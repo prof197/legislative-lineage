@@ -9,6 +9,7 @@ bill with text still yields comparable units. See DESIGN.md#sections.
 import re
 import sys
 import unicodedata
+from collections import Counter
 from dataclasses import dataclass
 from functools import cache
 
@@ -29,6 +30,11 @@ _GUTTER = re.compile(r"^\d{1,3}(?=[ \t]|$)[ \t]*")
 # Treat leading numbers as a gutter only when most lines carry one, as printed bills do.
 _GUTTER_MIN_LINES = 3
 _GUTTER_MIN_SHARE = 0.5
+# A running page header repeats on every page: short, with a number, and without lowercase
+# ("LC 47 3375", "STATE OF WYOMING 25LSO-0123"). Repeated lines that read as text, such as
+# "is amended to read as follows:", stay; the document-frequency stoplist handles those.
+_HEADER_MIN_REPEATS = 3
+_HEADER_MAX_WORDS = 8
 _NOT_WORD = re.compile(r"[\W_]+")
 
 
@@ -77,18 +83,37 @@ def _strip_gutter(lines: list[str]) -> list[str]:
     return [_GUTTER.sub("", line, count=1) for line in lines]
 
 
+def _is_running_header(line: str, repeats: int) -> bool:
+    return (
+        repeats >= _HEADER_MIN_REPEATS
+        and len(line.split()) <= _HEADER_MAX_WORDS
+        and any(ch.isdigit() for ch in line)
+        and not any(ch.islower() for ch in line)
+    )
+
+
+def _strip_running_headers(lines: list[str]) -> list[str]:
+    counts = Counter(line for line in lines if line)
+    return [line for line in lines if not (line and _is_running_header(line, counts[line]))]
+
+
 def clean(raw: str) -> str:
     """Display text: one newline convention, no invisible characters, no line-number gutter."""
     text = unicodedata.normalize("NFKC", raw.replace("\r\n", "\n").replace("\r", "\n"))
     text = _invisible().sub("", text)
     lines = _strip_gutter([" ".join(line.split()) for line in text.split("\n")])
+    lines = _strip_running_headers(lines)
     # Keep paragraph breaks, which the window fallback uses, but never more than one.
     return re.sub(r"\n{3,}", "\n\n", "\n".join(lines)).strip()
 
 
 def normalize(text: str) -> str:
-    """Matching text: case-folded words and numbers separated by single spaces."""
-    return _NOT_WORD.sub(" ", text.casefold()).strip()
+    """Matching text: case-folded words and numbers separated by single spaces.
+
+    The section sign is spelled out, so "§ 2" and "Section 2" normalize alike.
+    """
+    spelled = text.replace("§§", " sections ").replace("§", " section ")
+    return _NOT_WORD.sub(" ", spelled.casefold()).strip()
 
 
 def _windows(text: str) -> list[Section]:

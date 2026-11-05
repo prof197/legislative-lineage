@@ -96,12 +96,13 @@ The unit of matching is the section, not the bill. Provisions travel between sta
 - Format, private-use and control characters are dropped. Kentucky's export, for example, puts a private-use glyph before each heading.
 - Runs of spaces collapse to one.
 - A printed line-number gutter is removed. A gutter is recognized only when most lines of the bill start with a bare number, so New Jersey's "1." section numbers and a line such as "2023 Regular Session" survive.
+- Running page headers are removed. A header is a line that repeats at least three times in the bill, has at most eight words, contains a digit and has no lowercase letter, such as "LC 47 3375" or "STATE OF WYOMING 25LSO-0123". Repeated lines that read as text, such as "is amended to read as follows:", stay, and the document-frequency stoplist handles them.
 
 **Headings.** A section starts at a line that opens with `Section 1.`, `SECTION 1.`, `Sec. 1.`, `SEC. 1.` or `§ 1.`, with a colon accepted in place of the period. The number can be code-style (`1-101`, `2a`). Alaska's leading asterisk and Washington's `NEW SECTION.` are skipped. A heading must start its line, so a line opening with a quotation mark is not a heading. That keeps the sections of an act being amended, quoted inside the bill, from splitting it. Lowercase "section" at the start of a line is ignored, because there it is a wrapped cross-reference far more often than a heading. Text before the first heading becomes section 0.
 
 **Fallback.** A bill with no heading is cut into windows of at least 200 words on paragraph boundaries. A paragraph longer than a window is cut by words, and a short remainder joins the window before it. Every bill with text therefore yields sections, and the `by_heading` flag records which rule produced them. `lineage stats` reports the heading hit rate per state.
 
-**Normalized text** is case-folded words and numbers separated by single spaces. Shingling and hashing read it. The display text is kept for alignment and the site.
+**Normalized text** is case-folded words and numbers separated by single spaces, with the section sign spelled out so that "§ 2" and "Section 2" normalize alike. Shingling and hashing read it. The display text is kept for alignment and the site.
 
 ## Alternatives considered
 

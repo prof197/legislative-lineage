@@ -134,3 +134,27 @@ def test_a_quoted_heading_inside_amended_text_is_not_a_heading() -> None:
     text = 'SECTION 2.\nSaid Act is amended as follows:\n"SECTION 3.\nElection of commissioners."'
 
     assert [s.heading for s in split_sections(text).sections] == ["SECTION 2."]
+
+
+def test_clean_drops_running_page_headers() -> None:
+    page = "LC 47 3375\nshall be elected at the general election\n"
+    text = "SECTION 1.\n" + page * 3 + "SENATE BILL 12\n"
+
+    body = "\n".join(["shall be elected at the general election"] * 3)
+    # The header repeats on every page; the bill number appears once and stays.
+    assert clean(text) == f"SECTION 1.\n{body}\nSENATE BILL 12"
+
+
+def test_clean_keeps_repeated_lines_that_read_as_text() -> None:
+    # Amending phrases and enumerators repeat legitimately; the stoplist handles them instead.
+    text = "\n".join(["is amended to read as follows:", "Subd. 2.", "* * *"] * 3)
+
+    assert clean(text) == text
+
+
+def test_normalize_unifies_section_symbols() -> None:
+    assert (
+        normalize("§ 2 and §§ 3-4")
+        == normalize("section 2 and sections 3-4")
+        == ("section 2 and sections 3 4")
+    )
