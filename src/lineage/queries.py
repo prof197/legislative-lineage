@@ -68,6 +68,10 @@ def outcome_actions(
     return rows
 
 
+# Columns built from Python lists are cast explicitly: a list that is all None would otherwise
+# be typed NULL, and Parquet files with different column types cannot be read as one table.
+
+
 @dataclass(frozen=True, slots=True)
 class StatusColumns:
     """Derived status per bill id, as parallel lists, to be joined onto the bills table."""
@@ -94,9 +98,9 @@ def copy_bills_to_parquet(
         COPY (
             WITH s AS (
                 SELECT
-                    unnest($status_id) AS id,
-                    unnest($status) AS status,
-                    unnest($status_reason) AS status_reason,
+                    CAST(unnest($status_id) AS VARCHAR) AS id,
+                    CAST(unnest($status) AS VARCHAR) AS status,
+                    CAST(unnest($status_reason) AS VARCHAR) AS status_reason,
                     CAST(unnest($status_date) AS DATE) AS status_date
             )
             SELECT

@@ -135,3 +135,20 @@ def test_rerun_replaces_the_previous_table(raw_dir: Path, manifest: Path, tmp_pa
 
     assert not stale.exists()
     assert _bills(out).execute("SELECT count(*) FROM bills").fetchall() == [(5,)]
+
+
+def test_status_columns_keep_their_types_when_every_value_is_null(
+    raw_dir: Path, manifest: Path, tmp_path: Path
+) -> None:
+    out = tmp_path / "tables"
+    # With no session dates, every fixture bill without an outcome stays introduced, so whole
+    # archives have no status reason at all.
+    no_dates = tmp_path / "sessions.csv"
+    no_dates.write_text("state,session,name,start_date,end_date,carries_over_to\n")
+
+    ingest(raw_dir, manifest, no_dates, out, floor_bytes=0)
+
+    types = _bills(out).execute(
+        "SELECT DISTINCT typeof(status_reason), typeof(status_date) FROM bills"
+    )
+    assert types.fetchall() == [("VARCHAR", "DATE")]
