@@ -1,0 +1,184 @@
+[
+ {
+  "id": "ocd-bill/da0a32e7-b9d6-4f14-a3de-f437d56ae922",
+  "legislative_session": "2025_26",
+  "jurisdiction_name": "Georgia",
+  "identifier": "SB 238",
+  "title": "Rockdale County; board of commissioners; increase the board of commissioners to five members",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "subject": [],
+  "abstracts": [
+   {
+    "abstract": "A BILL to be entitled an Act to amend an Act creating a board of commissioners for Rockdale County, approved March 4, 1977 (Ga. L. 1977, p. 2817), as amended, so as to increase the board of commission",
+    "note": "description"
+   }
+  ],
+  "other_titles": [],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Senate Hopper",
+    "date": "2025-02-21",
+    "classification": [
+     "introduction"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate Read and Referred",
+    "date": "2025-02-24",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate Committee Favorably Reported",
+    "date": "2025-02-28",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate Sent to Governor",
+    "date": "2025-04-07",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate Date Signed by Governor",
+    "date": "2025-05-14",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Veto V7",
+    "date": "2025-05-14",
+    "classification": [
+     "executive-veto"
+    ],
+    "order": 11
+   }
+  ],
+  "related_bills": [],
+  "sponsors": [
+   {
+    "name": "Tonya Anderson",
+    "primary": true,
+    "classification": "primary"
+   }
+  ],
+  "documents": [],
+  "versions": [
+   {
+    "note": "SB 238/AP*",
+    "date": "",
+    "links": [
+     {
+      "url": "http://www.legis.ga.gov/Legislation/20252026/236173.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "As Passed Senate",
+    "date": "",
+    "links": [
+     {
+      "url": "http://www.legis.ga.gov/Legislation/20252026/234670.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "sources": [
+   {
+    "url": "https://www.legis.ga.gov/legislation/70662"
+   }
+  ],
+  "votes": [],
+  "raw_text": "LC 47 3375\nTo amend an Act creating a board of commissioners for Rockdale County, approved\nMarch 4, 1977 (Ga. L. 1977, p. 2817), as amended, so as to increase the board of\ncommissioners to five members; to revise the office of chairperson; to provide for initial\nterms of office; to provide for a county manager; to revise provisions related to the powers\nand duties of the board of commissioners, chairperson, and county manager; to provide for\ncontinuation in office of current members; to provide for related matters; to provide for a\nreferendum, effective dates, and automatic repeal; to provide for mandatory execution of\nelection and judicial remedies regarding failure to comply; to repeal conflicting laws; and for\nother purposes.\nBE IT ENACTED BY THE GENERAL ASSEMBLY OF GEORGIA:\nSECTION 1.\nAn Act creating a board of commissioners for Rockdale County, approved March 4, 1977\n(Ga. L. 1977, p. 2817), as amended, is amended by revising subsection (a) and adding new\nsubsections to Section 2 to read as follows:\n\"(a) As of January 1, 2027, the commission established herein shall consist of five\nmembers to be known as commissioners. The commissioners shall be elected by the\nLC 47 3375\nelectors of the county on an at-large basis. Commissioners shall be residents of the county\nfor at least one year prior to their qualification for election.\n(a.1) At the first meeting of the board of commissioners in January of each year, the board\nof commissioners shall select from among its members a chairperson and vice-chairperson\nof the board of commissioners. The chairperson shall preside over meetings of the board,\nprovided that the vice-chairperson shall preside in the chairperson's absence.\n(a.2)(1) Those members of the Board of Commissioners of Rockdale County who are\nserving as such on the effective date of this Act and any person selected to fill a vacancy\nin any such office shall continue to serve as such members until the regular expiration of\ntheir respective terms of office and upon the election and qualification of their respective\nsuccessors.\n(2)(A) The chairperson's post, as it exists immediately prior to the effective date of this\nAct, shall be designated as Commissioner Post 5, and on and after the effective date of\nthis Act, such member of the board serving from that former post shall be deemed to\nbe serving as a commissioner under this Act; the successor to such member shall be\nelected at the November general election in 2028, and shall be elected and serve a term\nas provided for in this Act.\n(B) Commissioner Post 1, as it exists immediately prior to the effective date of this\nAct, shall continue to be designated as Commissioner Post 1, and on and after the\neffective date of this Act, such member of the board shall serve as a commissioner as\nnewly described under this Act; the successor to such member shall be elected at the\nNovember general election in 2028, and shall be elected and serve a term as provided\nfor in this Act.\n(C) The initial commissioners from Commissioner Posts 2 and 4 as newly described\nunder this Act shall be elected at the November general election in 2026 and shall serve\nan initial term of office of four years; thereafter, successors to such members shall be\nelected and serve terms as provided for in this Act.\nLC 47 3375\n(D) The initial commissioner from Commissioner Post 3 as newly described under this\nAct shall be elected at the November general election in 2026 and shall serve an initial\nterm of office of two years; thereafter, successors to such member shall be elected and\nserve terms as provided for in this Act.\"\nSECTION 2.\nSaid Act is further amended by revising Section 3 as follows:\n\"SECTION 3.\nElection and term of commissioners.\nSuccessors to the commissioners provided for in Section 2 of this Act shall be elected at\nthe general election immediately preceding the expiration of terms of office and shall take\noffice on the first day of January immediately following their election for terms of four\nyears and until their successors are elected and qualified. Qualification by candidate shall\nbe partisan. Each candidate shall pay a qualification fee set by law at time of qualifying.\nAll elections shall be conducted pursuant to Chapter 2 of Title 21 of the O.C.G.A., the\n'Georgia Election Code.'\"\n",
+  "raw_text_url": "http://www.legis.ga.gov/Legislation/20252026/236173.pdf"
+ },
+ {
+  "id": "ocd-bill/51722284-7db1-4d3f-9815-8f2acc167928",
+  "legislative_session": "2025_26",
+  "jurisdiction_name": "Georgia",
+  "identifier": "SR 1065",
+  "title": "National Crime Victim's Rights Week; recognize April 19-25, 2026; the victim advocates of the Cobb County Solicitor General's Office; commend",
+  "chamber": "upper",
+  "classification": [
+   "resolution"
+  ],
+  "subject": [],
+  "abstracts": [
+   {
+    "abstract": "A RESOLUTION recognizing April 19-25, 2026, as National Crime Victim's Rights Week and commending the victim advocates of the Cobb County Solicitor General's Office for their dedicated service; and fo",
+    "note": "description"
+   }
+  ],
+  "other_titles": [],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Senate Hopper",
+    "date": "2026-03-27",
+    "classification": [
+     "introduction"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate Read and Adopted",
+    "date": "2026-03-31",
+    "classification": [
+     "passage"
+    ],
+    "order": 1
+   }
+  ],
+  "related_bills": [],
+  "sponsors": [
+   {
+    "name": "Michael 'Doc' Rhett",
+    "primary": true,
+    "classification": "primary"
+   }
+  ],
+  "documents": [],
+  "versions": [
+   {
+    "note": "Read and adopted LC 112 4113",
+    "date": "",
+    "links": [
+     {
+      "url": "http://www.legis.ga.gov/Legislation/20252026/247876.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "sources": [
+   {
+    "url": "https://www.legis.ga.gov/legislation/74519"
+   }
+  ],
+  "votes": [],
+  "raw_text": "LC 112 4113\nRecognizing April 19–25, 2026, as National Crime Victim's Rights Week and commending\nthe victim advocates of the Cobb County Solicitor General's Office for their dedicated\nservice; and for other purposes.\nWHEREAS, National Crime Victims' Rights Week is observed annually to promote victims'\nrights and honor those who serve them; and\nWHEREAS, victim advocates provide critical support, co",
+  "raw_text_url": "http://www.legis.ga.gov/Legislation/20252026/247876.pdf"
+ }
+]

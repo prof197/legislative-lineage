@@ -2,13 +2,17 @@
 
 Legislative Lineage takes one state bill and finds bills in other states that carry a similar provision. For each match it shows where the bill was introduced, what happened to it, and how its text differs. It indexes every state bill from the 2023–2026 sessions on a single laptop, matches them section by section in two stages that need no API key, and publishes the results for one state as a static site.
 
-This document is a skeleton. Sections marked **To be measured** fill in as the build reaches them. Every number added here will name the command and the committed output it comes from.
+Sections marked **To be measured** fill in as the build reaches them. Every number here names the command and the committed output it comes from.
 
 ## Contents
 
 - [Problem](#problem)
 - [Constraints](#constraints)
 - [Pipeline overview](#pipeline-overview)
+- [Data snapshot](#data-snapshot)
+- [Bill status](#bill-status)
+- [Sections](#sections)
+- [Boilerplate](#boilerplate)
 - [Alternatives considered](#alternatives-considered)
 - [Scaling limits](#scaling-limits)
 - [Known failure modes](#known-failure-modes)
@@ -21,7 +25,7 @@ Model legislation spreads by copying. An interest group, a uniform-law body or a
 
 Three properties of the corpus make this hard:
 
-- **Size.** Every bill from all 50 states over four years. Comparing every pair of sections is quadratic: *N* sections make *N*(*N* − 1)/2 pairs, so the method has to find candidates without enumerating pairs. *N* is measured in M1.
+- **Size.** Every bill from all 50 states over four years. Comparing every pair of sections is quadratic: *N* sections make *N*(*N* − 1)/2 pairs, so the method has to find candidates without enumerating pairs. The snapshot has *N* = 2,186,931 sections (`uv run lineage stats`, `reports/coverage.json`), which is about 2.4 × 10¹² pairs.
 - **The unit is the section, not the bill.** A copied provision often sits inside a much larger bill, such as an elections omnibus or a budget. Similarity between whole bills dilutes it below any useful threshold.
 - **Copying is not always verbatim.** Reordered clauses and substituted terms break exact-text methods, while generic legal phrasing ("the department shall…") makes meaning-based methods over-match.
 
@@ -47,8 +51,8 @@ Open States snapshot ─► ingest ─► sections ─┬─► near-duplicate s
                                  boilerplate)                                                                                       cached)
 ```
 
-1. **Ingest.** Read the raw per-session JSON into Parquet tables without editing the raw files ([DR-4](#dr-4)).
-2. **Sections.** Split each bill on its section headings, falling back to fixed paragraph windows. Normalize the text and flag legal boilerplate such as enacting clauses, severability and effective dates, which would otherwise dominate the matches.
+1. **Ingest.** Verify the raw archives against the committed manifest, then read the per-session JSON into Parquet tables without editing the raw files ([DR-4](#dr-4)). See [Data snapshot](#data-snapshot).
+2. **Sections.** Restrict matching to the document types that can carry law ([DR-5](#dr-5)), then split each bill on its section headings, falling back to fixed paragraph windows. Normalize the text and flag legal boilerplate such as enacting clauses, severability and effective dates, which would otherwise dominate the matches.
 3. **Near-duplicate stage.** Word shingles, MinHash signatures and LSH banding generate candidate pairs that share text, and each candidate is verified against its full signature ([DR-3](#dr-3)).
 4. **Semantic stage.** A local sentence-embedding model and an approximate nearest-neighbor index generate candidates that share meaning but not wording. This is a second candidate generator over every section, not a reranker of the first stage's output, so it can find pairs the first stage never proposed.
 5. **Merge and score.** Each match records which stage found it. A bill's score against another bill is the share of the *query* bill's text that falls in matched sections, so a provision inside a large omnibus still scores high.
@@ -56,11 +60,66 @@ Open States snapshot ─► ingest ─► sections ─┬─► near-duplicate s
 7. **Explanations.** For featured matches, a model summarizes what changed, citing span ids. The citations are validated in code.
 8. **Export.** Per-bill and per-story JSON for the static site ([DR-1](#dr-1), [DR-2](#dr-2)).
 
+## Data snapshot
+
+**Source.** Open States publishes one JSON archive per state legislative session ([Session JSON Archives](https://open.pluralpolicy.com/data/session-json/)). The corpus is every archive for the 50 states whose session overlaps 2023–2026. Each archive holds a README and one file of bill records, and each record carries at most one extracted text (`raw_text`) together with the URL it came from.
+
+**As-of dates.** The archives are generated independently, so the snapshot has no single date. Each archive's README states when it was generated, and that *Generated At* timestamp is the as-of date of its records everywhere: in the tables, the reports and the site's data stamp. The listing page also shows an "updated" date for each archive. It does not match Generated At, so it isn't used.
+
+**Pinning.** `snapshot/manifest.json` (committed) lists every archive with its size, SHA-256 and Generated At. Ingest refuses to run if the files on disk differ from the manifest in any way: a changed file, a missing one, or an extra one. A rebuild therefore either reproduces the same inputs or fails loudly.
+
+**Rebuilding the raw files.** `lineage fetch-raw` downloads every pinned archive that is missing locally. Open States serves them publicly, with no account or key. A file is kept only if its SHA-256 matches the manifest. `--repin` is the deliberate way to move the snapshot forward: it keeps the changed file and writes its new hash and Generated At to the manifest, so the change shows up in review as a diff of `snapshot/manifest.json`. Requests go out one at a time, a second apart, under a User-Agent that names the project.
+
+**Session dates.** Bill status needs to know whether a session has ended, and the export has no session dates. `snapshot/sessions.csv` (committed) holds each snapshot session's start and end dates, read from the session lists in Open States' own scraper repository at a pinned commit, which the file's header names. `lineage sessions --commit <sha>` regenerates it. The command parses those Python modules as source and never imports or runs them, and it keeps only names and dates, not code. Some legislatures sit for two years while Open States publishes each year separately, and their bills carry over from the first year to the second. For those, the CSV names the session a bill carries over to, so a first-year bill stays alive until the biennium ends. Special sessions keep their own dates.
+
+**Extraction failures.** The export has no error flag. A record whose `raw_text` is missing or blank counts as a failed extraction: it stays in the `bills` table but cannot match anything. Blank means no character that Python's `str.isspace()` rejects. `lineage stats` reports the rate per state and session.
+
+## Bill status
+
+Every bill carries a status, `passed`, `died` or `introduced`, derived from Open States' action classifications as of its archive's Generated At. The order of evidence is as follows.
+
+1. **Enacted.** A signature, becoming law without one, or a veto override means `passed`. Enactment is final, whatever follows it in the record. Georgia files a line-item veto as a veto action after the signature, and New Jersey's conditional veto is followed by a signature once the legislature adopts the governor's changes. In both cases the bill is law.
+2. **Killed.** Otherwise, a veto, a failed vote or a failed override means `died`. The exception is a failed vote followed by a later passage, because chambers can reconsider. In that case the bill is alive again.
+3. **Session ended.** Otherwise, a bill whose session ended before the archive was generated `died` with its session. A session is still sitting on its last day. Where bills carry over within a two-year term, the biennium's end applies ([Data snapshot](#data-snapshot)). A session with no known end date leaves the bill `introduced`, which avoids guessing that it died.
+4. Anything else is `introduced`.
+
+The table keeps the deciding classification (`status_reason`, or `session-ended`) and its date (`status_date`), so a bill page can name the action, for example a veto.
+
+Actions are sequenced by Open States' `order` field. Dates arrive either as plain dates or as zoned timestamps. A timestamp is converted to a calendar date in the time zone the state's export uses. Most exports write a plain date as local midnight. Alabama's writes midnight Eastern although the state keeps Central time, and converting it with Central time would move each date a day earlier.
+
+## Sections
+
+The unit of matching is the section, not the bill. Provisions travel between states one section at a time, often inside omnibus bills, so whole-bill similarity would bury a shared provision under unrelated text. `lineage split` writes the `sections` table: bill id, ordinal, heading, display text, normalized text, and whether the bill was split at headings.
+
+**Cleaning.** Before splitting, the text is cleaned:
+- Line endings are unified.
+- Text is NFKC-normalized, so non-breaking spaces and ligatures become plain characters.
+- Format, private-use and control characters are dropped. Kentucky's export, for example, puts a private-use glyph before each heading.
+- Runs of spaces collapse to one.
+- A printed line-number gutter is removed. A gutter is recognized only when most lines of the bill start with a bare number, so New Jersey's "1." section numbers and a line such as "2023 Regular Session" survive.
+- Running page headers are removed. A header is a line that repeats at least three times in the bill, has at most eight words, contains a digit and has no lowercase letter, such as "LC 47 3375" or "STATE OF WYOMING 25LSO-0123". Repeated lines that read as text, such as "is amended to read as follows:", stay, and the document-frequency stoplist handles them.
+
+**Headings.** A section starts at a line that opens with `Section 1.`, `SECTION 1.`, `Sec. 1.`, `SEC. 1.` or `§ 1.`, with a colon accepted in place of the period. The number can be code-style (`1-101`, `2a`). Alaska's leading asterisk and Washington's `NEW SECTION.` are skipped. A heading must start its line, so a line opening with a quotation mark is not a heading. That keeps the sections of an act being amended, quoted inside the bill, from splitting it. Lowercase "section" at the start of a line is ignored, because there it is a wrapped cross-reference far more often than a heading. Text before the first heading becomes section 0.
+
+**Fallback.** A bill with no heading is cut into windows of at least 200 words on paragraph boundaries. A paragraph longer than a window is cut by words, and a short remainder joins the window before it. Every bill with text therefore yields sections, and the `by_heading` flag records which rule produced them. `lineage stats` reports the heading hit rate per state.
+
+**Normalized text** is case-folded words and numbers separated by single spaces, with the section sign spelled out so that "§ 2" and "Section 2" normalize alike. Shingling and hashing read it. The display text is kept for alignment and the site.
+
+## Boilerplate
+
+Enacting clauses, effective dates, severability clauses, repealers and amending formulas are near-identical across thousands of bills. Left in, they would make unrelated bills look alike. Two mechanisms remove them, and `lineage boilerplate` reports what each one caught in `reports/boilerplate.json` (committed).
+
+**Patterns.** A short list of patterns runs on normalized text and recognizes enacting clauses, effective dates, severability clauses and repealers. A section is flagged as boilerplate only when, once its heading and every pattern match are removed, at most four words remain, which is room for a catchline such as "effective date". A provision that ends with an effective date therefore stays matchable. So does a preamble that carries the bill's title along with its enacting clause. The `boilerplate` column records which kind a flagged section is.
+
+**Document-frequency stoplist.** The patterns can't anticipate standard definitions, amending formulas ("is amended to read as follows"), or markup that survives extraction, such as Minnesota's "new text begin". The stoplist catches them from the data. Every section's set of word 5-gram shingles is counted, and a shingle found in more than a set share of all sections is dropped before MinHash. The list adapts to each state's habits without upkeep and is rebuilt with the corpus. The proposed share is 0.1% (`--max-share`). The report tabulates how many shingles, and what share of all shingle occurrences, each of several thresholds would remove, and lists the most frequent stoplisted shingles. The ablation sets the final value against recall.
+
+**Shingle hashing.** Each word is hashed with 64-bit FNV-1a over its UTF-8 bytes. Five consecutive word hashes are combined positionally and finished with MurmurHash3's 64-bit mixer, and the top 32 bits are kept. The computation is whole-array NumPy, and a test checks it against a one-shingle-at-a-time reference and pins its values. The stoplist and every later signature depend on those values, so changing the hash means rebuilding both.
+
 ## Alternatives considered
 
 | Alternative | Reason rejected | Evidence |
 |---|---|---|
-| Compare all pairs | Quadratic in the number of sections | Arithmetic, once *N* is measured (M1) |
+| Compare all pairs | Quadratic in the number of sections: about 2.4 × 10¹² pairs at the measured *N* | Arithmetic on the measured section count |
 | Embeddings only | No exact-span evidence to highlight, a higher cost per section, and weaker on legal boilerplate that sounds alike | To be measured by the stage ablation (M4) |
 | Embeddings as a reranker of LSH candidates | A reranker can only reorder pairs LSH already proposed, so it can never recover a paraphrase LSH missed | Follows from the design |
 | Whole bills as the unit | Dilutes provisions carried inside omnibus bills | To be shown by commission-recall misses (M3) |
@@ -72,7 +131,7 @@ Open States snapshot ─► ingest ─► sections ─┬─► near-duplicate s
 
 ## Scaling limits
 
-**To be measured.** M1 measures the section count, which sets the size of the signature matrix and the embedding index. This table gets numbers then.
+The section count sets the size of everything downstream. At the measured 2,186,931 sections (`reports/coverage.json`), 128 32-bit MinHash values per section make a 1.1 GB signature matrix. Ten times the corpus is 11 GB, which no longer fits comfortably in a laptop's memory.
 
 | Pressure | What breaks first at 10× | Response |
 |---|---|---|
@@ -98,14 +157,32 @@ These carry into the README's known-failure-modes section. Each has a mitigation
 | An explanation with valid citations but a wrong summary | A claim cites a real difference but describes it wrongly | A hand-labeled faithfulness eval, and the cited spans shown beside each claim |
 | Similarity has no direction | An earlier bill is not necessarily the source | Copy states timing only, never "copied from" |
 | Legislative status is not legal standing | A law struck down in court still shows as passed | A legend line wherever status is shown |
-| A stale snapshot | Bills filed after the snapshot are missing | Every page carries the snapshot date |
+| A bill awaiting the governor when the session ended, whose outcome the export never recorded | Shows as died | `lineage stats` counts these per state and type (`reports/coverage.json`, `status_gaps`) |
+| Resolutions are adopted, not signed | Under the enactment rule, an adopted resolution shows as died once its session ends | Decided with the DR-5 type lists, from the step 8 counts |
+| A state publishes no extracted text | Its bills cannot match: Connecticut, Maine and South Dakota have blank text for every record (`reports/coverage.json`) | Disclosed per state. Their version links point to PDFs, so extracting them ourselves is a possible extension, not part of v1 |
+| A stale snapshot | Bills filed after an archive was generated are missing, and archives were generated at different times | Every page carries the Generated At dates of the archives it draws on |
+| A substantive measure filed under an excluded document type | It can never be found | Excluded records stay in `bills`, and the recall eval names "excluded type" as a miss reason ([DR-5](#dr-5)) |
 
 ## Measured facts
 
-**To be measured.** Each entry will name the command that produced it and the committed file it reads from.
+Each entry names the command that produces it and the committed file it reads from. Snapshot-wide figures are below. Per-state and per-session figures are in the files.
 
-- Text coverage by state and session, from the empty and extraction-error rates (`lineage stats`, M1).
-- Section-heading hit rate, and sections per bill (`lineage stats`, M1).
+**Snapshot** (`uv run lineage snapshot` → `snapshot/manifest.json`). 220 archives, 6.42 GiB, for the 50 states' sessions overlapping 2023–2026. Generated At dates run from 2023-03-01 to 2026-11-05. `reports/coverage.json` gives the range per state.
+
+**Text coverage** (`uv run lineage stats` → `reports/coverage.json`).
+- Of 525,633 records, 11,675 have no text and 141,770 have blank text. 372,186 (70.8%) yield sections.
+- Connecticut, Maine and South Dakota publish blank text for every record. Maryland, Nebraska, New Hampshire, Montana and Indiana have text for under a third of their records.
+
+**Sections** (same command and file).
+- 2,186,931 sections.
+- The heading rule splits 257,085 of the 372,186 bills with text (69.1%), and the window fallback splits the rest.
+- Ohio, Washington, New Hampshire, New Jersey and Missouri split almost entirely by windows (98% or more). Their exports lack line breaks or section numbers, or number sections without the word "Section".
+
+**Document types** (same command and file). Record counts by classification per state, the title-pattern count of likely commemorative measures within each type, and status by type. These set DR-5's type rules.
+
+**Boilerplate** (`uv run lineage boilerplate` → `reports/boilerplate.json`). Sections flagged by each pattern, and the shingles and shingle occurrences that each candidate stoplist threshold removes.
+
+**To be measured.**
 - Signature and LSH build time and peak memory on the reference laptop, for the own NumPy MinHash and for datasketch's batch path, on the same inputs (step 10).
 - Candidate rate against the theoretical LSH S-curve (step 11).
 - Commission recall, pooled and by act (`lineage eval commission`, M3).
@@ -206,7 +283,7 @@ The step 10 benchmark puts both engines through the same work. It runs datasketc
 
 **Status:** accepted, 2026-11-05.
 
-**Context.** The input is Open States' per-session JSON for 50 states across four years. Its total size is measured in M1. The transformations are relational: flatten nested actions and versions, derive status, filter, and aggregate per state and session for coverage statistics. Their outputs feed NumPy, for hashing and embedding, and the exporter. Everything runs on a laptop and has to work when the data does not fit in memory.
+**Context.** The input is Open States' per-session JSON for 50 states across four years: 220 archives, 6.42 GiB (`uv run lineage snapshot`, `snapshot/manifest.json`). The transformations are relational: flatten nested actions and versions, derive status, filter, and aggregate per state and session for coverage statistics. Their outputs feed NumPy, for hashing and embedding, and the exporter. Everything runs on a laptop and has to work when the data does not fit in memory.
 
 **Options.**
 
@@ -225,3 +302,30 @@ The step 10 benchmark puts both engines through the same work. It runs datasketc
 - The choice over Polars is a judgment, not a measurement: reading nested JSON with SQL and inspecting tables in the CLI outweighed Polars' typed expression API.
 
 **Would reverse it.** If DuckDB's JSON reader cannot handle the snapshot's shape or size without per-file Python preprocessing, which step 4 finds out, a streaming Python reader writes the Parquet and DuckDB keeps the queries. If most transforms turn out to need row-wise Python functions, Polars replaces DuckDB.
+
+<a id="dr-5"></a>
+### DR-5 · Match only document types that can carry law
+
+**Status:** accepted, 2026-11-05. The per-state type lists are set from the step 8 counts.
+
+**Context.** An Open States session archive holds every measure a legislature filed, not just bills. It includes resolutions, proclamations, appointments, nominations, memorials and commemorations. Commemorative measures are numerous and highly formulaic ("commending", "recognizing", "expressing condolences"), so they flood the near-duplicate stage with matches on text no one is tracing. Type labels also vary by state, and a generic label can hide both kinds of record. Georgia, for example, files proposed constitutional amendments and commendations alike as "resolution", and its titles carry the distinction instead: a trailing "; commend" or "; recognize" against "; provide - CA". So a single global allowlist of types would either drop substantive measures or admit commemorations.
+
+**Options.**
+
+- **Match everything.** No record is lost, but commemorative boilerplate dominates the candidate pairs and the precision sample, and the stoplist ends up working around document types instead of legal boilerplate.
+- **Match only records labeled `bill`.** Simple, but it drops substantive measures that states file under other labels, such as constitutional amendments and joint resolutions with the force of law.
+- **Per-state rules over document type.** A default list of types eligible for matching, with per-state overrides where a state's labels don't separate law from ceremony. An override may use that state's own title convention, as in Georgia. Commemorative and memorial measures are always excluded.
+- **A topic or keyword filter.** Rejected: it would make commission recall circular, since only bills that match the keywords could be found, and it would remove the unrelated bills that test precision.
+- **A model classifying each record.** Rejected: it puts a model call in the retrieval path, which breaks the keyless constraint.
+
+**Decision.** Per-state rules over document type. Step 8 reports record counts by classification for each state. The review sets the default eligible types and any per-state overrides from those counts, and commemorative and memorial measures stay out regardless. The rules live in one committed table, so each exclusion can be reviewed.
+
+The filter does not bias the recall eval. It selects on what kind of document a record is, independent of its subject, so it removes records that aren't law without regard to any story or act. The unrelated bills on every topic, which are the hard negatives that test precision, all remain.
+
+**Consequences.**
+
+- Excluded records stay in `bills` with their classification, and the filter is applied downstream. Changing the rules needs no re-ingest.
+- Every rule is visible in one table, and step 8 reports how many records each rule excludes per state.
+- A substantive measure filed under an excluded type can't be found. The recall eval reports "excluded type" as a distinct miss reason, so such a loss shows up rather than hiding inside "not found".
+
+**Would reverse it.** If the recall eval shows any listed enactment lost to "excluded type", the rule that excluded it is revised. If the precision sample shows commemorative text still producing matches, the per-state rules widen.

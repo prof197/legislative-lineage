@@ -1,0 +1,36 @@
+[
+ {
+  "id": "ocd-bill/de5c69ff-7546-418b-8e18-f6c626243c3d",
+  "legislative_session": "33",
+  "jurisdiction_name": "Alaska",
+  "identifier": "SB 47",
+  "title": "NOT INTRODUCED",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "subject": [],
+  "abstracts": [],
+  "other_titles": [],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "(S) NOT INTRODUCED",
+    "date": "2023-01-27",
+    "classification": [],
+    "order": 0
+   }
+  ],
+  "related_bills": [],
+  "sponsors": [],
+  "documents": [],
+  "versions": [],
+  "sources": [
+   {
+    "url": "https://www.akleg.gov/basis/Bill/Detail/33?Root=SB47#tab5_4"
+   }
+  ],
+  "votes": [],
+  "raw_text": ""
+ }
+]

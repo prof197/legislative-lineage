@@ -9,6 +9,14 @@ uv run ruff format --check   # formatting (drop --check to apply)
 uv run pyright               # type check, strict
 uv run pytest                # tests
 uv run lineage --help        # the CLI
+
+uv run lineage fetch-raw     # download the archives the manifest pins into data/raw/
+uv run lineage snapshot      # pin data/raw/*/*.zip into snapshot/manifest.json
+uv run lineage sessions --commit <sha>  # pin session dates into snapshot/sessions.csv
+uv run lineage ingest        # verify against the manifest, write data/tables/bills/*.parquet
+uv run lineage split         # split bill text into data/tables/sections/*.parquet
+uv run lineage boilerplate   # shingle stoplist -> data/tables/stoplist.parquet, reports/boilerplate.json
+uv run lineage stats         # coverage, sections, types, status per state/session -> reports/coverage.json
 ```
 
 All four checks must pass before every commit. CI runs the same four commands.
@@ -18,9 +26,28 @@ All four checks must pass before every commit. CI runs the same four commands.
 ```
 src/lineage/      the package (import name `lineage`; distribution `legislative-lineage`)
   cli.py          Typer app; subcommands stay thin wrappers over library functions
+  snapshot.py     archive manifest: scan, write, load, verify
+  fetch.py        download pinned archives; hash-checked, paced, disk-guarded
+  sessions.py     session dates from openstates-scrapers, parsed as source, never run
+  ingest.py       raw archives -> bills Parquet, one file per archive, with status
+  status.py       passed / died / introduced from action classifications
+  sections.py     clean, split at headings or into windows, normalize (pure functions)
+  sectioning.py   build the sections table, one worker process per bills file
+  boilerplate.py  pattern list that flags boilerplate-only sections
+  shingles.py     word 5-gram shingles, 32-bit hashes (NumPy; values pinned by a test)
+  stoplist.py     document-frequency stoplist and its report
+  stats.py        coverage report: the measurements that replace the design's estimates
+  queries.py      every SQL query the pipeline runs (DR-4)
+  disk.py         free-space floor checked before large writes
 tests/            pytest; small committed fixtures only
+  fixtures/openstates/  trimmed real records in archive layout (README + *_bills.json)
+snapshot/manifest.json  the pinned snapshot: per-archive size, SHA-256, Generated At
+snapshot/sessions.csv   session start/end dates and carryover, from a pinned scrapers commit
+reports/          committed outputs of pipeline commands; README and DESIGN numbers cite them
 DESIGN.md         design, alternatives, scaling limits, failure modes, decision records
 data/             local snapshots and derived tables; gitignored, never committed
+  raw/<ST>/*.zip  Open States session archives, never edited
+  tables/         Parquet tables written by the pipeline
 ```
 
 ## Conventions
@@ -32,7 +59,8 @@ data/             local snapshots and derived tables; gitignored, never committe
 - Write tests first wherever DESIGN.md or the build plan specifies the behavior.
 - Never weaken a test, threshold or eval to get to green.
 - Every number in README.md or DESIGN.md comes from a committed eval or benchmark output, with the command that reproduces it. Never hard-code a result.
-- Fix random seeds. Pin the data snapshot date.
+- Fix random seeds. The snapshot is pinned by `snapshot/manifest.json`; an archive's as-of date is its README's Generated At.
+- Before a large write, call `disk.require_free_space` with an upper bound on the bytes written. The default floor is 20 GiB free.
 - Secrets come only from environment variables. `.env` is gitignored.
 - Model calls happen only in the explanation step and the provisional precision labels. Retrieval runs with no API key.
 - Commits use conventional messages, one build step per commit. The body gives the engineering reason: the tradeoff, the measurement, the alternative rejected.

@@ -1,0 +1,103 @@
+[
+ {
+  "id": "ocd-bill/93ea8dd9-d227-4613-b2eb-db3f29c8f269",
+  "legislative_session": "2024",
+  "jurisdiction_name": "Hawaii",
+  "identifier": "HB 818",
+  "title": "RELATING TO HEARING AIDS.",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "subject": [
+   "Deaf and Blind Task Force",
+   "Health Insurance Coverage",
+   "Hearing Aids",
+   "Kupuna Caucus"
+  ],
+  "abstracts": [
+   {
+    "abstract": "Requires health insurance policies and contracts issued on or after 01/01/2024 to provide coverage for the cost of hearing aids at a minimum of $1,500 per hearing aid for each hearing-impaired ear eve",
+    "note": "description"
+   }
+  ],
+  "other_titles": [],
+  "actions": [
+   {
+    "organization__name": "Hawaii State Legislature",
+    "description": "Carried over to 2024 Regular Session.",
+    "date": "2023-12-11",
+    "classification": [
+     "carried-over"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred to HLT, CPC, FIN, referral sheet 3",
+    "date": "2023-01-30",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "Introduced and Pass First Reading.",
+    "date": "2023-01-25",
+    "classification": [
+     "introduction",
+     "reading-1"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "House",
+    "description": "Pending introduction.",
+    "date": "2023-01-23",
+    "classification": [],
+    "order": 3
+   }
+  ],
+  "related_bills": [
+   {
+    "related_bill_id": null
+   }
+  ],
+  "sponsors": [
+   {
+    "name": "TAM",
+    "primary": true,
+    "classification": "primary"
+   },
+   {
+    "name": "AMATO",
+    "primary": true,
+    "classification": "primary"
+   }
+  ],
+  "documents": [],
+  "versions": [
+   {
+    "note": "HB818",
+    "date": "",
+    "links": [
+     {
+      "url": "https://capitol.hawaii.gov/sessions/session2024/bills/HB818_.PDF",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://capitol.hawaii.gov/sessions/session2024/bills/HB818_.HTM",
+      "media_type": "text/html"
+     }
+    ]
+   }
+  ],
+  "sources": [
+   {
+    "url": "https://capitol.hawaii.gov/session/archives/measure_indiv_Archives.aspx?billtype=HB&billnumber=818&year=2024"
+   }
+  ],
+  "votes": []
+ }
+]
