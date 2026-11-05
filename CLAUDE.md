@@ -16,6 +16,7 @@ uv run lineage sessions --commit <sha>  # pin session dates into snapshot/sessio
 uv run lineage ingest        # verify against the manifest, write data/tables/bills/*.parquet
 uv run lineage split         # split bill text into data/tables/sections/*.parquet
 uv run lineage boilerplate   # shingle stoplist -> data/tables/stoplist.parquet, reports/boilerplate.json
+uv run lineage stats         # coverage, sections, types, status per state/session -> reports/coverage.json
 ```
 
 All four checks must pass before every commit. CI runs the same four commands.
@@ -35,6 +36,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   boilerplate.py  pattern list that flags boilerplate-only sections
   shingles.py     word 5-gram shingles, 32-bit hashes (NumPy; values pinned by a test)
   stoplist.py     document-frequency stoplist and its report
+  stats.py        coverage report: the measurements that replace the design's estimates
   queries.py      every SQL query the pipeline runs (DR-4)
   disk.py         free-space floor checked before large writes
 tests/            pytest; small committed fixtures only

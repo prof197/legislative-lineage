@@ -20,6 +20,7 @@ from lineage.sessions import (
     write_sessions,
 )
 from lineage.snapshot import SnapshotError, load_manifest, scan, write_manifest
+from lineage.stats import write_coverage
 from lineage.stoplist import StoplistError, build_stoplist, file_sha256
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
@@ -217,4 +218,27 @@ def boilerplate(
         f"{result.occurrences_removed / max(result.occurrences, 1):.1%} of occurrences across "
         f"{result.sections:,} sections ({result.seconds:.0f}s) -> {tables / 'stoplist.parquet'}, "
         f"{report}"
+    )
+
+
+@app.command()
+def stats(
+    tables: Annotated[Path, typer.Option("--tables", help="Directory of Parquet tables.")] = Path(
+        "data/tables"
+    ),
+    manifest: ManifestOption = Path("snapshot/manifest.json"),
+    sessions: Annotated[
+        Path, typer.Option("--sessions", help="Session dates CSV (committed).")
+    ] = Path("snapshot/sessions.csv"),
+    report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = Path(
+        "reports/coverage.json"
+    ),
+) -> None:
+    """Measure text coverage, sections, document types and status per state and session."""
+    doc = write_coverage(tables, sessions_path=sessions, manifest_path=manifest, report_path=report)
+    t = doc["totals"]
+    typer.echo(
+        f"{t['records']:,} records: {t['missing_text']:,} without text, {t['blank_text']:,} "
+        f"blank, {t['with_sections']:,} with sections ({t['split_at_headings']:,} at headings), "
+        f"{t['sections']:,} sections -> {report}"
     )

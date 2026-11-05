@@ -2,7 +2,7 @@
 
 Legislative Lineage takes one state bill and finds bills in other states that carry a similar provision. For each match it shows where the bill was introduced, what happened to it, and how its text differs. It indexes every state bill from the 2023–2026 sessions on a single laptop, matches them section by section in two stages that need no API key, and publishes the results for one state as a static site.
 
-This document is a skeleton. Sections marked **To be measured** fill in as the build reaches them. Every number added here will name the command and the committed output it comes from.
+Sections marked **To be measured** fill in as the build reaches them. Every number here names the command and the committed output it comes from.
 
 ## Contents
 
@@ -25,7 +25,7 @@ Model legislation spreads by copying. An interest group, a uniform-law body or a
 
 Three properties of the corpus make this hard:
 
-- **Size.** Every bill from all 50 states over four years. Comparing every pair of sections is quadratic: *N* sections make *N*(*N* − 1)/2 pairs, so the method has to find candidates without enumerating pairs. *N* is measured in M1.
+- **Size.** Every bill from all 50 states over four years. Comparing every pair of sections is quadratic: *N* sections make *N*(*N* − 1)/2 pairs, so the method has to find candidates without enumerating pairs. The snapshot has *N* = 2,186,931 sections (`uv run lineage stats`, `reports/coverage.json`), which is about 2.4 × 10¹² pairs.
 - **The unit is the section, not the bill.** A copied provision often sits inside a much larger bill, such as an elections omnibus or a budget. Similarity between whole bills dilutes it below any useful threshold.
 - **Copying is not always verbatim.** Reordered clauses and substituted terms break exact-text methods, while generic legal phrasing ("the department shall…") makes meaning-based methods over-match.
 
@@ -72,7 +72,7 @@ Open States snapshot ─► ingest ─► sections ─┬─► near-duplicate s
 
 **Session dates.** Bill status needs to know whether a session has ended, and the export has no session dates. `snapshot/sessions.csv` (committed) holds each snapshot session's start and end dates, read from the session lists in Open States' own scraper repository at a pinned commit, which the file's header names. `lineage sessions --commit <sha>` regenerates it. The command parses those Python modules as source and never imports or runs them, and it keeps only names and dates, not code. Some legislatures sit for two years while Open States publishes each year separately, and their bills carry over from the first year to the second. For those, the CSV names the session a bill carries over to, so a first-year bill stays alive until the biennium ends. Special sessions keep their own dates.
 
-**Extraction failures.** The export has no error flag. A record whose `raw_text` is missing or blank counts as a failed extraction: it stays in the `bills` table but cannot match anything. Step 8 reports the rate per state and session.
+**Extraction failures.** The export has no error flag. A record whose `raw_text` is missing or blank counts as a failed extraction: it stays in the `bills` table but cannot match anything. Blank means no character that Python's `str.isspace()` rejects. `lineage stats` reports the rate per state and session.
 
 ## Bill status
 
@@ -119,7 +119,7 @@ Enacting clauses, effective dates, severability clauses, repealers and amending 
 
 | Alternative | Reason rejected | Evidence |
 |---|---|---|
-| Compare all pairs | Quadratic in the number of sections | Arithmetic, once *N* is measured (M1) |
+| Compare all pairs | Quadratic in the number of sections: about 2.4 × 10¹² pairs at the measured *N* | Arithmetic on the measured section count |
 | Embeddings only | No exact-span evidence to highlight, a higher cost per section, and weaker on legal boilerplate that sounds alike | To be measured by the stage ablation (M4) |
 | Embeddings as a reranker of LSH candidates | A reranker can only reorder pairs LSH already proposed, so it can never recover a paraphrase LSH missed | Follows from the design |
 | Whole bills as the unit | Dilutes provisions carried inside omnibus bills | To be shown by commission-recall misses (M3) |
@@ -131,7 +131,7 @@ Enacting clauses, effective dates, severability clauses, repealers and amending 
 
 ## Scaling limits
 
-**To be measured.** M1 measures the section count, which sets the size of the signature matrix and the embedding index. This table gets numbers then.
+The section count sets the size of everything downstream. At the measured 2,186,931 sections (`reports/coverage.json`), 128 32-bit MinHash values per section make a 1.1 GB signature matrix. Ten times the corpus is 11 GB, which no longer fits comfortably in a laptop's memory.
 
 | Pressure | What breaks first at 10× | Response |
 |---|---|---|
@@ -157,19 +157,32 @@ These carry into the README's known-failure-modes section. Each has a mitigation
 | An explanation with valid citations but a wrong summary | A claim cites a real difference but describes it wrongly | A hand-labeled faithfulness eval, and the cited spans shown beside each claim |
 | Similarity has no direction | An earlier bill is not necessarily the source | Copy states timing only, never "copied from" |
 | Legislative status is not legal standing | A law struck down in court still shows as passed | A legend line wherever status is shown |
-| A bill awaiting the governor when the session ended, whose outcome the export never recorded | Shows as died | `lineage stats` counts bills that reached the governor with no recorded outcome |
+| A bill awaiting the governor when the session ended, whose outcome the export never recorded | Shows as died | `lineage stats` counts these per state and type (`reports/coverage.json`, `status_gaps`) |
 | Resolutions are adopted, not signed | Under the enactment rule, an adopted resolution shows as died once its session ends | Decided with the DR-5 type lists, from the step 8 counts |
+| A state publishes no extracted text | Its bills cannot match: Connecticut, Maine and South Dakota have blank text for every record (`reports/coverage.json`) | Disclosed per state. Their version links point to PDFs, so extracting them ourselves is a possible extension, not part of v1 |
 | A stale snapshot | Bills filed after an archive was generated are missing, and archives were generated at different times | Every page carries the Generated At dates of the archives it draws on |
 | A substantive measure filed under an excluded document type | It can never be found | Excluded records stay in `bills`, and the recall eval names "excluded type" as a miss reason ([DR-5](#dr-5)) |
 
 ## Measured facts
 
-**To be measured.** Each entry will name the command that produced it and the committed file it reads from.
+Each entry names the command that produces it and the committed file it reads from. Snapshot-wide figures are below. Per-state and per-session figures are in the files.
 
-- Records, and the share with missing or blank text, by state and session (`lineage stats`, M1).
-- Record counts by document classification, per state (`lineage stats`, M1).
-- The range of archive Generated At dates, per state (`lineage stats`, M1).
-- Section-heading hit rate, and sections per bill (`lineage stats`, M1).
+**Snapshot** (`uv run lineage snapshot` → `snapshot/manifest.json`). 220 archives, 6.42 GiB, for the 50 states' sessions overlapping 2023–2026. Generated At dates run from 2023-03-01 to 2026-11-05. `reports/coverage.json` gives the range per state.
+
+**Text coverage** (`uv run lineage stats` → `reports/coverage.json`).
+- Of 525,633 records, 11,675 have no text and 141,770 have blank text. 372,186 (70.8%) yield sections.
+- Connecticut, Maine and South Dakota publish blank text for every record. Maryland, Nebraska, New Hampshire, Montana and Indiana have text for under a third of their records.
+
+**Sections** (same command and file).
+- 2,186,931 sections.
+- The heading rule splits 257,085 of the 372,186 bills with text (69.1%), and the window fallback splits the rest.
+- Ohio, Washington, New Hampshire, New Jersey and Missouri split almost entirely by windows (98% or more). Their exports lack line breaks or section numbers, or number sections without the word "Section".
+
+**Document types** (same command and file). Record counts by classification per state, the title-pattern count of likely commemorative measures within each type, and status by type. These set DR-5's type rules.
+
+**Boilerplate** (`uv run lineage boilerplate` → `reports/boilerplate.json`). Sections flagged by each pattern, and the shingles and shingle occurrences that each candidate stoplist threshold removes.
+
+**To be measured.**
 - Signature and LSH build time and peak memory on the reference laptop, for the own NumPy MinHash and for datasketch's batch path, on the same inputs (step 10).
 - Candidate rate against the theoretical LSH S-curve (step 11).
 - Commission recall, pooled and by act (`lineage eval commission`, M3).
@@ -270,7 +283,7 @@ The step 10 benchmark puts both engines through the same work. It runs datasketc
 
 **Status:** accepted, 2026-11-05.
 
-**Context.** The input is Open States' per-session JSON for 50 states across four years. Its total size is measured in M1. The transformations are relational: flatten nested actions and versions, derive status, filter, and aggregate per state and session for coverage statistics. Their outputs feed NumPy, for hashing and embedding, and the exporter. Everything runs on a laptop and has to work when the data does not fit in memory.
+**Context.** The input is Open States' per-session JSON for 50 states across four years: 220 archives, 6.42 GiB (`uv run lineage snapshot`, `snapshot/manifest.json`). The transformations are relational: flatten nested actions and versions, derive status, filter, and aggregate per state and session for coverage statistics. Their outputs feed NumPy, for hashing and embedding, and the exporter. Everything runs on a laptop and has to work when the data does not fit in memory.
 
 **Options.**
 
