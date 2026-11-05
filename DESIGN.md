@@ -65,6 +65,8 @@ Open States snapshot ─► ingest ─► sections ─┬─► near-duplicate s
 
 **Pinning.** `snapshot/manifest.json` (committed) lists every archive with its size, SHA-256 and Generated At. Ingest refuses to run if the files on disk differ from the manifest in any way: a changed file, a missing one, or an extra one. A rebuild therefore either reproduces the same inputs or fails loudly.
 
+**Rebuilding the raw files.** `lineage fetch-raw` downloads every pinned archive that is missing locally. Open States serves them publicly, with no account or key. A file is kept only if its SHA-256 matches the manifest. `--repin` is the deliberate way to move the snapshot forward: it keeps the changed file and writes its new hash and Generated At to the manifest, so the change shows up in review as a diff of `snapshot/manifest.json`. Requests go out one at a time, a second apart, under a User-Agent that names the project.
+
 **Extraction failures.** The export has no error flag. A record whose `raw_text` is missing or blank counts as a failed extraction: it stays in the `bills` table but cannot match anything. Step 8 reports the rate per state and session.
 
 ## Alternatives considered

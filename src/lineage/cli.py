@@ -7,6 +7,7 @@ import typer
 
 from lineage import __version__
 from lineage.disk import GiB, InsufficientDiskSpaceError
+from lineage.fetch import SOURCE, fetch_raw
 from lineage.ingest import ingest as run_ingest
 from lineage.snapshot import SnapshotError, scan, write_manifest
 
@@ -14,6 +15,9 @@ app = typer.Typer(no_args_is_help=True, add_completion=False)
 
 RawOption = Annotated[Path, typer.Option("--raw", help="Directory of Open States archives.")]
 ManifestOption = Annotated[Path, typer.Option("--manifest", help="Snapshot manifest (committed).")]
+MinFreeOption = Annotated[
+    float, typer.Option("--min-free-gib", help="Refuse to run if disk would drop below this.")
+]
 
 
 def _print_version(value: bool) -> None:
@@ -56,6 +60,42 @@ def snapshot(
     typer.echo(f"{len(archives)} archives, {total:.2f} GiB{span} -> {manifest}")
 
 
+@app.command("fetch-raw")
+def fetch_raw_command(
+    raw: RawOption = Path("data/raw"),
+    manifest: ManifestOption = Path("snapshot/manifest.json"),
+    repin: Annotated[
+        bool,
+        typer.Option(
+            "--repin", help="Keep archives whose SHA-256 changed and record them in the manifest."
+        ),
+    ] = False,
+    source: Annotated[str, typer.Option("--source", help="Base URL of the archives.")] = SOURCE,
+    pause: Annotated[float, typer.Option("--pause", help="Seconds between requests.")] = 1.0,
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """Download the archives the manifest pins that are missing from RAW."""
+    try:
+        result = fetch_raw(
+            raw,
+            manifest,
+            source=source,
+            floor_bytes=int(min_free_gib * GiB),
+            repin=repin,
+            pause=pause,
+        )
+    except (SnapshotError, InsufficientDiskSpaceError) as e:
+        typer.echo(str(e), err=True)
+        raise typer.Exit(1) from None
+    typer.echo(
+        f"{result.fetched} fetched ({result.bytes / GiB:.2f} GiB), {result.present} already "
+        f"present, {len(result.repinned)} re-pinned -> {raw}"
+    )
+    if result.problems:
+        typer.echo("not fetched:\n  " + "\n  ".join(result.problems), err=True)
+        raise typer.Exit(1)
+
+
 @app.command()
 def ingest(
     raw: RawOption = Path("data/raw"),
@@ -63,9 +103,7 @@ def ingest(
     out: Annotated[Path, typer.Option("--out", help="Directory for Parquet tables.")] = Path(
         "data/tables"
     ),
-    min_free_gib: Annotated[
-        float, typer.Option("--min-free-gib", help="Refuse to run if disk would drop below this.")
-    ] = 20.0,
+    min_free_gib: MinFreeOption = 20.0,
 ) -> None:
     """Verify the raw archives against the manifest and load them into the `bills` table."""
     try:

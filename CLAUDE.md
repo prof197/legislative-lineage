@@ -10,6 +10,7 @@ uv run pyright               # type check, strict
 uv run pytest                # tests
 uv run lineage --help        # the CLI
 
+uv run lineage fetch-raw     # download the archives the manifest pins into data/raw/
 uv run lineage snapshot      # pin data/raw/*/*.zip into snapshot/manifest.json
 uv run lineage ingest        # verify against the manifest, write data/tables/bills/*.parquet
 ```
@@ -22,6 +23,7 @@ All four checks must pass before every commit. CI runs the same four commands.
 src/lineage/      the package (import name `lineage`; distribution `legislative-lineage`)
   cli.py          Typer app; subcommands stay thin wrappers over library functions
   snapshot.py     archive manifest: scan, write, load, verify
+  fetch.py        download pinned archives; hash-checked, paced, disk-guarded
   ingest.py       raw archives -> bills Parquet, one file per archive
   queries.py      every SQL query the pipeline runs (DR-4)
   disk.py         free-space floor checked before large writes

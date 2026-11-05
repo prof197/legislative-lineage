@@ -4,6 +4,7 @@ from typer.testing import CliRunner
 
 from lineage import __version__
 from lineage.cli import app
+from tests.conftest import Upstream
 
 runner = CliRunner()
 
@@ -69,3 +70,18 @@ def test_ingest_fails_cleanly_on_a_mismatched_snapshot(raw_dir: Path, tmp_path: 
 
     assert result.exit_code == 1
     assert "missing: HI/HI_2024_json_fixture.zip" in result.output
+
+
+def test_fetch_raw_reports_what_it_could_not_fetch(
+    upstream: Upstream, raw_dir: Path, tmp_path: Path
+) -> None:
+    manifest = tmp_path / "manifest.json"
+    runner.invoke(app, ["snapshot", "--raw", str(raw_dir), "--manifest", str(manifest)])
+    (upstream.root / "GA_2025_26_json_fixture.zip").unlink()
+    args = ["--raw", str(tmp_path / "fetched"), "--manifest", str(manifest)]
+
+    result = runner.invoke(app, ["fetch-raw", *args, "--source", upstream.url, "--pause", "0"])
+
+    assert result.exit_code == 1
+    assert result.stdout.startswith("3 fetched")
+    assert "GA/GA_2025_26_json_fixture.zip: HTTP Error 404" in result.stderr
