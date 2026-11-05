@@ -89,9 +89,9 @@ def _part_shingles(part: Path, eligible: Path) -> tuple[int, list[NDArray[np.uin
     sets: list[NDArray[np.uint32]] = []
     sections = 0
     with queries.connect_quiet() as con:
-        scan = queries.matchable_section_texts(con, sections_path=part, eligible_path=eligible)
+        scan = queries.matchable_sections(con, sections_path=part, eligible_path=eligible)
         while batch := scan.fetchmany(_FETCH_SECTIONS):
-            texts = [t for (t,) in batch]
+            texts = [t for *_, t in batch]
             sections += len(texts)
             sets.extend(section_shingles(texts))
     flat = np.concatenate(sets) if sets else np.empty(0, dtype=np.uint32)
@@ -105,9 +105,9 @@ def _texts_of(parts: list[Path], eligible: Path, wanted: set[int]) -> dict[int, 
     wanted_array = np.array(sorted(wanted), dtype=np.uint32)
     with queries.connect_quiet() as con:
         for part in parts:
-            scan = queries.matchable_section_texts(con, sections_path=part, eligible_path=eligible)
+            scan = queries.matchable_sections(con, sections_path=part, eligible_path=eligible)
             while batch := scan.fetchmany(_FETCH_SECTIONS):
-                texts = [t for (t,) in batch]
+                texts = [t for *_, t in batch]
                 hashes, owners = shingle_hashes(texts)
                 first = np.searchsorted(owners, np.arange(len(texts)))
                 for i in np.flatnonzero(np.isin(hashes, wanted_array)).tolist():

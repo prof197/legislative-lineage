@@ -13,6 +13,7 @@ Sections marked **To be measured** fill in as the build reaches them. Every numb
 - [Bill status](#bill-status)
 - [Sections](#sections)
 - [Boilerplate](#boilerplate)
+- [Near-duplicate stage](#near-duplicate-stage)
 - [Alternatives considered](#alternatives-considered)
 - [Scaling limits](#scaling-limits)
 - [Known failure modes](#known-failure-modes)
@@ -118,6 +119,26 @@ Enacting clauses, effective dates, severability clauses, repealers and amending 
 
 **Shingle hashing.** Each word is hashed with 64-bit FNV-1a over its UTF-8 bytes. Five consecutive word hashes are combined positionally and finished with MurmurHash3's 64-bit mixer, and the top 32 bits are kept. The computation is whole-array NumPy, and a test checks it against a one-shingle-at-a-time reference and pins its values. The stoplist and every later signature depend on those values, so changing the hash means rebuilding both.
 
+## Near-duplicate stage
+
+Comparing every pair of sections is out of reach, so this stage summarizes each section in a short signature from which the similarity of any two can be estimated, and proposes for comparison only pairs whose signatures suggest they are alike. `lineage index` builds the signatures ([DR-3](#dr-3)).
+
+**Shingle sets.** A section is represented by its set of distinct word 5-gram hashes, less the stoplist. A section shorter than five words has no shingle, and one whose every shingle is stoplisted has none left. Neither gets a signature, and `reports/index.json` counts both.
+
+**MinHash.** Each section's signature holds 128 values. Value *k* is the minimum over the section's shingles of *h*<sub>*k*</sub>(*x*) = ((*a*<sub>*k*</sub>·*x* + *b*<sub>*k*</sub>) mod *p*) mod 2<sup>32</sup>, with *p* = 2<sup>61</sup> − 1. Two sections' values at position *k* agree when the shingle that minimizes *h*<sub>*k*</sub> over both sets lies in both. Under an ideal random permutation that happens with probability equal to the sets' Jaccard similarity *J*, so the share of agreeing positions estimates *J* with standard error √(*J*(1 − *J*)/128), at most 0.044. A linear hash family only approximates an ideal permutation. The test oracle described below checks that the approximation costs neither bias nor spread.
+
+**Exact arithmetic.** The product *a*<sub>*k*</sub>·*x* reaches 2<sup>93</sup>. Computed in NumPy's 64-bit integers it would wrap around before the remainder is taken, and the result would no longer belong to the family. The implementation splits *a*<sub>*k*</sub> at bit 32 and reduces each partial product using 2<sup>61</sup> ≡ 1 (mod *p*), so every value is exact. A test compares it with Python's arbitrary-precision integers on edge and random inputs.
+
+**Keeping 32 bits.** The final mod 2<sup>32</sup> halves the signature's size, but two different shingles can now share a value. For two sets of *n* shingles each, a false agreement at one position has probability about *n*/2<sup>33</sup>. The largest measured set has 261,324 shingles (`reports/index.json`), which puts the bias at about 3 × 10<sup>−5</sup>, against a standard error of up to 0.044.
+
+**Fixed parameters.** The 128 pairs (*a*<sub>*k*</sub>, *b*<sub>*k*</sub>) are drawn with SplitMix64 from a fixed seed rather than from a NumPy generator, because NumPy does not promise that its generators' streams stay the same across versions, and every stored signature depends on these numbers. A test pins them, along with sample signature values.
+
+**Computation.** Each permutation runs over every shingle of a batch in one vectorized pass, and a reduction takes each section's minimum. Batches are cut into runs of about 131,000 shingles, so the working arrays stay in cache and are reused across permutations instead of being reallocated. Sections files are signed in parallel, one worker process per file.
+
+**Storage.** Each sections file's signatures form one dense `uint32` matrix, stored as `.npy` so it memory-maps as it is. Next to it, a Parquet file holds each row's bill id and section ordinal. A signature takes 512 bytes.
+
+**Test oracle.** datasketch, a development-only dependency, signs the same pairs of sets as the NumPy implementation: 200 pairs at each of five Jaccard levels from 0.1 to 0.9, with the exact similarity known by construction. For both engines, the mean error is within four standard errors of zero, and the two engines' means agree within the same bound. Each engine's root-mean-square error is within 20% of the theoretical standard error, since an error that is too small would point to correlated permutations just as surely as one that is too large. The two use different hash families, so the test compares estimates, not values.
+
 ## Alternatives considered
 
 | Alternative | Reason rejected | Evidence |
@@ -134,7 +155,7 @@ Enacting clauses, effective dates, severability clauses, repealers and amending 
 
 ## Scaling limits
 
-The section count sets the size of everything downstream. At the measured 2,186,931 sections (`reports/coverage.json`), 128 32-bit MinHash values per section make a 1.1 GB signature matrix. Ten times the corpus is 11 GB, which no longer fits comfortably in a laptop's memory.
+The section count sets the size of everything downstream. The 1,917,646 signed sections' MinHash signatures take 0.98 GB (`uv run lineage index` → `reports/index.json`, `signature_bytes`). Ten times the corpus is about 10 GB, which no longer fits comfortably in a laptop's memory.
 
 | Pressure | What breaks first at 10× | Response |
 |---|---|---|
@@ -187,8 +208,12 @@ Each entry names the command that produces it and the committed file it reads fr
 
 **Boilerplate** (`uv run lineage boilerplate` → `reports/boilerplate.json`). Sections flagged by each pattern, and the shingles and shingle occurrences that each candidate stoplist threshold removes. 1,939,354 sections are matchable. At the proposed 0.1% share, 3,963 shingles are stoplisted, removing 4.0% of shingle occurrences.
 
+**Signatures** (`uv run lineage index` → `reports/index.json`). 1,917,646 of the 1,939,354 matchable sections are signed. 21,706 are shorter than five words, and 2 lose every shingle to the stoplist. After the stoplist, the median section has 165 distinct shingles, the 99th percentile 2,089 and the largest 261,324. The signatures take 0.98 GB.
+
+**MinHash engines** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`). On one core of an Apple M1 Max, signing every section took 283 s with the NumPy implementation and 114 s with datasketch's batch path. Signatures hold 512 and 785 bytes per section. See [DR-3](#dr-3).
+
 **To be measured.**
-- Signature and LSH build time and peak memory on the reference laptop, for the own NumPy MinHash and for datasketch's batch path, on the same inputs (step 10).
+- LSH index build time and peak memory for both engines, on the same signatures (step 11).
 - Candidate rate against the theoretical LSH S-curve (step 11).
 - Commission recall, pooled and by act (`lineage eval commission`, M3).
 - Stage ablation: recall and precision for each stage alone and both together (M4).
@@ -257,7 +282,7 @@ Existing team expertise with Next.js is a secondary, maintainability factor: it 
 <a id="dr-3"></a>
 ### DR-3 · MinHash engine: an own NumPy implementation, with datasketch as the test oracle
 
-**Status:** accepted, 2026-11-05. The supporting measurement is pending (step 10).
+**Status:** accepted, 2026-11-05. Signing was measured in step 10, below. The LSH index half of the measurement is pending (step 11).
 
 **Context.** The near-duplicate stage signs every section in the corpus and buckets the signatures by LSH band. The hot paths are hashing each shingle under every permutation, taking the minimum per permutation, hashing each band to a key, and grouping equal keys. At corpus scale, any per-element Python work in those loops dominates runtime and memory. The implementation also has to be simple enough to verify by reading.
 
@@ -280,6 +305,13 @@ The step 10 benchmark puts both engines through the same work. It runs datasketc
 - A dense signature matrix memory-maps and shards without conversion, which is the first response to [index growth](#scaling-limits).
 - Sorting to bucket costs *O*(*n* log *n*) with predictable memory, where dict buckets fragment the heap.
 - Time and peak memory for both engines become a recorded measurement, not an assumption.
+
+**Measured in step 10** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`; Apple M1 Max, 10 cores, 32 GiB). The benchmark gave each engine one core and the same 1,917,646 stoplisted sections, 478,175,576 shingles in all.
+
+- **Signing time.** The NumPy implementation took 283 s and datasketch 114 s. Since version 2.0, datasketch's default permutation is a multiply-add modulo 2<sup>32</sup>, a few array operations per shingle. The exact modular arithmetic here takes more than a dozen. The context above expected per-element Python work to dominate datasketch's time. On this corpus it does not.
+- **Signature memory.** The NumPy matrix holds 512 bytes per section and datasketch's objects 785 (`tracemalloc`, on a 20,000-section sample), or 0.98 GB against 1.50 GB for the corpus.
+
+Both engines are far inside the overnight bound. This record now turns on its second condition, whether datasketch's LSH index fits in memory, which step 11 measures.
 
 **Would reverse it.** If, on the reference laptop, datasketch builds signatures for the full corpus within an overnight run (eight hours of wall-clock time) *and* its LSH index fits in memory, then datasketch meets the constraints that justified owning the code, and it becomes the engine. A raw speed ratio is not the test: a slower library that meets both constraints is still the cheaper thing to maintain. If the NumPy implementation itself misses either bound, a compiled library replaces it, and the oracle tests carry over.
 

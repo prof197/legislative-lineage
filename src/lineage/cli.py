@@ -1,6 +1,7 @@
 """The `lineage` command line. Each subcommand is a thin wrapper over a library function."""
 
 import os
+import time
 from pathlib import Path
 from typing import Annotated
 
@@ -20,6 +21,7 @@ from lineage.sessions import (
     session_rows,
     write_sessions,
 )
+from lineage.signatures import build_index
 from lineage.snapshot import SnapshotError, load_manifest, scan, write_manifest
 from lineage.stats import write_coverage
 from lineage.stoplist import StoplistError, build_stoplist, file_sha256
@@ -241,6 +243,35 @@ def boilerplate(
         f"{result.occurrences_removed / max(result.occurrences, 1):.1%} of occurrences across "
         f"{result.sections:,} sections ({result.seconds:.0f}s) -> {tables / 'stoplist.parquet'}, "
         f"{report}"
+    )
+
+
+@app.command()
+def index(
+    tables: TablesOption = Path("data/tables"),
+    workers: Annotated[int, typer.Option("--workers", help="Worker processes.")] = (
+        os.cpu_count() or 1
+    ),
+    min_free_gib: MinFreeOption = 20.0,
+    report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = Path(
+        "reports/index.json"
+    ),
+) -> None:
+    """Build the search index: a MinHash signature for every matchable section."""
+    started = time.monotonic()
+    try:
+        doc = build_index(
+            tables, workers=workers, floor_bytes=int(min_free_gib * GiB), report_path=report
+        )
+    except (StoplistError, InsufficientDiskSpaceError) as e:
+        typer.echo(str(e), err=True)
+        raise typer.Exit(1) from None
+    counts = doc["sections"]
+    typer.echo(
+        f"{counts['signed']:,} of {counts['matchable']:,} matchable sections signed "
+        f"({counts['too_short']:,} too short, {counts['all_stoplisted']:,} all stoplisted) -> "
+        f"{tables / 'signatures'} ({doc['signature_bytes'] / GiB:.2f} GiB, "
+        f"{time.monotonic() - started:.0f}s), {report}"
     )
 
 

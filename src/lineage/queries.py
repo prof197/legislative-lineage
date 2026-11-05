@@ -225,23 +225,55 @@ def write_stoplist(
     con.execute(query, {"hashes": hashes, "sections": sections})
 
 
-def matchable_section_texts(
+def matchable_sections(
     con: duckdb.DuckDBPyConnection, *, sections_path: Path, eligible_path: Path
 ) -> duckdb.DuckDBPyConnection:
-    """Start a scan of the normalized text of one sections file's matchable sections.
+    """Start a scan of one sections file's matchable sections: (bill id, ordinal, normalized).
 
     Matchable means the bill's document type is eligible (DR-5) and the section is not flagged
-    as boilerplate. Read it with `fetchmany`.
+    as boilerplate. Rows come in key order, so anything built from them is reproducible. Read
+    it with `fetchmany`.
     """
     return con.execute(
         """
-        SELECT s.normalized
+        SELECT s.bill_id, s.ordinal, s.normalized
         FROM read_parquet($sections) s
         SEMI JOIN (SELECT id FROM read_parquet($eligible) WHERE eligible) e ON s.bill_id = e.id
         WHERE s.boilerplate IS NULL
+        ORDER BY s.bill_id, s.ordinal
         """,
         {"sections": str(sections_path), "eligible": str(eligible_path)},
     )
+
+
+def count_sections(con: duckdb.DuckDBPyConnection, *, sections_glob: str) -> int:
+    row: tuple[int] | None = con.execute(
+        "SELECT count(*) FROM read_parquet($glob)", {"glob": sections_glob}
+    ).fetchone()
+    return row[0] if row else 0
+
+
+def write_signature_keys(
+    con: duckdb.DuckDBPyConnection, *, parquet_path: Path, bill_ids: list[str], ordinals: list[int]
+) -> None:
+    """The keys of a signature matrix, row for row."""
+    query = f"""
+        COPY (
+            SELECT
+                CAST(unnest($bill_ids) AS VARCHAR) AS bill_id,
+                CAST(unnest($ordinals) AS INTEGER) AS ordinal
+        ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
+    """
+    con.execute(query, {"bill_ids": bill_ids, "ordinals": ordinals})
+
+
+def read_signature_keys(
+    con: duckdb.DuckDBPyConnection, *, parquet_path: Path
+) -> tuple[list[str], list[int]]:
+    rows: list[tuple[str, int]] = con.execute(
+        "SELECT bill_id, ordinal FROM read_parquet($p)", {"p": str(parquet_path)}
+    ).fetchall()
+    return [b for b, _ in rows], [o for _, o in rows]
 
 
 def read_stoplist(con: duckdb.DuckDBPyConnection, *, parquet_path: Path) -> list[int]:

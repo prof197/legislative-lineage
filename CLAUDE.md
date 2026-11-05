@@ -18,6 +18,8 @@ uv run lineage split         # split bill text into data/tables/sections/*.parqu
 uv run lineage eligible      # document-type rules -> data/tables/eligible.parquet, reports/document_types.json
 uv run lineage boilerplate   # shingle stoplist -> data/tables/stoplist.parquet, reports/boilerplate.json
 uv run lineage stats         # coverage, sections, types, status per state/session -> reports/coverage.json
+uv run lineage index         # MinHash signatures -> data/tables/signatures/, reports/index.json
+uv run python -m benchmarks.minhash  # NumPy vs datasketch signing time and memory (DR-3), dev only
 ```
 
 All four checks must pass before every commit. CI runs the same four commands.
@@ -37,10 +39,13 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   doctypes.py     document-type rules (DR-5): which records are matched
   boilerplate.py  pattern list that flags boilerplate-only sections
   shingles.py     word 5-gram shingles, 32-bit hashes (NumPy; values pinned by a test)
+  minhash.py      MinHash signatures, exact (a·x + b) mod p (pure functions; values pinned)
+  signatures.py   build the signatures table, one worker process per sections file
   stoplist.py     document-frequency stoplist and its report
   stats.py        coverage report: the measurements that replace the design's estimates
   queries.py      every SQL query the pipeline runs (DR-4)
   disk.py         free-space floor checked before large writes
+benchmarks/       dev-only measurements that need dev dependencies (datasketch)
 tests/            pytest; small committed fixtures only
   fixtures/openstates/  trimmed real records in archive layout (README + *_bills.json)
 snapshot/manifest.json  the pinned snapshot: per-archive size, SHA-256, Generated At
@@ -50,7 +55,7 @@ reports/          committed outputs of pipeline commands; README and DESIGN numb
 DESIGN.md         design, alternatives, scaling limits, failure modes, decision records
 data/             local snapshots and derived tables; gitignored, never committed
   raw/<ST>/*.zip  Open States session archives, never edited
-  tables/         Parquet tables written by the pipeline
+  tables/         Parquet tables written by the pipeline; signatures/ holds .npy matrices
 ```
 
 ## Conventions

@@ -1,0 +1,43 @@
+{
+ "command": "uv run python -m benchmarks.minhash",
+ "machine": {
+  "cpu": "Apple M1 Max",
+  "cores": 10,
+  "memory_bytes": 34359738368,
+  "platform": "macOS-15.7.3-arm64-arm-64bit-Mach-O",
+  "python": "3.13.2",
+  "numpy": "2.5.4",
+  "datasketch": "2.0.0"
+ },
+ "scope": "full corpus",
+ "num_perm": 128,
+ "memory_sample_sections": 20000,
+ "engines": {
+  "numpy": {
+   "engine": "numpy",
+   "sections": 1917646,
+   "shingles": 478175576,
+   "read_seconds": 326.1,
+   "sign_seconds": 283.0,
+   "retained_bytes_per_section": 512.3,
+   "rss_peak_bytes": 2806530048,
+   "seconds_per_million_shingles": 0.592,
+   "signature_memory_bytes": 982410046,
+   "within_overnight_bound": true
+  },
+  "datasketch": {
+   "engine": "datasketch",
+   "sections": 1917646,
+   "shingles": 478175576,
+   "read_seconds": 337.9,
+   "sign_seconds": 114.1,
+   "retained_bytes_per_section": 784.7,
+   "rss_peak_bytes": 2451423232,
+   "seconds_per_million_shingles": 0.239,
+   "signature_memory_bytes": 1504776816,
+   "within_overnight_bound": true
+  }
+ },
+ "datasketch_over_numpy_sign_time": 0.4,
+ "lsh_index": "measured in step 11"
+}

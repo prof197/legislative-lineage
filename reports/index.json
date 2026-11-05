@@ -1,0 +1,22 @@
+{
+ "command": "uv run lineage index",
+ "stoplist_sha256": "a87b743d9ef533fbee0a1f04f0b3095d9422b8369cc0b2778e99040af2a7aecf",
+ "minhash": {
+  "num_perm": 128,
+  "seed": 42,
+  "prime": "2^61 - 1"
+ },
+ "sections": {
+  "matchable": 1939354,
+  "signed": 1917646,
+  "too_short": 21706,
+  "all_stoplisted": 2
+ },
+ "shingle_set_size": {
+  "median": 165,
+  "p90": 485,
+  "p99": 2089,
+  "max": 261324
+ },
+ "signature_bytes": 981834752
+}
