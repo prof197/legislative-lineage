@@ -15,6 +15,7 @@ uv run lineage snapshot      # pin data/raw/*/*.zip into snapshot/manifest.json
 uv run lineage sessions --commit <sha>  # pin session dates into snapshot/sessions.csv
 uv run lineage ingest        # verify against the manifest, write data/tables/bills/*.parquet
 uv run lineage split         # split bill text into data/tables/sections/*.parquet
+uv run lineage eligible      # document-type rules -> data/tables/eligible.parquet, reports/document_types.json
 uv run lineage boilerplate   # shingle stoplist -> data/tables/stoplist.parquet, reports/boilerplate.json
 uv run lineage stats         # coverage, sections, types, status per state/session -> reports/coverage.json
 ```
@@ -33,6 +34,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   status.py       passed / died / introduced from action classifications
   sections.py     clean, split at headings or into windows, normalize (pure functions)
   sectioning.py   build the sections table, one worker process per bills file
+  doctypes.py     document-type rules (DR-5): which records are matched
   boilerplate.py  pattern list that flags boilerplate-only sections
   shingles.py     word 5-gram shingles, 32-bit hashes (NumPy; values pinned by a test)
   stoplist.py     document-frequency stoplist and its report
@@ -43,6 +45,7 @@ tests/            pytest; small committed fixtures only
   fixtures/openstates/  trimmed real records in archive layout (README + *_bills.json)
 snapshot/manifest.json  the pinned snapshot: per-archive size, SHA-256, Generated At
 snapshot/sessions.csv   session start/end dates and carryover, from a pinned scrapers commit
+rules/document_types.csv  which document types are matched, per state; first fitting rule wins
 reports/          committed outputs of pipeline commands; README and DESIGN numbers cite them
 DESIGN.md         design, alternatives, scaling limits, failure modes, decision records
 data/             local snapshots and derived tables; gitignored, never committed

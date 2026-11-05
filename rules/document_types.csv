@@ -1,0 +1,25 @@
+# Which records are matched (DESIGN.md#dr-5). Read top to bottom; the first rule whose state,
+# type and title patterns all fit a record decides it. A record no rule fits is excluded.
+# Patterns are Python regular expressions, matched case-insensitively against the title.
+# Counts per rule are measured by `uv run lineage eligible` -> reports/document_types.json.
+state,type,title,unless,decision,reason
+*,joint resolution,"^\W*(?:relating to:\s*|(?:h\.?\s?j\.?\s?r\.?\s*\d+\s+)?(?:a\s+)?(?:joint\s+)?resolution\s+(?:to\s+)?|memorials,\s*)?(?:commend|congratulat|condolence|mourn|in memory of|honou?r(?:s|ed|ing)?\b|recogni[sz]|celebrat)",constitution|amend|propos|\brights? (?:to|of)\b|\blaws?\b,exclude,"commemorative title: opens by commending, honoring, recognizing or mourning, and names no constitution, amendment, right or law"
+NJ,concurrent resolution,^(?:proposes|amends)\b.*\bconstitution,,match,New Jersey proposes constitutional amendments as concurrent resolutions
+MS,concurrent resolution,^constitution(?:al amendments| of 1890)?\s*;,,match,Mississippi proposes constitutional amendments as concurrent resolutions
+GA,resolution,-\s*CA\s*$,,match,Georgia marks resolutions proposing a constitutional amendment with a trailing -CA
+*,bill,,,match,bill
+*,bill+appropriation,,,match,appropriation bill
+*,proposed bill,,,match,proposed bill
+*,joint resolution,,,match,joint resolutions can carry law or propose constitutional amendments
+*,constitutional amendment,,,match,constitutional amendment
+*,resolution,,,exclude,simple resolutions express one chamber's view and are mostly ceremonial
+*,concurrent resolution,,,exclude,concurrent resolutions mostly express the legislature's view or govern its own procedure
+*,memorial,,,exclude,memorials petition another government
+*,joint memorial,,,exclude,memorials petition another government
+*,concurrent memorial,,,exclude,memorials petition another government
+*,commemoration,,,exclude,commemorative
+*,proclamation,,,exclude,ceremonial
+*,appointment,,,exclude,procedural: confirms an appointee
+*,nomination,,,exclude,procedural: confirms a nominee
+*,study request,,,exclude,procedural: requests an interim study
+*,concurrent study request,,,exclude,procedural: requests an interim study

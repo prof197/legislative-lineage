@@ -225,6 +225,32 @@ def write_stoplist(
     con.execute(query, {"hashes": hashes, "sections": sections})
 
 
+def matchable_section_texts(
+    con: duckdb.DuckDBPyConnection, *, sections_path: Path, eligible_path: Path
+) -> duckdb.DuckDBPyConnection:
+    """Start a scan of the normalized text of one sections file's matchable sections.
+
+    Matchable means the bill's document type is eligible (DR-5) and the section is not flagged
+    as boilerplate. Read it with `fetchmany`.
+    """
+    return con.execute(
+        """
+        SELECT s.normalized
+        FROM read_parquet($sections) s
+        SEMI JOIN (SELECT id FROM read_parquet($eligible) WHERE eligible) e ON s.bill_id = e.id
+        WHERE s.boilerplate IS NULL
+        """,
+        {"sections": str(sections_path), "eligible": str(eligible_path)},
+    )
+
+
+def read_stoplist(con: duckdb.DuckDBPyConnection, *, parquet_path: Path) -> list[int]:
+    rows: list[tuple[int]] = con.execute(
+        "SELECT hash FROM read_parquet($p) ORDER BY hash", {"p": str(parquet_path)}
+    ).fetchall()
+    return [h for (h,) in rows]
+
+
 def boilerplate_counts(con: duckdb.DuckDBPyConnection, *, sections_glob: str) -> dict[str, int]:
     """Sections flagged by each boilerplate pattern."""
     rows: list[tuple[str, int]] = con.execute(
@@ -233,6 +259,64 @@ def boilerplate_counts(con: duckdb.DuckDBPyConnection, *, sections_glob: str) ->
         {"glob": sections_glob},
     ).fetchall()
     return dict(rows)
+
+
+# ---- Document-type eligibility (`lineage eligible`, DR-5) -----------------------------------
+
+
+@dataclass(frozen=True, slots=True)
+class RecordType:
+    id: str
+    state: str
+    type: str  # classifications joined by "+"
+    title: str
+
+
+def record_types(con: duckdb.DuckDBPyConnection, *, bills_glob: str) -> list[RecordType]:
+    rows: list[tuple[str, str, str, str]] = con.execute(
+        "SELECT id, state, array_to_string(classification, '+'), coalesce(title, '') "
+        "FROM read_parquet($bills) ORDER BY id",
+        {"bills": bills_glob},
+    ).fetchall()
+    return [RecordType(*row) for row in rows]
+
+
+def write_eligibility(
+    con: duckdb.DuckDBPyConnection,
+    *,
+    parquet_path: Path,
+    ids: list[str],
+    eligible: list[bool],
+    rules: list[int | None],
+) -> None:
+    query = f"""
+        COPY (
+            SELECT
+                CAST(unnest($ids) AS VARCHAR) AS id,
+                CAST(unnest($eligible) AS BOOLEAN) AS eligible,
+                CAST(unnest($rules) AS INTEGER) AS rule
+        ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
+    """
+    con.execute(query, {"ids": ids, "eligible": eligible, "rules": rules})
+
+
+def eligible_text_by_state(
+    con: duckdb.DuckDBPyConnection, *, bills_glob: str, sections_glob: str, eligible_path: str
+) -> dict[str, tuple[int, int]]:
+    """Per state: eligible records that yielded sections, and eligible records."""
+    rows: list[tuple[str, int, int]] = con.execute(
+        """
+        WITH sectioned AS (SELECT DISTINCT bill_id AS id FROM read_parquet($sections))
+        SELECT b.state,
+               count(*) FILTER (WHERE b.id IN (SELECT id FROM sectioned)),
+               count(*)
+        FROM read_parquet($bills) b JOIN read_parquet($eligible) e USING (id)
+        WHERE e.eligible
+        GROUP BY b.state ORDER BY b.state
+        """,
+        {"bills": bills_glob, "sections": sections_glob, "eligible": eligible_path},
+    ).fetchall()
+    return {state: (sectioned, total) for state, sectioned, total in rows}
 
 
 # ---- Coverage statistics (`lineage stats`) -------------------------------------------------

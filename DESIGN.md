@@ -114,7 +114,7 @@ Enacting clauses, effective dates, severability clauses, repealers and amending 
 
 **Patterns.** A short list of patterns runs on normalized text and recognizes enacting clauses, effective dates, severability clauses and repealers. A section is flagged as boilerplate only when, once its heading and every pattern match are removed, at most four words remain, which is room for a catchline such as "effective date". A provision that ends with an effective date therefore stays matchable. So does a preamble that carries the bill's title along with its enacting clause. The `boilerplate` column records which kind a flagged section is.
 
-**Document-frequency stoplist.** The patterns can't anticipate standard definitions, amending formulas ("is amended to read as follows"), or markup that survives extraction, such as Minnesota's "new text begin". The stoplist catches them from the data. Every section's set of word 5-gram shingles is counted, and a shingle found in more than a set share of all sections is dropped before MinHash. The list adapts to each state's habits without upkeep and is rebuilt with the corpus. The proposed share is 0.1% (`--max-share`). The report tabulates how many shingles, and what share of all shingle occurrences, each of several thresholds would remove, and lists the most frequent stoplisted shingles. The ablation sets the final value against recall.
+**Document-frequency stoplist.** The patterns can't anticipate standard definitions, amending formulas ("is amended to read as follows"), or markup that survives extraction, such as Minnesota's "new text begin". The stoplist catches them from the data. Every matchable section's set of word 5-gram shingles is counted, and a shingle found in more than a set share of those sections is dropped before MinHash. Matchable means the bill's document type is eligible ([DR-5](#dr-5)) and the section is not flagged by the patterns, so the list reflects the text that will actually be compared: excluded resolutions cannot push their formulas onto it, and sections that are dropped anyway don't count twice. The list adapts to each state's habits without upkeep and is rebuilt with the corpus. The proposed share is 0.1% (`--max-share`). The report tabulates how many shingles, and what share of all shingle occurrences, each of several thresholds would remove, and lists the most frequent stoplisted shingles. The ablation sets the final value against recall.
 
 **Shingle hashing.** Each word is hashed with 64-bit FNV-1a over its UTF-8 bytes. Five consecutive word hashes are combined positionally and finished with MurmurHash3's 64-bit mixer, and the top 32 bits are kept. The computation is whole-array NumPy, and a test checks it against a one-shingle-at-a-time reference and pins its values. The stoplist and every later signature depend on those values, so changing the hash means rebuilding both.
 
@@ -152,7 +152,7 @@ These carry into the README's known-failure-modes section. Each has a mitigation
 | Failure | Effect | Mitigation or disclosure |
 |---|---|---|
 | The stored text is often the introduced version ([Open States stores one version's text per bill](https://github.com/openstates/openstates-core/blob/main/openstates/data/models/bill.py)) | Amendments made during passage are invisible to "what changed" | Fetch enacted versions for featured matches; measure the share of enacted bills stored as introduced text and state it |
-| Text extraction failed, or the source is a scanned image | No text, so no matches | Measure the rate per state; report it as a named miss reason |
+| Text extraction failed, or the source is a scanned image | No text, so no matches. This includes enacted bills in states that otherwise have text | Measured per state and session (`reports/coverage.json`). The recall eval names "no text in source" as a miss reason and reports recall both over all enactments and over enactments with text |
 | Amendment-style bills | New text sits inside old statute text, so matches can land on the old law | Drop struck text where its markup survives extraction; section-level scoring limits the damage |
 | Omnibus bills | The provision is a small share of the bill | Score from the query side; display matches by section |
 | Boilerplate leakage | False matches on shared clauses | Document-frequency stoplist, the LSH bucket cap, and the ablation's false-match rate |
@@ -161,9 +161,10 @@ These carry into the README's known-failure-modes section. Each has a mitigation
 | Similarity has no direction | An earlier bill is not necessarily the source | Copy states timing only, never "copied from" |
 | Legislative status is not legal standing | A law struck down in court still shows as passed | A legend line wherever status is shown |
 | A bill awaiting the governor when the session ended, whose outcome the export never recorded | Shows as died | `lineage stats` counts these per state and type (`reports/coverage.json`, `status_gaps`) |
-| A state publishes no extracted text | Its bills cannot match: Connecticut, Maine and South Dakota have blank text for every record (`reports/coverage.json`) | Disclosed per state. Their version links point to PDFs, so extracting them ourselves is a possible extension, not part of v1 |
+| A state publishes no extracted text | Its bills cannot match: Connecticut, Maine and South Dakota have no text for any eligible record (`reports/document_types.json`, `states_without_text`) | Excluded and disclosed per state. Their version links point to PDFs. A short test of Open States' own per-state conversion functions on a sample of documents decides whether to extract them, after checking that library's license and each state site's robots.txt |
 | A stale snapshot | Bills filed after an archive was generated are missing, and archives were generated at different times | Every page carries the Generated At dates of the archives it draws on |
 | A substantive measure filed under an excluded document type | It can never be found | Excluded records stay in `bills`, and the recall eval names "excluded type" as a miss reason ([DR-5](#dr-5)) |
+| A state whose resolution titles mark constitutional amendments in a way no rule reads yet | Its amendments are excluded with its resolutions. Nebraska's, Michigan's and Rhode Island's resolutions carry constitution titles whose conventions are not yet checked | Listed as a known gap; each is admitted by a rule once its convention is checked and counted ([DR-5](#dr-5)) |
 
 ## Measured facts
 
@@ -182,7 +183,9 @@ Each entry names the command that produces it and the committed file it reads fr
 
 **Document types** (same command and file). Record counts by classification per state, the title-pattern count of likely commemorative measures within each type, and status by type. These set DR-5's type rules.
 
-**Boilerplate** (`uv run lineage boilerplate` → `reports/boilerplate.json`). Sections flagged by each pattern, and the shingles and shingle occurrences that each candidate stoplist threshold removes.
+**Eligibility** (`uv run lineage eligible` → `reports/document_types.json`). 456,189 of 525,633 records are of an eligible type, and 316,051 of those yield sections. Every rule's count, per state, is in the file, with sample titles for each rule that reads titles and every title a rule's `unless` pattern spared.
+
+**Boilerplate** (`uv run lineage boilerplate` → `reports/boilerplate.json`). Sections flagged by each pattern, and the shingles and shingle occurrences that each candidate stoplist threshold removes. 1,939,354 sections are matchable. At the proposed 0.1% share, 3,963 shingles are stoplisted, removing 4.0% of shingle occurrences.
 
 **To be measured.**
 - Signature and LSH build time and peak memory on the reference laptop, for the own NumPy MinHash and for datasketch's batch path, on the same inputs (step 10).
@@ -308,7 +311,7 @@ The step 10 benchmark puts both engines through the same work. It runs datasketc
 <a id="dr-5"></a>
 ### DR-5 · Match only document types that can carry law
 
-**Status:** accepted, 2026-11-05. The per-state type lists are set from the step 8 counts.
+**Status:** accepted, 2026-11-05. The type lists and per-state rules were set from the step 8 counts.
 
 **Context.** An Open States session archive holds every measure a legislature filed, not just bills. It includes resolutions, proclamations, appointments, nominations, memorials and commemorations. Commemorative measures are numerous and highly formulaic ("commending", "recognizing", "expressing condolences"), so they flood the near-duplicate stage with matches on text no one is tracing. Type labels also vary by state, and a generic label can hide both kinds of record. Georgia, for example, files proposed constitutional amendments and commendations alike as "resolution", and its titles carry the distinction instead: a trailing "; commend" or "; recognize" against "; provide - CA". So a single global allowlist of types would either drop substantive measures or admit commemorations.
 
@@ -320,14 +323,22 @@ The step 10 benchmark puts both engines through the same work. It runs datasketc
 - **A topic or keyword filter.** Rejected: it would make commission recall circular, since only bills that match the keywords could be found, and it would remove the unrelated bills that test precision.
 - **A model classifying each record.** Rejected: it puts a model call in the retrieval path, which breaks the keyless constraint.
 
-**Decision.** Per-state rules over document type. Step 8 reports record counts by classification for each state. The review sets the default eligible types and any per-state overrides from those counts, and commemorative and memorial measures stay out regardless. The rules live in one committed table, so each exclusion can be reviewed.
+**Decision.** Per-state rules over document type, in one committed table, `rules/document_types.csv`. Rules are read top to bottom and the first that fits a record decides it. `lineage eligible` applies them and counts every rule's records per state in `reports/document_types.json`.
+
+- **Matched by default:** bills, appropriation bills, proposed bills, joint resolutions, and records classified as constitutional amendments. Joint resolutions stay in because many states use them to propose constitutional amendments, and some give them the force of law.
+- **Excluded by default:** simple and concurrent resolutions, memorials, commemorations, proclamations, appointments, nominations and study requests. They are formula-heavy: commendations, condolences, requests to Congress, and procedural motions written to a few templates. Matched, they would crowd every bill page with relatives that share only those templates, and their formulas would claim stoplist slots meant for legal boilerplate.
+- **Per-state exceptions** admit constitutional amendments that a state files under an excluded type, by that state's title convention: New Jersey's and Mississippi's concurrent resolutions that propose amending the constitution, and Georgia's resolutions whose titles end in "-CA". Each is a row of the table, and the report gives its count.
+- **Commemorative joint resolutions** are excluded by a title pattern. The title must open, after any type prefix, with commending, congratulating, honoring, recognizing, celebrating or mourning. A title that names a constitution, an amendment, a proposal, a right or a law is spared. The report lists a sample of excluded titles and every spared title, so false positives in both directions can be seen.
+
+**Counts** (`uv run lineage eligible` → `reports/document_types.json`). 69,444 of 525,633 records are excluded: 53,165 simple resolutions, 9,470 concurrent resolutions, 2,265 proclamations, 1,635 appointments, 1,494 commemorative joint resolutions, 780 memorials of the three kinds, 423 nominations, 188 commemorations and 24 study requests. The exceptions admit 451 New Jersey concurrent resolutions, 122 Mississippi concurrent resolutions and 102 Georgia resolutions. No record has a type the table doesn't list.
 
 The filter does not bias the recall eval. It selects on what kind of document a record is, independent of its subject, so it removes records that aren't law without regard to any story or act. The unrelated bills on every topic, which are the hard negatives that test precision, all remain.
 
 **Consequences.**
 
-- Excluded records stay in `bills` with their classification, and the filter is applied downstream. Changing the rules needs no re-ingest.
-- Every rule is visible in one table, and step 8 reports how many records each rule excludes per state.
+- Excluded records stay in `bills` with their classification, and the filter is applied downstream (`data/tables/eligible.parquet`). Changing a rule means editing the table and rerunning `lineage eligible` and `lineage boilerplate`, with no re-ingest. The choice is reversible by configuration.
+- The stoplist is counted over matchable sections only, so the excluded types can't shift it.
 - A substantive measure filed under an excluded type can't be found. The recall eval reports "excluded type" as a distinct miss reason, so such a loss shows up rather than hiding inside "not found".
+- Known gap: Nebraska's, Michigan's and Rhode Island's resolutions include constitution-titled records whose conventions are not yet checked, so they stay excluded. Each is admitted by a rule once its convention is checked and its count measured.
 
-**Would reverse it.** If the recall eval shows any listed enactment lost to "excluded type", the rule that excluded it is revised. If the precision sample shows commemorative text still producing matches, the per-state rules widen.
+**Would reverse it.** If the recall eval shows any listed enactment lost to "excluded type", the rule that excluded it is revised. If the precision sample shows commemorative text still producing matches, the rules widen. The exclusion of resolutions as a whole is reopened when a user wants to trace resolution campaigns, such as the same request to Congress filed in many states. That use needs the excluded types matched as their own corpus, not mixed into bill pages.

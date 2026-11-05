@@ -8,6 +8,7 @@ import typer
 
 from lineage import __version__
 from lineage.disk import GiB, InsufficientDiskSpaceError
+from lineage.doctypes import RULES, DocTypesError, build_eligibility
 from lineage.fetch import SOURCE, fetch_raw
 from lineage.ingest import ingest as run_ingest
 from lineage.sectioning import SectioningError, build_sections
@@ -27,6 +28,8 @@ app = typer.Typer(no_args_is_help=True, add_completion=False)
 
 RawOption = Annotated[Path, typer.Option("--raw", help="Directory of Open States archives.")]
 ManifestOption = Annotated[Path, typer.Option("--manifest", help="Snapshot manifest (committed).")]
+TablesOption = Annotated[Path, typer.Option("--tables", help="Directory of Parquet tables.")]
+RulesOption = Annotated[Path, typer.Option("--rules", help="Document-type rules (committed).")]
 MinFreeOption = Annotated[
     float, typer.Option("--min-free-gib", help="Refuse to run if disk would drop below this.")
 ]
@@ -161,9 +164,7 @@ def ingest(
 
 @app.command()
 def split(
-    tables: Annotated[Path, typer.Option("--tables", help="Directory of Parquet tables.")] = Path(
-        "data/tables"
-    ),
+    tables: TablesOption = Path("data/tables"),
     workers: Annotated[int, typer.Option("--workers", help="Worker processes.")] = (
         os.cpu_count() or 1
     ),
@@ -183,11 +184,32 @@ def split(
 
 
 @app.command()
-def boilerplate(
-    tables: Annotated[Path, typer.Option("--tables", help="Directory of Parquet tables.")] = Path(
-        "data/tables"
+def eligible(
+    tables: TablesOption = Path("data/tables"),
+    rules: RulesOption = RULES,
+    report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = Path(
+        "reports/document_types.json"
     ),
+) -> None:
+    """Decide which records are matched, by the document-type rules, and count each rule."""
+    try:
+        doc = build_eligibility(tables, rules_path=rules, report_path=report)
+    except DocTypesError as e:
+        typer.echo(str(e), err=True)
+        raise typer.Exit(1) from None
+    totals = doc["totals"]
+    typer.echo(
+        f"{totals['eligible']:,} of {totals['records']:,} records eligible, "
+        f"{totals['eligible_with_sections']:,} with sections; "
+        f"no text: {', '.join(doc['states_without_text']) or 'none'} -> {report}"
+    )
+
+
+@app.command()
+def boilerplate(
+    tables: TablesOption = Path("data/tables"),
     manifest: ManifestOption = Path("snapshot/manifest.json"),
+    rules: RulesOption = RULES,
     max_share: Annotated[
         float,
         typer.Option(
@@ -209,6 +231,7 @@ def boilerplate(
             workers=workers,
             report_path=report,
             manifest_sha256=file_sha256(manifest),
+            rules_sha256=file_sha256(rules),
         )
     except StoplistError as e:
         typer.echo(str(e), err=True)
@@ -223,9 +246,7 @@ def boilerplate(
 
 @app.command()
 def stats(
-    tables: Annotated[Path, typer.Option("--tables", help="Directory of Parquet tables.")] = Path(
-        "data/tables"
-    ),
+    tables: TablesOption = Path("data/tables"),
     manifest: ManifestOption = Path("snapshot/manifest.json"),
     sessions: Annotated[
         Path, typer.Option("--sessions", help="Session dates CSV (committed).")
