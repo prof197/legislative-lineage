@@ -58,18 +58,19 @@ def connect(*, memory_limit: str, temp_directory: Path) -> duckdb.DuckDBPyConnec
 
 def outcome_actions(
     con: duckdb.DuckDBPyConnection, *, json_path: Path, kinds: list[str]
-) -> list[tuple[str, list[dict[str, Any]]]]:
-    """Each bill's id with only the actions classified as one of `kinds`.
+) -> list[tuple[str, list[str], list[dict[str, Any]]]]:
+    """Each bill's id and classification, with only the actions classified as one of `kinds`.
 
     Status depends on a handful of classifications, so filtering in SQL keeps the rows that
     reach Python small.
     """
     query = f"""
-        SELECT id, list_filter(actions, lambda a: list_has_any(a.classification, $kinds))
+        SELECT id, coalesce(classification, []),
+               list_filter(actions, lambda a: list_has_any(a.classification, $kinds))
         FROM read_json($json_path, format = 'array',
                        columns = {_struct_literal(BILL_JSON_COLUMNS)})
     """
-    rows: list[tuple[str, list[dict[str, Any]]]] = con.execute(
+    rows: list[tuple[str, list[str], list[dict[str, Any]]]] = con.execute(
         query, {"json_path": str(json_path), "kinds": kinds}
     ).fetchall()
     return rows
@@ -319,10 +320,14 @@ def status_by_type(
     return out
 
 
-def adopted_resolutions_shown_died(
+def resolutions_adopted_by_one_chamber(
     con: duckdb.DuckDBPyConnection, *, bills_glob: str
 ) -> list[tuple[str, str, int]]:
-    """Resolutions with a passage action that status calls died because the session ended."""
+    """Resolutions with a passage action that still died when the session ended.
+
+    Adoption passes a resolution, so these are joint and concurrent measures that only one
+    chamber adopted.
+    """
     rows: list[tuple[str, str, int]] = con.execute(
         f"SELECT state, {_TYPE} AS type, count(*) FROM read_parquet($bills) "
         f"WHERE {_TYPE} LIKE '%resolution%' AND status_reason = 'session-ended' "

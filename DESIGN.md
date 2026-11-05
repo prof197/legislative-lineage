@@ -80,10 +80,13 @@ Every bill carries a status, `passed`, `died` or `introduced`, derived from Open
 
 1. **Enacted.** A signature, becoming law without one, or a veto override means `passed`. Enactment is final, whatever follows it in the record. Georgia files a line-item veto as a veto action after the signature, and New Jersey's conditional veto is followed by a signature once the legislature adopts the governor's changes. In both cases the bill is law.
 2. **Killed.** Otherwise, a veto, a failed vote or a failed override means `died`. The exception is a failed vote followed by a later passage, because chambers can reconsider. In that case the bill is alive again.
-3. **Session ended.** Otherwise, a bill whose session ended before the archive was generated `died` with its session. A session is still sitting on its last day. Where bills carry over within a two-year term, the biennium's end applies ([Data snapshot](#data-snapshot)). A session with no known end date leaves the bill `introduced`, which avoids guessing that it died.
-4. Anything else is `introduced`.
+3. **Adopted.** Otherwise, a resolution that has been adopted is `passed`. Resolutions are adopted, not signed, so under the enactment rule alone an adopted resolution would show as died once its session ended. A simple resolution or memorial is adopted by its own chamber. A joint or concurrent resolution, a joint or concurrent memorial, and a measure classified as a constitutional amendment need both chambers. Passage actions name the chamber that acted, "Senate", "House" or "Assembly". A passage by a body named for the whole legislature counts for both chambers, because the exports use one only once every chamber has acted: Nebraska's unicameral legislature, Utah's enrolling step and Ohio's "Sent To The Governor". The deciding action is the adoption that completed the measure, so a page for a constitutional amendment names the vote that sent it to the ballot.
+4. **Session ended.** Otherwise, a bill whose session ended before the archive was generated `died` with its session. A session is still sitting on its last day. Where bills carry over within a two-year term, the biennium's end applies ([Data snapshot](#data-snapshot)). A session with no known end date leaves the bill `introduced`, which avoids guessing that it died.
+5. Anything else is `introduced`.
 
 The table keeps the deciding classification (`status_reason`, or `session-ended`) and its date (`status_date`), so a bill page can name the action, for example a veto.
+
+Explicit outcomes still come first. A joint resolution that goes to the governor and is vetoed `died`, and one that is signed names the signature. Joint and concurrent measures that only one chamber adopted die with their session; `lineage stats` counts them per state and type (`reports/coverage.json`, `status_gaps.resolutions_adopted_by_one_chamber`).
 
 Actions are sequenced by Open States' `order` field. Dates arrive either as plain dates or as zoned timestamps. A timestamp is converted to a calendar date in the time zone the state's export uses. Most exports write a plain date as local midnight. Alabama's writes midnight Eastern although the state keeps Central time, and converting it with Central time would move each date a day earlier.
 
@@ -158,7 +161,6 @@ These carry into the README's known-failure-modes section. Each has a mitigation
 | Similarity has no direction | An earlier bill is not necessarily the source | Copy states timing only, never "copied from" |
 | Legislative status is not legal standing | A law struck down in court still shows as passed | A legend line wherever status is shown |
 | A bill awaiting the governor when the session ended, whose outcome the export never recorded | Shows as died | `lineage stats` counts these per state and type (`reports/coverage.json`, `status_gaps`) |
-| Resolutions are adopted, not signed | Under the enactment rule, an adopted resolution shows as died once its session ends | Decided with the DR-5 type lists, from the step 8 counts |
 | A state publishes no extracted text | Its bills cannot match: Connecticut, Maine and South Dakota have blank text for every record (`reports/coverage.json`) | Disclosed per state. Their version links point to PDFs, so extracting them ourselves is a possible extension, not part of v1 |
 | A stale snapshot | Bills filed after an archive was generated are missing, and archives were generated at different times | Every page carries the Generated At dates of the archives it draws on |
 | A substantive measure filed under an excluded document type | It can never be found | Excluded records stay in `bills`, and the recall eval names "excluded type" as a miss reason ([DR-5](#dr-5)) |

@@ -43,12 +43,18 @@ def _status_columns(
     as_of = date.fromisoformat(archive.generated_at[:10])
     columns = queries.StatusColumns(id=[], status=[], reason=[], on=[])
     rows = queries.outcome_actions(con, json_path=json_path, kinds=sorted(OUTCOME_CLASSIFICATIONS))
-    for bill_id, actions in rows:
+    for bill_id, kinds, actions in rows:
         outcome = bill_status(
             [
-                Action(date=a["date"], classification=tuple(a["classification"]), order=a["order"])
+                Action(
+                    date=a["date"],
+                    classification=tuple(a["classification"]),
+                    order=a["order"],
+                    organization=a["organization__name"] or "",
+                )
                 for a in actions
             ],
+            kinds=kinds,
             state=archive.state,
             session_end=end,
             as_of=as_of,

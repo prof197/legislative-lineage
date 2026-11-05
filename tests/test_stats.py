@@ -77,7 +77,7 @@ def test_reports_types_status_and_freshness_per_state(tables: tuple[Path, Path])
     assert ga["commemorative_title_candidates"] == {"resolution": 1}
     assert ga["status"] == {
         "bill": {"passed": 1},
-        "resolution": {"died": 1},
+        "resolution": {"passed": 1},
     }
 
 
@@ -86,8 +86,8 @@ def test_reports_the_known_status_gaps(tables: tuple[Path, Path]) -> None:
 
     doc = coverage(out, sessions_path=SESSIONS, manifest_path=manifest)
 
-    # SR 1065 was read and adopted, but resolutions are never signed.
-    assert doc["status_gaps"]["adopted_resolutions_shown_died"] == {"GA": {"resolution": 1}}
+    # SR 1065 was adopted by the Senate, which passes a simple resolution.
+    assert doc["status_gaps"]["resolutions_adopted_by_one_chamber"] == {}
     assert doc["status_gaps"]["reached_governor_shown_died"] == {}
     assert doc["sessions_without_end_date"] == {"sessions": 0, "bills_left_introduced": 0}
 

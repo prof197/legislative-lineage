@@ -42,7 +42,7 @@ def coverage(tables_dir: Path, *, sessions_path: Path, manifest_path: Path) -> d
         types = queries.type_counts(con, bills_glob=bills)
         commemorative = queries.title_matches(con, bills_glob=bills, pattern=COMMEMORATIVE_TITLE)
         status = queries.status_by_type(con, bills_glob=bills)
-        adopted = queries.adopted_resolutions_shown_died(con, bills_glob=bills)
+        one_chamber = queries.resolutions_adopted_by_one_chamber(con, bills_glob=bills)
         governor = queries.reached_governor_shown_died(con, bills_glob=bills)
         carryover = [
             {"state": state, "from": first, "to": second}
@@ -121,7 +121,7 @@ def coverage(tables_dir: Path, *, sessions_path: Path, manifest_path: Path) -> d
         "totals": totals,
         "sessions_without_end_date": unknown_end,
         "status_gaps": {
-            "adopted_resolutions_shown_died": _nest(adopted),
+            "resolutions_adopted_by_one_chamber": _nest(one_chamber),
             "reached_governor_shown_died": _nest(governor),
         },
         "carryover": carryover,
