@@ -1,0 +1,61 @@
+[project]
+name = "legislative-lineage"
+version = "0.1.0"
+description = "Find state bills that share provisions, section by section, without an API key."
+readme = "README.md"
+authors = [
+    { name = "prof197", email = "5631043+prof197@users.noreply.github.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "typer>=0.27.3",
+]
+
+[project.scripts]
+lineage = "lineage.cli:app"
+
+[build-system]
+requires = ["uv_build>=0.13.7,<0.14.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "lineage"
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.414",
+    "pytest>=9.2.0",
+    "ruff>=0.17.3",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = [
+    "E", "W",   # pycodestyle
+    "F",        # pyflakes
+    "I",        # isort
+    "N",        # pep8-naming
+    "UP",       # pyupgrade
+    "B",        # bugbear
+    "C4",       # comprehensions
+    "SIM",      # simplify
+    "PTH",      # pathlib over os.path
+    "PT",       # pytest style
+    "RUF",
+]
+
+[tool.pyright]
+include = ["src", "tests"]
+typeCheckingMode = "strict"
+pythonVersion = "3.13"
+venvPath = "."
+venv = ".venv"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["-ra", "--strict-markers", "--strict-config", "--import-mode=importlib"]
+xfail_strict = true
+filterwarnings = ["error"]
