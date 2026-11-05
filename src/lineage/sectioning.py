@@ -6,6 +6,7 @@ Each worker writes its own Parquet parts, and a bounded batch keeps its memory f
 large the archive. See DESIGN.md#sections.
 """
 
+import multiprocessing
 import shutil
 import tempfile
 import time
@@ -23,6 +24,11 @@ from lineage.sections import normalize, split_sections
 
 _FETCH_BILLS = 500
 _PART_SECTIONS = 10_000
+
+
+# Fork is Linux's default, and forking after DuckDB has started threads can deadlock the
+# child. Spawn starts each worker clean on every platform.
+_SPAWN = multiprocessing.get_context("spawn")
 
 
 class SectioningError(Exception):
@@ -114,7 +120,7 @@ def build_sections(tables_dir: Path, *, workers: int, floor_bytes: int) -> Secti
     final = tables_dir / "sections"
     building = Path(tempfile.mkdtemp(prefix="sections.", dir=tables_dir))
     try:
-        with ProcessPoolExecutor(max_workers=workers) as pool:
+        with ProcessPoolExecutor(max_workers=workers, mp_context=_SPAWN) as pool:
             counts = list(pool.map(_split_file, files, repeat(building)))
         if final.exists():
             shutil.rmtree(final)

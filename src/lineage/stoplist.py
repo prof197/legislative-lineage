@@ -9,6 +9,7 @@ DESIGN.md#boilerplate.
 
 import hashlib
 import json
+import multiprocessing
 import time
 from collections.abc import Sequence
 from concurrent.futures import ProcessPoolExecutor
@@ -20,6 +21,10 @@ from numpy.typing import NDArray
 
 from lineage import queries
 from lineage.shingles import SHINGLE_WORDS, section_shingles, shingle_hashes
+
+# Fork is Linux's default, and forking after DuckDB has started threads can deadlock the
+# child. Spawn starts each worker clean on every platform.
+_SPAWN = multiprocessing.get_context("spawn")
 
 COMMAND = "uv run lineage boilerplate"
 # The shares the report tabulates, so the threshold can be chosen from the data.
@@ -111,7 +116,7 @@ def build_stoplist(
     parts = sorted((tables_dir / "sections").glob("*.parquet"))
     if not parts:
         raise StoplistError(f"no sections table in {tables_dir}; run `lineage split` first")
-    with ProcessPoolExecutor(max_workers=workers) as pool:
+    with ProcessPoolExecutor(max_workers=workers, mp_context=_SPAWN) as pool:
         results = list(pool.map(_part_shingles, parts))
     sections = sum(n for n, _ in results)
 
