@@ -9,6 +9,7 @@ This document is a skeleton. Sections marked **To be measured** fill in as the b
 - [Problem](#problem)
 - [Constraints](#constraints)
 - [Pipeline overview](#pipeline-overview)
+- [Data snapshot](#data-snapshot)
 - [Alternatives considered](#alternatives-considered)
 - [Scaling limits](#scaling-limits)
 - [Known failure modes](#known-failure-modes)
@@ -47,14 +48,24 @@ Open States snapshot ─► ingest ─► sections ─┬─► near-duplicate s
                                  boilerplate)                                                                                       cached)
 ```
 
-1. **Ingest.** Read the raw per-session JSON into Parquet tables without editing the raw files ([DR-4](#dr-4)).
-2. **Sections.** Split each bill on its section headings, falling back to fixed paragraph windows. Normalize the text and flag legal boilerplate such as enacting clauses, severability and effective dates, which would otherwise dominate the matches.
+1. **Ingest.** Verify the raw archives against the committed manifest, then read the per-session JSON into Parquet tables without editing the raw files ([DR-4](#dr-4)). See [Data snapshot](#data-snapshot).
+2. **Sections.** Restrict matching to the document types that can carry law ([DR-5](#dr-5)), then split each bill on its section headings, falling back to fixed paragraph windows. Normalize the text and flag legal boilerplate such as enacting clauses, severability and effective dates, which would otherwise dominate the matches.
 3. **Near-duplicate stage.** Word shingles, MinHash signatures and LSH banding generate candidate pairs that share text, and each candidate is verified against its full signature ([DR-3](#dr-3)).
 4. **Semantic stage.** A local sentence-embedding model and an approximate nearest-neighbor index generate candidates that share meaning but not wording. This is a second candidate generator over every section, not a reranker of the first stage's output, so it can find pairs the first stage never proposed.
 5. **Merge and score.** Each match records which stage found it. A bill's score against another bill is the share of the *query* bill's text that falls in matched sections, so a provision inside a large omnibus still scores high.
 6. **Alignment.** Word-level alignment marks the spans that were copied exactly, the spans that were paraphrased, and the unmatched text.
 7. **Explanations.** For featured matches, a model summarizes what changed, citing span ids. The citations are validated in code.
 8. **Export.** Per-bill and per-story JSON for the static site ([DR-1](#dr-1), [DR-2](#dr-2)).
+
+## Data snapshot
+
+**Source.** Open States publishes one JSON archive per state legislative session ([Session JSON Archives](https://open.pluralpolicy.com/data/session-json/)). The corpus is every archive for the 50 states whose session overlaps 2023–2026. Each archive holds a README and one file of bill records, and each record carries at most one extracted text (`raw_text`) together with the URL it came from.
+
+**As-of dates.** The archives are generated independently, so the snapshot has no single date. Each archive's README states when it was generated, and that *Generated At* timestamp is the as-of date of its records everywhere: in the tables, the reports and the site's data stamp. The listing page also shows an "updated" date for each archive. It does not match Generated At, so it isn't used.
+
+**Pinning.** `snapshot/manifest.json` (committed) lists every archive with its size, SHA-256 and Generated At. Ingest refuses to run if the files on disk differ from the manifest in any way: a changed file, a missing one, or an extra one. A rebuild therefore either reproduces the same inputs or fails loudly.
+
+**Extraction failures.** The export has no error flag. A record whose `raw_text` is missing or blank counts as a failed extraction: it stays in the `bills` table but cannot match anything. Step 8 reports the rate per state and session.
 
 ## Alternatives considered
 
@@ -98,13 +109,16 @@ These carry into the README's known-failure-modes section. Each has a mitigation
 | An explanation with valid citations but a wrong summary | A claim cites a real difference but describes it wrongly | A hand-labeled faithfulness eval, and the cited spans shown beside each claim |
 | Similarity has no direction | An earlier bill is not necessarily the source | Copy states timing only, never "copied from" |
 | Legislative status is not legal standing | A law struck down in court still shows as passed | A legend line wherever status is shown |
-| A stale snapshot | Bills filed after the snapshot are missing | Every page carries the snapshot date |
+| A stale snapshot | Bills filed after an archive was generated are missing, and archives were generated at different times | Every page carries the Generated At dates of the archives it draws on |
+| A substantive measure filed under an excluded document type | It can never be found | Excluded records stay in `bills`, and the recall eval names "excluded type" as a miss reason ([DR-5](#dr-5)) |
 
 ## Measured facts
 
 **To be measured.** Each entry will name the command that produced it and the committed file it reads from.
 
-- Text coverage by state and session, from the empty and extraction-error rates (`lineage stats`, M1).
+- Records, and the share with missing or blank text, by state and session (`lineage stats`, M1).
+- Record counts by document classification, per state (`lineage stats`, M1).
+- The range of archive Generated At dates, per state (`lineage stats`, M1).
 - Section-heading hit rate, and sections per bill (`lineage stats`, M1).
 - Signature and LSH build time and peak memory on the reference laptop, for the own NumPy MinHash and for datasketch's batch path, on the same inputs (step 10).
 - Candidate rate against the theoretical LSH S-curve (step 11).
@@ -225,3 +239,30 @@ The step 10 benchmark puts both engines through the same work. It runs datasketc
 - The choice over Polars is a judgment, not a measurement: reading nested JSON with SQL and inspecting tables in the CLI outweighed Polars' typed expression API.
 
 **Would reverse it.** If DuckDB's JSON reader cannot handle the snapshot's shape or size without per-file Python preprocessing, which step 4 finds out, a streaming Python reader writes the Parquet and DuckDB keeps the queries. If most transforms turn out to need row-wise Python functions, Polars replaces DuckDB.
+
+<a id="dr-5"></a>
+### DR-5 · Match only document types that can carry law
+
+**Status:** accepted, 2026-11-05. The per-state type lists are set from the step 8 counts.
+
+**Context.** An Open States session archive holds every measure a legislature filed, not just bills. It includes resolutions, proclamations, appointments, nominations, memorials and commemorations. Commemorative measures are numerous and highly formulaic ("commending", "recognizing", "expressing condolences"), so they flood the near-duplicate stage with matches on text no one is tracing. Type labels also vary by state, and a generic label can hide both kinds of record. Georgia, for example, files proposed constitutional amendments and commendations alike as "resolution", and its titles carry the distinction instead: a trailing "; commend" or "; recognize" against "; provide - CA". So a single global allowlist of types would either drop substantive measures or admit commemorations.
+
+**Options.**
+
+- **Match everything.** No record is lost, but commemorative boilerplate dominates the candidate pairs and the precision sample, and the stoplist ends up working around document types instead of legal boilerplate.
+- **Match only records labeled `bill`.** Simple, but it drops substantive measures that states file under other labels, such as constitutional amendments and joint resolutions with the force of law.
+- **Per-state rules over document type.** A default list of types eligible for matching, with per-state overrides where a state's labels don't separate law from ceremony. An override may use that state's own title convention, as in Georgia. Commemorative and memorial measures are always excluded.
+- **A topic or keyword filter.** Rejected: it would make commission recall circular, since only bills that match the keywords could be found, and it would remove the unrelated bills that test precision.
+- **A model classifying each record.** Rejected: it puts a model call in the retrieval path, which breaks the keyless constraint.
+
+**Decision.** Per-state rules over document type. Step 8 reports record counts by classification for each state. The review sets the default eligible types and any per-state overrides from those counts, and commemorative and memorial measures stay out regardless. The rules live in one committed table, so each exclusion can be reviewed.
+
+The filter does not bias the recall eval. It selects on what kind of document a record is, independent of its subject, so it removes records that aren't law without regard to any story or act. The unrelated bills on every topic, which are the hard negatives that test precision, all remain.
+
+**Consequences.**
+
+- Excluded records stay in `bills` with their classification, and the filter is applied downstream. Changing the rules needs no re-ingest.
+- Every rule is visible in one table, and step 8 reports how many records each rule excludes per state.
+- A substantive measure filed under an excluded type can't be found. The recall eval reports "excluded type" as a distinct miss reason, so such a loss shows up rather than hiding inside "not found".
+
+**Would reverse it.** If the recall eval shows any listed enactment lost to "excluded type", the rule that excluded it is revised. If the precision sample shows commemorative text still producing matches, the per-state rules widen.
