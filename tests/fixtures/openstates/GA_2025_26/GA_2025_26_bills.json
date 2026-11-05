@@ -1,0 +1,184 @@
+[
+ {
+  "id": "ocd-bill/da0a32e7-b9d6-4f14-a3de-f437d56ae922",
+  "legislative_session": "2025_26",
+  "jurisdiction_name": "Georgia",
+  "identifier": "SB 238",
+  "title": "Rockdale County; board of commissioners; increase the board of commissioners to five members",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "subject": [],
+  "abstracts": [
+   {
+    "abstract": "A BILL to be entitled an Act to amend an Act creating a board of commissioners for Rockdale County, approved March 4, 1977 (Ga. L. 1977, p. 2817), as amended, so as to increase the board of commission",
+    "note": "description"
+   }
+  ],
+  "other_titles": [],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Senate Hopper",
+    "date": "2025-02-21",
+    "classification": [
+     "introduction"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate Read and Referred",
+    "date": "2025-02-24",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate Committee Favorably Reported",
+    "date": "2025-02-28",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate Sent to Governor",
+    "date": "2025-04-07",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate Date Signed by Governor",
+    "date": "2025-05-14",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Veto V7",
+    "date": "2025-05-14",
+    "classification": [
+     "executive-veto"
+    ],
+    "order": 11
+   }
+  ],
+  "related_bills": [],
+  "sponsors": [
+   {
+    "name": "Tonya Anderson",
+    "primary": true,
+    "classification": "primary"
+   }
+  ],
+  "documents": [],
+  "versions": [
+   {
+    "note": "SB 238/AP*",
+    "date": "",
+    "links": [
+     {
+      "url": "http://www.legis.ga.gov/Legislation/20252026/236173.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "As Passed Senate",
+    "date": "",
+    "links": [
+     {
+      "url": "http://www.legis.ga.gov/Legislation/20252026/234670.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "sources": [
+   {
+    "url": "https://www.legis.ga.gov/legislation/70662"
+   }
+  ],
+  "votes": [],
+  "raw_text": "LC 47 3375\nTo amend an Act creating a board of commissioners for Rockdale County, approved\nMarch 4, 1977 (Ga. L. 1977, p. 2817), as amended, so as to increase the board of\ncommissioners to five members; to revise the office of chairperson; to provide for initial\nterms of office; to provide for a county manager; to revise provisions related to the powers\nand duties of the board of commissioners, ch",
+  "raw_text_url": "http://www.legis.ga.gov/Legislation/20252026/236173.pdf"
+ },
+ {
+  "id": "ocd-bill/51722284-7db1-4d3f-9815-8f2acc167928",
+  "legislative_session": "2025_26",
+  "jurisdiction_name": "Georgia",
+  "identifier": "SR 1065",
+  "title": "National Crime Victim's Rights Week; recognize April 19-25, 2026; the victim advocates of the Cobb County Solicitor General's Office; commend",
+  "chamber": "upper",
+  "classification": [
+   "resolution"
+  ],
+  "subject": [],
+  "abstracts": [
+   {
+    "abstract": "A RESOLUTION recognizing April 19-25, 2026, as National Crime Victim's Rights Week and commending the victim advocates of the Cobb County Solicitor General's Office for their dedicated service; and fo",
+    "note": "description"
+   }
+  ],
+  "other_titles": [],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Senate Hopper",
+    "date": "2026-03-27",
+    "classification": [
+     "introduction"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate Read and Adopted",
+    "date": "2026-03-31",
+    "classification": [
+     "passage"
+    ],
+    "order": 1
+   }
+  ],
+  "related_bills": [],
+  "sponsors": [
+   {
+    "name": "Michael 'Doc' Rhett",
+    "primary": true,
+    "classification": "primary"
+   }
+  ],
+  "documents": [],
+  "versions": [
+   {
+    "note": "Read and adopted LC 112 4113",
+    "date": "",
+    "links": [
+     {
+      "url": "http://www.legis.ga.gov/Legislation/20252026/247876.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "sources": [
+   {
+    "url": "https://www.legis.ga.gov/legislation/74519"
+   }
+  ],
+  "votes": [],
+  "raw_text": "LC 112 4113\nRecognizing April 19\u201325, 2026, as National Crime Victim's Rights Week and commending\nthe victim advocates of the Cobb County Solicitor General's Office for their dedicated\nservice; and for other purposes.\nWHEREAS, National Crime Victims' Rights Week is observed annually to promote victims'\nrights and honor those who serve them; and\nWHEREAS, victim advocates provide critical support, co",
+  "raw_text_url": "http://www.legis.ga.gov/Legislation/20252026/247876.pdf"
+ }
+]

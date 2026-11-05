@@ -1,0 +1,90 @@
+"""All SQL the pipeline runs, kept in one module so it can be reviewed and tested as a unit.
+
+pyright cannot see inside SQL strings, so each query here is exercised against committed
+fixtures in the tests. See DESIGN.md#dr-4.
+"""
+
+from pathlib import Path
+
+import duckdb
+
+# The fields of Open States' JSON export (format 1.0) that the pipeline reads. Declaring the
+# schema instead of letting DuckDB infer it per file keeps every archive's Parquet identical in
+# shape, turns absent keys (some records have no `raw_text`) into NULL, and ignores the rest.
+BILL_JSON_COLUMNS: dict[str, str] = {
+    "id": "VARCHAR",
+    "legislative_session": "VARCHAR",
+    "identifier": "VARCHAR",
+    "title": "VARCHAR",
+    "chamber": "VARCHAR",
+    "classification": "VARCHAR[]",
+    "actions": (
+        "STRUCT(organization__name VARCHAR, description VARCHAR, date VARCHAR, "
+        'classification VARCHAR[], "order" INTEGER)[]'
+    ),
+    "versions": (
+        "STRUCT(note VARCHAR, date VARCHAR, links STRUCT(url VARCHAR, media_type VARCHAR)[])[]"
+    ),
+    "raw_text": "VARCHAR",
+    "raw_text_url": "VARCHAR",
+}
+
+
+def _sql_string(value: str) -> str:
+    return "'" + value.replace("'", "''") + "'"
+
+
+def _struct_literal(columns: dict[str, str]) -> str:
+    return "{" + ", ".join(f"{_sql_string(k)}: {_sql_string(v)}" for k, v in columns.items()) + "}"
+
+
+def connect(*, memory_limit: str, temp_directory: Path) -> duckdb.DuckDBPyConnection:
+    con = duckdb.connect()
+    con.execute(f"SET memory_limit = {_sql_string(memory_limit)}")
+    # Spill to the data disk, which the caller has checked for space, not the system temp dir.
+    con.execute(f"SET temp_directory = {_sql_string(str(temp_directory))}")
+    return con
+
+
+def copy_bills_to_parquet(
+    con: duckdb.DuckDBPyConnection,
+    *,
+    json_path: Path,
+    parquet_path: Path,
+    state: str,
+    generated_at: str,
+    archive: str,
+) -> int:
+    """Write one archive's bills file to Parquet and return the number of records written."""
+    # COPY's target cannot be a bound parameter, so it is quoted; every value is bound.
+    query = f"""
+        COPY (
+            SELECT
+                id,
+                $state AS state,
+                legislative_session AS session,
+                identifier,
+                title,
+                chamber,
+                classification,
+                actions,
+                versions,
+                raw_text,
+                raw_text_url,
+                CAST($generated_at AS TIMESTAMP) AS generated_at,
+                $archive AS archive
+            FROM read_json($json_path, format = 'array',
+                           columns = {_struct_literal(BILL_JSON_COLUMNS)})
+        ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
+    """
+    params = {
+        "state": state,
+        "generated_at": generated_at,
+        "archive": archive,
+        "json_path": str(json_path),
+    }
+    row = con.execute(query, params).fetchone()
+    if row is None:
+        raise RuntimeError("COPY returned no row count")
+    count: int = row[0]
+    return count
