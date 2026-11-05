@@ -27,3 +27,9 @@ def require_free_space(path: Path, *, needed: int, floor: int) -> None:
     # Measure the nearest existing ancestor: the target directory may not exist yet.
     existing = next(p for p in (path, *path.parents) if p.exists())
     check_free_space(free=shutil.disk_usage(existing).free, needed=needed, floor=floor)
+
+
+def spill_budget(path: Path, *, floor: int = DEFAULT_FLOOR_BYTES) -> int:
+    """Bytes a query may spill under `path` before the disk would drop below the floor."""
+    existing = next(p for p in (path, *path.parents) if p.exists())
+    return max(0, shutil.disk_usage(existing).free - floor)
