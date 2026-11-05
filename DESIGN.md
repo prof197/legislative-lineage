@@ -11,7 +11,7 @@ This document is a skeleton. Sections marked **To be measured** fill in as the b
 - [Pipeline overview](#pipeline-overview)
 - [Alternatives considered](#alternatives-considered)
 - [Scaling limits](#scaling-limits)
-- [Failure modes](#failure-modes)
+- [Known failure modes](#known-failure-modes)
 - [Measured facts](#measured-facts)
 - [Decision records](#decision-records)
 
@@ -58,7 +58,7 @@ Open States snapshot ─► ingest ─► sections ─┬─► near-duplicate s
 
 ## Alternatives considered
 
-| Alternative | Why not | Evidence |
+| Alternative | Reason rejected | Evidence |
 |---|---|---|
 | Compare all pairs | Quadratic in the number of sections | Arithmetic, once *N* is measured (M1) |
 | Embeddings only | No exact-span evidence to highlight, a higher cost per section, and weaker on legal boilerplate that sounds alike | To be measured by the stage ablation (M4) |
@@ -83,7 +83,7 @@ Open States snapshot ─► ingest ─► sections ─┬─► near-duplicate s
 | Boilerplate | The shared-clause load grows with the corpus | Recompute the document-frequency stoplist each build, and watch the LSH bucket-cap counter |
 | Hosting | One file per bill for all states exceeds static-host limits | One export per state, or a sharded layout on object storage |
 
-## Failure modes
+## Known failure modes
 
 These carry into the README's known-failure-modes section. Each has a mitigation or a plain disclosure.
 
@@ -106,7 +106,7 @@ These carry into the README's known-failure-modes section. Each has a mitigation
 
 - Text coverage by state and session, from the empty and extraction-error rates (`lineage stats`, M1).
 - Section-heading hit rate, and sections per bill (`lineage stats`, M1).
-- MinHash throughput, against datasketch on the same inputs (step 10).
+- Signature and LSH build time and peak memory on the reference laptop, for the own NumPy MinHash and for datasketch's batch path, on the same inputs (step 10).
 - Candidate rate against the theoretical LSH S-curve (step 11).
 - Commission recall, pooled and by act (`lineage eval commission`, M3).
 - Stage ablation: recall and precision for each stage alone and both together (M4).
@@ -125,16 +125,22 @@ Each record gives the context, the options weighed, the decision, its consequenc
 
 **Options.**
 
-- **Next.js with `output: "export"`.** React components, file-based routing, and per-bill pages generated at build time from the exported bill list. TypeScript types are generated from the JSON Schema, so the front end type-checks against the pipeline's actual output. Static export gives up server features (route handlers, on-demand revalidation, image optimization) that this site has no use for. The cost is that every page ships the React runtime.
+- **Next.js with `output: "export"`.** React components, file-based routing, and per-bill pages generated at build time from the exported bill list. Static export gives up server features (route handlers, on-demand revalidation, image optimization) that this site has no use for. The cost is that every page ships the React runtime.
 - **Astro.** Ships no JavaScript by default and hydrates interactive islands on their own. Pages would be lighter. But the comparison and browse views still need a component framework inside their islands, so the project would carry two component models instead of one.
 - **Python templating (Jinja) into plain HTML.** Keeps one language. The interactive views would become hand-written JavaScript with nothing checking them against the JSON contract, which is where schema drift between pipeline and site would surface as runtime bugs.
 - **Streamlit or a dashboard framework.** Needs a running server, which breaks the static constraint, and presents an internal-tool look to a public audience.
 
-**Decision.** Next.js static export in TypeScript, with types generated from the JSON Schema that the Pydantic export models emit. The maintainer already ships Next.js, which keeps the front end a small share of the project's attention and leaves review effort for the pipeline.
+**Decision.** Next.js static export in TypeScript, for three technical reasons:
+
+- **Pre-rendering at scale.** Static export renders every hosted bill's page at build time from the exported bill list, so thousands of pages ship as plain files with nothing running server-side.
+- **One data contract.** The Pydantic models that write the export also emit its JSON Schema, and the site's TypeScript types are generated from that schema. The pipeline and the site therefore share one definition of every field.
+- **Interactive views in one component model.** React components carry the state tile map, the timeline, the highlighted comparison and the browse filter.
+
+Existing team expertise with Next.js is a secondary, maintainability factor: it lowers the cost of keeping the front end current.
 
 **Consequences.**
 
-- The Python side owns the schema, and the site is a typed consumer of it. A breaking change to the export fails the site's type check, not a user's browser.
+- The Python side owns the schema, and the site consumes it as generated types. A breaking change to the export fails the site's type check, not a user's browser.
 - The repo carries two toolchains, uv and npm. CI gains a front-end job in M7.
 - Build time and output size grow with the number of hosted bills. Both are measured in M7.
 - Every page pays for the React runtime. Page weight is measured in M7 and reported.
@@ -173,23 +179,27 @@ Each record gives the context, the options weighed, the decision, its consequenc
 
 **Context.** The near-duplicate stage signs every section in the corpus and buckets the signatures by LSH band. The hot paths are hashing each shingle under every permutation, taking the minimum per permutation, hashing each band to a key, and grouping equal keys. At corpus scale, any per-element Python work in those loops dominates runtime and memory. The implementation also has to be simple enough to verify by reading.
 
+The binding constraints are two. The full corpus must be signed within an overnight run, and the LSH index must fit in memory, both on the reference laptop. That is the machine the benchmarks run on, and each benchmark output records its CPU, core count and memory.
+
 **Options.**
 
-- **[datasketch](https://github.com/ekzhu/datasketch).** Mature and widely used. It represents each set as a Python object and stores LSH buckets in dict-backed storage. Per-object overhead and millions of dict entries are the expected costs at this scale. Whether they matter in practice is what the step 10 timing test measures.
+- **[datasketch](https://github.com/ekzhu/datasketch).** Mature and widely used. Its batch path (`MinHash.bulk`, `update_batch`, and `MinHashLSH.insertion_session` for buffered inserts) avoids per-shingle Python loops. It still represents each set as a Python object and stores LSH buckets in dict-backed storage, so per-object overhead and the memory of millions of buckets are the costs to measure.
 - **An own NumPy implementation.** Signatures form one dense unsigned-integer matrix with one row per section. Shingles are hashed once to 32 bits, and each permutation is a universal hash (*a*·*x* + *b*) mod *p*, applied to all shingles in a single vectorized operation. Band keys are hashed to 64 bits, and candidate pairs come from sorting the keys and reading off runs of equal values, not from a dict.
 - **A compiled third-party MinHash library** with Rust or C++ bindings. Likely the fastest, but it adds a binary dependency and hides the algorithm behind bindings that can't be read or tested line by line.
 - **A distributed engine (Spark).** Solves a scale this corpus doesn't have, and needs a cluster.
 
 **Decision.** An own NumPy implementation. datasketch stays as a development-only dependency and serves as the test oracle: on the same inputs and parameters, both must produce agreeing similarity estimates.
 
+The step 10 benchmark puts both engines through the same work. It runs datasketch through its batch path, never a per-shingle loop, so the comparison is with the library at its best. It records wall-clock time and peak memory for building the signatures and the LSH index. Where a run completes on the full corpus, the full-corpus result is reported. Otherwise the result is extrapolated from a measured sample, and the report states the extrapolation.
+
 **Consequences.**
 
 - Correctness is this project's to own. The oracle test, plus a test of the empirical candidate rate against the theoretical S-curve (step 11), are what make that acceptable.
 - A dense signature matrix memory-maps and shards without conversion, which is the first response to [index growth](#scaling-limits).
 - Sorting to bucket costs *O*(*n* log *n*) with predictable memory, where dict buckets fragment the heap.
-- The speed difference becomes a recorded measurement, not an assumption.
+- Time and peak memory for both engines become a recorded measurement, not an assumption.
 
-**Would reverse it.** If the step 10 timing test shows datasketch within 2× of the NumPy implementation end to end, the maintenance cost of owning the code is not earned, and datasketch becomes the engine. If the vectorized version is still the pipeline's bottleneck, a compiled library replaces it, and the oracle tests carry over.
+**Would reverse it.** If, on the reference laptop, datasketch builds signatures for the full corpus within an overnight run (eight hours of wall-clock time) *and* its LSH index fits in memory, then datasketch meets the constraints that justified owning the code, and it becomes the engine. A raw speed ratio is not the test: a slower library that meets both constraints is still the cheaper thing to maintain. If the NumPy implementation itself misses either bound, a compiled library replaces it, and the oracle tests carry over.
 
 <a id="dr-4"></a>
 ### DR-4 · Data tooling: DuckDB over Parquet
