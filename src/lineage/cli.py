@@ -20,6 +20,7 @@ from lineage.sessions import (
     write_sessions,
 )
 from lineage.snapshot import SnapshotError, load_manifest, scan, write_manifest
+from lineage.stoplist import StoplistError, build_stoplist, file_sha256
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
 
@@ -177,4 +178,43 @@ def split(
         f"{result.sections:,} sections from {result.with_text:,} of {result.bills:,} bills with "
         f"text; {result.by_heading:,} split at headings -> {tables / 'sections'} "
         f"({result.output_bytes / GiB:.2f} GiB, {result.seconds:.0f}s)"
+    )
+
+
+@app.command()
+def boilerplate(
+    tables: Annotated[Path, typer.Option("--tables", help="Directory of Parquet tables.")] = Path(
+        "data/tables"
+    ),
+    manifest: ManifestOption = Path("snapshot/manifest.json"),
+    max_share: Annotated[
+        float,
+        typer.Option(
+            "--max-share", help="Stoplist shingles found in more than this share of sections."
+        ),
+    ] = 0.001,
+    report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = Path(
+        "reports/boilerplate.json"
+    ),
+    workers: Annotated[int, typer.Option("--workers", help="Worker processes.")] = (
+        os.cpu_count() or 1
+    ),
+) -> None:
+    """Build the shingle stoplist from the sections table and report the boilerplate found."""
+    try:
+        result = build_stoplist(
+            tables,
+            max_share=max_share,
+            workers=workers,
+            report_path=report,
+            manifest_sha256=file_sha256(manifest),
+        )
+    except StoplistError as e:
+        typer.echo(str(e), err=True)
+        raise typer.Exit(1) from None
+    typer.echo(
+        f"{result.stoplisted:,} of {result.distinct_shingles:,} shingles stoplisted, removing "
+        f"{result.occurrences_removed / max(result.occurrences, 1):.1%} of occurrences across "
+        f"{result.sections:,} sections ({result.seconds:.0f}s) -> {tables / 'stoplist.parquet'}, "
+        f"{report}"
     )

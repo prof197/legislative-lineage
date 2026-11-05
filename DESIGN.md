@@ -12,6 +12,7 @@ This document is a skeleton. Sections marked **To be measured** fill in as the b
 - [Data snapshot](#data-snapshot)
 - [Bill status](#bill-status)
 - [Sections](#sections)
+- [Boilerplate](#boilerplate)
 - [Alternatives considered](#alternatives-considered)
 - [Scaling limits](#scaling-limits)
 - [Known failure modes](#known-failure-modes)
@@ -103,6 +104,16 @@ The unit of matching is the section, not the bill. Provisions travel between sta
 **Fallback.** A bill with no heading is cut into windows of at least 200 words on paragraph boundaries. A paragraph longer than a window is cut by words, and a short remainder joins the window before it. Every bill with text therefore yields sections, and the `by_heading` flag records which rule produced them. `lineage stats` reports the heading hit rate per state.
 
 **Normalized text** is case-folded words and numbers separated by single spaces, with the section sign spelled out so that "§ 2" and "Section 2" normalize alike. Shingling and hashing read it. The display text is kept for alignment and the site.
+
+## Boilerplate
+
+Enacting clauses, effective dates, severability clauses, repealers and amending formulas are near-identical across thousands of bills. Left in, they would make unrelated bills look alike. Two mechanisms remove them, and `lineage boilerplate` reports what each one caught in `reports/boilerplate.json` (committed).
+
+**Patterns.** A short list of patterns runs on normalized text and recognizes enacting clauses, effective dates, severability clauses and repealers. A section is flagged as boilerplate only when, once its heading and every pattern match are removed, at most four words remain, which is room for a catchline such as "effective date". A provision that ends with an effective date therefore stays matchable. So does a preamble that carries the bill's title along with its enacting clause. The `boilerplate` column records which kind a flagged section is.
+
+**Document-frequency stoplist.** The patterns can't anticipate standard definitions, amending formulas ("is amended to read as follows"), or markup that survives extraction, such as Minnesota's "new text begin". The stoplist catches them from the data. Every section's set of word 5-gram shingles is counted, and a shingle found in more than a set share of all sections is dropped before MinHash. The list adapts to each state's habits without upkeep and is rebuilt with the corpus. The proposed share is 0.1% (`--max-share`). The report tabulates how many shingles, and what share of all shingle occurrences, each of several thresholds would remove, and lists the most frequent stoplisted shingles. The ablation sets the final value against recall.
+
+**Shingle hashing.** Each word is hashed with 64-bit FNV-1a over its UTF-8 bytes. Five consecutive word hashes are combined positionally and finished with MurmurHash3's 64-bit mixer, and the top 32 bits are kept. The computation is whole-array NumPy, and a test checks it against a one-shingle-at-a-time reference and pins its values. The stoplist and every later signature depend on those values, so changing the hash means rebuilding both.
 
 ## Alternatives considered
 

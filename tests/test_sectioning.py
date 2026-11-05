@@ -36,17 +36,19 @@ def test_splits_each_bill_at_its_headings(tables: Path) -> None:
     rows = (
         _sections(tables)
         .execute(
-            "SELECT ordinal, heading, by_heading, starts_with(normalized, 'section') "
+            "SELECT ordinal, heading, by_heading, starts_with(normalized, 'section'), "
+            "typeof(boilerplate), boilerplate "
             "FROM sections JOIN bills ON bill_id = id WHERE identifier = 'SB 238' ORDER BY ordinal"
         )
         .fetchall()
     )
 
     # The bill quotes the act it amends, which opens with "SECTION 3.; that is not a heading.
+    # The preamble holds the enacting clause but also the title, so nothing is boilerplate.
     assert rows == [
-        (0, None, True, False),
-        (1, "SECTION 1.", True, True),
-        (2, "SECTION 2.", True, True),
+        (0, None, True, False, "VARCHAR", None),
+        (1, "SECTION 1.", True, True, "VARCHAR", None),
+        (2, "SECTION 2.", True, True, "VARCHAR", None),
     ]
     assert (result.bills, result.with_text, result.by_heading) == (5, 3, 1)
 

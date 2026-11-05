@@ -178,6 +178,7 @@ class SectionColumns:
     text: list[str]
     normalized: list[str]
     by_heading: list[bool]
+    boilerplate: list[str | None]
 
 
 def write_sections(
@@ -191,7 +192,8 @@ def write_sections(
                 CAST(unnest($heading) AS VARCHAR) AS heading,
                 CAST(unnest($text) AS VARCHAR) AS text,
                 CAST(unnest($normalized) AS VARCHAR) AS normalized,
-                CAST(unnest($by_heading) AS BOOLEAN) AS by_heading
+                CAST(unnest($by_heading) AS BOOLEAN) AS by_heading,
+                CAST(unnest($boilerplate) AS VARCHAR) AS boilerplate
         ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
     """
     con.execute(
@@ -203,5 +205,30 @@ def write_sections(
             "text": columns.text,
             "normalized": columns.normalized,
             "by_heading": columns.by_heading,
+            "boilerplate": columns.boilerplate,
         },
     )
+
+
+def write_stoplist(
+    con: duckdb.DuckDBPyConnection, *, parquet_path: Path, hashes: list[int], sections: list[int]
+) -> None:
+    query = f"""
+        COPY (
+            SELECT
+                CAST(unnest($hashes) AS UINTEGER) AS hash,
+                CAST(unnest($sections) AS BIGINT) AS sections
+            ORDER BY hash
+        ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
+    """
+    con.execute(query, {"hashes": hashes, "sections": sections})
+
+
+def boilerplate_counts(con: duckdb.DuckDBPyConnection, *, sections_glob: str) -> dict[str, int]:
+    """Sections flagged by each boilerplate pattern."""
+    rows: list[tuple[str, int]] = con.execute(
+        "SELECT boilerplate, count(*) FROM read_parquet($glob) WHERE boilerplate IS NOT NULL "
+        "GROUP BY boilerplate ORDER BY boilerplate",
+        {"glob": sections_glob},
+    ).fetchall()
+    return dict(rows)

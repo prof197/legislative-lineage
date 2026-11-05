@@ -1,4 +1,5 @@
-"""Build the `sections` table: every bill's text split into sections, one row per section.
+"""Build the `sections` table: every bill's text split into sections, one row per section,
+each flagged with the kind of boilerplate it is, if any.
 
 Splitting is CPU-bound Python, so bills files are split in parallel, one per worker process.
 Each worker writes its own Parquet parts, and a bounded batch keeps its memory flat however
@@ -16,6 +17,7 @@ from pathlib import Path
 import duckdb
 
 from lineage import queries
+from lineage.boilerplate import boilerplate_kind
 from lineage.disk import require_free_space
 from lineage.sections import normalize, split_sections
 
@@ -46,7 +48,7 @@ class SectioningResult:
 
 
 def _empty() -> queries.SectionColumns:
-    return queries.SectionColumns([], [], [], [], [], [])
+    return queries.SectionColumns([], [], [], [], [], [], [])
 
 
 def _split_file(bills_file: Path, dest: Path) -> FileCounts:
@@ -76,12 +78,14 @@ def _split_file(bills_file: Path, dest: Path) -> FileCounts:
                 with_text += 1
                 by_heading += split.by_heading
                 for s in split.sections:
+                    normalized = normalize(s.text)
                     columns.bill_id.append(bill_id)
                     columns.ordinal.append(s.ordinal)
                     columns.heading.append(s.heading)
                     columns.text.append(s.text)
-                    columns.normalized.append(normalize(s.text))
+                    columns.normalized.append(normalized)
                     columns.by_heading.append(split.by_heading)
+                    columns.boilerplate.append(boilerplate_kind(normalized))
                 sections += len(split.sections)
             if len(columns.bill_id) >= _PART_SECTIONS:
                 flush(writer)

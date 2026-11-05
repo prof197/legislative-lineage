@@ -1,0 +1,296 @@
+{
+ "command": "uv run lineage boilerplate",
+ "manifest_sha256": "59cbe08262c53a9d01a359c10bf8f7612464bcfbab2596db1627bd15584f4298",
+ "sections": 2186931,
+ "distinct_shingles": 130635852,
+ "shingle_occurrences": 526040701,
+ "max_share": 0.001,
+ "max_sections": 2186,
+ "stoplisted_shingles": 3729,
+ "occurrences_removed": 21523507,
+ "by_threshold": [
+  {
+   "max_share": 0.01,
+   "stoplisted_shingles": 99,
+   "occurrences_removed": 4021010
+  },
+  {
+   "max_share": 0.003,
+   "stoplisted_shingles": 727,
+   "occurrences_removed": 10757642
+  },
+  {
+   "max_share": 0.001,
+   "stoplisted_shingles": 3729,
+   "occurrences_removed": 21523507
+  },
+  {
+   "max_share": 0.0003,
+   "stoplisted_shingles": 20258,
+   "occurrences_removed": 39129200
+  },
+  {
+   "max_share": 0.0001,
+   "stoplisted_shingles": 89270,
+   "occurrences_removed": 63572652
+  }
+ ],
+ "boilerplate_sections": {
+  "effective date": 125422,
+  "enacting clause": 6981,
+  "repealer": 3316,
+  "severability": 2604
+ },
+ "top_shingles": [
+  {
+   "shingle": "amended to read as follows",
+   "sections": 200304,
+   "share": 0.091591
+  },
+  {
+   "shingle": "be it enacted by the",
+   "sections": 177302,
+   "share": 0.081073
+  },
+  {
+   "shingle": "is amended to read as",
+   "sections": 143851,
+   "share": 0.065778
+  },
+  {
+   "shingle": "this act shall take effect",
+   "sections": 105673,
+   "share": 0.04832
+  },
+  {
+   "shingle": "including but not limited to",
+   "sections": 102275,
+   "share": 0.046766
+  },
+  {
+   "shingle": "enacted by the legislature of",
+   "sections": 89487,
+   "share": 0.040919
+  },
+  {
+   "shingle": "it enacted by the legislature",
+   "sections": 89434,
+   "share": 0.040895
+  },
+  {
+   "shingle": "legislature of the state of",
+   "sections": 83268,
+   "share": 0.038075
+  },
+  {
+   "shingle": "the legislature of the state",
+   "sections": 81114,
+   "share": 0.03709
+  },
+  {
+   "shingle": "by the legislature of the",
+   "sections": 80395,
+   "share": 0.036762
+  },
+  {
+   "shingle": "text end new text begin",
+   "sections": 62061,
+   "share": 0.028378
+  },
+  {
+   "shingle": "for the purposes of this",
+   "sections": 61857,
+   "share": 0.028285
+  },
+  {
+   "shingle": "assembly of the state of",
+   "sections": 57731,
+   "share": 0.026398
+  },
+  {
+   "shingle": "general assembly of the state",
+   "sections": 56690,
+   "share": 0.025922
+  },
+  {
+   "shingle": "year to year a bill",
+   "sections": 54799,
+   "share": 0.025057
+  },
+  {
+   "shingle": "is amended by adding a",
+   "sections": 54390,
+   "share": 0.02487
+  },
+  {
+   "shingle": "as used in this section",
+   "sections": 52354,
+   "share": 0.023939
+  },
+  {
+   "shingle": "new text end new text",
+   "sections": 51744,
+   "share": 0.023661
+  },
+  {
+   "shingle": "the effective date of this",
+   "sections": 49857,
+   "share": 0.022798
+  },
+  {
+   "shingle": "section 2 this act shall",
+   "sections": 49668,
+   "share": 0.022711
+  },
+  {
+   "shingle": "the people of the state",
+   "sections": 49073,
+   "share": 0.022439
+  },
+  {
+   "shingle": "now therefore be it resolved",
+   "sections": 48415,
+   "share": 0.022138
+  },
+  {
+   "shingle": "be it further resolved that",
+   "sections": 48276,
+   "share": 0.022075
+  },
+  {
+   "shingle": "people of the state of",
+   "sections": 47805,
+   "share": 0.021859
+  },
+  {
+   "shingle": "amended by adding a new",
+   "sections": 44817,
+   "share": 0.020493
+  },
+  {
+   "shingle": "by the general assembly of",
+   "sections": 44112,
+   "share": 0.020171
+  },
+  {
+   "shingle": "2 this act shall take",
+   "sections": 43419,
+   "share": 0.019854
+  },
+  {
+   "shingle": "enacted by the general assembly",
+   "sections": 43225,
+   "share": 0.019765
+  },
+  {
+   "shingle": "the provisions of this section",
+   "sections": 42880,
+   "share": 0.019607
+  },
+  {
+   "shingle": "to read as follows 1",
+   "sections": 42773,
+   "share": 0.019558
+  },
+  {
+   "shingle": "it enacted by the general",
+   "sections": 40644,
+   "share": 0.018585
+  },
+  {
+   "shingle": "the general assembly of the",
+   "sections": 40226,
+   "share": 0.018394
+  },
+  {
+   "shingle": "be it resolved by the",
+   "sections": 40152,
+   "share": 0.01836
+  },
+  {
+   "shingle": "code is amended to read",
+   "sections": 38753,
+   "share": 0.01772
+  },
+  {
+   "shingle": "act shall take effect immediately",
+   "sections": 37910,
+   "share": 0.017335
+  },
+  {
+   "shingle": "after the effective date of",
+   "sections": 36818,
+   "share": 0.016835
+  },
+  {
+   "shingle": "therefore be it resolved by",
+   "sections": 35295,
+   "share": 0.016139
+  },
+  {
+   "shingle": "law is amended by adding",
+   "sections": 34489,
+   "share": 0.015771
+  },
+  {
+   "shingle": "for purposes of this section",
+   "sections": 34019,
+   "share": 0.015556
+  },
+  {
+   "shingle": "the purposes of this section",
+   "sections": 33902,
+   "share": 0.015502
+  },
+  {
+   "shingle": "by the people of the",
+   "sections": 33590,
+   "share": 0.015359
+  },
+  {
+   "shingle": "it enacted by the people",
+   "sections": 33252,
+   "share": 0.015205
+  },
+  {
+   "shingle": "enacted by the people of",
+   "sections": 33251,
+   "share": 0.015204
+  },
+  {
+   "shingle": "except as otherwise provided in",
+   "sections": 30458,
+   "share": 0.013927
+  },
+  {
+   "shingle": "mississippi code of 1972 is",
+   "sections": 29796,
+   "share": 0.013625
+  },
+  {
+   "shingle": "of the house of representatives",
+   "sections": 29501,
+   "share": 0.01349
+  },
+  {
+   "shingle": "to be entitled an act",
+   "sections": 29479,
+   "share": 0.01348
+  },
+  {
+   "shingle": "is amended to read subd",
+   "sections": 28408,
+   "share": 0.01299
+  },
+  {
+   "shingle": "effective date of this act",
+   "sections": 27947,
+   "share": 0.012779
+  },
+  {
+   "shingle": "a bill to be entitled",
+   "sections": 27386,
+   "share": 0.012523
+  }
+ ]
+}
