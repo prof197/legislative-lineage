@@ -3,6 +3,8 @@ name = "legislative-lineage"
 version = "0.1.0"
 description = "Find state bills that share provisions, section by section, without an API key."
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
     { name = "prof197", email = "5631043+prof197@users.noreply.github.com" }
 ]
