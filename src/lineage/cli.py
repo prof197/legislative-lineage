@@ -1,5 +1,6 @@
 """The `lineage` command line. Each subcommand is a thin wrapper over a library function."""
 
+import os
 from pathlib import Path
 from typing import Annotated
 
@@ -9,6 +10,7 @@ from lineage import __version__
 from lineage.disk import GiB, InsufficientDiskSpaceError
 from lineage.fetch import SOURCE, fetch_raw
 from lineage.ingest import ingest as run_ingest
+from lineage.sectioning import SectioningError, build_sections
 from lineage.sessions import (
     CARRYOVER,
     SCRAPERS_REPO,
@@ -151,5 +153,28 @@ def ingest(
         raise typer.Exit(1) from None
     typer.echo(
         f"{result.rows:,} records from {result.archives} archives -> {out / 'bills'} "
+        f"({result.output_bytes / GiB:.2f} GiB, {result.seconds:.0f}s)"
+    )
+
+
+@app.command()
+def split(
+    tables: Annotated[Path, typer.Option("--tables", help="Directory of Parquet tables.")] = Path(
+        "data/tables"
+    ),
+    workers: Annotated[int, typer.Option("--workers", help="Worker processes.")] = (
+        os.cpu_count() or 1
+    ),
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """Split every bill's text into sections and write the `sections` table."""
+    try:
+        result = build_sections(tables, workers=workers, floor_bytes=int(min_free_gib * GiB))
+    except (SectioningError, InsufficientDiskSpaceError) as e:
+        typer.echo(str(e), err=True)
+        raise typer.Exit(1) from None
+    typer.echo(
+        f"{result.sections:,} sections from {result.with_text:,} of {result.bills:,} bills with "
+        f"text; {result.by_heading:,} split at headings -> {tables / 'sections'} "
         f"({result.output_bytes / GiB:.2f} GiB, {result.seconds:.0f}s)"
     )

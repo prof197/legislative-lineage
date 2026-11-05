@@ -41,8 +41,15 @@ def _struct_literal(columns: dict[str, str]) -> str:
     return "{" + ", ".join(f"{_sql_string(k)}: {_sql_string(v)}" for k, v in columns.items()) + "}"
 
 
-def connect(*, memory_limit: str, temp_directory: Path) -> duckdb.DuckDBPyConnection:
+def connect_quiet() -> duckdb.DuckDBPyConnection:
+    """A connection that prints no progress bar, which would interleave across processes."""
     con = duckdb.connect()
+    con.execute("SET enable_progress_bar = false")
+    return con
+
+
+def connect(*, memory_limit: str, temp_directory: Path) -> duckdb.DuckDBPyConnection:
+    con = connect_quiet()
     con.execute(f"SET memory_limit = {_sql_string(memory_limit)}")
     # Spill to the data disk, which the caller has checked for space, not the system temp dir.
     con.execute(f"SET temp_directory = {_sql_string(str(temp_directory))}")
@@ -140,3 +147,61 @@ def copy_bills_to_parquet(
         raise RuntimeError("COPY returned no row count")
     count: int = row[0]
     return count
+
+
+def text_bytes(con: duckdb.DuckDBPyConnection, *, bills_glob: str) -> int:
+    """Total UTF-8 bytes of extracted text in the bills table, to bound what splitting writes."""
+    row = con.execute(
+        "SELECT coalesce(sum(strlen(raw_text)), 0) FROM read_parquet($glob)", {"glob": bills_glob}
+    ).fetchone()
+    return int(row[0]) if row else 0
+
+
+def open_bill_texts(
+    con: duckdb.DuckDBPyConnection, *, parquet_path: Path
+) -> duckdb.DuckDBPyConnection:
+    """Start a scan of one bills file's ids and texts; read it with `fetchmany`.
+
+    No ORDER BY: sorting would hold the whole file's text in memory before the first row.
+    DuckDB keeps a single file's rows in stored order, so the output is still deterministic.
+    """
+    return con.execute("SELECT id, raw_text FROM read_parquet($path)", {"path": str(parquet_path)})
+
+
+@dataclass(frozen=True, slots=True)
+class SectionColumns:
+    """Sections as parallel lists, one entry per section."""
+
+    bill_id: list[str]
+    ordinal: list[int]
+    heading: list[str | None]
+    text: list[str]
+    normalized: list[str]
+    by_heading: list[bool]
+
+
+def write_sections(
+    con: duckdb.DuckDBPyConnection, *, parquet_path: Path, columns: SectionColumns
+) -> None:
+    query = f"""
+        COPY (
+            SELECT
+                CAST(unnest($bill_id) AS VARCHAR) AS bill_id,
+                CAST(unnest($ordinal) AS INTEGER) AS ordinal,
+                CAST(unnest($heading) AS VARCHAR) AS heading,
+                CAST(unnest($text) AS VARCHAR) AS text,
+                CAST(unnest($normalized) AS VARCHAR) AS normalized,
+                CAST(unnest($by_heading) AS BOOLEAN) AS by_heading
+        ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
+    """
+    con.execute(
+        query,
+        {
+            "bill_id": columns.bill_id,
+            "ordinal": columns.ordinal,
+            "heading": columns.heading,
+            "text": columns.text,
+            "normalized": columns.normalized,
+            "by_heading": columns.by_heading,
+        },
+    )

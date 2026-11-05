@@ -11,6 +11,7 @@ This document is a skeleton. Sections marked **To be measured** fill in as the b
 - [Pipeline overview](#pipeline-overview)
 - [Data snapshot](#data-snapshot)
 - [Bill status](#bill-status)
+- [Sections](#sections)
 - [Alternatives considered](#alternatives-considered)
 - [Scaling limits](#scaling-limits)
 - [Known failure modes](#known-failure-modes)
@@ -84,6 +85,23 @@ Every bill carries a status, `passed`, `died` or `introduced`, derived from Open
 The table keeps the deciding classification (`status_reason`, or `session-ended`) and its date (`status_date`), so a bill page can name the action, for example a veto.
 
 Actions are sequenced by Open States' `order` field. Dates arrive either as plain dates or as zoned timestamps. A timestamp is converted to a calendar date in the time zone the state's export uses. Most exports write a plain date as local midnight. Alabama's writes midnight Eastern although the state keeps Central time, and converting it with Central time would move each date a day earlier.
+
+## Sections
+
+The unit of matching is the section, not the bill. Provisions travel between states one section at a time, often inside omnibus bills, so whole-bill similarity would bury a shared provision under unrelated text. `lineage split` writes the `sections` table: bill id, ordinal, heading, display text, normalized text, and whether the bill was split at headings.
+
+**Cleaning.** Before splitting, the text is cleaned:
+- Line endings are unified.
+- Text is NFKC-normalized, so non-breaking spaces and ligatures become plain characters.
+- Format, private-use and control characters are dropped. Kentucky's export, for example, puts a private-use glyph before each heading.
+- Runs of spaces collapse to one.
+- A printed line-number gutter is removed. A gutter is recognized only when most lines of the bill start with a bare number, so New Jersey's "1." section numbers and a line such as "2023 Regular Session" survive.
+
+**Headings.** A section starts at a line that opens with `Section 1.`, `SECTION 1.`, `Sec. 1.`, `SEC. 1.` or `§ 1.`, with a colon accepted in place of the period. The number can be code-style (`1-101`, `2a`). Alaska's leading asterisk and Washington's `NEW SECTION.` are skipped. A heading must start its line, so a line opening with a quotation mark is not a heading. That keeps the sections of an act being amended, quoted inside the bill, from splitting it. Lowercase "section" at the start of a line is ignored, because there it is a wrapped cross-reference far more often than a heading. Text before the first heading becomes section 0.
+
+**Fallback.** A bill with no heading is cut into windows of at least 200 words on paragraph boundaries. A paragraph longer than a window is cut by words, and a short remainder joins the window before it. Every bill with text therefore yields sections, and the `by_heading` flag records which rule produced them. `lineage stats` reports the heading hit rate per state.
+
+**Normalized text** is case-folded words and numbers separated by single spaces. Shingling and hashing read it. The display text is kept for alignment and the site.
 
 ## Alternatives considered
 

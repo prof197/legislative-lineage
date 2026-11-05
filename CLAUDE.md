@@ -14,6 +14,7 @@ uv run lineage fetch-raw     # download the archives the manifest pins into data
 uv run lineage snapshot      # pin data/raw/*/*.zip into snapshot/manifest.json
 uv run lineage sessions --commit <sha>  # pin session dates into snapshot/sessions.csv
 uv run lineage ingest        # verify against the manifest, write data/tables/bills/*.parquet
+uv run lineage split         # split bill text into data/tables/sections/*.parquet
 ```
 
 All four checks must pass before every commit. CI runs the same four commands.
@@ -28,6 +29,8 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   sessions.py     session dates from openstates-scrapers, parsed as source, never run
   ingest.py       raw archives -> bills Parquet, one file per archive, with status
   status.py       passed / died / introduced from action classifications
+  sections.py     clean, split at headings or into windows, normalize (pure functions)
+  sectioning.py   build the sections table, one worker process per bills file
   queries.py      every SQL query the pipeline runs (DR-4)
   disk.py         free-space floor checked before large writes
 tests/            pytest; small committed fixtures only
