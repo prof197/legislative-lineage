@@ -4,7 +4,7 @@ from typer.testing import CliRunner
 
 from lineage import __version__
 from lineage.cli import app
-from tests.conftest import Upstream
+from tests.conftest import SESSIONS, Upstream
 
 runner = CliRunner()
 
@@ -35,6 +35,8 @@ def test_snapshot_then_ingest(raw_dir: Path, tmp_path: Path) -> None:
             str(raw_dir),
             "--manifest",
             str(manifest),
+            "--sessions",
+            str(SESSIONS),
             "--out",
             str(out),
             "--min-free-gib",

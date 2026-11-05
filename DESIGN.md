@@ -10,6 +10,7 @@ This document is a skeleton. Sections marked **To be measured** fill in as the b
 - [Constraints](#constraints)
 - [Pipeline overview](#pipeline-overview)
 - [Data snapshot](#data-snapshot)
+- [Bill status](#bill-status)
 - [Alternatives considered](#alternatives-considered)
 - [Scaling limits](#scaling-limits)
 - [Known failure modes](#known-failure-modes)
@@ -71,6 +72,19 @@ Open States snapshot ─► ingest ─► sections ─┬─► near-duplicate s
 
 **Extraction failures.** The export has no error flag. A record whose `raw_text` is missing or blank counts as a failed extraction: it stays in the `bills` table but cannot match anything. Step 8 reports the rate per state and session.
 
+## Bill status
+
+Every bill carries a status, `passed`, `died` or `introduced`, derived from Open States' action classifications as of its archive's Generated At. The order of evidence is as follows.
+
+1. **Enacted.** A signature, becoming law without one, or a veto override means `passed`. Enactment is final, whatever follows it in the record. Georgia files a line-item veto as a veto action after the signature, and New Jersey's conditional veto is followed by a signature once the legislature adopts the governor's changes. In both cases the bill is law.
+2. **Killed.** Otherwise, a veto, a failed vote or a failed override means `died`. The exception is a failed vote followed by a later passage, because chambers can reconsider. In that case the bill is alive again.
+3. **Session ended.** Otherwise, a bill whose session ended before the archive was generated `died` with its session. A session is still sitting on its last day. Where bills carry over within a two-year term, the biennium's end applies ([Data snapshot](#data-snapshot)). A session with no known end date leaves the bill `introduced`, which avoids guessing that it died.
+4. Anything else is `introduced`.
+
+The table keeps the deciding classification (`status_reason`, or `session-ended`) and its date (`status_date`), so a bill page can name the action, for example a veto.
+
+Actions are sequenced by Open States' `order` field. Dates arrive either as plain dates or as zoned timestamps. A timestamp is converted to a calendar date in the time zone the state's export uses. Most exports write a plain date as local midnight. Alabama's writes midnight Eastern although the state keeps Central time, and converting it with Central time would move each date a day earlier.
+
 ## Alternatives considered
 
 | Alternative | Reason rejected | Evidence |
@@ -113,6 +127,8 @@ These carry into the README's known-failure-modes section. Each has a mitigation
 | An explanation with valid citations but a wrong summary | A claim cites a real difference but describes it wrongly | A hand-labeled faithfulness eval, and the cited spans shown beside each claim |
 | Similarity has no direction | An earlier bill is not necessarily the source | Copy states timing only, never "copied from" |
 | Legislative status is not legal standing | A law struck down in court still shows as passed | A legend line wherever status is shown |
+| A bill awaiting the governor when the session ended, whose outcome the export never recorded | Shows as died | `lineage stats` counts bills that reached the governor with no recorded outcome |
+| Resolutions are adopted, not signed | Under the enactment rule, an adopted resolution shows as died once its session ends | Decided with the DR-5 type lists, from the step 8 counts |
 | A stale snapshot | Bills filed after an archive was generated are missing, and archives were generated at different times | Every page carries the Generated At dates of the archives it draws on |
 | A substantive measure filed under an excluded document type | It can never be found | Excluded records stay in `bills`, and the recall eval names "excluded type" as a miss reason ([DR-5](#dr-5)) |
 

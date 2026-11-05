@@ -10,6 +10,8 @@ from pathlib import Path
 import pytest
 
 FIXTURES = Path(__file__).parent / "fixtures" / "openstates"
+# Real session dates for the fixture archives, copied from snapshot/sessions.csv.
+SESSIONS = Path(__file__).parent / "fixtures" / "sessions.csv"
 
 
 def _readme_field(readme: str, key: str) -> str:

@@ -4,7 +4,10 @@ pyright cannot see inside SQL strings, so each query here is exercised against c
 fixtures in the tests. See DESIGN.md#dr-4.
 """
 
+from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
+from typing import Any
 
 import duckdb
 
@@ -46,6 +49,35 @@ def connect(*, memory_limit: str, temp_directory: Path) -> duckdb.DuckDBPyConnec
     return con
 
 
+def outcome_actions(
+    con: duckdb.DuckDBPyConnection, *, json_path: Path, kinds: list[str]
+) -> list[tuple[str, list[dict[str, Any]]]]:
+    """Each bill's id with only the actions classified as one of `kinds`.
+
+    Status depends on a handful of classifications, so filtering in SQL keeps the rows that
+    reach Python small.
+    """
+    query = f"""
+        SELECT id, list_filter(actions, lambda a: list_has_any(a.classification, $kinds))
+        FROM read_json($json_path, format = 'array',
+                       columns = {_struct_literal(BILL_JSON_COLUMNS)})
+    """
+    rows: list[tuple[str, list[dict[str, Any]]]] = con.execute(
+        query, {"json_path": str(json_path), "kinds": kinds}
+    ).fetchall()
+    return rows
+
+
+@dataclass(frozen=True, slots=True)
+class StatusColumns:
+    """Derived status per bill id, as parallel lists, to be joined onto the bills table."""
+
+    id: list[str]
+    status: list[str]
+    reason: list[str | None]
+    on: list[date | None]
+
+
 def copy_bills_to_parquet(
     con: duckdb.DuckDBPyConnection,
     *,
@@ -54,27 +86,39 @@ def copy_bills_to_parquet(
     state: str,
     generated_at: str,
     archive: str,
+    status: StatusColumns,
 ) -> int:
-    """Write one archive's bills file to Parquet and return the number of records written."""
+    """Write one archive's bills file, with status joined on, and return the rows written."""
     # COPY's target cannot be a bound parameter, so it is quoted; every value is bound.
     query = f"""
         COPY (
+            WITH s AS (
+                SELECT
+                    unnest($status_id) AS id,
+                    unnest($status) AS status,
+                    unnest($status_reason) AS status_reason,
+                    CAST(unnest($status_date) AS DATE) AS status_date
+            )
             SELECT
-                id,
+                b.id,
                 $state AS state,
-                legislative_session AS session,
-                identifier,
-                title,
-                chamber,
-                classification,
-                actions,
-                versions,
-                raw_text,
-                raw_text_url,
+                b.legislative_session AS session,
+                b.identifier,
+                b.title,
+                b.chamber,
+                b.classification,
+                s.status,
+                s.status_reason,
+                s.status_date,
+                b.actions,
+                b.versions,
+                b.raw_text,
+                b.raw_text_url,
                 CAST($generated_at AS TIMESTAMP) AS generated_at,
                 $archive AS archive
             FROM read_json($json_path, format = 'array',
-                           columns = {_struct_literal(BILL_JSON_COLUMNS)})
+                           columns = {_struct_literal(BILL_JSON_COLUMNS)}) AS b
+            LEFT JOIN s USING (id)
         ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
     """
     params = {
@@ -82,6 +126,10 @@ def copy_bills_to_parquet(
         "generated_at": generated_at,
         "archive": archive,
         "json_path": str(json_path),
+        "status_id": status.id,
+        "status": status.status,
+        "status_reason": status.reason,
+        "status_date": status.on,
     }
     row = con.execute(query, params).fetchone()
     if row is None:

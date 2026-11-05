@@ -6,6 +6,7 @@ import pytest
 from lineage.disk import InsufficientDiskSpaceError
 from lineage.ingest import ingest
 from lineage.snapshot import SnapshotError, scan, write_manifest
+from tests.conftest import SESSIONS
 
 
 @pytest.fixture
@@ -24,7 +25,7 @@ def _bills(out: Path) -> duckdb.DuckDBPyConnection:
 def test_writes_one_row_per_record(raw_dir: Path, manifest: Path, tmp_path: Path) -> None:
     out = tmp_path / "tables"
 
-    result = ingest(raw_dir, manifest, out, floor_bytes=0)
+    result = ingest(raw_dir, manifest, SESSIONS, out, floor_bytes=0)
 
     assert result.archives == 4
     assert result.rows == 5
@@ -35,7 +36,7 @@ def test_rows_carry_state_session_and_generated_at(
     raw_dir: Path, manifest: Path, tmp_path: Path
 ) -> None:
     out = tmp_path / "tables"
-    ingest(raw_dir, manifest, out, floor_bytes=0)
+    ingest(raw_dir, manifest, SESSIONS, out, floor_bytes=0)
 
     rows = (
         _bills(out)
@@ -53,7 +54,7 @@ def test_missing_text_is_null_and_blank_text_is_kept_blank(
     raw_dir: Path, manifest: Path, tmp_path: Path
 ) -> None:
     out = tmp_path / "tables"
-    ingest(raw_dir, manifest, out, floor_bytes=0)
+    ingest(raw_dir, manifest, SESSIONS, out, floor_bytes=0)
 
     rows = dict(
         _bills(out)
@@ -68,7 +69,7 @@ def test_keeps_actions_and_classification_for_later_steps(
     raw_dir: Path, manifest: Path, tmp_path: Path
 ) -> None:
     out = tmp_path / "tables"
-    ingest(raw_dir, manifest, out, floor_bytes=0)
+    ingest(raw_dir, manifest, SESSIONS, out, floor_bytes=0)
     con = _bills(out)
 
     (classes,) = con.execute(
@@ -83,6 +84,27 @@ def test_keeps_actions_and_classification_for_later_steps(
     assert {len(d) for (d,) in dates} == {25}
 
 
+def test_derives_status_as_of_each_archive(raw_dir: Path, manifest: Path, tmp_path: Path) -> None:
+    out = tmp_path / "tables"
+    ingest(raw_dir, manifest, SESSIONS, out, floor_bytes=0)
+
+    rows = (
+        _bills(out)
+        .execute(
+            "SELECT state, identifier, status, status_reason, CAST(status_date AS VARCHAR) "
+            "FROM bills WHERE identifier IN ('SB 238', 'SB 47', 'HB 521') ORDER BY state"
+        )
+        .fetchall()
+    )
+
+    assert rows == [
+        ("AK", "SB 47", "died", "session-ended", "2024-05-15"),
+        ("AL", "HB 521", "died", "session-ended", "2023-06-08"),
+        # Georgia files a line-item veto after the signature; the bill is still law.
+        ("GA", "SB 238", "passed", "executive-signature", "2025-05-14"),
+    ]
+
+
 def test_refuses_archives_that_differ_from_the_manifest(
     raw_dir: Path, manifest: Path, tmp_path: Path
 ) -> None:
@@ -91,7 +113,7 @@ def test_refuses_archives_that_differ_from_the_manifest(
     out = tmp_path / "tables"
 
     with pytest.raises(SnapshotError):
-        ingest(raw_dir, manifest, out, floor_bytes=0)
+        ingest(raw_dir, manifest, SESSIONS, out, floor_bytes=0)
     assert not out.exists()
 
 
@@ -99,17 +121,17 @@ def test_refuses_to_run_below_the_disk_floor(raw_dir: Path, manifest: Path, tmp_
     out = tmp_path / "tables"
 
     with pytest.raises(InsufficientDiskSpaceError):
-        ingest(raw_dir, manifest, out, floor_bytes=1 << 60)
+        ingest(raw_dir, manifest, SESSIONS, out, floor_bytes=1 << 60)
     assert not out.exists()
 
 
 def test_rerun_replaces_the_previous_table(raw_dir: Path, manifest: Path, tmp_path: Path) -> None:
     out = tmp_path / "tables"
-    ingest(raw_dir, manifest, out, floor_bytes=0)
+    ingest(raw_dir, manifest, SESSIONS, out, floor_bytes=0)
     stale = out / "bills" / "stale.parquet"
     stale.write_bytes(b"")
 
-    ingest(raw_dir, manifest, out, floor_bytes=0)
+    ingest(raw_dir, manifest, SESSIONS, out, floor_bytes=0)
 
     assert not stale.exists()
     assert _bills(out).execute("SELECT count(*) FROM bills").fetchall() == [(5,)]

@@ -138,11 +138,14 @@ def ingest(
     out: Annotated[Path, typer.Option("--out", help="Directory for Parquet tables.")] = Path(
         "data/tables"
     ),
+    sessions: Annotated[
+        Path, typer.Option("--sessions", help="Session dates CSV (committed).")
+    ] = Path("snapshot/sessions.csv"),
     min_free_gib: MinFreeOption = 20.0,
 ) -> None:
     """Verify the raw archives against the manifest and load them into the `bills` table."""
     try:
-        result = run_ingest(raw, manifest, out, floor_bytes=int(min_free_gib * GiB))
+        result = run_ingest(raw, manifest, sessions, out, floor_bytes=int(min_free_gib * GiB))
     except (SnapshotError, InsufficientDiskSpaceError) as e:
         typer.echo(str(e), err=True)
         raise typer.Exit(1) from None

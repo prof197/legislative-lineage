@@ -26,7 +26,8 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   snapshot.py     archive manifest: scan, write, load, verify
   fetch.py        download pinned archives; hash-checked, paced, disk-guarded
   sessions.py     session dates from openstates-scrapers, parsed as source, never run
-  ingest.py       raw archives -> bills Parquet, one file per archive
+  ingest.py       raw archives -> bills Parquet, one file per archive, with status
+  status.py       passed / died / introduced from action classifications
   queries.py      every SQL query the pipeline runs (DR-4)
   disk.py         free-space floor checked before large writes
 tests/            pytest; small committed fixtures only
