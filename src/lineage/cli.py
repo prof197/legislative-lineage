@@ -9,7 +9,15 @@ from lineage import __version__
 from lineage.disk import GiB, InsufficientDiskSpaceError
 from lineage.fetch import SOURCE, fetch_raw
 from lineage.ingest import ingest as run_ingest
-from lineage.snapshot import SnapshotError, scan, write_manifest
+from lineage.sessions import (
+    CARRYOVER,
+    SCRAPERS_REPO,
+    SessionsError,
+    fetch_scraper_sessions,
+    session_rows,
+    write_sessions,
+)
+from lineage.snapshot import SnapshotError, load_manifest, scan, write_manifest
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
 
@@ -94,6 +102,33 @@ def fetch_raw_command(
     if result.problems:
         typer.echo("not fetched:\n  " + "\n  ".join(result.problems), err=True)
         raise typer.Exit(1)
+
+
+@app.command()
+def sessions(
+    commit: Annotated[
+        str, typer.Option("--commit", help="Full openstates-scrapers commit SHA to read from.")
+    ],
+    manifest: ManifestOption = Path("snapshot/manifest.json"),
+    out: Annotated[Path, typer.Option("--out", help="Session dates CSV (committed).")] = Path(
+        "snapshot/sessions.csv"
+    ),
+) -> None:
+    """Pin start and end dates for every session in the manifest, from Open States' scrapers."""
+    # A branch name would make the CSV unreproducible, so only a full SHA is accepted.
+    if len(commit) != 40 or any(c not in "0123456789abcdef" for c in commit):
+        typer.echo("--commit must be a full 40-character commit SHA", err=True)
+        raise typer.Exit(1)
+    wanted = sorted({(a.state, a.session) for a in load_manifest(manifest)})
+    try:
+        scraped = fetch_scraper_sessions(sorted({s for s, _ in wanted}), commit=commit)
+    except SessionsError as e:
+        typer.echo(str(e), err=True)
+        raise typer.Exit(1) from None
+    rows = session_rows(scraped, wanted, carryover=CARRYOVER)
+    write_sessions(rows, out, source=SCRAPERS_REPO, commit=commit)
+    unknown = sum(r.end_date is None for r in rows)
+    typer.echo(f"{len(rows)} sessions, {unknown} without an end date -> {out}")
 
 
 @app.command()

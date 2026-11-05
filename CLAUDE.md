@@ -12,6 +12,7 @@ uv run lineage --help        # the CLI
 
 uv run lineage fetch-raw     # download the archives the manifest pins into data/raw/
 uv run lineage snapshot      # pin data/raw/*/*.zip into snapshot/manifest.json
+uv run lineage sessions --commit <sha>  # pin session dates into snapshot/sessions.csv
 uv run lineage ingest        # verify against the manifest, write data/tables/bills/*.parquet
 ```
 
@@ -24,12 +25,14 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   cli.py          Typer app; subcommands stay thin wrappers over library functions
   snapshot.py     archive manifest: scan, write, load, verify
   fetch.py        download pinned archives; hash-checked, paced, disk-guarded
+  sessions.py     session dates from openstates-scrapers, parsed as source, never run
   ingest.py       raw archives -> bills Parquet, one file per archive
   queries.py      every SQL query the pipeline runs (DR-4)
   disk.py         free-space floor checked before large writes
 tests/            pytest; small committed fixtures only
   fixtures/openstates/  trimmed real records in archive layout (README + *_bills.json)
 snapshot/manifest.json  the pinned snapshot: per-archive size, SHA-256, Generated At
+snapshot/sessions.csv   session start/end dates and carryover, from a pinned scrapers commit
 DESIGN.md         design, alternatives, scaling limits, failure modes, decision records
 data/             local snapshots and derived tables; gitignored, never committed
   raw/<ST>/*.zip  Open States session archives, never edited

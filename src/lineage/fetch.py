@@ -52,7 +52,8 @@ def _retry_after(error: urllib.error.HTTPError, default: float) -> float:
     return float(value) if value.isdigit() else default
 
 
-def _open(url: str, pause: float) -> HTTPResponse:
+def open_url(url: str, pause: float) -> HTTPResponse:
+    """GET `url` as this project, retrying overload and server errors with backoff."""
     request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     for attempt in range(_ATTEMPTS):
         try:
@@ -99,7 +100,7 @@ def _fetch_one(
     part = dest.with_name(dest.name + ".part")
     dest.parent.mkdir(parents=True, exist_ok=True)
     try:
-        with _open(url_for(archive, source), pause) as response:
+        with open_url(url_for(archive, source), pause) as response:
             length = response.headers.get("Content-Length")
             size = int(length) if length is not None else archive.bytes
             if size != archive.bytes and not repin:
