@@ -510,6 +510,19 @@ def title_matches(
     return rows
 
 
+def notice_only_by_session(
+    con: duckdb.DuckDBPyConnection, *, bills_glob: str, state: str, notice: str, enacting: str
+) -> list[tuple[str, int]]:
+    """Records per session of `state` whose text matches `notice` but not `enacting`."""
+    rows: list[tuple[str, int]] = con.execute(
+        "SELECT session, count(*) FROM read_parquet($bills) "
+        "WHERE state = $state AND regexp_matches(raw_text, $notice) "
+        "AND NOT regexp_matches(raw_text, $enacting) GROUP BY ALL ORDER BY session",
+        {"bills": bills_glob, "state": state, "notice": notice, "enacting": enacting},
+    ).fetchall()
+    return rows
+
+
 def status_by_type(
     con: duckdb.DuckDBPyConnection, *, bills_glob: str
 ) -> dict[tuple[str, str], dict[str, int]]:

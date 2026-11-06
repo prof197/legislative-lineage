@@ -7,7 +7,8 @@
   "blank_text": "raw_text has no character Python's str.isspace() rejects",
   "text_without_sections": "non-blank text that cleaning reduces to nothing or to a notice that the text is not available",
   "split_at_headings": "bills split by the heading rule, not the window fallback",
-  "commemorative_title_candidates": "(?i)\\b(commend|congratulat|condolence|mourn|in memory of|honou?ring|recogniz(e|es|ing))"
+  "commemorative_title_candidates": "(?i)\\b(commend|congratulat|condolence|mourn|in memory of|honou?ring|recogniz(e|es|ing))",
+  "georgia_local_notices": "Georgia records whose text has the notice of intention to introduce local legislation ((?i)notice\\s+of\\s+intention\\s+to\\s+introduce\\s+local\\s+legislation) and no enacting clause ((?i)be\\s+it\\s+enacted\\s+by\\s+the\\s+general\\s+assembly)"
  },
  "totals": {
   "records": 525633,
@@ -283,6 +284,15 @@
    "share": 0.1118
   }
  ],
+ "georgia_local_notices": {
+  "total": 774,
+  "by_session": {
+   "2023_24": 318,
+   "2023_ss": 3,
+   "2025_26": 355,
+   "2026_ss": 98
+  }
+ },
  "states": {
   "AK": {
    "sessions": [

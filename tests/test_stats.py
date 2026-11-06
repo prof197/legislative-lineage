@@ -9,7 +9,7 @@ import pytest
 from lineage.ingest import ingest
 from lineage.sectioning import build_sections
 from lineage.snapshot import scan, write_manifest
-from lineage.stats import BLANK_PATTERN, coverage, write_coverage
+from lineage.stats import BLANK_PATTERN, coverage, georgia_local_notices, write_coverage
 from tests.conftest import SESSIONS
 
 
@@ -113,3 +113,41 @@ def test_writes_the_report(tables: tuple[Path, Path], tmp_path: Path) -> None:
     write_coverage(out, sessions_path=SESSIONS, manifest_path=manifest, report_path=report)
 
     assert json.loads(report.read_text())["totals"]["records"] == 5
+
+
+NOTICE = (
+    "NOTICE OF INTENTION TO INTRODUCE LOCAL LEGISLATION Notice is given that there will be "
+    "introduced at the 2025 regular session of the General Assembly of Georgia a bill to "
+    "reconstitute the board of education of a county; and for other purposes.\n\nAFFIDAVIT\n"
+)
+ENACTED = "A BILL TO BE ENTITLED AN ACT\nBE IT ENACTED BY THE GENERAL ASSEMBLY OF GEORGIA:\n"
+
+
+def test_counts_georgia_local_bills_stored_as_their_notice_alone(tmp_path: Path) -> None:
+    bills = tmp_path / "bills.parquet"
+    rows = [
+        ("GA", "2025_26", NOTICE),  # the notice and affidavit, no bill
+        ("GA", "2025_26", " NOTICE   OF\nINTENTION TO INTRODUCE\nLOCAL LEGISLATION\n"),
+        ("GA", "2025_26", NOTICE + ENACTED + "SECTION 1.\nThe board shall have five members."),
+        ("GA", "2023_24", ENACTED + "SECTION 1.\nA general bill."),
+        ("GA", "2023_24", NOTICE),
+        ("AL", "2025rs", NOTICE),  # another state's text is not counted
+    ]
+    duckdb.execute(
+        "COPY (SELECT * FROM (VALUES "
+        + ", ".join(f"('{s}', '{n}', $t{i})" for i, (s, n, _) in enumerate(rows))
+        + f") t(state, session, raw_text)) TO '{bills}'",
+        {f"t{i}": text for i, (_, _, text) in enumerate(rows)},
+    )
+
+    assert georgia_local_notices(str(bills)) == {"2023_24": 1, "2025_26": 2}
+
+
+def test_reports_georgia_local_notices_per_session(tables: tuple[Path, Path]) -> None:
+    out, manifest = tables
+
+    doc = coverage(out, sessions_path=SESSIONS, manifest_path=manifest)
+
+    # SB 238 is a Georgia local bill whose stored text is the bill itself.
+    assert doc["georgia_local_notices"] == {"total": 0, "by_session": {}}
+    assert "enacting clause" in doc["definitions"]["georgia_local_notices"]

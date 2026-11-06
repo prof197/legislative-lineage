@@ -22,6 +22,11 @@ BLANK_PATTERN = r"[\s\p{Z}\x{0b}\x{1c}-\x{1f}\x{85}]*"
 COMMEMORATIVE_TITLE = (
     r"(?i)\b(commend|congratulat|condolence|mourn|in memory of|honou?ring|recogniz(e|es|ing))"
 )
+# Georgia publishes a notice before a local bill is introduced (O.C.G.A. § 28-1-14), and the
+# export often stores that notice and its affidavit in place of the bill. Every Georgia bill
+# carries the enacting clause, so text with the notice but no clause holds no bill text.
+GEORGIA_NOTICE = r"(?i)notice\s+of\s+intention\s+to\s+introduce\s+local\s+legislation"
+GEORGIA_ENACTING = r"(?i)be\s+it\s+enacted\s+by\s+the\s+general\s+assembly"
 
 
 def _nest(rows: list[tuple[str, str, int]]) -> dict[str, dict[str, int]]:
@@ -29,6 +34,19 @@ def _nest(rows: list[tuple[str, str, int]]) -> dict[str, dict[str, int]]:
     for outer, inner, n in rows:
         nested.setdefault(outer, {})[inner] = n
     return nested
+
+
+def georgia_local_notices(bills_glob: str) -> dict[str, int]:
+    """Georgia records per session whose stored text is a local bill's notice alone."""
+    with queries.connect_quiet() as con:
+        rows = queries.notice_only_by_session(
+            con,
+            bills_glob=bills_glob,
+            state="GA",
+            notice=GEORGIA_NOTICE,
+            enacting=GEORGIA_ENACTING,
+        )
+    return dict(rows)
 
 
 def coverage(tables_dir: Path, *, sessions_path: Path, manifest_path: Path) -> dict[str, Any]:
@@ -52,6 +70,7 @@ def coverage(tables_dir: Path, *, sessions_path: Path, manifest_path: Path) -> d
             for (state, first), second in sorted(CARRYOVER.items())
         ]
 
+    notices = georgia_local_notices(bills)
     states: dict[str, dict[str, Any]] = {}
     unknown_end = {"sessions": 0, "bills_left_introduced": 0}
     totals = dict.fromkeys(
@@ -120,6 +139,10 @@ def coverage(tables_dir: Path, *, sessions_path: Path, manifest_path: Path) -> d
             ),
             "split_at_headings": "bills split by the heading rule, not the window fallback",
             "commemorative_title_candidates": COMMEMORATIVE_TITLE,
+            "georgia_local_notices": (
+                "Georgia records whose text has the notice of intention to introduce local "
+                f"legislation ({GEORGIA_NOTICE}) and no enacting clause ({GEORGIA_ENACTING})"
+            ),
         },
         "totals": totals,
         "sessions_without_end_date": unknown_end,
@@ -128,6 +151,7 @@ def coverage(tables_dir: Path, *, sessions_path: Path, manifest_path: Path) -> d
             "reached_governor_shown_died": _nest(governor),
         },
         "carryover": carryover,
+        "georgia_local_notices": {"total": sum(notices.values()), "by_session": notices},
         "states": dict(sorted(states.items())),
     }
 
