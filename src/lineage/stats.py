@@ -11,7 +11,7 @@ from typing import Any
 
 from lineage import queries
 from lineage.sessions import CARRYOVER, load_sessions, status_end_date
-from lineage.status import ENACTED_IN_WORDS
+from lineage.status import ENACTED_IN_WORDS, Status
 from lineage.stoplist import file_sha256
 
 COMMAND = "uv run lineage stats"
@@ -103,6 +103,9 @@ def coverage(tables_dir: Path, *, sessions_path: Path, manifest_path: Path) -> d
         one_chamber = queries.resolutions_adopted_by_one_chamber(con, bills_glob=bills)
         governor = queries.reached_governor_shown_died(con, bills_glob=bills)
         in_words = queries.status_reason_counts(con, bills_glob=bills, reason=ENACTED_IN_WORDS)
+        finished = queries.status_counts(
+            con, bills_glob=bills, status=Status.PASSED_LEGISLATURE.value
+        )
         carryover = [
             {"state": state, "from": first, "to": second}
             | queries.carryover_overlap(
@@ -208,6 +211,7 @@ def coverage(tables_dir: Path, *, sessions_path: Path, manifest_path: Path) -> d
             "resolutions_adopted_by_one_chamber": _nest(one_chamber),
             "reached_governor_shown_died": _nest(governor),
             "enacted_in_words": _nest(in_words),
+            "passed_legislature": _nest(finished),
         },
         "carryover": carryover,
         "georgia_local_notices": {"total": sum(notices.values()), "by_session": notices},

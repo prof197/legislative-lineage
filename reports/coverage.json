@@ -29,7 +29,7 @@
  "status_gaps": {
   "resolutions_adopted_by_one_chamber": {
    "AK": {
-    "concurrent resolution": 18,
+    "concurrent resolution": 9,
     "joint resolution": 12
    },
    "AZ": {
@@ -40,7 +40,7 @@
     "joint resolution": 4
    },
    "CT": {
-    "joint resolution": 238
+    "joint resolution": 237
    },
    "DE": {
     "concurrent resolution": 338
@@ -63,14 +63,14 @@
     "joint resolution": 5
    },
    "KS": {
-    "concurrent resolution": 7
+    "concurrent resolution": 5
    },
    "KY": {
     "concurrent resolution": 19,
     "joint resolution": 5
    },
    "LA": {
-    "concurrent resolution": 614
+    "concurrent resolution": 36
    },
    "ME": {
     "joint resolution": 71
@@ -80,13 +80,13 @@
    },
    "MO": {
     "concurrent resolution": 21,
-    "joint resolution": 23
+    "joint resolution": 21
    },
    "MS": {
     "concurrent resolution": 18
    },
    "MT": {
-    "joint resolution": 33
+    "joint resolution": 11
    },
    "NC": {
     "joint resolution": 3
@@ -106,7 +106,7 @@
    },
    "OK": {
     "concurrent resolution": 20,
-    "joint resolution": 20
+    "joint resolution": 19
    },
    "OR": {
     "concurrent resolution": 4
@@ -116,7 +116,7 @@
     "joint resolution": 7
    },
    "SD": {
-    "joint resolution": 11
+    "joint resolution": 6
    },
    "TN": {
     "joint resolution": 289
@@ -127,7 +127,7 @@
    },
    "UT": {
     "concurrent resolution": 9,
-    "joint resolution": 26
+    "joint resolution": 23
    },
    "VA": {
     "joint resolution": 202
@@ -137,88 +137,14 @@
     "joint resolution": 118
    },
    "WI": {
-    "joint resolution": 156
+    "joint resolution": 61
    },
    "WV": {
     "concurrent resolution": 103,
     "joint resolution": 7
    }
   },
-  "reached_governor_shown_died": {
-   "AK": {
-    "concurrent resolution": 9
-   },
-   "AL": {
-    "bill": 2,
-    "resolution": 5
-   },
-   "AR": {
-    "bill": 13
-   },
-   "CO": {
-    "bill": 45
-   },
-   "FL": {
-    "bill": 35,
-    "memorial": 1
-   },
-   "HI": {
-    "bill": 8
-   },
-   "IL": {
-    "bill": 2
-   },
-   "KS": {
-    "bill": 53
-   },
-   "LA": {
-    "bill": 72,
-    "concurrent resolution": 577,
-    "resolution": 1568
-   },
-   "MI": {
-    "bill": 13
-   },
-   "MT": {
-    "bill": 20,
-    "resolution": 3
-   },
-   "NC": {
-    "bill": 4
-   },
-   "ND": {
-    "bill": 11
-   },
-   "NE": {
-    "bill": 9
-   },
-   "NV": {
-    "bill": 96
-   },
-   "NY": {
-    "bill": 1
-   },
-   "OK": {
-    "joint resolution": 1
-   },
-   "TN": {
-    "bill": 2
-   },
-   "TX": {
-    "bill": 2,
-    "resolution": 3
-   },
-   "UT": {
-    "bill": 7,
-    "joint resolution": 3
-   },
-   "VA": {
-    "bill": 178
-   },
-   "WI": {
-    "joint resolution": 95
-   }
-  },
+  "reached_governor_shown_died": {},
   "enacted_in_words": {
    "AR": {
     "concurrent memorial": 1,
@@ -267,6 +193,98 @@
    },
    "TN": {
     "bill": 3
+   }
+  },
+  "passed_legislature": {
+   "AK": {
+    "concurrent resolution": 9
+   },
+   "AL": {
+    "bill": 6,
+    "resolution": 9
+   },
+   "AR": {
+    "bill": 13
+   },
+   "CO": {
+    "bill": 209
+   },
+   "CT": {
+    "joint resolution": 2
+   },
+   "FL": {
+    "bill": 35
+   },
+   "HI": {
+    "bill": 3
+   },
+   "IL": {
+    "bill": 4
+   },
+   "KS": {
+    "concurrent resolution": 12,
+    "resolution": 73
+   },
+   "LA": {
+    "bill": 3,
+    "concurrent resolution": 1
+   },
+   "MA": {
+    "bill": 109
+   },
+   "ME": {
+    "bill": 95
+   },
+   "MI": {
+    "bill": 15
+   },
+   "MO": {
+    "bill": 99,
+    "joint resolution": 2
+   },
+   "MS": {
+    "bill": 11
+   },
+   "ND": {
+    "bill": 11,
+    "concurrent resolution": 74
+   },
+   "NE": {
+    "bill": 2
+   },
+   "NV": {
+    "bill": 96
+   },
+   "NY": {
+    "bill": 2
+   },
+   "OH": {
+    "bill": 48
+   },
+   "OK": {
+    "joint resolution": 1,
+    "resolution": 1
+   },
+   "OR": {
+    "bill": 10
+   },
+   "SC": {
+    "bill": 6
+   },
+   "SD": {
+    "joint resolution": 5
+   },
+   "TN": {
+    "bill": 2
+   },
+   "TX": {
+    "bill": 2
+   },
+   "UT": {
+    "bill": 7
+   },
+   "VA": {
+    "bill": 185
    }
   }
  },
@@ -407,8 +425,9 @@
      "passed": 176
     },
     "concurrent resolution": {
-     "died": 76,
-     "passed": 83
+     "died": 67,
+     "passed": 83,
+     "passed_legislature": 9
     },
     "joint resolution": {
      "died": 88,
@@ -525,12 +544,14 @@
    },
    "status": {
     "bill": {
-     "died": 2307,
-     "passed": 1427
+     "died": 2301,
+     "passed": 1427,
+     "passed_legislature": 6
     },
     "resolution": {
-     "died": 368,
-     "passed": 1298
+     "died": 359,
+     "passed": 1298,
+     "passed_legislature": 9
     }
    }
   },
@@ -711,8 +732,9 @@
    },
    "status": {
     "bill": {
-     "died": 1230,
-     "passed": 2249
+     "died": 1217,
+     "passed": 2249,
+     "passed_legislature": 13
     },
     "concurrent memorial": {
      "died": 1,
@@ -1201,8 +1223,9 @@
    },
    "status": {
     "bill": {
-     "died": 1051,
-     "passed": 1919
+     "died": 842,
+     "passed": 1919,
+     "passed_legislature": 209
     }
    }
   },
@@ -1317,8 +1340,9 @@
      "passed": 808
     },
     "joint resolution": {
-     "died": 1011,
-     "passed": 143
+     "died": 1009,
+     "passed": 143,
+     "passed_legislature": 2
     },
     "resolution": {
      "died": 16,
@@ -1690,9 +1714,10 @@
    },
    "status": {
     "bill": {
-     "died": 6172,
+     "died": 6137,
      "introduced": 3,
-     "passed": 1134
+     "passed": 1134,
+     "passed_legislature": 35
     },
     "concurrent resolution": {
      "died": 22,
@@ -1703,9 +1728,9 @@
      "passed": 7
     },
     "memorial": {
-     "died": 42,
+     "died": 41,
      "introduced": 1,
-     "passed": 12
+     "passed": 13
     },
     "resolution": {
      "died": 29,
@@ -1937,9 +1962,10 @@
    },
    "status": {
     "bill": {
-     "died": 10326,
-     "introduced": 5728,
-     "passed": 1095
+     "died": 10343,
+     "introduced": 5708,
+     "passed": 1095,
+     "passed_legislature": 3
     },
     "concurrent resolution": {
      "died": 672,
@@ -2248,9 +2274,10 @@
      "introduced": 707
     },
     "bill": {
-     "died": 8871,
-     "introduced": 9187,
-     "passed": 1910
+     "died": 8869,
+     "introduced": 9185,
+     "passed": 1910,
+     "passed_legislature": 4
     },
     "constitutional amendment": {
      "died": 36,
@@ -2459,12 +2486,14 @@
      "passed": 465
     },
     "concurrent resolution": {
-     "died": 86,
-     "passed": 24
+     "died": 75,
+     "passed": 23,
+     "passed_legislature": 12
     },
     "resolution": {
-     "died": 138,
-     "passed": 53
+     "died": 65,
+     "passed": 53,
+     "passed_legislature": 73
     }
    }
   },
@@ -2812,19 +2841,21 @@
    },
    "status": {
     "bill": {
-     "died": 2429,
-     "passed": 2794
+     "died": 2426,
+     "passed": 2794,
+     "passed_legislature": 3
     },
     "concurrent resolution": {
-     "died": 714,
-     "passed": 91
+     "died": 136,
+     "passed": 668,
+     "passed_legislature": 1
     },
     "concurrent study request": {
      "died": 3
     },
     "resolution": {
-     "died": 1685,
-     "passed": 582
+     "died": 117,
+     "passed": 2150
     },
     "study request": {
      "died": 21
@@ -2892,8 +2923,9 @@
    },
    "status": {
     "bill": {
-     "died": 23279,
-     "passed": 720
+     "died": 23170,
+     "passed": 720,
+     "passed_legislature": 109
     },
     "proposed bill": {
      "died": 12049
@@ -3078,8 +3110,9 @@
    },
    "status": {
     "bill": {
-     "died": 2902,
-     "passed": 1739
+     "died": 2807,
+     "passed": 1739,
+     "passed_legislature": 95
     },
     "joint resolution": {
      "died": 124,
@@ -3148,9 +3181,10 @@
    },
    "status": {
     "bill": {
-     "died": 2899,
-     "introduced": 3467,
-     "passed": 784
+     "died": 2885,
+     "introduced": 3466,
+     "passed": 784,
+     "passed_legislature": 15
     },
     "resolution": {
      "died": 114,
@@ -3409,16 +3443,18 @@
    },
    "status": {
     "bill": {
-     "died": 9856,
-     "passed": 167
+     "died": 9757,
+     "passed": 167,
+     "passed_legislature": 99
     },
     "concurrent resolution": {
      "died": 179,
      "passed": 2
     },
     "joint resolution": {
-     "died": 611,
-     "passed": 9
+     "died": 609,
+     "passed": 9,
+     "passed_legislature": 2
     },
     "resolution": {
      "died": 41,
@@ -3623,8 +3659,9 @@
    },
    "status": {
     "bill": {
-     "died": 11778,
-     "passed": 1566
+     "died": 11767,
+     "passed": 1566,
+     "passed_legislature": 11
     },
     "concurrent resolution": {
      "died": 211,
@@ -3708,15 +3745,15 @@
      "passed": 1561
     },
     "joint resolution": {
-     "died": 118,
-     "passed": 87
+     "died": 117,
+     "passed": 88
     },
     "proposed bill": {
      "died": 1691
     },
     "resolution": {
-     "died": 19,
-     "passed": 184
+     "died": 15,
+     "passed": 188
     }
    }
   },
@@ -3880,11 +3917,13 @@
    },
    "status": {
     "bill": {
-     "died": 778,
-     "passed": 1205
+     "died": 767,
+     "passed": 1205,
+     "passed_legislature": 11
     },
     "concurrent resolution": {
-     "died": 124
+     "died": 50,
+     "passed_legislature": 74
     },
     "memorial": {
      "died": 4
@@ -3977,12 +4016,13 @@
    },
    "status": {
     "bill": {
-     "died": 2323,
-     "passed": 619
+     "died": 2321,
+     "passed": 619,
+     "passed_legislature": 2
     },
     "resolution": {
-     "died": 573,
-     "passed": 460
+     "died": 574,
+     "passed": 459
     }
    }
   },
@@ -4552,8 +4592,9 @@
    },
    "status": {
     "bill": {
-     "died": 1274,
-     "passed": 1069
+     "died": 1178,
+     "passed": 1069,
+     "passed_legislature": 96
     }
    }
   },
@@ -4619,9 +4660,10 @@
    },
    "status": {
     "bill": {
-     "died": 19011,
-     "introduced": 19965,
-     "passed": 2539
+     "died": 19010,
+     "introduced": 19964,
+     "passed": 2539,
+     "passed_legislature": 2
     },
     "concurrent resolution": {
      "died": 11,
@@ -4718,9 +4760,10 @@
    },
    "status": {
     "bill": {
-     "died": 1003,
-     "introduced": 1419,
-     "passed": 157
+     "died": 958,
+     "introduced": 1416,
+     "passed": 157,
+     "passed_legislature": 48
     },
     "resolution": {
      "died": 483,
@@ -4936,14 +4979,16 @@
      "passed": 88
     },
     "joint resolution": {
-     "died": 222,
+     "died": 221,
      "introduced": 115,
-     "passed": 41
+     "passed": 41,
+     "passed_legislature": 1
     },
     "resolution": {
-     "died": 39,
+     "died": 38,
      "introduced": 18,
-     "passed": 243
+     "passed": 243,
+     "passed_legislature": 1
     }
    }
   },
@@ -5101,8 +5146,9 @@
    },
    "status": {
     "bill": {
-     "died": 5189,
-     "passed": 1507
+     "died": 5179,
+     "passed": 1507,
+     "passed_legislature": 10
     },
     "concurrent resolution": {
      "died": 48,
@@ -5393,9 +5439,10 @@
    },
    "status": {
     "bill": {
-     "died": 1860,
-     "introduced": 1881,
-     "passed": 483
+     "died": 1857,
+     "introduced": 1878,
+     "passed": 483,
+     "passed_legislature": 6
     },
     "concurrent resolution": {
      "died": 61,
@@ -5554,8 +5601,9 @@
      "died": 79
     },
     "joint resolution": {
-     "died": 45,
-     "passed": 4
+     "died": 40,
+     "passed": 4,
+     "passed_legislature": 5
     }
    }
   },
@@ -5688,8 +5736,9 @@
    },
    "status": {
     "bill": {
-     "died": 9273,
-     "passed": 2371
+     "died": 9271,
+     "passed": 2371,
+     "passed_legislature": 2
     },
     "joint resolution": {
      "died": 597,
@@ -5898,8 +5947,9 @@
    },
    "status": {
     "bill": {
-     "died": 15527,
-     "passed": 2546
+     "died": 15525,
+     "passed": 2546,
+     "passed_legislature": 2
     },
     "concurrent resolution": {
      "died": 244,
@@ -5910,8 +5960,8 @@
      "passed": 34
     },
     "resolution": {
-     "died": 258,
-     "passed": 6323
+     "died": 255,
+     "passed": 6326
     }
    }
   },
@@ -6155,16 +6205,17 @@
    },
    "status": {
     "bill": {
-     "died": 1449,
-     "passed": 2140
+     "died": 1442,
+     "passed": 2140,
+     "passed_legislature": 7
     },
     "concurrent resolution": {
      "died": 26,
      "passed": 63
     },
     "joint resolution": {
-     "died": 87,
-     "passed": 77
+     "died": 84,
+     "passed": 80
     },
     "resolution": {
      "died": 9,
@@ -6346,9 +6397,10 @@
    },
    "status": {
     "bill": {
-     "died": 6855,
-     "introduced": 1216,
-     "passed": 3413
+     "died": 6677,
+     "introduced": 1209,
+     "passed": 3413,
+     "passed_legislature": 185
     },
     "constitutional amendment": {
      "died": 16,
@@ -6651,8 +6703,8 @@
      "passed": 519
     },
     "joint resolution": {
-     "died": 559,
-     "passed": 22
+     "died": 464,
+     "passed": 117
     },
     "resolution": {
      "died": 15,

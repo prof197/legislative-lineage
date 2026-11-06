@@ -683,6 +683,18 @@ def reached_governor_shown_died(
     return rows
 
 
+def status_counts(
+    con: duckdb.DuckDBPyConnection, *, bills_glob: str, status: str
+) -> list[tuple[str, str, int]]:
+    """Records per state and type with `status`."""
+    rows: list[tuple[str, str, int]] = con.execute(
+        f"SELECT state, {_TYPE} AS type, count(*) FROM read_parquet($bills) "
+        "WHERE status = $status GROUP BY ALL ORDER BY state, type",
+        {"bills": bills_glob, "status": status},
+    ).fetchall()
+    return rows
+
+
 def status_reason_counts(
     con: duckdb.DuckDBPyConnection, *, bills_glob: str, reason: str
 ) -> list[tuple[str, str, int]]:
