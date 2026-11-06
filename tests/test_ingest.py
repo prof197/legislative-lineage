@@ -3,6 +3,7 @@ from pathlib import Path
 import duckdb
 import pytest
 
+from lineage import queries
 from lineage.disk import InsufficientDiskSpaceError
 from lineage.ingest import ingest
 from lineage.snapshot import SnapshotError, scan, write_manifest
@@ -17,7 +18,7 @@ def manifest(raw_dir: Path, tmp_path: Path) -> Path:
 
 
 def _bills(out: Path) -> duckdb.DuckDBPyConnection:
-    con = duckdb.connect()
+    con = queries.connect_quiet()
     con.execute(f"CREATE VIEW bills AS SELECT * FROM read_parquet('{out / 'bills' / '*.parquet'}')")
     return con
 

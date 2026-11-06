@@ -1,3 +1,4 @@
+import ast
 import shutil
 from pathlib import Path
 
@@ -8,6 +9,9 @@ from lineage import disk, queries
 from lineage.disk import InsufficientDiskSpaceError, check_free_space
 
 GiB = 1 << 30
+ROOT = Path(__file__).parents[1]
+# Opening DuckDB any other way skips the spill cap, and one such query filled the disk once.
+_GUARDED = ROOT / "src" / "lineage" / "queries.py"
 
 
 def test_allows_a_write_that_leaves_the_floor_intact() -> None:
@@ -61,3 +65,34 @@ def test_the_spill_directory_is_held_to_the_same_floor(
 
     with queries.connect(memory_limit="1GB", temp_directory=tmp_path) as con:
         assert _spill_limit(con) == "2.0 GiB"
+
+
+def _unguarded_duckdb_calls(path: Path) -> list[str]:
+    tree = ast.parse(path.read_text(), filename=str(path))
+    found = [
+        f"{path.relative_to(ROOT)}:{node.lineno}: duckdb.{node.func.attr}()"
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Attribute)
+        and isinstance(node.func.value, ast.Name)
+        and node.func.value.id == "duckdb"
+    ]
+    found += [
+        f"{path.relative_to(ROOT)}:{node.lineno}: from duckdb import ..."
+        for node in ast.walk(tree)
+        if isinstance(node, ast.ImportFrom) and node.module == "duckdb"
+    ]
+    return found
+
+
+def test_every_duckdb_connection_goes_through_the_guarded_helpers() -> None:
+    # Calling anything on the module (connect, execute, sql, read_parquet) opens a connection
+    # with no spill cap; naming its types and exceptions is fine.
+    paths = [
+        p
+        for d in ("src", "tests", "evals", "benchmarks")
+        for p in (ROOT / d).rglob("*.py")
+        if p != _GUARDED
+    ]
+
+    assert [c for p in paths for c in _unguarded_duckdb_calls(p)] == []

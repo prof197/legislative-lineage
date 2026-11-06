@@ -1,10 +1,10 @@
 import json
 from pathlib import Path
 
-import duckdb
 import pytest
 from typer.testing import CliRunner
 
+from lineage import queries
 from lineage.cli import app
 from lineage.doctypes import (
     RULES,
@@ -309,7 +309,7 @@ def test_writes_eligibility_and_a_report_counting_each_rule(tables: Path, tmp_pa
 
     doc = build_eligibility(tables, rules_path=RULES, report_path=report)
 
-    con = duckdb.connect()
+    con = queries.connect_quiet()
     rows = con.execute(
         f"SELECT b.state, b.identifier, e.eligible, e.rule "
         f"FROM read_parquet('{tables / 'eligible.parquet'}') e "

@@ -20,8 +20,6 @@ import shutil
 from pathlib import Path
 from typing import Any
 
-import duckdb
-
 from lineage import queries
 from lineage.commission import FIRST_YEAR
 from lineage.sessions import load_sessions
@@ -76,7 +74,7 @@ def main() -> None:
         if r.stratum is not None and r.state is not None and r.year >= FIRST_YEAR
     ]
     bills_glob = str(TABLES / "bills" / "*.parquet")
-    with duckdb.connect() as con:
+    with queries.connect_quiet() as con:
         bills = queries.enactment_bills(
             con,
             bills_glob=bills_glob,

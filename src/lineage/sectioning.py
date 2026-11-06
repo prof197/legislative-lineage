@@ -111,7 +111,7 @@ def build_sections(tables_dir: Path, *, workers: int, floor_bytes: int) -> Secti
     )
     if not files:
         raise SectioningError(f"no bills table in {tables_dir}; run `lineage ingest` first")
-    with duckdb.connect() as con:
+    with queries.connect_quiet() as con:
         text = queries.text_bytes(con, bills_glob=str(tables_dir / "bills" / "*.parquet"))
     # Each section is stored twice, as display text and as normalized text, and neither copy is
     # longer than the input; compressed Parquet stays under that bound.

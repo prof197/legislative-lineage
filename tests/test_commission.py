@@ -10,11 +10,11 @@ import json
 from dataclasses import replace
 from pathlib import Path
 
-import duckdb
 import numpy as np
 import pytest
 from typer.testing import CliRunner
 
+from lineage import queries
 from lineage.acts import ACTS
 from lineage.cli import app
 from lineage.commission import MISS_REASONS, Probe, Relative, evaluate, probe, target_reason
@@ -112,7 +112,7 @@ def test_found_is_a_score_above_the_threshold_whatever_the_rank() -> None:
 
 
 def _raw_text(tables: Path, bill_id: str) -> str:
-    with duckdb.connect() as con:
+    with queries.connect_quiet() as con:
         row = con.execute(
             "SELECT raw_text FROM read_parquet($p) WHERE id = $i",
             {"p": str(tables / "bills" / "*.parquet"), "i": bill_id},
@@ -142,9 +142,9 @@ def test_pipeline_regression_the_enacting_bills_are_found_among_distractors(
     commission_corpus: Path,
 ) -> None:
     build = json.loads((COMMISSION / "build.json").read_text())
-    queries = {act: _raw_text(commission_corpus, bill) for act, bill in build["queries"].items()}
+    act_texts = {act: _raw_text(commission_corpus, bill) for act, bill in build["queries"].items()}
     snapshot = load_enactments(ENACTMENTS)
-    with duckdb.connect() as con:
+    with queries.connect_quiet() as con:
         own = {
             (act, row[0], row[1])
             for act, bill in build["queries"].items()
@@ -161,7 +161,7 @@ def test_pipeline_regression_the_enacting_bills_are_found_among_distractors(
     ]
 
     result = evaluate(
-        queries, replace(snapshot, rows=rows), commission_corpus,
+        act_texts, replace(snapshot, rows=rows), commission_corpus,
         load_sessions(COMMISSION / "sessions.csv"),
     )  # fmt: skip
 

@@ -3,6 +3,7 @@ from pathlib import Path
 import duckdb
 import pytest
 
+from lineage import queries
 from lineage.disk import InsufficientDiskSpaceError
 from lineage.ingest import ingest
 from lineage.sectioning import SectioningError, build_sections
@@ -20,7 +21,7 @@ def tables(raw_dir: Path, tmp_path: Path) -> Path:
 
 
 def _sections(tables: Path) -> duckdb.DuckDBPyConnection:
-    con = duckdb.connect()
+    con = queries.connect_quiet()
     con.execute(
         f"CREATE VIEW sections AS SELECT * FROM read_parquet('{tables / 'sections' / '*.parquet'}')"
     )
