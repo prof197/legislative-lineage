@@ -39,6 +39,28 @@ def test_html_decodes_with_the_declared_charset_or_falls_back() -> None:
     assert html_text(page, None) == "Fiancée § 3"
 
 
+PAGE_WITH_CHROME = b"""<html><body><nav><div>Home</div><div>Bills</div></nav>
+<div id="document"><div class="title">AN ACT relating to widgets.</div>
+<p>Section 1. Short title.</p></div><div id="footer">Contact us</div></body></html>"""
+
+
+def test_html_keeps_only_the_states_content_element() -> None:
+    text = html_text(PAGE_WITH_CHROME, "utf-8", container="div#document")
+
+    assert text.splitlines() == ["AN ACT relating to widgets.", "Section 1. Short title."]
+
+
+def test_a_content_element_can_be_named_by_class() -> None:
+    page = b'<body><p>Menu</p><div class="text body">Section 1. Fees.</div></body>'
+
+    assert html_text(page, "utf-8", container="div.text") == "Section 1. Fees."
+
+
+def test_a_page_without_its_content_element_is_an_error() -> None:
+    with pytest.raises(ExtractError, match="content element"):
+        extract(PAGE_WITH_CHROME, "text/html", container="div#legcontent")
+
+
 def _pdf(*pages: str) -> bytes:
     writer = PdfWriter()
     for text in pages:

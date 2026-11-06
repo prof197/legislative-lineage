@@ -1,0 +1,98 @@
+# The text layer's rules (DESIGN.md#dr-6), applied by lineage.text_rules. The quality test
+# (`uv run lineage text sample` -> reports/text_quality.json) measures what these choose between;
+# tests/test_text_rules.py checks the choices against that report.
+
+[usable]
+# Usable text, the bar fetched text must clear: at least this many words, at least this share
+# of them real words (letters with a vowel). On the quality sample the bar fails only pages with
+# no bill on them (South Dakota's script-built pages, New Hampshire's dead links) and a few
+# stray documents, and passes a shell bill that holds only a short title.
+min_words = 30
+min_real_word_share = 0.5
+
+[fetch]
+# A state is fetched when its format and reading give usable text for at least this share of
+# its sampled records without text.
+min_usable_rate = 0.8
+# HTML is chosen when its clean rate is within this margin of the best PDF reading's, because
+# HTML marks struck text, which the extractor drops, and a PDF's text layer does not.
+html_margin = 0.05
+
+[replace]
+# Fetched text replaces Open States' stored text where, on the sampled records that have both,
+# our clean rate exceeds theirs by at least `margin`, over at least `min_compared` records.
+margin = 0.2
+min_compared = 10
+
+[hosts]
+# A site's content element: only text inside it is kept, which drops the site's menus.
+# Measured as the share of a host's text in lines repeated across its documents.
+"www.revisor.mn.gov" = { container = "div#document" }
+"assembly.state.ny.us" = { container = "div#legcontent" }
+"www.akleg.gov" = { container = "div#draftOverlay" }
+"www.wvlegislature.gov" = { container = "div.textcontainer" }
+"lis.virginia.gov" = { container = "div#mainC" }
+# New Hampshire moved its site to gc.nh.gov. The old host redirects there, but its record ids
+# no longer resolve: every sampled link answers "No bill text is on file", while every sampled
+# gc.nh.gov link yields the bill.
+"www.gencourt.state.nh.us" = { retired = "New Hampshire's old site; its ids no longer resolve" }
+
+[states]
+# formats: link formats in order of preference; a record lacking the first is fetched in the
+# next. reading: how a PDF is read, "plain" (text order) or "layout" (word positions). The
+# preferred format is the one with the best clean rate over the sampled documents, HTML when
+# within `html_margin` of the best PDF reading (reports/text_quality.json). A fallback is
+# listed only where the sample shows that format yields the bill; it is left off where it does
+# not: Kansas's, Illinois's, Iowa's, Wisconsin's and South Dakota's HTML links are a document
+# viewer, a "too large to display" page, or pages built by scripts, and Minnesota's and Texas's
+# PDFs split poorly in their reading.
+AK = { formats = ["html", "pdf"] }
+AL = { formats = ["pdf"] }
+AR = { formats = ["pdf"] }
+AZ = { formats = ["html", "pdf"] }
+CA = { source = "bulk" }  # leginfo's robots.txt answers 403; see lineage.ca_bulk
+CO = { formats = ["pdf"] }
+CT = { formats = ["pdf"] }
+DE = { formats = ["html", "pdf"] }
+FL = { formats = ["html", "pdf"] }
+GA = { formats = ["pdf"] }
+HI = { formats = ["html", "pdf"] }
+IA = { formats = ["pdf"], reading = "layout" }
+ID = { formats = ["pdf"], reading = "layout" }
+IL = { formats = ["pdf"] }
+IN = { fetch = false, reason = "documents are served only through an API that needs a registered key" }
+KS = { formats = ["pdf"] }
+KY = { formats = ["pdf"] }
+LA = { formats = ["pdf"] }
+MA = { formats = ["pdf"] }
+MD = { formats = ["pdf"] }
+ME = { formats = ["pdf"], reading = "layout" }
+MI = { formats = ["html", "pdf"] }
+MN = { formats = ["html"] }
+MO = { formats = ["pdf"] }
+MS = { formats = ["html", "pdf"] }
+MT = { formats = ["pdf"], reading = "layout" }
+NC = { formats = ["pdf"] }
+ND = { formats = ["pdf"] }
+NE = { formats = ["pdf"] }
+NH = { formats = ["html", "pdf"] }
+NJ = { formats = ["html", "pdf"] }
+NM = { formats = ["html", "pdf"] }
+NV = { formats = ["pdf"] }
+NY = { formats = ["pdf", "html"] }
+OH = { formats = ["html", "pdf"] }
+OK = { formats = ["pdf"] }
+OR = { formats = ["pdf"] }
+PA = { formats = ["html", "pdf"] }
+RI = { formats = ["pdf"] }
+SC = { formats = ["html"] }
+SD = { formats = ["pdf"] }
+TN = { fetch = false, reason = "robots.txt disallows the bill links" }
+TX = { formats = ["html"] }
+UT = { formats = ["pdf"] }
+VA = { formats = ["html", "pdf"] }
+VT = { formats = ["pdf"] }
+WA = { formats = ["html", "pdf"] }
+WI = { formats = ["pdf"] }
+WV = { formats = ["html", "pdf"] }
+WY = { formats = ["pdf"], reading = "layout" }

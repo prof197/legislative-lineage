@@ -3,7 +3,13 @@
 from typing import Any
 
 from lineage.text_fetch import Job
-from lineage.text_quality import draw_sample, evaluate, overlap
+from lineage.text_quality import containment, draw_sample, evaluate, overlap
+from lineage.text_rules import TextRules
+
+RULES = TextRules(
+    min_words=5, min_real_word_share=0.5, min_usable_rate=0.8, html_margin=0.05,
+    replace_margin=0.2, replace_min_compared=1, states={}, containers={}, retired={},
+)  # fmt: skip
 
 
 def _plan(state: str, kind: str, n: int, *, html: bool = True) -> list[dict[str, Any]]:
@@ -49,6 +55,14 @@ def test_overlap_is_word_five_gram_jaccard() -> None:
     assert overlap(a, "An unrelated sentence about fees and their schedule for permits.") == 0.0
 
 
+def test_containment_asks_whether_their_text_is_in_ours() -> None:
+    theirs = "Section 1. The board shall meet each month in the capital city."
+    ours = "Digest: the editor's summary of the bill. " + theirs
+
+    assert containment(ours, theirs) == 1.0
+    assert overlap(ours, theirs) < 1.0
+
+
 def test_evaluate_compares_our_text_with_theirs_on_the_same_record() -> None:
     bill = "Section 1. Short title.\nThis act is the Widget Act.\nSection 2. Fees.\nFive dollars."
     url = "https://nj.example/usable/0.htm"
@@ -67,11 +81,14 @@ def test_evaluate_compares_our_text_with_theirs_on_the_same_record() -> None:
         "b": ("one long paragraph " * 50, url, versions)
     }
 
-    cell = evaluate(sample, fetched, theirs, {"a": "NJ", "b": "NJ"})["NJ"]["html"]
+    cell = evaluate(sample, fetched, theirs, {"a": "NJ", "b": "NJ"}, RULES)["NJ"]["html"]
 
-    assert cell["clean_rate"] == {
-        "without_text": 1.0, "with_text_ours": 1.0, "with_text_theirs": 0.0,
-        "without_text_pdf_layout": None,
+    assert cell["readings"] == {
+        "plain": {
+            "usable_rate": 1.0,
+            "clean_rate": {"all": 1.0, "without_text": 1.0, "with_text": 1.0},
+        }
     }  # fmt: skip
-    assert cell["same_version_rate"] == 1.0
+    assert cell["theirs"] == {"usable_rate": 1.0, "clean_rate": 0.0}  # usable, no headings
+    assert (cell["compared"], cell["same_version_rate"]) == (1, 1.0)
     assert cell["sampled"] == {"without_text": 1, "with_text": 1}

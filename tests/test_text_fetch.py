@@ -8,8 +8,10 @@ from http.client import HTTPResponse
 from pathlib import Path
 from typing import Any, cast
 
+import pytest
+
 from lineage.robots import Robots, parse_robots
-from lineage.text_fetch import Fetched, Job, fetch_one, run_host
+from lineage.text_fetch import ExtractionWorkersError, Fetched, Job, fetch_one, run_host
 
 AT = "2099-01-02T00:00:00+00:00"
 PAGE = b"<html><body><p>Section 1. Short title.</p><p>Section 2. Fees.</p></body></html>"
@@ -144,3 +146,11 @@ def test_a_host_that_keeps_failing_is_stopped(tmp_path: Path) -> None:
     )  # fmt: skip
 
     assert (got["server_error"], got["host_stopped"]) == (20, 1)
+
+
+def test_failed_extraction_workers_stop_the_run_instead_of_failing_each_document() -> None:
+    def extractor(body: bytes, content_type: str, **options: Any) -> str:
+        raise ExtractionWorkersError("a process in the pool terminated abruptly")
+
+    with pytest.raises(ExtractionWorkersError):
+        fetch_one(JOB, _robots(), opener=_opener(), extractor=extractor)

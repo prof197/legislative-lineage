@@ -12,17 +12,20 @@ DESIGN.md#dr-6.
 
 import hashlib
 import json
+import os
 import threading
 import time
 import urllib.error
 import zlib
 from collections import Counter
 from collections.abc import Callable, Iterable
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from concurrent.futures.process import BrokenProcessPool
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from http.client import HTTPException, HTTPResponse
 from pathlib import Path
+from typing import Any
 from urllib.parse import urlsplit
 
 from lineage.disk import DEFAULT_FLOOR_BYTES, require_free_space
@@ -36,6 +39,12 @@ MAX_BODY_BYTES = 64 << 20
 # Consecutive failures after which a host is left alone for the rest of the run.
 STOP_AFTER_FAILURES = 20
 _RETRIED = frozenset({"network_error", "server_error"})
+_PROBE = b"<p>Section 1. The extraction workers are running.</p>"
+
+
+class ExtractionWorkersError(Exception):
+    """The extraction workers, not the document, failed: the run stops instead of recording
+    every document as an extraction error, which a rerun would not retry."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -45,6 +54,7 @@ class Job:
     format: str  # "html" or "pdf": the link's format as the export lists it
     note: str  # the version's label
     date: str
+    layout: bool = False  # read a PDF by word position (lineage.extract.pdf_text)
 
 
 @dataclass(frozen=True, slots=True)
@@ -55,7 +65,8 @@ class Fetched:
     format: str
     note: str
     date: str
-    outcome: str  # ok, robots, too_large, http_error, server_error, network_error, extract_error
+    outcome: str  # ok, not_usable, robots, too_large, http_error, server_error, network_error,
+    # extract_error
     status: int | None
     error: str | None
     body_bytes: int
@@ -99,7 +110,13 @@ def fetch_one(
     *,
     opener: Callable[[str, float], HTTPResponse] = open_url,
     layout_too: bool = False,
+    container: str | None = None,
+    extractor: Callable[..., str] = extract,
+    check: Callable[[str], bool] | None = None,
 ) -> Fetched:
+    """Fetch one job and extract its text. `container` is the host's content element;
+    `extractor` runs the extraction, in a worker process during a full run; text that fails
+    `check` (the usable-text bar) is kept but marked not_usable."""
     url = moved(job.url)
     started = time.monotonic()
     at = datetime.now(UTC).isoformat(timespec="seconds")
@@ -129,19 +146,22 @@ def fetch_one(
     if body is None:
         return result("too_large", status=status, error=f"over {MAX_BODY_BYTES} bytes")
     try:
-        text = extract(body, content_type)
+        text = extractor(body, content_type, layout=job.layout, container=container)
     except ExtractError as e:
         return result("extract_error", status=status, error=str(e), size=len(body))
+    except ExtractionWorkersError:
+        raise
     except Exception as e:
         error = f"extractor failed: {type(e).__name__}: {e}"
         return result("extract_error", status=status, error=error, size=len(body))
     layout = None
     if layout_too and body.startswith(b"%PDF"):
         try:
-            layout = extract(body, content_type, layout=True)
+            layout = extractor(body, content_type, layout=True)
         except Exception:
             layout = None
-    return result("ok", status=status, size=len(body), text=text, layout=layout)
+    outcome = "ok" if check is None or check(text) else "not_usable"
+    return result(outcome, status=status, size=len(body), text=text, layout=layout)
 
 
 def stored(path: Path) -> set[tuple[str, str, str]]:
@@ -164,6 +184,9 @@ def run_host(
     read: Callable[[str, str], Robots] = read_robots,
     fetch: Callable[[Job, Robots], Fetched] | None = None,
     layout_too: bool = False,
+    container: str | None = None,
+    extractor: Callable[..., str] = extract,
+    check: Callable[[str], bool] | None = None,
     floor_bytes: int = DEFAULT_FLOOR_BYTES,
     sleep: Callable[[float], None] = time.sleep,
     stop: threading.Event | None = None,
@@ -185,7 +208,18 @@ def run_host(
                 break
             if i:
                 sleep(interval)
-            fetched = fetch(job, robots) if fetch else fetch_one(job, robots, layout_too=layout_too)
+            fetched = (
+                fetch(job, robots)
+                if fetch
+                else fetch_one(
+                    job,
+                    robots,
+                    layout_too=layout_too,
+                    container=container,
+                    extractor=extractor,
+                    check=check,
+                )
+            )
             line = json.dumps(asdict(fetched), ensure_ascii=False) + "\n"
             require_free_space(store_dir, needed=len(line.encode()), floor=floor_bytes)
             out.write(line)
@@ -204,8 +238,15 @@ def fetch_all(
     *,
     floor_bytes: int = DEFAULT_FLOOR_BYTES,
     layout_too: bool = False,
+    containers: dict[str, str] | None = None,
+    check: Callable[[str], bool] | None = None,
+    processes: int | None = None,
 ) -> dict[str, Counter[str]]:
-    """Run every host's jobs, hosts in parallel; return the outcome counts per host."""
+    """Run every host's jobs, hosts in parallel; return the outcome counts per host.
+
+    Hosts wait on the network, so each gets a thread. Extraction is CPU-bound pure Python,
+    which threads would run one at a time, so it goes to a pool of worker processes.
+    """
     by_host: dict[str, list[Job]] = {}
     for job in jobs:
         by_host.setdefault(host_of(job.url), []).append(job)
@@ -213,8 +254,27 @@ def fetch_all(
     stop = threading.Event()
     # The slowest hosts (most jobs, longest crawl delay) start first.
     hosts = sorted(by_host, key=lambda h: -len(by_host[h]))
-    # Workers wait on the network, not the CPU, so every host gets its own.
-    with ThreadPoolExecutor(max_workers=max(1, len(hosts))) as pool:
+    workers = processes or max(1, (os.cpu_count() or 2) - 2)
+    with (
+        ProcessPoolExecutor(max_workers=workers) as extractors,
+        ThreadPoolExecutor(max_workers=max(1, len(hosts))) as pool,
+    ):
+
+        def extractor(body: bytes, content_type: str, **options: Any) -> str:
+            try:
+                return extractors.submit(extract, body, content_type, **options).result()
+            except BrokenProcessPool as e:
+                raise ExtractionWorkersError(str(e)) from e
+
+        # Before any request: workers that cannot start (a script run without a main guard,
+        # under spawn) would otherwise fail every document after its body was fetched.
+        try:
+            probe = extractor(_PROBE, "text/html")
+        except Exception as e:
+            raise ExtractionWorkersError(f"extraction workers did not start: {e}") from e
+        if "extraction workers are running" not in probe:
+            raise ExtractionWorkersError(f"extraction workers returned {probe!r}")
+
         futures = {
             h: pool.submit(
                 run_host,
@@ -224,6 +284,9 @@ def fetch_all(
                 floor_bytes=floor_bytes,
                 stop=stop,
                 layout_too=layout_too,
+                container=(containers or {}).get(h),
+                extractor=extractor,
+                check=check,
             )
             for h in hosts
         }

@@ -68,7 +68,8 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   text_inventory.py  `lineage text inventory`: unusable text per record, the fetch plan, per-host counts
   certs/intermediates.pem  intermediate certificates some legislature servers omit
   extract.py      text from HTML or PDF (pypdf), lines kept, struck text dropped
-  text_fetch.py   polite per-host fetching: robots, pacing, backoff, resumable JSON-lines store
+  text_fetch.py   polite per-host fetching: robots, pacing, backoff, resumable JSON-lines store; extraction in worker processes
+  text_rules.py   rules/text_layer.toml: the usable-text bar, per-state formats and readings, the replacement rule
   text_quality.py  `lineage text sample`: the quality test, fetched text against Open States'
   queries.py      every SQL query the pipeline runs (DR-4)
   disk.py         free-space floor checked before large writes
@@ -82,11 +83,12 @@ tests/            pytest; small committed fixtures only
 snapshot/manifest.json  the pinned snapshot: per-archive size, SHA-256, Generated At
 snapshot/sessions.csv   session start/end dates and carryover, from a pinned scrapers commit
 rules/document_types.csv  which document types are matched, per state; first fitting rule wins
+rules/text_layer.toml  the text layer's rules: usable bar, per-state format and PDF reading, content elements, replacement
 reports/          committed outputs of pipeline commands; README and DESIGN numbers cite them
   results.json    eval results, one section per eval; the README results table reads it
   answer_key.csv  each commission list row and the corpus bills it resolved to
   text_inventory.json  records without usable text, the versions planned, hosts and their robots.txt
-  text_quality.json  the quality test per state and format: outcomes, clean-text rates, comparison
+  text_quality.json  the quality test per state and format: outcomes, usable and clean rates per reading, comparison
 DESIGN.md         design, alternatives, scaling limits, failure modes, decision records
 data/             local snapshots and derived tables; gitignored, never committed
   raw/<ST>/*.zip  Open States session archives, never edited
@@ -106,6 +108,7 @@ data/             local snapshots and derived tables; gitignored, never committe
 - Every number in README.md or DESIGN.md comes from a committed eval or benchmark output, with the command that reproduces it. Never hard-code a result.
 - Fix random seeds. The snapshot is pinned by `snapshot/manifest.json`; an archive's as-of date is its README's Generated At.
 - Before a large write, call `disk.require_free_space` with an upper bound on the bytes written. The default floor is 20 GiB free.
+- A script that fetches through `text_fetch.fetch_all` runs under `if __name__ == "__main__":`; its extraction workers are spawned and re-import the script.
 - Open DuckDB only through `queries.connect_quiet` or `queries.connect`, which cap a query's spill to disk at the same floor. This holds for tests and one-off probes too; a test fails on any other `duckdb.*()` call.
 - Secrets come only from environment variables. `.env` is gitignored.
 - Model calls happen only in the explanation step and the provisional precision labels. Retrieval runs with no API key.
