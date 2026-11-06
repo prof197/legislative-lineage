@@ -58,6 +58,12 @@ _GUTTER = re.compile(r"^\d{1,3}(?=[ \t]|$)[ \t]*")
 # Treat leading numbers as a gutter only when most lines carry one, as printed bills do.
 _GUTTER_MIN_LINES = 3
 _GUTTER_MIN_SHARE = 0.5
+# Line numbers a PDF prints after the text, or in a column of their own, come out at the end of
+# each line (glued to the last word or after a space) or on lines alone. They are recognized as
+# a run of lines whose numbers count up by one, restarting at 1 on each page; a number that only
+# looks like one ends a run within a few lines.
+_LINE_RUN_MIN = 5
+_LINE_RUN_MAX_GAP = 3
 # A running page header repeats on every page: short, with a number, and without lowercase
 # ("LC 47 3375", "STATE OF WYOMING 25LSO-0123"). Repeated lines that read as text, such as
 # "is amended to read as follows:", stay; the document-frequency stoplist handles those.
@@ -132,6 +138,44 @@ def _strip_gutter(lines: list[str]) -> list[str]:
     return [_GUTTER.sub("", line, count=1) for line in lines]
 
 
+def _without_line_number(line: str, n: int) -> str | None:
+    """`line` without the line number `n` at its end, or None if it does not end with it."""
+    tag = str(n)
+    return line[: -len(tag)].rstrip() if line.endswith(tag) else None
+
+
+def _strip_line_numbers(lines: list[str]) -> list[str]:
+    out = list(lines)
+    dropped: set[int] = set()
+    run: list[tuple[int, str]] = []
+    expected = gap = 0
+
+    def close() -> None:
+        if len(run) >= _LINE_RUN_MIN:
+            for i, rest in run:
+                out[i] = rest
+                if not rest:
+                    dropped.add(i)
+
+    for i, line in enumerate(lines):
+        rest = _without_line_number(line, expected) if run else None
+        if rest is not None:
+            run.append((i, rest))
+            expected, gap = expected + 1, 0
+            continue
+        first = _without_line_number(line, 1)
+        if first is not None:
+            close()
+            run, expected, gap = [(i, first)], 2, 0
+        elif run and line:
+            gap += 1
+            if gap > _LINE_RUN_MAX_GAP:
+                close()
+                run = []
+    close()
+    return [line for i, line in enumerate(out) if i not in dropped]
+
+
 def _is_running_header(line: str, repeats: int) -> bool:
     return (
         repeats >= _HEADER_MIN_REPEATS
@@ -152,7 +196,8 @@ def clean(raw: str) -> str:
     text = _STYLE_RULES.sub("", _HTML_COMMENT.sub("", text))
     text = _STATUTE_MARKERS.sub("", text)
     text = _invisible().sub("", text)
-    lines = _strip_gutter([" ".join(line.split()) for line in text.split("\n")])
+    lines = [" ".join(line.split()) for line in text.split("\n")]
+    lines = _strip_gutter(_strip_line_numbers(lines))
     lines = _strip_running_headers(lines)
     # Keep paragraph breaks, which the window fallback uses, but never more than one.
     return re.sub(r"\n{3,}", "\n\n", "\n".join(lines)).strip()

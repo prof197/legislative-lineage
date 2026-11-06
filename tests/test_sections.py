@@ -91,6 +91,44 @@ def test_clean_keeps_numbered_lines_that_are_not_gutters() -> None:
     assert clean("2023 Regular Session") == "2023 Regular Session"
 
 
+def test_clean_drops_line_numbers_printed_after_the_text() -> None:
+    # A PDF's margin line numbers come out glued to the line's last word (Nebraska, Georgia)
+    # or after a space (Mississippi), and count up again on each page.
+    page = (
+        "A BILL FOR AN ACT relating to revenue; to amend section1\n"
+        "77-2701, Revised Statutes Supplement, 2023,2\n"
+        "and to repeal the original sections. 3\n"
+        "Be it enacted by the people of the State of Nebraska,4\n"
+        "Section 1. Section 77-2701 is amended to read: 5\n"
+        "(a) a fee of five dollars under section 56\n"
+    )
+
+    lines = clean(page + page).splitlines()
+
+    assert lines[:6] == [
+        "A BILL FOR AN ACT relating to revenue; to amend section",
+        "77-2701, Revised Statutes Supplement, 2023,",
+        "and to repeal the original sections.",
+        "Be it enacted by the people of the State of Nebraska,",
+        "Section 1. Section 77-2701 is amended to read:",
+        "(a) a fee of five dollars under section 5",
+    ]
+    assert lines[6:] == lines[:6]
+
+
+def test_clean_drops_a_column_of_line_numbers_on_their_own_lines() -> None:
+    # Oregon's PDFs give the page's line numbers first, one per line.
+    text = "1\n2\n3\n4\n5\n6\nA BILL FOR AN ACT\nRelating to education funding."
+
+    assert clean(text) == "A BILL FOR AN ACT\nRelating to education funding."
+
+
+def test_clean_keeps_numbers_that_do_not_count_up_line_by_line() -> None:
+    text = "Section 1. The fee is $5\nSection 2. The fee is 7\nSection 3. Repeal 2\nYear 2024"
+
+    assert clean(text) == text
+
+
 def test_falls_back_to_windows_on_paragraph_boundaries() -> None:
     paragraphs = [_words(120, f"p{i}") for i in range(5)]
 
