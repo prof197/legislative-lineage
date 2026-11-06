@@ -62,10 +62,11 @@
    "outcome:no_link": 1,
    "outcome:planned": 484,
    "with_text": 2485,
-   "with_text:html_and_pdf": 24,
-   "with_text:pdf_only": 2461,
+   "with_text:html_and_pdf": 32,
+   "with_text:pdf_only": 2453,
    "without_text": 485,
-   "without_text:pdf_only": 484
+   "without_text:html_and_pdf": 3,
+   "without_text:pdf_only": 481
   },
   "CT": {
    "eligible": 9260,
@@ -534,7 +535,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "dc595e66648611314f4a3c511c2c95bc2690ef4c90f77671de83734da8b649be",
-    "read_at": "2026-11-06T13:57:50+00:00"
+    "read_at": "2026-11-06T14:06:59+00:00"
    }
   },
   "legislation.nysenate.gov": {
@@ -553,7 +554,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "7c55f46de40de31de6cd1ddebe7663ace5183933647b3600c2a328c135299b13",
-    "read_at": "2026-11-06T13:57:40+00:00"
+    "read_at": "2026-11-06T14:03:13+00:00"
    }
   },
   "ilga.gov": {
@@ -576,7 +577,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "67945944ed49bb66a7aaab9f6e15962424fdd27ed3d60bf0dcbd8dbbfd07e6f7",
-    "read_at": "2026-11-06T13:57:38+00:00"
+    "read_at": "2026-11-06T14:03:11+00:00"
    }
   },
   "assembly.state.ny.us": {
@@ -595,7 +596,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "28193bdd982586677464a248a320aeffeb73097c7666d21b553cbb34d4a707b3",
-    "read_at": "2026-11-06T13:57:37+00:00"
+    "read_at": "2026-11-06T14:03:10+00:00"
    }
   },
   "capitol.texas.gov": {
@@ -618,7 +619,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "c4dccb65e1059c10446e5890ae66f57bc490b606aaa5e881df0bfa95e4d9c714",
-    "read_at": "2026-11-06T13:57:37+00:00"
+    "read_at": "2026-11-06T14:03:10+00:00"
    }
   },
   "malegislature.gov": {
@@ -637,7 +638,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "4d7d7b87c0e85e9089c43d50160a21cd3d0b6fd3de11116e2133b75d6143c2ad",
-    "read_at": "2026-11-06T13:57:42+00:00"
+    "read_at": "2026-11-06T14:06:57+00:00"
    }
   },
   "www.revisor.mn.gov": {
@@ -660,7 +661,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "ab30559ef28003bb0a3d1a6bc79ee2e025771936aa5b55d83824995e4f841edd",
-    "read_at": "2026-11-06T13:57:54+00:00"
+    "read_at": "2026-11-06T14:07:03+00:00"
    }
   },
   "billstatus.ls.state.ms.us": {
@@ -683,7 +684,7 @@
     "rule": "no rules",
     "crawl_delay": null,
     "sha256": null,
-    "read_at": "2026-11-06T13:57:37+00:00"
+    "read_at": "2026-11-06T14:03:10+00:00"
    }
   },
   "capitol.hawaii.gov": {
@@ -705,8 +706,8 @@
     "status": 200,
     "rule": "parsed",
     "crawl_delay": null,
-    "sha256": "8670fc5d5f44da09cf66708d6ec0d606ff5bad8c9db7fa3403487f51535b82a1",
-    "read_at": "2026-11-06T13:57:37+00:00"
+    "sha256": "b182807aa394be23bfde9d3c09a414045583701f244a0ed01bb3c2923f0c7be7",
+    "read_at": "2026-11-06T14:03:10+00:00"
    }
   },
   "data.capitol.hawaii.gov": {
@@ -729,7 +730,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "6d60108a943779b563b663e2d307d8a90f8df3622519d47f21ff5e8bb3cd3819",
-    "read_at": "2026-11-06T13:57:38+00:00"
+    "read_at": "2026-11-06T14:03:10+00:00"
    }
   },
   "www.palegis.us": {
@@ -752,7 +753,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "7428b8dee10f5bd4168c00fd6b2537a5e8a8776e9474fcb407dc706eeed3e4ce",
-    "read_at": "2026-11-06T13:57:54+00:00"
+    "read_at": "2026-11-06T14:07:02+00:00"
    }
   },
   "www.wvlegislature.gov": {
@@ -775,7 +776,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "2a705e14585819b370177e2bcaca7e94e9a92935e61a30d213a02c7b22d04b9c",
-    "read_at": "2026-11-06T13:57:54+00:00"
+    "read_at": "2026-11-06T14:07:03+00:00"
    }
   },
   "www.legis.iowa.gov": {
@@ -798,7 +799,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "4b4f0471893df31aaa43cfc221f0a0ca66e61268c70b593505ba022c2a6bb488",
-    "read_at": "2026-11-06T13:57:52+00:00"
+    "read_at": "2026-11-06T14:07:01+00:00"
    }
   },
   "legislature.mi.gov": {
@@ -821,7 +822,7 @@
     "rule": "no rules",
     "crawl_delay": null,
     "sha256": null,
-    "read_at": "2026-11-06T13:57:41+00:00"
+    "read_at": "2026-11-06T14:06:57+00:00"
    }
   },
   "lis.blob.core.windows.net": {
@@ -840,7 +841,7 @@
     "rule": "no rules",
     "crawl_delay": null,
     "sha256": null,
-    "read_at": "2026-11-06T13:57:42+00:00"
+    "read_at": "2026-11-06T14:06:57+00:00"
    }
   },
   "www.azleg.gov": {
@@ -863,7 +864,7 @@
     "rule": "parsed",
     "crawl_delay": 120.0,
     "sha256": "f9317ac9b6563e48e308f91ea5bd4011ed499ada1ba2896855e8203b99085c80",
-    "read_at": "2026-11-06T13:57:52+00:00"
+    "read_at": "2026-11-06T14:07:00+00:00"
    }
   },
   "lawfilesext.leg.wa.gov": {
@@ -886,7 +887,7 @@
     "rule": "no rules",
     "crawl_delay": null,
     "sha256": null,
-    "read_at": "2026-11-06T13:57:38+00:00"
+    "read_at": "2026-11-06T14:03:11+00:00"
    }
   },
   "flsenate.gov": {
@@ -905,7 +906,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "0133a7a99ca7a48b8c47ed6a52d2c4c549e7f61c97fd16bd950c987464068796",
-    "read_at": "2026-11-06T13:57:38+00:00"
+    "read_at": "2026-11-06T14:03:11+00:00"
    }
   },
   "mgaleg.maryland.gov": {
@@ -924,7 +925,7 @@
     "rule": "no rules",
     "crawl_delay": null,
     "sha256": null,
-    "read_at": "2026-11-06T13:57:49+00:00"
+    "read_at": "2026-11-06T14:06:57+00:00"
    }
   },
   "docs.legis.wisconsin.gov": {
@@ -947,7 +948,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "4bace78f2c6a86665265015ac8d0bcdfde1620f2601401700e907b1286c80065",
-    "read_at": "2026-11-06T13:57:38+00:00"
+    "read_at": "2026-11-06T14:03:10+00:00"
    }
   },
   "www.cga.ct.gov": {
@@ -964,7 +965,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "0508c677f509a5100f8d889443f1d49815ab34e9fe643c4362040742c0c2fc16",
-    "read_at": "2026-11-06T13:57:52+00:00"
+    "read_at": "2026-11-06T14:07:00+00:00"
    }
   },
   "lis.virginia.gov": {
@@ -987,7 +988,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "e912e24c35de5e2b6e8b3401e38eb03de436da756d46a986493dcbe245fe4ef2",
-    "read_at": "2026-11-06T13:57:42+00:00"
+    "read_at": "2026-11-06T14:06:57+00:00"
    }
   },
   "www.oklegislature.gov": {
@@ -1006,7 +1007,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "a676c21fd1960ed2b3b586d43e258958c02b1173e13d5f24968aa9d65554884a",
-    "read_at": "2026-11-06T13:57:53+00:00"
+    "read_at": "2026-11-06T14:07:02+00:00"
    }
   },
   "webserver.rilegislature.gov": {
@@ -1025,7 +1026,7 @@
     "rule": "no rules",
     "crawl_delay": null,
     "sha256": null,
-    "read_at": "2026-11-06T13:57:51+00:00"
+    "read_at": "2026-11-06T14:06:59+00:00"
    }
   },
   "webserver1.lsb.state.ok.us": {
@@ -1044,7 +1045,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "a676c21fd1960ed2b3b586d43e258958c02b1173e13d5f24968aa9d65554884a",
-    "read_at": "2026-11-06T13:57:51+00:00"
+    "read_at": "2026-11-06T14:07:00+00:00"
    }
   },
   "www.nmlegis.gov": {
@@ -1067,7 +1068,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "27da4e642d81d8c52d9322097d2548d56964e1dbc3ccc5af1210efaa2dd4ea99",
-    "read_at": "2026-11-06T13:57:53+00:00"
+    "read_at": "2026-11-06T14:07:02+00:00"
    }
   },
   "documents.house.mo.gov": {
@@ -1086,7 +1087,7 @@
     "rule": "parsed",
     "crawl_delay": 20.0,
     "sha256": "88f34e59ccd0e23fa8bfccdb73fe16d549c3951c3a75abc3d331dcac838d6219",
-    "read_at": "2026-11-06T13:57:38+00:00"
+    "read_at": "2026-11-06T14:03:10+00:00"
    }
   },
   "olis.oregonlegislature.gov": {
@@ -1105,7 +1106,7 @@
     "rule": "no rules",
     "crawl_delay": null,
     "sha256": null,
-    "read_at": "2026-11-06T13:57:50+00:00"
+    "read_at": "2026-11-06T14:06:58+00:00"
    }
   },
   "www.legis.la.gov": {
@@ -1124,7 +1125,7 @@
     "rule": "no rules",
     "crawl_delay": null,
     "sha256": null,
-    "read_at": "2026-11-06T13:57:52+00:00"
+    "read_at": "2026-11-06T14:07:01+00:00"
    }
   },
   "api.legmt.gov": {
@@ -1143,7 +1144,7 @@
     "rule": "parsed",
     "crawl_delay": 10.0,
     "sha256": "dc2f08337f914b83104b1cc09a2e273eec7d4003cc6fd7046411db9500c6056f",
-    "read_at": "2026-11-06T13:57:36+00:00"
+    "read_at": "2026-11-06T14:03:08+00:00"
    }
   },
   "www.legis.state.wv.us": {
@@ -1166,7 +1167,7 @@
     "rule": "no rules",
     "crawl_delay": null,
     "sha256": null,
-    "read_at": "2026-11-06T13:57:52+00:00"
+    "read_at": "2026-11-06T14:07:01+00:00"
    }
   },
   "leginfo.legislature.ca.gov": {
@@ -1183,7 +1184,7 @@
     "rule": "disallow all",
     "crawl_delay": null,
     "sha256": null,
-    "read_at": "2026-11-06T13:57:40+00:00"
+    "read_at": "2026-11-06T14:03:13+00:00"
    }
   },
   "www.legis.ga.gov": {
@@ -1202,7 +1203,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "301e217dc5d384b4243ee12b56ae51d5ecf1d0b0becedae1da952a1d361bac65",
-    "read_at": "2026-11-06T13:57:52+00:00"
+    "read_at": "2026-11-06T14:07:01+00:00"
    }
   },
   "www.mainelegislature.org": {
@@ -1219,7 +1220,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "bc423a72fcf030243bdd1ea10c066c2668d9edc0494ebec9da27c35625426bd5",
-    "read_at": "2026-11-06T13:57:53+00:00"
+    "read_at": "2026-11-06T14:07:02+00:00"
    }
   },
   "www.scstatehouse.gov": {
@@ -1238,7 +1239,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "30aa55e0e8342137e18bd9dc7f26dff0bbcb9f23bf489c6d5117f75e2269f7ca",
-    "read_at": "2026-11-06T13:57:54+00:00"
+    "read_at": "2026-11-06T14:07:03+00:00"
    }
   },
   "apps.legislature.ky.gov": {
@@ -1257,7 +1258,7 @@
     "rule": "no rules",
     "crawl_delay": null,
     "sha256": null,
-    "read_at": "2026-11-06T13:57:37+00:00"
+    "read_at": "2026-11-06T14:03:09+00:00"
    }
   },
   "www.ncleg.gov": {
@@ -1276,7 +1277,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "662de01afc6b1d472428678ba290a37cb2960f41322843f2657e0c0018606b20",
-    "read_at": "2026-11-06T13:57:53+00:00"
+    "read_at": "2026-11-06T14:07:02+00:00"
    }
   },
   "search-prod.lis.state.oh.us": {
@@ -1299,7 +1300,7 @@
     "rule": "no rules",
     "crawl_delay": null,
     "sha256": null,
-    "read_at": "2026-11-06T13:57:51+00:00"
+    "read_at": "2026-11-06T14:06:59+00:00"
    }
   },
   "www.kslegislature.gov": {
@@ -1322,7 +1323,7 @@
     "rule": "no rules",
     "crawl_delay": null,
     "sha256": null,
-    "read_at": "2026-11-06T13:57:52+00:00"
+    "read_at": "2026-11-06T14:07:00+00:00"
    }
   },
   "le.utah.gov": {
@@ -1341,7 +1342,7 @@
     "rule": "parsed",
     "crawl_delay": 10.0,
     "sha256": "8a66833d4dac302d52b965debc25158d9cc19e4d1e4fe31084a4faa26782838d",
-    "read_at": "2026-11-06T13:57:39+00:00"
+    "read_at": "2026-11-06T14:03:12+00:00"
    }
   },
   "www.senate.mo.gov": {
@@ -1360,7 +1361,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "6d8c8af5a93aa03abce77b4265821ccf1bd467879fe77c99b76084d78064abaa",
-    "read_at": "2026-11-06T13:57:54+00:00"
+    "read_at": "2026-11-06T14:07:03+00:00"
    }
   },
   "www.arkleg.state.ar.us": {
@@ -1377,7 +1378,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "98fe330838e111b16a86b6e23b18f6b1b49c6f795637d229dd9f50b6554dfe71",
-    "read_at": "2026-11-06T13:57:51+00:00"
+    "read_at": "2026-11-06T14:07:00+00:00"
    }
   },
   "legis.delaware.gov": {
@@ -1400,7 +1401,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "efd49dffb1cb2258c03cfec168d51af666c77db1b6282e50b90efe9d7ecb3f35",
-    "read_at": "2026-11-06T13:57:40+00:00"
+    "read_at": "2026-11-06T14:03:13+00:00"
    }
   },
   "www.capitol.tn.gov": {
@@ -1417,7 +1418,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "3de14c7371990ac5ab427b2e71060769da66f7d54c47f4c1f400a5787e530c19",
-    "read_at": "2026-11-06T13:57:52+00:00"
+    "read_at": "2026-11-06T14:07:00+00:00"
    }
   },
   "www.akleg.gov": {
@@ -1440,7 +1441,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "3c543f8dea07e74d1e64cb585a0bbcfaf59db0683f32b8e6e20177f565b3fe43",
-    "read_at": "2026-11-06T13:57:51+00:00"
+    "read_at": "2026-11-06T14:07:00+00:00"
    }
   },
   "nebraskalegislature.gov": {
@@ -1459,7 +1460,7 @@
     "rule": "parsed",
     "crawl_delay": 3.0,
     "sha256": "08d243c5384b0f1a3a31879f89391659d889c613b8ad83504549fbe1ad47a0e7",
-    "read_at": "2026-11-06T13:57:50+00:00"
+    "read_at": "2026-11-06T14:06:58+00:00"
    }
   },
   "leg.colorado.gov": {
@@ -1478,7 +1479,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "4193e9db31147814f2979ce79125b9386e0febb6bbe39fb7901aad9d84afd5b3",
-    "read_at": "2026-11-06T13:57:39+00:00"
+    "read_at": "2026-11-06T14:03:12+00:00"
    }
   },
   "iga.in.gov": {
@@ -1495,7 +1496,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "61d9d1265c828684df265d5139ee43f21d5325cb19aa861c7da7816dd28ac732",
-    "read_at": "2026-11-06T13:57:38+00:00"
+    "read_at": "2026-11-06T14:03:11+00:00"
    }
   },
   "capitol.tn.gov": {
@@ -1511,7 +1512,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "3de14c7371990ac5ab427b2e71060769da66f7d54c47f4c1f400a5787e530c19",
-    "read_at": "2026-11-06T13:57:38+00:00"
+    "read_at": "2026-11-06T14:03:10+00:00"
    }
   },
   "legislature.idaho.gov": {
@@ -1530,7 +1531,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "a99b18c9d28e841c905839652d13985646ff919f9815b166f3f494fad1924593",
-    "read_at": "2026-11-06T13:57:40+00:00"
+    "read_at": "2026-11-06T14:03:13+00:00"
    }
   },
   "legislature.vermont.gov": {
@@ -1549,7 +1550,7 @@
     "rule": "parsed",
     "crawl_delay": 30.0,
     "sha256": "2ba9caf3b2812a1b3cf9730942eab5cebaa6093150c6bbf63ae0e1e1c08b3c47",
-    "read_at": "2026-11-06T13:57:42+00:00"
+    "read_at": "2026-11-06T14:06:57+00:00"
    }
   },
   "alison.legislature.state.al.us": {
@@ -1568,7 +1569,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "7c183a8f9b73ad09bd695e98e61aab16e56013d948a9fd43263a4245597528b4",
-    "read_at": "2026-11-06T13:57:36+00:00"
+    "read_at": "2026-11-06T14:03:08+00:00"
    }
   },
   "www.leg.state.nv.us": {
@@ -1587,7 +1588,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "e88d8ef24ee56b3ab4f52427e032821996e4fd6379ddbeb87722e9bea492f7db",
-    "read_at": "2026-11-06T13:57:52+00:00"
+    "read_at": "2026-11-06T14:07:01+00:00"
    }
   },
   "www.gencourt.state.nh.us": {
@@ -1610,7 +1611,7 @@
     "rule": "parsed",
     "crawl_delay": 11.0,
     "sha256": "c38abbc80072afa48184bc5b243b2625babf61e3d329c1c2c9d1d95ecfc93177",
-    "read_at": "2026-11-06T13:57:52+00:00"
+    "read_at": "2026-11-06T14:07:00+00:00"
    }
   },
   "sdlegislature.gov": {
@@ -1627,7 +1628,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "3a694e62d7104765c277f4709b6aa29ce382112131c79efdf473b02c76ee1f66",
-    "read_at": "2026-11-06T13:57:51+00:00"
+    "read_at": "2026-11-06T14:06:59+00:00"
    }
   },
   "mylrc.sdlegislature.gov": {
@@ -1644,7 +1645,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "ba5e33f39877f75ad41edfe46e15a131bb9e23da576d022cb43ce566541c48de",
-    "read_at": "2026-11-06T13:57:49+00:00"
+    "read_at": "2026-11-06T14:06:58+00:00"
    }
   },
   "ndlegis.gov": {
@@ -1663,7 +1664,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "5385a5a071576d85a307432b28d129893ad4dc5ba14a01219de2863023956c7d",
-    "read_at": "2026-11-06T13:57:50+00:00"
+    "read_at": "2026-11-06T14:06:58+00:00"
    }
   },
   "wyoleg.gov": {
@@ -1682,7 +1683,7 @@
     "rule": "no rules",
     "crawl_delay": null,
     "sha256": null,
-    "read_at": "2026-11-06T13:57:54+00:00"
+    "read_at": "2026-11-06T14:07:03+00:00"
    }
   },
   "leg.mt.gov": {
@@ -1701,7 +1702,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "e6824debefdac8de59a228ba45e4006da9351c483aa3f1cced3ab159512e4a89",
-    "read_at": "2026-11-06T13:57:39+00:00"
+    "read_at": "2026-11-06T14:03:12+00:00"
    }
   },
   "gc.nh.gov": {
@@ -1724,7 +1725,7 @@
     "rule": "parsed",
     "crawl_delay": 11.0,
     "sha256": "c38abbc80072afa48184bc5b243b2625babf61e3d329c1c2c9d1d95ecfc93177",
-    "read_at": "2026-11-06T13:57:38+00:00"
+    "read_at": "2026-11-06T14:03:11+00:00"
    }
   },
   "apps.azleg.gov": {
@@ -1743,7 +1744,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "7e66c29e5f3dc0c3e3a791ac0ab94a5bf9a2a46e8f3fbb825d7f31297f0f6419",
-    "read_at": "2026-11-06T13:57:37+00:00"
+    "read_at": "2026-11-06T14:03:09+00:00"
    }
   },
   "www.legislature.state.al.us": {
@@ -1762,7 +1763,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "93bb4e6dc9c775e5b962b04d5c45a9d2cfe3a3a9c4d9a8553016bb84cee5976f",
-    "read_at": "2026-11-06T13:57:52+00:00"
+    "read_at": "2026-11-06T14:07:01+00:00"
    }
   },
   "in-proxy.openstates.org": {
@@ -1778,7 +1779,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "efdb5938a9736727f5cce2b60355588e4fa541d19d022d222d8a09b8efd5dcce",
-    "read_at": "2026-11-06T13:57:38+00:00"
+    "read_at": "2026-11-06T14:03:11+00:00"
    }
   },
   "arc-sos.state.al.us": {
@@ -1794,7 +1795,7 @@
     "rule": "parsed",
     "crawl_delay": null,
     "sha256": "6b9d617198422f5f8e5b467a0c92af030788095c44f9042acdf6f4bf90d68017",
-    "read_at": "2026-11-06T13:57:37+00:00"
+    "read_at": "2026-11-06T14:03:09+00:00"
    }
   },
   "webservices.ncleg.gov": {
@@ -1813,7 +1814,7 @@
     "rule": "no rules",
     "crawl_delay": null,
     "sha256": null,
-    "read_at": "2026-11-06T13:57:51+00:00"
+    "read_at": "2026-11-06T14:07:00+00:00"
    }
   },
   "s3.us-west-2.amazonaws.com": {
@@ -1821,8 +1822,9 @@
     "CO"
    ],
    "links": {
-    "with_text:html": 24,
+    "with_text:html": 32,
     "with_text:pdf": 32,
+    "without_text:html": 3,
     "without_text:pdf": 3
    },
    "robots": {
@@ -1831,7 +1833,7 @@
     "rule": "disallow all",
     "crawl_delay": null,
     "sha256": null,
-    "read_at": "2026-11-06T13:57:50+00:00"
+    "read_at": "2026-11-06T14:06:59+00:00"
    }
   },
   "budget.lis.virginia.gov": {
@@ -1847,8 +1849,8 @@
     "status": 200,
     "rule": "parsed",
     "crawl_delay": null,
-    "sha256": "676f5dc5579e58abf9fe603f9cb9ce56f9bbfaeee7a98b5e46c5349b6100a076",
-    "read_at": "2026-11-06T13:57:37+00:00"
+    "sha256": "41aea674378cb87b105732b442acb945ff598ce55fa066e6076c54801a9a1060",
+    "read_at": "2026-11-06T14:03:10+00:00"
    }
   }
  }

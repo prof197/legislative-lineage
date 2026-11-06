@@ -32,6 +32,9 @@ _OTHER_DOCUMENT = re.compile(
 _READING_THEN_TITLE = re.compile(
     r"^(?:first|second|third|enrolled|engrossed|chapter)\s+-\s", re.IGNORECASE
 )
+# Colorado's "Signed Act" is a scanned image of the signed bill, with no text to extract. It
+# yields to the latest other bill version, and is taken only when it is the sole one.
+_SCANNED = re.compile(r"^signed act\b", re.IGNORECASE)
 # Vermont's export keeps a link's screen-reader hint in the note.
 _LINK_HINT = re.compile(r"\s*opens in a new window", re.IGNORECASE)
 
@@ -71,7 +74,8 @@ def choose_version(versions: Sequence[Version]) -> Choice | None:
     bill = [(v.date[:10], i, v) for i, v in enumerate(versions) if is_bill_text(v.note)]
     if not bill:
         return None
-    *_, latest = max(bill, key=lambda t: (t[0], t[1]))
+    texts = [b for b in bill if not _SCANNED.match(_LINK_HINT.sub("", b[2].note))] or bill
+    *_, latest = max(texts, key=lambda t: (t[0], t[1]))
     links = tuple(
         link for kind in SUPPORTED_FORMATS for link in latest.links if link.media_type == kind
     )

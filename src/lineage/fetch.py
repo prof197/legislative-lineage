@@ -68,6 +68,15 @@ def moved(url: str) -> str:
     return urllib.parse.urlunsplit(parts._replace(netloc=HOST_MOVES[host]))
 
 
+# Characters a URL may carry as they are; anything else, such as the spaces in Oklahoma's and
+# West Virginia's links, is percent-encoded. "%" is kept so existing escapes stay single.
+_URL_SAFE = ":/?#[]@!$&'()*+,;=%~"
+
+
+def request_url(url: str) -> str:
+    return urllib.parse.quote(url, safe=_URL_SAFE)
+
+
 def url_for(archive: Archive, source: str) -> str:
     # A few session names contain spaces, which a request line cannot carry unencoded.
     return source + urllib.parse.quote(Path(archive.path).name)
@@ -80,7 +89,7 @@ def _retry_after(error: urllib.error.HTTPError, default: float) -> float:
 
 def open_url(url: str, pause: float) -> HTTPResponse:
     """GET `url` as this project, retrying overload and server errors with backoff."""
-    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    request = urllib.request.Request(request_url(url), headers={"User-Agent": USER_AGENT})
     for attempt in range(_ATTEMPTS):
         try:
             response: HTTPResponse = urllib.request.urlopen(

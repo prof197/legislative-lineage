@@ -124,3 +124,23 @@ def test_a_latest_version_in_an_unsupported_format_is_not_replaced_by_an_older_o
 
     assert choice is not None
     assert (choice.note, choice.links) == ("Enrolled", ())
+
+
+def test_a_scanned_signed_copy_gives_way_to_the_text_beside_it() -> None:
+    # Colorado's "Signed Act" is an image of the signed bill; "Final Act" is its text.
+    versions = [
+        _v("Final Act", "2024-05-01", PDF),
+        _v("Signed Act", "2024-05-20", PDF),
+    ]
+
+    choice = choose_version(versions)
+
+    assert choice is not None
+    assert choice.note == "Final Act"
+
+
+def test_a_scanned_copy_is_still_taken_when_it_is_the_only_bill_version() -> None:
+    choice = choose_version([_v("Signed Act", "2024-05-20", PDF)])
+
+    assert choice is not None
+    assert choice.note == "Signed Act"

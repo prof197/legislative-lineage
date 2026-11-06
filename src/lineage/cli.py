@@ -32,6 +32,8 @@ from lineage.snapshot import SnapshotError, load_manifest, scan, write_manifest
 from lineage.stats import write_coverage
 from lineage.stoplist import StoplistError, build_stoplist, file_sha256
 from lineage.text_inventory import PLAN, REPORT, build_inventory
+from lineage.text_quality import REPORT as QUALITY
+from lineage.text_quality import STORE, run_sample
 from lineage.ulc import ENACTMENTS, UlcError
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
@@ -467,3 +469,19 @@ def text_inventory(
         f"{totals.get('without_text:planned', 0):,} with a bill version to fetch, "
         f"on {len(doc['hosts'])} hosts -> {out}"
     )
+
+
+@text_app.command("sample")
+def text_sample(
+    tables: TablesOption = Path("data/tables"),
+    plan: Annotated[Path, typer.Option("--plan", help="Fetch plan Parquet (local).")] = PLAN,
+    store: Annotated[Path, typer.Option("--store", help="Fetched sample (local).")] = STORE,
+    out: Annotated[Path, typer.Option("--out", help="Quality report JSON (committed).")] = QUALITY,
+    fetch: Annotated[bool, typer.Option(help="Fetch what the store lacks before judging.")] = True,
+) -> None:
+    """Fetch a seeded sample per state and format and judge its text against Open States'."""
+    doc = run_sample(tables, plan_path=plan, store=store, report_path=out, fetch=fetch)
+    cells = [c for formats in doc["states"].values() for c in formats.values()]
+    sampled = sum(sum(c["sampled"].values()) for c in cells)
+    ok = sum(c["outcomes"].get("ok", 0) for c in cells)
+    typer.echo(f"{ok:,} of {sampled:,} sampled documents extracted, {len(cells)} cells -> {out}")

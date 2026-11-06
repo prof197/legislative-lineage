@@ -94,6 +94,8 @@ Open States stays the source for bills, actions and the links to each bill's ver
 
 **Two fixes in transport.** Connecticut's, Mississippi's and Illinois's servers send their certificate without its intermediate, which browsers fetch and Python's OpenSSL does not. `src/lineage/certs/intermediates.pem` supplies the three intermediates, each with its source URL and fingerprint, and every chain must still end at a trusted root. Illinois retired `beta.ilga.gov`, which the 103rd General Assembly's links still name; the same paths are served from `ilga.gov`, and the fetcher rewrites that one host.
 
+**Quality test.** Before any full fetch, `lineage text sample` fetches a seeded sample from the plan: about 50 documents per state and link format, up to 30 whose stored text is unusable and at least 20 that already have Open States text (`reports/text_quality.json`). A document is clean when its text splits at section headings. Records with Open States text are judged both ways, and the two texts are compared for version (which version each came from) and content (word 5-gram overlap). PDFs are read twice from the same bytes: in text order, and by each word's position on the page. The second reading recovers Iowa's, Idaho's, Georgia's and Wyoming's PDFs, which position words one at a time or glue line numbers to the text, and it loses lines in Illinois's, Wisconsin's and Rhode Island's, so the reading is chosen per state. The clean-text rate understates states whose bills carry no section headings: New Jersey and New Hampshire split into windows in either source, and Connecticut's proposed bills are a sentence of intent with no sections.
+
 ## Bill status
 
 Every bill carries a status, `passed`, `died` or `introduced`, derived from Open States' action classifications as of its archive's Generated At. The order of evidence is as follows.
@@ -521,7 +523,7 @@ The filter does not bias the recall eval. It selects on what kind of document a 
 
 ### DR-6 · Own the text layer
 
-**Status:** proposed, 2026-11-06. The quality test decides which states and formats are fetched.
+**Status:** proposed, 2026-11-06. The quality test (`reports/text_quality.json`) decides which states, formats and PDF readings are fetched.
 
 **Context.** Open States' bulk export carries each bill's text as extracted by its scrapers. For 145,946 of 447,389 eligible records the text is unusable (`reports/text_inventory.json`): blank for 129,633, absent for 8,708, an amendment in place of the bill for 5,442. The gap is not three states, as first assumed. It covers whole sessions (Hawaii 2024 and 2025, Virginia 2025 and 2026, Massachusetts's 193rd) and most records of New Jersey, Maryland and Montana. A record with no text cannot match anything, so recall over the corpus is capped by upstream extraction. The export does keep the links to every version of each bill, on the legislatures' own sites.
 

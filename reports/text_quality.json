@@ -1,0 +1,1839 @@
+{
+ "command": "uv run lineage text sample",
+ "seed": 42,
+ "per_cell": 50,
+ "with_text_per_cell": 20,
+ "clean_means": "the text splits at section headings (lineage.sections.split_sections)",
+ "states": {
+  "AK": {
+   "html": {
+    "hosts": [
+     "www.akleg.gov"
+    ],
+    "sampled": {
+     "without_text": 3,
+     "with_text": 47
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.333,
+     "with_text_ours": 0.426,
+     "with_text_theirs": 0.915,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 0.851,
+    "overlap_median": 0.35,
+    "text_bytes_mean": 17380,
+    "body_bytes_mean": 78795,
+    "seconds_median": 0.72
+   },
+   "pdf": {
+    "hosts": [
+     "www.akleg.gov"
+    ],
+    "sampled": {
+     "without_text": 3,
+     "with_text": 47
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.667,
+     "with_text_ours": 0.936,
+     "with_text_theirs": 0.936,
+     "without_text_pdf_layout": 0.667
+    },
+    "same_version_rate": 0.83,
+    "overlap_median": 0.297,
+    "text_bytes_mean": 26620,
+    "body_bytes_mean": 463439,
+    "seconds_median": 3.57
+   }
+  },
+  "AL": {
+   "pdf": {
+    "hosts": [
+     "alison.legislature.state.al.us",
+     "arc-sos.state.al.us",
+     "www.legislature.state.al.us"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "extract_error": 1,
+     "ok": 48,
+     "robots": 1
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 0.895,
+     "without_text_pdf_layout": 1.0
+    },
+    "same_version_rate": 0.684,
+    "overlap_median": 0.803,
+    "text_bytes_mean": 7557,
+    "body_bytes_mean": 463472,
+    "seconds_median": 11.02
+   }
+  },
+  "AR": {
+   "pdf": {
+    "hosts": [
+     "www.arkleg.state.ar.us"
+    ],
+    "sampled": {
+     "with_text": 50
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": null,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 0.56,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 0.4,
+    "overlap_median": 0.215,
+    "text_bytes_mean": 10985,
+    "body_bytes_mean": 206236,
+    "seconds_median": 5.78
+   }
+  },
+  "AZ": {
+   "html": {
+    "hosts": [
+     "www.azleg.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "not_fetched": 24,
+     "ok": 26
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": null,
+     "with_text_theirs": null,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": null,
+    "overlap_median": null,
+    "text_bytes_mean": 15047,
+    "body_bytes_mean": 27411,
+    "seconds_median": 0.42
+   },
+   "pdf": {
+    "hosts": [
+     "apps.azleg.gov",
+     "www.azleg.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "not_fetched": 30,
+     "ok": 20
+    },
+    "clean_rate": {
+     "without_text": 0.833,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": 0.778
+    },
+    "same_version_rate": 0.0,
+    "overlap_median": 0.303,
+    "text_bytes_mean": 13052,
+    "body_bytes_mean": 30403,
+    "seconds_median": 3.57
+   }
+  },
+  "CA": {
+   "pdf": {
+    "hosts": [
+     "leginfo.legislature.ca.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "robots": 50
+    },
+    "clean_rate": {
+     "without_text": null,
+     "with_text_ours": null,
+     "with_text_theirs": null,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": null,
+    "overlap_median": null,
+    "text_bytes_mean": null,
+    "body_bytes_mean": null,
+    "seconds_median": null
+   }
+  },
+  "CO": {
+   "html": {
+    "hosts": [
+     "s3.us-west-2.amazonaws.com"
+    ],
+    "sampled": {
+     "without_text": 3,
+     "with_text": 32
+    },
+    "outcomes": {
+     "robots": 35
+    },
+    "clean_rate": {
+     "without_text": null,
+     "with_text_ours": null,
+     "with_text_theirs": null,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": null,
+    "overlap_median": null,
+    "text_bytes_mean": null,
+    "body_bytes_mean": null,
+    "seconds_median": null
+   },
+   "pdf": {
+    "hosts": [
+     "leg.colorado.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.867,
+     "with_text_ours": 0.75,
+     "with_text_theirs": 0.75,
+     "without_text_pdf_layout": 0.867
+    },
+    "same_version_rate": 0.25,
+    "overlap_median": 0.42,
+    "text_bytes_mean": 12264,
+    "body_bytes_mean": 144773,
+    "seconds_median": 4.2
+   }
+  },
+  "CT": {
+   "pdf": {
+    "hosts": [
+     "www.cga.ct.gov"
+    ],
+    "sampled": {
+     "without_text": 50
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.38,
+     "with_text_ours": null,
+     "with_text_theirs": null,
+     "without_text_pdf_layout": 0.32
+    },
+    "same_version_rate": null,
+    "overlap_median": null,
+    "text_bytes_mean": 8448,
+    "body_bytes_mean": 95763,
+    "seconds_median": 2.47
+   }
+  },
+  "DE": {
+   "html": {
+    "hosts": [
+     "legis.delaware.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 1.0,
+    "overlap_median": 0.894,
+    "text_bytes_mean": 11490,
+    "body_bytes_mean": 34964,
+    "seconds_median": 0.64
+   },
+   "pdf": {
+    "hosts": [
+     "legis.delaware.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.867,
+     "with_text_ours": 0.6,
+     "with_text_theirs": 0.95,
+     "without_text_pdf_layout": 0.9
+    },
+    "same_version_rate": 1.0,
+    "overlap_median": 0.849,
+    "text_bytes_mean": 8952,
+    "body_bytes_mean": 81397,
+    "seconds_median": 3.16
+   }
+  },
+  "FL": {
+   "html": {
+    "hosts": [
+     "flsenate.gov"
+    ],
+    "sampled": {
+     "with_text": 50
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": null,
+     "with_text_ours": 0.92,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 0.78,
+    "overlap_median": 0.91,
+    "text_bytes_mean": 21886,
+    "body_bytes_mean": 32450,
+    "seconds_median": 0.73
+   },
+   "pdf": {
+    "hosts": [
+     "flsenate.gov"
+    ],
+    "sampled": {
+     "with_text": 50
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": null,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 0.74,
+    "overlap_median": 0.311,
+    "text_bytes_mean": 14163,
+    "body_bytes_mean": 140071,
+    "seconds_median": 6.67
+   }
+  },
+  "GA": {
+   "pdf": {
+    "hosts": [
+     "www.legis.ga.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "extract_error": 1,
+     "ok": 49
+    },
+    "clean_rate": {
+     "without_text": 0.0,
+     "with_text_ours": 0.105,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": 0.967
+    },
+    "same_version_rate": 0.526,
+    "overlap_median": 0.348,
+    "text_bytes_mean": 12107,
+    "body_bytes_mean": 68766,
+    "seconds_median": 4.36
+   }
+  },
+  "HI": {
+   "html": {
+    "hosts": [
+     "capitol.hawaii.gov",
+     "data.capitol.hawaii.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "http_error": 2,
+     "ok": 48
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 0.895,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 0.579,
+    "overlap_median": 0.836,
+    "text_bytes_mean": 6428,
+    "body_bytes_mean": 76935,
+    "seconds_median": 0.83
+   },
+   "pdf": {
+    "hosts": [
+     "capitol.hawaii.gov",
+     "data.capitol.hawaii.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "http_error": 18,
+     "ok": 32
+    },
+    "clean_rate": {
+     "without_text": 0.938,
+     "with_text_ours": 0.938,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": 0.875
+    },
+    "same_version_rate": 0.562,
+    "overlap_median": 0.651,
+    "text_bytes_mean": 10675,
+    "body_bytes_mean": 242529,
+    "seconds_median": 7.62
+   }
+  },
+  "IA": {
+   "html": {
+    "hosts": [
+     "www.legis.iowa.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.0,
+     "with_text_ours": 0.0,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 1.0,
+    "overlap_median": 0.344,
+    "text_bytes_mean": 9536,
+    "body_bytes_mean": 97216,
+    "seconds_median": 0.49
+   },
+   "pdf": {
+    "hosts": [
+     "www.legis.iowa.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.2,
+     "with_text_ours": 0.05,
+     "with_text_theirs": 0.9,
+     "without_text_pdf_layout": 0.967
+    },
+    "same_version_rate": 1.0,
+    "overlap_median": 0.386,
+    "text_bytes_mean": 8763,
+    "body_bytes_mean": 59763,
+    "seconds_median": 3.17
+   }
+  },
+  "ID": {
+   "pdf": {
+    "hosts": [
+     "legislature.idaho.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.0,
+     "with_text_ours": 0.0,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": 1.0
+    },
+    "same_version_rate": 0.95,
+    "overlap_median": 0.4,
+    "text_bytes_mean": 10818,
+    "body_bytes_mean": 60023,
+    "seconds_median": 3.32
+   }
+  },
+  "IL": {
+   "html": {
+    "hosts": [
+     "ilga.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.1,
+     "with_text_ours": 0.25,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 0.85,
+    "overlap_median": 0.0,
+    "text_bytes_mean": 4269,
+    "body_bytes_mean": 41414,
+    "seconds_median": 0.45
+   },
+   "pdf": {
+    "hosts": [
+     "ilga.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 0.95,
+     "with_text_theirs": 0.95,
+     "without_text_pdf_layout": 0.5
+    },
+    "same_version_rate": 0.9,
+    "overlap_median": 0.828,
+    "text_bytes_mean": 24773,
+    "body_bytes_mean": 118962,
+    "seconds_median": 2.6
+   }
+  },
+  "IN": {
+   "pdf": {
+    "hosts": [
+     "iga.in.gov",
+     "in-proxy.openstates.org"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "extract_error": 30,
+     "robots": 20
+    },
+    "clean_rate": {
+     "without_text": null,
+     "with_text_ours": null,
+     "with_text_theirs": null,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": null,
+    "overlap_median": null,
+    "text_bytes_mean": null,
+    "body_bytes_mean": null,
+    "seconds_median": null
+   }
+  },
+  "KS": {
+   "html": {
+    "hosts": [
+     "www.kslegislature.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.0,
+     "with_text_ours": 0.0,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 0.7,
+    "overlap_median": 0.285,
+    "text_bytes_mean": 26093,
+    "body_bytes_mean": 111045,
+    "seconds_median": 0.52
+   },
+   "pdf": {
+    "hosts": [
+     "www.kslegislature.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "http_error": 23,
+     "ok": 27
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": 1.0
+    },
+    "same_version_rate": 0.636,
+    "overlap_median": 0.962,
+    "text_bytes_mean": 16499,
+    "body_bytes_mean": 95517,
+    "seconds_median": 7.11
+   }
+  },
+  "KY": {
+   "pdf": {
+    "hosts": [
+     "apps.legislature.ky.gov"
+    ],
+    "sampled": {
+     "without_text": 25,
+     "with_text": 25
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": 1.0
+    },
+    "same_version_rate": 1.0,
+    "overlap_median": 0.381,
+    "text_bytes_mean": 16702,
+    "body_bytes_mean": 54379,
+    "seconds_median": 3.79
+   }
+  },
+  "LA": {
+   "pdf": {
+    "hosts": [
+     "www.legis.la.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.667,
+     "with_text_ours": 0.5,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": 0.667
+    },
+    "same_version_rate": 0.85,
+    "overlap_median": 0.425,
+    "text_bytes_mean": 10460,
+    "body_bytes_mean": 76880,
+    "seconds_median": 2.94
+   }
+  },
+  "MA": {
+   "pdf": {
+    "hosts": [
+     "malegislature.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.267,
+     "with_text_ours": 0.3,
+     "with_text_theirs": 0.6,
+     "without_text_pdf_layout": 0.267
+    },
+    "same_version_rate": 1.0,
+    "overlap_median": 0.288,
+    "text_bytes_mean": 7380,
+    "body_bytes_mean": 2682465,
+    "seconds_median": 9.58
+   }
+  },
+  "MD": {
+   "pdf": {
+    "hosts": [
+     "mgaleg.maryland.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.967,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": 0.967
+    },
+    "same_version_rate": 0.5,
+    "overlap_median": 0.256,
+    "text_bytes_mean": 18117,
+    "body_bytes_mean": 156934,
+    "seconds_median": 5.52
+   }
+  },
+  "ME": {
+   "pdf": {
+    "hosts": [
+     "www.mainelegislature.org"
+    ],
+    "sampled": {
+     "without_text": 50
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.22,
+     "with_text_ours": null,
+     "with_text_theirs": null,
+     "without_text_pdf_layout": 0.7
+    },
+    "same_version_rate": null,
+    "overlap_median": null,
+    "text_bytes_mean": 5232,
+    "body_bytes_mean": 157658,
+    "seconds_median": 4.31
+   }
+  },
+  "MI": {
+   "html": {
+    "hosts": [
+     "legislature.mi.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 0.95,
+     "with_text_theirs": 0.75,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 0.9,
+    "overlap_median": 1.0,
+    "text_bytes_mean": 48679,
+    "body_bytes_mean": 200873,
+    "seconds_median": 1.38
+   },
+   "pdf": {
+    "hosts": [
+     "legislature.mi.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "extract_error": 15,
+     "ok": 35
+    },
+    "clean_rate": {
+     "without_text": 0.957,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 0.75,
+     "without_text_pdf_layout": 0.87
+    },
+    "same_version_rate": 0.833,
+    "overlap_median": 0.392,
+    "text_bytes_mean": 9829,
+    "body_bytes_mean": 153493,
+    "seconds_median": 4.61
+   }
+  },
+  "MN": {
+   "html": {
+    "hosts": [
+     "www.revisor.mn.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 1.0,
+    "overlap_median": 0.447,
+    "text_bytes_mean": 33567,
+    "body_bytes_mean": 147875,
+    "seconds_median": 0.47
+   },
+   "pdf": {
+    "hosts": [
+     "www.revisor.mn.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "network_error": 2,
+     "ok": 48
+    },
+    "clean_rate": {
+     "without_text": 0.107,
+     "with_text_ours": 0.0,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": 0.679
+    },
+    "same_version_rate": 1.0,
+    "overlap_median": 0.338,
+    "text_bytes_mean": 129411,
+    "body_bytes_mean": 942392,
+    "seconds_median": 0.87
+   }
+  },
+  "MO": {
+   "pdf": {
+    "hosts": [
+     "documents.house.mo.gov",
+     "www.senate.mo.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "http_error": 2,
+     "ok": 48
+    },
+    "clean_rate": {
+     "without_text": 0.036,
+     "with_text_ours": 0.0,
+     "with_text_theirs": 0.0,
+     "without_text_pdf_layout": 0.036
+    },
+    "same_version_rate": 0.85,
+    "overlap_median": 0.701,
+    "text_bytes_mean": 17491,
+    "body_bytes_mean": 212049,
+    "seconds_median": 4.01
+   }
+  },
+  "MS": {
+   "html": {
+    "hosts": [
+     "billstatus.ls.state.ms.us"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 0.95,
+     "with_text_theirs": 0.95,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 0.95,
+    "overlap_median": 0.986,
+    "text_bytes_mean": 23984,
+    "body_bytes_mean": 35589,
+    "seconds_median": 0.5
+   },
+   "pdf": {
+    "hosts": [
+     "billstatus.ls.state.ms.us"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "http_error": 1,
+     "ok": 49
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": 1.0
+    },
+    "same_version_rate": 0.75,
+    "overlap_median": 0.357,
+    "text_bytes_mean": 15212,
+    "body_bytes_mean": 94869,
+    "seconds_median": 4.0
+   }
+  },
+  "MT": {
+   "pdf": {
+    "hosts": [
+     "api.legmt.gov",
+     "leg.mt.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "extract_error": 1,
+     "http_error": 14,
+     "ok": 35
+    },
+    "clean_rate": {
+     "without_text": 0.75,
+     "with_text_ours": 0.842,
+     "with_text_theirs": 0.895,
+     "without_text_pdf_layout": 0.875
+    },
+    "same_version_rate": 0.526,
+    "overlap_median": 0.853,
+    "text_bytes_mean": 11402,
+    "body_bytes_mean": 65252,
+    "seconds_median": 2.56
+   }
+  },
+  "NC": {
+   "pdf": {
+    "hosts": [
+     "www.ncleg.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": 0.967
+    },
+    "same_version_rate": 0.2,
+    "overlap_median": 0.383,
+    "text_bytes_mean": 13230,
+    "body_bytes_mean": 89567,
+    "seconds_median": 4.62
+   }
+  },
+  "ND": {
+   "pdf": {
+    "hosts": [
+     "ndlegis.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": 1.0
+    },
+    "same_version_rate": 0.55,
+    "overlap_median": 0.726,
+    "text_bytes_mean": 10157,
+    "body_bytes_mean": 85609,
+    "seconds_median": 3.64
+   }
+  },
+  "NE": {
+   "pdf": {
+    "hosts": [
+     "nebraskalegislature.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 0.95,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": 0.933
+    },
+    "same_version_rate": 0.7,
+    "overlap_median": 0.352,
+    "text_bytes_mean": 13334,
+    "body_bytes_mean": 69595,
+    "seconds_median": 2.88
+   }
+  },
+  "NH": {
+   "html": {
+    "hosts": [
+     "gc.nh.gov",
+     "www.gencourt.state.nh.us"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.0,
+     "with_text_ours": 0.0,
+     "with_text_theirs": 0.0,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 1.0,
+    "overlap_median": 0.0,
+    "text_bytes_mean": 4418,
+    "body_bytes_mean": 13999,
+    "seconds_median": 0.32
+   },
+   "pdf": {
+    "hosts": [
+     "gc.nh.gov",
+     "www.gencourt.state.nh.us"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.0,
+     "with_text_ours": 0.0,
+     "with_text_theirs": 0.0,
+     "without_text_pdf_layout": 0.0
+    },
+    "same_version_rate": 1.0,
+    "overlap_median": 0.0,
+    "text_bytes_mean": 4644,
+    "body_bytes_mean": 59822,
+    "seconds_median": 3.53
+   }
+  },
+  "NJ": {
+   "html": {
+    "hosts": [
+     "pub.njleg.state.nj.us"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.0,
+     "with_text_ours": 0.0,
+     "with_text_theirs": 0.0,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 1.0,
+    "overlap_median": 0.932,
+    "text_bytes_mean": 14844,
+    "body_bytes_mean": 29385,
+    "seconds_median": 0.28
+   },
+   "pdf": {
+    "hosts": [
+     "pub.njleg.state.nj.us"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.0,
+     "with_text_ours": 0.0,
+     "with_text_theirs": 0.0,
+     "without_text_pdf_layout": 0.0
+    },
+    "same_version_rate": 1.0,
+    "overlap_median": 0.353,
+    "text_bytes_mean": 10765,
+    "body_bytes_mean": 194976,
+    "seconds_median": 5.45
+   }
+  },
+  "NM": {
+   "html": {
+    "hosts": [
+     "www.nmlegis.gov"
+    ],
+    "sampled": {
+     "without_text": 25,
+     "with_text": 25
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 0.92,
+     "with_text_theirs": 0.92,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 0.88,
+    "overlap_median": 0.973,
+    "text_bytes_mean": 6501,
+    "body_bytes_mean": 19193,
+    "seconds_median": 0.77
+   },
+   "pdf": {
+    "hosts": [
+     "www.nmlegis.gov"
+    ],
+    "sampled": {
+     "without_text": 25,
+     "with_text": 25
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 0.96,
+     "with_text_theirs": 0.92,
+     "without_text_pdf_layout": 1.0
+    },
+    "same_version_rate": 0.96,
+    "overlap_median": 0.926,
+    "text_bytes_mean": 23780,
+    "body_bytes_mean": 114008,
+    "seconds_median": 3.83
+   }
+  },
+  "NV": {
+   "pdf": {
+    "hosts": [
+     "www.leg.state.nv.us"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 0.95,
+     "with_text_theirs": 0.9,
+     "without_text_pdf_layout": 0.933
+    },
+    "same_version_rate": 0.5,
+    "overlap_median": 0.325,
+    "text_bytes_mean": 32738,
+    "body_bytes_mean": 325781,
+    "seconds_median": 2.64
+   }
+  },
+  "NY": {
+   "html": {
+    "hosts": [
+     "assembly.state.ny.us"
+    ],
+    "sampled": {
+     "without_text": 8,
+     "with_text": 42
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.625,
+     "with_text_ours": 0.476,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 0.929,
+    "overlap_median": 0.315,
+    "text_bytes_mean": 8887,
+    "body_bytes_mean": 24431,
+    "seconds_median": 0.76
+   },
+   "pdf": {
+    "hosts": [
+     "legislation.nysenate.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.9,
+     "with_text_ours": 0.9,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": 0.9
+    },
+    "same_version_rate": 0.85,
+    "overlap_median": 0.737,
+    "text_bytes_mean": 13728,
+    "body_bytes_mean": 11913,
+    "seconds_median": 3.05
+   }
+  },
+  "OH": {
+   "html": {
+    "hosts": [
+     "search-prod.lis.state.oh.us"
+    ],
+    "sampled": {
+     "without_text": 13,
+     "with_text": 37
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 0.0,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 0.811,
+    "overlap_median": 0.712,
+    "text_bytes_mean": 21743,
+    "body_bytes_mean": 62787,
+    "seconds_median": 0.68
+   },
+   "pdf": {
+    "hosts": [
+     "search-prod.lis.state.oh.us"
+    ],
+    "sampled": {
+     "without_text": 25,
+     "with_text": 25
+    },
+    "outcomes": {
+     "http_error": 19,
+     "ok": 31
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 0.0,
+     "without_text_pdf_layout": 1.0
+    },
+    "same_version_rate": 0.944,
+    "overlap_median": 0.594,
+    "text_bytes_mean": 21048,
+    "body_bytes_mean": 86689,
+    "seconds_median": 3.72
+   }
+  },
+  "OK": {
+   "pdf": {
+    "hosts": [
+     "webserver1.lsb.state.ok.us",
+     "www.oklegislature.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": 1.0
+    },
+    "same_version_rate": 0.9,
+    "overlap_median": 0.908,
+    "text_bytes_mean": 7641,
+    "body_bytes_mean": 57523,
+    "seconds_median": 2.78
+   }
+  },
+  "OR": {
+   "pdf": {
+    "hosts": [
+     "olis.oregonlegislature.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 0.8,
+     "without_text_pdf_layout": 0.967
+    },
+    "same_version_rate": 0.7,
+    "overlap_median": 0.382,
+    "text_bytes_mean": 17167,
+    "body_bytes_mean": 42611,
+    "seconds_median": 2.7
+   }
+  },
+  "PA": {
+   "html": {
+    "hosts": [
+     "www.palegis.us"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 0.9,
+    "overlap_median": 0.804,
+    "text_bytes_mean": 8787,
+    "body_bytes_mean": 218898,
+    "seconds_median": 0.72
+   },
+   "pdf": {
+    "hosts": [
+     "www.palegis.us"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": 1.0
+    },
+    "same_version_rate": 0.9,
+    "overlap_median": 0.845,
+    "text_bytes_mean": 8438,
+    "body_bytes_mean": 75299,
+    "seconds_median": 3.74
+   }
+  },
+  "RI": {
+   "pdf": {
+    "hosts": [
+     "webserver.rilegislature.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": 0.767
+    },
+    "same_version_rate": 1.0,
+    "overlap_median": 0.452,
+    "text_bytes_mean": 10424,
+    "body_bytes_mean": 99508,
+    "seconds_median": 5.41
+   }
+  },
+  "SC": {
+   "html": {
+    "hosts": [
+     "www.scstatehouse.gov"
+    ],
+    "sampled": {
+     "without_text": 3,
+     "with_text": 47
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 0.745,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 0.468,
+    "overlap_median": 0.783,
+    "text_bytes_mean": 5938,
+    "body_bytes_mean": 15152,
+    "seconds_median": 0.25
+   }
+  },
+  "SD": {
+   "html": {
+    "hosts": [
+     "sdlegislature.gov"
+    ],
+    "sampled": {
+     "without_text": 50
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.0,
+     "with_text_ours": null,
+     "with_text_theirs": null,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": null,
+    "overlap_median": null,
+    "text_bytes_mean": 119,
+    "body_bytes_mean": 5982,
+    "seconds_median": 0.3
+   },
+   "pdf": {
+    "hosts": [
+     "mylrc.sdlegislature.gov"
+    ],
+    "sampled": {
+     "without_text": 50
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": null,
+     "with_text_theirs": null,
+     "without_text_pdf_layout": 0.92
+    },
+    "same_version_rate": null,
+    "overlap_median": null,
+    "text_bytes_mean": 7438,
+    "body_bytes_mean": 124855,
+    "seconds_median": 5.3
+   }
+  },
+  "TN": {
+   "pdf": {
+    "hosts": [
+     "capitol.tn.gov",
+     "www.capitol.tn.gov"
+    ],
+    "sampled": {
+     "without_text": 1,
+     "with_text": 49
+    },
+    "outcomes": {
+     "robots": 50
+    },
+    "clean_rate": {
+     "without_text": null,
+     "with_text_ours": null,
+     "with_text_theirs": null,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": null,
+    "overlap_median": null,
+    "text_bytes_mean": null,
+    "body_bytes_mean": null,
+    "seconds_median": null
+   }
+  },
+  "TX": {
+   "html": {
+    "hosts": [
+     "capitol.texas.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 1.0,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 0.85,
+    "overlap_median": 0.921,
+    "text_bytes_mean": 7700,
+    "body_bytes_mean": 43240,
+    "seconds_median": 0.48
+   },
+   "pdf": {
+    "hosts": [
+     "capitol.texas.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.067,
+     "with_text_ours": 0.05,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": 0.067
+    },
+    "same_version_rate": 0.75,
+    "overlap_median": 0.583,
+    "text_bytes_mean": 6846,
+    "body_bytes_mean": 118559,
+    "seconds_median": 4.23
+   }
+  },
+  "UT": {
+   "pdf": {
+    "hosts": [
+     "le.utah.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.167,
+     "with_text_ours": 0.9,
+     "with_text_theirs": 0.95,
+     "without_text_pdf_layout": 0.167
+    },
+    "same_version_rate": 1.0,
+    "overlap_median": 0.92,
+    "text_bytes_mean": 18323,
+    "body_bytes_mean": 109471,
+    "seconds_median": 1.4
+   }
+  },
+  "VA": {
+   "html": {
+    "hosts": [
+     "lis.blob.core.windows.net",
+     "lis.virginia.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.467,
+     "with_text_ours": 0.85,
+     "with_text_theirs": 0.85,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 1.0,
+    "overlap_median": 0.858,
+    "text_bytes_mean": 17275,
+    "body_bytes_mean": 25815,
+    "seconds_median": 0.38
+   },
+   "pdf": {
+    "hosts": [
+     "lis.blob.core.windows.net",
+     "lis.virginia.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.5,
+     "with_text_ours": 0.9,
+     "with_text_theirs": 0.9,
+     "without_text_pdf_layout": 0.433
+    },
+    "same_version_rate": 1.0,
+    "overlap_median": 0.962,
+    "text_bytes_mean": 9516,
+    "body_bytes_mean": 35221,
+    "seconds_median": 2.85
+   }
+  },
+  "VT": {
+   "pdf": {
+    "hosts": [
+     "legislature.vermont.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.9,
+     "with_text_ours": 0.9,
+     "with_text_theirs": 0.9,
+     "without_text_pdf_layout": 0.9
+    },
+    "same_version_rate": 0.8,
+    "overlap_median": 0.393,
+    "text_bytes_mean": 21982,
+    "body_bytes_mean": 113012,
+    "seconds_median": 0.71
+   }
+  },
+  "WA": {
+   "html": {
+    "hosts": [
+     "lawfilesext.leg.wa.gov"
+    ],
+    "sampled": {
+     "without_text": 12,
+     "with_text": 38
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.917,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 0.0,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 0.711,
+    "overlap_median": 0.883,
+    "text_bytes_mean": 40291,
+    "body_bytes_mean": 66932,
+    "seconds_median": 0.85
+   },
+   "pdf": {
+    "hosts": [
+     "lawfilesext.leg.wa.gov"
+    ],
+    "sampled": {
+     "without_text": 12,
+     "with_text": 38
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.917,
+     "with_text_ours": 0.974,
+     "with_text_theirs": 0.0,
+     "without_text_pdf_layout": 0.917
+    },
+    "same_version_rate": 0.763,
+    "overlap_median": 0.358,
+    "text_bytes_mean": 15552,
+    "body_bytes_mean": 89598,
+    "seconds_median": 4.86
+   }
+  },
+  "WI": {
+   "html": {
+    "hosts": [
+     "docs.legis.wisconsin.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.0,
+     "with_text_ours": 0.0,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 0.95,
+    "overlap_median": 0.219,
+    "text_bytes_mean": 8463,
+    "body_bytes_mean": 58194,
+    "seconds_median": 0.8
+   },
+   "pdf": {
+    "hosts": [
+     "docs.legis.wisconsin.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "ok": 50
+    },
+    "clean_rate": {
+     "without_text": 0.933,
+     "with_text_ours": 0.9,
+     "with_text_theirs": 0.9,
+     "without_text_pdf_layout": 0.567
+    },
+    "same_version_rate": 0.9,
+    "overlap_median": 0.564,
+    "text_bytes_mean": 13366,
+    "body_bytes_mean": 60535,
+    "seconds_median": 3.73
+   }
+  },
+  "WV": {
+   "html": {
+    "hosts": [
+     "www.legis.state.wv.us",
+     "www.wvlegislature.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "http_error": 8,
+     "ok": 42
+    },
+    "clean_rate": {
+     "without_text": 0.931,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": null
+    },
+    "same_version_rate": 0.923,
+    "overlap_median": 0.76,
+    "text_bytes_mean": 15302,
+    "body_bytes_mean": 43048,
+    "seconds_median": 0.43
+   },
+   "pdf": {
+    "hosts": [
+     "www.legis.state.wv.us",
+     "www.wvlegislature.gov"
+    ],
+    "sampled": {
+     "without_text": 30,
+     "with_text": 20
+    },
+    "outcomes": {
+     "http_error": 5,
+     "ok": 45
+    },
+    "clean_rate": {
+     "without_text": 0.967,
+     "with_text_ours": 1.0,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": 0.967
+    },
+    "same_version_rate": 1.0,
+    "overlap_median": 0.847,
+    "text_bytes_mean": 8984,
+    "body_bytes_mean": 104101,
+    "seconds_median": 3.29
+   }
+  },
+  "WY": {
+   "pdf": {
+    "hosts": [
+     "wyoleg.gov"
+    ],
+    "sampled": {
+     "without_text": 4,
+     "with_text": 46
+    },
+    "outcomes": {
+     "extract_error": 1,
+     "ok": 49
+    },
+    "clean_rate": {
+     "without_text": 0.0,
+     "with_text_ours": 0.37,
+     "with_text_theirs": 1.0,
+     "without_text_pdf_layout": 1.0
+    },
+    "same_version_rate": 0.761,
+    "overlap_median": 0.764,
+    "text_bytes_mean": 8559,
+    "body_bytes_mean": 35674,
+    "seconds_median": 2.55
+   }
+  }
+ }
+}
