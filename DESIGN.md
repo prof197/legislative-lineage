@@ -352,7 +352,7 @@ Existing team expertise with Next.js is a secondary, maintainability factor: it 
 
 The benchmark puts both engines through the same work. It runs datasketch through its batch path, never a per-shingle loop, so the comparison is with the library at its best. It records wall-clock time and peak memory for building the signatures and the LSH index, on the full corpus.
 
-**Measured in step 10** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`; Apple M1 Max, 10 cores, 32 GiB). The benchmark gave each engine one core and the same 1,916,250 stoplisted sections, 477,224,285 shingles in all.
+**Measured in step 10** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`; Apple M1 Max, 10 cores, 32 GiB). The benchmark gave each engine one core and the same 1,916,250 stoplisted sections, 477,224,285 shingles in all. That was the corpus when the benchmark ran (`engines.numpy.sections` in the report). Later document-type rules have since left 1,904,743 signed sections (`reports/index.json`), 0.6% fewer. The comparison concerns cost per section, so it is re-run only when the corpus changes by more than 5%.
 
 - **Signing time.** The NumPy implementation took 270 s and datasketch 102 s. The context above expected per-element Python work to dominate datasketch's time. On this corpus it does not.
 - **Signature memory.** The NumPy matrix holds 512 bytes per section and datasketch's objects 785 (`tracemalloc`, on a 20,000-section sample), or 0.98 GB against 1.50 GB for the corpus.
