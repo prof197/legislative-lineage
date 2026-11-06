@@ -123,7 +123,7 @@ The unit of matching is the section, not the bill. Provisions travel between sta
 
 Enacting clauses, effective dates, severability clauses, repealers and amending formulas are near-identical across thousands of bills. Left in, they would make unrelated bills look alike. Two mechanisms remove them, and `lineage boilerplate` reports what each one caught in `reports/boilerplate.json` (committed).
 
-**Patterns.** A short list of patterns runs on normalized text and recognizes enacting clauses, effective dates, severability clauses and repealers. A section is flagged as boilerplate only when, once its heading and every pattern match are removed, at most four words remain, which is room for a catchline such as "effective date". A provision that ends with an effective date therefore stays matchable. So does a preamble that carries the bill's title along with its enacting clause. The `boilerplate` column records which kind a flagged section is.
+**Patterns.** A short list of patterns runs on normalized text and recognizes enacting clauses, effective dates, severability clauses and repealers, along with two of the Uniform Law Commission's standard closing sections: the uniformity clause ("In applying and construing this [act], ..."), which closes every uniform act, and the statement of an act's relation to the federal E-SIGN Act, which closes its acts on electronic records. Left in, those two made each uniform act's text match the enactments of dozens of other uniform acts (see [Commission recall](#commission-recall)). A section is flagged as boilerplate only when, once its heading and every pattern match are removed, at most four words remain, which is room for a catchline such as "effective date". A provision that ends with an effective date therefore stays matchable. So does a preamble that carries the bill's title along with its enacting clause. The `boilerplate` column records which kind a flagged section is.
 
 **Document-frequency stoplist.** The patterns can't anticipate standard definitions, amending formulas ("is amended to read as follows"), or markup that survives extraction, such as Minnesota's "new text begin". The stoplist catches them from the data. Every matchable section's set of word 5-gram shingles is counted, and a shingle found in more than a set share of those sections is dropped before MinHash. Matchable means the bill's document type is eligible ([DR-5](#dr-5)) and the section is not flagged by the patterns, so the list reflects the text that will actually be compared: excluded resolutions cannot push their formulas onto it, and sections that are dropped anyway don't count twice. The list adapts to each state's habits without upkeep and is rebuilt with the corpus. The proposed share is 0.1% (`--max-share`). The report tabulates how many shingles, and what share of all shingle occurrences, each of several thresholds would remove, and lists the most frequent stoplisted shingles. The ablation sets the final value against recall.
 
@@ -193,7 +193,9 @@ So:
 
 The resolved mapping is committed as `reports/answer_key.csv` (`uv run lineage eval answer-key`) so every row can be checked by eye. Each bill a row resolved to is listed with its Open States id, title, chambers passed and last passage date, along with the step that found it and the listed number it matched. Rows that are not counted are listed with the reason. The key needs only the bills table, so it can be checked before the index is built. A test fails if the committed key and the committed results name different bills.
 
-**Found.** An enactment is found when any of its bills belongs to a family among the act text's relatives at or above the cutoff. The cutoff is proposed: the top 50 families, each with at least one verified section. The results record each found enactment's rank and share, and recall at a minimum share, so another cutoff can be read from them without rerunning. An enactment is "with text" when at least one of its bills has stored text, and recall is reported over all enactments and over those with text.
+**Found.** An enactment is found when any of its bills belongs to a family among the act text's relatives with a score above the threshold. The score is the family's share of the act's signed sections, the share that query-side scoring ranks by. Rank is reported but does not decide. A uniform act's real relatives can outnumber any fixed rank once each state's introduced, failed and enacted versions count, so a rank cutoff would cap recall as an act spreads. The site's display cap of 50 relatives is a separate choice.
+
+The threshold is proposed and comes from the measured scores. An earlier rank cutoff of 50 was examined first. With the commission's standard closing sections still matchable, most of each act's relatives were bills of other uniform acts matched through the uniformity clause alone, or through the E-SIGN statement, and they outranked some enactments. Those two sections are now boilerplate ([Boilerplate](#boilerplate)). Every relative left for each of the three acts carries part of that act's text. Each is an enactment, another state's introduced or failed bill, a companion, an omnibus bill that includes the act, or a bill that adapts a few of its sections. The results list them (`queries.<act>.relatives`). No score separates unrelated bills from relatives, so the threshold is one verified section (`threshold.min_share` 0). The results record each found enactment's rank and share, and recall at higher minimum shares (`recall_by_min_share`), so another threshold can be read from them without rerunning. The threshold is re-examined whenever a relative turns out not to carry the act. An enactment is "with text" when at least one of its bills has stored text, and recall is reported over all enactments and over those with text.
 
 **Miss reasons.** Each miss is classified automatically. Each bill an enactment names gets the first reason that applies, and the enactment takes the reason of the bill that got furthest through the pipeline. The stage reasons are measured by replaying LSH and verification on the bill's own stored signatures, with the query's band keys, the bucket cap and the verification threshold.
 
@@ -205,7 +207,7 @@ The resolved mapping is committed as `reports/answer_key.csv` (`uv run lineage e
 - `not_proposed`: no section of the bill shares a band key with any section of the act.
 - `bucket_cap`: a section pair would have verified, but every band it shares is in a bucket over the cap.
 - `verification`: a section pair was proposed, but none reached the verification threshold.
-- `below_cutoff`: the bill's family is among the relatives, ranked below the cutoff.
+- `below_threshold`: the bill's family is among the relatives, with a score at or below the threshold.
 
 **Pipeline regression test.** The act texts cannot be committed, so CI cannot compute the headline number. Instead, `tests/test_commission.py` runs every pipeline command on a committed fixture: the bills each enactment names, among distractors that are bills of other uniform acts from the same archives. They share the commission's drafting conventions and closing sections, which makes them hard negatives. Each act is queried with its earliest enacted state version, and that version's own enactment is left out. The test fails if any enactment it found when written is lost. `uv run python -m evals.fixture` rebuilds the fixture from the snapshot. It leaves out omnibus bills over 40,000 characters. Its number is not the recall the README reports, because a state's version differs from the act.
 
@@ -227,7 +229,7 @@ The resolved mapping is committed as `reports/answer_key.csv` (`uv run lineage e
 
 ## Scaling limits
 
-The section count sets the size of everything downstream. The 2,058,712 signed sections' MinHash signatures take 1.05 GB, and their band index 0.79 GB (`uv run lineage index` → `reports/index.json`, `signature_bytes` and `lsh.index_bytes`). Ten times the corpus is about 18 GB, which no longer fits comfortably in a laptop's memory.
+The section count sets the size of everything downstream. The 2,058,452 signed sections' MinHash signatures take 1.05 GB, and their band index 0.79 GB (`uv run lineage index` → `reports/index.json`, `signature_bytes` and `lsh.index_bytes`). Ten times the corpus is about 18 GB, which no longer fits comfortably in a laptop's memory.
 
 | Pressure | What breaks first at 10× | Response |
 |---|---|---|
@@ -285,30 +287,30 @@ Each entry names the command that produces it and the committed file it reads fr
 
 **Eligibility** (`uv run lineage eligible` → `reports/document_types.json`). 447,389 of 525,633 records are of an eligible type, and 307,659 of those yield sections. Every rule's count, per state, is in the file, and for a rule with an `unless` pattern, the count per state of the titles it spared. The titles themselves are not committed, because commemorations name private people. `uv run lineage stats --samples` writes a sample of each title rule's titles and every spared title to `data/reports/document_type_samples.json`, a local file anyone can reproduce from the pinned snapshot.
 
-**Boilerplate** (`uv run lineage boilerplate` → `reports/boilerplate.json`). Sections flagged by each pattern, and the shingles and shingle occurrences that each candidate stoplist threshold removes. 2,081,434 sections are matchable. At the proposed 0.1% share, 3,359 shingles are stoplisted, removing 3.6% of shingle occurrences.
+**Boilerplate** (`uv run lineage boilerplate` → `reports/boilerplate.json`). Sections flagged by each pattern, and the shingles and shingle occurrences that each candidate stoplist threshold removes. 2,081,174 sections are matchable. At the proposed 0.1% share, 3,359 shingles are stoplisted, removing 3.6% of shingle occurrences.
 
-**Signatures** (`uv run lineage index` → `reports/index.json`). 2,058,712 of the 2,081,434 matchable sections are signed. 22,720 are shorter than five words, and 2 lose every shingle to the stoplist. After the stoplist, the median section has 146 distinct shingles, the 99th percentile 1,933 and the largest 261,326. The signatures take 1.05 GB.
+**Signatures** (`uv run lineage index` → `reports/index.json`). 2,058,452 of the 2,081,174 matchable sections are signed. 22,720 are shorter than five words, and 2 lose every shingle to the stoplist. After the stoplist, the median section has 146 distinct shingles, the 99th percentile 1,933 and the largest 261,326. The signatures take 1.05 GB.
 
-**LSH bands** (same command and file, `lsh`). The band index takes 0.79 GB. At 32 × 4 with the cap at 500, the bands propose 17,213,908 distinct candidate pairs, of which 470,980 (2.7%) cross state lines. The largest bucket holds 1,847 sections. Summed over bands, the cap skips 357 buckets and the 97,821,952 pairs inside them. 2,005 cross-state candidates appear only in skipped buckets and are lost. The cap sweep:
+**LSH bands** (same command and file, `lsh`). The band index takes 0.79 GB. At 32 × 4 with the cap at 500, the bands propose 17,192,418 distinct candidate pairs, of which 450,708 (2.6%) cross state lines. The largest bucket holds 1,847 sections. Summed over bands, the cap skips 357 buckets and the 97,821,952 pairs inside them. 2,005 cross-state candidates appear only in skipped buckets and are lost. The cap sweep:
 
 | Cap | Buckets skipped | Of those, spanning more than one state | Most states in a skipped bucket | Cross-state candidates lost |
 |---|---|---|---|---|
-| 100 | 3,711 | 61 | 35 | 94,052 |
+| 100 | 3,710 | 60 | 35 | 92,783 |
 | 200 | 1,750 | 33 | 35 | 55,231 |
 | 500 | 357 | 2 | 2 | 2,005 |
 | 1,000 | 37 | 0 | 1 | 0 |
 | 2,000 | 0 | 0 | 0 | 0 |
 
-**Verification and families** (same command and file, `pairs` and `families`). 11,505,297 of the 17,213,908 candidates verify at an estimate of 0.5 or more, 207,453 of them across state lines, and 5,708,611 are dropped. The stored cross-state pairs take 1.9 MB. 6,887,095 pairs of same-state bills share a verified section. 431,218 of them reach a share of 0.8 in both directions, and they form 62,558 families of two or more bills, 163,774 bills in all. The largest holds 764. The share sweep:
+**Verification and families** (same command and file, `pairs` and `families`). 11,494,482 of the 17,192,418 candidates verify at an estimate of 0.5 or more, 197,548 of them across state lines, and 5,697,936 are dropped. The stored cross-state pairs take 1.8 MB. 6,886,579 pairs of same-state bills share a verified section. 431,216 of them reach a share of 0.8 in both directions, and they form 62,557 families of two or more bills, 163,772 bills in all. The largest holds 764. The share sweep:
 
 | Share | Linked bill pairs | Families of two or more | Bills in them | Largest family |
 |---|---|---|---|---|
-| 0.5 | 933,124 | 66,481 | 204,948 | 1,282 |
+| 0.5 | 933,120 | 66,482 | 204,947 | 1,282 |
 | 2/3 | 632,791 | 66,029 | 182,235 | 764 |
 | 0.75 | 450,154 | 63,931 | 169,170 | 764 |
-| 0.8 | 431,218 | 62,558 | 163,774 | 764 |
-| 0.9 | 411,602 | 60,419 | 155,910 | 764 |
-| 1.0 | 404,377 | 59,286 | 152,163 | 764 |
+| 0.8 | 431,216 | 62,557 | 163,772 | 764 |
+| 0.9 | 411,600 | 60,418 | 155,907 | 764 |
+| 1.0 | 404,372 | 59,286 | 152,162 | 764 |
 
 **MinHash engines** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`). On one core of an Apple M1 Max, signing every section took 271 s with the NumPy implementation and 105 s with datasketch's batch path. Signatures hold 512 and 785 bytes per section. Building the LSH index over the same stored signatures took 11.5 s with NumPy, adding 0.70 GiB, at a peak of 2.2 GiB with the signatures included. datasketch's insertion session reached the 16 GiB bound after 2,025,000 of the 2,058,712 sections, holding 14.9 GiB of index, and the benchmark stopped it. See [DR-3](#dr-3).
 
@@ -400,7 +402,7 @@ Existing team expertise with Next.js is a secondary, maintainability factor: it 
 
 The benchmark puts both engines through the same work. It runs datasketch through its batch path, never a per-shingle loop, so the comparison is with the library at its best. It records wall-clock time and peak memory for building the signatures and the LSH index, on the full corpus.
 
-**Measured in step 10** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`; Apple M1 Max, 10 cores, 32 GiB). The comparison concerns cost per section, so it is re-run when the corpus changes by more than 5%. Step 10's run gave each engine one core and the same 1,916,250 stoplisted sections. Splitting at citation headings later raised the signed sections to 2,058,712 (`reports/index.json`), 7.4% more, so the benchmark was re-run on them, 475,914,210 shingles in all (`engines.numpy.sections` in the report). The figures below are from the re-run. Step 10's report is in git history (`git show 714f085:reports/minhash_benchmark.json`), and its signing times differ from the re-run's by under 4%.
+**Measured in step 10** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`; Apple M1 Max, 10 cores, 32 GiB). The comparison concerns cost per section, so it is re-run when the corpus changes by more than 5%. Step 10's run gave each engine one core and the same 1,916,250 stoplisted sections. Splitting at citation headings later raised the signed sections to 2,058,712, 7.4% more, so the benchmark was re-run on them, 475,914,210 shingles in all (`engines.numpy.sections` in the report). Making the commission's standard sections boilerplate then left 2,058,452 (`reports/index.json`), 0.01% fewer. The figures below are from the re-run. Step 10's report is in git history (`git show 714f085:reports/minhash_benchmark.json`), and its signing times differ from the re-run's by under 4%.
 
 - **Signing time.** The NumPy implementation took 271 s and datasketch 105 s. The context above expected per-element Python work to dominate datasketch's time. On this corpus it does not.
 - **Signature memory.** The NumPy matrix holds 512 bytes per section and datasketch's objects 785 (`tracemalloc`, on a 20,000-section sample), or 1.05 GB against 1.62 GB for the corpus.

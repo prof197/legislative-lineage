@@ -30,7 +30,7 @@ This is a one-time local step, not part of the pipeline. The eval records each t
 ## Results
 
 <!-- results:commission -->
-Commission recall: of the bills that enacted three uniform acts, the share that the act's own text finds among its top 50 relatives. The lists were read 2026-11-06. Reproduce with `uv run lineage eval commission` → `reports/results.json`.
+Commission recall: of the bills that enacted three uniform acts, the share that the act's own text finds, sharing at least one verified section with it, not counting the commission's standard closing sections. The lists were read 2026-11-06. Reproduce with `uv run lineage eval commission` → `reports/results.json`.
 
 | | All enactments | With text in the source |
 |---|---|---|
@@ -41,7 +41,7 @@ Commission recall: of the bills that enacted three uniform acts, the share that 
 | Enacted | 20 / 35 (57.1%) | 20 / 26 (76.9%) |
 | Substantially similar | 0 / 1 (0.0%) | 0 / 1 (0.0%) |
 
-Misses: no text in the source 9, never proposed 5, verification 1, below the cutoff 1. The reasons are defined in DESIGN.md, [Commission recall](DESIGN.md#commission-recall).
+Misses: no text in the source 9, never proposed 6, verification 1. The reasons are defined in DESIGN.md, [Commission recall](DESIGN.md#commission-recall).
 <!-- /results:commission -->
 
 These are the near-duplicate stage's numbers alone: an enactment is found only where a state kept the act's wording closely enough, section by section. The results file lists every enactment's bills, with each bill's signed sections and the stage that lost it. The commission lists no failed bills, so this measures recall only.

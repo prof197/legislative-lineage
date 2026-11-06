@@ -23,7 +23,7 @@ _REASONS = {
     "not_proposed": "never proposed",
     "bucket_cap": "the bucket cap",
     "verification": "verification",
-    "below_cutoff": "below the cutoff",
+    "below_threshold": "below the threshold",
 }
 _STRATA = {"enacted": "Enacted", "substantially_similar": "Substantially similar"}
 
@@ -40,14 +40,20 @@ def _cell(r: dict[str, Any]) -> str:
 
 def render_commission(section: dict[str, Any]) -> str:
     recall = section["recall"]
-    cutoff = section["cutoff"]["max_rank"]
+    min_share = section["threshold"]["min_share"]
+    found_when = (
+        "at least one verified section"
+        if min_share == 0
+        else f"more than {min_share:.0%} of its sections"
+    )
     read = section["enactments_file"]["read"].removeprefix("ULC Bill List, ")
     rows = [("Pooled, three acts", recall["pooled"])]
     rows += [(ACT_NAMES[act], r) for act, r in recall["by_act"].items()]
     rows += [(_STRATA[s], r) for s, r in recall["by_stratum"].items()]
     lines = [
         "Commission recall: of the bills that enacted three uniform acts, the share that the "
-        f"act's own text finds among its top {cutoff} relatives. The lists were {read}. "
+        f"act's own text finds, sharing {found_when} with it, not counting the commission's "
+        f"standard closing sections. The lists were {read}. "
         f"Reproduce with `{section['command']}` → `reports/results.json`.",
         "",
         "| | All enactments | With text in the source |",

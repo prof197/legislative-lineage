@@ -83,7 +83,7 @@ BILL = EnactmentBill(
 )
 
 
-def test_reasons_follow_the_pipeline_from_source_text_to_cutoff() -> None:
+def test_reasons_follow_the_pipeline_from_source_text_to_the_threshold() -> None:
     proposed = Probe("verification", 0.4)
 
     def reason(bill: EnactmentBill, rows: int = 3, probed: Probe | None = proposed) -> str | None:
@@ -95,11 +95,20 @@ def test_reasons_follow_the_pipeline_from_source_text_to_cutoff() -> None:
     assert reason(BILL, rows=0, probed=None) == "no_usable_text"
     assert reason(BILL) == "verification"
     assert reason(BILL, probed=Probe("not_proposed", 0.1)) == "not_proposed"
-    ranked = target_reason(BILL, signed_rows=3, probed=None, relative=Relative(51, 0.1, "HB 12"))
-    assert ranked == "below_cutoff"
-    found = target_reason(BILL, signed_rows=3, probed=None, relative=Relative(50, 0.1, "HB 12"))
-    assert found is None
-    assert list(MISS_REASONS)[-1] == "below_cutoff"
+    low = Relative(3, 0.1, "HB 12")
+    assert target_reason(BILL, signed_rows=3, probed=None, relative=low, min_share=0.2) == (
+        "below_threshold"
+    )
+    assert list(MISS_REASONS)[-1] == "below_threshold"
+
+
+def test_found_is_a_score_above_the_threshold_whatever_the_rank() -> None:
+    # A uniform act's relatives can outnumber any fixed rank once each state's introduced,
+    # failed and enacted versions count, so rank is reported but does not decide.
+    far = Relative(400, 0.25, "HB 12")
+
+    assert target_reason(BILL, signed_rows=3, probed=None, relative=far, min_share=0.2) is None
+    assert target_reason(BILL, signed_rows=3, probed=None, relative=far) is None
 
 
 def _raw_text(tables: Path, bill_id: str) -> str:
@@ -188,6 +197,10 @@ def test_the_command_writes_its_section_of_the_results(
     section = doc["commission"]
     assert section["command"] == "uv run lineage eval commission"
     assert set(section["queries"]) == set(ACTS)
+    assert section["threshold"]["status"] == "proposed"
+    for act in ACTS:
+        relatives = section["queries"][act]["relatives"]
+        assert [r["rank"] for r in relatives] == list(range(1, len(relatives) + 1))
     assert len(section["queries"][ACTS[0]]["file_sha256"]) == 64
     assert section["enactments_file"]["read"].startswith("ULC Bill List, read ")
     assert "recall" in out.output

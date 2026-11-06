@@ -7,8 +7,8 @@
   "prime": "2^61 - 1"
  },
  "sections": {
-  "matchable": 2081434,
-  "signed": 2058712,
+  "matchable": 2081174,
+  "signed": 2058452,
   "too_short": 22720,
   "all_stoplisted": 2
  },
@@ -18,12 +18,12 @@
   "p99": 1933,
   "max": 261326
  },
- "signature_bytes": 1054060544,
+ "signature_bytes": 1053927424,
  "lsh": {
   "bands": 32,
   "rows": 4,
   "threshold": 0.42,
-  "index_bytes": 790545408,
+  "index_bytes": 790445568,
   "bucket_cap": 500,
   "largest_bucket": 1847,
   "capped": {
@@ -33,17 +33,17 @@
    "cross_state_pairs_lost": 2005
   },
   "candidate_pairs": {
-   "all": 17213908,
-   "cross_state": 470980,
-   "same_state": 16742928
+   "all": 17192418,
+   "cross_state": 450708,
+   "same_state": 16741710
   },
   "cap_sweep": [
    {
     "cap": 100,
-    "buckets_over_cap": 3711,
-    "multi_state_buckets_over_cap": 61,
+    "buckets_over_cap": 3710,
+    "multi_state_buckets_over_cap": 60,
     "most_states_in_a_capped_bucket": 35,
-    "cross_state_pairs_lost": 94052
+    "cross_state_pairs_lost": 92783
    },
    {
     "cap": 200,
@@ -79,57 +79,57 @@
   "threshold": 0.5,
   "min_agreements": 64,
   "verified": {
-   "all": 11505297,
-   "cross_state": 207453,
-   "same_state": 11297844,
-   "dropped": 5708611
+   "all": 11494482,
+   "cross_state": 197548,
+   "same_state": 11296934,
+   "dropped": 5697936
   },
   "estimate_histogram": {
    "cross_state": [
     272,
-    6995,
-    36626,
-    33260,
-    43729,
-    44143,
-    50190,
-    48312,
-    46375,
-    38593,
-    30247,
-    26188,
-    20027,
-    15675,
-    13002,
-    17346
+    6993,
+    36574,
+    32847,
+    42541,
+    41739,
+    47244,
+    44950,
+    43316,
+    36645,
+    28159,
+    24831,
+    19384,
+    15246,
+    12646,
+    17321
    ],
    "same_state": [
     994,
     51391,
     260758,
-    552764,
-    874096,
-    1002958,
-    1237738,
-    1464385,
-    1300192,
-    1270235,
-    880753,
-    898817,
-    921796,
-    1205150,
-    941200,
-    3879701
+    552763,
+    874071,
+    1002905,
+    1237669,
+    1464225,
+    1300006,
+    1270068,
+    880678,
+    898697,
+    921726,
+    1205120,
+    941150,
+    3879489
    ]
   },
-  "stored_bytes": 1867077
+  "stored_bytes": 1777932
  },
  "families": {
   "share": 0.8,
-  "same_state_bill_pairs": 6887095,
-  "linked_bill_pairs": 431218,
-  "families_of_two_or_more": 62558,
-  "bills_in_them": 163774,
+  "same_state_bill_pairs": 6886579,
+  "linked_bill_pairs": 431216,
+  "families_of_two_or_more": 62557,
+  "bills_in_them": 163772,
   "largest": [
    {
     "family": "ocd-bill/005896ef-09ec-46f2-aeab-e4a3521d2942",
@@ -183,33 +183,33 @@
    }
   ],
   "min_share_histogram": [
-   758821,
-   906534,
-   1088575,
-   528977,
-   647558,
+   758435,
+   906336,
+   1088563,
+   529068,
+   647548,
    1083237,
-   827445,
-   29189,
-   77081,
-   6554,
-   275134,
-   18713,
-   5895,
+   827444,
+   29190,
+   77080,
+   6558,
+   275130,
+   18715,
+   5893,
    178611,
    4617,
-   18936,
-   12385,
-   7231,
-   5461,
-   406141
+   18938,
+   12396,
+   7220,
+   5465,
+   406135
   ],
   "sweep": [
    {
     "share": 0.5,
-    "linked_bill_pairs": 933124,
-    "families_of_two_or_more": 66481,
-    "bills_in_them": 204948,
+    "linked_bill_pairs": 933120,
+    "families_of_two_or_more": 66482,
+    "bills_in_them": 204947,
     "largest_family": 1282
    },
    {
@@ -228,23 +228,23 @@
    },
    {
     "share": 0.8,
-    "linked_bill_pairs": 431218,
-    "families_of_two_or_more": 62558,
-    "bills_in_them": 163774,
+    "linked_bill_pairs": 431216,
+    "families_of_two_or_more": 62557,
+    "bills_in_them": 163772,
     "largest_family": 764
    },
    {
     "share": 0.9,
-    "linked_bill_pairs": 411602,
-    "families_of_two_or_more": 60419,
-    "bills_in_them": 155910,
+    "linked_bill_pairs": 411600,
+    "families_of_two_or_more": 60418,
+    "bills_in_them": 155907,
     "largest_family": 764
    },
    {
     "share": 1.0,
-    "linked_bill_pairs": 404377,
+    "linked_bill_pairs": 404372,
     "families_of_two_or_more": 59286,
-    "bills_in_them": 152163,
+    "bills_in_them": 152162,
     "largest_family": 764
    }
   ]

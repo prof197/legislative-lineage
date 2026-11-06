@@ -17,7 +17,7 @@ def _section(found: int, enactments: int) -> dict[str, object]:
     both = {"all": cell, "with_text": cell}
     return {
         "command": "uv run lineage eval commission",
-        "cutoff": {"max_rank": 50},
+        "threshold": {"min_share": 0.0},
         "enactments_file": {"read": "ULC Bill List, read 2099-01-02"},
         "recall": {
             "pooled": both,
@@ -45,6 +45,7 @@ def test_renders_counts_and_shares_from_the_results() -> None:
     assert "| Special Deposits |" in out
     assert "read 2099-01-02" in out
     assert "never proposed 2" in out
+    assert "at least one verified section" in out
     assert out.endswith(f"{END}\n\nMore.\n")
 
 
