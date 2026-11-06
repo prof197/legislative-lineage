@@ -257,7 +257,7 @@ def index(
         "reports/index.json"
     ),
 ) -> None:
-    """Build the search index: MinHash signatures and LSH bands for every matchable section."""
+    """Build the search index: signatures, LSH bands, verified cross-state pairs, families."""
     started = time.monotonic()
     try:
         doc = build_index(
@@ -268,6 +268,7 @@ def index(
         raise typer.Exit(1) from None
     counts, lsh = doc["sections"], doc["lsh"]
     pairs, capped = lsh["candidate_pairs"], lsh["capped"]
+    verified, families = doc["pairs"]["verified"], doc["families"]
     typer.echo(
         f"{counts['signed']:,} of {counts['matchable']:,} matchable sections signed "
         f"({counts['too_short']:,} too short, {counts['all_stoplisted']:,} all stoplisted) -> "
@@ -277,6 +278,10 @@ def index(
         f"{pairs['cross_state']:,} across states; {capped['buckets']:,} buckets over the cap "
         f"of {lsh['bucket_cap']} skipped, dropping {capped['cross_state_pairs_lost']:,} "
         f"cross-state pairs\n"
+        f"{verified['all']:,} verified at an estimate of {doc['pairs']['threshold']} or more: "
+        f"{verified['cross_state']:,} cross-state pairs -> {tables / 'pairs'}; "
+        f"{families['families_of_two_or_more']:,} same-state families of two or more bills "
+        f"({families['bills_in_them']:,} bills) -> {tables / 'families'}\n"
         f"{time.monotonic() - started:.0f}s, {report}"
     )
 

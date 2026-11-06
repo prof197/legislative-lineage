@@ -149,6 +149,10 @@ Comparing every pair of sections is out of reach, so this stage summarizes each 
 
 **Bucket cap.** A bucket larger than the cap yields no pairs, and `reports/index.json` counts the buckets, section memberships and pairs skipped. The large buckets are boilerplate that the stoplist misses because it is common only within one state, such as a state's own wording of effective-date, appropriation and transition clauses. A cap set too low would also cut real copying: interstate compacts put the same section into bills in dozens of states. So the report sweeps a range of caps and, for each, counts the buckets skipped, those spanning more than one state, and the cross-state candidates the cap removes for good, after checking every band a pair shares. The cap is 500, the smallest in the sweep that removes cross-state candidates from no more than one bucket. Every build reports the cross-state candidates its cap drops (`lsh.capped.cross_state_pairs_lost`), and when the recall eval loses an enactment to the cap, its miss reason says so. The numbers are under [Measured facts](#measured-facts).
 
+**Verification.** Each candidate's similarity is re-estimated from all 128 values and kept as the count of agreeing positions, one byte per pair. Pairs estimated below 0.5, fewer than 64 agreements, are dropped. The threshold of 0.5 is proposed. At 0.5 the S-curve already proposes 87% of pairs, so what verification keeps is what the bands find reliably, while below the curve's midpoint whether a pair is proposed at all is largely chance. The candidates' estimates show no valley to set the threshold by: cross-state candidates spread from 0.1 to 1 (`reports/index.json`, `pairs.estimate_histogram`). Partial or reworded copying below the threshold is the semantic stage's to find, and the ablation sweeps the threshold. Verified cross-state pairs are stored in `pairs/` by signature row. Same-state pairs serve only to form families.
+
+**Families.** A state files the same text many times: companion bills in each chamber, a bill refiled in a later session, or one template for many resolutions. Lineage counts the other states that carry a provision, so each state's copies are grouped into a family that counts once. Two bills of one state are linked when, in each direction, at least 80% of the bill's signed sections have a verified match among the other's, and families are the connected components of the links. Requiring a share, not any one match, keeps a clause both bills happen to share from linking them. Requiring it in both directions keeps an omnibus bill from absorbing each small bill it contains. The share of 0.8 is proposed and was set from the measured distribution (`reports/index.json`, `families.min_share_histogram`). Shares spike at the fractions of small bills, 1/3, 1/2, 2/3 and 3/4, where a short bill shares one or two clauses with another, and again at 1. Between 0.70 and 0.95 they are sparse, and 0.8 sits there, past the 3/4 spike. The report's sweep shows what a lower share costs: at 0.5 the largest family grows to 1,282 bills, chained through shared clauses, while from 2/3 up it stays at 830. The largest families are one template filed many times, such as Tennessee's memorial resolutions and New Mexico's placeholder bills, which is what a family should collapse. A family is named by its first bill id in sort order and stored in `families/`.
+
 ## Alternatives considered
 
 | Alternative | Reason rejected | Evidence |
@@ -187,6 +191,7 @@ These carry into the README's known-failure-modes section. Each has a mitigation
 | Amendment-style bills | New text sits inside old statute text, so matches can land on the old law | Drop struck text where its markup survives extraction; section-level scoring limits the damage |
 | Omnibus bills | The provision is a small share of the bill | Score from the query side; display matches by section |
 | Boilerplate leakage | False matches on shared clauses | Document-frequency stoplist, the LSH bucket cap, and the ablation's false-match rate |
+| A family joins bills whose only signed text is a shared template | Georgia's local bills, whose stored text is often only the notice of intention to introduce them, form one family of 764 (`reports/index.json`, `families.largest`) | They can match no other state through the notice, so cross-state counts are unaffected. Disclosed |
 | A copied section that sits in an LSH bucket over the cap in every band it shares | The pair is never proposed | Each build counts the cross-state pairs the cap drops (`reports/index.json`), and the recall eval names "bucket cap" as a miss reason |
 | Legal phrasing that sounds alike | The semantic stage pairs unrelated sections | Label meaning-only matches as such, tune the cosine threshold, and run the precision sample |
 | An explanation with valid citations but a wrong summary | A claim cites a real difference but describes it wrongly | A hand-labeled faithfulness eval, and the cited spans shown beside each claim |
@@ -230,6 +235,17 @@ Each entry names the command that produces it and the committed file it reads fr
 | 500 | 356 | 1 | 2 | 501 |
 | 1,000 | 35 | 0 | 1 | 0 |
 | 2,000 | 0 | 0 | 0 | 0 |
+
+**Verification and families** (same command and file, `pairs` and `families`). 10,887,538 of the 15,321,302 candidates verify at an estimate of 0.5 or more, 157,247 of them across state lines, and 4,433,764 are dropped. The stored cross-state pairs take 1.4 MB. 6,670,885 pairs of same-state bills share a verified section. 480,227 of them reach a share of 0.8 in both directions, and they form 62,982 families of two or more bills, 166,637 bills in all. The largest holds 830. The share sweep:
+
+| Share | Linked bill pairs | Families of two or more | Bills in them | Largest family |
+|---|---|---|---|---|
+| 0.5 | 1,001,683 | 67,605 | 207,739 | 1,282 |
+| 2/3 | 659,928 | 66,747 | 184,047 | 830 |
+| 0.75 | 498,192 | 64,293 | 171,743 | 830 |
+| 0.8 | 480,227 | 62,982 | 166,637 | 830 |
+| 0.9 | 461,947 | 60,997 | 159,456 | 830 |
+| 1.0 | 456,180 | 59,988 | 156,143 | 830 |
 
 **MinHash engines** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`). On one core of an Apple M1 Max, signing every section took 270 s with the NumPy implementation and 102 s with datasketch's batch path. Signatures hold 512 and 785 bytes per section. Building the LSH index over the same stored signatures took 10 s with NumPy and 571 s with datasketch's insertion session. The index added 0.66 GiB and 14.3 GiB to the process, and the build's peak memory, signatures included, was 2.1 GiB and 15.3 GiB, against the 16 GiB bound. See [DR-3](#dr-3).
 

@@ -34,7 +34,8 @@ INDEX_ROW_BYTES = BANDS * (8 + 4)
 SWEEP_CAPS = (100, 200, 500, 1000, 2000)
 
 
-def _states(tables_dir: Path, table: SignatureTable) -> NDArray[np.int32]:
+def row_states(tables_dir: Path, table: SignatureTable) -> NDArray[np.int32]:
+    """Each signature row's state, as a code that is equal exactly when the states are."""
     with queries.connect_quiet() as con:
         by_bill = queries.bill_states(con, bills_glob=str(tables_dir / "bills" / "*.parquet"))
     _, codes = np.unique(np.array([by_bill[b] for b in table.bill_ids]), return_inverse=True)
@@ -60,7 +61,7 @@ def build_bands(tables_dir: Path, *, floor_bytes: int) -> dict[str, Any]:
         shutil.rmtree(building, ignore_errors=True)
         raise
 
-    states = _states(tables_dir, table)
+    states = row_states(tables_dir, table)
     found = candidate_pairs(index, cap=BUCKET_CAP)
     cross = int(np.count_nonzero(states[found.left] != states[found.right]))
     # The build's own cap joins the sweep, so its losses are counted whatever the sweep lists.

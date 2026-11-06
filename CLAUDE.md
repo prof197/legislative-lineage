@@ -18,7 +18,7 @@ uv run lineage split         # split bill text into data/tables/sections/*.parqu
 uv run lineage eligible      # document-type rules -> data/tables/eligible.parquet, reports/document_types.json
 uv run lineage boilerplate   # shingle stoplist -> data/tables/stoplist.parquet, reports/boilerplate.json
 uv run lineage stats         # coverage, sections, types, status per state/session -> reports/coverage.json
-uv run lineage index         # signatures + LSH bands -> data/tables/{signatures,bands}/, reports/index.json
+uv run lineage index         # signatures, LSH bands, verified pairs, families -> data/tables/{signatures,bands,pairs,families}/, reports/index.json
 uv run python -m benchmarks.minhash  # NumPy vs datasketch: signing and LSH index time and memory (DR-3), dev only
 ```
 
@@ -43,7 +43,10 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   signatures.py   build the signatures table, one worker process per sections file
   lsh.py          LSH banding: band keys, sorted-array buckets, the cap (pure functions)
   bands.py        build the band index from the signatures; cap counter and cap sweep
-  index.py        `lineage index`: signatures, then bands, then reports/index.json
+  verify.py       re-estimate candidates from full signatures; the verification threshold
+  families.py     same-state families: bill match shares, connected components (pure functions)
+  pairs.py        verify candidates, store cross-state pairs, write families
+  index.py        `lineage index`: signatures, bands, pairs and families, then reports/index.json
   stoplist.py     document-frequency stoplist and its report
   stats.py        coverage report: the measurements that replace the design's estimates
   queries.py      every SQL query the pipeline runs (DR-4)
@@ -59,7 +62,7 @@ reports/          committed outputs of pipeline commands; README and DESIGN numb
 DESIGN.md         design, alternatives, scaling limits, failure modes, decision records
 data/             local snapshots and derived tables; gitignored, never committed
   raw/<ST>/*.zip  Open States session archives, never edited
-  tables/         Parquet tables written by the pipeline; signatures/ and bands/ hold .npy matrices
+  tables/         Parquet tables written by the pipeline; signatures/, bands/ and pairs/ hold .npy arrays
 ```
 
 ## Conventions

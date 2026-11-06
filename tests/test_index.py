@@ -10,6 +10,7 @@ from lineage.bands import SWEEP_CAPS, load_band_index
 from lineage.disk import InsufficientDiskSpaceError
 from lineage.index import build_index
 from lineage.lsh import BANDS, BUCKET_CAP, build_band_index
+from lineage.pairs import load_cross_state_pairs, load_families
 from lineage.signatures import load_signatures
 
 COPIED = "a person who knowingly sells a catalytic converter without a receipt commits a felony"
@@ -119,4 +120,28 @@ def test_refuses_to_fill_the_disk(tables: Path, tmp_path: Path) -> None:
         build_index(tables, workers=1, floor_bytes=1 << 62, report_path=tmp_path / "index.json")
 
     assert not (tables / "bands").exists()
+    assert not (tables / "pairs").exists()
     assert not (tmp_path / "index.json").exists()
+
+
+def test_verifies_candidates_and_stores_the_cross_state_pairs(tables: Path, tmp_path: Path) -> None:
+    doc = build_index(tables, workers=1, floor_bytes=0, report_path=tmp_path / "index.json")
+
+    verified = doc["pairs"]["verified"]
+    assert (doc["pairs"]["threshold"], doc["pairs"]["min_agreements"]) == (0.5, 64)
+    assert verified == {"all": 3, "cross_state": 2, "same_state": 1, "dropped": 0}
+    # Rows follow the signatures table: b1, b2, b3, b4.
+    stored = load_cross_state_pairs(tables)
+    assert list(zip(stored.left.tolist(), stored.right.tolist(), strict=True)) == [(0, 1), (1, 2)]
+    assert stored.agreements.tolist() == [128, 128]
+
+
+def test_groups_same_state_copies_into_one_family(tables: Path, tmp_path: Path) -> None:
+    doc = build_index(tables, workers=1, floor_bytes=0, report_path=tmp_path / "index.json")
+
+    # b1 and b3 are Alabama's two copies; b2 is Alaska's, so it stays apart.
+    assert load_families(tables) == {"b1": "b1", "b2": "b2", "b3": "b1", "b4": "b4"}
+    assert doc["families"]["share"] == 0.8
+    assert doc["families"]["families_of_two_or_more"] == 1
+    assert doc["families"]["bills_in_them"] == 2
+    assert doc["families"]["largest"] == [{"family": "b1", "state": "AL", "bills": 2}]

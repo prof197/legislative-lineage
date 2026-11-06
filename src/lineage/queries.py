@@ -352,6 +352,26 @@ def write_eligibility(
     con.execute(query, {"ids": ids, "eligible": eligible, "rules": rules})
 
 
+def write_families(
+    con: duckdb.DuckDBPyConnection, *, parquet_path: Path, bill_ids: list[str], families: list[str]
+) -> None:
+    query = f"""
+        COPY (
+            SELECT
+                CAST(unnest($ids) AS VARCHAR) AS bill_id,
+                CAST(unnest($families) AS VARCHAR) AS family
+        ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
+    """
+    con.execute(query, {"ids": bill_ids, "families": families})
+
+
+def read_families(con: duckdb.DuckDBPyConnection, *, parquet_path: Path) -> dict[str, str]:
+    rows: list[tuple[str, str]] = con.execute(
+        "SELECT bill_id, family FROM read_parquet($p)", {"p": str(parquet_path)}
+    ).fetchall()
+    return dict(rows)
+
+
 def eligible_text_by_state(
     con: duckdb.DuckDBPyConnection, *, bills_glob: str, sections_glob: str, eligible_path: str
 ) -> dict[str, tuple[int, int]]:
