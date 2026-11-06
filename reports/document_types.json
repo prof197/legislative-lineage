@@ -1,10 +1,10 @@
 {
  "command": "uv run lineage eligible",
- "rules_sha256": "134e8039961adee9de989d6add2111348879beb788cc57a09568432b9b7f5c57",
+ "rules_sha256": "7bb84d14ed3553737e1e9ebffd0d75e7d0eee0a2ccbc5be29d9a737fa30a3c11",
  "totals": {
   "records": 525633,
-  "eligible": 450334,
-  "eligible_with_sections": 308838
+  "eligible": 447389,
+  "eligible_with_sections": 307659
  },
  "rules": [
   {
@@ -43,17 +43,115 @@
    "rule": 2,
    "state": "TN",
    "type": "joint resolution",
-   "title": "^\\W*memorials\\s*,",
+   "title": "^\\W*memorials\\s*,(?!\\s*congress\\b)",
    "unless": null,
    "decision": "exclude",
-   "reason": "Tennessee files each memorial as a joint resolution titled \"Memorials, <occasion> - <honoree> -\"; no guard, since an honoree's name can carry a word such as law",
-   "records": 5803,
+   "reason": "Tennessee files each memorial as a joint resolution titled \"Memorials, <occasion> - <honoree> -\"; no guard, since an honoree's name can carry a word such as law. \"Memorials, Congress\" calls on Congress and is kept",
+   "records": 5783,
    "by_state": {
-    "TN": 5803
+    "TN": 5783
    }
   },
   {
    "rule": 3,
+   "state": "*",
+   "type": "joint resolution",
+   "title": "\\b(?:memorial|honorary)\\b.{0,80}\\b(?:highway|hwy|hgwy|hghwy|bridges?|roads?|interchange|overpass|ave|avenue|byway|parkway|route|rest area|underpass|trail)\\b|\\bdesignat\\w*\\b.{0,120}\\b(?:highway|bridges?|interchange|overpass|roads?|byway|rest area|underpass)\\b|^\\W*naming and designating\\b",
+   "unless": "constitution|amend|propos|\\bcongress\\b",
+   "decision": "exclude",
+   "reason": "commemorative naming: names a highway, bridge or road for a person or group, or (Tennessee's \"Naming and Designating\") a state symbol, honorary title or observance",
+   "records": 231,
+   "by_state": {
+    "IL": 71,
+    "KY": 115,
+    "NJ": 9,
+    "TN": 36
+   },
+   "spared_by_state": {}
+  },
+  {
+   "rule": 4,
+   "state": "*",
+   "type": "joint resolution",
+   "title": "\\b(?:designat\\w*|proclaim\\w*|declar\\w*|recogni[sz]\\w*)\\b.{0,140}\\b(?:day|week|weekend|month|year|night)s?\\b|^\\W*holidays and days of special observance\\b",
+   "unless": "constitution|amend|propos|\\bcongress\\b|\\bfederal\\b|\\burg(?:e|es|ing)\\b",
+   "decision": "exclude",
+   "reason": "observance: designates, proclaims or recognizes a day, week, month or year; a call on Congress or anyone else to do so is kept",
+   "records": 1074,
+   "by_state": {
+    "DE": 4,
+    "ME": 10,
+    "NJ": 837,
+    "TN": 3,
+    "UT": 1,
+    "VA": 28,
+    "VT": 2,
+    "WI": 189
+   },
+   "spared_by_state": {
+    "AK": 1,
+    "NJ": 2,
+    "WI": 2
+   }
+  },
+  {
+   "rule": 5,
+   "state": "*",
+   "type": "joint resolution",
+   "title": "^\\W*(?:resolution\\s+|senate\\s+)?confirm\\w*\\b.{0,60}\\b(?:nominations?|appointments?|appointees?)\\b|;\\s*confirming\\s+(?:various\\s+)?appointments\\b|^\\W*general assembly\\s*,\\s*confirmation\\b|^\\W*appointments?\\s+to\\b",
+   "unless": "constitution|amend|propos|emergenc",
+   "decision": "exclude",
+   "reason": "procedural: confirms an appointee or nominee; a title that also approves an emergency, or proposes changing the confirmation process, is kept",
+   "records": 602,
+   "by_state": {
+    "CT": 308,
+    "FL": 1,
+    "NC": 1,
+    "TN": 276,
+    "VA": 16
+   },
+   "spared_by_state": {
+    "FL": 2
+   }
+  },
+  {
+   "rule": 6,
+   "state": "*",
+   "type": "joint resolution",
+   "title": "\\badjourn(?!ed\\s+session\\b)\\w*|\\brecess(?:es)?\\b|\\breconvene\\w*|\\bjoint\\s+(?:session|convention)s?\\b|\\bjoint\\s+rules?\\b|^\\W*joint order\\b",
+   "unless": "constitution|\\bcongress\\b",
+   "decision": "exclude",
+   "reason": "procedural: adjournment, recess, a joint session or convention, the joint rules, or a joint order (Vermont's second-year \"Adjourned Session\" is a session name, not an adjournment)",
+   "records": 357,
+   "by_state": {
+    "CT": 17,
+    "IL": 51,
+    "ME": 118,
+    "MT": 2,
+    "NC": 15,
+    "TN": 42,
+    "UT": 32,
+    "VT": 80
+   },
+   "spared_by_state": {
+    "ME": 1
+   }
+  },
+  {
+   "rule": 7,
+   "state": "*",
+   "type": "joint resolution",
+   "title": "\\bclaims?\\s+commissioner\\b|\\bclaims?\\s+against\\s+the\\s+state\\b",
+   "unless": null,
+   "decision": "exclude",
+   "reason": "procedural: decides or extends a claim against the state",
+   "records": 701,
+   "by_state": {
+    "CT": 701
+   }
+  },
+  {
+   "rule": 8,
    "state": "NJ",
    "type": "concurrent resolution",
    "title": "^(?:proposes|amends)\\b.*\\bconstitution",
@@ -66,7 +164,7 @@
    }
   },
   {
-   "rule": 4,
+   "rule": 9,
    "state": "MS",
    "type": "concurrent resolution",
    "title": "^constitution(?:al amendments| of 1890)?\\s*;",
@@ -79,7 +177,7 @@
    }
   },
   {
-   "rule": 5,
+   "rule": 10,
    "state": "GA",
    "type": "resolution",
    "title": "-\\s*CA\\s*$",
@@ -92,7 +190,7 @@
    }
   },
   {
-   "rule": 6,
+   "rule": 11,
    "state": "*",
    "type": "bill",
    "title": null,
@@ -154,7 +252,7 @@
    }
   },
   {
-   "rule": 7,
+   "rule": 12,
    "state": "*",
    "type": "bill+appropriation",
    "title": null,
@@ -167,7 +265,7 @@
    }
   },
   {
-   "rule": 8,
+   "rule": 13,
    "state": "*",
    "type": "proposed bill",
    "title": null,
@@ -182,51 +280,51 @@
    }
   },
   {
-   "rule": 9,
+   "rule": 14,
    "state": "*",
    "type": "joint resolution",
    "title": null,
    "unless": null,
    "decision": "match",
    "reason": "joint resolutions can carry law or propose constitutional amendments",
-   "records": 7734,
+   "records": 4789,
    "by_state": {
     "AK": 119,
     "AR": 77,
     "AZ": 2,
     "CA": 91,
-    "CT": 1141,
-    "DE": 48,
-    "FL": 103,
+    "CT": 115,
+    "DE": 44,
+    "FL": 102,
     "IA": 81,
     "ID": 23,
-    "IL": 278,
+    "IL": 156,
     "IN": 93,
-    "KY": 233,
+    "KY": 118,
     "MD": 49,
-    "ME": 152,
+    "ME": 24,
     "MO": 620,
-    "MT": 195,
-    "NC": 47,
+    "MT": 193,
+    "NC": 31,
     "NH": 1,
-    "NJ": 1046,
+    "NJ": 200,
     "NM": 120,
     "OK": 378,
     "OR": 129,
     "SC": 322,
     "SD": 49,
-    "TN": 517,
+    "TN": 180,
     "TX": 711,
-    "UT": 152,
-    "VA": 233,
-    "VT": 137,
+    "UT": 119,
+    "VA": 189,
+    "VT": 55,
     "WA": 51,
-    "WI": 339,
+    "WI": 150,
     "WV": 197
    }
   },
   {
-   "rule": 10,
+   "rule": 15,
    "state": "*",
    "type": "constitutional amendment",
    "title": null,
@@ -243,7 +341,7 @@
    }
   },
   {
-   "rule": 11,
+   "rule": 16,
    "state": "*",
    "type": "resolution",
    "title": null,
@@ -299,7 +397,7 @@
    }
   },
   {
-   "rule": 12,
+   "rule": 17,
    "state": "*",
    "type": "concurrent resolution",
    "title": null,
@@ -341,7 +439,7 @@
    }
   },
   {
-   "rule": 13,
+   "rule": 18,
    "state": "*",
    "type": "memorial",
    "title": null,
@@ -358,7 +456,7 @@
    }
   },
   {
-   "rule": 14,
+   "rule": 19,
    "state": "*",
    "type": "joint memorial",
    "title": null,
@@ -374,7 +472,7 @@
    }
   },
   {
-   "rule": 15,
+   "rule": 20,
    "state": "*",
    "type": "concurrent memorial",
    "title": null,
@@ -388,7 +486,7 @@
    }
   },
   {
-   "rule": 16,
+   "rule": 21,
    "state": "*",
    "type": "commemoration",
    "title": null,
@@ -401,7 +499,7 @@
    }
   },
   {
-   "rule": 17,
+   "rule": 22,
    "state": "*",
    "type": "proclamation",
    "title": null,
@@ -415,7 +513,7 @@
    }
   },
   {
-   "rule": 18,
+   "rule": 23,
    "state": "*",
    "type": "appointment",
    "title": null,
@@ -428,7 +526,7 @@
    }
   },
   {
-   "rule": 19,
+   "rule": 24,
    "state": "*",
    "type": "nomination",
    "title": null,
@@ -441,7 +539,7 @@
    }
   },
   {
-   "rule": 20,
+   "rule": 25,
    "state": "*",
    "type": "study request",
    "title": null,
@@ -454,7 +552,7 @@
    }
   },
   {
-   "rule": 21,
+   "rule": 26,
    "state": "*",
    "type": "concurrent study request",
    "title": null,

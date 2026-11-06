@@ -182,7 +182,7 @@ The external ground truth is the Uniform Law Commission's list of enactments. St
 
 ## Scaling limits
 
-The section count sets the size of everything downstream. The 1,907,159 signed sections' MinHash signatures take 0.98 GB, and their band index 0.73 GB (`uv run lineage index` → `reports/index.json`, `signature_bytes` and `lsh.index_bytes`). Ten times the corpus is about 17 GB, which no longer fits comfortably in a laptop's memory.
+The section count sets the size of everything downstream. The 1,904,743 signed sections' MinHash signatures take 0.98 GB, and their band index 0.73 GB (`uv run lineage index` → `reports/index.json`, `signature_bytes` and `lsh.index_bytes`). Ten times the corpus is about 17 GB, which no longer fits comfortably in a laptop's memory.
 
 | Pressure | What breaks first at 10× | Response |
 |---|---|---|
@@ -235,32 +235,32 @@ Each entry names the command that produces it and the committed file it reads fr
 
 **Document types** (same command and file). Record counts by classification per state, the title-pattern count of likely commemorative measures within each type, and status by type. These set DR-5's type rules.
 
-**Eligibility** (`uv run lineage eligible` → `reports/document_types.json`). 450,334 of 525,633 records are of an eligible type, and 308,838 of those yield sections. Every rule's count, per state, is in the file, and for a rule with an `unless` pattern, the count per state of the titles it spared. The titles themselves are not committed, because commemorations name private people. `uv run lineage stats --samples` writes a sample of each title rule's titles and every spared title to `data/reports/document_type_samples.json`, a local file anyone can reproduce from the pinned snapshot.
+**Eligibility** (`uv run lineage eligible` → `reports/document_types.json`). 447,389 of 525,633 records are of an eligible type, and 307,659 of those yield sections. Every rule's count, per state, is in the file, and for a rule with an `unless` pattern, the count per state of the titles it spared. The titles themselves are not committed, because commemorations name private people. `uv run lineage stats --samples` writes a sample of each title rule's titles and every spared title to `data/reports/document_type_samples.json`, a local file anyone can reproduce from the pinned snapshot.
 
-**Boilerplate** (`uv run lineage boilerplate` → `reports/boilerplate.json`). Sections flagged by each pattern, and the shingles and shingle occurrences that each candidate stoplist threshold removes. 1,928,867 sections are matchable. At the proposed 0.1% share, 3,789 shingles are stoplisted, removing 3.8% of shingle occurrences.
+**Boilerplate** (`uv run lineage boilerplate` → `reports/boilerplate.json`). Sections flagged by each pattern, and the shingles and shingle occurrences that each candidate stoplist threshold removes. 1,926,447 sections are matchable. At the proposed 0.1% share, 3,788 shingles are stoplisted, removing 3.8% of shingle occurrences.
 
-**Signatures** (`uv run lineage index` → `reports/index.json`). 1,907,159 of the 1,928,867 matchable sections are signed. 21,706 are shorter than five words, and 2 lose every shingle to the stoplist. After the stoplist, the median section has 163 distinct shingles, the 99th percentile 2,096 and the largest 261,324. The signatures take 0.98 GB.
+**Signatures** (`uv run lineage index` → `reports/index.json`). 1,904,743 of the 1,926,447 matchable sections are signed. 21,702 are shorter than five words, and 2 lose every shingle to the stoplist. After the stoplist, the median section has 163 distinct shingles, the 99th percentile 2,096 and the largest 261,324. The signatures take 0.98 GB.
 
-**LSH bands** (same command and file, `lsh`). The band index takes 0.73 GB. At 32 × 4 with the cap at 500, the bands propose 15,028,715 distinct candidate pairs, of which 364,285 (2.4%) cross state lines. The largest bucket holds 1,277 sections. Summed over bands, the cap skips 356 buckets and the 96,156,777 pairs inside them. 501 cross-state candidates appear only in skipped buckets and are lost. The cap sweep:
+**LSH bands** (same command and file, `lsh`). The band index takes 0.73 GB. At 32 × 4 with the cap at 500, the bands propose 14,979,580 distinct candidate pairs, of which 364,277 (2.4%) cross state lines. The largest bucket holds 1,277 sections. Summed over bands, the cap skips 356 buckets and the 96,156,777 pairs inside them. 501 cross-state candidates appear only in skipped buckets and are lost. The cap sweep:
 
 | Cap | Buckets skipped | Of those, spanning more than one state | Most states in a skipped bucket | Cross-state candidates lost |
 |---|---|---|---|---|
-| 100 | 3,560 | 51 | 33 | 70,574 |
-| 200 | 1,706 | 30 | 33 | 43,340 |
+| 100 | 3,557 | 51 | 33 | 70,574 |
+| 200 | 1,705 | 30 | 33 | 43,340 |
 | 500 | 356 | 1 | 2 | 501 |
 | 1,000 | 35 | 0 | 1 | 0 |
 | 2,000 | 0 | 0 | 0 | 0 |
 
-**Verification and families** (same command and file, `pairs` and `families`). 10,837,078 of the 15,028,715 candidates verify at an estimate of 0.5 or more, 157,248 of them across state lines, and 4,191,637 are dropped. The stored cross-state pairs take 1.4 MB. 6,620,763 pairs of same-state bills share a verified section. 431,018 of them reach a share of 0.8 in both directions, and they form 62,679 families of two or more bills, 164,221 bills in all. The largest holds 764. The share sweep:
+**Verification and families** (same command and file, `pairs` and `families`). 10,835,678 of the 14,979,580 candidates verify at an estimate of 0.5 or more, 157,242 of them across state lines, and 4,143,902 are dropped. The stored cross-state pairs take 1.4 MB. 6,619,799 pairs of same-state bills share a verified section. 430,358 of them reach a share of 0.8 in both directions, and they form 62,372 families of two or more bills, 163,464 bills in all. The largest holds 764. The share sweep:
 
 | Share | Linked bill pairs | Families of two or more | Bills in them | Largest family |
 |---|---|---|---|---|
-| 0.5 | 952,111 | 67,268 | 205,174 | 1,282 |
-| 2/3 | 610,706 | 66,443 | 181,623 | 764 |
-| 0.75 | 448,980 | 63,991 | 169,329 | 764 |
-| 0.8 | 431,018 | 62,679 | 164,221 | 764 |
-| 0.9 | 412,735 | 60,693 | 157,038 | 764 |
-| 1.0 | 406,969 | 59,685 | 153,727 | 764 |
+| 0.5 | 951,367 | 66,965 | 204,391 | 1,282 |
+| 2/3 | 610,030 | 66,134 | 180,857 | 764 |
+| 0.75 | 448,316 | 63,685 | 168,573 | 764 |
+| 0.8 | 430,358 | 62,372 | 163,464 | 764 |
+| 0.9 | 412,073 | 60,385 | 156,279 | 764 |
+| 1.0 | 406,309 | 59,377 | 152,968 | 764 |
 
 **MinHash engines** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`). On one core of an Apple M1 Max, signing every section took 270 s with the NumPy implementation and 102 s with datasketch's batch path. Signatures hold 512 and 785 bytes per section. Building the LSH index over the same stored signatures took 10 s with NumPy and 571 s with datasketch's insertion session. The index added 0.66 GiB and 14.3 GiB to the process, and the build's peak memory, signatures included, was 2.1 GiB and 15.3 GiB, against the 16 GiB bound. See [DR-3](#dr-3).
 
@@ -433,9 +433,11 @@ This project's index is two `.npy` matrices, 0.74 GB in all (`reports/index.json
 - **Matched by default:** bills, appropriation bills, proposed bills, joint resolutions, and records classified as constitutional amendments. Joint resolutions stay in because many states use them to propose constitutional amendments, and some give them the force of law.
 - **Excluded by default:** simple and concurrent resolutions, memorials, commemorations, proclamations, appointments, nominations and study requests. They are formula-heavy: commendations, condolences, requests to Congress, and procedural motions written to a few templates. Matched, they would crowd every bill page with relatives that share only those templates, and their formulas would claim stoplist slots meant for legal boilerplate.
 - **Per-state exceptions** admit constitutional amendments that a state files under an excluded type, by that state's title convention: New Jersey's and Mississippi's concurrent resolutions that propose amending the constitution, and Georgia's resolutions whose titles end in "-CA". Each is a row of the table, and the report gives its count.
-- **Commemorative joint resolutions** are excluded by a title pattern. The title must open, after any type prefix, with commending, commemorating, congratulating, honoring, paying tribute, recognizing, celebrating or mourning. A title that names a constitution, an amendment, a proposal, a right or a law is spared. The report counts the titles each rule excluded and spared, per state, and `lineage stats --samples` lists them locally, so false positives in both directions can be checked. Tennessee files every memorial as a joint resolution titled "Memorials, <occasion> - <honoree> -", for recognitions, deaths, retirements, academic and sports achievements, interns and petitions to Congress alike. Those titles name the occasion rather than opening with a verb, and an honoree's name or cause can carry a word the guard reads as law, so a Tennessee row excludes the prefix with no guard. It was found when 830 graduation memorials formed the corpus's largest family.
+- **Commemorative joint resolutions** are excluded by a title pattern. The title must open, after any type prefix, with commending, commemorating, congratulating, honoring, paying tribute, recognizing, celebrating or mourning. A title that names a constitution, an amendment, a proposal, a right or a law is spared. The report counts the titles each rule excluded and spared, per state, and `lineage stats --samples` lists them locally, so false positives in both directions can be checked. Tennessee files every memorial as a joint resolution titled "Memorials, <occasion> - <honoree> -", for recognitions, deaths, retirements, academic and sports achievements, interns and petitions to Congress alike. Those titles name the occasion rather than opening with a verb, and an honoree's name or cause can carry a word the guard reads as law, so a Tennessee row excludes the prefix with no guard. It was found when 830 graduation memorials formed the corpus's largest family. "Memorials, Congress" titles call on Congress, so they are kept.
+- **Commemorative and procedural joint resolutions** are excluded whatever their wording, by one row per kind: namings of highways, bridges and roads; designations of a day, week, month or year; confirmations of appointees; adjournments, recesses, joint sessions and conventions, joint rules and joint orders; and claims against the state. A joint resolution that expresses a position or calls on Congress is kept, and so is one that proposes changing the process it names, such as a constitutional amendment on confirmations. Each row's guard says what it spares.
+- **Title rules apply only to joint resolutions and to the per-state exceptions.** Bills are never excluded by title: a bill naming a bridge or designating a day is still law.
 
-**Counts** (`uv run lineage eligible` → `reports/document_types.json`). 75,299 of 525,633 records are excluded: 53,165 simple resolutions, 9,470 concurrent resolutions, 5,803 Tennessee memorials filed as joint resolutions, 2,265 proclamations, 1,635 appointments, 1,546 other commemorative joint resolutions, 780 memorials of the three kinds, 423 nominations, 188 commemorations and 24 study requests. The exceptions admit 451 New Jersey concurrent resolutions, 122 Mississippi concurrent resolutions and 102 Georgia resolutions. No record has a type the table doesn't list.
+**Counts** (`uv run lineage eligible` → `reports/document_types.json`). 78,244 of 525,633 records are excluded: 53,165 simple resolutions, 9,470 concurrent resolutions, 5,783 Tennessee memorials filed as joint resolutions, 2,265 proclamations, 1,635 appointments, 1,546 other commemorative joint resolutions, 780 memorials of the three kinds, 423 nominations, 188 commemorations and 24 study requests. Of joint resolutions, 1,074 designate an observance, 701 decide claims against the state, 602 confirm appointees, 357 are procedural and 231 name a road or bridge. The exceptions admit 451 New Jersey concurrent resolutions, 122 Mississippi concurrent resolutions and 102 Georgia resolutions. No record has a type the table doesn't list.
 
 The filter does not bias the recall eval. It selects on what kind of document a record is, independent of its subject, so it removes records that aren't law without regard to any story or act. The unrelated bills on every topic, which are the hard negatives that test precision, all remain.
 

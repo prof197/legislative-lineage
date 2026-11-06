@@ -121,6 +121,109 @@ def test_rejects_a_malformed_rule_naming_its_line(tmp_path: Path, body: str, mes
             "Memorials, Recognition - Fallen law enforcement officers of Hawkins County  -",
             False,
         ),
+        (
+            "TN",
+            "joint resolution",
+            "Memorials, Congress - Urges Congress to bring home the remains of the USS Intrepid "
+            "sailors entombed in Libya. -",
+            True,
+        ),
+        # Commemorative and procedural joint resolutions, whatever their wording.
+        (
+            "KY",
+            "joint resolution",
+            "A JOINT RESOLUTION designating the Nelson County Veterans Bridge on United States "
+            "Highway 31E.",
+            False,
+        ),
+        (
+            "TN",
+            "joint resolution",
+            "Naming and Designating - Designates Pumpkin Pie as a symbol of the State of "
+            "Tennessee. -",
+            False,
+        ),
+        (
+            "NJ",
+            "joint resolution",
+            'Designates June 25 of each year as "Delaware and Raritan Canal Day."',
+            False,
+        ),
+        (
+            "WI",
+            "joint resolution",
+            "Relating to: proclaiming the months of October 2025 and October 2026 as Cybersecurity "
+            "Awareness Month.",
+            False,
+        ),
+        ("VA", "joint resolution", "Governor; confirming appointments.", False),
+        ("IL", "joint resolution", "ADJOURN HOUSE & SENATE", False),
+        ("UT", "joint resolution", "Joint Rules Resolution - Amendments to Joint Rules", False),
+        (
+            "TN",
+            "joint resolution",
+            "General Assembly, Joint Conventions - Calls joint convention to elect comptroller and "
+            "state treasurer on January 11, 2023. -",
+            False,
+        ),
+        (
+            "CT",
+            "joint resolution",
+            "RESOLUTION GRANTING THE CLAIMS COMMISSIONER AN EXTENSION OF TIME TO DISPOSE OF THE "
+            "CLAIM OF THE CITY OF HARTFORD.",
+            False,
+        ),
+        # Positions, calls on Congress, and changes to the process itself are kept.
+        (
+            "AK",
+            "joint resolution",
+            "Encouraging the United States Congress to designate 2025 as the Year of the Soldier.",
+            True,
+        ),
+        (
+            "TN",
+            "joint resolution",
+            "General Assembly, Statement of Intent or Position - Supports "
+            "Tennessee\u2019s response to the United States Department of Energy Request for "
+            "Information on Nuclear Lifecycle Innovation Campuses. -",
+            True,
+        ),
+        (
+            "WA",
+            "joint resolution",
+            "Concerning senate confirmation of gubernatorial appointments to fill vacancies on the "
+            "supreme court.",
+            True,
+        ),
+        (
+            "FL",
+            "joint resolution",
+            "Senate Confirmation of Gubernatorial Appointments and Legislative Approval of "
+            "Extended States of Emergency",
+            True,
+        ),
+        (
+            "VT",
+            "joint resolution",
+            "Joint resolution relating to compensation of Members of the General Assembly during "
+            "the remainder of the 2024 Adjourned Session.",
+            True,
+        ),
+        (
+            "TN",
+            "joint resolution",
+            "General Assembly, Review Or Ratification of Rules - Ratifies the increase of the 911 "
+            "surcharge rate to $1.86 as approved by the Tennessee Emergency Communications "
+            "Board. -",
+            True,
+        ),
+        (
+            "TX",
+            "joint resolution",
+            "Proposing a constitutional amendment requiring this state to observe daylight saving "
+            "time year-round.",
+            True,
+        ),
         # Substantive joint resolutions that a looser pattern would have excluded.
         (
             "TN",
