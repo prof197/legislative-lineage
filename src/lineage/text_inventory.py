@@ -62,7 +62,7 @@ def plan_row(
     versions = _versions(raw)
     row: dict[str, str | None] = dict.fromkeys(PLAN_COLUMNS)
     row |= {"id": bill_id, "state": state, "session": session, "status": status, "kind": kind}
-    choice = choose_version(versions)
+    choice = choose_version(versions, state)
     if not any(v.links for v in versions):
         row["outcome"] = "no_link"
     elif choice is None:

@@ -93,13 +93,47 @@ def test_versions_on_the_same_day_keep_the_export_order() -> None:
     assert choice.note == "Enrolled"
 
 
-def test_an_undated_version_sorts_by_its_place_in_the_export() -> None:
-    versions = [_v("Introduced", "", PDF), _v("Engrossed", "", PDF)]
+def test_undated_versions_rank_by_the_stage_their_note_names() -> None:
+    # Utah's export lists the enrolled bill first and leaves every date empty.
+    versions = [
+        _v("Enrolled", "", PDF),
+        _v("Introduced", "", PDF),
+        _v("Substitute #2", "", PDF),
+        _v("Senate Committee Report", "", PDF),
+    ]
 
-    choice = choose_version(versions)
+    choice = choose_version(versions, "UT")
 
     assert choice is not None
-    assert choice.note == "Engrossed"
+    assert (choice.note, choice.passed_over) == ("Enrolled", 1)
+
+
+@pytest.mark.parametrize(
+    ("notes", "latest"),
+    [
+        (["Engrossed", "Introduced"], "Engrossed"),
+        (["Chaptered", "Amended Senate", "Introduced"], "Chaptered"),
+        (["As Passed by the House", "As Introduced"], "As Passed by the House"),
+        (["HB1 Act 12", "HB1 Engrossed", "HB1 Original"], "HB1 Act 12"),  # Louisiana
+        (["HB12ER", "HB12"], "HB12ER"),  # Virginia's enrolled bill
+        (["As Passed the upper", "As Introduced", "Current version"], "Current version"),
+        (["Printer's No. PN1562", "Printer's No. PN1200"], "Printer's No. PN1562"),
+        (["S1234B", "S1234", "S1234A"], "S1234B"),  # New York's amended prints
+        (["Substitute #2", "Substitute #3", "Substitute #1"], "Substitute #3"),
+        (["05/20/25 - Amended Assembly", "06/02/25 - Amended Senate"], "06/02/25 - Amended Senate"),
+    ],
+)
+def test_the_latest_of_undated_versions(notes: list[str], latest: str) -> None:
+    choice = choose_version([_v(note, "", PDF) for note in notes])
+
+    assert choice is not None
+    assert choice.note == latest
+
+
+def test_a_committee_report_is_bill_text_in_texas_but_not_in_utah() -> None:
+    assert is_bill_text("Senate Committee Report", "TX")
+    assert not is_bill_text("Senate Committee Report", "UT")
+    assert not is_bill_text("Comparison to Sub #2", "UT")
 
 
 def test_only_supported_formats_are_kept_html_first() -> None:
