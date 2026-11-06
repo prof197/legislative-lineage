@@ -92,7 +92,7 @@ def test_derives_status_as_of_each_archive(raw_dir: Path, manifest: Path, tmp_pa
         _bills(out)
         .execute(
             "SELECT state, identifier, status, status_reason, CAST(status_date AS VARCHAR) "
-            "FROM bills WHERE identifier IN ('SB 238', 'SR 1065', 'SB 47', 'HB 521') "
+            "FROM bills WHERE identifier IN ('SB 238', 'SR 1065', 'SB 47', 'HB 81') "
             "ORDER BY state, identifier"
         )
         .fetchall()
@@ -100,7 +100,7 @@ def test_derives_status_as_of_each_archive(raw_dir: Path, manifest: Path, tmp_pa
 
     assert rows == [
         ("AK", "SB 47", "died", "session-ended", "2024-05-15"),
-        ("AL", "HB 521", "died", "session-ended", "2023-06-08"),
+        ("AL", "HB 81", "died", "session-ended", "2023-06-08"),
         # Georgia files a line-item veto after the signature; the bill is still law.
         ("GA", "SB 238", "passed", "executive-signature", "2025-05-14"),
         # A simple resolution passes when its chamber adopts it.

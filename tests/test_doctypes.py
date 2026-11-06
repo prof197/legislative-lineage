@@ -78,21 +78,15 @@ def test_rejects_a_malformed_rule_naming_its_line(tmp_path: Path, body: str, mes
             "H.J.R. 21 Joint Resolution Honoring the Hispanic Community",
             False,
         ),
-        ("TN", "joint resolution", "Memorials, Congratulations - Kelly Lang -", False),
         # Substantive joint resolutions that a looser pattern would have excluded.
         (
             "TX",
             "joint resolution",
-            "Proposing a constitutional amendment recognizing the right of an individual to "
-            "refuse a vaccination.",
+            "Proposing a constitutional amendment to increase the mandatory age of retirement for "
+            "state justices and judges.",
             True,
         ),
-        (
-            "MO",
-            "joint resolution",
-            "Recognizes that unborn children have equal protection of the laws",
-            True,
-        ),
+        ("NJ", "joint resolution", "Recognizes right to adequate food.", True),
         (
             "WV",
             "joint resolution",
@@ -106,7 +100,13 @@ def test_rejects_a_malformed_rule_naming_its_line(tmp_path: Path, body: str, mes
             "first responders",
             True,
         ),
-        ("GA", "resolution", "Right to Register and Vote; clarify -CA", True),
+        (
+            "GA",
+            "resolution",
+            "Bona Fide Conservation Use Property; maximum acreage to qualify for assessment and "
+            "taxation; increase -CA",
+            True,
+        ),
         ("GA", "resolution", "Dr. Jane Doe; commend", False),
         (
             "NJ",
@@ -115,11 +115,18 @@ def test_rejects_a_malformed_rule_naming_its_line(tmp_path: Path, body: str, mes
             "than on land.",
             True,
         ),
-        ("NJ", "concurrent resolution", "Urges US Congress to strengthen Medicare Part D.", False),
+        (
+            "NJ",
+            "concurrent resolution",
+            "Urges New Jersey State Park Service to establish visitor's center at Princeton "
+            "Battlefield State Park.",
+            False,
+        ),
         (
             "MS",
             "concurrent resolution",
-            "Constitution; amend to revise ballot initiative process.",
+            "Constitution; amend to restore authority to tax Grand Gulf Nuclear Power Plant to "
+            "Claiborne County.",
             True,
         ),
         ("MS", "concurrent resolution", "Commend the Jackson State football team.", False),
