@@ -13,7 +13,7 @@
    "status": "proposed"
   },
   "verification_threshold": 0.5,
-  "bucket_cap": 500,
+  "bucket_cap": 1000,
   "first_year": 2023,
   "queries": {
    "electronic-estate-planning-documents": {
