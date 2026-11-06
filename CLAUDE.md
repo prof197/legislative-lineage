@@ -50,6 +50,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   pairs.py        verify candidates, store cross-state pairs, write families
   index.py        `lineage index`: signatures, bands, pairs and families, then reports/index.json
   query.py        `lineage query`: sign a bill's text, look up its bands, verify, group by family
+  acts.py         uniform act texts as eval queries: keep the sections, drop comments and notes
   stoplist.py     document-frequency stoplist and its report
   stats.py        coverage report: the measurements that replace the design's estimates
   queries.py      every SQL query the pipeline runs (DR-4)
@@ -65,6 +66,7 @@ reports/          committed outputs of pipeline commands; README and DESIGN numb
 DESIGN.md         design, alternatives, scaling limits, failure modes, decision records
 data/             local snapshots and derived tables; gitignored, never committed
   raw/<ST>/*.zip  Open States session archives, never edited
+  acts/<act>.txt  uniform act texts, downloaded from the ULC under its terms; never committed
   tables/         Parquet tables written by the pipeline; signatures/, bands/ and pairs/ hold .npy arrays
 ```
 

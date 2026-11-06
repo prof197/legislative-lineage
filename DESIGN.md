@@ -166,6 +166,8 @@ The external ground truth is the Uniform Law Commission's list of enactments. St
 - The eval uses them locally, as query documents.
 - The site may show an act's text unmodified, with the ULC's copyright notice and a link to the act's page, as informational, noncommercial use, unless the notice on the act download is narrower. That notice is read when the acts are downloaded, and this paragraph will record what it says. If it is narrower, a comparison starts from the earliest enacted state version instead, which is public domain like every bill.
 
+**Act texts as queries.** An act as the commission publishes it is mostly not law: a title page and committee list, a table of contents, a prefatory note, and an official comment or legislative note after many sections. States enact the sections. Scoring is from the query's side, the share of the query's sections a bill matches, so every comment left in would lower every enacted bill's score. `lineage.acts` keeps the numbered sections, including bracketed optional ones, and drops everything else: front matter up to the first `Section 1.` heading that is not a contents entry, each comment up to the next section, and each legislative note up to the next blank line.
+
 ## Alternatives considered
 
 | Alternative | Reason rejected | Evidence |
