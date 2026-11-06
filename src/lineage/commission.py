@@ -48,7 +48,7 @@ RESULTS = Path("reports/results.json")
 # The corpus is the sessions of 2023-2026 (README.md#data); earlier enactments are listed but
 # cannot be found, so they are left out of recall rather than counted as misses.
 FIRST_YEAR = 2023
-# Proposed, from the measured scores: with the commission's standard sections as boilerplate,
+# Set from the measured scores: with the commission's standard sections as boilerplate,
 # every relative of the three act texts is a version of that act (each act's relatives are in
 # the results), so no score separates unrelated bills and one verified section is enough. Every
 # found enactment's rank and share are in the results, and recall at higher thresholds is
@@ -335,7 +335,7 @@ def evaluate(
             "score": "share of the query's signed sections that the family matches",
             "min_share": min_share,
             "found_when": "score above min_share",
-            "status": "proposed",
+            "status": "approved",
         },
         "verification_threshold": THRESHOLD,
         "bucket_cap": BUCKET_CAP,

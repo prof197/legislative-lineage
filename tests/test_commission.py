@@ -197,7 +197,7 @@ def test_the_command_writes_its_section_of_the_results(
     section = doc["commission"]
     assert section["command"] == "uv run lineage eval commission"
     assert set(section["queries"]) == set(ACTS)
-    assert section["threshold"]["status"] == "proposed"
+    assert section["threshold"]["status"] == "approved"
     for act in ACTS:
         relatives = section["queries"][act]["relatives"]
         assert [r["rank"] for r in relatives] == list(range(1, len(relatives) + 1))

@@ -10,7 +10,7 @@
    "score": "share of the query's signed sections that the family matches",
    "min_share": 0.0,
    "found_when": "score above min_share",
-   "status": "proposed"
+   "status": "approved"
   },
   "verification_threshold": 0.5,
   "bucket_cap": 1000,
