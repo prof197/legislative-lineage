@@ -160,13 +160,21 @@ Comparing every pair of sections is out of reach, so this stage summarizes each 
 
 The external ground truth is the Uniform Law Commission's list of enactments. Starting from a uniform act's text, the eval asks what share of the bills that enacted it the pipeline finds.
 
-**Act text.** The ULC holds the copyright in its acts. Its [terms of use](https://www.uniformlaws.org/termsofuse) let anyone view, copy, print and distribute the site's content for informational, noncommercial purposes, unmodified and with the copyright notice or other attribution. Modifying it is allowed only as part of a legislative process. The terms say nothing specific about showing an act on another website. The act files themselves download behind a separate copyright notice, which this check did not open. So:
+**Act text.** The ULC holds the copyright in its acts. Its [terms of use](https://www.uniformlaws.org/termsofuse) let anyone view, copy, print and distribute the site's content for informational, noncommercial purposes, unmodified and with the copyright notice or other attribution. Modifying it is allowed only as part of a legislative process. The terms say nothing specific about showing an act on another website. Downloading an act's final text shows no separate notice or terms. Each act prints its own notice in its front matter:
 
-- The repository never contains act text. Its code is MIT-licensed, and an act committed beside it would read as offered under that license, which includes the right to modify. Act texts live in `data/acts/`, which is gitignored, and each user downloads them from the ULC under its terms.
+| Act | Edition used | Notice printed in the act |
+|---|---|---|
+| Uniform Public Expression Protection Act | Final act without prefatory note and comments, October 2, 2020 | Copyright © 2020 By National Conference of Commissioners on Uniform State Laws |
+| Uniform Special Deposits Act | Final act without prefatory note and comments, January 13, 2025 | Copyright © 2023 By National Conference of Commissioners on Uniform State Laws |
+| Uniform Electronic Estate Planning Documents Act | Final act without prefatory note and comments, September 28, 2022 | Copyright © 2022 By National Conference of Commissioners on Uniform State Laws |
+
+So:
+
+- The repository never contains act text. Its code is MIT-licensed, and an act committed beside it would read as offered under that license, which includes the right to modify. Act texts live in `data/acts/`, which is gitignored, and each user downloads them from the ULC under its terms (README, [Data](README.md#data)).
 - The eval uses them locally, as query documents.
-- The site may show an act's text unmodified, with the ULC's copyright notice and a link to the act's page, as informational, noncommercial use, unless the notice on the act download is narrower. That notice is read when the acts are downloaded, and this paragraph will record what it says. If it is narrower, a comparison starts from the earliest enacted state version instead, which is public domain like every bill.
+- The site may show an act's text unmodified, with the act's own copyright notice above and a link to the act's page, as informational, noncommercial use. No narrower notice came with the download, so the terms of use are the whole of the permission.
 
-**Act texts as queries.** An act as the commission publishes it is mostly not law: a title page and committee list, a table of contents, a prefatory note, and an official comment or legislative note after many sections. States enact the sections. Scoring is from the query's side, the share of the query's sections a bill matches, so every comment left in would lower every enacted bill's score. `lineage.acts` keeps the numbered sections, including bracketed optional ones, and drops everything else: front matter up to the first `Section 1.` heading that is not a contents entry, each comment up to the next section, and each legislative note up to the next blank line.
+**Act texts as queries.** An act as the commission publishes it is mostly not law: a title page and committee list, a table of contents, a prefatory note, and an official comment or legislative note after many sections. States enact the sections. Scoring is from the query's side, the share of the query's sections a bill matches, so every comment left in would lower every enacted bill's score. The editions above already leave out the prefatory note and comments, but each still carries legislative notes, which tell a state how to adapt a section and can run several paragraphs. `lineage.acts` keeps the numbered sections, including bracketed optional ones, and the article headings of an act divided into articles. It drops the front matter up to the first section or article heading that is not a contents entry, and each comment or legislative note up to the next section or article heading. In the commission's final acts, both close a section. The words each act keeps, and each file's SHA-256, are recorded in the eval's results, so a different edition or conversion is visible.
 
 ## Alternatives considered
 
