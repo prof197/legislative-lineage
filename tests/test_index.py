@@ -5,7 +5,7 @@ import duckdb
 import numpy as np
 import pytest
 
-from lineage import queries
+from lineage import bands, queries
 from lineage.bands import SWEEP_CAPS, load_band_index
 from lineage.disk import InsufficientDiskSpaceError
 from lineage.index import build_index
@@ -77,7 +77,28 @@ def test_identical_sections_are_candidates_counted_by_state(tables: Path, tmp_pa
     # b1, b2 and b3 share every band: (b1, b2) and (b2, b3) cross states, (b1, b3) does not.
     assert doc["lsh"]["candidate_pairs"] == {"all": 3, "cross_state": 2, "same_state": 1}
     assert doc["lsh"]["largest_bucket"] == 3
-    assert doc["lsh"]["capped"] == {"buckets": 0, "section_memberships": 0, "pairs": 0}
+    assert doc["lsh"]["capped"] == {
+        "buckets": 0,
+        "section_memberships": 0,
+        "pairs": 0,
+        "cross_state_pairs_lost": 0,
+    }
+
+
+def test_reports_the_cross_state_pairs_the_cap_drops(
+    tables: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # At a cap of 2, the bucket of b1, b2 and b3 is skipped in every band, so both of its
+    # cross-state pairs are lost; a cap the sweep does not list must still be counted.
+    monkeypatch.setattr(bands, "BUCKET_CAP", 2)
+
+    doc = build_index(tables, workers=1, floor_bytes=0, report_path=tmp_path / "index.json")
+
+    assert doc["lsh"]["bucket_cap"] == 2
+    assert doc["lsh"]["capped"]["buckets"] == BANDS
+    assert doc["lsh"]["capped"]["cross_state_pairs_lost"] == 2
+    assert doc["lsh"]["candidate_pairs"]["all"] == 0
+    assert [entry["cap"] for entry in doc["lsh"]["cap_sweep"]] == list(SWEEP_CAPS)
 
 
 def test_the_stored_band_index_memory_maps_and_matches_the_signatures(

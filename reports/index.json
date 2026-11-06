@@ -29,7 +29,8 @@
   "capped": {
    "buckets": 388,
    "section_memberships": 296930,
-   "pairs": 126883011
+   "pairs": 126883011,
+   "cross_state_pairs_lost": 501
   },
   "candidate_pairs": {
    "all": 15766146,

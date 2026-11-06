@@ -275,7 +275,8 @@ def index(
         f"{lsh['bands']} bands x {lsh['rows']} rows -> {tables / 'bands'} "
         f"({lsh['index_bytes'] / GiB:.2f} GiB): {pairs['all']:,} candidate pairs, "
         f"{pairs['cross_state']:,} across states; {capped['buckets']:,} buckets over the cap "
-        f"of {lsh['bucket_cap']} skipped\n"
+        f"of {lsh['bucket_cap']} skipped, dropping {capped['cross_state_pairs_lost']:,} "
+        f"cross-state pairs\n"
         f"{time.monotonic() - started:.0f}s, {report}"
     )
 

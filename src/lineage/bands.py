@@ -2,9 +2,9 @@
 
 The index is two (BANDS, n) matrices in `<tables>/bands/`: each band's sorted keys
 (`keys.npy`) and the signature row behind each key (`rows.npy`). Rows number the signatures
-in the order `load_signatures` reads them. The report counts the candidate pairs, what the
-bucket cap skipped, and, for a range of caps, how many cross-state candidates each would lose.
-See DESIGN.md#dr-3.
+in the order `load_signatures` reads them. The report counts the candidate pairs and what the
+bucket cap skipped, including the cross-state candidates it drops for good. For a range of
+caps, it also counts the cross-state candidates each would lose. See DESIGN.md#dr-3.
 """
 
 import shutil
@@ -63,7 +63,8 @@ def build_bands(tables_dir: Path, *, floor_bytes: int) -> dict[str, Any]:
     states = _states(tables_dir, table)
     found = candidate_pairs(index, cap=BUCKET_CAP)
     cross = int(np.count_nonzero(states[found.left] != states[found.right]))
-    sweep = cap_sweep(index, states, SWEEP_CAPS)
+    # The build's own cap joins the sweep, so its losses are counted whatever the sweep lists.
+    effects = cap_sweep(index, states, sorted({*SWEEP_CAPS, BUCKET_CAP}))
     return {
         "bands": BANDS,
         "rows": ROWS,
@@ -76,6 +77,7 @@ def build_bands(tables_dir: Path, *, floor_bytes: int) -> dict[str, Any]:
             "buckets": found.buckets_over_cap,
             "section_memberships": found.sections_in_capped_buckets,
             "pairs": found.pairs_in_capped_buckets,
+            "cross_state_pairs_lost": effects[BUCKET_CAP].cross_group_pairs_lost,
         },
         "candidate_pairs": {
             "all": int(found.left.size),
@@ -90,7 +92,8 @@ def build_bands(tables_dir: Path, *, floor_bytes: int) -> dict[str, Any]:
                 "most_states_in_a_capped_bucket": effect.most_groups_in_a_capped_bucket,
                 "cross_state_pairs_lost": effect.cross_group_pairs_lost,
             }
-            for cap, effect in sweep.items()
+            for cap, effect in effects.items()
+            if cap in SWEEP_CAPS
         ],
     }
 
