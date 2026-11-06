@@ -1,0 +1,201 @@
+[
+ {
+  "id": "ocd-bill/22c73c4d-0be9-4b87-83a2-66df3c5c844a",
+  "legislative_session": "2025-2026",
+  "identifier": "S 5336",
+  "title": "Creates the uniform trade secrets act",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "REFERRED TO JUDICIARY",
+    "date": "2025-02-20",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "REFERRED TO JUDICIARY",
+    "date": "2026-01-07",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 1
+   }
+  ],
+  "versions": [
+   {
+    "note": "S5336",
+    "date": "",
+    "links": [
+     {
+      "url": "http://legislation.nysenate.gov/pdf/bills/2025/S5336",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "http://assembly.state.ny.us/leg/?sh=printbill&bn=S5336&term=2025&Text=Y",
+      "media_type": "text/html"
+     }
+    ]
+   }
+  ],
+  "raw_text": "Section 1. The general business law is amended by adding a new article\n17-B to read as follows:\nARTICLE 17-B\nUNIFORM TRADE SECRETS ACT\nSection 279-m. Short title.\n279-n. Definitions.\n279-o. Injunctive relief.\n279-p. Damages.\n279-q. Attorney's fees.\n279-r. Preservation of secrecy.\n279-s. Statute of limitations.\n279-t. Effect on other law.\n279-u. Uniformity of application and construction.\n279-v. Severability.\n§ 279-m. Short title. This article shall be known as the \"uniform\ntrade secrets act\".\n§ 279-n. Definitions. As used in this article, unless the context\nrequires otherwise:\n(a) \"Improper means\" includes theft, bribery, misrepresentation,\nbreach or inducement of a breach of a duty to maintain secrecy, or espi-\nonage through electronic or other means;\n(b) \"Misappropriation\" means: (1) acquisition of a trade secret of\nanother by a person who knows or has reason to know that the trade\nsecret was acquired by improper means; or (2) duplicating, sketching,\ndrawing, photographing, downloading, uploading, concealing, altering,\ndestroying, replicating, transmitting, delivering, sending, mailing,\ncommunicating, or conveying a trade secret without authorization; or (3)\nreceiving, buying, or possessing a trade secret, knowing the same to\nhave been stolen or appropriated, obtained, or converted without author-\nization; or (4) disclosure or use of a trade secret of another without\nexpress or implied consent by a person who:\n(i) used improper means to acquire knowledge of the trade secret; or\n(ii) at the time of disclosure or use, knew or had reason to know that\nsuch person's knowledge of the trade secret was:\n(A) derived from or through a person who had utilized improper means\nto acquire it;\n(B) acquired under circumstances giving rise to a duty to maintain its\nsecrecy or limit its use; or\n(C) derived from or through a person who owed a duty to the person\nseeking relief to maintain its secrecy or limit its use; or\n(iii) before a material change of such person's position, knew or had\nreason to know that it was a trade secret and that knowledge of it had\nbeen acquired by accident or mistake;\n(c) \"Person\" means a natural person, corporation, limited liability\ncompany, business trust, estate, trust, partnership, association, joint\nventure, government, governmental subdivision or agency, or any other\nlegal or commercial entity; and\n(d) \"Trade secret\" means any form and type of financial, business,\nscientific, technical, economic, or engineering information, including a\npattern, plan, compilation, program device, formula, design, prototype,\nmethod, technique, process, procedure, program, or code, whether tangi-\nble or intangible, and whether or how stored, compiled, or memorialized\nphysically, electronically, graphically, photographically or in writing,\nthat:\n(1) derives independent economic value, actual or potential, from not\nbeing generally known to, and not being readily ascertainable by proper\nmeans by, other persons who can obtain economic value from its disclo-\nsure or use; and\n(2) is the subject of efforts that are reasonable under the circum-\nstances to maintain its secrecy.\n§ 279-o. Injunctive relief. (a) Actual or threatened misappropriation\nmay be temporarily, preliminarily, or permanently enjoined. Upon appli-\ncation to the court, an injunction shall be vacated when the trade\nsecret has ceased to exist, but the injunction may be continued for an\nadditional reasonable period of time in order to eliminate commercial\nadvantage that otherwise would be derived from the misappropriation.\n(b) In exceptional circumstances, an injunction may condition future\nuse upon payment of a reasonable royalty for no longer than the period\nof time for which use could have been prohibited. Exceptional circum-\nstances include, but are not limited to, a material and prejudicial\nchange of position prior to acquiring knowledge or reason to know of\nmisappropriation that renders a prohibitive injunction inequitable.\n(c) In appropriate circumstances, the court may order affirmative acts\nto protect a trade secret.\n§ 279-p. Damages. (a) Except to the extent that a material and preju-\ndicial change of position prior to acquiring knowledge or reason to know\nof misappropriation renders a monetary recovery inequitable, a complain-\nant is entitled to recover damages for misappropriation. Damages can\ninclude both the actual loss caused by misappropriation and the unjust\nenrichment caused by misappropriation that is not taken into account in\ncomputing actual loss. In lieu of damages measured by any other methods,\nthe damages caused by misappropriation may be measured by imposition of\nliability for a reasonable royalty for a misappropriator's unauthorized\ndisclosure or use of a trade secret.\n(b) If willful or malicious misappropriation exists, the court may\naward exemplary damages in an amount not exceeding twice any award made\nunder subdivision (a) of this section.\n§ 279-q. Attorney's fees. If (a) a claim of misappropriation is made\nor continued in bad faith, (b) a motion to terminate an injunction is\nmade or resisted or continued in bad faith, or (c) a willful or mali-\ncious misappropriation exists, the court may award reasonable attorney's\nfees to the prevailing party. For purposes of this section, a claim of\nmisappropriation is made or continued in bad faith or a motion to termi-\nnate an injunction is made or resisted or continued in bad faith if it\nis undertaken or continued solely to harass or maliciously injure anoth-\ner or to delay or prolong the resolution of the litigation; or it is\nundertaken or continued without any reasonable basis in fact or law and\ncould not be supported by a good faith argument for an extension,\nmodification or reversal of existing law.\n§ 279-r. Preservation of secrecy. In an action under this article, a\ncourt shall preserve the secrecy of an alleged trade secret by reason-\nable means, including but not limited to, granting protective orders in\nconnection with discovery devices pursuant to the provisions of section\nthirty-one hundred three of the civil practice law and rules, holding\nin-camera hearings, sealing the records of the action, and ordering any\nperson involved in the litigation not to disclose an alleged trade\nsecret without prior court approval.\n§ 279-s. Statute of limitations. Notwithstanding any inconsistent\nprovision of law, an action for misappropriation must be brought within\nthree years after the misappropriation is discovered or by the exercise\nof reasonable diligence should have been discovered. For the purposes of\nthis section, a continuing misappropriation constitutes a single claim.\n§ 279-t. Effect on other law. (a) Except as provided in subdivision\n(b) of this section, this article displaces conflicting tort, restitu-\ntionary, and other law of this state providing civil remedies for misap-\npropriation of a trade secret.\n(b) This article does not affect:\n(1) contractual remedies, whether or not based upon misappropriation\nof a trade secret;\n(2) other civil remedies that are not based upon misappropriation of a\ntrade secret; or\n(3) criminal remedies, whether or not based upon misappropriation of a\ntrade secret.\n§ 279-u. Uniformity of application and construction. This article\nshall be applied and construed to effectuate its general purpose to make\nuniform the law with respect to the subject of this article among states\nenacting it.\n§ 279-v. Severability. If any provision of this article or its appli-\ncation to any person or circumstances is held invalid, the invalidity\ndoes not affect other provisions or applications of this article which\ncan be given effect without the invalid provision or application, and to\nthis end the provisions of this article are severable.\n§ 2. Section 8303-a of the civil practice law and rules is amended by\nadding a new subdivision (d) to read as follows:\n(d) The provisions of this section shall not apply to actions governed\nby article seventeen-B of the general business law.\n§ 3. This act shall take effect on the one hundred eightieth day after\nit shall have become a law, except that the provisions of article 17-B\nof the general business law, as added by section one of this act, shall\nnot apply to a misappropriation occurring prior to such effective date.\nWith respect to a continuing misappropriation that began prior to such\neffective date, this act shall not apply to the continuing misappropri-\nation that occurs after such effective date.",
+  "raw_text_url": "http://legislation.nysenate.gov/pdf/bills/2025/S5336"
+ },
+ {
+  "id": "ocd-bill/8d9dff64-7011-4962-90c3-a1a28a3370d4",
+  "legislative_session": "2025-2026",
+  "identifier": "A 5345",
+  "title": "Enacts the uniform special deposits act",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Assembly",
+    "description": "REFERRED TO BANKS",
+    "date": "2025-02-13",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Assembly",
+    "description": "REPORTED REFERRED TO CODES",
+    "date": "2025-05-19",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "Assembly",
+    "description": "REPORTED REFERRED TO RULES",
+    "date": "2025-05-28",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "Assembly",
+    "description": "REPORTED",
+    "date": "2025-05-29",
+    "classification": [],
+    "order": 3
+   },
+   {
+    "organization__name": "Assembly",
+    "description": "RULES REPORT CAL.316",
+    "date": "2025-05-29",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "Assembly",
+    "description": "ORDERED TO THIRD READING RULES CAL.316",
+    "date": "2025-05-29",
+    "classification": [],
+    "order": 5
+   },
+   {
+    "organization__name": "Assembly",
+    "description": "PASSED ASSEMBLY",
+    "date": "2025-05-29",
+    "classification": [
+     "passage"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "Assembly",
+    "description": "DELIVERED TO SENATE",
+    "date": "2025-05-29",
+    "classification": [],
+    "order": 7
+   },
+   {
+    "organization__name": "Senate",
+    "description": "REFERRED TO BANKS",
+    "date": "2025-05-29",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 8
+   },
+   {
+    "organization__name": "Senate",
+    "description": "SUBSTITUTED FOR S4323",
+    "date": "2025-06-05",
+    "classification": [],
+    "order": 9
+   },
+   {
+    "organization__name": "Senate",
+    "description": "3RD READING CAL.1171",
+    "date": "2025-06-05",
+    "classification": [],
+    "order": 10
+   },
+   {
+    "organization__name": "Senate",
+    "description": "PASSED SENATE",
+    "date": "2025-06-05",
+    "classification": [
+     "passage"
+    ],
+    "order": 11
+   },
+   {
+    "organization__name": "Senate",
+    "description": "RETURNED TO ASSEMBLY",
+    "date": "2025-06-05",
+    "classification": [],
+    "order": 12
+   },
+   {
+    "organization__name": "Assembly",
+    "description": "DELIVERED TO GOVERNOR",
+    "date": "2025-12-01",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 13
+   },
+   {
+    "organization__name": "Assembly",
+    "description": "SIGNED CHAP.583",
+    "date": "2025-12-05",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 14
+   }
+  ],
+  "versions": [
+   {
+    "note": "A5345",
+    "date": "",
+    "links": [
+     {
+      "url": "http://legislation.nysenate.gov/pdf/bills/2025/A5345",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "http://assembly.state.ny.us/leg/?sh=printbill&bn=A5345&term=2025&Text=Y",
+      "media_type": "text/html"
+     }
+    ]
+   }
+  ],
+  "raw_text": "Section 1. The banking law is amended by adding a new article 13-F to\nread as follows:\nARTICLE XIII-F\nUNIFORM SPECIAL DEPOSITS ACT\nSection 680.   Short title.\n680-a. Definitions.\n680-b. Scope; choice of law; forum.\n680-c. Variation by agreement or amendment.\n680-d. Requirements for special deposit.\n680-e. Permissible purpose.\n680-f. Payment to beneficiary by bank.\n680-g. Property interest of depositor or beneficiary.\n680-h. When creditor process enforceable against bank.\n680-i. Injunction or similar relief.\n680-j. Recoupment or set off.\n680-k. Duties and liability of bank.\n680-l. Term and termination.\n680-m. Principles of law and equity.\n680-n. Uniformity of application and construction.\n680-o. Transitional provision.\n680-p. Severability.\n§ 680. Short title. This article shall be known and may be cited as\nthe \"uniform special deposits act\".\n§ 680-a. Definitions. As used in this article, the following terms\nshall have the following meanings:\n1. \"Account agreement\" means an agreement that:\n(a) is in a record between a bank and one or more depositors;\n(b) may have one or more beneficiaries as additional parties; and\n(c) states the intention of the parties to establish a special deposit\ngoverned by this article.\n2. \"Bank\" means a person engaged in the business of banking and\nincludes a savings bank, savings and loan association, credit union,\ntrust company, and a bank as defined in section two of this chapter.\nEach branch or separate office of a bank is a separate bank for the\npurpose of this article.\n3. \"Beneficiary\" means a person that:\n(a) is identified as a beneficiary in an account agreement; or\n(b) if not identified as a beneficiary in an account agreement, may be\nentitled to payment from a special deposit:\n(i) under the account agreement; or\n(ii) on termination of the special deposit.\n4. \"Contingency\" means an event or circumstance stated in an account\nagreement that is not certain to occur but must occur before the bank is\nobligated to pay a beneficiary.\n5. \"Creditor process\" means attachment, garnishment, levy, notice of\nlien, sequestration, or similar process issued by or on behalf of a\ncreditor or other claimant.\n6. \"Depositor\" means a person that establishes or funds a special\ndeposit.\n7. \"Good faith\" means honesty in fact and observance of reasonable\ncommercial standards of fair dealing.\n8. \"Knowledge\" means:\n(a) with respect to a beneficiary, actual knowledge of the fact; or\n(b) with respect to a bank holding a special deposit:\n(i) if the bank:\n(1) has established a reasonable routine for communicating material\ninformation to an individual to whom the bank has assigned responsibil-\nity for the special deposit; and\n(2) maintains reasonable compliance with the routine, actual knowledge\nof the fact by that individual; or\n(ii) if the bank has not established and maintained reasonable compli-\nance with a routine described in subparagraph (i) of this paragraph or\notherwise exercised due diligence, implied knowledge of the fact that\nwould have come to the attention of an individual to whom the bank has\nassigned responsibility for the special deposit.\n9. \"Obligated to pay a beneficiary\" or \"obligation to pay a benefici-\nary\" means a beneficiary is entitled under the account agreement to\nreceive from the bank a payment when:\n(a) a contingency has occurred; and\n(b) the bank has knowledge the contingency has occurred.\n10. \"Permissible purpose\" means a governmental, regulatory, commer-\ncial, charitable, or testamentary objective of the parties stated in an\naccount agreement. The term includes an objective to:\n(a) hold funds:\n(i) in escrow, including for a purchase and sale, lease, buyback, or\nother transaction;\n(ii) as a security deposit of a tenant;\n(iii) that may be distributed to a person as remuneration, retirement\nor other benefit, or compensation under a judgment, consent decree,\ncourt order, or other decision of a tribunal; or\n(iv) for distribution to a defined class of persons after identifica-\ntion of the class members and their interest in the funds;\n(b) provide assurance with respect to an obligation created by\ncontract, such as earnest money to ensure a transaction closes;\n(c) settle an obligation that arises in the operation of a payment\nsystem, securities settlement system, or other financial market infras-\ntructure;\n(d) provide assurance with respect to an obligation that arises in the\noperation of a payment system, securities settlement system, or other\nfinancial market infrastructure; or\n(e) hold margin, other cash collateral, or funds that support the\norderly functioning of financial market infrastructure or the perform-\nance of an obligation with respect to the infrastructure.\n11. \"Person\" means an individual, estate, business or nonprofit enti-\nty, government or governmental subdivision, agency, or instrumentality,\nor other legal entity. The term includes a protected series, however\ndenominated, of an entity if the protected series is established under\nlaw that limits, or limits if conditions specified under law are satis-\nfied, the ability of a creditor of the entity or of any other protected\nseries of the entity to satisfy a claim from assets of the protected\nseries.\n12. \"Record\" means information:\n(a) inscribed on a tangible medium; or\n(b) stored in an electronic or other medium and retrievable in\nperceivable form.\n13. \"Special deposit\" means a deposit that satisfies section six\nhundred eighty-d of this article.\n14. \"State\" means a state of the United States, the District of Colum-\nbia, Puerto Rico, the United States Virgin Islands, or any other terri-\ntory or possession subject to the jurisdiction of the United States. The\nterm includes an agency or instrumentality of the state.\n§ 680-b. Scope; choice of law; forum. 1. This article applies to a\nspecial deposit under an account agreement that states the intention of\nthe parties to establish a special deposit governed by this article,\nregardless of whether a party to the account agreement or a transaction\nrelated to the special deposit, or the special deposit itself, has a\nreasonable relation to this state.\n2. The parties to an account agreement may choose a forum in this\nstate for settling a dispute arising out of the special deposit, regard-\nless of whether a party to the account agreement or a transaction\nrelated to the special deposit, or the special deposit itself, has a\nreasonable relation to this state.\n3. This article does not affect:\n(a) a right or obligation relating to a deposit other than a special\ndeposit under this article; or\n(b) the voidability of a deposit or transfer that is fraudulent or\nvoidable under other law.\n§ 680-c. Variation by agreement or amendment. 1. The effect of this\nsection and sections six hundred eighty-a, six hundred eighty-b, six\nhundred eighty-d, six hundred eighty-e, six hundred eighty-g, six\nhundred eighty-h, six hundred eighty-i, six hundred eighty-j and six\nhundred eighty-m of this article shall not be varied by agreement,\nexcept as provided in such sections. Subject to subdivision two of this\nsection, the effect of sections six hundred eighty-f, six hundred eight-\ny-k and six hundred eighty-l of this article may be varied by agreement.\n2. A provision in an account agreement or other record that substan-\ntially excuses liability or substantially limits remedies for failure to\nperform an obligation under this article is not sufficient to vary the\neffect of a provision of this article.\n3. If a beneficiary is a party to an account agreement, the bank and\nthe depositor may amend the agreement without the consent of the benefi-\nciary only if the agreement expressly permits the amendment.\n4. If a beneficiary is not a party to an account agreement and the\nbank and the depositor know the beneficiary has knowledge of the agree-\nment's terms, the bank and the depositor may amend the agreement without\nthe consent of the beneficiary only if the amendment does not adversely\nand materially affect a payment right of the beneficiary.\n5. If a beneficiary is not a party to an account agreement and the\nbank and the depositor do not know whether the beneficiary has knowledge\nof the agreement's terms, the bank and the depositor may amend the\nagreement without the consent of the beneficiary only if the amendment\nis made in good faith.\n§ 680-d. Requirements for special deposit. A deposit is a special\ndeposit if it is:\n1. a deposit of funds in a bank under an account agreement;\n2. for the benefit of at least two beneficiaries, one or more of which\nmay be a depositor;\n3. denominated in a medium of exchange that is currently authorized or\nadopted by a domestic or foreign government;\n4. for a permissible purpose stated in the account agreement; and\n5. subject to a contingency.\n§ 680-e. Permissible purpose. 1. A special deposit must serve at least\none permissible purpose stated in the account agreement from the time\nthe special deposit is created in the account agreement until termi-\nnation of the special deposit.\n2. If, before termination of the special deposit, the bank or a court\ndetermines the special deposit no longer satisfies subdivision one of\nthis section, sections six hundred eighty-g, six hundred eighty-h, six\nhundred eighty-i and six hundred eighty-j of this article cease to apply\nto any funds deposited in the special deposit after the special deposit\nceases to satisfy subdivision one of this section.\n3. If, before termination of a special deposit, the bank determines\nthe special deposit no longer satisfies subdivision one of this section,\nthe bank may take action it believes is necessary under the circum-\nstances, including terminating the special deposit.\n§ 680-f. Payment to beneficiary by bank. 1. Unless the account agree-\nment provides otherwise, the bank is obligated to pay a beneficiary if\nthere are sufficient actually and finally collected funds in the balance\nof the special deposit.\n2. Except as provided in subdivision three of this section, the obli-\ngation to pay the beneficiary is excused if the funds available in the\nspecial deposit are insufficient to cover such payment.\n3. Unless the account agreement provides otherwise, if the funds\navailable in the special deposit are insufficient to cover an obligation\nto pay a beneficiary, a beneficiary may elect to be paid the funds that\nare available or, if there is more than one beneficiary, a pro rata\nshare of the funds available. Payment to the beneficiary making the\nelection under this subsection discharges the bank's obligation to pay a\nbeneficiary and does not constitute an accord and satisfaction with\nrespect to another person obligated to the beneficiary.\n4. Unless the account agreement provides otherwise, the obligation of\nthe bank obligated to pay a beneficiary is immediately due and payable.\n5. The bank may discharge its obligation under this section by:\n(a) crediting another transaction account of the beneficiary; or\n(b) taking other action that:\n(i) is permitted under the account agreement for the bank to obtain a\ndischarge; or\n(ii) otherwise would constitute a discharge under law.\n6. If the bank obligated to pay a beneficiary has incurred an obli-\ngation to discharge the obligation of another person, the obligation of\nthe other person is discharged if action by the bank under subdivision\nfive of this section would constitute a discharge of the obligation of\nthe other person under law that determines whether an obligation is\nsatisfied.\n§ 680-g. Property interest of depositor or beneficiary. 1. Neither a\ndepositor nor a beneficiary has a property interest in a special depos-\nit.\n2. Any property interest with respect to a special deposit is only in\nthe right to receive payment if the bank is obligated to pay a benefici-\nary and not in the special deposit itself. Any property interest under\nthis subdivision shall be subject to the provisions of this chapter and\nto rules and regulations made in accordance therewith.\n§ 680-h. When creditor process enforceable against bank. 1. Subject to\nsubdivision two of this section, creditor process with respect to a\nspecial deposit is not enforceable against the bank holding the special\ndeposit.\n2. Creditor process is enforceable against the bank holding a special\ndeposit with respect to an amount the bank is obligated to pay a benefi-\nciary or a depositor if the process:\n(a) is served on the bank;\n(b) provides sufficient information to permit the bank to identify the\ndepositor or the beneficiary from the bank's books and records; and\n(c) gives the bank a reasonable opportunity to act on the process.\n3. Creditor process served on a bank before it is enforceable against\nthe bank under subdivision two of this section does not create a right\nof the creditor against the bank or a duty of the bank to the creditor.\nThe lien law and any other applicable law shall determine whether credi-\ntor process creates a lien enforceable against the beneficiary on a\ncontingent interest of a beneficiary, including a depositor as a benefi-\nciary, even if not enforceable against the bank.\n§ 680-i. Injunction or similar relief. A court may enjoin, or grant\nsimilar relief that would have the effect of enjoining, a bank from\npaying a depositor or beneficiary only if payment would constitute a\nmaterial fraud or facilitate a material fraud with respect to a special\ndeposit.\n§ 680-j. Recoupment or set off. 1. Except as provided in subdivision\ntwo or three of this section, a bank shall not exercise a right of\nrecoupment or set off against a special deposit.\n2. An account agreement may authorize the bank to debit the special\ndeposit:\n(a) when the bank becomes obligated to pay a beneficiary, in an amount\nthat does not exceed the amount necessary to discharge the obligation;\n(b) for a fee assessed by the bank that relates to an overdraft in the\nspecial deposit account;\n(c) for costs incurred by the bank that relate directly to the special\ndeposit; or\n(d) to reverse an earlier credit posted by the bank to the balance of\nthe special deposit account, if the reversal occurs under an event or\ncircumstance warranted under other law of this state governing mistake\nand restitution.\n3. The bank holding a special deposit may exercise a right of recoup-\nment or set off against an obligation to pay a beneficiary, even if the\nbank funds payment from the special deposit.\n§ 680-k. Duties and liability of bank. 1. A bank does not have a fidu-\nciary duty to any person with respect to a special deposit.\n2. When the bank holding a special deposit becomes obligated to pay a\nbeneficiary, a debtor-creditor relationship arises between the bank and\nbeneficiary.\n3. The bank holding a special deposit has a duty to a beneficiary to\ncomply with the account agreement and this article.\n4. If the bank holding a special deposit does not comply with the\naccount agreement or this article, the bank is liable to a depositor or\nbeneficiary only for damages proximately caused by the noncompliance.\nExcept as provided by other law of this state, the bank is not liable\nfor consequential, special, or punitive damages.\n5. The bank holding a special deposit may rely on records presented in\ncompliance with the account agreement to determine whether the bank is\nobligated to pay a beneficiary.\n6. If the account agreement requires payment on presentation of a\nrecord, the bank shall determine within a reasonable time whether the\nrecord is sufficient to require payment. If the agreement requires\naction by the bank on presentation of a record, the bank is not liable\nfor relying in good faith on the genuineness of the record if the record\nappears on its face to be genuine.\n7. Unless the account agreement provides otherwise, the bank is not\nrequired to determine whether a permissible purpose stated in the agree-\nment continues to exist.\n§ 680-l. Term and termination. 1. Unless otherwise provided in the\naccount agreement, a special deposit terminates five years after the\ndate the special deposit was first funded.\n2. Unless otherwise provided in the account agreement, if the bank\ncannot identify or locate a beneficiary entitled to payment when the\nspecial deposit is terminated, and a balance remains in the special\ndeposit, the bank shall pay the balance to the depositor or depositors\nas a beneficiary or beneficiaries.\n3. A bank that pays the remaining balance as provided under subdivi-\nsion two of this section has no further obligation with respect to the\nspecial deposit.\n§ 680-m. Principles of law and equity. The uniform commercial code,\narticle twenty-two-A of the general business law, the provisions of this\nchapter governing deposits generally, the abandoned property law, and\nthe principles of law and equity, including any applicable law related\nto capacity to contract, principal and agent, estoppel, fraud, misrepre-\nsentation, duress, coercion, mistake, and bankruptcy, supplement this\narticle except to the extent inconsistent with this article.\n§ 680-n. Uniformity of application and construction. In applying and\nconstruing the provisions of this uniform special deposits act, a court\nshall consider the promotion of uniformity of the law among jurisdic-\ntions that enact it.\n§ 680-o. Transitional provision. This article applies to:\n1. a special deposit made under an account agreement executed on or\nafter the effective date of this article; and\n2. a deposit made under an agreement executed before the effective\ndate of this article, if:\n(a) all parties entitled to amend the agreement agree to make the\ndeposit a special deposit governed by this article; and\n(b) the special deposit referenced in the amended agreement satisfies\nthe provisions of section six hundred eighty-d of this article.\n§ 680-p. Severability. If any word, phrase, clause, sentence, para-\ngraph, section or part of this article shall be adjudged by any court of\ncompetent jurisdiction to be invalid, such judgment shall not affect,\nimpair or invalidate the remainder thereof, but shall be confined in its\noperation to the word, phrase, clause, sentence, paragraph, section or\npart thereof directly involved in the controversy in which judgment\nshall have been rendered.\n§ 2. This act shall take effect on the first of January next succeed-\ning the date on which it shall have become a law.",
+  "raw_text_url": "http://legislation.nysenate.gov/pdf/bills/2025/A5345"
+ }
+]

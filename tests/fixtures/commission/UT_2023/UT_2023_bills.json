@@ -1,0 +1,435 @@
+[
+ {
+  "id": "ocd-bill/7968b9d9-25ee-4684-a92e-c76167d6f917",
+  "legislative_session": "2023",
+  "identifier": "SB 18",
+  "title": "Public Expression Protection Act",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Bill Numbered but not Distributed",
+    "date": "2022-12-19",
+    "classification": [],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Numbered Bill Publicly Distributed",
+    "date": "2022-12-19",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "Utah State Legislature",
+    "description": "fiscal note sent to sponsor",
+    "date": "2022-12-19",
+    "classification": [],
+    "order": 2
+   },
+   {
+    "organization__name": "Utah State Legislature",
+    "description": "bill sent to agencies for fiscal input",
+    "date": "2022-12-19",
+    "classification": [],
+    "order": 3
+   },
+   {
+    "organization__name": "Utah State Legislature",
+    "description": "fiscal note publicly available",
+    "date": "2022-12-19",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "Senate",
+    "description": "received bill from Legislative Research",
+    "date": "2023-01-11",
+    "classification": [
+     "receipt"
+    ],
+    "order": 5
+   },
+   {
+    "organization__name": "Senate",
+    "description": "received fiscal note from Fiscal Analyst",
+    "date": "2023-01-11",
+    "classification": [
+     "receipt"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "Senate",
+    "description": "1st reading (Introduced)",
+    "date": "2023-01-17",
+    "classification": [
+     "introduction",
+     "reading-1"
+    ],
+    "order": 7
+   },
+   {
+    "organization__name": "Senate",
+    "description": "to Senate Business and Labor Committee",
+    "date": "2023-01-17",
+    "classification": [],
+    "order": 8
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate Comm - Favorable Recommendation",
+    "date": "2023-01-18",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "Senate",
+    "description": "committee report favorable",
+    "date": "2023-01-19",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "Senate",
+    "description": "placed on 2nd Reading Calendar",
+    "date": "2023-01-19",
+    "classification": [],
+    "order": 11
+   },
+   {
+    "organization__name": "Senate",
+    "description": "2nd reading",
+    "date": "2023-01-23",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 12
+   },
+   {
+    "organization__name": "Senate",
+    "description": "passed 2nd reading",
+    "date": "2023-01-23",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 13
+   },
+   {
+    "organization__name": "Senate",
+    "description": "3rd reading",
+    "date": "2023-01-24",
+    "classification": [
+     "reading-3"
+    ],
+    "order": 14
+   },
+   {
+    "organization__name": "Senate",
+    "description": "passed 3rd reading",
+    "date": "2023-01-24",
+    "classification": [
+     "passage"
+    ],
+    "order": 15
+   },
+   {
+    "organization__name": "Senate",
+    "description": "to House",
+    "date": "2023-01-24",
+    "classification": [],
+    "order": 16
+   },
+   {
+    "organization__name": "House",
+    "description": "received from Senate",
+    "date": "2023-01-25",
+    "classification": [
+     "receipt"
+    ],
+    "order": 17
+   },
+   {
+    "organization__name": "House",
+    "description": "1st reading (Introduced)",
+    "date": "2023-01-25",
+    "classification": [
+     "introduction",
+     "reading-1"
+    ],
+    "order": 18
+   },
+   {
+    "organization__name": "House",
+    "description": "to House Business and Labor Committee",
+    "date": "2023-01-26",
+    "classification": [],
+    "order": 19
+   },
+   {
+    "organization__name": "Senate",
+    "description": "House Comm - Amendment Recommendation # 1",
+    "date": "2023-01-27",
+    "classification": [
+     "amendment-introduction"
+    ],
+    "order": 20
+   },
+   {
+    "organization__name": "Senate",
+    "description": "House Comm - Favorable Recommendation",
+    "date": "2023-01-27",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 21
+   },
+   {
+    "organization__name": "Senate",
+    "description": "House Comm - Consent Calendar Recommendation",
+    "date": "2023-01-27",
+    "classification": [],
+    "order": 22
+   },
+   {
+    "organization__name": "House",
+    "description": "comm rpt/amended/placed on Consent Cal",
+    "date": "2023-01-30",
+    "classification": [
+     "amendment-passage"
+    ],
+    "order": 23
+   },
+   {
+    "organization__name": "House",
+    "description": "2nd reading",
+    "date": "2023-01-30",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 24
+   },
+   {
+    "organization__name": "House",
+    "description": "3rd reading",
+    "date": "2023-02-01",
+    "classification": [
+     "reading-3"
+    ],
+    "order": 25
+   },
+   {
+    "organization__name": "House",
+    "description": "passed 3rd reading",
+    "date": "2023-02-01",
+    "classification": [
+     "passage"
+    ],
+    "order": 26
+   },
+   {
+    "organization__name": "House",
+    "description": "to Senate",
+    "date": "2023-02-01",
+    "classification": [],
+    "order": 27
+   },
+   {
+    "organization__name": "Senate",
+    "description": "received from House",
+    "date": "2023-02-01",
+    "classification": [
+     "receipt"
+    ],
+    "order": 28
+   },
+   {
+    "organization__name": "Senate",
+    "description": "placed on Concurrence Calendar",
+    "date": "2023-02-01",
+    "classification": [],
+    "order": 29
+   },
+   {
+    "organization__name": "Senate",
+    "description": "circled",
+    "date": "2023-02-02",
+    "classification": [],
+    "order": 30
+   },
+   {
+    "organization__name": "Senate",
+    "description": "uncircled",
+    "date": "2023-02-02",
+    "classification": [],
+    "order": 31
+   },
+   {
+    "organization__name": "Senate",
+    "description": "concurs with House amendment",
+    "date": "2023-02-02",
+    "classification": [
+     "amendment-passage"
+    ],
+    "order": 32
+   },
+   {
+    "organization__name": "Senate",
+    "description": "to House",
+    "date": "2023-02-02",
+    "classification": [],
+    "order": 33
+   },
+   {
+    "organization__name": "House",
+    "description": "received from Senate",
+    "date": "2023-02-02",
+    "classification": [
+     "receipt"
+    ],
+    "order": 34
+   },
+   {
+    "organization__name": "House",
+    "description": "received from Senate",
+    "date": "2023-02-02",
+    "classification": [
+     "receipt"
+    ],
+    "order": 35
+   },
+   {
+    "organization__name": "House",
+    "description": "signed by Speaker/returned to Senate",
+    "date": "2023-02-02",
+    "classification": [
+     "passage"
+    ],
+    "order": 36
+   },
+   {
+    "organization__name": "House",
+    "description": "to Senate",
+    "date": "2023-02-02",
+    "classification": [],
+    "order": 37
+   },
+   {
+    "organization__name": "Senate",
+    "description": "received from House",
+    "date": "2023-02-03",
+    "classification": [
+     "receipt"
+    ],
+    "order": 38
+   },
+   {
+    "organization__name": "Senate",
+    "description": "signed by President/sent for enrolling",
+    "date": "2023-02-03",
+    "classification": [
+     "passage"
+    ],
+    "order": 39
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Bill Received from Senate for Enrolling",
+    "date": "2023-02-14",
+    "classification": [],
+    "order": 40
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Draft of Enrolled Bill Prepared",
+    "date": "2023-02-14",
+    "classification": [],
+    "order": 41
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Enrolled Bill Returned to House or Senate",
+    "date": "2023-03-09",
+    "classification": [
+     "enrolled"
+    ],
+    "order": 42
+   },
+   {
+    "organization__name": "Senate",
+    "description": "enrolled bill to Printing",
+    "date": "2023-03-09",
+    "classification": [],
+    "order": 43
+   },
+   {
+    "organization__name": "Senate",
+    "description": "received enrolled bill from Printing",
+    "date": "2023-03-13",
+    "classification": [
+     "receipt"
+    ],
+    "order": 44
+   },
+   {
+    "organization__name": "Senate",
+    "description": "to Governor",
+    "date": "2023-03-13",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 45
+   },
+   {
+    "organization__name": "Office of the Governor",
+    "description": "Governor Signed",
+    "date": "2023-03-23",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 46
+   }
+  ],
+  "versions": [
+   {
+    "note": "Enrolled",
+    "date": "",
+    "links": [
+     {
+      "url": "https://le.utah.gov/~2023/bills/sbillenr/SB0018.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Amended",
+    "date": "",
+    "links": [
+     {
+      "url": "https://le.utah.gov/~2023/bills/sbillamd/SB0018.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "https://le.utah.gov/~2023/bills/sbillint/SB0018.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "Approved for Filing: E.A. Evans 6\n12-19-22 7:18 PM 6\nPUBLIC EXPRESSION PROTECTION ACT\n2023 GENERAL SESSION\nSTATE OF UTAH\nChief Sponsor: Curtis S. Bramble\nHouse Sponsor: A. Cory Maloy\nLONG TITLE\nCommittee Note:\nThe Business and Labor Interim Committee recommended this bill.\nLegislative Vote: 14 voting for 1 voting against          6 absent\nGeneral Description:\nThis bill enacts the Uniform Public Expression Protection Act.\nHighlighted Provisions:\nThis bill:\n< defines terms;\n< creates a process for a claim asserted against a person for:\nC    communication in, or on an issue under consideration in, certain governmental\nproceedings; or\nC    exercising certain rights under the United States Constitution or Utah\nConstitution;\n< requires a court to award costs, attorney fees, and other litigation expenses under\ncertain circumstances;\n< includes a severability clause; and\n< repeals the Citizenship Participation in Government Act.\nMoney Appropriated in this Bill:\nNone\nOther Special Clauses:\nNone\nUtah Code Sections Affected:\nENACTS:\n78B-25-101, Utah Code Annotated 1953\n78B-25-102, Utah Code Annotated 1953\n78B-25-103, Utah Code Annotated 1953\n78B-25-104, Utah Code Annotated 1953\n78B-25-105, Utah Code Annotated 1953\n78B-25-106, Utah Code Annotated 1953\n78B-25-107, Utah Code Annotated 1953\n78B-25-108, Utah Code Annotated 1953\n78B-25-109, Utah Code Annotated 1953\n78B-25-110, Utah Code Annotated 1953\n78B-25-111, Utah Code Annotated 1953\n78B-25-112, Utah Code Annotated 1953\n78B-25-113, Utah Code Annotated 1953\n78B-25-114, Utah Code Annotated 1953\n78B-25-115, Utah Code Annotated 1953\nREPEALS:\n78B-6-1401, as renumbered and amended by Laws of Utah 2008, Chapter 3\n78B-6-1402, as last amended by Laws of Utah 2010, Chapter 254\n78B-6-1403, as renumbered and amended by Laws of Utah 2008, Chapter 3\n78B-6-1404, as renumbered and amended by Laws of Utah 2008, Chapter 3\n78B-6-1405, as renumbered and amended by Laws of Utah 2008, Chapter 3\nBe it enacted by the Legislature of the state of Utah:\nSection 1. Section 78B-25-101 is enacted to read:\nCHAPTER 25. UNIFORM PUBLIC EXPRESSION PROTECTION ACT\n78B-25-101. Title.\nThis chapter may be cited as the Uniform Public Expression Protection Act.\nSection 2. Section 78B-25-102 is enacted to read:\n78B-25-102. Scope.\n(1) As used in this section:\n(a) \"Goods or services\" does not include the creation, dissemination, exhibition, or\nadvertisement or similar promotion of a dramatic, literary, musical, political, journalistic, or\nartistic work.\n(b) \"Governmental unit\" means a public corporation or government or governmental\nsubdivision, agency, or instrumentality.\n(c) \"Person\" means an individual, estate, trust, partnership, business or nonprofit entity,\ngovernmental unit, or other legal entity.\n(2) Except as provided in Subsection (3), this chapter applies to a cause of action\nasserted in a civil action against a person based on the person's:\n(a) communication in a legislative, executive, judicial, administrative, or other\ngovernmental proceeding;\n(b) communication on an issue under consideration or review in a legislative,\nexecutive, judicial, administrative, or other governmental proceeding; or\n(c) exercise of the right of freedom of speech or of the press, the right to assemble or\npetition, or the right of association, guaranteed by the United States Constitution or Utah\nConstitution, on a matter of public concern.\n(3) This chapter does not apply to a cause of action asserted:\n(a) against a governmental unit or an employee or agent of a governmental unit acting\nor purporting to act in an official capacity;\n(b) by a governmental unit or an employee or agent of a governmental unit acting in an\nofficial capacity to enforce a law to protect against an imminent threat to public health or\nsafety; or\n(c) against a person primarily engaged in the business of selling or leasing goods or\nservices if the cause of action arises out of a communication related to the person's sale or lease\nof the goods or services.\nSection 3. Section 78B-25-103 is enacted to read:\n78B-25-103. Special motion for expedited relief.\nNot later than 60 days after the day on which a party is served with a complaint,\ncrossclaim, counterclaim, third-party claim, or other pleading that asserts a cause of action to\nwhich this chapter applies, or at a later time on a showing of good cause, the party may file a\nspecial motion for expedited relief to dismiss the cause of action or part of the cause of action.\nSection 4. Section 78B-25-104 is enacted to read:\n78B-25-104. Stay.\n(1) Except as provided in Subsections (4) through (7), on the filing of a motion under\nSection 78B-25-103:\n(a) all other proceedings between the moving party and responding party, including\ndiscovery and a pending hearing or motion, are stayed; and\n(b) on motion by the moving party, the court may stay a hearing or motion involving\nanother party, or discovery by another party, if the hearing or ruling on the motion would\nadjudicate, or the discovery would relate to, an issue material to the motion under Section\n78B-25-103.\n(2) A stay under Subsection (1) remains in effect until the day on which an order ruling\non the motion under Section 78B-25-103 is entered and expiration of the time under Section\n78B-25-109 for the moving party to appeal the order.\n(3) (a) Except as provided in Subsections (5), (6), and (7), if a party appeals from an\norder ruling on a motion under Section 78B-25-103, all proceedings between all parties in the\naction are stayed.\n(b) A stay under Subsection (3)(a) remains in effect until the day on which the appeal\nconcludes.\n(4) During a stay under Subsection (1), the court may allow limited discovery if a party\nshows that specific information is necessary to establish whether a party has satisfied or failed\nto satisfy a burden under Subsection 78B-25-107(1) and the information is not reasonably\navailable unless discovery is allowed.\n(5) A motion under Section 78B-25-110 for costs, attorney fees, and expenses is not\nsubject to a stay under this section.\n(6) A stay under this section does not affect a party's ability to voluntarily dismiss a\ncause of action or part of a cause of action or move to sever a cause of action.\n(7) During a stay under this section, the court for good cause may hear and rule on:\n(a) a motion unrelated to the motion under Section 78B-25-103; and\n(b) a motion seeking a special or preliminary injunction to protect against an imminent\nthreat to public health or safety.\nSection 5. Section 78B-25-105 is enacted to read:\n78B-25-105. Hearing.\n(1) The court shall hear a motion under Section 78B-25-103 not later than 60 days after\nthe day on which the motion is filed, unless the court orders a later hearing:\n(a) to allow discovery under Subsection 78B-25-104(4); or\n(b) for other good cause.\n(2) If the court orders a later hearing under Subsection (1)(a), the court shall hear the\nmotion under Section 78B-25-103 not later than 60 days after the day on which the court issues\nan order allowing the discovery, unless the court orders a later hearing under Subsection (1)(b).\nSection 6. Section 78B-25-106 is enacted to read:\n78B-25-106. Proof.\nIn ruling on a motion under Section 78B-25-103, the court shall consider the pleadings,\nthe motion, any reply or response to the motion, and any evidence that could be considered in\nruling on a motion for summary judgment under Utah Rules of Civil Procedure, Rule 56.\nSection 7. Section 78B-25-107 is enacted to read:\n78B-25-107. Dismissal of cause of action in whole or part.\n(1) In ruling on a motion under Section 78B-25-103, the court shall dismiss with\nprejudice a cause of action, or part of a cause of action, if:\n(a) the moving party establishes under Subsection 78B-25-102(2) that this chapter\napplies;\n(b) the responding party fails to establish under Subsection 78B-25-102(3) that this\nchapter does not apply; and\n(c) either:\n(i) the responding party fails to establish a prima facie case as to each essential element\nof the cause of action; or\n(ii) the moving party establishes that:\n(A) the responding party failed to state a cause of action upon which relief can be\ngranted; or\n(B) there is no genuine issue as to any material fact and the moving party is entitled to\njudgment as a matter of law on the cause of action or part of the cause of action.\n(2) A voluntary dismissal without prejudice of a responding party's cause of action, or\npart of a cause of action, that is the subject of a motion under Section 78B-25-103 does not\naffect a moving party's right to obtain a ruling on the motion and seek costs, attorney fees, and\nexpenses under Section 78B-25-110.\n(3) A voluntary dismissal with prejudice of a responding party's cause of action, or part\nof a cause of action, that is the subject of a motion under Section 78B-25-103 establishes for\nthe purpose of Section 78B-25-110 that the moving party prevailed on the motion.\nSection 8. Section 78B-25-108 is enacted to read:\n78B-25-108. Ruling.\nThe court shall rule on a motion under Section 78B-25-103 not later than 60 days after\nthe day on which a hearing is held under Section 78B-25-105.\nSection 9. Section 78B-25-109 is enacted to read:\n78B-25-109. Appeal.\n(1) A moving party may appeal as a matter of right from an order denying, in whole or\nin part, a motion under Section 78B-25-103.\n(2) The appeal shall be filed not later than 21 days after the day on which the order is\nentered.\nSection 10. Section 78B-25-110 is enacted to read:\n78B-25-110. Costs, attorney fees, and expenses.\nOn a motion under Section 78B-25-103, the court shall award court costs, reasonable\nattorney fees, and reasonable litigation expenses related to the motion:\n(1) to the moving party if the moving party prevails on the motion; or\n(2) to the responding party if the responding party prevails on the motion and the court\nfinds that the motion was frivolous or filed solely with intent to delay the proceeding.\nSection 11. Section 78B-25-111 is enacted to read:\n78B-25-111. Construction.\nThis chapter shall be broadly construed and applied to protect the exercise of the right\nof freedom of speech and of the press, the right to assemble and petition, and the right of\nassociation, guaranteed by the United States Constitution or the Utah Constitution.\nSection 12. Section 78B-25-112 is enacted to read:\n78B-25-112. Uniformity of application and construction.\nIn applying and construing this uniform act, consideration shall be given to the need to\npromote uniformity of the law with respect to the uniform law's subject matter among states\nthat enact the uniform law.\nSection 13. Section 78B-25-113 is enacted to read:\n78B-25-113. Transitional provision.\nThis chapter applies to a civil action filed or cause of action asserted in a civil action on\nor after May 3, 2023.\nSection 14. Section 78B-25-114 is enacted to read:\n78B-25-114. Savings clause.\nThis chapter does not affect a cause of action asserted before May 3, 2023, in a civil\naction or a motion under Title 78B, Chapter 6, Part 14, Citizen Participation in Government\nAct, regarding the cause of action.\nSection 15. Section 78B-25-115 is enacted to read:\n78B-25-115. Severability.\nIf any provision of this chapter or the chapter's application to any person or\ncircumstance is held invalid, the invalidity does not affect other provisions or applications of\nthis chapter which can be given effect without the invalid provision or application, and to this\nend the provisions of this chapter are severable.\nSection 16. Repealer.\nThis bill repeals:\nSection 78B-6-1401, Title.\nSection 78B-6-1402, Definitions.\nSection 78B-6-1403, Applicability.\nSection 78B-6-1404, Procedures.\nSection 78B-6-1405, Counter actions -- Attorney fees -- Damages.",
+  "raw_text_url": "https://le.utah.gov/~2023/bills/sbillint/SB0018.pdf"
+ }
+]

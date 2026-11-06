@@ -1,0 +1,382 @@
+[
+ {
+  "id": "ocd-bill/466153a5-6ac0-4a17-b061-aecda47f1135",
+  "legislative_session": "2025-2026",
+  "identifier": "HB 4045",
+  "title": "Civil procedure: civil actions; lawsuits for exercising rights to free expression; provide protections against. Creates new act.",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "House",
+    "description": "introduced by Representative Rep. Kara Hope",
+    "date": "2025-01-30",
+    "classification": [
+     "introduction"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "House",
+    "description": "read a first time",
+    "date": "2025-01-30",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "referred to Committee on Judiciary",
+    "date": "2025-01-30",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "House",
+    "description": "bill electronically reproduced 01/30/2025",
+    "date": "2025-02-04",
+    "classification": [],
+    "order": 3
+   },
+   {
+    "organization__name": "House",
+    "description": "reported with recommendation with substitute (H-1)",
+    "date": "2025-04-16",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 4
+   },
+   {
+    "organization__name": "House",
+    "description": "referred to second reading",
+    "date": "2025-04-16",
+    "classification": [],
+    "order": 5
+   },
+   {
+    "organization__name": "House",
+    "description": "read a second time",
+    "date": "2025-10-21",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "House",
+    "description": "substitute (H-1) adopted",
+    "date": "2025-10-21",
+    "classification": [],
+    "order": 7
+   },
+   {
+    "organization__name": "House",
+    "description": "placed on third reading",
+    "date": "2025-10-21",
+    "classification": [],
+    "order": 8
+   },
+   {
+    "organization__name": "House",
+    "description": "read a third time",
+    "date": "2025-10-22",
+    "classification": [
+     "reading-3"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "House",
+    "description": "passed; given immediate effect Roll Call #262 Yeas 103 Nays 0 Excused 0 Not Voting 7",
+    "date": "2025-10-22",
+    "classification": [
+     "passage"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "House",
+    "description": "transmitted",
+    "date": "2025-10-22",
+    "classification": [],
+    "order": 11
+   },
+   {
+    "organization__name": "Senate",
+    "description": "PASSED BY HOUSE WITH IMMEDIATE EFFECT",
+    "date": "2025-10-28",
+    "classification": [],
+    "order": 12
+   },
+   {
+    "organization__name": "Senate",
+    "description": "REFERRED TO COMMITTEE ON CIVIL RIGHTS, JUDICIARY, AND PUBLIC SAFETY",
+    "date": "2025-10-28",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 13
+   },
+   {
+    "organization__name": "Senate",
+    "description": "REPORTED FAVORABLY WITHOUT AMENDMENT 12/10/2025",
+    "date": "2025-12-11",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 14
+   },
+   {
+    "organization__name": "Senate",
+    "description": "REFERRED TO COMMITTEE OF THE WHOLE",
+    "date": "2025-12-11",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 15
+   },
+   {
+    "organization__name": "Senate",
+    "description": "REPORTED BY COMMITTEE OF THE WHOLE FAVORABLY WITHOUT AMENDMENT(S)",
+    "date": "2025-12-16",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 16
+   },
+   {
+    "organization__name": "Senate",
+    "description": "PLACED ON ORDER OF THIRD READING",
+    "date": "2025-12-16",
+    "classification": [],
+    "order": 17
+   },
+   {
+    "organization__name": "Senate",
+    "description": "PASSED ROLL CALL # 347 YEAS 36 NAYS 0 EXCUSED 1 NOT VOTING 0",
+    "date": "2025-12-18",
+    "classification": [
+     "passage"
+    ],
+    "order": 18
+   },
+   {
+    "organization__name": "Senate",
+    "description": "RETURNED TO HOUSE",
+    "date": "2025-12-18",
+    "classification": [],
+    "order": 19
+   },
+   {
+    "organization__name": "House",
+    "description": "returned from Senate without amendment",
+    "date": "2025-12-18",
+    "classification": [],
+    "order": 20
+   },
+   {
+    "organization__name": "House",
+    "description": "bill ordered enrolled",
+    "date": "2025-12-18",
+    "classification": [],
+    "order": 21
+   },
+   {
+    "organization__name": "House",
+    "description": "presented to the Governor 12/22/2025 01:40 PM",
+    "date": "2025-12-23",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 22
+   },
+   {
+    "organization__name": "House",
+    "description": "approved by the Governor 12/23/2025 10:26 AM",
+    "date": "2025-12-31",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 23
+   },
+   {
+    "organization__name": "House",
+    "description": "filed with Secretary of State 12/23/2025 11:56 AM",
+    "date": "2025-12-31",
+    "classification": [],
+    "order": 24
+   },
+   {
+    "organization__name": "House",
+    "description": "assigned PA 52'25",
+    "date": "2025-12-31",
+    "classification": [],
+    "order": 25
+   }
+  ],
+  "versions": [
+   {
+    "note": "Substitute (H-1)",
+    "date": "",
+    "links": [
+     {
+      "url": "https://legislature.mi.gov/Home/GetObject?objectName=2025-HCVBH-4045-0N295.pdf",
+      "media_type": "text/html"
+     }
+    ]
+   },
+   {
+    "note": "Substitute (H-1) - 2",
+    "date": "",
+    "links": [
+     {
+      "url": "https://legislature.mi.gov/Home/GetObject?objectName=2025-HCVBH-4045-0O338.pdf",
+      "media_type": "text/html"
+     }
+    ]
+   },
+   {
+    "note": "House Introduced Bill",
+    "date": "",
+    "links": [
+     {
+      "url": "https://legislature.mi.gov/documents/2025-2026/billintroduced/House/htm/2025-HIB-4045.htm",
+      "media_type": "text/html"
+     },
+     {
+      "url": "https://legislature.mi.gov/documents/2025-2026/billintroduced/House/pdf/2025-HIB-4045.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "As Passed by the House",
+    "date": "",
+    "links": [
+     {
+      "url": "https://legislature.mi.gov/documents/2025-2026/billengrossed/House/htm/2025-HEBH-4045.htm",
+      "media_type": "text/html"
+     },
+     {
+      "url": "https://legislature.mi.gov/documents/2025-2026/billengrossed/House/pdf/2025-HEBH-4045.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "As Passed by the Senate",
+    "date": "",
+    "links": [
+     {
+      "url": "https://legislature.mi.gov/documents/2025-2026/billengrossed/House/htm/2025-HEBS-4045.htm",
+      "media_type": "text/html"
+     },
+     {
+      "url": "https://legislature.mi.gov/documents/2025-2026/billengrossed/House/pdf/2025-HEBS-4045.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "House Concurred Bill",
+    "date": "",
+    "links": [
+     {
+      "url": "https://legislature.mi.gov/documents/2025-2026/billconcurred/House/htm/2025-HCB-4045.htm",
+      "media_type": "text/html"
+     },
+     {
+      "url": "https://legislature.mi.gov/documents/2025-2026/billconcurred/House/pdf/2025-HCB-4045.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Public Act",
+    "date": "",
+    "links": [
+     {
+      "url": "https://legislature.mi.gov/documents/2025-2026/publicact/htm/2025-PA-0052.htm",
+      "media_type": "text/html"
+     },
+     {
+      "url": "https://legislature.mi.gov/documents/2025-2026/publicact/pdf/2025-PA-0052.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "",
+  "raw_text_url": "https://legislature.mi.gov/Home/GetObject?objectName=2025-HCVBH-4045-0O338.pdf"
+ },
+ {
+  "id": "ocd-bill/e7518288-55fa-4861-8515-7be830ab5b33",
+  "legislative_session": "2025-2026",
+  "identifier": "HB 6191",
+  "title": "Financial institutions: mortgage brokers and lenders; consolidation of certain licensing statutes related to residential mortgages; make conforming changes in the uniform securities act (2002). Amends secs. 401 & 402 of 2008 PA 551 (MCL 451.2401 & 451.2402).   TIE BAR WITH: HB 6177'26",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "House",
+    "description": "introduced by Representative Rep. Steve Frisbie",
+    "date": "2026-07-03",
+    "classification": [
+     "introduction"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "House",
+    "description": "read a first time",
+    "date": "2026-07-03",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "referred to Committee on Finance",
+    "date": "2026-07-03",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "House",
+    "description": "bill electronically reproduced 07/03/2026",
+    "date": "2026-07-14",
+    "classification": [],
+    "order": 3
+   }
+  ],
+  "versions": [
+   {
+    "note": "House Introduced Bill",
+    "date": "",
+    "links": [
+     {
+      "url": "https://legislature.mi.gov/documents/2025-2026/billintroduced/House/htm/2026-HIB-6191.htm",
+      "media_type": "text/html"
+     },
+     {
+      "url": "https://legislature.mi.gov/documents/2025-2026/billintroduced/House/pdf/2026-HIB-6191.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "\n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\n \n\nHOUSE BILL NO. 6191\n\n\n\nA bill to amend 2008 PA 551, entitled\n\n\"Uniform securities act (2002),\"\n\nby amending sections 401 and 402 (MCL 451.2401 and\n451.2402), section 401 as amended by 2014 PA 355.\n\nthe people of the state of michigan enact:\n\nSec. 401. (1) A person shall not transact\nbusiness in this state as a broker-dealer unless the person is registered under\nthis act as a broker-dealer or is exempt from registration as a broker-dealer\nunder subsection (2) or (4).\n\n(2) The following\npersons are exempt from the registration requirement of subsection (1):\n\n(a) A broker-dealer\nif the broker-dealer does not have a place of business in this state and if the\nbroker-dealer's only transactions effected in this state are with any of the\nfollowing:\n\n(i) The issuer of the securities involved in\nthe transactions.\n\n(ii) A broker-dealer registered as a\nbroker-dealer under this act or not required to be registered as a\nbroker-dealer under this act.\n\n(iii) An institutional investor.\n\n(iv) A nonaffiliated federal covered\ninvestment adviser with investments under management in excess of\n$100,000,000.00 acting for the account of others pursuant\nto under discretionary authority in a\nsigned record.\n\n(v) A bona fide preexisting customer whose\nprincipal place of residence is not in this state and the broker-dealer is\nregistered as a broker-dealer under the securities exchange act of 1934 or not\nrequired to be registered under the securities exchange act of 1934 and is\nregistered under the securities act of the state in which the customer\nmaintains a principal place of residence.\n\n(vi) A bona fide preexisting customer whose\nprincipal place of residence is in this state but who was not present in this\nstate when the customer relationship was established, if both of the following\nare met:\n\n(A) The\nbroker-dealer is registered under the securities exchange act of 1934 or not\nrequired to be registered under the securities exchange act of 1934 and is\nregistered under the securities laws of the state in which the customer\nrelationship was established and where the customer had maintained a principal\nplace of residence.\n\n(B) Within Not later than 45\ndays after the customer's first transaction in this state, the person files an\napplication for registration as a broker-dealer in this state and a further\ntransaction is not effected more than 75 days after the date on which the\napplication is filed, or, if earlier, the date on which the administrator\nnotifies the person that the administrator has denied the application for\nregistration or has stayed the pendency of the application for good cause.\n\n(vii) Not more than 3 customers in this state\nduring the previous 12 months, in addition to those specified in subparagraphs\n(i) to (vi) and under subparagraph (viii), if the broker-dealer is registered\nunder the securities exchange act of 1934 or not required to be registered\nunder the securities exchange act of 1934 and is registered under the\nsecurities act of the state in which the broker-dealer has its principal place\nof business.\n\n(viii) Any other person exempted by rule or\norder under this act.\n\n(b) A person that\ndeals solely in United States government securities and is supervised as a\ndealer in government securities by the board of\ngovernors of the federal reserve system, the comptroller of the currency, the\nfederal deposit insurance corporation, or the office of thrift supervision.Board of Governors of the Federal Reserve System, the Office of the Comptroller of the Currency,\nthe Federal Deposit Insurance Corporation, or the Office of Thrift Supervision.\n\n(c) A For 6 months after the\neffective date of the residential mortgage licensing and supervision act, a person\nlicensed or registered as a mortgage broker, mortgage lender, or mortgage\nservicer under the mortgage brokers, lenders, and servicers licensing act, 1987\nPA 173, MCL 445.1651 to 445.1684, in the offer or sale of mortgage loans as\ndefined in section 1a of the mortgage brokers, lenders, and servicers licensing\nact, 1987 PA 173, MCL 445.1651a.\n\n(d) Beginning on the effective date of the residential mortgage\nlicensing and supervision act, a person licensed as a mortgage broker, mortgage\nlender, or mortgage servicer under the residential mortgage licensing and\nsupervision act, in the offer or sale of residential mortgage loans as that\nterm is defined in section 6 of the residential mortgage licensing and\nsupervision act.\n\n(e) (d) A\nperson that is registered as a Michigan investment market under article 4A and\nthat deals in securities solely in its capacity as a Michigan investment\nmarket.\n\n(3) A\nbroker-dealer, or an issuer engaged in offering, offering to purchase,\npurchasing, or selling securities in this state, shall not directly or\nindirectly employ or associate with an individual to engage in an activity\nrelated to securities transactions in this state if the registration of the\nindividual is suspended or revoked or the individual is barred from employment\nor association with a broker-dealer, an issuer, an investment adviser, or a\nfederal covered investment adviser by an order of the administrator under this\nact, the securities and exchange commission, a securities regulator of another\nstate, or a self-regulatory organization. A broker-dealer or issuer does not\nviolate this subsection if the broker-dealer or issuer did not know and in the\nexercise of reasonable care could not have known of the suspension, revocation,\nor bar. If requested by a broker-dealer or issuer and if good cause is shown,\nan order under this act may modify or waive, in whole or in part, the\napplication of the prohibitions of this subsection.\n\n(4) A rule or order\nunder this act may permit any of the following:\n\n(a) A broker-dealer\nthat is registered in Canada or other foreign jurisdiction and that does not\nhave a place of business in this state to effect transactions in securities\nwith or for, or attempt to effect the purchase or sale of any securities by,\nany of the following:\n\n(i) An individual from Canada or other\nforeign jurisdiction who is temporarily present in this state and with whom the\nbroker-dealer had a bona fide customer relationship before the individual\nentered the United States.\n\n(ii) An individual from Canada or other\nforeign jurisdiction who is present in this state and whose transactions are in\na self-directed tax advantaged retirement plan of which the individual is the\nholder or contributor in that foreign jurisdiction.\n\n(iii) An individual who is present in this\nstate, with whom the broker-dealer customer relationship arose while the\nindividual was temporarily or permanently resident in Canada or the other\nforeign jurisdiction.\n\n(b) An agent who\nrepresents a broker-dealer that is exempt under this subsection to effect\ntransactions in securities or attempt to effect the purchase or sale of any\nsecurities in this state as permitted for a broker-dealer described in\nsubdivision (a).\n\nSec. 402. (1) An individual shall not\ntransact business in this state as an agent unless the individual is registered\nunder this act as an agent or is exempt from registration as an agent under\nsubsection (2).\n\n(2) Each of the\nfollowing individuals is exempt from the registration requirement of subsection\n(1):\n\n(a) An individual\nwho represents a broker-dealer in effecting transactions in this state limited\nto those described in section 15(h)(2) of the securities exchange act of 1934,\n15 USC 78o.\n\n(b) An individual\nwho represents a broker-dealer that is exempt under section 401(2) or (4).\n\n(c) An individual\nwho represents an issuer with respect to an offer or sale of the issuer's own\nsecurities or those of the issuer's parent or any of the issuer's subsidiaries,\nand who is not compensated in connection with the individual's participation by\nthe payment of commissions or other remuneration based, directly or indirectly,\non transactions in those securities.\n\n(d) An individual\nwho represents an issuer and who effects transactions in the issuer's\nsecurities exempted by section 202, other than section 202(1)(k) or (n).\n\n(e) An individual\nwho represents an issuer who effects transactions solely in federal covered\nsecurities of the issuer, but an individual who effects transactions in a\nfederal covered security under section 18(b)(3) or 18(b)(4)(D)\n(4)(D) of the securities act of 1933, 15\nUSC 77r, is not exempt if the individual is compensated in connection with the\nagent's participation by the payment of commissions or other remuneration\nbased, directly or indirectly, on transactions in those securities.\n\n(f) An individual\nwho represents a broker-dealer registered in this state under section 401(1) or\nexempt from registration under section 401(2) in the offer and sale of\nsecurities for an account of a nonaffiliated federal covered investment adviser\nwith investments under management in excess of $100,000,000.00 acting for the\naccount of others pursuant to under discretionary authority in a signed record.\n\n(g) An individual\nwho represents an issuer in connection with the purchase of the issuer's own\nsecurities.\n\n(h) An individual\nwho represents an issuer and who restricts participation to performing clerical\nor ministerial acts.\n\n(i) An For 6 months after the\neffective date of the residential mortgage licensing and supervision act, an employee\nof a person licensed or registered under the mortgage brokers, lenders, and\nservicers licensing act, 1987 PA 173, MCL 445.1651 to 445.1684, in the offer or\nsale of mortgage loans, as that term is defined in section 1a of the mortgage\nbrokers, lenders, and servicers licensing act, 1987 PA 173, MCL 445.1651a, when\nacting as an employee of the licensed or registered person.\n\n(j) Beginning on the effective date of the residential mortgage\nlicensing and supervision act, an employee of a person licensed as a mortgage\nbroker, mortgage lender, or mortgage servicer under the residential mortgage\nlicensing and supervision act, in the offer or sale of residential mortgage\nloans, as that term is defined in section 6 of the residential mortgage\nlicensing and supervision act, when acting as an employee of the licensee.\n\n(k) (j) Any\nother individual exempted by rule or order under this act.\n\n(3) The\nregistration of an agent is effective only while the agent is employed by or\nassociated with a broker-dealer registered under this act or an issuer that is\noffering, selling, or purchasing its securities in this state.\n\n(4) A\nbroker-dealer, or an issuer engaged in offering, selling, or purchasing\nsecurities in this state, shall not employ or associate with an agent who\ntransacts business in this state on behalf of broker-dealers or issuers unless\nthe agent is registered under subsection (1) or exempt from registration under\nsubsection (2).\n\n(5) An individual\nshall not act as an agent for more than 1 broker-dealer or more than 1 issuer\nat a time, unless the broker-dealers or the issuers for which the agent acts\nare affiliated by direct or indirect common control or are authorized by rule\nor order under this act.\n\nEnacting section 1.\nThis amendatory act does not take effect unless House Bill No. 6177 (request\nno. H05171'25) of the 103rd Legislature is enacted into law.\n\n",
+  "raw_text_url": "https://legislature.mi.gov/documents/2025-2026/billintroduced/House/htm/2026-HIB-6191.htm"
+ }
+]

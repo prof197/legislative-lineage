@@ -1,0 +1,383 @@
+[
+ {
+  "id": "ocd-bill/c923a345-667d-443b-b897-7157c0767529",
+  "legislative_session": "109",
+  "identifier": "LB 231",
+  "title": "Adopt the Uniform Special Deposits Act",
+  "chamber": "legislature",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Office of the Governor",
+    "description": "Approved by Governor on March 11, 2025",
+    "date": "2025-03-12",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Office of the Governor",
+    "description": "Presented to Governor on  March 6, 2025",
+    "date": "2025-03-06",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "President/Speaker signed",
+    "date": "2025-03-06",
+    "classification": [
+     "passage"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Passed on Final Reading 48-0-1",
+    "date": "2025-03-06",
+    "classification": [
+     "passage"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Dispensing of reading at large approved",
+    "date": "2025-03-06",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Placed on Final Reading",
+    "date": "2025-02-24",
+    "classification": [
+     "reading-3"
+    ],
+    "order": 5
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Advanced to Enrollment and Review for Engrossment",
+    "date": "2025-02-19",
+    "classification": [],
+    "order": 6
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Hallstrom AM216 adopted",
+    "date": "2025-02-19",
+    "classification": [],
+    "order": 7
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Hallstrom AM216 filed",
+    "date": "2025-02-13",
+    "classification": [
+     "filing"
+    ],
+    "order": 8
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Placed on Select File",
+    "date": "2025-02-11",
+    "classification": [
+     "filing"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Advanced to Enrollment and Review Initial",
+    "date": "2025-02-05",
+    "classification": [],
+    "order": 10
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Banking, Commerce and Insurance AM30 adopted",
+    "date": "2025-02-05",
+    "classification": [],
+    "order": 11
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Banking, Commerce and Insurance AM30 filed",
+    "date": "2025-01-30",
+    "classification": [
+     "filing"
+    ],
+    "order": 12
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Placed on General File with AM30",
+    "date": "2025-01-30",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 13
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Notice of hearing for January 28, 2025",
+    "date": "2025-01-16",
+    "classification": [],
+    "order": 14
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Referred to Banking, Commerce and Insurance Committee",
+    "date": "2025-01-16",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 15
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Date of introduction",
+    "date": "2025-01-14",
+    "classification": [
+     "introduction"
+    ],
+    "order": 16
+   }
+  ],
+  "versions": [
+   {
+    "note": "Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "https://nebraskalegislature.gov/FloorDocs/109/PDF/Intro/LB231.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Final Reading",
+    "date": "",
+    "links": [
+     {
+      "url": "https://nebraskalegislature.gov/FloorDocs/109/PDF/Final/LB231.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Slip Law",
+    "date": "",
+    "links": [
+     {
+      "url": "https://nebraskalegislature.gov/FloorDocs/109/PDF/Slip/LB231.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Banking, Commerce and Insurance AM30",
+    "date": "",
+    "links": [
+     {
+      "url": "https://nebraskalegislature.gov/FloorDocs/109/PDF/AM/AM30.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Hallstrom AM216",
+    "date": "",
+    "links": [
+     {
+      "url": "https://nebraskalegislature.gov/FloorDocs/109/PDF/AM/AM216.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "LB231                                                                     LB231\n2025                                                                       2025\n\n\n                     LEGISLATIVE BILL 231\n                    Approved by the Governor March 11, 2025\n\n\nIntroduced by Hallstrom, 1; DeBoer, 10.\n\n\nA BILL FOR AN ACT relating to banking and finance; to adopt the Uniform Special\n     Deposits Act.\nBe it enacted by the people of the State of Nebraska,\n\n     Section 1. Sections 1 to 16 of this act shall be known and may be cited\nas the Uniform Special Deposits Act.\n     Sec. 2. In the Uniform Special Deposits Act:\n     (1) Account agreement means an agreement that:\n     (A) is in a record between a financial institution and one or more\ndepositors;\n     (B) may have one or more beneficiaries as additional parties; and\n     (C) states the intention of the parties to establish a special deposit\ngoverned by the act.\n     (2) Financial institution means a bank, savings bank, building and loan\nassociation, savings and loan association, or credit union, whether chartered\nby the United States, the Department of Banking and Finance, or a foreign state\nagency; any other similar organization which is covered by federal deposit\ninsurance; a trust company; or a digital asset depository that is not a digital\nasset depository institution.\n     (3) Beneficiary means a person that:\n     (A) is identified as a beneficiary in an account agreement; or\n     (B) if not identified as a beneficiary in an account agreement, may be\nentitled to payment from a special deposit:\n     (i) under the account agreement; or\n     (ii) on termination of the special deposit.\n     (4) Contingency means an event or circumstance stated in an account\nagreement that is not certain to occur but must occur before the financial\ninstitution is obligated to pay a beneficiary.\n     (5) Creditor process means attachment, garnishment, levy, notice of lien,\nsequestration, or similar process issued by or on behalf of a creditor or other\nclaimant.\n     (6) Depositor means a person that establishes or funds a special deposit.\n     (7) Good faith means honesty in fact and observance of reasonable\ncommercial standards of fair dealing.\n     (8) Knowledge of a fact means:\n     (A) with respect to a beneficiary, actual knowledge of the fact; or\n     (B) with respect to a financial institution holding a special deposit:\n     (i) if the financial institution:\n     (I) has established a reasonable routine for communicating material\ninformation to an individual to whom the financial institution has assigned\nresponsibility for the special deposit; and\n     (II) maintains reasonable compliance with the routine, actual knowledge of\nthe fact by that individual; or\n     (ii) if the financial institution has not established and maintained\nreasonable compliance with a routine described in clause (i) or otherwise\nexercised due diligence, implied knowledge of the fact that would have come to\nthe attention of an individual to whom the financial institution has assigned\nresponsibility for the special deposit.\n     (9) Obligated to pay a beneficiary means a beneficiary is entitled under\nthe account agreement to receive from the financial institution a payment when:\n     (A) a contingency has occurred; and\n     (B) the financial institution has knowledge the contingency has occurred.\nObligation to pay a beneficiary has a corresponding meaning.\n     (10) Permissible purpose means a governmental, regulatory, commercial,\ncharitable, or testamentary objective of the parties stated in an account\nagreement. The term includes an objective to:\n     (A) hold funds:\n     (i) in escrow, including for a purchase and sale, lease, buyback, or other\ntransaction;\n     (ii) as a security deposit of a tenant;\n     (iii) that may be distributed to a person as remuneration, retirement or\nother benefit, or compensation under a judgment, consent decree, court order,\nor other decision of a tribunal; or\n     (iv) for distribution to a defined class of persons after identification\nof the class members and their interest in the funds;\n     (B) provide assurance with respect to an obligation created by contract,\nsuch as earnest money to ensure a transaction closes;\n     (C) settle an obligation that arises in the operation of a payment system,\nsecurities settlement system, or other financial market infrastructure;\n     (D) provide assurance with respect to an obligation that arises in the\noperation of a payment system, securities settlement system, or other financial\nmarket infrastructure; or\n     (E) hold margin, other cash collateral, or funds that support the orderly\n                                       -1-\n\fLB231                                                                     LB231\n2025                                                                       2025\nfunctioning of financial market infrastructure or the performance of an\nobligation with respect to the infrastructure.\n     (11) Person means an individual, estate, business or nonprofit entity,\ngovernment or governmental subdivision, agency, or instrumentality, or other\nlegal entity. The term includes a protected series, however denominated, of an\nentity if the protected series is established under law that limits, or limits\nif conditions specified under law are satisfied, the ability of a creditor of\nthe entity or of any other protected series of the entity to satisfy a claim\nfrom assets of the protected series.\n     (12) Record means information:\n     (A) inscribed on a tangible medium; or\n     (B) stored in an electronic or other medium and retrievable in perceivable\nform.\n     (13) Special deposit means a deposit that satisfies section 5 of this act.\n     (14) State means a state of the United States, the District of Columbia,\nPuerto Rico, the United States Virgin Islands, or any other territory or\npossession subject to the jurisdiction of the United States. The term includes\nan agency or instrumentality of the state.\n     Sec. 3. (a) The Uniform Special Deposits Act applies to a special deposit\nunder an account agreement that states the intention of the parties to\nestablish a special deposit governed by the act, regardless of whether a party\nto the account agreement or a transaction related to the special deposit, or\nthe special deposit itself, has a reasonable relation to this state.\n     (b) The parties to an account agreement may choose a forum in this state\nfor settling a dispute arising out of the special deposit, regardless of\nwhether a party to the account agreement or a transaction related to the\nspecial deposit, or the special deposit itself, has a reasonable relation to\nthis state.\n     (c) The act does not affect:\n     (1) a right or obligation relating to a deposit other than a special\ndeposit under the act; or\n     (2) the voidability of a deposit or transfer that is fraudulent or\nvoidable under other law.\n     Sec. 4. (a) The effect of sections 2 to 6, 8 to 11, and 14 of this act\nmay not be varied by agreement, except as provided in those sections. Subject\nto subsection (b), the effect of sections 7, 12, and 13 of this act may be\nvaried by agreement.\n     (b) A provision in an account agreement or other record that substantially\nexcuses liability or substantially limits remedies for failure to perform an\nobligation under the Uniform Special Deposits Act is not sufficient to vary the\neffect of a provision of the act.\n     (c) If a beneficiary is a party to an account agreement, the financial\ninstitution and the depositor may amend the agreement without the consent of\nthe beneficiary only if the agreement expressly permits the amendment.\n     (d) If a beneficiary is not a party to an account agreement and the\nfinancial institution and the depositor know the beneficiary has knowledge of\nthe agreement's terms, the financial institution and the depositor may amend\nthe agreement without the consent of the beneficiary only if the amendment does\nnot adversely and materially affect a payment right of the beneficiary.\n     (e) If a beneficiary is not a party to an account agreement and the\nfinancial institution and the depositor do not know whether the beneficiary has\nknowledge of the agreement's terms, the financial institution and the depositor\nmay amend the agreement without the consent of the beneficiary only if the\namendment is made in good faith.\n     Sec. 5. A deposit is a special deposit if it is:\n     (1) a deposit of funds in a financial institution under an account\nagreement;\n     (2) for the benefit of at least two beneficiaries, one or more of which\nmay be a depositor;\n     (3) denominated in a medium of exchange that is currently authorized or\nadopted by a domestic or foreign government;\n     (4) for a permissible purpose stated in the account agreement; and\n     (5) subject to a contingency.\n     Sec. 6. (a) A special deposit must serve at least one permissible purpose\nstated in the account agreement from the time the special deposit is created in\nthe account agreement until termination of the special deposit.\n     (b) If, before termination of the special deposit, the financial\ninstitution or a court determines the special deposit no longer satisfies\nsubsection (a), sections 8 to 11 of this act cease to apply to any funds\ndeposited in the special deposit after the special deposit ceases to satisfy\nsubsection (a).\n     (c) If, before termination of a special deposit, the financial institution\ndetermines the special deposit no longer satisfies subsection (a), the\nfinancial institution may take action it believes is necessary under the\ncircumstances, including terminating the special deposit.\n     Sec. 7.     (a) Unless the account agreement provides otherwise, the\nfinancial institution is obligated to pay a beneficiary if there are sufficient\nactually and finally collected funds in the balance of the special deposit.\n     (b) Except as provided in subsection (c), the obligation to pay the\nbeneficiary is excused if the funds available in the special deposit are\ninsufficient to cover such payment.\n     (c) Unless the account agreement provides otherwise, if the funds\navailable in the special deposit are insufficient to cover an obligation to pay\n                                      -2-\n\fLB231                                                                     LB231\n2025                                                                       2025\na beneficiary, a beneficiary may elect to be paid the funds that are available\nor, if there is more than one beneficiary, a pro rata share of the funds\navailable. Payment to the beneficiary making the election under this subsection\ndischarges the financial institution's obligation to pay a beneficiary and does\nnot constitute an accord and satisfaction with respect to another person\nobligated to the beneficiary.\n     (d) Unless the account agreement provides otherwise, the obligation of the\nfinancial institution obligated to pay a beneficiary is immediately due and\npayable.\n     (e) The financial institution may discharge its obligation under this\nsection by:\n     (1) crediting another transaction account of the beneficiary; or\n     (2) taking other action that:\n     (i) is permitted under the account agreement for the financial institution\nto obtain a discharge; or\n     (ii) otherwise would constitute a discharge under law.\n     (f) If the financial institution obligated to pay a beneficiary has\nincurred an obligation to discharge the obligation of another person, the\nobligation of the other person is discharged if action by the financial\ninstitution under subsection (e) would constitute a discharge of the obligation\nof the other person under law that determines whether an obligation is\nsatisfied.\n     Sec. 8. (a) Neither a depositor nor a beneficiary has a property interest\nin a special deposit.\n     (b) Any property interest with respect to a special deposit is only in the\nright to receive payment if the financial institution is obligated to pay a\nbeneficiary and not in the special deposit itself. Any property interest under\nthis subsection is determined under other law.\n     Sec. 9. (a) Subject to subsection (b), creditor process with respect to a\nspecial deposit is not enforceable against the financial institution holding\nthe special deposit.\n     (b) Creditor process is enforceable against the financial institution\nholding a special deposit with respect to an amount the financial institution\nis obligated to pay a beneficiary or a depositor if the process:\n     (1) is served on the financial institution;\n     (2) provides sufficient information to permit the financial institution to\nidentify the depositor or the beneficiary from the financial institution's\nbooks and records; and\n     (3) gives the financial institution a reasonable opportunity to act on the\nprocess.\n     (c) Creditor process served on a financial institution before it is\nenforceable against the financial institution under subsection (b) does not\ncreate a right of the creditor against the financial institution or a duty of\nthe financial institution to the creditor. Other law determines whether\ncreditor process creates a lien enforceable against the beneficiary on a\ncontingent interest of a beneficiary, including a depositor as a beneficiary,\neven if not enforceable against the financial institution.\n     Sec. 10. A court may enjoin, or grant similar relief that would have the\neffect of enjoining, a financial institution from paying a depositor or\nbeneficiary only if payment would constitute a material fraud or facilitate a\nmaterial fraud with respect to a special deposit.\n     Sec. 11.   (a) Except as provided in subsection (b) or (c), a financial\ninstitution may not exercise a right of recoupment or set off against a special\ndeposit.\n     (b) An account agreement may authorize the financial institution to debit\nthe special deposit:\n     (1) when the financial institution becomes obligated to pay a beneficiary,\nin an amount that does not exceed the amount necessary to discharge the\nobligation;\n     (2) for a fee assessed by the financial institution that relates to an\noverdraft in the special deposit account;\n     (3) for costs incurred by the financial institution that relate directly\nto the special deposit; or\n     (4) to reverse an earlier credit posted by the financial institution to\nthe balance of the special deposit account, if the reversal occurs under an\nevent or circumstance warranted under other law of this state governing mistake\nand restitution.\n     (c) The financial institution holding a special deposit may exercise a\nright of recoupment or set off against an obligation to pay a beneficiary, even\nif the financial institution funds payment from the special deposit.\n     Sec. 12.   (a) A financial institution does not have a fiduciary duty to\nany person with respect to a special deposit.\n     (b) When the financial institution holding a special deposit becomes\nobligated to pay a beneficiary, a debtor-creditor relationship arises between\nthe financial institution and beneficiary.\n     (c) The financial institution holding a special deposit has a duty to a\nbeneficiary to comply with the account agreement and the Uniform Special\nDeposits Act.\n     (d) If the financial institution holding a special deposit does not comply\nwith the account agreement or the act, the financial institution is liable to a\ndepositor or beneficiary only for damages proximately caused by the\nnoncompliance. Except as provided by other law of this state, the financial\ninstitution is not liable for consequential, special, or punitive damages.\n                                      -3-\n\fLB231                                                                     LB231\n2025                                                                       2025\n     (e) The financial institution holding a special deposit may rely on\nrecords presented in compliance with the account agreement to determine whether\nthe financial institution is obligated to pay a beneficiary.\n     (f) If the account agreement requires payment on presentation of a record,\nthe financial institution shall determine within a reasonable time whether the\nrecord is sufficient to require payment. If the agreement requires action by\nthe financial institution on presentation of a record, the financial\ninstitution is not liable for relying in good faith on the genuineness of the\nrecord if the record appears on its face to be genuine.\n     (g) Unless the account agreement provides otherwise, the financial\ninstitution is not required to determine whether a permissible purpose stated\nin the agreement continues to exist.\n     Sec. 13.    (a) Unless otherwise provided in the account agreement, a\nspecial deposit terminates five years after the date the special deposit was\nfirst funded.\n     (b) Unless otherwise provided in the account agreement, if the financial\ninstitution cannot identify or locate a beneficiary entitled to payment when\nthe special deposit is terminated, and a balance remains in the special\ndeposit, the financial institution shall pay the balance to the depositor or\ndepositors as a beneficiary or beneficiaries.\n     (c) A financial institution that pays the remaining balance as provided\nunder subsection (b) has no further obligation with respect to the special\ndeposit.\n     Sec. 14.    The Uniform Commercial Code, consumer protection law, law\ngoverning deposits generally, law related to escheat and abandoned or unclaimed\nproperty, and the principles of law and equity, including law related to\ncapacity to contract, principal and agent, estoppel, fraud, misrepresentation,\nduress, coercion, mistake, and bankruptcy, supplement the Uniform Special\nDeposits Act except to the extent inconsistent with the act.\n     Sec. 15. In applying and construing the Uniform Special Deposits Act, a\ncourt shall consider the promotion of uniformity of the law among jurisdictions\nthat enact it.\n     Sec. 16. The Uniform Special Deposits Act applies to:\n     (1) a special deposit made under an account agreement executed on or after\nthe effective date of this act; and\n     (2) a deposit made under an agreement executed before the effective date\nof this act, if:\n     (A) all parties entitled to amend the agreement agree to make the deposit\na special deposit governed by the act; and\n     (B) the special deposit referenced in the amended agreement satisfies\nsection 5 of this act.\n\n\n\n\n                                      -4-\n\f",
+  "raw_text_url": "https://nebraskalegislature.gov/FloorDocs/109/PDF/Slip/LB231.pdf"
+ },
+ {
+  "id": "ocd-bill/d4f9d20c-b13e-47f1-8ddc-b97872ca241b",
+  "legislative_session": "109",
+  "identifier": "LB 422",
+  "title": "Change provisions of the Nebraska Uniform Real Property Transfer on Death Act",
+  "chamber": "legislature",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Office of the Governor",
+    "description": "Approved by Governor on May 30, 2025",
+    "date": "2025-06-02",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Office of the Governor",
+    "description": "Presented to Governor on  May 28, 2025",
+    "date": "2025-05-28",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "President/Speaker signed",
+    "date": "2025-05-28",
+    "classification": [
+     "passage"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Passed on Final Reading 48-0-1",
+    "date": "2025-05-28",
+    "classification": [
+     "passage"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Placed on Final Reading",
+    "date": "2025-05-19",
+    "classification": [
+     "reading-3"
+    ],
+    "order": 4
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Advanced to Enrollment and Review for Engrossment",
+    "date": "2025-05-15",
+    "classification": [],
+    "order": 5
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Placed on Select File",
+    "date": "2025-05-13",
+    "classification": [
+     "filing"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Advanced to Enrollment and Review Initial",
+    "date": "2025-05-09",
+    "classification": [],
+    "order": 7
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Judiciary AM841 adopted",
+    "date": "2025-05-09",
+    "classification": [],
+    "order": 8
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Judiciary AM841 filed",
+    "date": "2025-04-08",
+    "classification": [
+     "filing"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Placed on General File with AM841",
+    "date": "2025-04-08",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Notice of hearing for February 27, 2025",
+    "date": "2025-02-06",
+    "classification": [],
+    "order": 11
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Referred to Judiciary Committee",
+    "date": "2025-01-22",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 12
+   },
+   {
+    "organization__name": "Nebraska Legislature",
+    "description": "Date of introduction",
+    "date": "2025-01-17",
+    "classification": [
+     "introduction"
+    ],
+    "order": 13
+   }
+  ],
+  "versions": [
+   {
+    "note": "Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "https://nebraskalegislature.gov/FloorDocs/109/PDF/Intro/LB422.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Final Reading",
+    "date": "",
+    "links": [
+     {
+      "url": "https://nebraskalegislature.gov/FloorDocs/109/PDF/Final/LB422.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Slip Law",
+    "date": "",
+    "links": [
+     {
+      "url": "https://nebraskalegislature.gov/FloorDocs/109/PDF/Slip/LB422.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Judiciary AM841",
+    "date": "",
+    "links": [
+     {
+      "url": "https://nebraskalegislature.gov/FloorDocs/109/PDF/AM/AM841.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "LB422                                                                     LB422\n2025                                                                       2025\n\n\n                     LEGISLATIVE BILL 422\n                     Approved by the Governor May 30, 2025\n\n\nIntroduced by Storer, 43.\n\n\nA BILL FOR AN ACT relating to the Nebraska Uniform Real Property Transfer on\n     Death Act; to amend sections 76-3401 and 76-3410, Reissue Revised Statutes\n     of Nebraska; to change provisions relating to required warnings on\n     transfer on death deeds and insurance policies on certain real property;\n     to harmonize provisions; and to repeal the original sections.\nBe it enacted by the people of the State of Nebraska,\n\n     Section 1. Section 76-3401, Reissue Revised Statutes of Nebraska, is\namended to read:\n     76-3401 Sections 76-3401 to 76-3423 and section 3 of this act shall be\nknown and may be cited as the Nebraska Uniform Real Property Transfer on Death\nAct.\n     Sec. 2. Section 76-3410, Reissue Revised Statutes of Nebraska, is amended\nto read:\n     76-3410 (a) A transfer on death deed:\n     (1) Except as otherwise provided in subdivision (2) of this subsection,\nmust contain the essential elements and formalities of a properly recordable\ninter vivos deed;\n     (2) Must state that the transfer to the designated beneficiary is to occur\nat the transferor's death;\n     (3) Must contain the warnings provided in subsection (b) of this section;\nand\n     (4) Must be recorded (i) within thirty days after being executed as\nrequired in section 76-3409, (ii) before the transferor's death, and (iii) in\nthe public records in the office of the register of deeds of the county where\nthe property is located.\n     (b)(1) A transfer on death deed shall contain the following warnings:\n     WARNING: The property transferred remains subject to inheritance taxation\nin Nebraska to the same extent as if owned by the transferor at death. Failure\nto timely pay inheritance taxes is subject to interest and penalties as\nprovided by law.\n     WARNING: The designated beneficiary is personally liable, to the extent of\nthe value of the property transferred, to account for medicaid reimbursement to\nthe extent necessary to discharge any such claim remaining after application of\nthe assets of the transferor's estate. The designated beneficiary may also be\npersonally liable, to the extent of the value of the property transferred, for\nclaims against the estate, statutory allowances to the transferor's surviving\nspouse and children, and the expenses of administration to the extent needed to\npay such amounts by the personal representative.\n     WARNING: The Department of Health and Human Services may require\nrevocation of this deed by a transferor, a transferor's spouse, or both a\ntransferor and the transferor's spouse in order to qualify or remain qualified\nfor medicaid assistance.\n     (2) A transfer on death deed created after the effective date of this act\nshall contain the following warning in addition to the warnings required under\nsubdivision (1) of this subsection:\n     WARNING: Property insurance on the transferred property may expire thirty\ndays after the death of the transferor. Unless the transferor has added the\ndesignated beneficiary as an insured or additional named insured to the\nproperty insurance policy of the transferred property, any property insurance\ncoverage of the transferred property will end on the earliest to occur of the\nfollowing after the transferor's death: The end of the policy period as\ndetermined as if the transferor was still living; the date the designated\nbeneficiary obtains alternative coverage; or thirty days after the transferor's\ndeath only if any premium required for the additional days beyond the policy\nperiod is paid.\n     (3) (2) No recorded transfer on death deed shall be invalidated because of\nany defects in the wording of the warnings required by this subsection.\n     (c) No action may be commenced to set aside a transfer on death deed,\nbased on failure to comply with the requirement of disinterested witnesses\npursuant to section 76-3409, more than ninety days after the date of death of\nthe transferor or, if there is more than one transferor, more than ninety days\nafter the date of death of the last surviving transferor.\n     (d) Notwithstanding subsection (c) of this section, an action to set aside\na transfer on death deed, based on failure to comply with the requirement of\ndisinterested witnesses pursuant to section 76-3409, in which the transferor\nor, if there is more than one transferor, the last surviving transferor, has\ndied prior to May 8, 2013, shall be commenced by the later of (1) ninety days\nafter the date of death of the transferor or, if there is more than one\ntransferor, ninety days after the date of death of the last surviving\ntransferor, or (2) ninety days after May 8, 2013.\n     Sec. 3. (a) In addition to any other coverage provided under an insurance\npolicy on real estate transferred pursuant to a transfer on death deed, the\n                                       -1-\n\fLB422                                                                    LB422\n2025                                                                      2025\ndesignated beneficiary shall be deemed to be an insured party under any\nproperty insurance policy for the period from the date of the transferor's\ndeath until the first to occur of:\n     (1) The end of the policy period as determined as if the transferor was\nstill living;\n     (2) The date the designated beneficiary obtains alternative coverage; or\n     (3) Thirty days after the transferor's death only if any premium required\nfor the additional days beyond the policy period is paid.\n     (b) Nothing in this section shall affect coverage provided under an\ninsurance policy to household members or others who are deemed to be insured\nupon the death of the transferor.\n     (c) The designated beneficiary shall not acquire any interest in proceeds\nof an insurance policy that have accrued before the death of the insured.\n     Sec. 4. Original sections 76-3401 and 76-3410, Reissue Revised Statutes\nof Nebraska, are repealed.\n\n\n\n\n                                      -2-\n\f",
+  "raw_text_url": "https://nebraskalegislature.gov/FloorDocs/109/PDF/Slip/LB422.pdf"
+ }
+]

@@ -1,0 +1,276 @@
+[
+ {
+  "id": "ocd-bill/213a3799-0793-474f-9bbe-94a3ece4fe1a",
+  "legislative_session": "2025-2026",
+  "identifier": "HF 3560",
+  "title": "Uniform Electronic Estate Planning Documents Act enacted.",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "House",
+    "description": "Introduction and first reading, referred to Judiciary Finance and Civil Law",
+    "date": "2026-02-23",
+    "classification": [
+     "introduction",
+     "referral-committee"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "House",
+    "description": "Committee report, to adopt",
+    "date": "2026-03-16",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "Second reading",
+    "date": "2026-03-16",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred to Chief Clerk for comparison with SF3602",
+    "date": "2026-03-23",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "House",
+    "description": "Bills identical, SF substituted on General Register",
+    "date": "2026-03-25",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "House",
+    "description": "HF indefinitely postponed",
+    "date": "2026-03-25",
+    "classification": [],
+    "order": 5
+   }
+  ],
+  "versions": [
+   {
+    "note": "Introduction",
+    "date": "2026-02-20",
+    "links": [
+     {
+      "url": "https://www.revisor.mn.gov/bills/94/2026/0/HF/3560/versions/0/",
+      "media_type": "text/html"
+     }
+    ]
+   }
+  ],
+  "raw_text": "\n    \n       A bill for an act relating to estates; enacting the Uniform Electronic Estate Planning Documents  Act; proposing coding for new law as Minnesota Statutes, chapter 533.\n    \n     BE IT ENACTED BY THE LEGISLATURE OF THE STATE OF MINNESOTA:\n    \n       Section 1. \n      \n        new text begin \n        [533.01] TITLE.\n        new text end \n      \n      \n        new text begin \n         This chapter may be cited as the \"Uniform Electronic Estate Planning Documents Act.\"\n        new text end \n      \n    \n    \n       Sec. 2. \n      \n        new text begin \n        [533.02] DEFINITIONS.\n        new text end \n      \n      \n        new text begin \n         In this chapter:\n        new text end \n      \n      \n        new text begin \n         (1) \"Electronic\" means relating to technology having electrical, digital, magnetic, wireless,  optical, electromagnetic, or similar capabilities.\n        new text end \n      \n      \n        new text begin \n         (2) \"Electronic presence\" means an individual being in a state and communicating  simultaneously with another person by means of an electronic device or process by sight  and sound to substantially the same extent as if the individual were in a physical location  in relation to the other person that would allow an individual to see and hear the person,  allowing for reasonable accommodation for individuals with hearing, vision, or speech  impairments as necessary.\n        new text end \n      \n      \n        new text begin \n         (3) \"Electronic record\" means a record created, generated, sent, communicated, received,  or stored by electronic means.\n        new text end \n      \n      \n        new text begin \n         (4) \"Electronic signature\" means an electronic symbol, signature, mark, or a process  attached to or logically associated with a record and executed or adopted by a person with  the intent to sign the record.\n        new text end \n      \n      \n        new text begin \n         (5) \"Information\" includes data, text, images, codes, computer programs, software, and  databases.\n        new text end \n      \n      \n        new text begin \n         (6) \"Nontestamentary estate planning document\" means a record relating to estate  planning and is not a will or contained in a will. The term:\n        new text end \n      \n      \n        new text begin \n         (i) includes a record that creates, exercises, modifies, releases, or revokes:\n        new text end \n      \n      \n        new text begin \n         (A) a trust instrument;\n        new text end \n      \n      \n        new text begin \n         (B) a trust power that under the terms of the trust requires a signed record;\n        new text end \n      \n      \n        new text begin \n         (C) a certification of a trust under section 501C.1013;\n        new text end \n      \n      \n        new text begin \n         (D) a power of attorney under chapter 523;\n        new text end \n      \n      \n        new text begin \n         (E) an agent's certification under sections 523.16 to 523.18 of the validity of a power of  attorney and the agent's authority;\n        new text end \n      \n      \n        new text begin \n         (F) a power of appointment;\n        new text end \n      \n      \n        new text begin \n         (G) an advance directive, including a health care directive, directive to physicians, natural  death statement, living will, and medical or physician order for life-sustaining treatment;\n        new text end \n      \n      \n        new text begin \n         (H) a record directing disposition of an individual's body after death;\n        new text end \n      \n      \n        new text begin \n         (I) a nomination of a guardian for the signing individual;\n        new text end \n      \n      \n        new text begin \n         (J) a nomination of a guardian for a minor child or disabled adult child;\n        new text end \n      \n      \n        new text begin \n         (K) a mental health treatment declaration;\n        new text end \n      \n      \n        new text begin \n         (L) a community property survivorship agreement;\n        new text end \n      \n      \n        new text begin \n         (M) a disclaimer under the Uniform Disclaimer of Property Interests Act, sections  524.2-1101 to 524.2-1116;\n        new text end \n      \n      \n        new text begin \n         (N) an antenuptial agreement or postnuptial agreement; and\n        new text end \n      \n      \n        new text begin \n         (O) any other record intended to carry out an individual's intent regarding property or  health care while incapacitated or on death; and\n        new text end \n      \n      \n        new text begin \n         (ii) does not include a deed of real property, or certificate of title for a motor vehicle,  watercraft, or aircraft.\n        new text end \n      \n      \n        new text begin \n         (7) \"Person\" means:\n        new text end \n      \n      \n        new text begin \n         (i) an individual;\n        new text end \n      \n      \n        new text begin \n         (ii) an estate;\n        new text end \n      \n      \n        new text begin \n         (iii) a business or nonprofit entity;\n        new text end \n      \n      \n        new text begin \n         (iv) a government or governmental subdivision, agency, or instrumentality; or\n        new text end \n      \n      \n        new text begin \n         (v) any other legal entity.\n        new text end \n      \n      \n        new text begin \n         (8) \"Power of attorney\" means a record that grants authority to an agent to act in place  of the principal, even if the term is not used in the record.\n        new text end \n      \n      \n        new text begin \n         (9) \"Presence\" or \"conscious presence\" means either:\n        new text end \n      \n      \n        new text begin \n         (i) an individual being in a physical location in relation to another person that allows  the individual to see and hear the person; or\n        new text end \n      \n      \n        new text begin \n         (ii) electronic presence.\n        new text end \n      \n      \n        new text begin \n         (10) \"Record\" means information that is: (i) inscribed on a tangible medium; or (ii)  stored in an electronic medium and is retrievable in perceivable form.\n        new text end \n      \n      \n        new text begin \n         (11) \"Security procedure\" means a procedure to verify that an electronic signature,  record, or performance is that of a specific person or to detect a change or error in an  electronic record. The term includes a procedure that uses an algorithm, code, identifying  word or number, encryption, or callback or other acknowledgment procedure.\n        new text end \n      \n      \n        new text begin \n         (12) \"Settlor\" means a person, including a testator, that creates or contributes property  to a trust.\n        new text end \n      \n      \n        new text begin \n         (13) \"Sign\" means, with present intent to authenticate or adopt a record:\n        new text end \n      \n      \n        new text begin \n         (i) execute or adopt a tangible symbol; or\n        new text end \n      \n      \n        new text begin \n         (ii) attach to or logically associate with the record an electronic signature.\n        new text end \n      \n      \n        new text begin \n         (14) \"State\" means a state of the United States, the District of Columbia, Puerto Rico,  the United States Virgin Islands, or other territory or possession subject to the jurisdiction  of the United States. The term includes a federally recognized Indian Tribe.\n        new text end \n      \n      \n        new text begin \n         (15) \"Terms of a trust\" means the manifestation of the settlor's intent regarding a trust's  provisions as expressed in the trust instrument or as may be established by other evidence  that would be admissible in a judicial proceeding.\n        new text end \n      \n      \n        new text begin \n         (16) \"Trust instrument\" means an instrument executed by the settlor that contains terms  of the trust, including any amendments.\n        new text end \n      \n      \n        new text begin \n         (17) \"Will\" includes an electronic will, any codicil to a will or electronic will, and a  testamentary instrument which merely appoints an executor, revokes or revises another will,  electronic will, or codicil.\n        new text end \n      \n    \n    \n       Sec. 3. \n      \n        new text begin \n        [533.03] CONSTRUCTION.\n        new text end \n      \n      \n        new text begin \n         This chapter must be construed and applied to:\n        new text end \n      \n      \n        new text begin \n         (1) facilitate electronic estate planning documents and signatures consistent with other  law; and\n        new text end \n      \n      \n        new text begin \n         (2) be consistent with reasonable practices concerning electronic documents and  signatures and continued expansion of those practices.\n        new text end \n      \n    \n    \n       Sec. 4. \n      \n        new text begin \n        [533.10] SCOPE.\n        new text end \n      \n      \n        new text begin \n         (a) Except as provided in paragraph (b), sections 533.10 to 533.19 apply to an electronic  nontestamentary estate planning document and an electronic signature on a nontestamentary  estate planning document.\n        new text end \n      \n      \n        new text begin \n         (b) Sections 533.10 to 533.19 do not apply to a nontestamentary estate planning document  if the document precludes use of an electronic record or electronic signature.\n        new text end \n      \n      \n        new text begin \n         (c) Sections 533.10 to 533.19 do not affect the validity of an electronic record or  electronic signature that is valid under:\n        new text end \n      \n      \n        new text begin \n         (1) the Uniform Electronic Transactions Act, chapter 325L;\n        new text end \n      \n      \n        new text begin \n         (2) the Uniform Probate Code, chapter 524; or\n        new text end \n      \n      \n        new text begin \n         (3) the Minnesota Real Property Electronic Recording Act, sections 507.0941 to 507.0949.\n        new text end \n      \n    \n    \n       Sec. 5. \n      \n        new text begin \n        [533.11] PRINCIPLES OF LAW AND EQUITY.\n        new text end \n      \n      \n        new text begin \n         The law of this state and principles of equity applicable to a nontestamentary estate  planning document apply to an electronic nontestamentary estate planning document except  as modified by sections 533.10 to 533.19.\n        new text end \n      \n    \n    \n       Sec. 6. \n      \n        new text begin \n        [533.12] USE OF ELECTRONIC RECORD OR SIGNATURE NOT  REQUIRED.\n        new text end \n      \n      \n        new text begin \n         (a) Sections 533.10 to 533.19 do not require a nontestamentary estate planning document  or signature on a nontestamentary estate planning document to be created, generated, sent,  communicated, received, stored, or otherwise processed or used by electronic means or in  electronic form.\n        new text end \n      \n      \n        new text begin \n         (b) A person is not required to have a nontestamentary estate planning document in  electronic form or signed electronically even if the person previously created or signed a  nontestamentary estate planning document by electronic means.\n        new text end \n      \n      \n        new text begin \n         (c) A person may not waive the provisions of this section.\n        new text end \n      \n    \n    \n       Sec. 7. \n      \n        new text begin \n        [533.13] RECOGNITION OF ELECTRONIC NONTESTAMENTARY  ESTATE PLANNING DOCUMENT AND ELECTRONIC SIGNATURE.\n        new text end \n      \n      \n        new text begin \n         (a) A nontestamentary estate planning document or a signature on a nontestamentary  estate planning document may not be denied legal effect or enforceability solely because it  is in electronic form.\n        new text end \n      \n      \n        new text begin \n         (b) If other law of this state requires a nontestamentary estate planning document to be  in writing, an electronic record of the document satisfies the requirement.\n        new text end \n      \n      \n        new text begin \n         (c) If other law of this state requires a signature on a nontestamentary estate planning  document, an electronic signature satisfies the requirement, except as expressly prohibited  by Minnesota Statutes.\n        new text end \n      \n    \n    \n       Sec. 8. \n      \n        new text begin \n        [533.14] ATTRIBUTION AND EFFECT OF ELECTRONIC RECORD AND  ELECTRONIC SIGNATURE.\n        new text end \n      \n      \n        new text begin \n         (a) An electronic nontestamentary estate planning document or electronic signature on  an electronic nontestamentary estate planning document is attributable to a person if it was  the act of the person. The act of the person may be shown in any manner, including by  showing the efficacy of a security procedure applied to determine the person to which the  electronic record or electronic signature was attributable.\n        new text end \n      \n      \n        new text begin \n         (b) The effect of attribution to a person under subsection (a) of a document or signature  is determined from the context and surrounding circumstances at the time of its creation,  execution, or adoption and as provided by other law.\n        new text end \n      \n    \n    \n       Sec. 9. \n      \n        new text begin \n        [533.15] NOTARIZATION AND ACKNOWLEDGMENT.\n        new text end \n      \n      \n        new text begin \n         If other law of this state requires a signature or record to be notarized, acknowledged,  verified, or made under oath, the requirement is satisfied with respect to an electronic  nontestamentary estate planning document if an individual authorized to perform the  notarization, acknowledgment, verification, or oath attaches or logically associates the  individual's electronic signature on the document together with all other information required  to be included under the other law, and in conformity with the laws of the state in which  the execution occurs.\n        new text end \n      \n    \n    \n       Sec. 10. \n      \n        new text begin \n        [533.16] WITNESSING AND ATTESTATION.\n        new text end \n      \n      \n        new text begin \n         (a) If other law of this state bases the validity of a nontestamentary estate planning  document on whether it is signed, witnessed, or attested by another individual, the signature,  witnessing, or attestation of that individual may be electronic.\n        new text end \n      \n      \n        new text begin \n         (b) If other law of this state bases the validity of a nontestamentary estate planning  document on whether it is signed, witnessed, or attested by another individual in the presence  of the individual signing the document, the presence requirement is satisfied if the individuals  are in each other's electronic presence.\n        new text end \n      \n    \n    \n       Sec. 11. \n      \n        new text begin \n        [533.17] RETENTION OF ELECTRONIC RECORD; ORIGINAL.\n        new text end \n      \n      \n        new text begin \n         (a) Except as provided in paragraph (b), if other law of this state requires an electronic  nontestamentary estate planning document to be retained, transmitted, copied, or filed, the  requirement is satisfied by retaining, transmitting, copying, or filing an electronic record  that:\n        new text end \n      \n      \n        new text begin \n         (1) accurately reflects the information in the document after it was first generated in  final form as an electronic record or under section 533.18; and\n        new text end \n      \n      \n        new text begin \n         (2) remains accessible to the extent required by the other law.\n        new text end \n      \n      \n        new text begin \n         (b) A requirement under paragraph (a) to retain a record does not apply to information  the sole purpose of which is to enable the record to be sent, communicated, or received.\n        new text end \n      \n      \n        new text begin \n         (c) A person may satisfy paragraph (a) by using the services of another person.\n        new text end \n      \n      \n        new text begin \n         (d) If other law of this state requires a nontestamentary estate planning document to be  presented or retained in its original form, or provides consequences if a nontestamentary  estate planning document is not presented or retained in its original form, an electronic  record retained in accordance with paragraph (a) satisfies the other law.\n        new text end \n      \n      \n        new text begin \n         (e) This section does not preclude a governmental agency from specifying requirements  for the retention of a record subject to the agency's jurisdiction in addition to those in this  section. In this section, \"governmental agency\" means an executive, legislative, or judicial  agency, department, board, commission, authority, institution, or instrumentality of the  federal government or of a state or of a county, municipality, or other political subdivision  of a state.\n        new text end \n      \n    \n    \n       Sec. 12. \n      \n        new text begin \n        [533.18] CERTIFICATION OF PAPER COPY.\n        new text end \n      \n      \n        new text begin \n         An individual may create a certified paper copy of an electronic nontestamentary estate  planning document by affirming under penalty of perjury that a paper copy is a complete,  true, and accurate copy of the document. A certified paper copy of an electronic  nontestamentary estate planning document is presumed to be a true and accurate copy of  the executed electronic record, absent clear and convincing evidence to the contrary, and  must be given the same effect as an original.\n        new text end \n      \n    \n    \n       Sec. 13. \n      \n        new text begin \n        [533.19] ADMISSIBILITY IN EVIDENCE.\n        new text end \n      \n      \n        new text begin \n         Evidence relating to an electronic nontestamentary estate planning document or an  electronic signature on the document may not be excluded in a proceeding solely because  it is in electronic form.\n        new text end \n      \n    \n  ",
+  "raw_text_url": "https://www.revisor.mn.gov/bills/94/2026/0/HF/3560/versions/0/"
+ },
+ {
+  "id": "ocd-bill/236fbbea-57f9-4062-9d01-eaad8a386762",
+  "legislative_session": "2025-2026",
+  "identifier": "SF 3602",
+  "title": "Uniform Electronics Estate Planning Documents Act Establishment",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "House",
+    "description": "Received from Senate",
+    "date": "2026-03-23",
+    "classification": [
+     "introduction"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "House",
+    "description": "Senate file first reading, referred for comparison HF3560",
+    "date": "2026-03-23",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "Bills identical, SF substituted on General Register",
+    "date": "2026-03-25",
+    "classification": [],
+    "order": 2
+   },
+   {
+    "organization__name": "House",
+    "description": "Second reading",
+    "date": "2026-03-25",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "House",
+    "description": "House rule 1.21, placed on Calendar for the Day Thursday, April 9, 2026",
+    "date": "2026-04-07",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "House",
+    "description": "Third reading",
+    "date": "2026-04-09",
+    "classification": [
+     "reading-3"
+    ],
+    "order": 5
+   },
+   {
+    "organization__name": "House",
+    "description": "Bill was passed",
+    "date": "2026-04-09",
+    "classification": [
+     "passage"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "Governor of Minnesota",
+    "description": "Presented to Governor 04/13/2026",
+    "date": "2026-04-13",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 7
+   },
+   {
+    "organization__name": "Governor of Minnesota",
+    "description": "Governor approval 04/14/2026",
+    "date": "2026-04-14",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 8
+   },
+   {
+    "organization__name": "House",
+    "description": "Secretary of State, Filed 04/14/2026",
+    "date": "2026-04-14",
+    "classification": [],
+    "order": 9
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Introduction and first reading",
+    "date": "2026-02-17",
+    "classification": [
+     "introduction"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Referred to Judiciary and Public Safety",
+    "date": "2026-02-17",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 11
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Comm report: To pass",
+    "date": "2026-03-04",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 12
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Second reading",
+    "date": "2026-03-04",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 13
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Special Order",
+    "date": "2026-03-18",
+    "classification": [],
+    "order": 14
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Third reading Passed",
+    "date": "2026-03-18",
+    "classification": [
+     "passage"
+    ],
+    "order": 15
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Returned from House",
+    "date": "2026-04-13",
+    "classification": [],
+    "order": 16
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Presentment date 04/13/26",
+    "date": "2026-04-13",
+    "classification": [],
+    "order": 17
+   },
+   {
+    "organization__name": "Governor of Minnesota",
+    "description": "Governor's action Approval 04/14/26",
+    "date": "2026-04-14",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 18
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Secretary of State Chapter 45 04/14/26",
+    "date": "2026-04-14",
+    "classification": [],
+    "order": 19
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Effective date 08/01/2026",
+    "date": "2026-08-01",
+    "classification": [],
+    "order": 20
+   }
+  ],
+  "versions": [
+   {
+    "note": "Introduction",
+    "date": "2026-02-16",
+    "links": [
+     {
+      "url": "https://www.revisor.mn.gov/bills/94/2026/0/SF/3602/versions/0/",
+      "media_type": "text/html"
+     }
+    ]
+   }
+  ],
+  "raw_text": "\n    \n       A bill for an act relating to estates; enacting the Uniform Electronic Estate Planning Documents  Act; proposing coding for new law as Minnesota Statutes, chapter 533.\n    \n     BE IT ENACTED BY THE LEGISLATURE OF THE STATE OF MINNESOTA:\n    \n       Section 1. \n      \n        new text begin \n        [533.01] TITLE.\n        new text end \n      \n      \n        new text begin \n         This chapter may be cited as the \"Uniform Electronic Estate Planning Documents Act.\"\n        new text end \n      \n    \n    \n       Sec. 2. \n      \n        new text begin \n        [533.02] DEFINITIONS.\n        new text end \n      \n      \n        new text begin \n         In this chapter:\n        new text end \n      \n      \n        new text begin \n         (1) \"Electronic\" means relating to technology having electrical, digital, magnetic, wireless,  optical, electromagnetic, or similar capabilities.\n        new text end \n      \n      \n        new text begin \n         (2) \"Electronic presence\" means an individual being in a state and communicating  simultaneously with another person by means of an electronic device or process by sight  and sound to substantially the same extent as if the individual were in a physical location  in relation to the other person that would allow an individual to see and hear the person,  allowing for reasonable accommodation for individuals with hearing, vision, or speech  impairments as necessary.\n        new text end \n      \n      \n        new text begin \n         (3) \"Electronic record\" means a record created, generated, sent, communicated, received,  or stored by electronic means.\n        new text end \n      \n      \n        new text begin \n         (4) \"Electronic signature\" means an electronic symbol, signature, mark, or a process  attached to or logically associated with a record and executed or adopted by a person with  the intent to sign the record.\n        new text end \n      \n      \n        new text begin \n         (5) \"Information\" includes data, text, images, codes, computer programs, software, and  databases.\n        new text end \n      \n      \n        new text begin \n         (6) \"Nontestamentary estate planning document\" means a record relating to estate  planning and is not a will or contained in a will. The term:\n        new text end \n      \n      \n        new text begin \n         (i) includes a record that creates, exercises, modifies, releases, or revokes:\n        new text end \n      \n      \n        new text begin \n         (A) a trust instrument;\n        new text end \n      \n      \n        new text begin \n         (B) a trust power that under the terms of the trust requires a signed record;\n        new text end \n      \n      \n        new text begin \n         (C) a certification of a trust under section 501C.1013;\n        new text end \n      \n      \n        new text begin \n         (D) a power of attorney under chapter 523;\n        new text end \n      \n      \n        new text begin \n         (E) an agent's certification under sections 523.16 to 523.18 of the validity of a power of  attorney and the agent's authority;\n        new text end \n      \n      \n        new text begin \n         (F) a power of appointment;\n        new text end \n      \n      \n        new text begin \n         (G) an advance directive, including a health care directive, directive to physicians, natural  death statement, living will, and medical or physician order for life-sustaining treatment;\n        new text end \n      \n      \n        new text begin \n         (H) a record directing disposition of an individual's body after death;\n        new text end \n      \n      \n        new text begin \n         (I) a nomination of a guardian for the signing individual;\n        new text end \n      \n      \n        new text begin \n         (J) a nomination of a guardian for a minor child or disabled adult child;\n        new text end \n      \n      \n        new text begin \n         (K) a mental health treatment declaration;\n        new text end \n      \n      \n        new text begin \n         (L) a community property survivorship agreement;\n        new text end \n      \n      \n        new text begin \n         (M) a disclaimer under the Uniform Disclaimer of Property Interests Act, sections  524.2-1101 to 524.2-1116;\n        new text end \n      \n      \n        new text begin \n         (N) an antenuptial agreement or postnuptial agreement; and\n        new text end \n      \n      \n        new text begin \n         (O) any other record intended to carry out an individual's intent regarding property or  health care while incapacitated or on death; and\n        new text end \n      \n      \n        new text begin \n         (ii) does not include a deed of real property, or certificate of title for a motor vehicle,  watercraft, or aircraft.\n        new text end \n      \n      \n        new text begin \n         (7) \"Person\" means:\n        new text end \n      \n      \n        new text begin \n         (i) an individual;\n        new text end \n      \n      \n        new text begin \n         (ii) an estate;\n        new text end \n      \n      \n        new text begin \n         (iii) a business or nonprofit entity;\n        new text end \n      \n      \n        new text begin \n         (iv) a government or governmental subdivision, agency, or instrumentality; or\n        new text end \n      \n      \n        new text begin \n         (v) any other legal entity.\n        new text end \n      \n      \n        new text begin \n         (8) \"Power of attorney\" means a record that grants authority to an agent to act in place  of the principal, even if the term is not used in the record.\n        new text end \n      \n      \n        new text begin \n         (9) \"Presence\" or \"conscious presence\" means either:\n        new text end \n      \n      \n        new text begin \n         (i) an individual being in a physical location in relation to another person that allows  the individual to see and hear the person; or\n        new text end \n      \n      \n        new text begin \n         (ii) electronic presence.\n        new text end \n      \n      \n        new text begin \n         (10) \"Record\" means information that is: (i) inscribed on a tangible medium; or (ii)  stored in an electronic medium and is retrievable in perceivable form.\n        new text end \n      \n      \n        new text begin \n         (11) \"Security procedure\" means a procedure to verify that an electronic signature,  record, or performance is that of a specific person or to detect a change or error in an  electronic record. The term includes a procedure that uses an algorithm, code, identifying  word or number, encryption, or callback or other acknowledgment procedure.\n        new text end \n      \n      \n        new text begin \n         (12) \"Settlor\" means a person, including a testator, that creates or contributes property  to a trust.\n        new text end \n      \n      \n        new text begin \n         (13) \"Sign\" means, with present intent to authenticate or adopt a record:\n        new text end \n      \n      \n        new text begin \n         (i) execute or adopt a tangible symbol; or\n        new text end \n      \n      \n        new text begin \n         (ii) attach to or logically associate with the record an electronic signature.\n        new text end \n      \n      \n        new text begin \n         (14) \"State\" means a state of the United States, the District of Columbia, Puerto Rico,  the United States Virgin Islands, or other territory or possession subject to the jurisdiction  of the United States. The term includes a federally recognized Indian Tribe.\n        new text end \n      \n      \n        new text begin \n         (15) \"Terms of a trust\" means the manifestation of the settlor's intent regarding a trust's  provisions as expressed in the trust instrument or as may be established by other evidence  that would be admissible in a judicial proceeding.\n        new text end \n      \n      \n        new text begin \n         (16) \"Trust instrument\" means an instrument executed by the settlor that contains terms  of the trust, including any amendments.\n        new text end \n      \n      \n        new text begin \n         (17) \"Will\" includes an electronic will, any codicil to a will or electronic will, and a  testamentary instrument which merely appoints an executor, revokes or revises another will,  electronic will, or codicil.\n        new text end \n      \n    \n    \n       Sec. 3. \n      \n        new text begin \n        [533.03] CONSTRUCTION.\n        new text end \n      \n      \n        new text begin \n         This chapter must be construed and applied to:\n        new text end \n      \n      \n        new text begin \n         (1) facilitate electronic estate planning documents and signatures consistent with other  law; and\n        new text end \n      \n      \n        new text begin \n         (2) be consistent with reasonable practices concerning electronic documents and  signatures and continued expansion of those practices.\n        new text end \n      \n    \n    \n       Sec. 4. \n      \n        new text begin \n        [533.10] SCOPE.\n        new text end \n      \n      \n        new text begin \n         (a) Except as provided in paragraph (b), sections 533.10 to 533.19 apply to an electronic  nontestamentary estate planning document and an electronic signature on a nontestamentary  estate planning document.\n        new text end \n      \n      \n        new text begin \n         (b) Sections 533.10 to 533.19 do not apply to a nontestamentary estate planning document  if the document precludes use of an electronic record or electronic signature.\n        new text end \n      \n      \n        new text begin \n         (c) Sections 533.10 to 533.19 do not affect the validity of an electronic record or  electronic signature that is valid under:\n        new text end \n      \n      \n        new text begin \n         (1) the Uniform Electronic Transactions Act, chapter 325L;\n        new text end \n      \n      \n        new text begin \n         (2) the Uniform Probate Code, chapter 524; or\n        new text end \n      \n      \n        new text begin \n         (3) the Minnesota Real Property Electronic Recording Act, sections 507.0941 to 507.0949.\n        new text end \n      \n    \n    \n       Sec. 5. \n      \n        new text begin \n        [533.11] PRINCIPLES OF LAW AND EQUITY.\n        new text end \n      \n      \n        new text begin \n         The law of this state and principles of equity applicable to a nontestamentary estate  planning document apply to an electronic nontestamentary estate planning document except  as modified by sections 533.10 to 533.19.\n        new text end \n      \n    \n    \n       Sec. 6. \n      \n        new text begin \n        [533.12] USE OF ELECTRONIC RECORD OR SIGNATURE NOT  REQUIRED.\n        new text end \n      \n      \n        new text begin \n         (a) Sections 533.10 to 533.19 do not require a nontestamentary estate planning document  or signature on a nontestamentary estate planning document to be created, generated, sent,  communicated, received, stored, or otherwise processed or used by electronic means or in  electronic form.\n        new text end \n      \n      \n        new text begin \n         (b) A person is not required to have a nontestamentary estate planning document in  electronic form or signed electronically even if the person previously created or signed a  nontestamentary estate planning document by electronic means.\n        new text end \n      \n      \n        new text begin \n         (c) A person may not waive the provisions of this section.\n        new text end \n      \n    \n    \n       Sec. 7. \n      \n        new text begin \n        [533.13] RECOGNITION OF ELECTRONIC NONTESTAMENTARY  ESTATE PLANNING DOCUMENT AND ELECTRONIC SIGNATURE.\n        new text end \n      \n      \n        new text begin \n         (a) A nontestamentary estate planning document or a signature on a nontestamentary  estate planning document may not be denied legal effect or enforceability solely because it  is in electronic form.\n        new text end \n      \n      \n        new text begin \n         (b) If other law of this state requires a nontestamentary estate planning document to be  in writing, an electronic record of the document satisfies the requirement.\n        new text end \n      \n      \n        new text begin \n         (c) If other law of this state requires a signature on a nontestamentary estate planning  document, an electronic signature satisfies the requirement, except as expressly prohibited  by Minnesota Statutes.\n        new text end \n      \n    \n    \n       Sec. 8. \n      \n        new text begin \n        [533.14] ATTRIBUTION AND EFFECT OF ELECTRONIC RECORD AND  ELECTRONIC SIGNATURE.\n        new text end \n      \n      \n        new text begin \n         (a) An electronic nontestamentary estate planning document or electronic signature on  an electronic nontestamentary estate planning document is attributable to a person if it was  the act of the person. The act of the person may be shown in any manner, including by  showing the efficacy of a security procedure applied to determine the person to which the  electronic record or electronic signature was attributable.\n        new text end \n      \n      \n        new text begin \n         (b) The effect of attribution to a person under subsection (a) of a document or signature  is determined from the context and surrounding circumstances at the time of its creation,  execution, or adoption and as provided by other law.\n        new text end \n      \n    \n    \n       Sec. 9. \n      \n        new text begin \n        [533.15] NOTARIZATION AND ACKNOWLEDGMENT.\n        new text end \n      \n      \n        new text begin \n         If other law of this state requires a signature or record to be notarized, acknowledged,  verified, or made under oath, the requirement is satisfied with respect to an electronic  nontestamentary estate planning document if an individual authorized to perform the  notarization, acknowledgment, verification, or oath attaches or logically associates the  individual's electronic signature on the document together with all other information required  to be included under the other law, and in conformity with the laws of the state in which  the execution occurs.\n        new text end \n      \n    \n    \n       Sec. 10. \n      \n        new text begin \n        [533.16] WITNESSING AND ATTESTATION.\n        new text end \n      \n      \n        new text begin \n         (a) If other law of this state bases the validity of a nontestamentary estate planning  document on whether it is signed, witnessed, or attested by another individual, the signature,  witnessing, or attestation of that individual may be electronic.\n        new text end \n      \n      \n        new text begin \n         (b) If other law of this state bases the validity of a nontestamentary estate planning  document on whether it is signed, witnessed, or attested by another individual in the presence  of the individual signing the document, the presence requirement is satisfied if the individuals  are in each other's electronic presence.\n        new text end \n      \n    \n    \n       Sec. 11. \n      \n        new text begin \n        [533.17] RETENTION OF ELECTRONIC RECORD; ORIGINAL.\n        new text end \n      \n      \n        new text begin \n         (a) Except as provided in paragraph (b), if other law of this state requires an electronic  nontestamentary estate planning document to be retained, transmitted, copied, or filed, the  requirement is satisfied by retaining, transmitting, copying, or filing an electronic record  that:\n        new text end \n      \n      \n        new text begin \n         (1) accurately reflects the information in the document after it was first generated in  final form as an electronic record or under section 533.18; and\n        new text end \n      \n      \n        new text begin \n         (2) remains accessible to the extent required by the other law.\n        new text end \n      \n      \n        new text begin \n         (b) A requirement under paragraph (a) to retain a record does not apply to information  the sole purpose of which is to enable the record to be sent, communicated, or received.\n        new text end \n      \n      \n        new text begin \n         (c) A person may satisfy paragraph (a) by using the services of another person.\n        new text end \n      \n      \n        new text begin \n         (d) If other law of this state requires a nontestamentary estate planning document to be  presented or retained in its original form, or provides consequences if a nontestamentary  estate planning document is not presented or retained in its original form, an electronic  record retained in accordance with paragraph (a) satisfies the other law.\n        new text end \n      \n      \n        new text begin \n         (e) This section does not preclude a governmental agency from specifying requirements  for the retention of a record subject to the agency's jurisdiction in addition to those in this  section. In this section, \"governmental agency\" means an executive, legislative, or judicial  agency, department, board, commission, authority, institution, or instrumentality of the  federal government or of a state or of a county, municipality, or other political subdivision  of a state.\n        new text end \n      \n    \n    \n       Sec. 12. \n      \n        new text begin \n        [533.18] CERTIFICATION OF PAPER COPY.\n        new text end \n      \n      \n        new text begin \n         An individual may create a certified paper copy of an electronic nontestamentary estate  planning document by affirming under penalty of perjury that a paper copy is a complete,  true, and accurate copy of the document. A certified paper copy of an electronic  nontestamentary estate planning document is presumed to be a true and accurate copy of  the executed electronic record, absent clear and convincing evidence to the contrary, and  must be given the same effect as an original.\n        new text end \n      \n    \n    \n       Sec. 13. \n      \n        new text begin \n        [533.19] ADMISSIBILITY IN EVIDENCE.\n        new text end \n      \n      \n        new text begin \n         Evidence relating to an electronic nontestamentary estate planning document or an  electronic signature on the document may not be excluded in a proceeding solely because  it is in electronic form.\n        new text end \n      \n    \n  ",
+  "raw_text_url": "https://www.revisor.mn.gov/bills/94/2026/0/SF/3602/versions/0/"
+ }
+]

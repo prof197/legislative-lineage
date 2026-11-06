@@ -1,0 +1,476 @@
+[
+ {
+  "id": "ocd-bill/a5394b24-d0b3-4cbb-b5fc-380f6e525e31",
+  "legislative_session": "2025",
+  "identifier": "SB 294",
+  "title": "Finance Amendments",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Utah State Legislature",
+    "description": "Bill Numbered but not Distributed",
+    "date": "2025-02-17T19:36:00+00:00",
+    "classification": [],
+    "order": 0
+   },
+   {
+    "organization__name": "Utah State Legislature",
+    "description": "Numbered Bill Publicly Distributed",
+    "date": "2025-02-17T19:36:00+00:00",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "Utah State Legislature",
+    "description": "Senate/ received bill from Legislative Research",
+    "date": "2025-02-18T15:45:00+00:00",
+    "classification": [
+     "receipt"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate/ 1st reading (Introduced)",
+    "date": "2025-02-18T17:19:00+00:00",
+    "classification": [],
+    "order": 3
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate/ received fiscal note from Fiscal Analyst",
+    "date": "2025-02-19T20:56:00+00:00",
+    "classification": [
+     "receipt"
+    ],
+    "order": 4
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate/ to standing committee",
+    "date": "2025-02-21T21:19:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 5
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate Comm - Favorable Recommendation",
+    "date": "2025-02-27T00:40:00+00:00",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate/ committee report favorable",
+    "date": "2025-02-27T17:43:00+00:00",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 7
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate/ placed on 2nd Reading Calendar",
+    "date": "2025-02-27T17:43:00+00:00",
+    "classification": [],
+    "order": 8
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate/ 2nd reading",
+    "date": "2025-02-28T22:35:00+00:00",
+    "classification": [],
+    "order": 9
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate/ passed 2nd reading",
+    "date": "2025-02-28T22:42:00+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate/ 3rd reading",
+    "date": "2025-03-03T17:46:00+00:00",
+    "classification": [],
+    "order": 11
+   },
+   {
+    "organization__name": "House",
+    "description": "Senate/ passed 3rd reading",
+    "date": "2025-03-03T17:49:00+00:00",
+    "classification": [
+     "passage"
+    ],
+    "order": 12
+   },
+   {
+    "organization__name": "House",
+    "description": "Senate/ to House",
+    "date": "2025-03-03T17:49:00+00:00",
+    "classification": [],
+    "order": 13
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ received from Senate",
+    "date": "2025-03-03T19:19:00+00:00",
+    "classification": [
+     "receipt"
+    ],
+    "order": 14
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ 1st reading (Introduced)",
+    "date": "2025-03-03T21:23:00+00:00",
+    "classification": [],
+    "order": 15
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ to standing committee",
+    "date": "2025-03-03T22:23:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 16
+   },
+   {
+    "organization__name": "House",
+    "description": "House Comm - Favorable Recommendation",
+    "date": "2025-03-04T23:21:00+00:00",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 17
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ committee report favorable",
+    "date": "2025-03-05T04:24:00+00:00",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 18
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ return to Rules due to fiscal impact",
+    "date": "2025-03-05T04:24:00+00:00",
+    "classification": [],
+    "order": 19
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ Rules to 3rd Reading Calendar",
+    "date": "2025-03-08T04:31:00+00:00",
+    "classification": [],
+    "order": 20
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ 2nd reading",
+    "date": "2025-03-08T04:31:00+00:00",
+    "classification": [],
+    "order": 21
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ 3rd reading",
+    "date": "2025-03-08T06:09:00+00:00",
+    "classification": [],
+    "order": 22
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ substituted",
+    "date": "2025-03-08T06:10:00+00:00",
+    "classification": [],
+    "order": 23
+   },
+   {
+    "organization__name": "Senate",
+    "description": "House/ passed 3rd reading",
+    "date": "2025-03-08T06:13:00+00:00",
+    "classification": [
+     "passage"
+    ],
+    "order": 24
+   },
+   {
+    "organization__name": "Senate",
+    "description": "House/ to Senate",
+    "date": "2025-03-08T06:13:00+00:00",
+    "classification": [],
+    "order": 25
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate/ received from House",
+    "date": "2025-03-08T06:56:00+00:00",
+    "classification": [
+     "receipt"
+    ],
+    "order": 26
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate/ placed on Concurrence Calendar",
+    "date": "2025-03-08T06:56:00+00:00",
+    "classification": [],
+    "order": 27
+   },
+   {
+    "organization__name": "House",
+    "description": "Senate/ concurs with House amendment",
+    "date": "2025-03-08T06:58:00+00:00",
+    "classification": [
+     "amendment-passage"
+    ],
+    "order": 28
+   },
+   {
+    "organization__name": "House",
+    "description": "Senate/ to House",
+    "date": "2025-03-08T06:58:00+00:00",
+    "classification": [],
+    "order": 29
+   },
+   {
+    "organization__name": "Senate",
+    "description": "House/ signed by Speaker/ returned to Senate",
+    "date": "2025-03-08T07:00:00+00:00",
+    "classification": [
+     "passage"
+    ],
+    "order": 30
+   },
+   {
+    "organization__name": "Senate",
+    "description": "House/ to Senate",
+    "date": "2025-03-08T07:00:00+00:00",
+    "classification": [],
+    "order": 31
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ received from Senate",
+    "date": "2025-03-08T07:02:00+00:00",
+    "classification": [
+     "receipt"
+    ],
+    "order": 32
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate/ received from House",
+    "date": "2025-03-12T15:27:00+00:00",
+    "classification": [
+     "receipt"
+    ],
+    "order": 33
+   },
+   {
+    "organization__name": "Utah State Legislature",
+    "description": "Senate/ signed by President/ sent for enrolling",
+    "date": "2025-03-12T15:28:00+00:00",
+    "classification": [
+     "passage"
+    ],
+    "order": 34
+   },
+   {
+    "organization__name": "Utah State Legislature",
+    "description": "Bill Received from Senate for Enrolling",
+    "date": "2025-03-13T17:26:00+00:00",
+    "classification": [],
+    "order": 35
+   },
+   {
+    "organization__name": "Utah State Legislature",
+    "description": "Draft of Enrolled Bill Prepared",
+    "date": "2025-03-13T17:26:00+00:00",
+    "classification": [],
+    "order": 36
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Enrolled Bill Returned to House or Senate",
+    "date": "2025-03-14T16:07:00+00:00",
+    "classification": [
+     "enrolled"
+    ],
+    "order": 37
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate/ enrolled bill to Printing",
+    "date": "2025-03-14T16:07:00+00:00",
+    "classification": [],
+    "order": 38
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate/ received enrolled bill from Printing",
+    "date": "2025-03-17T16:35:00+00:00",
+    "classification": [
+     "receipt"
+    ],
+    "order": 39
+   },
+   {
+    "organization__name": "Office of the Governor",
+    "description": "Senate/ to Governor",
+    "date": "2025-03-17T16:35:00+00:00",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 40
+   },
+   {
+    "organization__name": "Office of the Governor",
+    "description": "Governor Signed",
+    "date": "2025-03-27T15:26:00+00:00",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 41
+   }
+  ],
+  "versions": [
+   {
+    "note": "Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "https://le.utah.gov/Session/2025/bills/introduced/SB0294.pdf",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://le.utah.gov/Session/2025/bills/introduced/SB0294.xml",
+      "media_type": "text/xml"
+     }
+    ]
+   },
+   {
+    "note": "House Committee Report",
+    "date": "",
+    "links": [
+     {
+      "url": "https://le.utah.gov/Session/2025/comreport/SB294H10.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Senate Committee Report",
+    "date": "",
+    "links": [
+     {
+      "url": "https://le.utah.gov/Session/2025/comreport/SB294S10.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Comparison to Sub #0",
+    "date": "",
+    "links": [
+     {
+      "url": "https://le.utah.gov/Session/2025/bills/introduced/CP SB0294 To SB0294S02.pdf",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://le.utah.gov/Session/2025/bills/introduced/CP SB0294 To SB0294S01.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Substitute #1",
+    "date": "",
+    "links": [
+     {
+      "url": "https://le.utah.gov/Session/2025/bills/introduced/SB0294S01.pdf",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://le.utah.gov/Session/2025/bills/introduced/SB0294S01.xml",
+      "media_type": "text/xml"
+     }
+    ]
+   },
+   {
+    "note": "Enrolled",
+    "date": "",
+    "links": [
+     {
+      "url": "https://le.utah.gov/Session/2025/bills/enrolled/SB0294.pdf",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://le.utah.gov/Session/2025/bills/enrolled/SB0294.xml",
+      "media_type": "text/xml"
+     }
+    ]
+   },
+   {
+    "note": "Comparison to Sub #1",
+    "date": "",
+    "links": [
+     {
+      "url": "https://le.utah.gov/Session/2025/bills/introduced/CP SB0294S01 To SB0294S02.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Substitute #2",
+    "date": "",
+    "links": [
+     {
+      "url": "https://le.utah.gov/Session/2025/bills/introduced/SB0294S02.pdf",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://le.utah.gov/Session/2025/bills/introduced/SB0294S02.xml",
+      "media_type": "text/xml"
+     }
+    ]
+   },
+   {
+    "note": "House Transmittal Letter 1",
+    "date": "",
+    "links": [
+     {
+      "url": "https://le.utah.gov/Session/2025/transmit/SB294H10.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Senate Transmittal Letter 1",
+    "date": "",
+    "links": [
+     {
+      "url": "https://le.utah.gov/Session/2025/transmit/SB294S10.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "Finance Amendments\nGENERAL SESSION\nLONG TITLE\nGeneral Description:\nThis bill enacts provisions related to finance.\nHighlighted Provisions:\nThis bill:\n▸ modifies the exclusions to the definition of title loan;\n▸ defines terms;\n▸ establishes the scope of the Uniform Special Deposits Act;\n▸ allows parties to an agreement under the Uniform Special Deposits Act to choose a forum\nin Utah for settling a dispute, regardless of whether the dispute occurred in Utah;\n▸ provides that sections of the Uniform Special Deposits Act may vary by agreement or\namendment;\n▸ establishes requirements for a special deposit;\n▸ requires that a special deposit serve a permissible purpose;\n▸ provides the conditions under which a bank shall pay a beneficiary funds in the balance of\na special deposit;\n▸ establishes the interest of a depositor or beneficiary in a special deposit;\n▸ allows a court to grant relief to prevent a bank from paying a depositor or beneficiary of a\nspecial deposit if a payment would result in fraud;\n▸ provides that except in certain circumstances, a bank may not exercise a right of\nrecoupment or set off against a special deposit;\n▸ establishes the duties and liabilities of a bank in regards to a special deposit;\n▸ provides that a special deposit terminates five years after the date on which the special\ndeposit was first funded;\n▸ describes the application of governing law over special deposits;\n▸ provides that the provisions of this act only apply to an agreement executed after the\neffective date of this bill, unless the parties to a special deposit amend the agreement;\n▸ provides that the provisions of this act are severable if a provision of the act is found\ninvalid;\n▸ establishes the scope of the Uniform Mortgage Modification Act;\n▸ codifies the types of modifications that may be made to a mortgage loan that will not\nmaterially prejudice interest holders; and\n▸ contains safe harbor provisions for mortgage modifications that do not materially\nprejudice the holders of a junior interest.\nMoney Appropriated in this Bill:\nNone\nOther Special Clauses:\nNone\nUtah Code Sections Affected:\nAMENDS:\n7-24-102, as last amended by Laws of Utah 2015, Chapter 284\nENACTS:\n7-28-101, Utah Code Annotated 1953\n7-28-102, Utah Code Annotated 1953\n7-28-103, Utah Code Annotated 1953\n7-28-104, Utah Code Annotated 1953\n7-28-105, Utah Code Annotated 1953\n7-28-106, Utah Code Annotated 1953\n7-28-107, Utah Code Annotated 1953\n7-28-108, Utah Code Annotated 1953\n7-28-109, Utah Code Annotated 1953\n7-28-110, Utah Code Annotated 1953\n7-28-111, Utah Code Annotated 1953\n7-28-112, Utah Code Annotated 1953\n7-28-113, Utah Code Annotated 1953\n7-28-114, Utah Code Annotated 1953\n7-28-115, Utah Code Annotated 1953\n7-28-116, Utah Code Annotated 1953\n70D-4-101, Utah Code Annotated 1953\n70D-4-201, Utah Code Annotated 1953\n70D-4-301, Utah Code Annotated 1953\n70D-4-401, Utah Code Annotated 1953\n70D-4-501, Utah Code Annotated 1953\n70D-4-601, Utah Code Annotated 1953\nBe it enacted by the Legislature of the state of Utah:\nSection 1. Section 7-24-102 is amended to read:\n7-24-102 . Definitions.\nAs used in this chapter:\n(1) \"Nationwide database\" means the Nationwide Mortgage Licensing System and\nRegistry, authorized under 12 U.S.C. Sec. 5101 for federal licensing of mortgage loan\noriginators.\n(2) \"Rollover\" means the extension or renewal of the term of a title loan.\n(3)(a) \"Title lender\" means a person that extends a title loan.\n(b) \"Title lender\" includes a person that:\n(i) arranges a title loan on behalf of a title lender;\n(ii) acts as an agent for a title lender; or\n(iii) assists a title lender in the extension of a title loan.\n(4)(a) \"Title loan\" means a loan secured by the title to a:\n(i) motor vehicle, as defined in Section 41-6a-102;\n(ii) mobile home, as defined in Section 41-6a-102; or\n(iii) motorboat, as defined in Section 73-18-2.\n(b) \"Title loan\" includes a title loan extended at the same premise on which any of the\nfollowing are sold:\n(i) a motor vehicle, as defined in Section 41-6a-102;\n(ii) a mobile home, as defined in Section 41-6a-102; or\n(iii) a motorboat, as defined in Section 73-18-2.\n(c) \"Title loan\" does not include:\n(i) a purchase money loan;\n(ii) a loan made in connection with the sale of a:\n(A) motor vehicle, as defined in Section 41-6a-102;\n(B) mobile home, as defined in Section 41-6a-102; or\n(C) motorboat, as defined in Section 73-18-2;[ or]\n(iii) a loan extended by an institution listed in Section 7-24-305[.] ; or\n(iv) a loan with a repayment term that is longer than 364 days.\nSection 2. Section 7-28-101 is enacted to read:\nCHAPTER 28. UNIFORM SPECIAL DEPOSITS ACT\n7-28-101 . Definitions.\nAs used in this chapter:\n(1) \"Account agreement\" means an agreement that:\n(a) is in a record between a bank and one or more depositors;\n(b) may have one or more beneficiaries as additional parties; and\n(c) states the intention of the parties to establish a special deposit governed by this\nchapter.\n(2)(a) \"Bank\" means a person engaged in the business of banking.\n(b) \"Bank\" includes a savings bank, savings and loan association, credit union, and trust\ncompany.\n(c) Each branch or separate office of a bank is a separate bank for the purpose of this\nchapter.\n(3) \"Beneficiary\" means a person that:\n(a) is identified as a beneficiary in an account agreement; or\n(b) if not identified as a beneficiary in an account agreement, may be entitled to payment\nfrom a special deposit:\n(i) under the account agreement; or\n(ii) on termination of the special deposit.\n(4) \"Contingency\" means an event or circumstance stated in an account agreement that is\nnot certain to occur but shall occur before the bank is obligated to pay a beneficiary.\n(5) \"Creditor process\" means attachment, garnishment, levy, notice of lien, sequestration, or\nsimilar process issued by or on behalf of a creditor or other claimant.\n(6) \"Depositor\" means a person that establishes or funds a special deposit.\n(7) \"Good faith\" means honesty in fact and observance of reasonable commercial standards\nof fair dealing.\n(8) \"Knowledge of a fact\" means:\n(a) with respect to a beneficiary, actual knowledge of the fact; or\n(b) with respect to a bank holding a special deposit:\n(i) if the bank:\n(A) has established a reasonable routine for communicating material information\nto an individual to whom the bank has assigned responsibility for the special\ndeposit; and\n(B) maintains reasonable compliance with the routine, actual knowledge of the\nfact by that individual; or\n(ii) if the bank has not established and maintained reasonable compliance with a\nroutine described in Subsection (8)(b)(i) or otherwise exercised due diligence,\nimplied knowledge of the fact that would have come to the attention of an\nindividual to whom the bank has assigned responsibility for the special deposit.\n(9) \"Obligated to pay a beneficiary\" means a beneficiary is entitled under the account\nagreement to receive from the bank a payment when:\n(a) a contingency has occurred; and\n(b) the bank has knowledge the contingency has occurred.\n(10)(a) \"Permissible purpose\" means a governmental, regulatory, commercial,\ncharitable, or testamentary objective of the parties stated in an account agreement.\n(b) \"Permissible purpose\" includes an objective to:\n(i) hold funds:\n(A) in escrow, including for a purchase and sale, lease, buyback, or other\ntransaction;\n(B) as a security deposit of a tenant;\n(C) that may be distributed to a person as remuneration, retirement or other\nbenefit, or compensation under a judgment, consent decree, court order, or\nother decision of a tribunal; or\n(D) for distribution to a defined class of persons after identification of the class\nmembers and the class members' interest in the funds;\n(ii) provide assurance with respect to an obligation created by contract, such as\nearnest money to ensure a transaction closes;\n(iii) settle an obligation that arises in the operation of a payment system, securities\nsettlement system, or other financial market infrastructure;\n(iv) provide assurance with respect to an obligation that arises in the operation of a\npayment system, securities settlement system, or other financial market\ninfrastructure; or\n(v) hold margin, other cash collateral, or funds that support the orderly functioning of\nfinancial market infrastructure or the performance of an obligation with respect to\nthe infrastructure.\n(11)(a) \"Person\" means an individual, estate, business or nonprofit entity, government or\ngovernmental subdivision, agency, or instrumentality, or other legal entity.\n(b) \"Person\" includes a protected series, however denominated, of an entity if the\nprotected series is established under law that limits, or limits if conditions specified\nunder law are satisfied, the ability of a creditor of the entity or of any other protected\nseries of the entity to satisfy a claim from assets of the protected series.\n(12) \"Record\" means information:\n(a) inscribed on a tangible medium; or\n(b) stored in an electronic or other medium and retrievable in perceivable form.\n(13) \"Special deposit\" means a deposit that satisfies Section 7-28-104.\n(14)(a) \"State\" means a state of the United States, the District of Columbia, Puerto Rico,\nthe United States Virgin Islands, or any other territory or possession subject to the\njurisdiction of the United States.\n(b) \"State\" includes an agency or instrumentality of the state.\nSection 3. Section 7-28-102 is enacted to read:\n7-28-102 . Scope -- Choice of law -- Forum.\n(1) This chapter applies to a special deposit under an account agreement that states the\nintention of the parties to establish a special deposit governed by this chapter, regardless\nof whether a party to the account agreement or a transaction related to the special\ndeposit, or the special deposit itself, has a reasonable relation to this state.\n(2) The parties to an account agreement may choose a forum in this state for settling a\ndispute arising out of the special deposit, regardless of whether a party to the account\nagreement or a transaction related to the special deposit, or the special deposit itself, has\na reasonable relation to this state.\n(3) This chapter does not affect:\n(a) a right or obligation relating to a deposit other than a special deposit under this\nchapter; or\n(b) the voidability of a deposit or transfer that is fraudulent or voidable under other law.\nSection 4. Section 7-28-103 is enacted to read:\n7-28-103 . Variation by agreement or amendment.\n(1)(a) The effect of Sections 7-28-101 through 7-28-105, Sections 7-28-107 through\n7-28-110, and Section 7-28-113 may not be varied by agreement, except as provided\nin those sections.\n(b) Subject to Subsection (2), the effect of Sections 7-28-106, 7-28-111, and 7-28-112\nmay be varied by agreement.\n(2) A provision in an account agreement or other record that substantially excuses liability\nor substantially limits remedies for failure to perform an obligation under this chapter is\nnot sufficient to vary the effect of a provision of this chapter.\n(3) If a beneficiary is a party to an account agreement, the bank and the depositor may\namend the agreement without the consent of the beneficiary only if the agreement\nexpressly permits the amendment.\n(4) If a beneficiary is not a party to an account agreement and the bank and the depositor\nknow the beneficiary has knowledge of the agreement's terms, the bank and the\ndepositor may amend the agreement without the consent of the beneficiary only if the\namendment does not adversely and materially affect a payment right of the beneficiary.\n(5) If a beneficiary is not a party to an account agreement and the bank and the depositor do\nnot know whether the beneficiary has knowledge of the agreement's terms, the bank and\nthe depositor may amend the agreement without the consent of the beneficiary only if\nthe amendment is made in good faith.\nSection 5. Section 7-28-104 is enacted to read:\n7-28-104 . Requirements for special deposit.\nA deposit is a special deposit if the deposit is:\n(1) a deposit of funds in a bank under an account agreement;\n(2) for the benefit of at least two beneficiaries, one or more of which may be a depositor;\n(3) denominated in a medium of exchange that is currently authorized or adopted by a\ndomestic or foreign government;\n(4) for a permissible purpose stated in the account agreement; and\n(5) subject to a contingency.\nSection 6. Section 7-28-105 is enacted to read:\n7-28-105 . Permissible purpose.\n(1) A special deposit must serve at least one permissible purpose stated in the account\nagreement from the time the special deposit is created in the account agreement until\ntermination of the special deposit.\n(2) If, before termination of the special deposit, the bank or a court determines the special\ndeposit no longer satisfies Subsection (1), Sections 7-28-107 through 7-28-110 cease to\napply to any funds deposited in the special deposit after the special deposit ceases to\nsatisfy Subsection (1).\n(3) If, before termination of a special deposit, the bank determines the special deposit no\nlonger satisfies Subsection (1), the bank may take action the bank believes is necessary\nunder the circumstances, including terminating the special deposit.\nSection 7. Section 7-28-106 is enacted to read:\n7-28-106 . Payment to beneficiary by bank.\n(1) Unless the account agreement provides otherwise, the bank is obligated to pay a\nbeneficiary if there are sufficient actually and finally collected funds in the balance of\nthe special deposit.\n(2) Except as provided in Subsection (3), the obligation to pay the beneficiary is excused if\nthe funds available in the special deposit are insufficient to cover such payment.\n(3)(a) Unless the account agreement provides otherwise, if the funds available in the\nspecial deposit are insufficient to cover an obligation to pay a beneficiary, a\nbeneficiary may elect to be paid the funds that are available or, if there is more than\none beneficiary, a pro rata share of the funds available.\n(b) Payment to the beneficiary making the election under this Subsection (3) discharges\nthe bank's obligation to pay a beneficiary and does not constitute an accord and\nsatisfaction with respect to another person obligated to the beneficiary.\n(4) Unless the account agreement provides otherwise, the obligation of the bank obligated\nto pay a beneficiary is immediately due and payable.\n(5) The bank may discharge the bank's obligation under this section by:\n(a) crediting another transaction account of the beneficiary; or\n(b) taking other action that:\n(i) is permitted under the account agreement for the bank to obtain a discharge; or\n(ii) otherwise would constitute a discharge under law.\n(6) If the bank obligated to pay a beneficiary has incurred an obligation to discharge the\nobligation of another person, the obligation of the other person is discharged if action by\nthe bank under Subsection (5) would constitute a discharge of the obligation of the other\nperson under law that determines whether an obligation is satisfied.\nSection 8. Section 7-28-107 is enacted to read:\n7-28-107 . Property interest of depositor or beneficiary.\n(1) Neither a depositor nor a beneficiary has a property interest in a special deposit.\n(2)(a) Any property interest with respect to a special deposit is only in the right to\nreceive payment if the bank is obligated to pay a beneficiary and not in the special\ndeposit itself.\n(b) Any property interest under this Subsection (2) is determined under other law.\nSection 9. Section 7-28-108 is enacted to read:\n7-28-108 . When creditor process enforceable against bank.\n(1) Subject to Subsection (2), creditor process with respect to a special deposit is not\nenforceable against the bank holding the special deposit.\n(2) Creditor process is enforceable against the bank holding a special deposit with respect\nto an amount the bank is obligated to pay a beneficiary or a depositor if the process:\n(a) is served on the bank;\n(b) provides sufficient information to permit the bank to identify the depositor or the\nbeneficiary from the bank's books and records; and\n(c) gives the bank a reasonable opportunity to act on the process.\n(3)(a) Creditor process served on a bank before the creditor process is enforceable\nagainst the bank under Subsection (2) does not create a right of the creditor against\nthe bank or a duty of the bank to the creditor.\n(b) Other law determines whether creditor process creates a lien enforceable against the\nbeneficiary on a contingent interest of a beneficiary, including a depositor as a\nbeneficiary, even if not enforceable against the bank.\nSection 10. Section 7-28-109 is enacted to read:\n7-28-109 . Injunction or similar relief.\nA court may enjoin, or grant similar relief that would have the effect of enjoining, a\nbank from paying a depositor or beneficiary only if payment would constitute a material fraud\nor facilitate a material fraud with respect to a special deposit.\nSection 11. Section 7-28-110 is enacted to read:\n7-28-110 . Recoupment or set off.\n(1) Except as provided in Subsection (2) or (3), a bank may not exercise a right of\nrecoupment or set off against a special deposit.\n(2) An account agreement may authorize the bank to debit the special deposit:\n(a) when the bank becomes obligated to pay a beneficiary, in an amount that does not\nexceed the amount necessary to discharge the obligation;\n(b) for a fee assessed by the bank that relates to an overdraft in the special deposit\naccount;\n(c) for costs incurred by the bank that relate directly to the special deposit; or\n(d) to reverse an earlier credit posted by the bank to the balance of the special deposit\naccount, if the reversal occurs under an event or circumstance warranted under other\nlaw of this state governing mistake and restitution.\n(3) The bank holding a special deposit may exercise a right of recoupment or set off against\nan obligation to pay a beneficiary, even if the bank funds payment from the special\ndeposit.\nSection 12. Section 7-28-111 is enacted to read:\n7-28-111 . Duties and liability of bank.\n(1) A bank does not have a fiduciary duty to any person with respect to a special deposit.\n(2) When the bank holding a special deposit becomes obligated to pay a beneficiary, a\ndebtor-creditor relationship arises between the bank and beneficiary.\n(3) The bank holding a special deposit has a duty to a beneficiary to comply with the\naccount agreement and this chapter.\n(4)(a) If the bank holding a special deposit does not comply with the account agreement\nor this chapter, the bank is liable to a depositor or beneficiary only for damages\nproximately caused by the noncompliance.\n(b) Except as provided by other law of this state, the bank is not liable for consequential,\nspecial, or punitive damages.\n(5) The bank holding a special deposit may rely on records presented in compliance with\nthe account agreement to determine whether the bank is obligated to pay a beneficiary.\n(6)(a) If the account agreement requires payment on presentation of a record, the bank\nshall determine within a reasonable time whether the record is sufficient to require\npayment.\n(b) If the agreement requires action by the bank on presentation of a record, the bank is\nnot liable for relying in good faith on the genuineness of the record if the record\nappears on the record's face to be genuine.\n(7) Unless the account agreement provides otherwise, the bank is not required to determine\nwhether a permissible purpose stated in the agreement continues to exist.\nSection 13. Section 7-28-112 is enacted to read:\n7-28-112 . Term and termination.\n(1) Unless otherwise provided in the account agreement, a special deposit terminates five\nyears after the date the special deposit was first funded.\n(2) Unless otherwise provided in the account agreement, if the bank cannot identify or\nlocate a beneficiary entitled to payment when the special deposit is terminated, and a\nbalance remains in the special deposit, the bank shall pay the balance to the depositor or\ndepositors as a beneficiary or beneficiaries.\n(3) A bank that pays the remaining balance as provided under Subsection (2) has no further\nobligation with respect to the special deposit.\nSection 14. Section 7-28-113 is enacted to read:\n7-28-113 . Principles of law and equity.\nTitle 70A, Uniform Commercial Code, consumer protection law, law governing deposits\ngenerally, law related to escheat and abandoned or unclaimed property, and the principles of\nlaw and equity, including law related to capacity to contract, principal and agent, estoppel,\nfraud, misrepresentation, duress, coercion, mistake, and bankruptcy, supplement this chapter\nexcept to the extent inconsistent with this chapter.\nSection 15. Section 7-28-114 is enacted to read:\n7-28-114 . Uniformity of application and construction.\nIn applying and construing this uniform act, a court shall consider the promotion of\nuniformity of the law among jurisdictions that enact this uniform act.\nSection 16. Section 7-28-115 is enacted to read:\n7-28-115 . Transitional provision.\nThis chapter applies to:\n(1) a special deposit made under an account agreement executed on or after May 7, 2025;\nand\n(2) a deposit made under an agreement executed before May 7, 2025, if:\n(a) all parties entitled to amend the agreement agree to make the deposit a special\ndeposit governed by this chapter; and\n(b) the special deposit referenced in the amended agreement satisfies Section 7-28-104.\nSection 17. Section 7-28-116 is enacted to read:\n7-28-116 . Severability.\nIf a provision of this chapter or the chapter's application to a person or circumstance is\nheld invalid, the invalidity does not affect another provision or application that can be given\neffect without the invalid provision.\nSection 18. Section 70D-4-101 is enacted to read:\n70D-4-101 . Definitions.\n(1) \"Electronic\" means relating to technology having electrical, digital, magnetic, wireless,\noptical, electromagnetic, or similar capabilities.\n(2) \"Financial covenant\" means an undertaking to demonstrate an obligor's creditworthiness\nor the adequacy of security provided by an obligor.\n(3) \"Modification\" includes change, amendment, revision, correction, addition,\nsupplementation, elimination, waiver, and restatement.\n(4)(a) \"Mortgage\" means an agreement that creates a consensual interest in real property\nto secure payment or performance of an obligation regardless of how the agreement\nis denominated, including a mortgage, deed of trust, trust deed, security deed,\nindenture, or deed to secure debt, and regardless of whether the agreement also\ncreates a security interest in personal property.\n(b) \"Mortgage\" does not include an agreement that creates a consensual interest to\nsecure a liability owed by a unit owner to a condominium association, owners\nassociation, or cooperative housing association for association dues, fees, or\nassessments.\n(5) \"Mortgage modification\" means modification of:\n(a) a mortgage;\n(b) an agreement that creates an obligation, including a promissory note, loan\nagreement, or credit agreement; or\n(c) an agreement that creates other security or credit enhancement for an obligation,\nincluding an assignment of leases or rents or a guaranty.\n(6) \"Obligation\" means a debt or other duty or liability secured by a mortgage.\n(7) \"Obligor\" means a person that:\n(a) owes payment or performance of an obligation;\n(b) signs a mortgage; or\n(c) is otherwise accountable, or whose property serves as collateral, for payment or\nperformance of an obligation.\n(8) \"Person\" means an individual, estate, business or nonprofit entity, government or\ngovernmental subdivision, agency, instrumentality, or other legal entity.\n(9) \"Recognized index\" means an index to which changes in the interest rate may be linked\nthat is readily available to, and verifiable by, the obligor and is beyond the control of the\nperson to whom the obligation is owed.\n(10) \"Record\" means information:\n(a) inscribed on a tangible medium; or\n(b) stored in an electronic or other medium and retrievable in perceivable form.\n(11) \"Sign\" means, with present intent to authenticate or adopt a record:\n(a) to execute or adopt a tangible symbol; or\n(b) to attach to or logically associate with the record an electronic symbol, sound, or\nprocess.\nSection 19. Section 70D-4-201 is enacted to read:\n70D-4-201 . Scope.\n(1) Except as provided in Subsection (3), this chapter applies to a mortgage modification.\n(2) This chapter does not affect the following law of this state:\n(a) law governing the required content of a mortgage;\n(b) a statute of limitations or other law governing the expiration or termination of a right\nto enforce an obligation or a mortgage;\n(c) a recording statute;\n(d) a statute governing the priority of a tax lien or other governmental lien;\n(e) a statute of frauds; or\n(f) except as provided in Subsection 70D-4-301(2)(h), law governing the priority of a\nfuture advance.\n(3) This chapter does not apply to:\n(a) a release of, or addition to, property encumbered by a mortgage;\n(b) a release of, addition of, or other change in an obligor; or\n(c) an assignment or other transfer of a mortgage or an obligation.\nSection 20. Section 70D-4-301 is enacted to read:\n70D-4-301 . Effect of mortgage modification.\n(1) For a mortgage modification described in Subsection (2):\n(a) the mortgage continues to secure the obligation as modified;\n(b) the priority of the mortgage is not affected by the modification;\n(c) the mortgage retains the mortgage's priority regardless of whether a record of the\nmortgage modification is recorded; and\n(d) the modification is not a novation.\n(2) Subsection (1) applies to one or more of the following:\n(a) an extension of the maturity date of an obligation;\n(b) a decrease in the interest rate of an obligation;\n(c) if there is any change as specified in Subsection (2)(c)(i) through (iv) that does not\nresult in an increase in the interest rate as calculated on the date the modification\nbecomes effective:\n(i) a change to a different recognized index if the previous index is no longer\navailable;\n(ii) a change in the differential between the index and the interest rate;\n(iii) a change from a floating or adjustable rate to a fixed rate; and\n(iv) a change from a fixed rate to a floating or adjustable rate based on a recognized\nindex;\n(d) a capitalization of unpaid interest or other unpaid obligation;\n(e) a forgiveness, forbearance, or other reduction of principal, accrued interest, or other\nmonetary obligation;\n(f) a modification of a requirement for maintaining an escrow or reserve account for\npayment of an obligation, including taxes, insurance premiums, or another obligation;\n(g) a modification of a requirement for acquiring or maintaining insurance;\n(h) a modification of an existing condition to advance funds;\n(i) a modification of a financial covenant; and\n(j) a modification of the payment amount or schedule resulting from another\nmodification described in this Subsection (2).\n(3) The effect of a mortgage modification not described in Subsection (2) is governed by\nother law.\nSection 21. Section 70D-4-401 is enacted to read:\n70D-4-401 . Uniformity of application and construction.\nIn applying and construing this uniform act, a court shall consider the promotion of\nuniformity of the law among jurisdictions that enact it.\nSection 22. Section 70D-4-501 is enacted to read:\n70D-4-501 . Relation to Electronic Signatures in Global and National Commerce\nAct.\nThis chapter modifies, limits, or supersedes the Electronic Signatures in Global and\nNational Commerce Act, 15 U.S.C. Sec. 7001 et seq. , but does not modify, limit, or supersede\n15 U.S.C. Sec. 7001(c), or authorize electronic delivery of any of the notices described in 15\nU.S.C. Sec. 7003(b).\nSection 23. Section 70D-4-601 is enacted to read:\n70D-4-601 . Transitional Provision.\nThis chapter applies to a mortgage modification made on or after May 7, 2025,\nregardless of when the mortgage or the obligation was created.\nSection 24. Effective Date.\nThis bill takes effect on May 7, 2025.",
+  "raw_text_url": "https://le.utah.gov/Session/2025/bills/introduced/SB0294S02.pdf"
+ }
+]

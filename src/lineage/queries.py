@@ -336,6 +336,84 @@ def bill_summaries(
     return [BillSummary(*row) for row in rows]
 
 
+@dataclass(frozen=True, slots=True)
+class EnactmentBill:
+    """A bill an enactment may name, with what the recall eval checks about it."""
+
+    id: str
+    state: str
+    session: str
+    identifier: str
+    status: str | None
+    status_date: date | None
+    passage_chambers: int
+    text_chars: int  # stored text, ignoring surrounding whitespace
+    amendment_only: bool  # opens like an amendment and does not replace the whole bill
+    eligible: bool
+    family: str | None  # None when the bill has no signed sections
+
+
+def enactment_bills(
+    con: duckdb.DuckDBPyConnection,
+    *,
+    bills_glob: str,
+    eligible_path: Path,
+    families_path: Path,
+    states: list[str],
+    opening: str,
+    chars: int,
+    substitute: str,
+) -> list[EnactmentBill]:
+    """Every bill of the given states, with its passage, text, eligibility and family."""
+    passages = "list_filter(actions, lambda a: list_contains(a.classification, 'passage'))"
+    rows: list[tuple[Any, ...]] = con.execute(
+        f"""
+        SELECT
+            b.id, b.state, b.session, b.identifier, b.status, b.status_date,
+            len(list_distinct(list_transform({passages}, lambda a: a.organization__name))),
+            length(trim(coalesce(b.raw_text, ''))),
+            coalesce(regexp_matches(left(b.raw_text, $chars), $opening)
+                     AND NOT regexp_matches(b.raw_text, $substitute), false),
+            coalesce(e.eligible, false),
+            f.family
+        FROM read_parquet($bills) b
+        LEFT JOIN read_parquet($eligible) e USING (id)
+        LEFT JOIN read_parquet($families) f ON f.bill_id = b.id
+        WHERE b.state IN (SELECT unnest($states))
+        ORDER BY b.id
+        """,
+        {
+            "bills": bills_glob,
+            "eligible": str(eligible_path),
+            "families": str(families_path),
+            "states": states,
+            "opening": opening,
+            "chars": chars,
+            "substitute": substitute,
+        },
+    ).fetchall()
+    return [EnactmentBill(*row) for row in rows]
+
+
+def signature_rows_of(
+    con: duckdb.DuckDBPyConnection, *, keys_paths: list[Path], bill_ids: list[str]
+) -> list[tuple[int, int, str]]:
+    """(file index, row within the file, bill id) of every signature row of the wanted bills."""
+    if not keys_paths or not bill_ids:
+        return []
+    found: list[tuple[str, int, str]] = con.execute(
+        """
+        SELECT filename, file_row_number, bill_id
+        FROM read_parquet($paths, filename = true, file_row_number = true)
+        WHERE bill_id IN (SELECT unnest($ids))
+        ORDER BY filename, file_row_number
+        """,
+        {"paths": [str(p) for p in keys_paths], "ids": bill_ids},
+    ).fetchall()
+    index = {str(p): i for i, p in enumerate(keys_paths)}
+    return [(index[name], row, bill_id) for name, row, bill_id in found]
+
+
 def bill_states(con: duckdb.DuckDBPyConnection, *, bills_glob: str) -> dict[str, str]:
     """Every bill's state, by bill id."""
     rows: list[tuple[str, str]] = con.execute(

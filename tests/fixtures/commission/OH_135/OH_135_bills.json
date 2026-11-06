@@ -1,0 +1,155 @@
+[
+ {
+  "id": "ocd-bill/ac8be703-90ff-46ce-a145-1871e12e3c89",
+  "legislative_session": "135",
+  "identifier": "SB 237",
+  "title": "Enacts the Uniform Public Expression Protection Act",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Introduced",
+    "date": "2024-03-26",
+    "classification": [
+     "introduction"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Refer to Committee",
+    "date": "2024-04-10",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported",
+    "date": "2024-05-22",
+    "classification": [],
+    "order": 2
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Passed",
+    "date": "2024-06-12",
+    "classification": [
+     "passage"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "House",
+    "description": "Introduced",
+    "date": "2024-06-14",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 4
+   },
+   {
+    "organization__name": "House",
+    "description": "Refer to Committee",
+    "date": "2024-06-18",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 5
+   },
+   {
+    "organization__name": "House",
+    "description": "Reported",
+    "date": "2024-12-10",
+    "classification": [],
+    "order": 6
+   },
+   {
+    "organization__name": "House",
+    "description": "Passed",
+    "date": "2024-12-11",
+    "classification": [
+     "passage"
+    ],
+    "order": 7
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Concurred in House amendments",
+    "date": "2024-12-18",
+    "classification": [
+     "passage"
+    ],
+    "order": 8
+   }
+  ],
+  "versions": [
+   {
+    "note": "As Reported by the Senate Judiciary Committee",
+    "date": "",
+    "links": [
+     {
+      "url": "https://search-prod.lis.state.oh.us/solarapi/v1/general_assembly_135/bills/sb237/RS/01/sb237_01_RS?format=pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "As Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "https://search-prod.lis.state.oh.us/solarapi/v1/general_assembly_135/bills/sb237/IN/00/sb237_00_IN?format=pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "As Passed by the Senate",
+    "date": "",
+    "links": [
+     {
+      "url": "https://search-prod.lis.state.oh.us/solarapi/v1/general_assembly_135/bills/sb237/PS/02/sb237_02_PS?format=pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "As Reported by the House Civil Justice Committee",
+    "date": "",
+    "links": [
+     {
+      "url": "https://search-prod.lis.state.oh.us/solarapi/v1/general_assembly_135/bills/sb237/RH/03/sb237_03_RH?format=pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "As Passed by the House",
+    "date": "",
+    "links": [
+     {
+      "url": "https://search-prod.lis.state.oh.us/solarapi/v1/general_assembly_135/bills/sb237/PH/04/sb237_04_PH?format=pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "As Enrolled",
+    "date": "",
+    "links": [
+     {
+      "url": "https://search-prod.lis.state.oh.us/solarapi/v1/general_assembly_135/bills/sb237/EN/05/sb237_05_EN?format=pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "   Regular Session                                      S. B. No.\n\n              To amend section\n\n\n                Public Expression Protection Act relating to\n                legal actions concerning protected speech.\n     Section\n2747.01,\nRevised Code be enacted to read as follows:\n     Sec.\n     (1) \"Substantial right\" means a right that the United\nStates Constitution, the Ohio Constitution, a statute, the\ncommon law, or a rule of procedure entitles a person to enforce\nor protect.\n     (2) \"Special proceeding\" means an action or proceeding\nthat is specially created by statute and that prior to\nnot denoted as an action at law or a suit in equity.\n     (3) \"Provisional remedy\" means a proceeding ancillary to\nan action, including, but not limited to, a proceeding for a\nS. B. No.\npreliminary injunction, attachment, discovery of privileged\nmatter, suppression of evidence, a prima-facie showing pursuant\nto section\nshowing pursuant to section\nfinding made pursuant to division (A)(3) of section\nthe Revised Code.\n       (B) An order is a final order that may be reviewed,\naffirmed, modified, or reversed, with or without retrial, when\nit is one of the following:\n       (1) An order that affects a substantial right in an action\nthat in effect determines the action and prevents a judgment;\n       (2) An order that affects a substantial right made in a\nspecial proceeding or upon a summary application in an action\nafter judgment;\n       (3) An order that vacates or sets aside a judgment or\ngrants a new trial;\n       (4) An order that grants or denies a provisional remedy\nand to which both of the following apply:\n       (a) The order in effect determines the action with respect\nto the provisional remedy and prevents a judgment in the action\nin favor of the appealing party with respect to the provisional\nremedy.\n       (b) The appealing party would not be afforded a meaningful\nor effective remedy by an appeal following final judgment as to\nall proceedings, issues, claims, and parties in the action.\n       (5) An order that determines that an action may or may not\nbe maintained as a class action;\n       (6) An order determining the constitutionality of any\nS. B. No.\nchanges to the Revised Code made by Am. Sub. S.B.\n124th general assembly, including the amendment of sections\n1751.67,\n2323.56,\n2919.16,\n5164.07 by H.B.\nenactment of sections\nthe Revised Code or any changes made by Sub. S.B.\n125th general assembly, including the amendment of sections\n2125.02,\nRevised Code;\n       (7) An order in an appropriation proceeding that may be\nappealed pursuant to division (B)(3) of section\nRevised Code;\n       (8) An order that denies a motion for expedited relief\npursuant to section\n       (C) When a court issues an order that vacates or sets\naside a judgment or grants a new trial, the court, upon the\nrequest of either party, shall state in the order the grounds\nupon which the new trial is granted or the judgment vacated or\nset aside.\n       (D) This section applies to and governs any action,\nincluding an appeal, that is pending in any court on July\n1998, and all claims filed or actions commenced on or after July\n22,\nrule of law of this state.\n       Sec.\n       (1) \"Goods or services\" does not include the creation,\ndissemination, exhibition, or advertisement, or a similar\nS. B. No.\npromotion, of a dramatic, literary, musical, political,\njournalistic, or artistic work.\n       (2) \"Governmental unit\" means the government of the United\nStates, the state, a political subdivision of the state, or any\ndepartment, agency, board, commission, or other instrumentality\nof the government of the United States, the state, or a\npolitical subdivision.\n       (3) \"Person\" includes an individual, estate, trust,\npartnership, business or nonprofit entity, governmental unit, or\nother legal entity.\n       (B) Except as provided in division (C) of this section,\nthis chapter applies to a cause of action asserted in a civil\naction against a person based on any of the following:\n       (1) The person's communication in a legislative,\nexecutive, judicial, administrative, or other governmental\nproceeding;\n       (2) The person's communication on an issue under\nconsideration or review in a legislative, executive, judicial,\nadministrative, or other governmental proceeding;\n       (3) The person's exercise of the right of freedom of\nspeech and of the press, the right to assemble and petition, and\nthe right of association, guaranteed by the United States\nConstitution or the Ohio Constitution, on a matter of public\nconcern.\n       (C) This chapter does not apply to any of the following:\n       (1) A legal action against a governmental unit or an\nemployee or agent of the governmental unit who was acting or\npurporting to act in an official capacity;\nS. B. No.\n       (2) An enforcement action that is brought in the name of a\ngovernmental unit to protect against an imminent threat to\npublic health or safety;\n       (3) A legal action brought against a person primarily\nengaged in the business of selling or leasing goods or services,\nif the cause of action arises out of communication related to\nthe person's sale or lease of the goods or service.\n       Sec.\nserved with a complaint, cross-claim, counterclaim, third-party\nclaim, or other pleading that asserts a cause of action to which\nthis chapter applies, the party may file a motion for expedited\nrelief to dismiss the civil action or claim. The court may\nextend the sixty-day period to file the motion for expedited\nrelief for good cause shown.\n       Sec.\nsection, if a motion for expedited relief is filed under section\n2747.02 of the Revised Code, the court shall stay all other\nproceedings in the action between the moving party and\nresponding party, including discovery and any other pending\nhearing or motion.\n       (2) Upon request by the moving party, the court may stay a\nhearing or motion involving another party in the action, or\ndiscovery by another party, if the hearing or ruling on the\nmotion would adjudicate, or the discovery would relate to, an\nissue material to the motion for expedited relief.\n       (B) A stay under division (A) of this section remains in\neffect until thirty days after the entry of a ruling on the\nmotion for expedited relief or upon the conclusion of an appeal\nof the ruling, whichever is later. During such an appeal, all\nS. B. No.\nproceedings between all parties in the action are stayed.\n       (C) During a stay under division (A) of this section, the\ncourt may allow limited discovery if the party seeking discovery\nshows that specific information is necessary to establish\nwhether a party has satisfied a burden under section\nthe Revised Code and the information cannot be obtained unless\ndiscovery is allowed.\n       (D) A motion under section\nattorney's fees, court costs, and other litigation expenses is\nnot subject to a stay under this section.\n       (E) A stay under this section does not affect a party's\nability to voluntarily dismiss a cause of action or move to\nsever a cause of action for a separate trial.\n       (F) During a stay under this section, the court for good\ncause may hear and rule on either of the following:\n       (1) A motion unrelated to the motion for expedited relief;\n       (2) A motion seeking a temporary or preliminary injunction\nto protect against an imminent threat to public health or\nsafety.\n       Sec.\nlater than sixty days after the filing of a motion for expedited\nrelief, unless the court orders a later hearing to allow for\nlimited discovery under section\ndelays the hearing for other good cause.\n       (2) If the court orders a later hearing to allow for\nlimited discovery, the court shall conduct the hearing not later\nthan sixty days after the court order allowing discovery unless\nthe hearing is delayed for other good cause.\nS. B. No.\n        (B) In ruling on the motion for expedited relief, the\ncourt shall consider the pleadings, the motion, any response to\nthe motion, and any evidence that could be considered in ruling\non a motion for summary judgment under Rule\nCivil Procedure.\n        (C) In ruling on the motion for expedited relief, the\ncourt shall dismiss with prejudice a cause of action, or part of\na cause of action, if all of the following apply:\n        (1) The moving party establishes that the cause of action\nis based on a communication or action described in division (B)\nof section\n        (2) The responding party fails to establish that this\nchapter does not apply to the cause of action due to an\nexception in division (C) of section\nCode.\n        (3) Either the responding party fails to establish a\nprima-facie case for each essential element of the cause of\naction or the moving party establishes one of the following:\n        (a) The responding party failed to state a cause of action\nupon which relief can be granted.\n        (b) There is no genuine issue as to any material fact and\nthe moving party is entitled to judgment as a matter of law on\nthe cause of action or part of the cause of action.\n        (D) The court shall rule on the motion for expedited\nrelief not later than sixty days after the hearing.\n        (E)(1) A voluntary dismissal without prejudice of a\nresponding party's cause of action, or part of a cause of\naction, that is the subject of a motion for expedited relief\nS. B. No.\ndoes not affect a moving party's right to obtain a ruling on the\nmotion for the purpose of obtaining attorney's fees, court\ncosts, and other litigation expenses under section\nthe Revised Code.\n       (2) A voluntary dismissal with prejudice of a responding\nparty's cause of action, or part of a cause of action, that is\nthe subject of a motion for expedited relief establishes that\nthe moving party prevailed on the motion for the purpose of\nawarding attorney's fees, court costs, and other litigation\nexpenses under section\n       Sec.\nexpedited relief under section\ncourt shall award reasonable attorney's fees, court costs, and\nother reasonable litigation expenses to the moving party.\n       (B) If the court denies a motion for expedited relief\nunder section\nmotion was frivolous conduct as defined in section\nthe Revised Code, the court, after the disposition of any appeal\naffirming the court's ruling on the motion, shall award to the\nresponding party reasonable attorney's fees, court costs, and\nother reasonable litigation expenses incurred in responding to\nthe motion.\n       (C) If the court denies a motion for expedited relief\nunder section\norder under section\nparty has an interlocutory right of appeal under that section.\nThe appeal must be filed within thirty days after entry of the\norder.\n       Sec.\nS. B. No.\nRevised Code apply to a civil action filed or any claim asserted\nin a civil action on or after the effective date of this\nsection.\n       (B) A court shall broadly construe and apply sections\n2747.01 to\nof the right of freedom of speech and of the press, the right to\nassemble and petition, and the right of association, guaranteed\nby the United States Constitution and the Ohio Constitution.\n       (C) In construing and applying sections\nof the Revised Code, a court shall consider the need to promote\nuniformity of the law with respect to its subject matter among\nstates that enact a substantially similar law.\n       Section\nCode is hereby repealed.\n       Section\nExpression Protection Act.",
+  "raw_text_url": "https://search-prod.lis.state.oh.us/solarapi/v1/general_assembly_135/bills/sb237/RS/01/sb237_01_RS?format=pdf"
+ }
+]

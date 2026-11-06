@@ -1,0 +1,245 @@
+[
+ {
+  "id": "ocd-bill/8bd05268-df20-4e80-8ea6-fee765d633f9",
+  "legislative_session": "2025",
+  "identifier": "S 1001",
+  "title": "UNIFORM PUBLIC EXPRESSION PROTECTION ACT – Adds to existing law to establish the Uniform Public Expression Protection Act.",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Introduced; read first time; referred to JR for Printing",
+    "date": "2025-01-14",
+    "classification": [
+     "introduction"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported Printed; referred to Judiciary & Rules",
+    "date": "2025-01-15",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported out of Committee with Do Pass Recommendation; Filed for second reading",
+    "date": "2025-01-23",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Read second time; filed for Third Reading",
+    "date": "2025-01-24",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Read third time in full – PASSED - 32-1-2AYES – Adams, Bernt, Bjerke, Blaylock, Carlson, Cook, Den Hartog, Foreman, Grow, Guthrie, Harris, Hart, Keyser, Kohl, Lakey, Lenney, Lent, Nichols, Okuniewicz, Ricks, Ruchti, Semmelroth, Sessions(Burtenshaw), Shippy, Taylor, Toews, VanOrden, Ward-Engelking, Wintrow, Woodward, Zito, ZuiderveldNAYS – AnthonAbsent and excused – Galloway, RabeFloor Sponsor - LenneyTitle apvd - to House",
+    "date": "2025-01-27",
+    "classification": [
+     "passage"
+    ],
+    "order": 4
+   },
+   {
+    "organization__name": "House",
+    "description": "Received from the Senate, Filed for First Reading",
+    "date": "2025-01-28",
+    "classification": [],
+    "order": 5
+   },
+   {
+    "organization__name": "House",
+    "description": "Read First Time, Referred to Judiciary, Rules & Administration",
+    "date": "2025-01-28",
+    "classification": [
+     "reading-1",
+     "referral-committee"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "House",
+    "description": "Reported out of Committee with Do Pass Recommendation, Filed for Second Reading",
+    "date": "2025-02-14",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 7
+   },
+   {
+    "organization__name": "House",
+    "description": "Read second time; Filed for Third Reading",
+    "date": "2025-02-17",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 8
+   },
+   {
+    "organization__name": "House",
+    "description": "U.C. to hold place on third reading calendar one legislative day",
+    "date": "2025-02-18",
+    "classification": [],
+    "order": 9
+   },
+   {
+    "organization__name": "House",
+    "description": "U.C. to hold place on third reading calendar one legislative day",
+    "date": "2025-02-19",
+    "classification": [],
+    "order": 10
+   },
+   {
+    "organization__name": "House",
+    "description": "U.C. to hold place on third reading calendar one legislative day",
+    "date": "2025-02-20",
+    "classification": [],
+    "order": 11
+   },
+   {
+    "organization__name": "House",
+    "description": "U.C. to hold place on third reading calendar until Monday, February 24, 2025",
+    "date": "2025-02-21",
+    "classification": [],
+    "order": 12
+   },
+   {
+    "organization__name": "House",
+    "description": "U.C. to hold place on third reading calendar one legislative day",
+    "date": "2025-02-24",
+    "classification": [],
+    "order": 13
+   },
+   {
+    "organization__name": "House",
+    "description": "U.C. to hold place on third reading calendar one legislative day",
+    "date": "2025-02-25",
+    "classification": [],
+    "order": 14
+   },
+   {
+    "organization__name": "House",
+    "description": "U.C. to hold place on third reading calendar one legislative day",
+    "date": "2025-02-26",
+    "classification": [],
+    "order": 15
+   },
+   {
+    "organization__name": "House",
+    "description": "U.C. to hold place on third reading calendar one legislative day",
+    "date": "2025-02-27",
+    "classification": [],
+    "order": 16
+   },
+   {
+    "organization__name": "House",
+    "description": "U.C. to hold place on third reading calendar until Monday, March 3, 2025",
+    "date": "2025-02-28",
+    "classification": [],
+    "order": 17
+   },
+   {
+    "organization__name": "House",
+    "description": "U.C. to hold place on third reading calendar one legislative day",
+    "date": "2025-03-03",
+    "classification": [],
+    "order": 18
+   },
+   {
+    "organization__name": "House",
+    "description": "U.C. to hold place on third reading calendar one legislative day",
+    "date": "2025-03-04",
+    "classification": [],
+    "order": 19
+   },
+   {
+    "organization__name": "House",
+    "description": "Read Third Time in Full – PASSED - 70-0-0AYES – Achilles, Alfieri, Andrus, Barbieri, Beiswenger, Berch, Boyle, Bruce, Burgoyne, Cannon, Cayler, Cheatum, Church(Caldwell), Clow, Cornilles, Crane(12), Crane(13), Dygert, Egbert, Ehardt, Ehlers, Erickson, Fuhriman, Furniss, Galaviz, Gannon, Garner, Green, Handy, Harris, Hawkins, Healey, Hill, Holtzclaw, Horman, Hostetler, Leavitt, Manwaring, Marmon, Mathias, McCann, Mendive, Mickelsen, Miller, Mitchell, Monks, Nelsen, Palmer, Petzke, Pickett, Pohanka, Price, Rasor, Raybould, Raymond, Redman, Rubel, Sauter, Scott, Shepherd, Shirts, Skaug, Tanner(13), Tanner(14), Thompson, Vander Woude, Weber, Wheeler, Wisniewski, Mr. SpeakerNAYS – NoneAbsent – NoneFloor Sponsor - ScottTitle apvd - to Senate",
+    "date": "2025-03-05",
+    "classification": [
+     "passage",
+     "reading-3"
+    ],
+    "order": 20
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Returned From House Passed; referred to enrolling",
+    "date": "2025-03-05",
+    "classification": [
+     "enrolled"
+    ],
+    "order": 21
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported enrolled; signed by President; to House for signature of Speaker",
+    "date": "2025-03-06",
+    "classification": [],
+    "order": 22
+   },
+   {
+    "organization__name": "House",
+    "description": "Received from Senate; Signed by Speaker; Returned to Senate",
+    "date": "2025-03-06",
+    "classification": [
+     "passage"
+    ],
+    "order": 23
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported signed by the Speaker & ordered delivered to Governor",
+    "date": "2025-03-07",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 24
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported delivered to Governor at 2:20 p.m. on 03/07/25",
+    "date": "2025-03-10",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 25
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Signed by Governor on 03/10/25    Session Law Chapter 17    Effective: 01/01/2026",
+    "date": "2025-03-11",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 26
+   }
+  ],
+  "versions": [
+   {
+    "note": "Bill Text",
+    "date": "",
+    "links": [
+     {
+      "url": "https://legislature.idaho.gov/wp-content/uploads/sessioninfo/2025/legislation/S1001.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "AN ACT\nRELATING TO THE UNIFORM PUBLIC EXPRESSION PROTECTION ACT; AMENDING TITLE\n6, IDAHO CODE, BY THE ADDITION OF A NEW CHAPTER 39, TITLE 6, IDAHO CODE,\nTO PROVIDE A SHORT TITLE, TO DEFINE TERMS, TO PROVIDE SCOPE, TO PRO-\nVIDE FOR A SPECIAL MOTION FOR EXPEDITED RELIEF, TO PROVIDE FOR A STAY\nIN CERTAIN INSTANCES, TO PROVIDE FOR A HEARING, TO PROVIDE FOR PROOF\nTO BE CONSIDERED BY THE COURT, TO PROVIDE FOR THE DISMISSAL OF A CAUSE\nOF ACTION IN WHOLE OR PART, TO PROVIDE FOR WHEN A COURT SHALL RULE ON A\nMOTION, TO PROVIDE FOR AN APPEAL, TO PROVIDE FOR THE AWARDING OF COSTS,\nATTORNEY'S FEES, AND EXPENSES, TO PROVIDE FOR STATUTORY CONSTRUCTION,\nTO PROVIDE FOR UNIFORMITY OF APPLICATION AND CONSTRUCTION, TO PROVIDE\nA TRANSITIONAL PROVISION, TO PROVIDE A SAVINGS CLAUSE, AND TO PROVIDE\nSEVERABILITY; AND PROVIDING AN EFFECTIVE DATE.\nBe It Enacted by the Legislature of the State of Idaho:\nSECTION 1. That Title 6, Idaho Code, be, and the same is hereby amended\nby the addition thereto of a NEW CHAPTER, to be known and designated as Chap-\nter 39, Title 6, Idaho Code, and to read as follows:\nCHAPTER 39\nUNIFORM PUBLIC EXPRESSION PROTECTION ACT\n6-3901. SHORT TITLE. This chapter shall be known and may be cited as\nthe \"Uniform Public Expression Protection Act.\"\n6-3902. SCOPE. (1) As used in this section:\n(a) \"Goods or services\" does not include the creation, dissemination,\nexhibition, or advertisement or similar promotion of a dramatic, liter-\nary, musical, political, journalistic, or artistic work.\n(b) \"Governmental unit\" means a public corporation or government or a\ngovernmental subdivision, agency, or instrumentality.\n(c) \"Person\" means an individual, estate, trust, partnership, business\nor nonprofit entity, governmental unit, or other legal entity.\n(2) Except as otherwise provided in subsection (3) of this section, the\nprovisions of this chapter shall apply to a cause of action asserted in a\ncivil action against a person based on the person's:\n(a) Communication in a legislative, executive, judicial, administra-\ntive, or other governmental proceeding;\n(b) Communication on an issue under consideration or review in a leg-\nislative, executive, judicial, administrative, or other governmental\nproceeding; or\n(c) Exercise of the right of freedom of speech or of the press, the right\nto assemble or petition, or the right of association, guaranteed by the\nconstitution of the United States or the constitution of the state of\nIdaho, on a matter of public concern.\n(3) The provisions of this chapter shall not apply to a cause of action\nasserted:\n(a) Against a governmental unit or an employee or agent of a governmen-\ntal unit acting or purporting to act in an official capacity;\n(b) By a governmental unit or an employee or agent of a governmental\nunit acting in an official capacity to enforce a law to protect against\nan imminent threat to public health or safety; or\n(c) Against a person primarily engaged in the business of selling or\nleasing goods or services if the cause of action arises out of a communi-\ncation related to the person's sale or lease of the goods or services.\n(4) A cause of action brought pursuant to the provisions of this chapter\nshall be subject to the rules of the Idaho supreme court.\n6-3903. SPECIAL MOTION FOR EXPEDITED RELIEF. No later than sixty (60)\ndays after a party is served with a complaint, cross-claim, counterclaim,\nthird-party claim, or other pleading that asserts a cause of action to which\nthis chapter applies, or at a later time on a showing of good cause, the party\nmay file a special motion for expedited relief to dismiss the cause of action\nor part of the cause of action.\n6-3904. STAY. (1) Except as otherwise provided in subsections (4)\nthrough (7) of this section, upon the filing of a motion pursuant to section\n6-3903, Idaho Code:\n(a) All other proceedings between the moving party and responding\nparty, including discovery and a pending hearing or motion, are stayed;\nand\n(b) Upon motion by the moving party, the court may stay a hearing or\nmotion involving another party, or discovery by another party, if the\nhearing or ruling on the motion would adjudicate, or the discovery would\nrelate to, an issue material to the motion pursuant to section 6-3903,\nIdaho Code.\n(2) A stay pursuant to subsection (1) of this section remains in ef-\nfect until entry of an order ruling on the motion pursuant to section 6-3903,\nIdaho Code, and expiration of the time for the moving party to appeal the or-\nder pursuant to section 6-3909, Idaho Code, and applicable court rule.\n(3) Except as otherwise provided in subsections (5), (6), and (7) of\nthis section, if a party appeals an order ruling on a motion pursuant to sec-\ntion 6-3903, Idaho Code, all proceedings between all parties in the action\nare stayed. The stay remains in effect until the conclusion of the appeal.\n(4) During a stay pursuant to subsection (1) of this section, the court\nmay allow limited discovery if a party shows that specific information is\nnecessary to establish whether a party has satisfied or failed to satisfy a\nburden pursuant to section 6-3907(1), Idaho Code, and the information is not\nreasonably available unless discovery is allowed.\n(5) A motion pursuant to section 6-3910, Idaho Code, for costs, attor-\nney's fees, and expenses is not subject to a stay pursuant to this section.\n(6) A stay pursuant to the provisions of this section does not affect a\nparty's ability to voluntarily dismiss a cause of action or part of a cause of\naction or move to sever a cause of action.\n(7) During a stay pursuant to the provisions of this section, the court\nfor good cause may hear and rule on:\n(a) A motion unrelated to the motion pursuant to section 6-3903, Idaho\nCode; and\n(b) A motion seeking a special or preliminary injunction to protect\nagainst an imminent threat to public health or safety.\n6-3905. HEARING. (1) The court shall hear a motion pursuant to section\n6-3903, Idaho Code, no later than sixty (60) days after filing of the motion,\nunless the court orders a later hearing:\n(a) To allow discovery pursuant to section 6-3904(4), Idaho Code; or\n(b) For other good cause.\n(2) If the court orders a later hearing pursuant to subsection (1)(a)\nof this section, the court shall hear the motion pursuant to section 6-3903,\nIdaho Code, no later than sixty (60) days after the court order allowing the\ndiscovery, unless the court orders a later hearing pursuant to subsection\n(1)(b) of this section.\n6-3906. PROOF. In ruling on a motion pursuant to section 6-3903, Idaho\nCode, the court shall consider the pleadings, the motion, any reply or re-\nsponse to the motion, and any evidence that could be considered in ruling on a\nmotion for summary judgment pursuant to applicable court rule.\n6-3907. DISMISSAL OF CAUSE OF ACTION IN WHOLE OR PART. (1) In ruling on\na motion under section 6-3903, Idaho Code, the court shall dismiss with prej-\nudice a cause of action, or part of a cause of action, if:\n(a) The moving party establishes pursuant to section 6-3902(2), Idaho\nCode, that this chapter applies;\n(b)   The responding party fails to establish pursuant to section\n6-3902(3), Idaho Code, that this chapter does not apply; and\n(c) Either:\n(i) The responding party fails to establish a prima facie case as\nto each essential element of the cause of action; or\n(ii) The moving party establishes that:\n1. The responding party failed to state a cause of action\nupon which relief can be granted; or\n2. There is no genuine issue as to any material fact and the\nmoving party is entitled to judgment as a matter of law on the\ncause of action or part of the cause of action.\n(2) A voluntary dismissal without prejudice of a responding party's\ncause of action, or part of a cause of action, that is the subject of a motion\npursuant to section 6-3903, Idaho Code, does not affect a moving party's\nright to obtain a ruling on the motion and to seek costs, attorney's fees, and\nexpenses pursuant to section 6-3910, Idaho Code.\n(3) A voluntary dismissal with prejudice of a responding party's cause\nof action, or part of a cause of action, that is the subject of a motion pur-\nsuant to section 6-3903, Idaho Code, establishes for the purpose of section\n6-3910, Idaho Code, that the moving party prevailed on the motion.\n6-3908. RULING. The court shall rule on a motion pursuant to section\n6-3903, Idaho Code, no later than sixty (60) days after a hearing pursuant to\nsection 6-3905, Idaho Code.\n6-3909. APPEAL. A moving party may appeal as a matter of right from\nan order denying, in whole or in part, a motion pursuant to section 6-3903,\nIdaho Code. The appeal shall be filed within forty-two (42) days after entry\nof the order pursuant to applicable court rule.\n6-3910. COSTS, ATTORNEY'S FEES, AND EXPENSES. Upon a motion pursuant\nto section 6-3903, Idaho Code, the court shall award court costs, reasonable\nattorney's fees, and reasonable litigation expenses related to the motion:\n(1) To the moving party if the moving party prevails on the motion; or\n(2) To the responding party if the responding party prevails on the mo-\ntion and the court finds that the motion was frivolous or filed solely with\nintent to delay the proceeding.\n6-3911. CONSTRUCTION. This chapter shall be broadly construed and\napplied to protect the exercise of the right of freedom of speech and of the\npress, the right to assemble and petition, and the right of association,\nguaranteed by the constitution of the United States and the constitution of\nthe state of Idaho.\n6-3912. UNIFORMITY OF APPLICATION AND CONSTRUCTION. In applying and\nconstruing this uniform act, consideration shall be given to the need to pro-\nmote uniformity of the law with respect to its subject matter among states\nthat enact it.\n6-3913. TRANSITIONAL PROVISION. The provisions of this chapter shall\napply to a civil action filed or cause of action asserted in a civil action on\nor after January 1, 2026.\n6-3914. SAVINGS CLAUSE. The provisions of this chapter shall not af-\nfect a cause of action asserted before January 1, 2026.\n6-3915. SEVERABILITY. If any provision of this chapter or its applica-\ntion to any person or circumstance is held invalid, the invalidity does not\naffect other provisions or applications of this chapter that can be given ef-\nfect without the invalid provision or application, and to this end, the pro-\nvisions of this chapter are severable.\nSECTION 2. This act shall be in full force and effect on and after Jan-\nuary 1, 2026.",
+  "raw_text_url": "https://legislature.idaho.gov/wp-content/uploads/sessioninfo/2025/legislation/S1001.pdf"
+ }
+]

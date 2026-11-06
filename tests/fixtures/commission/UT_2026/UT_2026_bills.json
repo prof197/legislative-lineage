@@ -1,0 +1,348 @@
+[
+ {
+  "id": "ocd-bill/370e175f-246b-4076-a6b8-62312800299c",
+  "legislative_session": "2026",
+  "identifier": "HB 181",
+  "title": "Uniform Estate Planning Amendments",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Utah State Legislature",
+    "description": "Bill Numbered but not Distributed",
+    "date": "2026-01-07T21:47:37+00:00",
+    "classification": [],
+    "order": 0
+   },
+   {
+    "organization__name": "Utah State Legislature",
+    "description": "Numbered Bill Publicly Distributed",
+    "date": "2026-01-07T21:47:37+00:00",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "Utah State Legislature",
+    "description": "LFA/ bill assigned to staff for fiscal analysis for HB0181",
+    "date": "2026-01-07T21:47:38+00:00",
+    "classification": [],
+    "order": 2
+   },
+   {
+    "organization__name": "Utah State Legislature",
+    "description": "LFA/ bill sent to agencies for fiscal input for HB0181",
+    "date": "2026-01-07T21:47:38+00:00",
+    "classification": [],
+    "order": 3
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ received bill from Legislative Research",
+    "date": "2026-01-14T21:01:01+00:00",
+    "classification": [
+     "receipt"
+    ],
+    "order": 4
+   },
+   {
+    "organization__name": "Utah State Legislature",
+    "description": "LFA/ fiscal note sent to sponsor for HB0181",
+    "date": "2026-01-16T18:16:45+00:00",
+    "classification": [],
+    "order": 5
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ 1st reading (Introduced)",
+    "date": "2026-01-20T22:38:26+00:00",
+    "classification": [
+     "introduction",
+     "reading-1"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "Utah State Legislature",
+    "description": "LFA/ fiscal note publicly available for HB0181",
+    "date": "2026-01-20T22:50:03+00:00",
+    "classification": [],
+    "order": 7
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ received fiscal note from Fiscal Analyst",
+    "date": "2026-01-20T23:17:47+00:00",
+    "classification": [
+     "receipt"
+    ],
+    "order": 8
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ to standing committee [House Judiciary Committee]",
+    "date": "2026-01-26T19:15:42+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "Utah State Legislature",
+    "description": "House Comm - Favorable Recommendation [House Judiciary Committee]",
+    "date": "2026-01-28T22:39:07+00:00",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ committee report favorable [House Judiciary Committee]",
+    "date": "2026-01-29T18:13:03+00:00",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 11
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ 2nd reading",
+    "date": "2026-01-29T18:13:04+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 12
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ 3rd reading",
+    "date": "2026-02-06T18:53:27+00:00",
+    "classification": [
+     "reading-3"
+    ],
+    "order": 13
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ passed 3rd reading",
+    "date": "2026-02-06T18:56:37+00:00",
+    "classification": [
+     "passage"
+    ],
+    "order": 14
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ to Senate",
+    "date": "2026-02-06T18:56:39+00:00",
+    "classification": [],
+    "order": 15
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate/ received from House",
+    "date": "2026-02-06T19:29:06+00:00",
+    "classification": [
+     "receipt"
+    ],
+    "order": 16
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate/ 1st reading (Introduced)",
+    "date": "2026-02-06T21:17:22+00:00",
+    "classification": [
+     "introduction",
+     "reading-1"
+    ],
+    "order": 17
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate/ to standing committee [Senate Judiciary, Law Enforcement, and Criminal Justice Committee]",
+    "date": "2026-02-10T21:28:01+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 18
+   },
+   {
+    "organization__name": "Utah State Legislature",
+    "description": "Senate Comm - Favorable Recommendation [Senate Judiciary, Law Enforcement, and Criminal Justice Committee]",
+    "date": "2026-02-12T22:22:10+00:00",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 19
+   },
+   {
+    "organization__name": "Utah State Legislature",
+    "description": "Senate Comm - Consent Calendar Recommendation [Senate Judiciary, Law Enforcement, and Criminal Justice Committee]",
+    "date": "2026-02-12T22:23:05+00:00",
+    "classification": [],
+    "order": 20
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate/ comm rpt/ placed on Consent Calendar [Senate Judiciary, Law Enforcement, and Criminal Justice Committee]",
+    "date": "2026-02-13T17:19:26+00:00",
+    "classification": [],
+    "order": 21
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate/ 2nd reading",
+    "date": "2026-02-13T17:19:27+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 22
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate/ 3rd reading",
+    "date": "2026-02-19T17:29:56+00:00",
+    "classification": [
+     "reading-3"
+    ],
+    "order": 23
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate/ passed 3rd reading",
+    "date": "2026-02-19T17:31:52+00:00",
+    "classification": [
+     "passage"
+    ],
+    "order": 24
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate/ signed by President/ returned to House",
+    "date": "2026-02-19T17:31:53+00:00",
+    "classification": [
+     "passage"
+    ],
+    "order": 25
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate/ to House",
+    "date": "2026-02-19T17:31:54+00:00",
+    "classification": [],
+    "order": 26
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ received from Senate",
+    "date": "2026-02-19T19:23:39+00:00",
+    "classification": [
+     "receipt"
+    ],
+    "order": 27
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ signed by Speaker/ sent for enrolling",
+    "date": "2026-02-19T19:23:40+00:00",
+    "classification": [
+     "passage"
+    ],
+    "order": 28
+   },
+   {
+    "organization__name": "Utah State Legislature",
+    "description": "Bill Received from House for Enrolling",
+    "date": "2026-02-23T21:45:37+00:00",
+    "classification": [
+     "receipt"
+    ],
+    "order": 29
+   },
+   {
+    "organization__name": "Utah State Legislature",
+    "description": "Draft of Enrolled Bill Prepared",
+    "date": "2026-02-23T21:45:42+00:00",
+    "classification": [],
+    "order": 30
+   },
+   {
+    "organization__name": "Utah State Legislature",
+    "description": "Enrolled Bill Returned to House or Senate",
+    "date": "2026-02-25T17:13:37+00:00",
+    "classification": [
+     "enrolled"
+    ],
+    "order": 31
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ enrolled bill to Printing",
+    "date": "2026-02-25T17:13:42+00:00",
+    "classification": [],
+    "order": 32
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ received enrolled bill from Printing",
+    "date": "2026-03-03T20:49:47+00:00",
+    "classification": [
+     "receipt"
+    ],
+    "order": 33
+   },
+   {
+    "organization__name": "House",
+    "description": "House/ to Governor",
+    "date": "2026-03-03T20:49:49+00:00",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 34
+   },
+   {
+    "organization__name": "Office of the Governor",
+    "description": "Governor Signed",
+    "date": "2026-03-23T15:17:00+00:00",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 35
+   }
+  ],
+  "versions": [
+   {
+    "note": "Enrolled",
+    "date": "",
+    "links": [
+     {
+      "url": "https://le.utah.gov/Session/2026/bills/enrolled/HB0181.pdf",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://le.utah.gov/Session/2026/bills/enrolled/HB0181.xml",
+      "media_type": "text/xml"
+     }
+    ]
+   },
+   {
+    "note": "Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "https://le.utah.gov/Session/2026/bills/introduced/HB0181.pdf",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://le.utah.gov/Session/2026/bills/introduced/HB0181.xml",
+      "media_type": "text/xml"
+     }
+    ]
+   }
+  ],
+  "raw_text": "Uniform Estate Planning Amendments\nGENERAL SESSION\nLONG TITLE\nGeneral Description:\nThis bill enacts the Uniform Electronic Estate Planning Documents Act.\nHighlighted Provisions:\nThis bill:\n▸ defines terms;\n▸ enacts the Uniform Electronic Estate Planning Documents Act;\n▸ establishes the scope of the provisions this bill enacts;\n▸ provides that a non-testamentary estate planning document or an electronic signature may\nnot be denied legal effect because the non-testamentary estate planning document or\nelectronic signature is in electronic form;\n▸ provides that a non-testamentary estate planning document or an electronic signature is\nattributable to a person if the non-testamentary estate planning document or the\nelectronic signature was the act of the person;\n▸ provides notarization and acknowledgment requirements for a non-testamentary estate\nplanning document or an electronic signature on an electronic non-testamentary estate\nplanning document;\n▸ provides witnessing and attestation requirements for an electronic non-testamentary estate\nplanning document;\n▸ establishes retention requirements for an electronic non-testamentary estate planning\ndocument;\n▸ provides the manner in which an individual may certify a paper copy of an electronic\nnon-testamentary estate planning document;\n▸ provides that an electronic non-testamentary estate planning document or an electronic\nsignature on an electronic non-testamentary estate planning document may not be\nexcluded from a proceeding solely because the electronic non-testamentary estate\nplanning document or an electronic signature is in electronic form; and\n▸ provides the manner in which the provisions this bill enacts relate to existing law.\nMoney Appropriated in this Bill:\nNone\nOther Special Clauses:\nNone\nUtah Code Sections Affected:\nENACTS:\n75-13-101, Utah Code Annotated 1953\n75-13-102, Utah Code Annotated 1953\n75-13-201, Utah Code Annotated 1953\n75-13-202, Utah Code Annotated 1953\n75-13-203, Utah Code Annotated 1953\n75-13-204, Utah Code Annotated 1953\n75-13-205, Utah Code Annotated 1953\n75-13-206, Utah Code Annotated 1953\n75-13-207, Utah Code Annotated 1953\n75-13-208, Utah Code Annotated 1953\n75-13-209, Utah Code Annotated 1953\n75-13-210, Utah Code Annotated 1953\n75-13-301, Utah Code Annotated 1953\n75-13-302, Utah Code Annotated 1953\n75-13-303, Utah Code Annotated 1953\nBe it enacted by the Legislature of the state of Utah:\nSection 1. Section 75-13-101 is enacted to read:\nCHAPTER 13. Uniform Electronic Estate Planning Documents Act\nPart 1. General Provisions\n75-13-101 . Definitions.\nAs used in this chapter:\n(1) \"Electronic\" means relating to technology having electrical, digital, magnetic, wireless,\noptical, electromagnetic, or similar capabilities.\n(2) \"Electronic record\" means a record created, generated, sent, communicated, received, or\nstored by electronic means.\n(3) \"Electronic signature\" means an electronic symbol or process attached to or logically\nassociated with a record and executed or adopted by a person with the intent to sign the\nrecord.\n(4) \"Information\" includes data, text, images, codes, computer programs, software, and\ndatabases.\n(5)(a) \"Non-testamentary estate planning document\" means a record relating to estate\nplanning that is readable as text at the time of signing and is not a will or contained in\na will.\n(b) \"Non-testamentary estate planning document\" includes a record readable as text at\nthe time of signing that creates, exercises, modifies, releases, or revokes:\n(i) a trust instrument;\n(ii) a trust power that under the terms of the trust requires a signed record;\n(iii) a certification of a trust under Section 75B-2-1013;\n(iv) a power of attorney that is durable under Title 75A, Chapter 2, Uniform Power of\nAttorney Act;\n(v) an agent's certification under Section 75A-2-302 of the validity of a power of\nattorney and the agent's authority;\n(vi) a power of appointment;\n(vii) an advance directive, including an advance health care directive, directive to\nphysicians, natural death statement, living will, and medical or physician order for\nlife-sustaining treatment;\n(viii) a record directing disposition of an individual's body after death;\n(ix) a nomination of a guardian for the signing individual;\n(x) a nomination of a guardian for a minor child or disabled adult child;\n(xi) a mental health treatment declaration;\n(xii) a community property survivorship agreement;\n(xiii) a disclaimer under Section 75-2-801; and\n(xiv) any other record intended to carry out an individual's intent regarding property\nor health care while incapacitated or on death.\n(c) \"Non-testamentary estate planning document\" does not include a deed of real\nproperty or certificate of title for a motor vehicle, watercraft, or aircraft.\n(6) \"Person\" means an individual, estate, business or nonprofit entity, government or\ngovernmental subdivision, agency, or instrumentality, or other legal entity.\n(7) \"Power of attorney\" means a record that grants authority to an agent to act in place of\nthe principal, even if the term is not used in the record.\n(8) \"Record\" means information:\n(a) inscribed on a tangible medium; or\n(b) stored in an electronic or other medium and retrievable in perceivable form.\n(9)(a) \"Security procedure\" means a procedure to verify that an electronic signature,\nrecord, or performance is that of a specific person or to detect a change or error in an\nelectronic record.\n(b) \"Security procedure\" includes a procedure that uses an algorithm, code, identifying\nword or number, encryption, or callback or other acknowledgment procedure.\n(10) \"Settlor\" means a person, including a testator, that creates or contributes property to a\ntrust.\n(11) \"Sign\" means, with present intent to authenticate or adopt a record to:\n(a) execute or adopt a tangible symbol; or\n(b) attach to or logically associate with the record an electronic signature.\n(12)(a) \"State\" means a state of the United States, the District of Columbia, Puerto Rico,\nthe United States Virgin Islands, or other territory or possession subject to the\njurisdiction of the United States.\n(b) \"State\" includes a federally recognized Indian tribe.\n(13) \"Terms of a trust\" means:\n(a) except as provided in Subsection (13)(b), the manifestation of the settlor's intent\nregarding a trust's provisions as:\n(i) expressed in the trust instrument; or\n(ii) established by other evidence that would be admissible in a judicial proceeding; or\n(b) the trust's provisions as established, determined, or amended by:\n(i) a trustee or other person in accordance with applicable law;\n(ii) a court order; or\n(iii) a nonjudicial settlement agreement under Section 75B-2-110.\n(14) \"Trust instrument\" means an instrument executed by the settlor that contains terms of\nthe trust, including any amendments.\n(15) \"Will\" includes a codicil and a testamentary instrument that merely appoints an\nexecutor, revokes or revises another will, nominates a guardian, or expressly excludes or\nlimits the right of an individual or class to succeed to property of the decedent passing\nby intestate succession.\nSection 2. Section 75-13-102 is enacted to read:\n75-13-102 . Construction.\nThis chapter shall be construed and applied to:\n(1) facilitate electronic estate planning documents and signatures consistent with other law;\nand\n(2) be consistent with reasonable practices concerning electronic documents and signatures\nand continued expansion of those practices.\nSection 3. Section 75-13-201 is enacted to read:\nPart 2. Electronic Non-Testamentary Estate Planning Documents\n75-13-201 . Scope.\n(1) Except as provided in Subsection (2), this part applies to an electronic non-testamentary\nestate planning document and an electronic signature on a non-testamentary estate\nplanning document.\n(2) This part does not apply to a non-testamentary estate planning document if the\ndocument precludes use of an electronic record or electronic signature.\n(3) This part does not affect the validity of an electronic record or electronic signature that\nis valid under:\n(a) Title 46, Chapter 4, Uniform Electronic Transactions Act; or\n(b) Chapter 2, Part 14, Uniform Electronic Wills Act.\nSection 4. Section 75-13-202 is enacted to read:\n75-13-202 . Principles of law and equity.\nThe laws of this state and principles of equity applicable to a non-testamentary estate\nplanning document apply to an electronic non-testamentary estate planning document except\nas modified by this part.\nSection 5. Section 75-13-203 is enacted to read:\n75-13-203 . Use of electronic record or signature not required.\n(1) This part does not require a non-testamentary estate planning document or signature on\na non-testamentary estate planning document to be created, generated, sent,\ncommunicated, received, stored, or otherwise processed or used by electronic means or\nin electronic form.\n(2) A person is not required to have a non-testamentary estate planning document in\nelectronic form or signed electronically even if the person previously created or signed a\nnon-testamentary estate planning document by electronic means.\n(3) A person may not waive the provisions of this section.\nSection 6. Section 75-13-204 is enacted to read:\n75-13-204 . Recognition of electronic non-testamentary estate planning document\nand electronic signature.\n(1) A non-testamentary estate planning document or a signature on a non-testamentary\nestate planning document may not be denied legal effect or enforceability solely because\nthe non-testamentary estate planning document or a signature on a non-testamentary\nestate planning document is in electronic form.\n(2) If other law of this state requires a non-testamentary estate planning document to be in\nwriting, an electronic record of the document satisfies this requirement.\n(3) If other law of this state requires a signature on a non-testamentary estate planning\ndocument, an electronic signature satisfies the requirement.\nSection 7. Section 75-13-205 is enacted to read:\n75-13-205 . Attribution and effect of electronic record and electronic signature.\n(1)(a) An electronic non-testamentary estate planning document or electronic signature\non an electronic non-testamentary estate planning document is attributable to a\nperson if the electronic non-testamentary estate planning document or electronic\nsignature on an electronic non-testamentary estate planning document was the act of\nthe person.\n(b) The act of the person may be shown in any manner, including by showing the\nefficacy of a security procedure applied to determine the person to which the\nelectronic record or electronic signature was attributable.\n(2) The effect of attribution to a person under Subsection (1) of a document or signature is\ndetermined from the context and surrounding circumstances at the time of the\ndocument's or signature's creation, execution, or adoption and as provided by law.\nSection 8. Section 75-13-206 is enacted to read:\n75-13-206 . Notarization and acknowledgment.\nIf other law of this state requires a signature or record to be notarized, acknowledged,\nverified or made under oath, the requirement is satisfied with respect to an electronic\nnon-testamentary estate planning document if an individual authorized to perform the\nnotarization, acknowledgment, verification, or oath attaches or logically associates the\nindividual's electronic signature on the document together with all other information required\nto be included under the other law.\nSection 9. Section 75-13-207 is enacted to read:\n75-13-207 . Witnessing and attestation.\n(1) If other law of this states bases the validity of a non-testamentary estate planning\ndocument on whether the non-testamentary estate planning document is signed,\nwitnessed, or attested by another individual, the signature, witnessing, or attestation of\nthat individual may be electronic.\n(2)(a) As used in this Subsection (2), \"electronic presence\" means that two or more\nindividuals in different locations are able to communicate in real time to the same\nextent as if the individuals were physically present in the same location.\n(b) If other law of this state bases the validity of a non-testamentary estate planning\ndocument on whether the non-testamentary estate planning document is signed,\nwitnessed, or attested by another individual in the presence of the individual signing\nthe document, the presence requirement is satisfied if the individuals are in each\nother's electronic presence.\nSection 10. Section 75-13-208 is enacted to read:\n75-13-208 . Retention of electronic record -- Original.\n(1) As used in this section, \"governmental agency\" means an executive, legislative, or\njudicial agency, department, board, commission, authority, institution, or instrumentality\nof the federal government or of a state or of a county, municipality, or other political\nsubdivision of a state.\n(2) Except as provided in Subsection (3), if other law of this state requires an electronic\nnon-testamentary estate planning document to be retained, transmitted, copied, or filed,\nthe requirement is satisfied by retaining, transmitting, copying, or filing an electronic\nrecord that:\n(a) accurately reflects the information in the document after the document was first\ngenerated in final form as an electronic record or under Section 75-13-209; and\n(b) remains accessible to the extent required by the other law.\n(3) A requirement under Subsection (2) to retain a record does not apply to information the\nsole purpose of which is to enable the record to be sent, communicated, or received.\n(4) A person may satisfy Subsection (2) by using the services of another person.\n(5) If other law of this state requires a non-testamentary estate planning document to be\npresented or retained in the non-testamentary estate planning document's original form,\nor provides consequences if a non-testamentary estate planning document is not\npresented or retained in the non-testamentary estate planning document's original form,\nan electronic record retained in accordance with Subsection (2) satisfies the other law.\n(6) This section does not preclude a governmental agency from specifying requirements for\nthe retention of a record subject to the agency's jurisdiction in addition to those in this\nsection.\nSection 11. Section 75-13-209 is enacted to read:\n75-13-209 . Certification of paper copy.\nAn individual may create a certified paper copy of an electronic non-testamentary estate\nplanning document by affirming under penalty of perjury that the paper copy is a complete and\naccurate copy of the document.\nSection 12. Section 75-13-210 is enacted to read:\n75-13-210 . Admissibility in evidence.\nEvidence relating to an electronic non-testamentary estate planning document or an\nelectronic signature on the document may not be excluded in a proceeding solely because the\nnon-testamentary estate planning document or electronic signature is in electronic form.\nSection 13. Section 75-13-301 is enacted to read:\nPart 3. Miscellaneous Provisions\n75-13-301 . Uniformity of application and construction.\nIn applying and construing this uniform act, a court shall consider the promotion of\nuniformity in the law among jurisdictions that enact the uniform act.\nSection 14. Section 75-13-302 is enacted to read:\n75-13-302 . Relation to Electronic Signatures in Global and National Commerce\nAct.\nThis chapter modifies, limits, or supersedes the Electronic Signatures in Global and\nNational Commerce Act, 15 U.S.C. Sec. 7001 et seq., but does not modify, limit or supersede\n15 U.S.C. Sec. 7001(c), or authorize electronic delivery of any of the notices described in 15\nU.S.C. Sec. 7003(b).\nSection 15. Section 75-13-303 is enacted to read:\n75-13-303 . Transitional provision.\nThis chapter applies to an electronic non-testamentary estate planning document created,\nsigned, generated, sent, communicated, received, or stored before, on, or after May 6, 2026.\nSection 16. Effective Date.\nThis bill takes effect on May 6, 2026.",
+  "raw_text_url": "https://le.utah.gov/Session/2026/bills/introduced/HB0181.pdf"
+ }
+]

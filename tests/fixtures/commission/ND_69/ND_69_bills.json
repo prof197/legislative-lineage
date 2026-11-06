@@ -1,0 +1,539 @@
+[
+ {
+  "id": "ocd-bill/463214e4-c47a-4c4b-8819-2eb952e28bdc",
+  "legislative_session": "69",
+  "identifier": "SB 2127",
+  "title": "AN ACT to create and enact chapter 59-22 of the North Dakota Century Code, relating to the Uniform Electronic Estate Planning Documents Act; and to provide for application.",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Introduced, first reading, referred Judiciary Committee",
+    "date": "2025-01-07",
+    "classification": [
+     "introduction"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Committee Hearing 11:00",
+    "date": "2025-01-15",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported back, do pass, place on calendar 7 0 0",
+    "date": "2025-01-15",
+    "classification": [
+     "committee-passage",
+     "committee-passage-favorable"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Second reading, passed, yeas 47 nays 0",
+    "date": "2025-01-16",
+    "classification": [
+     "passage",
+     "reading-2"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "House",
+    "description": "Received from Senate",
+    "date": "2025-01-17",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "House",
+    "description": "Introduced, first reading, referred Judiciary Committee",
+    "date": "2025-02-13",
+    "classification": [
+     "introduction"
+    ],
+    "order": 5
+   },
+   {
+    "organization__name": "House",
+    "description": "Committee Hearing 11:00",
+    "date": "2025-03-11",
+    "classification": [],
+    "order": 6
+   },
+   {
+    "organization__name": "House",
+    "description": "Reported back amended, do pass, amendment placed on calendar 11 0 3",
+    "date": "2025-03-13",
+    "classification": [
+     "committee-passage",
+     "committee-passage-favorable"
+    ],
+    "order": 7
+   },
+   {
+    "organization__name": "House",
+    "description": "Amendment adopted, placed on calendar",
+    "date": "2025-03-14",
+    "classification": [],
+    "order": 8
+   },
+   {
+    "organization__name": "House",
+    "description": "Second reading, passed as amended, yeas 90 nays 2",
+    "date": "2025-03-17",
+    "classification": [
+     "passage",
+     "reading-2"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Returned to Senate (12)",
+    "date": "2025-03-18",
+    "classification": [],
+    "order": 10
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Concurred",
+    "date": "2025-03-20",
+    "classification": [],
+    "order": 11
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Second reading, passed, yeas 45 nays 1",
+    "date": "2025-03-20",
+    "classification": [
+     "passage",
+     "reading-2"
+    ],
+    "order": 12
+   },
+   {
+    "organization__name": "House",
+    "description": "Signed by Speaker",
+    "date": "2025-03-24",
+    "classification": [],
+    "order": 13
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Signed by President",
+    "date": "2025-03-24",
+    "classification": [],
+    "order": 14
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Sent to Governor",
+    "date": "2025-03-24",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 15
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Signed by Governor 03/25",
+    "date": "2025-03-26",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 16
+   },
+   {
+    "organization__name": "North Dakota Legislative Assembly",
+    "description": "Filed with Secretary Of State 03/26",
+    "date": "2025-03-27",
+    "classification": [
+     "introduction"
+    ],
+    "order": 17
+   }
+  ],
+  "versions": [
+   {
+    "note": "INTRODUCED",
+    "date": "",
+    "links": [
+     {
+      "url": "https://ndlegis.gov/assembly/69-2025/regular/documents/25-0258-01000.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Enrollment",
+    "date": "",
+    "links": [
+     {
+      "url": "https://ndlegis.gov/assembly/69-2025/regular/documents/25-0258-03000.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "",
+  "raw_text_url": null
+ },
+ {
+  "id": "ocd-bill/965e5111-eab6-4030-8993-6dfeef6a770b",
+  "legislative_session": "69",
+  "identifier": "HB 1149",
+  "title": "AN ACT to amend and reenact sections 47-30.2-04, 47-30.2-24, 47-30.2-32, 47-30.2-39, 47-30.2-50, 47-30.2-52, 47-30.2-55, and 47-30.2-63 of the North Dakota Century Code, relating to the revised uniform unclaimed property act; and to declare an emergency.",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "House",
+    "description": "Introduced, first reading, (emergency), referred Industry, Business and Labor Committee",
+    "date": "2025-01-07",
+    "classification": [
+     "introduction"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "House",
+    "description": "Committee Hearing 08:30",
+    "date": "2025-01-15",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "Committee Hearing 02:00",
+    "date": "2025-01-15",
+    "classification": [],
+    "order": 2
+   },
+   {
+    "organization__name": "House",
+    "description": "Reported back amended, do pass, amendment placed on calendar 14 0 0",
+    "date": "2025-01-24",
+    "classification": [
+     "committee-passage",
+     "committee-passage-favorable"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "House",
+    "description": "Amendment adopted, placed on calendar",
+    "date": "2025-01-27",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "House",
+    "description": "Second reading, passed, yeas 92 nays 0, Emergency clause carried",
+    "date": "2025-01-28",
+    "classification": [
+     "passage",
+     "reading-2"
+    ],
+    "order": 5
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Received from House",
+    "date": "2025-01-29",
+    "classification": [],
+    "order": 6
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Introduced, first reading, (emergency), referred Industry and Business Committee",
+    "date": "2025-02-13",
+    "classification": [
+     "introduction"
+    ],
+    "order": 7
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Committee Hearing 09:30",
+    "date": "2025-03-17",
+    "classification": [],
+    "order": 8
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported back, do pass, place on calendar 5 0 0",
+    "date": "2025-03-20",
+    "classification": [
+     "committee-passage",
+     "committee-passage-favorable"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Second reading, passed, yeas 44 nays 0, Emergency clause carried",
+    "date": "2025-03-21",
+    "classification": [
+     "passage",
+     "reading-2"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "House",
+    "description": "Returned to House",
+    "date": "2025-03-24",
+    "classification": [],
+    "order": 11
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Signed by President",
+    "date": "2025-03-25",
+    "classification": [],
+    "order": 12
+   },
+   {
+    "organization__name": "House",
+    "description": "Signed by Speaker",
+    "date": "2025-03-26",
+    "classification": [],
+    "order": 13
+   },
+   {
+    "organization__name": "House",
+    "description": "Sent to Governor",
+    "date": "2025-03-26",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 14
+   },
+   {
+    "organization__name": "House",
+    "description": "Signed by Governor 03/27",
+    "date": "2025-04-01",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 15
+   },
+   {
+    "organization__name": "North Dakota Legislative Assembly",
+    "description": "Filed with Secretary Of State 03/31",
+    "date": "2025-04-02",
+    "classification": [
+     "introduction"
+    ],
+    "order": 16
+   }
+  ],
+  "versions": [
+   {
+    "note": "INTRODUCED",
+    "date": "",
+    "links": [
+     {
+      "url": "https://ndlegis.gov/assembly/69-2025/regular/documents/25-0855-01000.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "FIRST ENGROSSMENT",
+    "date": "",
+    "links": [
+     {
+      "url": "https://ndlegis.gov/assembly/69-2025/regular/documents/25-0855-02000.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Enrollment",
+    "date": "",
+    "links": [
+     {
+      "url": "https://ndlegis.gov/assembly/69-2025/regular/documents/25-0855-03000.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "A BILL for an Act to amend and reenact sections 47-30.2-04, 47-30.2-24, 47-30.2-32,\n47-30.2-39, 47-30.2-50, 47-30.2-52, 47-30.2-55, and 47-30.2-63 of the North Dakota Century\nCode, relating to the revised uniform unclaimed property act; and to declare an emergency.\nBE IT ENACTED BY THE LEGISLATIVE ASSEMBLY OF NORTH DAKOTA:\nSECTION 1. AMENDMENT. Section 47-30.2-04 of the North Dakota Century Code is\namended and reenacted as follows:\n47-30.2-04. (201) When property presumed abandoned.\nSubject to section 47-30.2-12, the following property is presumed abandoned if it is\nunclaimed by the apparent owner during the period specified below:\n1.   Except as provided in this section, checks held, issued, or owing in the ordinary\ncourse of the holder's business which remain uncashed by the owner two years after\nbecoming payable;\n2.   A traveler's check, fifteen years after issuance;\n3.   A money order, seven years after issuance;\n4.   A state or municipal bond, bearer bond, or original-issue-discount bond, three years\nafter the earliest of the date:\na.     The bond matures;\nb.     The bond is called; or\nc.     The obligation to pay the principal of the bond arises;\n5.   A debt of a business association, three years after the obligation to pay arises;\n6.   A payroll card or a demand, savings, or time deposit, including a time deposit that is\nautomatically renewable, five years after the date of maturity of the time deposit or the\ndate of the last indication of interest in the property by the apparent owner, whichever\nis earlier, provided a time deposit that is automatically renewable is deemed matured\non its initial date of maturity unless the apparent owner has consented in a record on\nfile with the holder to renewal at or about the time of the renewal. If an apparent owner\nhas another established account with the financial institution and has demonstrated\ninterest in any account under section 47-30.2-12, then all accounts must be\nconsidered active;\n7.   A cashier's check or certified check, two years after issuance;\n8.   Money or a credit owed to a customer as a result of a retail business transaction, other\nthan in-store credit for returned merchandise, three years after the obligation arose;\n9.   An amount owed by an insurance company on a life or endowment insurance policy or\nan annuity contract that has matured or terminated, three years after the obligation to\npay arose under the terms of the policy or contract or, if a policy or contract for which\nan amount is owed on proof of death has not matured by proof of the death of the\ninsured or annuitant, as follows:\na.   With respect to an amount owed on a life or endowment insurance policy, three\nyears after the earlier of the date:\n(1)   The insurance company has knowledge of the death of the insured; or\n(2)   The insured has attained, or would have attained if living, the limiting age\nunder the mortality table on which the reserve for the policy is based; and\nb.   With respect to an amount owed on an annuity contract, three years after the\ndate the insurance company has knowledge of the death of the annuitant.\n10.   Property distributable by a business association in the course of dissolution, one year\nafter the property becomes distributable;\n11.   Property held by a court, including property received as proceeds of a class action,\nthree years after the property becomes distributable;\n12.   Property held by a government or political subdivision, agency, or instrumentality,\nincluding municipal bond interest and unredeemed principal under the administration\nof a paying agent or indenture trustee, three years after the property becomes\ndistributable;\n13.   Wages, commissions, bonuses, or reimbursements to which an employee is entitled,\nor other compensation for personal services, one year after the amount becomes\npayable;\n14.   A deposit or refund owed to a subscriber by a utility, one year after the deposit or\nrefund becomes payable;\n15.   A security deposit, including interest on the security deposit, made in advance by a\nperson to secure an agreement for rights of services, less any lawsuit deductions,\nwhich remains unclaimed by the owner for more than one year after termination of the\nagreement for which the deposit or advance payment was made;\n16.   A sum payable as mineral proceeds which has remained unclaimed by the owner for\nmore than three years after it became payable or distributable and the owner's\nunderlying right to receive those mineral proceeds are deemed abandoned. At the time\nan owner's underlying right to receive mineral proceeds is deemed abandoned, any\nmineral proceeds then owing to the owner and any proceeds accruing after that time\nare deemed abandoned; and\n17.   Virtual currency, three years after the apparent owner's last indication of interest in the\nproperty;\n18.   Excess proceeds from the sale of abandoned vehicles under chapter 23.1-15, the time\nprescribed by section 23.1-15-07;\n19.   Excess proceeds from the sale of public or private property under chapter 57-28, the\ntime prescribed by section 57-28-20; and\n20.   Property not specified in this section or sections 47-30.2-05 through 47-30.2-10, the\nearlier of three years after the owner first has a right to demand the property or the\nobligation to pay or distribute the property arises.\nSECTION 2. AMENDMENT. Section 47-30.2-24 of the North Dakota Century Code is\namended and reenacted as follows:\n47-30.2-24. (404) Retention of records by holder.\n1.   A holder required to file a report under section 47-30.2-21 shall retain records for ten\nyears after the later of the date the report was filed or the last date a timely report was\ndue to be filed, unless a shorter period is provided by rule of the commissioner.\n2.   Upon receipt of a notice for an examination or notice of authorization to participate in\nthe voluntary disclosure program under section 47-30.2-55, a holder shall retain, until\nthe conclusion of the examination or any related appeal or litigation, or the conclusion\nof authorized voluntary disclosure in each instance, all relevant records dating back\nten years from the commencement of the examination, plus the applicable dormancy\nperiod under section 47-30.2-04, before the date of the administrator's delivery of a\nnotice of an examination to a holder under this chapter.\n3.   The holder may satisfy the requirement to retain records under this section through an\nagent.\n4.   The records must contain:\na.   The verifiable information required to be included in the report;\nb.   The date, place, and nature of the circumstances that gave rise to the property\nright;\nc.   The amount or value of the property;\nd.   The last address of the apparent owner, if known to the holder;\ne.   If the holder sells, issues, or provides to others for sale or issue in this state\ntraveler's checks, money orders, or similar instruments, other than third-party\nbank checks, on which the holder is directly liable, a record of the instruments\nwhile they remain outstanding indicating the state and date of issue; and\nf.   Records of items that were not reported as unclaimed sufficient to determine\nwhether the holder has complied with this chapter.\nSECTION 3. AMENDMENT. Section 47-30.2-32 of the North Dakota Century Code is\namended and reenacted as follows:\n47-30.2-32. (603) Payment or delivery of property to administrator.\n1.   Except as otherwise provided in this section, on filing a report under section\n47-30.2-21, the holder shall pay or deliver to the administrator the property described\nin the report.\n2.   If property in a report under section 47-30.2-21 is an automatically renewable deposit\nand a penalty or forfeiture in the payment of interest would result from paying the\ndeposit to the administrator at the time of the report, the date for payment of the\nproperty to the administrator is extended until a penalty or forfeiture no longer would\nresult from payment, if the holder informs the administrator of the extended date.\n3.   If property reported to the administrator under section 47-30.2-21 is a security, the\nadministrator may:\na.   Make an endorsement, instruction, or entitlement order on behalf of the apparent\nowner to invoke the duty of the issuer, the transfer agent of the issuer, or the\nsecurities intermediary to transfer the security; or\nb.   Dispose of the security under section 47-30.2-41.\n4.   If the holder of property reported to the administrator under section 47-30.2-21 is the\nissuer of a certificated security, the administrator may obtain a replacement certificate\nin physical or book-entry form under section 41-08-38. An indemnity bond is not\nrequired.\n5.   The administrator shall establish procedures for the registration, issuance, method of\ndelivery, transfer, and maintenance of securities delivered to the administrator by a\nholder.\n6.   An issuer, holder, or transfer agent acting under this section under instructions of and\non behalf of the issuer or holder is not liable to the apparent owner for, and shall be\nindemnified by the state against, a claim arising with respect to property after the\nproperty has been delivered in good faith to the administrator.\n7.   A holder is not required to deliver to the administrator a security identified by the\nholder as a non-freely transferable security. If the administrator or holder determines\nthat a security is no longer a non-freely transferable security, the holder shall deliver\nthe security on the next regular date prescribed for delivery of securities under this\nchapter. The holder shall make a determination annually whether a security identified\nin a report filed under section 47-30.2-21 as a non-freely transferable security is no\nlonger a non-freely transferable security.\n8.   If property reported to the administrator is virtual currency, the holder shall liquidate\nthe virtual currency and remit the proceeds to the administrator. The liquidation must\noccur anytime within thirty days before the filing of the report under section\n47-30.2-21. The owner may not have recourse against the holder or the administrator\nto recover any gain in value occurring after the liquidation of the virtual currency under\nthis subsection.\nSECTION 4. AMENDMENT. Section 47-30.2-39 of the North Dakota Century Code is\namended and reenacted as follows:\n47-30.2-39. (610) Periods of limitation and repose.\n1.   Expiration before, on, or after July 1, 2021, of a period of limitation on an owner's right\nto receive or recover property, whether specified by contract, statute, or court order,\ndoes not prevent the property from being presumed abandoned or affect the duty of a\nholder under this chapter to file a report or pay or deliver property to the administrator.\n2.   The administrator may not commence an action or proceeding to enforce this chapter\nwith respect to the reporting, payment, or delivery of property more than seven years\nafter the holder filed a nonfraudulent report under section 47-30.2-21 with the\nadministrator. The parties may agree in a record to extend the limitation in this\nsubsection.\n3.   The administrator may not commence an action, proceeding, or examination with\nrespect to a duty of a holder under this chapter more than ten years after the duty\narose.\n4.   The periods of limitation established by this section are tolled by the earlier of the\nadministrator's delivery of a notice that a holder is subject to an examination or the\ndelivery of notice of authorization to voluntarily disclose property subject to this\nchapter under section 47-30.2-55.\nSECTION 5. AMENDMENT. Section 47-30.2-50 of the North Dakota Century Code is\namended and reenacted as follows:\n47-30.2-50. (903) Claim for property by person claiming to be owner.\n1.   A person claiming to be the owner of property held under this chapter by the\nadministrator may file a claim for the property and the claim must be on a form\nprescribed by the administrator. The claimant shall verify the claim as to the claim's\ncompleteness and accuracy.\n2.   The administrator may waive the requirement in subsection 1 and may pay or deliver\nproperty directly to a person if:\na.   The person receiving the property or payment is shown to be the apparent owner\nincluded on a report filed under section 47-30.2-21; and\nb.   The administrator reasonably believes the person is entitled to receive the\nproperty or payment; and\nc.   The property has a value as provided by rules adopted by the commissioner.\nSECTION 6. AMENDMENT. Section 47-30.2-52 of the North Dakota Century Code is\namended and reenacted as follows:\n47-30.2-52. (905) Allowance of claim for property.\n1.   Not later than sixty days after a claim is allowed under subsection 2 of section\n47-30.2-51, the administrator shall pay or deliver to the owner the property or pay to\nthe owner the net proceeds of a sale of the property, together with income or gain to\nwhich the owner is entitled under section 47-30.2-36. On request of the owner, the\nadministrator may sell or liquidate a security and pay the net proceeds to the owner,\neven if the security had been held by the administrator for fewer than three years or\nthe administrator has not complied with the notice requirements under section\n47-30.2-41.\n2.   Property held under this chapter by the administrator is subject to a claim for the\npayment of an enforceable debt the owner owes in this state for:\na.   Child support arrearages, including child support collection costs and child\nsupport arrearages that are combined with maintenance;\nb.   A civil or criminal fine or penalty, court costs, a surcharge, or restitution imposed\nby a final order of an administrative agency or a final court judgment; or\nc.   State or local taxes, penalties, and interest that have been determined to be\ndelinquent or as to which notice has been recorded with the state or local taxing\nauthority; or\nd.   A civil monetary judgment for which an execution order has been issued by a\nstate court of competent jurisdiction.\n3.   The state and local agencies may make periodic inquiries to the administrator to\ndetermine whether an apparent owner included in the unclaimed property records of\nthis state has enforceable debts described in subsection 2. The administrator first shall\napply the property or net proceeds of a sale of property held by the administrator to a\ndebt under subsection 2 of an apparent owner which appears in the records of the\nadministrator and deliver the amount to the appropriate state or local agency.\nSECTION 7. AMENDMENT. Section 47-30.2-55 of the North Dakota Century Code is\namended and reenacted as follows:\n47-30.2-55. (1002) Examination of records to determine compliance.\nThe administrator, at reasonable times and on reasonable notice, may:\n1.   Examine the records of a person, including examination of appropriate records in the\npossession of an agent of the person under examination, if the records are reasonably\nnecessary to determine whether the person has complied with this chapter;\n2.   Issue an administrative subpoena requiring the person or agent of the person to make\nrecords available for examination; and\n3.   Bring an action seeking judicial enforcement of the subpoena; and\n4.   Authorize a holder to voluntarily disclose property subject to this chapter.\nSECTION 8. AMENDMENT. Section 47-30.2-63 of the North Dakota Century Code is\namended and reenacted as follows:\n47-30.2-63. (1202) Interstate and international agreement - Cooperation.\n1.   Subject to subsection 2, theThe administrator may:\na.1.   Exchange information with another state or foreign country relating to property\npresumed abandoned or relating to the possible existence of property presumed\nabandoned; and\nb.2.   Authorize in a record another state or foreign country or a person acting on\nbehalf of the other state or country to examine its records of a putative holder as\nprovided in sections 47-30.2-54, 47-30.2-55, 47-30.2-56, 47-30.2-57, 47-30.2-58,\n47-30.2-59, 47-30.2-60, 47-30.2-61, and 47-30.2-62.\n2.   An exchange or examination under subsection 1 may be done only if the state or\nforeign country has confidentiality and security requirements substantially equivalent\nto those in sections 47-30.2-71, 47-30.2-72, and 47-30.2-73 or agrees in a record to\nbe bound by this state's confidentiality and security requirements.\nSECTION 9. EMERGENCY. This Act is declared to be an emergency measure.",
+  "raw_text_url": "https://ndlegis.gov/assembly/69-2025/regular/documents/25-0855-01000.pdf"
+ },
+ {
+  "id": "ocd-bill/bb0205d7-bfe0-4789-99cb-0b8712f6a7f8",
+  "legislative_session": "69",
+  "identifier": "SB 2123",
+  "title": "AN ACT to create and enact chapter 6-08.6 of the North Dakota Century Code, relating to the Uniform Special Deposits Act; and to provide for application.",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Introduced, first reading, referred Industry and Business Committee",
+    "date": "2025-01-07",
+    "classification": [
+     "introduction"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Committee Hearing 10:30",
+    "date": "2025-01-13",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported back, do pass, place on calendar 5 0 0",
+    "date": "2025-01-15",
+    "classification": [
+     "committee-passage",
+     "committee-passage-favorable"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Second reading, passed, yeas 47 nays 0",
+    "date": "2025-01-16",
+    "classification": [
+     "passage",
+     "reading-2"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "House",
+    "description": "Received from Senate",
+    "date": "2025-01-17",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "House",
+    "description": "Introduced, first reading, referred Industry, Business and Labor Committee",
+    "date": "2025-02-13",
+    "classification": [
+     "introduction"
+    ],
+    "order": 5
+   },
+   {
+    "organization__name": "House",
+    "description": "Committee Hearing 03:45",
+    "date": "2025-03-12",
+    "classification": [],
+    "order": 6
+   },
+   {
+    "organization__name": "House",
+    "description": "Reported back, do pass, place on calendar 10 0 4",
+    "date": "2025-03-13",
+    "classification": [
+     "committee-passage",
+     "committee-passage-favorable"
+    ],
+    "order": 7
+   },
+   {
+    "organization__name": "House",
+    "description": "Second reading, passed, yeas 88 nays 0",
+    "date": "2025-03-14",
+    "classification": [
+     "passage",
+     "reading-2"
+    ],
+    "order": 8
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Returned to Senate",
+    "date": "2025-03-17",
+    "classification": [],
+    "order": 9
+   },
+   {
+    "organization__name": "House",
+    "description": "Signed by Speaker",
+    "date": "2025-03-19",
+    "classification": [],
+    "order": 10
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Signed by President",
+    "date": "2025-03-19",
+    "classification": [],
+    "order": 11
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Sent to Governor",
+    "date": "2025-03-19",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 12
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Signed by Governor 03/20",
+    "date": "2025-03-21",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 13
+   },
+   {
+    "organization__name": "North Dakota Legislative Assembly",
+    "description": "Filed with Secretary Of State 03/20",
+    "date": "2025-03-24",
+    "classification": [
+     "introduction"
+    ],
+    "order": 14
+   }
+  ],
+  "versions": [
+   {
+    "note": "INTRODUCED",
+    "date": "",
+    "links": [
+     {
+      "url": "https://ndlegis.gov/assembly/69-2025/regular/documents/25-0259-03000.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Enrollment",
+    "date": "",
+    "links": [
+     {
+      "url": "https://ndlegis.gov/assembly/69-2025/regular/documents/25-0259-04000.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "",
+  "raw_text_url": null
+ }
+]

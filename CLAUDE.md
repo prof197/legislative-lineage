@@ -21,6 +21,8 @@ uv run lineage stats         # coverage, sections, types, status per state/sessi
 uv run lineage stats --samples  # also: sample titles per document-type rule -> data/reports/ (local; names private people, never committed)
 uv run lineage index         # signatures, LSH bands, verified pairs, families -> data/tables/{signatures,bands,pairs,families}/, reports/index.json
 uv run lineage query FILE     # a bill's near-duplicate families, offline, from the built index
+uv run lineage eval commission  # commission recall, act texts from data/acts/ -> reports/results.json
+uv run python -m evals.fixture  # rebuild tests/fixtures/commission/ from the local snapshot, dev only
 uv run python -m benchmarks.minhash  # NumPy vs datasketch: signing and LSH index time and memory (DR-3), dev only
 ```
 
@@ -51,18 +53,24 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   index.py        `lineage index`: signatures, bands, pairs and families, then reports/index.json
   query.py        `lineage query`: sign a bill's text, look up its bands, verify, group by family
   acts.py         uniform act texts as eval queries: keep the sections, drop comments and notes
+  ulc.py          the commission's enactment lists, and the bills each enactment names
+  commission.py   `lineage eval commission`: recall, a miss reason per enactment, the results JSON
   stoplist.py     document-frequency stoplist and its report
   stats.py        coverage report: the measurements that replace the design's estimates
   queries.py      every SQL query the pipeline runs (DR-4)
   disk.py         free-space floor checked before large writes
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
+evals/            eval inputs: ulc_enactments.csv (hand copy of the commission's lists, dated)
+  fixture.py      dev-only: builds tests/fixtures/commission/ from the snapshot
   memory.py       current and peak memory as the OS charges it (macOS physical footprint)
 tests/            pytest; small committed fixtures only
   fixtures/openstates/  trimmed real records in archive layout (README + *_bills.json)
+  fixtures/commission/  enacting bills among uniform-act distractors, same layout, + sessions.csv
 snapshot/manifest.json  the pinned snapshot: per-archive size, SHA-256, Generated At
 snapshot/sessions.csv   session start/end dates and carryover, from a pinned scrapers commit
 rules/document_types.csv  which document types are matched, per state; first fitting rule wins
 reports/          committed outputs of pipeline commands; README and DESIGN numbers cite them
+  results.json    eval results, one section per eval; the README results table reads it
 DESIGN.md         design, alternatives, scaling limits, failure modes, decision records
 data/             local snapshots and derived tables; gitignored, never committed
   raw/<ST>/*.zip  Open States session archives, never edited

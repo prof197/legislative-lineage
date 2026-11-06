@@ -1,0 +1,18 @@
+{
+ "command": "uv run python -m evals.fixture",
+ "queries": {
+  "electronic-estate-planning-documents": "ocd-bill/fcf5bbbf-1572-4766-af1a-47649b26178a",
+  "public-expression-protection": "ocd-bill/7968b9d9-25ee-4684-a92e-c76167d6f917",
+  "special-deposits": "ocd-bill/a3bec6ea-4c68-4251-b36c-60f0e4053031"
+ },
+ "targets": 49,
+ "omitted_over_max_chars": [
+  "ocd-bill/3cc60328-ce7c-4672-822d-83d1702cfff9",
+  "ocd-bill/6f465d45-da9a-4770-b4f3-81c6fb0dd2f3",
+  "ocd-bill/904a6e6b-5831-4983-acee-72147889a52a",
+  "ocd-bill/f16c85d9-9f6e-49ec-81c3-dcad51fa9377",
+  "ocd-bill/f9e78d0c-7e60-46db-acf1-fd75a1fcf5c5"
+ ],
+ "max_target_chars": 40000,
+ "distractors": 14
+}

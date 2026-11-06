@@ -1,0 +1,348 @@
+[
+ {
+  "id": "ocd-bill/10a37090-8929-4998-98bd-8825b751aee2",
+  "legislative_session": "2023-2024",
+  "identifier": "HB 1466",
+  "title": "An Act amending Title 42 (Judiciary and Judicial Procedure) of the Pennsylvania Consolidated Statutes, in particular rights and immunities, providing for a cause of action on protected public expression and for immunity for protected public expression; and imposing a duty upon the Administrative Office of Pennsylvania Courts and the Legislative Reference Bureau.",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "House",
+    "description": "Referred to Judiciary",
+    "date": "2023-06-21T04:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "House",
+    "description": "Reported as committed",
+    "date": "2023-10-03T04:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "First consideration",
+    "date": "2023-10-03T04:00:00+00:00",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "House",
+    "description": "Laid on the table",
+    "date": "2023-10-03T04:00:00+00:00",
+    "classification": [],
+    "order": 3
+   },
+   {
+    "organization__name": "House",
+    "description": "Removed from table",
+    "date": "2023-10-03T04:00:00+00:00",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "House",
+    "description": "Second consideration",
+    "date": "2023-10-04T04:00:00+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 5
+   },
+   {
+    "organization__name": "House",
+    "description": "Re-committed to Appropriations",
+    "date": "2023-10-04T04:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "House",
+    "description": "Re-reported as committed",
+    "date": "2023-10-05T04:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 7
+   },
+   {
+    "organization__name": "House",
+    "description": "Third consideration and final passage",
+    "date": "2023-10-05T04:00:00+00:00",
+    "classification": [
+     "passage",
+     "reading-3"
+    ],
+    "order": 8
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Referred to Judiciary",
+    "date": "2023-10-13T04:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported as committed",
+    "date": "2024-07-01T04:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "Senate",
+    "description": "First consideration",
+    "date": "2024-07-01T04:00:00+00:00",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 11
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Second consideration",
+    "date": "2024-07-02T04:00:00+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 12
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Re-referred to Appropriations",
+    "date": "2024-07-02T04:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 13
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Re-reported as committed",
+    "date": "2024-07-02T04:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 14
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Amended on third consideration",
+    "date": "2024-07-03T04:00:00+00:00",
+    "classification": [
+     "amendment-passage"
+    ],
+    "order": 15
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Third consideration and final passage",
+    "date": "2024-07-09T04:00:00+00:00",
+    "classification": [
+     "passage",
+     "reading-3"
+    ],
+    "order": 16
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred to Rules",
+    "date": "2024-07-10T04:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 17
+   },
+   {
+    "organization__name": "House",
+    "description": "Re-reported on concurrence, as committed",
+    "date": "2024-07-10T04:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 18
+   },
+   {
+    "organization__name": "House",
+    "description": "House concurred in Senate amendments",
+    "date": "2024-07-10T04:00:00+00:00",
+    "classification": [],
+    "order": 19
+   },
+   {
+    "organization__name": "House",
+    "description": "Signed in House",
+    "date": "2024-07-10T04:00:00+00:00",
+    "classification": [],
+    "order": 20
+   },
+   {
+    "organization__name": "House",
+    "description": "Signed in Senate",
+    "date": "2024-07-10T04:00:00+00:00",
+    "classification": [],
+    "order": 21
+   },
+   {
+    "organization__name": "House",
+    "description": "Presented to the Governor",
+    "date": "2024-07-10T04:00:00+00:00",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 22
+   },
+   {
+    "organization__name": "House",
+    "description": "Approved by the Governor",
+    "date": "2024-07-17T04:00:00+00:00",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 23
+   },
+   {
+    "organization__name": "House",
+    "description": "Act No. 72 of 2024",
+    "date": "2024-07-17T04:00:00+00:00",
+    "classification": [],
+    "order": 24
+   }
+  ],
+  "versions": [
+   {
+    "note": "House Amendment A05420",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.palegis.us/legislation/amendments/text/2023/0/A05420?txtType=DOC",
+      "media_type": "application/msword"
+     },
+     {
+      "url": "https://www.palegis.us/legislation/amendments/text/2023/0/A05420?txtType=HTM",
+      "media_type": "text/html"
+     },
+     {
+      "url": "https://www.palegis.us/legislation/amendments/text/2023/0/A05420",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "House Amendment A02281",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.palegis.us/legislation/amendments/text/2023/0/A02281?txtType=DOC",
+      "media_type": "application/msword"
+     },
+     {
+      "url": "https://www.palegis.us/legislation/amendments/text/2023/0/A02281?txtType=HTM",
+      "media_type": "text/html"
+     },
+     {
+      "url": "https://www.palegis.us/legislation/amendments/text/2023/0/A02281",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Printer's No. PN1650",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.palegis.us/legislation/bills/text/DOC/2023/0/HB1466/PN1650",
+      "media_type": "application/msword"
+     },
+     {
+      "url": "https://www.palegis.us/legislation/bills/text/HTM/2023/0/HB1466/PN1650",
+      "media_type": "text/html"
+     },
+     {
+      "url": "https://www.palegis.us/legislation/bills/text/PDF/2023/0/HB1466/PN1650",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Printer's No. PN3487",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.palegis.us/legislation/bills/text/DOC/2023/0/HB1466/PN3487",
+      "media_type": "application/msword"
+     },
+     {
+      "url": "https://www.palegis.us/legislation/bills/text/HTM/2023/0/HB1466/PN3487",
+      "media_type": "text/html"
+     },
+     {
+      "url": "https://www.palegis.us/legislation/bills/text/PDF/2023/0/HB1466/PN3487",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "Amending Title 42 (Judiciary and Judicial Procedure) of the\nPennsylvania Consolidated Statutes, in particular rights and\nimmunities, providing for a cause of action on protected\npublic expression and for immunity for protected public\nexpression; and imposing a duty upon the Administrative\nOffice of Pennsylvania Courts and the Legislative Reference\nBureau.\nThe General Assembly of the Commonwealth of Pennsylvania\nhereby enacts as follows:\nSection 1.      Title 42 of the Pennsylvania Consolidated\nStatutes is amended by adding a section to read:\n§ 8320.1.      Action for protected public expression.\n(a)   Establishment.--A person has a cause of action if, in a\nprevious cause of action based on protected public expression:\n(1)    the person would have prevailed on a ground under\nsection 8340.15 (relating to grant of immunity); but\n(2)    the court did not make a determination on immunity\nunder section 8340.15.\n(b)   Recovery.--A party that prevails in an action under this\nsection is entitled to recover from the nonprevailing party\nunder subsection (a)(1) all of the following:\n(1)   Attorney fees, court costs and expenses of\nlitigation in the underlying action.\n(2)   Punitive damages upon proof that the underlying\naction was commenced or continued for the sole purpose of\nharassing, intimidating, punishing or maliciously inhibiting\nprotected public expression.\n(c)   Construction.--This section shall be broadly construed\nand applied to defend and enhance protected public expression.\n(d)   Definitions.--As used in this section, the following\nwords and phrases shall have the meanings given to them in this\nsubsection unless the context clearly indicates otherwise:\n\"Protected public expression.\"       As defined in section 8340.13\n(relating to definitions).\n\"Protected public expression immunity.\"      As defined in\nsection 8340.13.\nSection 2.     Chapter 83 of Title 42 is amended by adding a\nsubchapter to read:\nSUBCHAPTER C.1\nPROTECTED PUBLIC EXPRESSION\nSec.\n8340.11. Short title of subchapter.\n8340.12. Declaration of policy.\n8340.13. Definitions.\n8340.14. Scope.\n8340.15. Grant of immunity.\n8340.16. Pretrial motion.\n8340.17. Interlocutory appeal.\n8340.18. Awards.\n§ 8340.11.   Short title of subchapter.\nThis subchapter shall be known and may be cited as the\nUniform Public Expression Protection Act.\n§ 8340.12.   Declaration of policy.\nThe General Assembly finds and declares as follows:\n(1)   There has been a disturbing increase in lawsuits\nbrought primarily to chill the valid exercise of protected\npublic expression.\n(2)   It is in the public interest to encourage continued\nparticipation in matters of public significance. This\nparticipation should not be chilled through abuse of the\njudicial process.\n(3)   This subchapter:\n(i)    grants immunity to those groups or parties\nexercising the rights to protected public expression; and\n(ii)    awards attorney fees to parties that are forced\nto defend against meritless claims arising from the\nexercise of the rights to protected public expression.\n(4)   Broad construction of this subchapter will implement\nthe goals under paragraphs (2) and (3).\n§ 8340.13.   Definitions.\nThe following words and phrases when used in this subchapter\nshall have the meanings given to them in this section unless the\ncontext clearly indicates otherwise:\n\"Cause of action based on protected public expression.\"       A\ncause of action under section 8340.14 (relating to scope).\n\"Goods or services.\"     The term does not include the creation,\ndissemination, exhibition or advertisement or similar promotion\nof a dramatic, literary, musical, political, journalistic or\nartistic work.\n\"Protected public expression.\"          A person's:\n(1)   communication in a legislative, executive, judicial\nor administrative proceeding;\n(2)   communication on an issue under consideration or\nreview in a legislative, executive, judicial or\nadministrative proceeding; or\n(3)   exercise, on a matter of public concern, of the\nrights of freedom of speech or of the press, the right to\nassemble or petition or the right of association, guaranteed\nby:\n(i)    the First Amendment to the Constitution of the\nUnited States; or\n(ii)   section 7 or 20 of Article I of the\nConstitution of Pennsylvania.\n\"Protected public expression immunity.\"          Immunity under\nsection 8340.15 (relating to grant of immunity).\n§ 8340.14.     Scope.\n(a)   Coverage.--Except as provided in subsection (b), this\nsubchapter applies to a cause of action based on protected\npublic expression.\n(b)   Exclusions.--This subchapter does not apply to any of\nthe following claims asserted in a civil action:\n(1)   Against a government unit or an employee or agent of\na government unit acting in an official capacity.\n(2)   By a government unit or an employee or agent of a\ngovernment unit acting in an official capacity to enforce a\nlaw, regulation or ordinance.\n(3)   Against a person primarily engaged in the business\nof selling or leasing goods or services if the cause of\naction arises out of a communication related to the person's\nsale or lease of the goods or services.\n(4)   Seeking damages for bodily injury or death unless\nthe claim:\n(i)    is for:\n(A)   defamation;\n(B)   publication of private facts;\n(C)   false light invasion of privacy;\n(D)   misappropriation of likeness; or\n(E)   intentional or negligent infliction of\nemotional distress; or\n(ii)    arises solely from a communication on a matter\nof public concern.\n(5)   Arising under any of the following:\n(i)    23 Pa.C.S. Ch. 61 (relating to protection from\nabuse).\n(ii)    Chapter 62A (relating to protection of victims\nof sexual violence or intimidation).\n(iii)    The act of May 17, 1921 (P.L.682, No.284),\nknown as The Insurance Company Law of 1921.\n(6)   Arising under an insurance contract.\n(7)   Asserting misappropriation of trade secrets or\ncorporate opportunities against the person that allegedly\nmisappropriated the trade secret or corporate opportunity.\n(8)   Enforcing a nondisparagement agreement or a covenant\nnot to compete against a party to the agreement or covenant.\n(9)   Arising out of the internal affairs, governance,\ndissolution, liquidation, rights or obligations between or\namong stockholders or partners. This paragraph includes the\ninterpretation of the rights or obligations under the\ngoverning organic law, articles of incorporation, bylaws and\nagreements.\n(10)    Liability or indemnity of managers of business\ncorporations, partnerships, limited partnerships, limited\nliability partnerships, professional associations, business\ntrusts, joint ventures or other business enterprises. This\nparagraph includes the interpretation of the rights or\nobligations under the governing organic law, articles of\nincorporation, bylaws or agreements.\n§ 8340.15.      Grant of immunity.\nA person is immune from civil liability for a cause of action\nbased on protected public expression if any of the following\nparagraphs apply:\n(1)    The party asserting the cause of action based on\nprotected public expression fails to:\n(i)    establish a prima facie case as to each\nessential element of the cause of action; or\n(ii)    state a cause of action upon which relief can\nbe granted.\n(2)    There is no genuine issue as to any material fact,\nand the person against whom the cause of action based on\nprotected public expression has been asserted is entitled to\njudgment as a matter of law in whole or in part.\n§ 8340.16.      Pretrial motion.\n(a)     Authorization.--A party may file a special motion for\ndismissal of or judgment on a cause of action, or part of a\ncause of action, based on a party's protected public expression\nimmunity.\n(b)     Time.--A motion under subsection (a) must be made as\nfollows:\n(1)   Except as provided in paragraph (2), no later than\n60 days after being served with a pleading asserting a cause\nof action based on protected public expression.\n(2)   The court may extend the time under paragraph (1)\nupon a showing of good cause.\n(c)    Effect.--A motion under subsection (a) does not preclude\na party from asserting protected public expression immunity\nthrough other pleadings and motions under the Pennsylvania Rules\nof Civil Procedure.\n(d)    Procedure.--Upon motion under subsection (a), all of the\nfollowing apply:\n(1)   Subject to paragraphs (2) and (3), the court shall\nhear oral argument on the motion within 60 days after the\nmotion is filed.\n(2)   The court may extend the time period under paragraph\n(1):\n(i)    to allow discovery under subsection (f)(2)(i);\nor\n(ii)    for good cause.\n(3)   If paragraph (2) applies, the court shall hear\nargument as follows:\n(i)    For an extension under paragraph (2)(i):\n(A)   within 60 days after the court order\nallowing the discovery; or\n(B)   for good cause, on the date specified by the\ncourt.\n(ii)    For an extension under paragraph (2)(ii), on\nthe date specified by the court.\n(4)   In ruling on a motion under subsection (a), the\ncourt shall consider the record as defined in Pa.R.C.P. No.\n1035.1 (relating to Motion for Summary Judgment. Definition),\nthe special motion and responses and the evidence which can\nbe considered on a motion for summary judgment under\nPa.R.C.P. No. 1035.2 (relating to motion).\n(5)   Within 60 days after hearing oral argument under\nparagraph (1) or (3), the court shall:\n(i)    rule on a motion under subsection (a); and\n(ii)    place on the record a written opinion stating\nits reasoning for its ruling.\n(e)   Stay.--If a motion under subsection (a) is made, all of\nthe following apply:\n(1)   Except as provided in subsection (f), all other\nproceedings in the action are stayed. This paragraph includes\ndiscovery and the moving party's obligation to file a\nresponsive pleading.\n(2)   A stay under paragraph (1) shall remain in effect\nuntil the order ruling on the motion becomes final. This\nparagraph includes an appeal of the order.\n(f)   Exceptions to stay.--During a stay under subsection (e),\nall of the following apply:\n(1)   A party may challenge service of a writ or\ncomplaint, personal or subject matter jurisdiction or venue.\n(2)   A court may take any of the following actions:\n(i)    Allow limited discovery if a party shows that\nspecific information:\n(A)   is necessary to establish whether a party\nhas satisfied or failed to satisfy a burden under\nsection 8340.15 (relating to grant of immunity); and\n(B)   is not reasonably available unless discovery\nis allowed.\n(ii)    Upon a showing of good cause, hear and rule on\na request for special or preliminary injunctive relief to\nprotect against an imminent threat to public health or\nsafety.\n(iii)    Upon a showing of good cause, permit a\nproceeding relating exclusively to a cause of action:\n(A)   in response to which no party has asserted\nprotected public expression immunity; and\n(B)   which does not implicate an issue relevant\nto a party's assertion of protected public expression\nimmunity or to the cause of action for which that\nimmunity has been asserted.\n(3)   A party may voluntarily discontinue all or part of\nthe party's action.\n(4)   A party may move to recover attorney fees, court\ncosts and expenses of litigation under section 8340.18\n(relating to awards).\n§ 8340.17.     Interlocutory appeal.\nAn order granting, denying or otherwise determining immunity\nunder this subchapter is immediately appealable under section\n702 (relating to interlocutory orders).\n§ 8340.18.     Awards.\n(a)   Party asserting immunity.--If a cause of action based on\nprotected public expression is commenced against a party, all of\nthe following apply:\n(1)   If the party is immune under section 8340.15\n(relating to grant of immunity), the court shall award the\nparty attorney fees, court costs and expenses of litigation\njointly and severally against each adverse party that\nasserted the cause of action.\n(2)   If the party asserts protected public expression\nimmunity and the opposing party voluntarily discontinues the\naction under Pa.R.C.P. No. 230 (relating to voluntary\nnonsuit), with or without prejudice, the court shall award\nthe asserting party attorney fees, court costs and expenses\nof litigation jointly and severally against each adverse\nparty that asserted the cause of action.\n(b)   Party opposing immunity.--If the court determines that a\nparty's assertion of protected public expression immunity is\nfrivolous or filed solely with intent to delay the proceeding,\nthe court shall award the opposing party attorney fees, court\ncosts and expenses of litigation, incurred in opposing the\nassertion of protected public expression immunity.\nSection 3.        The following apply:\n(1)   The Administrative Office of Pennsylvania Courts has\na duty under paragraph (3) if any of the following occur:\n(i)    Promulgation by the Supreme Court of\nPennsylvania of a rule, similar in form to Pa.R.C.P. No.\n4023, stating that the provisions of 42 Pa.C.S. § 8340.16\nare not suspended.\n(ii)    Promulgation by the Supreme Court of\nPennsylvania of a direct letter of address, similar in\nform to In re 42 Pa.C.S. § 1703, 482 Pa. 522, 394 A.2d\n444 (1978), stating that the provisions of 42 Pa.C.S. §\n8340.16 are not suspended and do not violate Article V of\nthe Constitution of Pennsylvania.\n(iii)    Promulgation by the Supreme Court of\nPennsylvania of procedural rules providing substantially\nthe same content as the provisions of 42 Pa.C.S. §\n8340.16.\n(2)   The Legislative Reference Bureau shall determine the\neffective date of passage by the General Assembly of a joint\nresolution confirming that the procedural rules under\nparagraph (1)(iii) provide substantially the same content as\nthe provisions of 42 Pa.C.S. § 8340.16.\n(3)   The Administrative Office of Pennsylvania Courts\nshall transmit to the Legislative Reference Bureau all of the\nfollowing:\n(i)    Notice, for publication in the next available\nissue of the Pennsylvania Bulletin, of each promulgation\nand effective date under paragraph (1)(i) and (ii).\n(ii)    Notice of a promulgation and its effective date\nunder paragraph (1)(iii).\n(4)   The Legislative Reference Bureau shall publish any\nof the following in the Pennsylvania Bulletin:\n(i)    For a notice under paragraph (3)(i), the entire\nnotice.\n(ii)    For a notice under paragraph (3)(ii), notice of\nthe later of the effective date of:\n(A)   promulgation under paragraph (1)(iii); or\n(B)   passage under paragraph (2).\nSection 4.      This act does not affect immunity, rights,\nobligations or procedures under 27 Pa.C.S. § 7707 or Ch. 83.\nSECTION 5.      IN APPLYING AND CONSTRUING THIS ACT,                <--\nCONSIDERATION MUST BE GIVEN TO THE NEED TO PROMOTE UNIFORMITY OF\nTHE LAW WITH RESPECT TO ITS SUBJECT MATTER AMONG STATES THAT\nENACT IT.\nSECTION 6.      THIS ACT APPLIES TO A CIVIL ACTION COMMENCED OR A\nCAUSE OF ACTION ASSERTED IN A CIVIL ACTION ON OR AFTER THE\nEFFECTIVE DATE OF THIS SECTION.\nSection 5 7.    This act shall take effect as follows:       <--\n(1)   The addition of 42 Pa.C.S. § 8340.16 shall take\neffect on the effective date specified in the notice under\nsection 3(4).\n(2)   The remainder of this act shall take effect\nimmediately.",
+  "raw_text_url": "https://www.palegis.us/legislation/bills/text/PDF/2023/0/HB1466/PN3487"
+ },
+ {
+  "id": "ocd-bill/6a995153-2637-4501-b3f6-8b5046e6f974",
+  "legislative_session": "2023-2024",
+  "identifier": "SB 972",
+  "title": "An Act amending Title 42 (Judiciary and Judicial Procedure) of the Pennsylvania Consolidated Statutes, in particular rights and immunities, providing for immunity for protected public expression.",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Referred to Judiciary",
+    "date": "2023-10-31T04:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 0
+   }
+  ],
+  "versions": [
+   {
+    "note": "Printer's No. PN1198",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.palegis.us/legislation/bills/text/DOC/2023/0/SB0972/PN1198",
+      "media_type": "application/msword"
+     },
+     {
+      "url": "https://www.palegis.us/legislation/bills/text/HTM/2023/0/SB0972/PN1198",
+      "media_type": "text/html"
+     },
+     {
+      "url": "https://www.palegis.us/legislation/bills/text/PDF/2023/0/SB0972/PN1198",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "Amending Title 42 (Judiciary and Judicial Procedure) of the\nPennsylvania Consolidated Statutes, in particular rights and\nimmunities, providing for immunity for protected public\nexpression.\nThe General Assembly of the Commonwealth of Pennsylvania\nhereby enacts as follows:\nSection 1.    Chapter 83 of Title 42 of the Pennsylvania\nConsolidated Statutes is amended by adding a subchapter to read:\nSUBCHAPTER C.1\nIMMUNITY FOR PROTECTED PUBLIC EXPRESSION\nSec.\n8340.4.   Short title of subchapter.\n8340.5.   Legislative findings and declaration.\n8340.6.   Definitions.\n8340.7.   Protected public expression immunity.\n8340.8.   Special motion for dismissal or judgment.\n§ 8340.4.   Short title of subchapter.\nThis subchapter shall be known and may be cited as the\nPennsylvania Public Expression Protection Act.\n§ 8340.5.    Legislative findings and declaration.\nThe General Assembly finds and declares as follows:\n(1)    There has been a disturbing increase in lawsuits\nbrought primarily to chill the valid exercise of the\nconstitutional rights of freedom of speech and petition for\nthe redress of grievances.\n(2)    It is in the public interest to encourage continued\nparticipation in matters of public significance and that this\nparticipation should not be chilled through the abuse of the\njudicial process.\n(3)    This subchapter is intended to grant immunity to\nthose groups or parties exercising this right and award\nattorney fees to those groups and parties that are forced to\ndefend against meritless claims arising from the exercise of\nthis right, and this subchapter shall be construed broadly.\n§ 8340.6.    Definitions.\nThe following words and phrases when used in this subchapter\nshall have the meanings given to them in this section unless the\ncontext clearly indicates otherwise:\n\"Cause of action based on protected public expression.\"\n(1)    The term includes a cause of action asserted in a\ncivil action against a person based on the person's:\n(i)    communication in a legislative, executive,\njudicial, administrative or other governmental\nproceeding;\n(ii)    communication on an issue under consideration\nor review in a legislative, executive, judicial,\nadministrative or other governmental proceeding; or\n(iii)    exercise of any of the following rights\nguaranteed by the Constitution of the United States or\nthe Constitution of Pennsylvania, on a matter of public\nconcern:\n(A)   The right to freedom of speech or of the\npress.\n(B)   The right to assemble or petition.\n(C)   The right of association.\n(2)   The term does not include any cause of action\nasserted in a civil action:\n(i)    against a government unit or an employee or\nagent of a government unit acting or purporting to act in\nan official capacity;\n(ii)    initiated by a government unit or an employee\nor agent of a government unit acting in an official\ncapacity to enforce a law, regulation or ordinance;\n(iii)    against a person primarily engaged in the\nbusiness of selling or leasing goods or services if the\ncause of action arises out of a communication related to\nthe person's sale or lease of the goods or services;\n(iv)    seeking damages for bodily injury or death,\nprovided that the cause of action is not for defamation,\nlibel, slander, publication of private facts, false light\ninvasion of privacy, misappropriation of likeness or\nintentional or negligent infliction of emotional\ndistress, or does not arise solely from a communication\non a matter of public concern;\n(v)    arising under Chapter 62A (relating to\nprotection of victims of sexual violence or intimidation)\nor 23 Pa.C.S. Ch. 61 (relating to protection from abuse);\n(vi)    arising under 23 Pa.C.S. (relating to domestic\nrelations);\n(vii)     arising under the act of May 17, 1921\n(P.L.682, No.284), known as The Insurance Company Law of\n1921, or out of an insurance contract;\n(viii)     asserting misappropriation of trade secrets\nor corporate opportunities against the person who\nallegedly misappropriated the trade secret or corporate\nopportunity, or to enforce a nondisparagement agreement\nor a covenant not to compete against a party to the\nagreement or covenant; or\n(ix)    arising out of the internal affairs,\ngovernance, dissolution, liquidation, rights or\nobligations between or among owners and liability or\nindemnity of managers of business corporations,\npartnerships, limited partnerships, limited liability\npartnerships, professional associations, business trusts,\njoint ventures or other business enterprises, including\nactions involving the interpretation of the rights or\nobligations under the organic law, articles of\nincorporation, bylaws or agreements governing these\nenterprises.\n\"Goods and services.\"      The term does not include the\ncreation, dissemination, exhibition, advertisement or similar\npromotion of a dramatic, literary, musical, political,\njournalistic or artistic work.\n\"Protected public expression immunity.\"      The immunity\nprovided under section 8340.7(a) (relating to protected public\nexpression immunity).\n§ 8340.7.   Protected public expression immunity.\n(a)   Scope of immunity.--A person shall be immune from civil\nliability for, and shall be entitled to the recovery of costs,\nfees, additional tax liability and other expenses under\nsubsection (b) for defending against, a cause of action based on\nprotected public expression if one of the following apply:\n(1)   The party asserting the cause of action based on\nprotected public expression fails to establish a prima facie\ncase as to each essential element of the cause of action.\n(2)   The party asserting the cause of action based on\nprotected public expression has failed to state a cause of\naction upon which relief can be granted.\n(3)   There is no genuine issue as to any material fact\nand the person against whom the cause of action based on\nprotected public expression has been asserted is entitled to\njudgment as a matter of law on the cause of action or part of\nthe cause of action.\n(b)   Costs, attorney fees and expenses.--\n(1)   A person who is immune from civil liability for a\ncause of action, or any part of the cause of action, under\nsubsection (a) shall be awarded court costs, reasonable\nattorney fees, including compensation for any additional tax\nliability that accrues as a direct consequence of the\nrecovery of the attorney fees and costs, and reasonable\nlitigation expenses related to defending against the cause of\naction, or part of the cause from which the person is immune,\nfrom any party who asserted the cause of action in accordance\nwith subsection (d).\n(2)   If a court determines that a person's assertion of\nprotected public expression immunity in a motion was\nfrivolous or filed solely with intent to delay the\nproceeding, the court shall award to the opposing party the\ncourt costs, reasonable attorney fees, including any\nadditional tax liability that accrues as a direct consequence\nof the recovery of the attorney fees and costs, and\nreasonable litigation expenses related to defending against\nthe assertion of the immunity in the motion.\n(3)   A person who asserts the protected public expression\nimmunity in an answer or a motion shall be entitled to the\naward under paragraph (1) if the cause of action based on\nprotected public expression, or any part of the cause of\naction, is voluntarily discontinued with or without prejudice\nafter the person has asserted the immunity, unless a court\nhas previously ruled in the action that the person is not\nimmune from civil liability under subsection (a).\n(c)   Immediate appeal.--An order granting, denying or\notherwise determining whether a person is immune from civil\nliability for a cause of action, or any part of a cause of\naction, based on protected public expression is immediately\nappealable under section 702 (relating to interlocutory orders).\n(d)   Recovery of costs.--\n(1)   A person may bring a cause of action to recover the\ncourt costs, reasonable attorney fees and reasonable\nlitigation expenses incurred in defending against a cause of\naction based on protected public expression from any party\nthat brought that action if the action was terminated in the\nperson's favor on any ground of immunity under subsection\n(a), provided that no court previously determined whether the\nperson was immune under subsection (a).\n(2)   A person bringing a cause of action under this\nsubsection is entitled to recover punitive damages if the\ncause of action based on protected public expression was\ncommenced or continued for the sole purpose of harassing,\nintimidating, punishing or otherwise maliciously inhibiting\nthe free exercise of speech, petition or association rights\nas guaranteed under the Constitution of the United States or\nConstitution of Pennsylvania.\n(e)   Construction and interpretation.--This section shall be\nbroadly construed and applied to protect the exercise of the\nright of freedom of speech and of the press, the right to\nassemble and petition, and the right of association, guaranteed\nby the Constitution of the United States or Constitution of\nPennsylvania.\n(f)   Application.--This section shall apply to a civil action\nfiled or cause of action asserted in a civil action on or after\nthe effective date of this subsection.\n(g)   Effect on pending litigation.--This section shall not\naffect the following:\n(1)    A cause of action asserted before the effective date\nof this subsection in a civil action.\n(2)    The immunity, rights and procedures provided under\n27 Pa.C.S. § 7707 (relating to participation in environmental\nlaw or regulation) or 8302 (relating to immunity).\n§ 8340.8.      Special motion for dismissal or judgment.\n(a)   Special motion.--\n(1)    A person may file a special motion for dismissal of\nor judgment due to the person's protected public expression\nimmunity no later than 60 days after being served with a\npleading asserting a cause of action based on protected\npublic expression, or at a later time upon a showing of good\ncause. The availability of the special motion does not\npreclude a party from asserting its protected public\nexpression immunity through a motion for judgment on the\npleadings, motion for summary judgment or some other motion\nprovided by court rules.\n(2)   In ruling on a special motion under this subsection,\nthe court shall consider the pleadings, the motion, any reply\nor response to the motion and any evidence that could be\nconsidered in ruling on a motion for summary judgment, as\nwell as any deposition testimony and any supporting and\nopposing affidavits attesting to the facts upon which\nliability or a defense is based.\n(b)   Stay.--\n(1)   Except as provided under paragraph (3), all other\nproceedings in an action, including discovery and the moving\nparty's obligation to file a responsive pleading, except as\nnecessary to challenge service of a writ or complaint, the\ncourt's jurisdiction or the action's venue, shall be stayed\nupon the filing of a motion under subsection (a). The stay\nshall remain in effect until the entry of an order ruling on\nthe party's:\n(i)    assertion of protected public expression\nimmunity; and\n(ii)    appeal under section 8340.7(c) (relating to\nprotected public expression immunity), if applicable.\n(2)   During a stay under paragraph (1), the court:\n(i)    may allow limited discovery if a party shows\nthat specific information is necessary to establish\nwhether a party has satisfied or failed to satisfy a\nburden under section 8340.7(a) and the information is not\nreasonably available unless discovery is allowed; and\n(ii)    for good cause, may:\n(A)   hear and rule on a request for special or\npreliminary injunctive relief to protect against an\nimminent threat to public health or safety; and\n(B)   permit any proceeding relating exclusively\nto a cause of action:\n(I)    in response to which no party has\nasserted protected public expression immunity;\nand\n(II)    that does not implicate any issue\nrelevant to a party's assertion of protected\npublic expression immunity or the cause of action\nfor which the immunity has been asserted.\n(3)   A motion under section 8340.7(b) for costs, attorney\nfees and expenses shall not be subject to a stay under this\nsubsection.\n(4)   A stay under this subsection does not affect a\nparty's ability to voluntarily discontinue a cause of action\nor part of a cause of action.\n(c)   Oral argument on motion.--The court shall hear oral\nargument on a motion under subsection (a)(1) no later than 60\ndays after the filing of the motion, unless the court orders a\nlater date to allow discovery under subsection (b)(2) or for\nother good cause. The following shall apply:\n(1)   If the court orders a later date for oral argument,\nthe court shall hear argument on the motion under subsection\n(a)(1) no later than 60 days after the court order allowing\nthe discovery, unless the court orders a later date for good\ncause unrelated to discovery.\n(2)   The court shall rule on a motion under subsection\n(a)(1) no later than 60 days after hearing oral argument. The\ncourt shall place on the record a written opinion setting\nforth its reasoning for the decision.\nSection 2.      This act shall take effect as follows:\n(1)   The addition of 42 Pa.C.S. § 8340.8 shall take\neffect upon promulgation or publication by the Pennsylvania\nSupreme Court of:\n(i)    a rule, similar in form to Rule of Civil\nProcedure 4023, stating that the contents of 42 Pa.C.S. §\n8340.8 are not suspended;\n(ii)    a direct letter of address, similar in form to\nIn re 42 Pa.C.S. § 1703, 482 Pa. 522, 394 A.2d 444\n(1978), stating that the contents of 42 Pa.C.S. § 8340.8\nare not suspended and do not violate Article V of the\nConstitution of Pennsylvania; or\n(iii)    procedural rules providing substantially the\nsame content as specified in 42 Pa.C.S. § 8340.8 and\nsubsequent enactment by the General Assembly of a joint\nresolution confirming that the procedural rules provide\nsubstantially the same content as specified in 42 Pa.C.S.\n§ 8340.8.\n(2)   The remainder of this act shall take effect\nimmediately.",
+  "raw_text_url": "https://www.palegis.us/legislation/bills/text/PDF/2023/0/SB0972/PN1198"
+ }
+]

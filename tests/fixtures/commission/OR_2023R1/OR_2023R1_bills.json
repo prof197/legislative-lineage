@@ -1,0 +1,210 @@
+[
+ {
+  "id": "ocd-bill/a12c65b0-db31-4d30-8a3c-8ff188086e20",
+  "legislative_session": "2023R1",
+  "identifier": "SB 305",
+  "title": "Relating to special motions to strike.",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Introduction and first reading. Referred to President's desk.",
+    "date": "2023-01-09T18:53:53+00:00",
+    "classification": [
+     "introduction",
+     "reading-1",
+     "referral-committee"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Referred to Judiciary.",
+    "date": "2023-01-12T19:26:35+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Public Hearing held.",
+    "date": "2023-02-07T21:01:00+00:00",
+    "classification": [],
+    "order": 2
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Work Session held.",
+    "date": "2023-02-15T21:02:00+00:00",
+    "classification": [],
+    "order": 3
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Recommendation: Do pass.",
+    "date": "2023-02-20T17:26:13+00:00",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 4
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Second reading.",
+    "date": "2023-02-20T18:15:48+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 5
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Carried over to 02-22 by unanimous consent.",
+    "date": "2023-02-21T19:03:45+00:00",
+    "classification": [],
+    "order": 6
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Third reading.  Carried by Prozanski.  Passed.",
+    "date": "2023-02-22T19:59:16+00:00",
+    "classification": [
+     "passage",
+     "reading-3"
+    ],
+    "order": 7
+   },
+   {
+    "organization__name": "House",
+    "description": "First reading. Referred to Speaker's desk.",
+    "date": "2023-02-28T18:14:25+00:00",
+    "classification": [
+     "introduction",
+     "reading-1",
+     "referral-committee"
+    ],
+    "order": 8
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred to Judiciary.",
+    "date": "2023-03-03T17:30:17+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "House",
+    "description": "Public Hearing held.",
+    "date": "2023-03-14T15:01:00+00:00",
+    "classification": [],
+    "order": 10
+   },
+   {
+    "organization__name": "House",
+    "description": "Work Session held.",
+    "date": "2023-04-20T15:02:00+00:00",
+    "classification": [],
+    "order": 11
+   },
+   {
+    "organization__name": "House",
+    "description": "Recommendation: Do pass.",
+    "date": "2023-04-21T14:44:18+00:00",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 12
+   },
+   {
+    "organization__name": "House",
+    "description": "Second reading.",
+    "date": "2023-04-24T19:05:24+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 13
+   },
+   {
+    "organization__name": "House",
+    "description": "Third reading. Carried by Reynolds. Passed.",
+    "date": "2023-04-25T18:29:26+00:00",
+    "classification": [
+     "passage",
+     "reading-3"
+    ],
+    "order": 14
+   },
+   {
+    "organization__name": "Senate",
+    "description": "President signed.",
+    "date": "2023-04-27T19:43:55+00:00",
+    "classification": [
+     "passage"
+    ],
+    "order": 15
+   },
+   {
+    "organization__name": "House",
+    "description": "Speaker signed.",
+    "date": "2023-05-01T17:14:34+00:00",
+    "classification": [
+     "passage"
+    ],
+    "order": 16
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Governor signed.",
+    "date": "2023-05-08T20:12:01+00:00",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 17
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Chapter 71, 2023 Laws.",
+    "date": "2023-05-16T22:45:00+00:00",
+    "classification": [],
+    "order": 18
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Effective date, January 1, 2024.",
+    "date": "2023-05-16T23:00:00+00:00",
+    "classification": [],
+    "order": 19
+   }
+  ],
+  "versions": [
+   {
+    "note": "Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "https://olis.oregonlegislature.gov/liz/2023R1/Downloads/MeasureDocument/SB305/Introduced",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Enrolled",
+    "date": "",
+    "links": [
+     {
+      "url": "https://olis.oregonlegislature.gov/liz/2023R1/Downloads/MeasureDocument/SB305/Enrolled",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "A BILL FOR AN ACT\nRelating to special motions to strike; amending ORS 31.150 and 31.152.\nBe It Enacted by the People of the State of Oregon:\nSECTION 1. ORS 31.150 is amended to read:\n31.150. (1) A defendant may make a special motion to strike against a claim in a civil action\ndescribed in subsection (2) of this section. The court shall grant the motion unless the plaintiff es-\ntablishes in the manner provided by subsection [(3)] (4) of this section that there is a probability\nthat the plaintiff will prevail on the claim. The special motion to strike shall be treated as a motion\nto dismiss under ORCP 21 A but shall not be subject to ORCP 21 F. Upon granting the special mo-\ntion to strike, the court shall enter a judgment of dismissal without prejudice. If the court denies\na special motion to strike, the court shall enter a limited judgment denying the motion.\n(2) A special motion to strike may be made under this section against any claim in a civil action\nthat arises out of:\n(a) Any oral statement made, or written statement or other document submitted, in a legislative,\nexecutive or judicial proceeding or other proceeding authorized by law;\n(b) Any oral statement made, or written statement or other document submitted, in connection\nwith an issue under consideration or review by a legislative, executive or judicial body or other\nproceeding authorized by law;\n(c) Any oral statement made, or written statement or other document presented, in a place open\nto the public or a public forum in connection with an issue of public interest; or\n(d) Any other conduct in furtherance of the exercise of the constitutional right of assembly,\npetition or association or the constitutional right of free speech or freedom of the press in con-\nnection with a public issue or an issue of public interest.\n(3) A special motion to strike may not be made against a claim under this section against\na person primarily engaged in the business of selling or leasing goods or services if the claim\narises out of a communication related to the person’s sale or lease of the goods or services.\n[(3)] (4) A defendant making a special motion to strike under the provisions of this section has\nthe initial burden of making a prima facie showing that the claim against which the motion is made\narises out of a statement, document or conduct described in subsection (2) of this section. If the\ndefendant meets this burden, the burden shifts to the plaintiff in the action to establish that there\nis a probability that the plaintiff will prevail on the claim by presenting substantial evidence to\nsupport a prima facie case. If the plaintiff meets this burden, the court shall deny the motion.\n[(4)] (5) In making a determination under subsection (1) of this section, the court shall consider\npleadings and supporting and opposing affidavits stating the facts upon which the liability or defense\nis based.\n[(5)] (6) If the court determines that the plaintiff has established a probability that the plaintiff\nwill prevail on the claim:\n(a) The fact that the determination has been made and the substance of the determination may\nnot be admitted in evidence at any later stage of the case; and\n(b) The determination does not affect the burden of proof or standard of proof that is applied in\nthe proceeding.\nSECTION 2. ORS 31.152 is amended to read:\n31.152. (1) A special motion to strike under ORS 31.150 must be filed within 60 days after the\nservice of the complaint or, in the court’s discretion, at any later time. A hearing shall be held on\nthe motion not more than 30 days after the filing of the motion unless the docket conditions of the\ncourt require a later hearing.\n(2)(a) All discovery in the proceeding shall be stayed upon the filing of a special motion to\nstrike under ORS 31.150. The stay of discovery shall remain in effect until entry of the judgment.\nThe court, on motion and for good cause shown, may order that specified discovery be conducted\nnotwithstanding the stay imposed by this subsection.\n(b) During a stay under this subsection, the court may hear and rule on a motion for\nreasonable attorney fees and costs under subsection (3) of this section.\n(c) A stay under this subsection does not affect a party’s ability voluntarily to dismiss a\nclaim or part of a claim or move to sever a claim.\n(d) During a stay under this subsection, the court for good cause may hear and rule on:\n(A) A motion unrelated to the special motion to strike under ORS 31.150.\n(B) A motion seeking a preliminary injunction to protect against an imminent threat to\npublic health or safety.\n(3) A defendant who prevails on a special motion to strike made under ORS 31.150 shall be\nawarded reasonable attorney fees and costs. If the court finds that a special motion to strike is\nfrivolous or is solely intended to cause unnecessary delay, the court shall award costs and reason-\nable attorney fees to a plaintiff who prevails on a special motion to strike.\n(4)(a) A voluntary dismissal without prejudice of a responding party’s claim, or part of\na claim, that is the subject of a special motion to strike under ORS 31.150 does not affect a\nmoving party’s right to obtain a ruling on the motion and seek attorney fees and costs under\nsubsection (3) of this section.\n(b) A voluntary dismissal with prejudice of a responding party’s claim, or part of a claim,\nthat is the subject of a special motion to strike under ORS 31.150 establishes for the purpose\nof subsection (3) of this section that the moving party prevailed on the motion.\n(5) A moving party may appeal as a matter of right from an order denying, in whole or\nin part, a special motion to strike under ORS 31.150. The appeal must be filed in accordance\nwith ORS 19.205.\n[(4)] (6) The purpose of the procedure established by this section and ORS 31.150 and 31.155 is\nto provide a defendant with the right to not proceed to trial in cases in which the plaintiff does not\nmeet the burden specified in ORS 31.150 [(3)] (4). This section and ORS 31.150 and 31.155 are to be\nliberally construed in favor of the exercise of the rights [of expression] described in ORS 31.150 (2).",
+  "raw_text_url": "https://olis.oregonlegislature.gov/liz/2023R1/Downloads/MeasureDocument/SB305/Introduced"
+ }
+]

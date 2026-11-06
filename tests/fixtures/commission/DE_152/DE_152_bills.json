@@ -1,0 +1,194 @@
+[
+ {
+  "id": "ocd-bill/8af10a38-1f43-49ed-8f32-44856e9b4f2c",
+  "legislative_session": "152",
+  "identifier": "SB 308",
+  "title": "AN ACT TO AMEND TITLE 5 OF THE DELAWARE CODE RELATING TO THE UNIFORM SPECIAL DEPOSITS ACT.",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Introduced and Assigned to Judiciary Committee in Senate",
+    "date": "2024-05-16",
+    "classification": [
+     "introduction",
+     "referral-committee"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported Out of Committee (Judiciary) in Senate with 6 On Its Merits",
+    "date": "2024-05-22",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Passed By Senate. Votes: 21 YES",
+    "date": "2024-06-11",
+    "classification": [
+     "passage"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "House",
+    "description": "Assigned to Economic Development/Banking/Insurance & Commerce Committee in House",
+    "date": "2024-06-12",
+    "classification": [
+     "introduction",
+     "referral-committee"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "House",
+    "description": "Reported Out of Committee (Economic Development/Banking/Insurance & Commerce) in House with 8 On Its Merits",
+    "date": "2024-06-18",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 4
+   },
+   {
+    "organization__name": "House",
+    "description": "Passed By House. Votes: 41 YES",
+    "date": "2024-06-27",
+    "classification": [
+     "passage"
+    ],
+    "order": 5
+   },
+   {
+    "organization__name": "Office of the Governor",
+    "description": "Signed by Governor",
+    "date": "2024-09-30",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 6
+   }
+  ],
+  "versions": [
+   {
+    "note": "Bill Text",
+    "date": "",
+    "links": [
+     {
+      "url": "https://legis.delaware.gov/json/BillDetail/GeneratePdfDocument?legislationId=141419&legislationTypeId=1&docTypeId=2&legislationName=SB308",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://legis.delaware.gov/json/BillDetail/GenerateHtmlDocument?legislationId=141419&legislationTypeId=1&docTypeId=2&legislationName=SB308",
+      "media_type": "text/html"
+     }
+    ]
+   }
+  ],
+  "raw_text": "\n      \n        BE IT ENACTED BY THE GENERAL ASSEMBLY OF THE STATE OF DELAWARE:\n      \n      \n        \n        \n        \n        \n        \n        \n        \n        \n        Section 1.\n         \n        Amend Part V, Title 5 of the Delaware Code by making deletions as shown by strike through and insertions as shown by underline as follows:\n      \n      \n        Chapter 51. Uniform Special Deposits Act.\n      \n      \n        § 5101. Title.\n      \n      \n        This \n        chapter \n        may be cited as the Uniform Special Deposits Act.\n      \n      \n        \n        \n        \n        \n        \n        \n        \n        \n        § 5102. Definitions\n        .\n      \n      \n        In this \n        chapter:\n      \n      \n        (1) “Account agreement” means an agreement that:\n      \n      \n        a. Is in a record between a bank and one or more depositors;\n      \n      \n        b. May have one or more beneficiaries as additional parties; and\n      \n      \n        c. States the intention of the parties to establish a special deposit governed by this chapter.\n      \n      \n        (2) “Bank” means a person engaged in the business of banking and includes a savings bank, savings and loan association, credit union, and trust company. Each branch or separate office of a bank is a separate bank for the purpose of this chapter.\n      \n      \n        (3) “Beneficiary” means a person that:\n      \n      \n        a. Is identified as a beneficiary in an account agreement; or\n      \n      \n        b. If not identified as a beneficiary in an account agreement, may be entitled to payment from a special deposit:\n      \n      \n        1. Under the account agreement; or\n      \n      \n        2. On termination of the special deposit.\n      \n      \n        (4) “Contingency” means an event or circumstance stated in an account agreement that is not certain to occur but must occur before the bank is obligated to pay a beneficiary.\n      \n      \n        (5) “Creditor process” means attachment, garnishment, levy, notice of lien, sequestration, or similar process issued by or on behalf of a creditor or other claimant.\n      \n      \n        (6) “Depositor” means a person that establishes or funds a special deposit.\n      \n      \n        (7) “Good faith” means honesty in fact and observance of reasonable commercial standards of fair dealing.\n      \n      \n        (8) “Knowledge” of a fact means:\n      \n      \n        a. With respect to a beneficiary, actual knowledge of the fact; or\n      \n      \n        b. With respect to a bank holding a special deposit:\n      \n      \n        1. If the bank:\n      \n      \n        A. Has established a reasonable routine for communicating material information to an individual to whom the bank has assigned responsibility for the special deposit; and \n      \n      \n        B. Maintains reasonable compliance with the routine, actual knowledge of the fact by that individual; or\n      \n      \n        2. If the bank has not established and maintained reasonable compliance with a routine described in paragraph (8)b.1. of this section or otherwise exercised due diligence, implied knowledge of the fact that would have come to the attention of an individual to whom the bank has assigned responsibility for the special deposit.\n      \n      \n        (9)a. “Obligated to pay a beneficiary” means a beneficiary is entitled under the account agreement to receive from the bank a payment when:\n      \n      \n        1. A contingency has occurred; and\n      \n      \n        2. The bank has knowledge the contingency has occurred.\n      \n      \n        b. “Obligation to pay a beneficiary” has a corresponding meaning.\n      \n      \n        (10) “Permissible purpose” means a governmental, regulatory, commercial, charitable, or testamentary objective of the parties stated in an account agreement. The term includes an objective to:\n      \n      \n        a. Hold funds:\n      \n      \n        1. In escrow, including for a purchase and sale, lease, buyback, or other transaction;\n      \n      \n        2. As a security deposit of a tenant;\n      \n      \n        3. That may be distributed to a person as remuneration, retirement or other benefit, or compensation under a judgment, consent decree, court order, or other decision of a tribunal; or\n      \n      \n        4. For distribution to a defined class of persons after identification of the class members and their interest in the funds;\n      \n      \n        b. Provide assurance with respect to an obligation created by contract, such as earnest money to ensure a transaction closes;\n      \n      \n        c. Settle an obligation that arises in the operation of a payment system, securities settlement system, or other financial market infrastructure;\n      \n      \n        d. Provide assurance with respect to an obligation that arises in the operation of a payment system, securities settlement system, or other financial market infrastructure; or\n      \n      \n        e. Hold margin, other cash collateral, or funds that support the orderly functioning of financial market infrastructure or the performance of an obligation with respect to the infrastructure.\n      \n      \n        (11) “Person” means an individual, estate, business or nonprofit entity, government or governmental subdivision, agency, or instrumentality, or other legal entity. The term includes a protected series, however denominated, of an entity if the protected series is established under law that limits, or limits if conditions specified under law are satisfied, the ability of a creditor of the entity or of any other protected series of the entity to satisfy a claim from assets of the protected series.\n      \n      \n        (12) “Record” means information:\n      \n      \n        a. Inscribed on a tangible medium; or\n      \n      \n        b. Stored in an electronic or other medium and retrievable in perceivable form.\n      \n      \n        (13) “Special deposit” means a deposit that satisfies § 5105 of this title.\n      \n      \n        (14) “State” means a state of the United States, the District of Columbia, Puerto Rico, the United States Virgin Islands, or any other territory or possession subject to the jurisdiction of the United States. The term includes an agency or instrumentality of the state.\n      \n      \n        \n        \n        \n        \n        \n        \n        \n        § 5103. \n        Scope; choice of law; forum\n        .\n      \n      \n        (a) This chapter applies to a special deposit under an account agreement that states the intention of the parties to establish a special deposit governed by this chapter, regardless of whether a party to the account agreement or a transaction related to the special deposit, or the special deposit itself, has a reasonable relation to this State.\n      \n      \n        (b) The parties to an account agreement may choose a forum in this State for settling a dispute arising out of the special deposit, regardless of whether a party to the account agreement or a transaction related to the special deposit, or the special deposit itself, has a reasonable relation to this State.\n      \n      \n        (c) This chapter does not affect:\n      \n      \n        (1) A right or obligation relating to a deposit other than a special deposit under this chapter; or\n      \n      \n        (2) The voidability of a deposit or transfer that is fraudulent or voidable under other law.\n      \n      \n        \n        \n        § 5104. Variation by agreement or amendment\n        .\n      \n      \n        (a) The effect of §§ 5102 through 5106, § 5108 through 5111, and § 5114 of this title may not be varied by agreement, except as provided in those sections. Subject to subsection (b) of this section, the effect of §§ 5107, 5112, and 5113 of this title may be varied by agreement.\n      \n      \n        (b) A provision in an account agreement or other record that substantially excuses liability or substantially limits remedies for failure to perform an obligation under this chapter is not sufficient to vary the effect of a provision of this chapter.\n      \n      \n        (c) If a beneficiary is a party to an account agreement, the bank and the depositor may amend the agreement without the consent of the beneficiary only if the agreement expressly permits the amendment.\n      \n      \n        (d) If a beneficiary is not a party to an account agreement and the bank and the depositor know the beneficiary has knowledge of the agreement’s terms, the bank and the depositor may amend the agreement without the consent of the beneficiary only if the amendment does not adversely and materially affect a payment right of the beneficiary.\n      \n      \n        (e) If a beneficiary is not a party to an account agreement and the bank and the depositor do not know whether the beneficiary has knowledge of the agreement’s terms, the bank and the depositor may amend the agreement without the consent of the beneficiary only if the amendment is made in good faith.\n      \n      \n        \n        \n        § 5105. Requirements for special deposit\n        .\n      \n      \n        A deposit is a special deposit if it is:\n      \n      \n        (1) A deposit of funds in a bank under an account agreement;\n      \n      \n        (2) For the benefit of at least 2 beneficiaries, 1 or more of which may be a depositor;\n      \n      \n        (3) Denominated in a medium of exchange that is currently authorized or adopted by a domestic or foreign government;\n      \n      \n        (4) For a permissible purpose stated in the account agreement; and\n      \n      \n        (5) Subject to a contingency.\n      \n      \n        \n        \n        § 5106. Permissible purpose\n        .\n      \n      \n        (a) A special deposit must serve at least 1 permissible purpose stated in the account agreement from the time the special deposit is created in the account agreement until termination of the special deposit.\n      \n      \n        (b) If, before termination of the special deposit, the bank or a court determines the special deposit no longer satisfies subsection (a) of this section, §§ 5108 through 5111 of this title cease to apply to any funds deposited in the special deposit after the special deposit ceases to satisfy subsection (a) of this section.\n      \n      \n        (c) If, before termination of a special deposit, the bank determines the special deposit no longer satisfies subsection (a) of this section, the bank may take action it believes is necessary under the circumstances, including terminating the special deposit.\n      \n      \n        \n        \n        § 5107. Payment to beneficiary by bank\n        .\n      \n      \n        (a) Unless the account agreement provides otherwise, the bank is obligated to pay a beneficiary if there are sufficient actually and finally collected funds in the balance of the special deposit. \n      \n      \n        (b) Except as provided in subsection (c) of this section, the obligation to pay the beneficiary is excused if the funds available in the special deposit are insufficient to cover such payment.\n      \n      \n        (c) Unless the account agreement provides otherwise, if the funds available in the special deposit are insufficient to cover an obligation to pay a beneficiary, a beneficiary may elect to be paid the funds that are available or, if there is more than one beneficiary, a pro rata share of the funds available. Payment to the beneficiary making the election under this subsection discharges the bank’s obligation to pay a beneficiary and does not constitute an accord and satisfaction with respect to another person obligated to the beneficiary.\n      \n      \n        (d) Unless the account agreement provides otherwise, the obligation of the bank obligated to pay a beneficiary is immediately due and payable.\n      \n      \n        (e) The bank may discharge its obligation under this section by: \n      \n      \n        (1) Crediting another transaction account of the beneficiary; or \n      \n      \n        (2) Taking other action that: \n      \n      \n        a. Is permitted under the account agreement for the bank to obtain a discharge; or \n      \n      \n        b. Otherwise would constitute a discharge under law.\n      \n      \n        (f) If the bank obligated to pay a beneficiary has incurred an obligation to discharge the obligation of another person, the obligation of the other person is discharged if action by the bank under subsection (e) of this section would constitute a discharge of the obligation of the other person under law that determines whether an obligation is satisfied.\n      \n      \n        \n        \n        § 5108. Property interest of depositor or beneficiary\n        .\n      \n      \n        (a) Neither a depositor nor a beneficiary has a property interest in a special deposit.\n      \n      \n        (b) Any property interest with respect to a special deposit is only in the right to receive payment if the bank is obligated to pay a beneficiary and not in the special deposit itself. Any property interest under this subsection is determined under other law.\n      \n      \n        \n        \n        § 5109. When creditor process enforceable against bank\n        .\n      \n      \n        (a) Subject to subsection (b) of this section, creditor process with respect to a special deposit is not enforceable against the bank holding the special deposit. \n      \n      \n        (b) Creditor process is enforceable against the bank holding a special deposit with respect to an amount the bank is obligated to pay a beneficiary or a depositor if the process:\n      \n      \n        (1) Is served on the bank;\n      \n      \n        (2) Provides sufficient information to permit the bank to identify the depositor or the beneficiary from the bank’s books and records; and\n      \n      \n        (3) Gives the bank a reasonable opportunity to act on the process.\n      \n      \n        (c) Creditor process served on a bank before it is enforceable against the bank under subsection (b) of this section does not create a right of the creditor against the bank or a duty of the bank to the creditor. Other law determines whether creditor process creates a lien enforceable against the beneficiary on a contingent interest of a beneficiary, including a depositor as a beneficiary, even if not enforceable against the bank.\n      \n      \n        \n        \n        § 5110. Injunction or similar relief\n        .\n      \n      \n        A court may enjoin, or grant similar relief that would have the effect of enjoining, a bank from paying a depositor or beneficiary only if payment would constitute a material fraud or facilitate a material fraud with respect to a special deposit.\n      \n      \n        \n        \n        § 5111. Recoupment or set off\n        .\n      \n      \n        (a) Except as provided in subsection (b) or (c) of this section, a bank may not exercise a right of recoupment or set off against a special deposit.\n      \n      \n        (b) An account agreement may authorize the bank to debit the special deposit:\n      \n      \n        (1) When the bank becomes obligated to pay a beneficiary, in an amount that does not exceed the amount necessary to discharge the obligation;\n      \n      \n        (2) For a fee assessed by the bank that relates to an overdraft in the special deposit account; \n      \n      \n        (3) For costs incurred by the bank that relate directly to the special deposit; or\n      \n      \n        (4) To reverse an earlier credit posted by the bank to the balance of the special deposit account, if the reversal occurs under an event or circumstance warranted under other law of this State governing mistake and restitution.\n      \n      \n        (c) The bank holding a special deposit may exercise a right of recoupment or set off against an obligation to pay a beneficiary, even if the bank funds payment from the special deposit.\n      \n      \n        \n        \n        § 5112. Duties and liability of bank\n        .\n      \n      \n        (a) A bank does not have a fiduciary duty to any person with respect to a special deposit.\n      \n      \n        (b) When the bank holding a special deposit becomes obligated to pay a beneficiary, a debtor-creditor relationship arises between the bank and beneficiary.\n      \n      \n        (c) The bank holding a special deposit has a duty to a beneficiary to comply with the account agreement and this chapter.\n      \n      \n        (d) If the bank holding a special deposit does not comply with the account agreement or this chapter, the bank is liable to a depositor or beneficiary only for damages proximately caused by the noncompliance. Except as provided by other law of this State, the bank is not liable for consequential, special, or punitive damages.\n      \n      \n        (e) The bank holding a special deposit may rely on records presented in compliance with the account agreement to determine whether the bank is obligated to pay a beneficiary.\n      \n      \n        (f) If the account agreement requires payment on presentation of a record, the bank shall determine within a reasonable time whether the record is sufficient to require payment. If the agreement requires action by the bank on presentation of a record, the bank is not liable for relying in good faith on the genuineness of the record if the record appears on its face to be genuine.\n      \n      \n        (g) Unless the account agreement provides otherwise, the bank is not required to determine whether a permissible purpose stated in the agreement continues to exist.\n      \n      \n        \n        \n        § 5113. Term and termination\n        .\n      \n      \n        (a)\n         \n        Unless otherwise provided in the account agreement, a special deposit terminates 5 years after the date the special deposit was first funded.\n      \n      \n        (b) Unless otherwise provided in the account agreement, if the bank cannot identify or locate a beneficiary entitled to payment when the special deposit is terminated, and a balance remains in the special deposit, the bank shall pay the balance to the depositor or depositors as a beneficiary or beneficiaries.\n      \n      \n        (c) A bank that pays the remaining balance as provided under subsection (b) of this section has no further obligation with respect to the special deposit.\n      \n      \n        \n        \n        § 5114. Principles of law and equity\n        .\n      \n      \n        The Uniform Commercial Code (Subtitle I of Title 6), consumer protection law, law governing deposits generally, law related to escheat and abandoned or unclaimed property, and the principles of law and equity, including law related to capacity to contract, principal and agent, estoppel, fraud, misrepresentation, duress, coercion, mistake, and bankruptcy, supplement this chapter except to the extent inconsistent with this chapter.\n      \n      \n        \n        \n        \n        \n        \n        \n        \n        § 5115. Uniformity of application and construction\n        .\n      \n      \n        In applying and construing this uniform act, a court shall consider the promotion of uniformity of the law among jurisdictions that enact it.\n      \n      \n        \n        \n        § 5116. Transitional provision\n        .\n      \n      \n        This Act applies to:\n      \n      \n        (1) A special deposit made under an account agreement executed on or after [the effective date of this Act]; and\n      \n      \n        (2) A deposit made under an agreement executed before [the effective date of this Act], if:\n      \n      \n        a. All parties entitled to amend the agreement agree to make the deposit a special deposit governed by this chapter; and\n      \n      \n        b. The special deposit referenced in the amended agreement satisfies § 5105 of this title.\n      \n      \n        Section 2. This Act takes effect on January 1, 2025.\n      \n      \n         \n      \n    \n\n      \n        SYNOPSIS\n      \n      \n        This Act adopts the Uniform Special Deposits Act (“the Act”) authored by the Uniform Law Commission. The Uniform Law Commission “provides states with non-partisan, well-conceived and well-drafted legislation that brings clarity and stability to critical areas of state statutory law.” The Act was adopted by the Uniform Law Commission in October 2023 and has been adopted in 2 states and introduced in 3 other states.\n      \n      \n        \n      \n      \n        The Act addresses deposits at a bank where the identity of the person entitled to payment is not determined until the occurrence of a contingency identified at the time that the deposit is created. An example of such an account is an escrow account holding funds that will be paid to one of two potential beneficiaries depending on the outcome of a contingency. Although such accounts are commonly used, the legal protections afforded them are uncertain. The fundamental purpose of the Uniform Special Deposits Act is to provide a vehicle that banks and their customers can elect to use providing greater legal certainty that the expectations of users will be respected. The Act provides a mechanism those that elect to be covered by the Act can use to avoid case law applied to special deposits that is murky and in some ways outdated in the context of modern banking.\n      \n      \n        \n      \n      \n        In determining whether a person is engaged in the business of banking to be considered a bank for purposes of the Act, the business of banking is intended to be construed broadly to include persons that may engage in limited functions that are part of or incidental to the business of banking, such as a trust company that engages in fiduciary and agency activities and has the power and authority to accept a special deposit.\n      \n      \n        \n      \n      \n        This Act takes effect on January 1, 2025.\n      \n      \n        Author: Senator Gay\n      \n    \n",
+  "raw_text_url": "https://legis.delaware.gov/json/BillDetail/GenerateHtmlDocument?legislationId=141419&legislationTypeId=1&docTypeId=2&legislationName=SB308"
+ },
+ {
+  "id": "ocd-bill/f119e1d4-9963-4c37-b2e0-075f9ab17d01",
+  "legislative_session": "152",
+  "identifier": "SB 235",
+  "title": "AN ACT TO AMEND CHAPTER 26, TITLE 21 OF THE DELAWARE CODE RELATING TO THE UNIFORM COMMERCIAL DRIVERS LICENSE ACT.",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Introduced and Assigned to Environment, Energy & Transportation Committee in Senate",
+    "date": "2024-03-06",
+    "classification": [
+     "introduction",
+     "referral-committee"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported Out of Committee (Environment, Energy & Transportation) in Senate with 2 Favorable, 6 On Its Merits",
+    "date": "2024-03-13",
+    "classification": [
+     "committee-passage",
+     "committee-passage-favorable"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Passed By Senate. Votes: 20 YES 1 ABSENT",
+    "date": "2024-03-21",
+    "classification": [
+     "passage"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "House",
+    "description": "Assigned to Public Safety & Homeland Security Committee in House",
+    "date": "2024-03-26",
+    "classification": [
+     "introduction",
+     "referral-committee"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "House",
+    "description": "Reported Out of Committee (Public Safety & Homeland Security) in House with 1 Favorable, 6 On Its Merits",
+    "date": "2024-04-16",
+    "classification": [
+     "committee-passage",
+     "committee-passage-favorable"
+    ],
+    "order": 4
+   },
+   {
+    "organization__name": "House",
+    "description": "Passed By House. Votes: 41 YES",
+    "date": "2024-06-18",
+    "classification": [
+     "passage"
+    ],
+    "order": 5
+   },
+   {
+    "organization__name": "Office of the Governor",
+    "description": "Signed by Governor",
+    "date": "2024-06-30",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 6
+   }
+  ],
+  "versions": [
+   {
+    "note": "Bill Text",
+    "date": "",
+    "links": [
+     {
+      "url": "https://legis.delaware.gov/json/BillDetail/GeneratePdfDocument?legislationId=140959&legislationTypeId=1&docTypeId=2&legislationName=SB235",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://legis.delaware.gov/json/BillDetail/GenerateHtmlDocument?legislationId=140959&legislationTypeId=1&docTypeId=2&legislationName=SB235",
+      "media_type": "text/html"
+     }
+    ]
+   }
+  ],
+  "raw_text": "\n      \n        BE IT ENACTED BY THE GENERAL ASSEMBLY OF THE STATE OF DELAWARE:\n      \n      \n        \n        \n        Section 1. Amend § 2603, Title 21 of the Delaware Code \n        by making deletions as shown by strike through and insertions as shown by underline as follows and by redesignating accordingly: \n      \n      \n        \n        \n        (18) “Drug and Alcohol Clearinghouse” (the Clearinghouse) means the secure online database that gives employers, FMCSA, State Driver Licensing Agencies, and State law enforcement personnel real-time information about CDL holder’s drug and alcohol program violations.\n      \n      \n        \n        Section 2. Amend § 2608, Title 21 of the Delaware Code by making deletions as shown by strike through and insertions as shown by underline as follows: \n      \n      \n        \n        § 2608. Commercial driver license qualification standards.\n      \n      \n        \n        (c) Limitations on issuance of license.\n      \n      \n        \n        (1) \n        A commercial driver license or CLP may not be issued to a person while the person is subject to a disqualification from driving a commercial motor vehicle, or while the person’s driver license is suspended, revoked, denied or cancelled in any state; nor may a commercial driver license be issued to a person who has a commercial driver license issued by any other state unless the person first surrenders all such licenses, which must be returned to the issuing state(s) for cancellation.\n      \n      \n        \n        (2) The Division shall query the Drug and Alcohol Clearinghouse and deny the issuance, renewal, upgrade, or transfer of a CDL and the issuance, upgrade, or renewal of a CLP if the query indicates the driver is subject to the CMV driving prohibition due to a violation of 49 C.F.R. part 382.\n      \n      \n        \n        Section 3. Amend § 2627, Title 21 of the Delaware Code by making deletions as shown by strike through and insertions as shown by underline as follows: \n      \n      \n        \n        § 2627. CDL Drug and Alcohol Clearinghouse requirements.\n      \n      \n        \n        (\n        a) The Division shall request information from the Clearinghouse, and if applicable, deny the issuance, renewal, upgrade, or transfer of a CDL or CLP as stated in § 2608(c)(2).\n      \n      \n        \n        (b) The Division shall, upon receiving notification from FMCSA that a CDL or CLP holder is prohibited from operating a CMV due to a drug and alcohol program violation, downgrade the CDL or CLP by removing the commercial privilege from the driver license. The downgrade must be completed and recorded on the CDLIS driver record within 60 days of the Division’s receipt of such notification. \n      \n      \n        \n        (1) Reinstatement after FMCSA notification that the driver is no longer prohibited:\n         \n      \n      \n        \n        a.\n         \n        If, after the Division completes and records the downgrade on the CDLIS driving record, FMCSA notifies the State that a driver is no longer prohibited from operating a commercial motor vehicle, the Division must make the driver eligible for reinstatement of the CDL or CLP privilege to the driver’s license within 10 calendar days of receiving notification from FMCSA.\n      \n      \n        \n        (2) Reinstatement after Clearinghouse error correction:\n         \n      \n      \n        \n        a.\n         \n        If, after the Division completes and records the downgrade on the CDLIS driver record, FMCSA notifies the State the driver was erroneously identified as prohibited from operating a commercial motor vehicle, the Division shall:\n      \n      \n        \n        1. Reinstate the CDL or CLP privilege to the driver’s license within 5 business days of receiving notification of the correction from FMCSA; and \n      \n      \n        \n        2. Expunge from the CDLIS driver record and, if applicable, the motor vehicle record, any reference related to the driver’s erroneous prohibited status within 5 business days of receiving notification of the correction from FMCSA.\n      \n      \n         \n      \n    \n\n      \n        SYNOPSIS\n      \n      \n        This Act brings the State in compliance with the federal regulation published by FMCSA on October 7, 2021, to establish a national drug and alcohol clearinghouse as mandated by the Moving Ahead for Progress in the 21st Century Act (MAP-21). This act established requirements for Division access to and use of driver-specific drug and alcohol program violation information contained in the Drug and Alcohol Clearinghouse. The Act prohibits the Division from issuing, renewing, upgrading, or transferring a commercial driver license (CDL) or commercial learner’s permit (CLP), as applicable, for any individual prohibited under FMCSA regulations from driving a commercial motor vehicle (CMV), due to one or more drug and alcohol program violations. In addition, the Division must, upon notification that a driver is prohibited from operating a CMV due to a drug and alcohol program violation, initiate the downgrade process to remove the CLP or CDL privilege from the driver’s license within 60 days. This Federal requirement must be enacted by states by November 18, 2024.\n      \n      \n        Author: Senator Hansen\n      \n    \n",
+  "raw_text_url": "https://legis.delaware.gov/json/BillDetail/GenerateHtmlDocument?legislationId=140959&legislationTypeId=1&docTypeId=2&legislationName=SB235"
+ }
+]

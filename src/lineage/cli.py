@@ -9,6 +9,8 @@ from typing import Annotated
 import typer
 
 from lineage import __version__
+from lineage.acts import ACTS_DIR
+from lineage.commission import RESULTS, CommissionError, commission_recall, write_results
 from lineage.disk import GiB, InsufficientDiskSpaceError
 from lineage.doctypes import RULES, DocTypesError, build_eligibility, rule_samples
 from lineage.fetch import SOURCE, fetch_raw
@@ -27,8 +29,11 @@ from lineage.sessions import (
 from lineage.snapshot import SnapshotError, load_manifest, scan, write_manifest
 from lineage.stats import write_coverage
 from lineage.stoplist import StoplistError, build_stoplist, file_sha256
+from lineage.ulc import ENACTMENTS, UlcError
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
+eval_app = typer.Typer(no_args_is_help=True, help="Run an eval and write its results.")
+app.add_typer(eval_app, name="eval")
 
 RawOption = Annotated[Path, typer.Option("--raw", help="Directory of Open States archives.")]
 ManifestOption = Annotated[Path, typer.Option("--manifest", help="Snapshot manifest (committed).")]
@@ -367,3 +372,35 @@ def stats(
         samples_report.parent.mkdir(parents=True, exist_ok=True)
         samples_report.write_text(json.dumps(found, indent=1, ensure_ascii=False) + "\n")
         typer.echo(f"sample titles for {len(found['rules'])} rules -> {samples_report}")
+
+
+@eval_app.command("commission")
+def eval_commission(
+    tables: TablesOption = Path("data/tables"),
+    acts: Annotated[
+        Path, typer.Option("--acts", help="Directory of uniform act texts (local, gitignored).")
+    ] = ACTS_DIR,
+    enactments: Annotated[
+        Path, typer.Option("--enactments", help="The commission's enactment lists (committed).")
+    ] = ENACTMENTS,
+    sessions: Annotated[
+        Path, typer.Option("--sessions", help="Session dates CSV (committed).")
+    ] = Path("snapshot/sessions.csv"),
+    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+) -> None:
+    """Commission recall: what share of each uniform act's enactments its text finds."""
+    try:
+        section = commission_recall(
+            tables, acts_dir=acts, enactments_path=enactments, sessions_path=sessions
+        )
+    except (CommissionError, IndexMissingError, StoplistError, UlcError) as e:
+        typer.echo(str(e), err=True)
+        raise typer.Exit(1) from None
+    write_results(results, "commission", section)
+    pooled = section["recall"]["pooled"]
+    for label, key in (("all enactments", "all"), ("with text", "with_text")):
+        r = pooled[key]
+        share = r["found"] / r["enactments"] if r["enactments"] else 0.0
+        typer.echo(f"recall, {label}: {r['found']}/{r['enactments']} = {share:.1%}")
+    misses = ", ".join(f"{k} {v}" for k, v in section["miss_reasons"].items())
+    typer.echo(f"misses: {misses or 'none'} -> {results}")
