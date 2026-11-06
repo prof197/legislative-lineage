@@ -111,13 +111,20 @@ def _raw_text(tables: Path, bill_id: str) -> str:
     return str(row[0][0])
 
 
-# Measured on the fixture when the test was written. A pipeline change that loses one of these
-# fails here; one that finds more should add it, so the floor only rises.
+# Measured on the fixture. A pipeline change that loses one of these fails here; one that finds
+# more should add it, so the floor only rises. Citation headings (DESIGN.md#sections) added
+# Colorado's two enactments, Idaho's, Rhode Island's and New York's, whose chapters had been
+# one section each.
 REGRESSION_FOUND = {
+    ("electronic-estate-planning-documents", "CO", 2024),
     ("electronic-estate-planning-documents", "MN", 2026),
     ("electronic-estate-planning-documents", "UT", 2026),
     ("public-expression-protection", "IA", 2025),
+    ("public-expression-protection", "ID", 2025),
     ("public-expression-protection", "MT", 2025),
+    ("special-deposits", "CO", 2024),
+    ("special-deposits", "NY", 2026),
+    ("special-deposits", "RI", 2026),
     ("special-deposits", "UT", 2025),
 }
 

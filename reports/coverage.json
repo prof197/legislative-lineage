@@ -17,8 +17,8 @@
   "blank_text": 141770,
   "text_without_sections": 1394,
   "with_sections": 370794,
-  "split_at_headings": 257085,
-  "sections": 2185234,
+  "split_at_headings": 257108,
+  "sections": 2340883,
   "amendment_only": 7588,
   "amendment_substitutes": 1851
  },
@@ -397,7 +397,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 4072,
+      "total": 4081,
       "median": 3.0,
       "p90": 6,
       "max": 185
@@ -419,7 +419,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 4650,
+      "total": 4673,
       "median": 3.0,
       "p90": 6,
       "max": 123
@@ -441,7 +441,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 4670,
+      "total": 4675,
       "median": 3.0,
       "p90": 6,
       "max": 48
@@ -463,7 +463,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 5294,
+      "total": 5297,
       "median": 3.0,
       "p90": 6,
       "max": 38
@@ -511,10 +511,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 6240,
+      "total": 7602,
       "median": 2.0,
-      "p90": 8,
-      "max": 193
+      "p90": 9,
+      "max": 216
      }
     },
     {
@@ -533,7 +533,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 119,
+      "total": 121,
       "median": 6.0,
       "p90": 8,
       "max": 9
@@ -555,8 +555,8 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 2875,
-      "median": 7.0,
+      "total": 2953,
+      "median": 8.0,
       "p90": 24,
       "max": 77
      }
@@ -599,10 +599,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 6875,
+      "total": 8864,
       "median": 2.0,
-      "p90": 7,
-      "max": 162
+      "p90": 9,
+      "max": 231
      }
     },
     {
@@ -621,9 +621,9 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 1683,
+      "total": 1728,
       "median": 5.0,
-      "p90": 12,
+      "p90": 13,
       "max": 45
      }
     },
@@ -708,10 +708,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 6890,
-      "median": 2.0,
-      "p90": 7,
-      "max": 133
+      "total": 10849,
+      "median": 3.0,
+      "p90": 13,
+      "max": 184
      }
     },
     {
@@ -730,9 +730,9 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 7131,
-      "median": 2.0,
-      "p90": 7,
+      "total": 11545,
+      "median": 3.0,
+      "p90": 13,
       "max": 165
      }
     },
@@ -752,9 +752,9 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 7290,
-      "median": 2.0,
-      "p90": 7,
+      "total": 11697,
+      "median": 3.0,
+      "p90": 13,
       "max": 149
      }
     },
@@ -774,9 +774,9 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 8055,
-      "median": 3.0,
-      "p90": 7,
+      "total": 12744,
+      "median": 4.0,
+      "p90": 13,
       "max": 138
      }
     }
@@ -843,7 +843,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 53591,
+      "total": 53593,
       "median": 4.0,
       "p90": 16,
       "max": 1072
@@ -909,7 +909,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 24901,
+      "total": 24908,
       "median": 4.0,
       "p90": 19,
       "max": 978
@@ -1006,10 +1006,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 4456,
-      "median": 5.0,
-      "p90": 12,
-      "max": 100
+      "total": 7423,
+      "median": 6.0,
+      "p90": 22,
+      "max": 197
      }
     },
     {
@@ -1028,10 +1028,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 109,
-      "median": 4.0,
-      "p90": 19,
-      "max": 22
+      "total": 180,
+      "median": 6.0,
+      "p90": 35,
+      "max": 41
      }
     },
     {
@@ -1050,10 +1050,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 5575,
-      "median": 5.0,
-      "p90": 12,
-      "max": 127
+      "total": 9496,
+      "median": 7.0,
+      "p90": 22,
+      "max": 218
      }
     },
     {
@@ -1072,10 +1072,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 77,
-      "median": 4.5,
-      "p90": 7,
-      "max": 23
+      "total": 108,
+      "median": 5.0,
+      "p90": 10,
+      "max": 40
      }
     },
     {
@@ -1094,10 +1094,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 3932,
-      "median": 4.0,
-      "p90": 11,
-      "max": 189
+      "total": 6654,
+      "median": 6.0,
+      "p90": 21,
+      "max": 375
      }
     },
     {
@@ -1116,10 +1116,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 194,
-      "median": 5.0,
-      "p90": 8,
-      "max": 20
+      "total": 313,
+      "median": 6.0,
+      "p90": 18,
+      "max": 50
      }
     },
     {
@@ -1138,10 +1138,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 2994,
-      "median": 4.0,
-      "p90": 11,
-      "max": 97
+      "total": 5038,
+      "median": 6.0,
+      "p90": 20,
+      "max": 191
      }
     }
    ],
@@ -1381,7 +1381,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 12629,
+      "total": 12637,
       "median": 4.0,
       "p90": 12,
       "max": 178
@@ -1447,10 +1447,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 14158,
+      "total": 14170,
       "median": 4.0,
       "p90": 13,
-      "max": 259
+      "max": 260
      }
     },
     {
@@ -1469,10 +1469,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 16398,
+      "total": 16420,
       "median": 4.0,
       "p90": 15,
-      "max": 384
+      "max": 386
      }
     },
     {
@@ -1513,10 +1513,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 104,
-      "median": 52.0,
-      "p90": 55,
-      "max": 55
+      "total": 105,
+      "median": 52.5,
+      "p90": 56,
+      "max": 56
      }
     },
     {
@@ -1535,10 +1535,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 91,
+      "total": 93,
       "median": 7.0,
-      "p90": 34,
-      "max": 34
+      "p90": 35,
+      "max": 35
      }
     },
     {
@@ -1557,10 +1557,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 13945,
+      "total": 13962,
       "median": 4.0,
       "p90": 13,
-      "max": 324
+      "max": 326
      }
     },
     {
@@ -1687,9 +1687,9 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 14479,
+      "total": 16683,
       "median": 2.0,
-      "p90": 5,
+      "p90": 6,
       "max": 339
      }
     },
@@ -1731,9 +1731,9 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 15985,
+      "total": 18206,
       "median": 2.0,
-      "p90": 5,
+      "p90": 6,
       "max": 328
      }
     },
@@ -1803,7 +1803,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 12253,
+      "total": 12255,
       "median": 3.0,
       "p90": 6,
       "max": 92
@@ -1869,7 +1869,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 24332,
+      "total": 24337,
       "median": 3.0,
       "p90": 7,
       "max": 199
@@ -1931,7 +1931,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 37912,
+      "total": 37917,
       "median": 3.0,
       "p90": 16,
       "max": 2842
@@ -1953,7 +1953,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 24856,
+      "total": 24859,
       "median": 3.0,
       "p90": 15,
       "max": 210
@@ -2017,10 +2017,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 3192,
-      "median": 3.5,
-      "p90": 9,
-      "max": 95
+      "total": 4634,
+      "median": 5.0,
+      "p90": 13,
+      "max": 163
      }
     },
     {
@@ -2039,10 +2039,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 3735,
+      "total": 5605,
       "median": 4.0,
-      "p90": 8,
-      "max": 62
+      "p90": 12,
+      "max": 173
      }
     },
     {
@@ -2061,10 +2061,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 4458,
-      "median": 3.0,
-      "p90": 11,
-      "max": 111
+      "total": 6861,
+      "median": 5.0,
+      "p90": 16,
+      "max": 176
      }
     },
     {
@@ -2083,10 +2083,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 4319,
-      "median": 4.0,
-      "p90": 9,
-      "max": 103
+      "total": 6550,
+      "median": 5.0,
+      "p90": 14,
+      "max": 176
      }
     }
    ],
@@ -2153,7 +2153,7 @@
       "substitutes": 624
      },
      "sections": {
-      "total": 45130,
+      "total": 45165,
       "median": 3.0,
       "p90": 8,
       "max": 96
@@ -2175,7 +2175,7 @@
       "substitutes": 577
      },
      "sections": {
-      "total": 54603,
+      "total": 54637,
       "median": 3.0,
       "p90": 10,
       "max": 174
@@ -2366,9 +2366,9 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 7873,
+      "total": 8019,
       "median": 4.0,
-      "p90": 11,
+      "p90": 12,
       "max": 210
      }
     },
@@ -2388,7 +2388,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 5662,
+      "total": 5686,
       "median": 4.0,
       "p90": 10,
       "max": 207
@@ -2442,10 +2442,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 6129,
+      "total": 6134,
       "median": 3.0,
       "p90": 9,
-      "max": 151
+      "max": 152
      }
     },
     {
@@ -2464,10 +2464,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 8539,
+      "total": 8547,
       "median": 3.0,
       "p90": 9,
-      "max": 217
+      "max": 218
      }
     },
     {
@@ -2486,7 +2486,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 6627,
+      "total": 6636,
       "median": 3.0,
       "p90": 8,
       "max": 187
@@ -2508,7 +2508,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 8704,
+      "total": 8717,
       "median": 3.0,
       "p90": 9,
       "max": 173
@@ -2743,10 +2743,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 7340,
+      "total": 7341,
       "median": 2.0,
       "p90": 5,
-      "max": 290
+      "max": 291
      }
     }
    ],
@@ -2805,7 +2805,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 25402,
+      "total": 25689,
       "median": 2.0,
       "p90": 12,
       "max": 3580
@@ -2827,7 +2827,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 102285,
+      "total": 102408,
       "median": 3.0,
       "p90": 10,
       "max": 3938
@@ -3061,7 +3061,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 9907,
+      "total": 9912,
       "median": 2.0,
       "p90": 6,
       "max": 98
@@ -3083,7 +3083,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 10379,
+      "total": 10380,
       "median": 2.0,
       "p90": 6,
       "max": 89
@@ -3341,7 +3341,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 20001,
+      "total": 20002,
       "median": 4.0,
       "p90": 24,
       "max": 604
@@ -3400,10 +3400,10 @@
       "substitutes": 5
      },
      "sections": {
-      "total": 19214,
+      "total": 25525,
       "median": 4.0,
-      "p90": 11,
-      "max": 146
+      "p90": 15,
+      "max": 280
      }
     },
     {
@@ -3422,10 +3422,10 @@
       "substitutes": 7
      },
      "sections": {
-      "total": 24734,
+      "total": 34568,
       "median": 4.0,
-      "p90": 11,
-      "max": 262
+      "p90": 16,
+      "max": 517
      }
     },
     {
@@ -3444,10 +3444,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 28,
+      "total": 45,
       "median": 4.0,
-      "p90": 20,
-      "max": 20
+      "p90": 37,
+      "max": 37
      }
     },
     {
@@ -3466,10 +3466,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 53,
+      "total": 84,
       "median": 4.0,
-      "p90": 45,
-      "max": 45
+      "p90": 76,
+      "max": 76
      }
     },
     {
@@ -3488,10 +3488,10 @@
       "substitutes": 6
      },
      "sections": {
-      "total": 20094,
+      "total": 27594,
       "median": 4.0,
-      "p90": 12,
-      "max": 152
+      "p90": 17,
+      "max": 302
      }
     },
     {
@@ -3510,7 +3510,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 1628,
+      "total": 1635,
       "median": 12.0,
       "p90": 28,
       "max": 52
@@ -3532,10 +3532,10 @@
       "substitutes": 7
      },
      "sections": {
-      "total": 17839,
-      "median": 4.0,
-      "p90": 15,
-      "max": 234
+      "total": 25251,
+      "median": 5.0,
+      "p90": 21,
+      "max": 460
      }
     },
     {
@@ -3554,10 +3554,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 81,
-      "median": 40.5,
-      "p90": 75,
-      "max": 75
+      "total": 147,
+      "median": 73.5,
+      "p90": 141,
+      "max": 141
      }
     }
    ],
@@ -3613,10 +3613,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 10637,
+      "total": 11432,
       "median": 4.0,
       "p90": 12,
-      "max": 141
+      "max": 142
      }
     },
     {
@@ -3635,10 +3635,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 10477,
+      "total": 10958,
       "median": 4.0,
       "p90": 11,
-      "max": 160
+      "max": 173
      }
     }
    ],
@@ -3694,7 +3694,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 3105,
+      "total": 3110,
       "median": 3.0,
       "p90": 8,
       "max": 73
@@ -3716,7 +3716,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 11870,
+      "total": 11886,
       "median": 3.0,
       "p90": 8,
       "max": 276
@@ -3791,10 +3791,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 3748,
+      "total": 5437,
       "median": 3.0,
-      "p90": 7,
-      "max": 137
+      "p90": 10,
+      "max": 234
      }
     },
     {
@@ -3813,10 +3813,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 3102,
-      "median": 2.0,
-      "p90": 6,
-      "max": 57
+      "total": 4151,
+      "median": 3.0,
+      "p90": 9,
+      "max": 96
      }
     }
    ],
@@ -3912,7 +3912,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 5082,
+      "total": 5083,
       "median": 3.0,
       "p90": 16,
       "max": 312
@@ -4202,7 +4202,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 6826,
+      "total": 6827,
       "median": 3.0,
       "p90": 10,
       "max": 367
@@ -4531,10 +4531,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 94814,
+      "total": 103797,
       "median": 3.0,
-      "p90": 6,
-      "max": 348
+      "p90": 7,
+      "max": 369
      }
     },
     {
@@ -4553,10 +4553,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 103446,
+      "total": 113965,
       "median": 3.0,
-      "p90": 7,
-      "max": 348
+      "p90": 8,
+      "max": 360
      }
     }
    ],
@@ -4703,7 +4703,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 14696,
+      "total": 14697,
       "median": 3.0,
       "p90": 7,
       "max": 254
@@ -4835,7 +4835,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 14045,
+      "total": 14046,
       "median": 4.0,
       "p90": 8,
       "max": 1526
@@ -4857,7 +4857,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 25235,
+      "total": 25236,
       "median": 4.0,
       "p90": 7,
       "max": 163
@@ -5090,15 +5090,15 @@
      "blank_text": 2213,
      "text_without_sections": 0,
      "with_sections": 2575,
-     "split_at_headings": 1886,
+     "split_at_headings": 1888,
      "amendment_only": {
       "all": 215,
       "substitutes": 0
      },
      "sections": {
-      "total": 19736,
+      "total": 20997,
       "median": 4.0,
-      "p90": 12,
+      "p90": 13,
       "max": 703
      }
     },
@@ -5134,15 +5134,15 @@
      "blank_text": 3567,
      "text_without_sections": 0,
      "with_sections": 1705,
-     "split_at_headings": 1314,
+     "split_at_headings": 1315,
      "amendment_only": {
       "all": 161,
       "substitutes": 0
      },
      "sections": {
-      "total": 12825,
+      "total": 13800,
       "median": 4.0,
-      "p90": 12,
+      "p90": 13,
       "max": 573
      }
     }
@@ -5190,10 +5190,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 9567,
-      "median": 3.0,
-      "p90": 5,
-      "max": 125
+      "total": 16708,
+      "median": 4.0,
+      "p90": 12,
+      "max": 271
      }
     },
     {
@@ -5212,10 +5212,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 9059,
-      "median": 3.0,
-      "p90": 5,
-      "max": 57
+      "total": 16267,
+      "median": 4.0,
+      "p90": 13,
+      "max": 221
      }
     },
     {
@@ -5234,10 +5234,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 9060,
-      "median": 3.0,
-      "p90": 5,
-      "max": 93
+      "total": 15799,
+      "median": 4.0,
+      "p90": 11,
+      "max": 223
      }
     },
     {
@@ -5256,10 +5256,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 8881,
-      "median": 3.0,
-      "p90": 5,
-      "max": 45
+      "total": 15733,
+      "median": 4.0,
+      "p90": 12,
+      "max": 224
      }
     }
    ],
@@ -5304,7 +5304,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 19438,
+      "total": 19440,
       "median": 3.0,
       "p90": 7,
       "max": 562
@@ -5326,7 +5326,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 20643,
+      "total": 20644,
       "median": 3.0,
       "p90": 9,
       "max": 504
@@ -5533,10 +5533,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 32963,
+      "total": 36333,
       "median": 3.0,
-      "p90": 5,
-      "max": 197
+      "p90": 6,
+      "max": 379
      }
     },
     {
@@ -5555,10 +5555,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 1351,
+      "total": 1459,
       "median": 3.0,
-      "p90": 5,
-      "max": 13
+      "p90": 6,
+      "max": 19
      }
     },
     {
@@ -5577,10 +5577,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 32332,
+      "total": 36084,
       "median": 3.0,
-      "p90": 5,
-      "max": 129
+      "p90": 7,
+      "max": 169
      }
     },
     {
@@ -5599,10 +5599,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 126,
-      "median": 4.0,
-      "p90": 11,
-      "max": 17
+      "total": 186,
+      "median": 5.0,
+      "p90": 20,
+      "max": 25
      }
     },
     {
@@ -5675,7 +5675,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 70100,
+      "total": 70176,
       "median": 4.0,
       "p90": 12,
       "max": 2015
@@ -5697,7 +5697,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 626,
+      "total": 627,
       "median": 4.0,
       "p90": 16,
       "max": 59
@@ -5741,7 +5741,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 2398,
+      "total": 2399,
       "median": 2.0,
       "p90": 9,
       "max": 283
@@ -5763,7 +5763,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 1538,
+      "total": 1539,
       "median": 2.0,
       "p90": 8,
       "max": 277
@@ -5785,7 +5785,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 4460,
+      "total": 4464,
       "median": 4.0,
       "p90": 14,
       "max": 275
@@ -5807,7 +5807,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 4479,
+      "total": 4483,
       "median": 4.0,
       "p90": 13,
       "max": 210
@@ -5829,7 +5829,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 67619,
+      "total": 67660,
       "median": 4.0,
       "p90": 13,
       "max": 427
@@ -5889,10 +5889,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 9663,
-      "median": 4.0,
-      "p90": 19,
-      "max": 342
+      "total": 15345,
+      "median": 6.0,
+      "p90": 32,
+      "max": 513
      }
     },
     {
@@ -5911,8 +5911,8 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 12,
-      "median": 3.0,
+      "total": 14,
+      "median": 4.0,
       "p90": 4,
       "max": 4
      }
@@ -5933,10 +5933,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 7,
-      "median": 7.0,
-      "p90": 7,
-      "max": 7
+      "total": 10,
+      "median": 10.0,
+      "p90": 10,
+      "max": 10
      }
     },
     {
@@ -5955,10 +5955,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 8862,
-      "median": 5.0,
-      "p90": 19,
-      "max": 271
+      "total": 14282,
+      "median": 6.0,
+      "p90": 31,
+      "max": 523
      }
     },
     {
@@ -5977,8 +5977,8 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 200,
-      "median": 4.5,
+      "total": 222,
+      "median": 5.5,
       "p90": 161,
       "max": 161
      }
@@ -5999,10 +5999,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 22,
-      "median": 5.0,
-      "p90": 8,
-      "max": 8
+      "total": 31,
+      "median": 6.0,
+      "p90": 14,
+      "max": 14
      }
     },
     {
@@ -6021,7 +6021,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 9194,
+      "total": 9199,
       "median": 5.0,
       "p90": 23,
       "max": 587
@@ -6087,7 +6087,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 10859,
+      "total": 10869,
       "median": 5.0,
       "p90": 21,
       "max": 352
@@ -6140,13 +6140,13 @@
      "blank_text": 63,
      "text_without_sections": 0,
      "with_sections": 3019,
-     "split_at_headings": 1761,
+     "split_at_headings": 1775,
      "amendment_only": {
       "all": 183,
       "substitutes": 183
      },
      "sections": {
-      "total": 11084,
+      "total": 11109,
       "median": 2.0,
       "p90": 5,
       "max": 266
@@ -6184,13 +6184,13 @@
      "blank_text": 221,
      "text_without_sections": 0,
      "with_sections": 3374,
-     "split_at_headings": 1815,
+     "split_at_headings": 1821,
      "amendment_only": {
       "all": 175,
       "substitutes": 175
      },
      "sections": {
-      "total": 10664,
+      "total": 10680,
       "median": 2.0,
       "p90": 5,
       "max": 138
@@ -6514,10 +6514,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 24517,
+      "total": 24521,
       "median": 3.0,
       "p90": 14,
-      "max": 3399
+      "max": 3401
      }
     },
     {
@@ -6634,7 +6634,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 8390,
+      "total": 8391,
       "median": 2.0,
       "p90": 6,
       "max": 490
@@ -6678,7 +6678,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 8444,
+      "total": 8446,
       "median": 2.0,
       "p90": 6,
       "max": 490
@@ -6766,7 +6766,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 2192,
+      "total": 2193,
       "median": 2.0,
       "p90": 7,
       "max": 68
@@ -6825,10 +6825,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 2014,
-      "median": 4.0,
-      "p90": 5,
-      "max": 54
+      "total": 3562,
+      "median": 5.0,
+      "p90": 13,
+      "max": 82
      }
     },
     {
@@ -6847,10 +6847,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 1841,
-      "median": 4.0,
-      "p90": 6,
-      "max": 153
+      "total": 3096,
+      "median": 6.0,
+      "p90": 12,
+      "max": 266
      }
     },
     {
@@ -6869,10 +6869,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 2359,
-      "median": 4.0,
-      "p90": 5,
-      "max": 46
+      "total": 4429,
+      "median": 6.0,
+      "p90": 12,
+      "max": 267
      }
     },
     {
@@ -6891,10 +6891,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 1700,
-      "median": 4.0,
-      "p90": 6,
-      "max": 155
+      "total": 2948,
+      "median": 6.0,
+      "p90": 14,
+      "max": 162
      }
     }
    ],
