@@ -1,34 +1,34 @@
 {
  "command": "uv run lineage eligible",
- "rules_sha256": "2829185203028fe7e2a0f7e2d7c415ab6ff67818cc728af0cfd4483a851eecb3",
+ "rules_sha256": "134e8039961adee9de989d6add2111348879beb788cc57a09568432b9b7f5c57",
  "totals": {
   "records": 525633,
-  "eligible": 456189,
-  "eligible_with_sections": 314664
+  "eligible": 450334,
+  "eligible_with_sections": 308838
  },
  "rules": [
   {
    "rule": 1,
    "state": "*",
    "type": "joint resolution",
-   "title": "^\\W*(?:relating to:\\s*|(?:h\\.?\\s?j\\.?\\s?r\\.?\\s*\\d+\\s+)?(?:a\\s+)?(?:joint\\s+)?resolution\\s+(?:to\\s+)?|memorials,\\s*)?(?:commend|congratulat|condolence|mourn|in memory of|honou?r(?:s|ed|ing)?\\b|recogni[sz]|celebrat)",
+   "title": "^\\W*(?:relating to:\\s*|(?:h\\.?\\s?j\\.?\\s?r\\.?\\s*\\d+\\s+)?(?:a\\s+)?(?:joint\\s+)?resolution\\s+(?:to\\s+)?|memorials,\\s*)?(?:commend|commemorat|congratulat|condolence|mourn|in memory of|(?:paying\\s+)?tribute\\b|honou?r(?:s|ed|ing)?\\b|recogni[sz]|celebrat)",
    "unless": "constitution|amend|propos|\\brights? (?:to|of)\\b|\\blaws?\\b",
    "decision": "exclude",
-   "reason": "commemorative title: opens by commending, honoring, recognizing or mourning, and names no constitution, amendment, right or law",
-   "records": 1494,
+   "reason": "commemorative title: opens by commending, commemorating, honoring, recognizing or mourning, and names no constitution, amendment, right or law",
+   "records": 1546,
    "by_state": {
     "AK": 8,
-    "CT": 8,
+    "CT": 13,
     "IL": 4,
     "MD": 1,
-    "ME": 151,
+    "ME": 161,
     "MT": 10,
     "NC": 2,
-    "NJ": 32,
+    "NJ": 45,
     "TN": 4,
     "UT": 12,
-    "VA": 1037,
-    "WI": 225
+    "VA": 1044,
+    "WI": 242
    },
    "sample_titles": [
     "WI: Relating to: recognizing the many federal, state, and local contributions of the 115th Fighter Wing.",
@@ -37,6 +37,7 @@
     "VA: Celebrating the life of George Samuel Hobart.",
     "VA: Celebrating the life of Bernard A. Strother, Jr.",
     "VA: Commending Gregory L. Robinson.",
+    "WI: Relating to: commemorating the 80th anniversary of D-Day.",
     "VA: Commending William G. Crutchfield, Jr.",
     "VA: Commending Amy Burchuk.",
     "VA: Commending David L. Holmes, PhD.",
@@ -89,8 +90,7 @@
     "VA: Celebrating the life of Scott Blackford Meacham.",
     "ME: Joint Resolution Recognizing May 6 To May 12, 2024 As National Nurses Week",
     "VA: Celebrating the life of Lawrence Bussey.",
-    "VA: Commending the Army Navy Country Club.",
-    "VA: Commending Virginia S. Perrin."
+    "VA: Commemorating the life and legacy of Cook Petty Officer Third Class Doris Miller, USN."
    ],
    "spared_titles": [
     "AK: Recognizing the sovereign decisions of the communities of Kipnuk and Kwigillingok to relocate in the wake of the devastation caused by Typhoon Halong; affirming the right of Alaska Native communities to self-determination; and urging full state and federal support for relocation of those communities.",
@@ -107,6 +107,81 @@
   },
   {
    "rule": 2,
+   "state": "TN",
+   "type": "joint resolution",
+   "title": "^\\W*memorials\\s*,",
+   "unless": null,
+   "decision": "exclude",
+   "reason": "Tennessee files each memorial as a joint resolution titled \"Memorials, <occasion> - <honoree> -\"; no guard, since an honoree's name can carry a word such as law",
+   "records": 5803,
+   "by_state": {
+    "TN": 5803
+   },
+   "sample_titles": [
+    "TN: Memorials, Death - Mark Moffatt -",
+    "TN: Memorials, Recognition - 250th anniversary of the Battles of Lexington and Concord -",
+    "TN: Memorials, Professional Achievement - Galen Brown, DeKalb Middle School Teacher of the Year -",
+    "TN: Memorials, Recognition - Richard and Joni Maples -",
+    "TN: Memorials, Professional Achievement - Brittany Tyree, Liberty Creek Elementary School Teacher of the Year -",
+    "TN: Memorials, Recognition - PENCIL -",
+    "TN: Memorials, Retirement - Brent Clayton  -",
+    "TN: Memorials, Interns - Brice Petty -",
+    "TN: Memorials, Death - William J. Chism, Sr. -",
+    "TN: Memorials, Death - Margaret Jewel \"Margie\" Ison -",
+    "TN: Memorials, Recognition - Rujena Dotson, Governor's Volunteer Stars Award -",
+    "TN: Memorials, Professional Achievement - Missy Testerman, National Teacher of the Year -",
+    "TN: Memorials, Professional Achievement - Michele Summers, Merrol Hyde Magnet School Teacher of the Year -",
+    "TN: Memorials, Death - Thomas Hayes \"Tommy\" Schumpert -",
+    "TN: Memorials, Recognition - PENCIL -",
+    "TN: Memorials, Sports - Ella Murphey -",
+    "TN: Memorials, Academic Achievement - Hallie Kate Dierks, Valedictorian, Adamsville High School -",
+    "TN: Memorials, Public Service - Representative Caleb Hemmer -",
+    "TN: Memorials, Recognition - Riley Gaines -",
+    "TN: Memorials, Recognition - Izabella Gansore, Boys & Girls Club of the Cumberland Plateau Youth of the Year -",
+    "TN: Memorials, Professional Achievement - Hailey Ellis, Westmeade Elementary School Teacher of the Year -",
+    "TN: Memorials, Recognition - Green Hill Church, 125th anniversary -",
+    "TN: Memorials, Personal Achievement - William Lawrence Cole, Eagle Scout -",
+    "TN: Memorials, Professional Achievement - Rebekah Morford, Teacher of the Year, Allendale Elementary School  -",
+    "TN: Memorials, Academic Achievement - Destiny Marie Browning, Valedictorian, Waverly Central High School -",
+    "TN: Memorials, Recognition - Alexander Sharpe -",
+    "TN: Memorials, Recognition - Hixson High School AFJROTC, 50th anniversary -",
+    "TN: Memorials, Recognition - Karis Community Health, 10th anniversary -",
+    "TN: Memorials, Sports - Jean Hinkle, Senior Olympics gold medalist -",
+    "TN: Memorials, Academic Achievement - Jake McDaniel, Salutatorian, Christian Community Schools -",
+    "TN: Memorials, Academic Achievement - Ramkeert S. Sooch, Valedictorian, Spring Hill High School -",
+    "TN: Memorials, Sports - Marley VanBuskirk -",
+    "TN: Memorials, Death - Grady Lamar Rhoden, Jr. -",
+    "TN: Memorials, Personal Achievement - Emily Williams, Eagle Scout -",
+    "TN: Memorials, Recognition - Totianya Zamora Moore, 2024-2025 Tennessee Association of School Librarians Bookmark Contest -",
+    "TN: Memorials, Professional Achievement - Sarah Wheeler, Rucker-Stewart Middle School Teacher of the Year -",
+    "TN: Memorials, Academic Achievement - Kaleb Christian, Valedictorian, Heritage Christian Academy -",
+    "TN: Memorials, Sports - Brian Carter, All-TCCAA Second Team -",
+    "TN: Memorials, Academic Achievement - Anna Lara, Salutatorian, Knox County Virtual School -",
+    "TN: Memorials, Recognition - Arts in Education Week -",
+    "TN: Memorials, Academic Achievement - Dariana Sanchez Arredondo, Salutatorian, Raleigh-Egypt High School -",
+    "TN: Memorials, Professional Achievement - Erin Clark, Mt. Juliet Christian Academy Teacher of the Year -",
+    "TN: Memorials, Academic Achievement - Brett Eastin Astran, Top Ten Senior, Zion Christian Academy -",
+    "TN: Memorials, Academic Achievement - Alex Whiteside, Top Ten Senior, Forrest School -",
+    "TN: Memorials, Recognition - Dr. C. William \"Bill\" McKee -",
+    "TN: Memorials, Recognition - Reverend Tracey Coleman  -",
+    "TN: Memorials, Academic Achievement - Abby Heady, Valedictorian, White County High School -",
+    "TN: Memorials, Recognition - Evan Miller, AMVETS Americanism contest winner -",
+    "TN: Memorials, Recognition - Major Richard Lynch, White County Sheriff's Office -",
+    "TN: Memorials, Death - R.W. Groom III -",
+    "TN: Memorials, Death - Mary Elizabeth Goins -",
+    "TN: Memorials, Professional Achievement - Kimberly Lewis, White County Middle School Teacher of the Year -",
+    "TN: Memorials, Academic Achievement - Nathan Jeansonne, Co-Valedictorian, Halls High School -",
+    "TN: Memorials, Recognition - Rebecca Tipton, Boys & Girls Clubs Hall of Fame -",
+    "TN: Memorials, Academic Achievement - Evie Marie Steidl, Valedictorian, Dickson County High School -",
+    "TN: Memorials, Sports - Sofia Vega Barrantes -",
+    "TN: Memorials, Personal Occasion - Barbara Joyce Driver-Rice, 70th birthday -",
+    "TN: Memorials, Death - Pamela Suzette Cofer Simpson -",
+    "TN: Memorials, Professional Achievement - Donna Frisse, George Whitten Elementary School Support Employee of the Year -",
+    "TN: Memorials, Recognition - Scott County Fair, 100th anniversary -"
+   ]
+  },
+  {
+   "rule": 3,
    "state": "NJ",
    "type": "concurrent resolution",
    "title": "^(?:proposes|amends)\\b.*\\bconstitution",
@@ -181,7 +256,7 @@
    ]
   },
   {
-   "rule": 3,
+   "rule": 4,
    "state": "MS",
    "type": "concurrent resolution",
    "title": "^constitution(?:al amendments| of 1890)?\\s*;",
@@ -256,7 +331,7 @@
    ]
   },
   {
-   "rule": 4,
+   "rule": 5,
    "state": "GA",
    "type": "resolution",
    "title": "-\\s*CA\\s*$",
@@ -331,7 +406,7 @@
    ]
   },
   {
-   "rule": 5,
+   "rule": 6,
    "state": "*",
    "type": "bill",
    "title": null,
@@ -393,7 +468,7 @@
    }
   },
   {
-   "rule": 6,
+   "rule": 7,
    "state": "*",
    "type": "bill+appropriation",
    "title": null,
@@ -406,7 +481,7 @@
    }
   },
   {
-   "rule": 7,
+   "rule": 8,
    "state": "*",
    "type": "proposed bill",
    "title": null,
@@ -421,20 +496,20 @@
    }
   },
   {
-   "rule": 8,
+   "rule": 9,
    "state": "*",
    "type": "joint resolution",
    "title": null,
    "unless": null,
    "decision": "match",
    "reason": "joint resolutions can carry law or propose constitutional amendments",
-   "records": 13589,
+   "records": 7734,
    "by_state": {
     "AK": 119,
     "AR": 77,
     "AZ": 2,
     "CA": 91,
-    "CT": 1146,
+    "CT": 1141,
     "DE": 48,
     "FL": 103,
     "IA": 81,
@@ -443,29 +518,29 @@
     "IN": 93,
     "KY": 233,
     "MD": 49,
-    "ME": 162,
+    "ME": 152,
     "MO": 620,
     "MT": 195,
     "NC": 47,
     "NH": 1,
-    "NJ": 1059,
+    "NJ": 1046,
     "NM": 120,
     "OK": 378,
     "OR": 129,
     "SC": 322,
     "SD": 49,
-    "TN": 6320,
+    "TN": 517,
     "TX": 711,
     "UT": 152,
-    "VA": 240,
+    "VA": 233,
     "VT": 137,
     "WA": 51,
-    "WI": 356,
+    "WI": 339,
     "WV": 197
    }
   },
   {
-   "rule": 9,
+   "rule": 10,
    "state": "*",
    "type": "constitutional amendment",
    "title": null,
@@ -482,7 +557,7 @@
    }
   },
   {
-   "rule": 10,
+   "rule": 11,
    "state": "*",
    "type": "resolution",
    "title": null,
@@ -538,7 +613,7 @@
    }
   },
   {
-   "rule": 11,
+   "rule": 12,
    "state": "*",
    "type": "concurrent resolution",
    "title": null,
@@ -580,7 +655,7 @@
    }
   },
   {
-   "rule": 12,
+   "rule": 13,
    "state": "*",
    "type": "memorial",
    "title": null,
@@ -597,7 +672,7 @@
    }
   },
   {
-   "rule": 13,
+   "rule": 14,
    "state": "*",
    "type": "joint memorial",
    "title": null,
@@ -613,7 +688,7 @@
    }
   },
   {
-   "rule": 14,
+   "rule": 15,
    "state": "*",
    "type": "concurrent memorial",
    "title": null,
@@ -627,7 +702,7 @@
    }
   },
   {
-   "rule": 15,
+   "rule": 16,
    "state": "*",
    "type": "commemoration",
    "title": null,
@@ -640,7 +715,7 @@
    }
   },
   {
-   "rule": 16,
+   "rule": 17,
    "state": "*",
    "type": "proclamation",
    "title": null,
@@ -654,7 +729,7 @@
    }
   },
   {
-   "rule": 17,
+   "rule": 18,
    "state": "*",
    "type": "appointment",
    "title": null,
@@ -667,7 +742,7 @@
    }
   },
   {
-   "rule": 18,
+   "rule": 19,
    "state": "*",
    "type": "nomination",
    "title": null,
@@ -680,7 +755,7 @@
    }
   },
   {
-   "rule": 19,
+   "rule": 20,
    "state": "*",
    "type": "study request",
    "title": null,
@@ -693,7 +768,7 @@
    }
   },
   {
-   "rule": 20,
+   "rule": 21,
    "state": "*",
    "type": "concurrent study request",
    "title": null,

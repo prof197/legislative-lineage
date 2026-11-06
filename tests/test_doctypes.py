@@ -78,7 +78,49 @@ def test_rejects_a_malformed_rule_naming_its_line(tmp_path: Path, body: str, mes
             "H.J.R. 21 Joint Resolution Honoring the Hispanic Community",
             False,
         ),
+        ("VA", "joint resolution", "Commemorating the life and legacy of Secretariat.", False),
+        (
+            "NJ",
+            "joint resolution",
+            "Commemorates 75th anniversary of Princeton Plasma Physics Laboratory.",
+            False,
+        ),
+        (
+            "WI",
+            "joint resolution",
+            "Relating to: commemorating the 80th anniversary of D-Day.",
+            False,
+        ),
+        (
+            "WI",
+            "joint resolution",
+            "Relating to: paying tribute to the entire Polish community that has lived in "
+            "Wisconsin for 180 years and contributed to its strength.",
+            False,
+        ),
+        # Tennessee titles every memorial "Memorials, <occasion> - <honoree> -", and an honoree's
+        # name can carry a word the guard reads as law, so its rule has no guard.
+        (
+            "TN",
+            "joint resolution",
+            "Memorials, Recognition - Fort Loudoun Electric Cooperative, 85th anniversary -",
+            False,
+        ),
+        (
+            "TN",
+            "joint resolution",
+            "Memorials, Recognition - Fallen law enforcement officers of Hawkins County  -",
+            False,
+        ),
         # Substantive joint resolutions that a looser pattern would have excluded.
+        (
+            "TN",
+            "joint resolution",
+            "Constitutional Amendments - Proposes additional language in Article II, Section 28 to "
+            "prohibit the general assembly from levying, authorizing, or otherwise permitting a "
+            "state tax on property.  -",
+            True,
+        ),
         (
             "TX",
             "joint resolution",
@@ -162,16 +204,16 @@ def test_writes_eligibility_and_a_report_counting_each_rule(tables: Path, tmp_pa
         f"JOIN read_parquet('{tables / 'bills' / '*.parquet'}') b USING (id) ORDER BY ALL"
     ).fetchall()
     # SR 1065 recognizes a week: a simple resolution, excluded by the default rule.
-    assert ("GA", "SR 1065", False, 10) in rows
-    assert ("GA", "SB 238", True, 5) in rows
+    assert ("GA", "SR 1065", False, 11) in rows
+    assert ("GA", "SB 238", True, 6) in rows
     assert all(rule is not None for *_, rule in rows)
 
     assert json.loads(report.read_text()) == doc
     assert doc["command"] == "uv run lineage eligible"
     by_rule = {r["rule"]: r for r in doc["rules"]}
-    assert by_rule[5]["records"] == 4
-    assert by_rule[10]["records"] == 1
-    assert by_rule[10]["by_state"] == {"GA": 1}
+    assert by_rule[6]["records"] == 4
+    assert by_rule[11]["records"] == 1
+    assert by_rule[11]["by_state"] == {"GA": 1}
     assert doc["totals"] == {"records": 5, "eligible": 4, "eligible_with_sections": 2}
     assert doc["unlisted_types"] == {}
 

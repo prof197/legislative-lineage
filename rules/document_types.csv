@@ -3,7 +3,8 @@
 # Patterns are Python regular expressions, matched case-insensitively against the title.
 # Counts per rule are measured by `uv run lineage eligible` -> reports/document_types.json.
 state,type,title,unless,decision,reason
-*,joint resolution,"^\W*(?:relating to:\s*|(?:h\.?\s?j\.?\s?r\.?\s*\d+\s+)?(?:a\s+)?(?:joint\s+)?resolution\s+(?:to\s+)?|memorials,\s*)?(?:commend|congratulat|condolence|mourn|in memory of|honou?r(?:s|ed|ing)?\b|recogni[sz]|celebrat)",constitution|amend|propos|\brights? (?:to|of)\b|\blaws?\b,exclude,"commemorative title: opens by commending, honoring, recognizing or mourning, and names no constitution, amendment, right or law"
+*,joint resolution,"^\W*(?:relating to:\s*|(?:h\.?\s?j\.?\s?r\.?\s*\d+\s+)?(?:a\s+)?(?:joint\s+)?resolution\s+(?:to\s+)?|memorials,\s*)?(?:commend|commemorat|congratulat|condolence|mourn|in memory of|(?:paying\s+)?tribute\b|honou?r(?:s|ed|ing)?\b|recogni[sz]|celebrat)",constitution|amend|propos|\brights? (?:to|of)\b|\blaws?\b,exclude,"commemorative title: opens by commending, commemorating, honoring, recognizing or mourning, and names no constitution, amendment, right or law"
+TN,joint resolution,"^\W*memorials\s*,",,exclude,"Tennessee files each memorial as a joint resolution titled ""Memorials, <occasion> - <honoree> -""; no guard, since an honoree's name can carry a word such as law"
 NJ,concurrent resolution,^(?:proposes|amends)\b.*\bconstitution,,match,New Jersey proposes constitutional amendments as concurrent resolutions
 MS,concurrent resolution,^constitution(?:al amendments| of 1890)?\s*;,,match,Mississippi proposes constitutional amendments as concurrent resolutions
 GA,resolution,-\s*CA\s*$,,match,Georgia marks resolutions proposing a constitutional amendment with a trailing -CA
