@@ -27,6 +27,7 @@ module-name = "lineage"
 
 [dependency-groups]
 dev = [
+    "datasketch>=2.0.0",
     "pyright>=1.1.414",
     "pytest>=9.2.0",
     "ruff>=0.17.3",
@@ -52,7 +53,7 @@ select = [
 ]
 
 [tool.pyright]
-include = ["src", "tests"]
+include = ["src", "tests", "benchmarks"]
 typeCheckingMode = "strict"
 pythonVersion = "3.13"
 venvPath = "."
@@ -60,6 +61,8 @@ venv = ".venv"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# The repo root, so tests can import the dev-only benchmarks package.
+pythonpath = ["."]
 addopts = ["-ra", "--strict-markers", "--strict-config", "--import-mode=importlib"]
 xfail_strict = true
 filterwarnings = ["error"]

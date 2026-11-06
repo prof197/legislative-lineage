@@ -3,7 +3,9 @@
 Shared clauses that no pattern list anticipates (standard definitions, amending formulas,
 appropriation language) show up as shingles present in a large share of sections. Dropping
 them before MinHash keeps them from creating matches. The list comes from the data, so it
-follows each state's habits without upkeep, and it is rebuilt with the corpus. See
+follows each state's habits without upkeep, and it is rebuilt with the corpus. Frequencies are
+counted over matchable sections only: those of eligible document types (DESIGN.md#dr-5) not
+flagged as boilerplate, so excluded resolutions cannot shift the list. See
 DESIGN.md#boilerplate.
 """
 
@@ -66,14 +68,30 @@ def over_threshold(
     return hashes[counts > max_share * sections]
 
 
-def _part_shingles(part: Path) -> tuple[int, list[NDArray[np.uint32]]]:
-    """All section shingle sets of one sections file, split into hash partitions."""
+def apply_stoplist(
+    section_sets: Sequence[NDArray[np.uint32]], stoplist: NDArray[np.uint32]
+) -> list[NDArray[np.uint32]]:
+    """Each section's shingle set without the stoplisted hashes; `stoplist` must be sorted."""
+    return [s[~np.isin(s, stoplist, assume_unique=True)] for s in section_sets]
+
+
+def load_stoplist(tables_dir: Path) -> NDArray[np.uint32]:
+    """The stoplisted hashes, sorted."""
+    path = tables_dir / "stoplist.parquet"
+    if not path.exists():
+        raise StoplistError(f"no stoplist in {tables_dir}; run `lineage boilerplate` first")
+    with queries.connect_quiet() as con:
+        return np.array(queries.read_stoplist(con, parquet_path=path), dtype=np.uint32)
+
+
+def _part_shingles(part: Path, eligible: Path) -> tuple[int, list[NDArray[np.uint32]]]:
+    """All matchable section shingle sets of one sections file, split into hash partitions."""
     sets: list[NDArray[np.uint32]] = []
     sections = 0
     with queries.connect_quiet() as con:
-        scan = con.execute("SELECT normalized FROM read_parquet($p)", {"p": str(part)})
+        scan = queries.matchable_sections(con, sections_path=part, eligible_path=eligible)
         while batch := scan.fetchmany(_FETCH_SECTIONS):
-            texts = [t for (t,) in batch]
+            texts = [t for *_, t in batch]
             sections += len(texts)
             sets.extend(section_shingles(texts))
     flat = np.concatenate(sets) if sets else np.empty(0, dtype=np.uint32)
@@ -81,15 +99,15 @@ def _part_shingles(part: Path) -> tuple[int, list[NDArray[np.uint32]]]:
     return sections, [flat[top == p] for p in range(1 << _PARTITION_BITS)]
 
 
-def _texts_of(parts: list[Path], wanted: set[int]) -> dict[int, str]:
+def _texts_of(parts: list[Path], eligible: Path, wanted: set[int]) -> dict[int, str]:
     """Recover one example text for each wanted hash, scanning sections until all are found."""
     found: dict[int, str] = {}
     wanted_array = np.array(sorted(wanted), dtype=np.uint32)
     with queries.connect_quiet() as con:
         for part in parts:
-            scan = con.execute("SELECT normalized FROM read_parquet($p)", {"p": str(part)})
+            scan = queries.matchable_sections(con, sections_path=part, eligible_path=eligible)
             while batch := scan.fetchmany(_FETCH_SECTIONS):
-                texts = [t for (t,) in batch]
+                texts = [t for *_, t in batch]
                 hashes, owners = shingle_hashes(texts)
                 first = np.searchsorted(owners, np.arange(len(texts)))
                 for i in np.flatnonzero(np.isin(hashes, wanted_array)).tolist():
@@ -110,14 +128,18 @@ def build_stoplist(
     workers: int,
     report_path: Path,
     manifest_sha256: str,
+    rules_sha256: str,
 ) -> StoplistResult:
     """Write `<tables>/stoplist.parquet` and the report from the sections table."""
     started = time.monotonic()
     parts = sorted((tables_dir / "sections").glob("*.parquet"))
     if not parts:
         raise StoplistError(f"no sections table in {tables_dir}; run `lineage split` first")
+    eligible = tables_dir / "eligible.parquet"
+    if not eligible.exists():
+        raise StoplistError(f"no eligibility table in {tables_dir}; run `lineage eligible` first")
     with ProcessPoolExecutor(max_workers=workers, mp_context=_SPAWN) as pool:
-        results = list(pool.map(_part_shingles, parts))
+        results = list(pool.map(_part_shingles, parts, [eligible] * len(parts)))
     sections = sum(n for n, _ in results)
 
     stop_hashes: list[NDArray[np.uint32]] = []
@@ -153,7 +175,7 @@ def build_stoplist(
     # Highest document frequency first; the hash breaks ties so the choice is reproducible.
     top = np.lexsort((stoplist, -dfs))[:_TOP]
     top_df = {int(stoplist[i]): int(dfs[i]) for i in top}
-    texts = _texts_of(parts, set(top_df))
+    texts = _texts_of(parts, eligible, set(top_df))
     top_rows = sorted(
         (
             {"shingle": texts[h], "sections": df, "share": round(df / sections, 6)}
@@ -165,6 +187,7 @@ def build_stoplist(
     report = {
         "command": COMMAND,
         "manifest_sha256": manifest_sha256,
+        "rules_sha256": rules_sha256,
         "sections": sections,
         "distinct_shingles": distinct,
         "shingle_occurrences": occurrences,

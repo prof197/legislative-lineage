@@ -158,3 +158,68 @@ def test_normalize_unifies_section_symbols() -> None:
         == normalize("section 2 and sections 3-4")
         == ("section 2 and sections 3 4")
     )
+
+
+# Style sheets left in the text when the source's HTML was converted, trimmed from real records.
+WORD_STYLE_SHEET = """\n\n\n<!--\n /* Font Definitions */\n @font-face\n {font-family:Calibri;\n \
+panose-1:2 15 5 2 2 2 4 3 2 4;\n mso-font-charset:0;\n mso-font-signature:-520092929 1073786111 9 \
+0 415 0;}\n /* Style Definitions */\n p.MsoNormal, li.MsoNormal, div.MsoNormal\n \
+{mso-style-unhide:no;\n mso-style-parent:"";\n margin-top:0in;}\n@page WordSection1\n \
+{size:8.5in 11.0in;\n mso-paper-source:0;}\ndiv.WordSection1\n {page:WordSection1;}\n-->\n\n"""
+TEXAS_TABLE_STYLE = (
+    "      89(R) HB 4135 - Introduced version - Bill Text\n"
+    "      td { font-family: Courier, Arial, sans-serif; font-size: 10pt; } "
+    "table { empty-cells:show; } \n   \n            89R9039 JRR-D\n  By: Zwiener"
+)
+WEST_VIRGINIA_CLASSES = (
+    "\n\n\n \n  .cs2516C423{text-align:center;text-indent:0pt;margin:0pt 0pt 0pt 0pt;"
+    "line-height:2}\n"
+    "  .cs6D637943{color:#000000;background-color:transparent;font-family:'Microsoft Sans Serif';"
+    "font-size:10pt;font-weight:normal;font-style:normal;}\n \n WEST VIRGINIA LEGISLATURE"
+)
+TEXAS_NO_TEXT = (
+    "This version is not currently available, but is coming\nsoon.  In the meantime, please "
+    "see the PDF\nfor the content of this bill.\n\n"
+)
+
+
+def test_clean_drops_a_word_style_sheet() -> None:
+    assert clean(WORD_STYLE_SHEET + "Section 1. The text.") == "Section 1. The text."
+
+
+def test_clean_drops_style_rules_and_keeps_the_text_around_them() -> None:
+    expected = "89(R) HB 4135 - Introduced version - Bill Text\n\n89R9039 JRR-D\nBy: Zwiener"
+    assert clean(TEXAS_TABLE_STYLE) == expected
+    assert clean(WEST_VIRGINIA_CLASSES) == "WEST VIRGINIA LEGISLATURE"
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        # Kansas marks amendments with braces, and other states brace parts of forms.
+        "Sec. 26. Text.\n{Sec. 27. K.S.A. 25-1115 is hereby amended to read as follows:\n1115.}",
+        "Nothing in this subsection shall{:\n(A) }Prohibit disclosure",
+        "publication in the statute book {Kansas register}.",
+        '1. "Do you speak and understand English?"\n{If no, an interpreter must be present}',
+        "{1} Name of any debtor that is not an addressee: (Name of each debtor)",
+    ],
+)
+def test_clean_keeps_braced_text_that_is_not_a_style_rule(text: str) -> None:
+    assert clean(text) == text
+
+
+@pytest.mark.parametrize(
+    "notice",
+    [
+        TEXAS_NO_TEXT,
+        "An HTML version of this bill is not available. Please see the PDF for the content of "
+        "this bill.\nFor additional information, consult the Legislative Budget Board's website.",
+    ],
+)
+def test_a_notice_that_the_text_is_unavailable_is_no_text(notice: str) -> None:
+    assert split_sections(WORD_STYLE_SHEET + notice).sections == []
+
+
+def test_the_words_of_a_notice_inside_a_bill_are_kept() -> None:
+    bill = "Section 1. Projects must develop water supply sources not currently available."
+    assert split_sections(bill).sections[0].text == bill

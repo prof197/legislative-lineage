@@ -11,15 +11,30 @@ AFTER_SESSION = date(2026, 7, 25)
 DURING_SESSION = date(2026, 3, 1)
 
 
-def _actions(*steps: tuple[str, str]) -> list[Action]:
-    """Actions in the order given, each a (date, classification) pair; '' means unclassified."""
+def _actions(*steps: tuple[str, str] | tuple[str, str, str]) -> list[Action]:
+    """Actions in the order given: (date, classification) or (date, classification, body).
+
+    '' means unclassified. The body defaults to the House.
+    """
     return [
-        Action(date=d, classification=(c,) if c else (), order=i) for i, (d, c) in enumerate(steps)
+        Action(
+            date=step[0],
+            classification=(step[1],) if step[1] else (),
+            order=i,
+            organization=step[2] if len(step) == 3 else "House",
+        )
+        for i, step in enumerate(steps)
     ]
 
 
-def _status(actions: list[Action], *, as_of: date, end: date | None = SESSION_END) -> Outcome:
-    return bill_status(actions, state="GA", session_end=end, as_of=as_of)
+def _status(
+    actions: list[Action],
+    *,
+    as_of: date,
+    end: date | None = SESSION_END,
+    kinds: tuple[str, ...] = ("bill",),
+) -> Outcome:
+    return bill_status(actions, kinds=kinds, state="GA", session_end=end, as_of=as_of)
 
 
 INTRODUCED = ("2025-01-15", "introduction")
@@ -133,18 +148,127 @@ def test_a_bill_with_no_actions_follows_the_session() -> None:
 
 
 def test_sequence_comes_from_the_action_order_not_list_position() -> None:
-    veto = Action(date="2025-04-01", classification=("executive-veto",), order=3)
-    override = Action(date="2025-04-01", classification=("veto-override-passage",), order=4)
+    veto = Action(date="2025-04-01", classification=("executive-veto",), order=3, organization="")
+    override = Action(
+        date="2025-04-01", classification=("veto-override-passage",), order=4, organization=""
+    )
 
     assert _status([override, veto], as_of=AFTER_SESSION).status is Status.PASSED
 
 
 def test_an_action_can_carry_several_classifications() -> None:
     actions = [
-        Action(date="2025-05-01", classification=("passage", "executive-signature"), order=0)
+        Action(
+            date="2025-05-01",
+            classification=("passage", "executive-signature"),
+            order=0,
+            organization="Governor",
+        )
     ]
 
     assert _status(actions, as_of=AFTER_SESSION).reason == "executive-signature"
+
+
+# Resolutions are adopted, not signed. A simple resolution is adopted by its own chamber; a
+# joint or concurrent one by both, or by a body that acts for the whole legislature.
+
+ADOPTED_HOUSE = ("2025-02-20", "passage", "House")
+ADOPTED_SENATE = ("2025-03-25", "passage", "Senate")
+
+
+def test_a_simple_resolution_passed_when_its_chamber_adopted_it() -> None:
+    actions = _actions(INTRODUCED, ADOPTED_HOUSE)
+
+    assert _status(actions, as_of=DURING_SESSION, kinds=("resolution",)) == Outcome(
+        Status.PASSED, "passage", date(2025, 2, 20)
+    )
+
+
+def test_a_memorial_is_adopted_like_a_simple_resolution() -> None:
+    actions = _actions(INTRODUCED, ADOPTED_SENATE)
+
+    assert _status(actions, as_of=AFTER_SESSION, kinds=("memorial",)).status is Status.PASSED
+
+
+@pytest.mark.parametrize(
+    "kind",
+    [
+        "joint resolution",
+        "concurrent resolution",
+        "joint memorial",
+        "concurrent memorial",
+        "constitutional amendment",
+    ],
+)
+def test_a_joint_measure_passed_when_the_second_chamber_adopted_it(kind: str) -> None:
+    actions = _actions(INTRODUCED, ADOPTED_HOUSE, ADOPTED_SENATE)
+
+    # The deciding action is the second chamber's adoption, which a bill page names.
+    assert _status(actions, as_of=AFTER_SESSION, kinds=(kind,)) == Outcome(
+        Status.PASSED, "passage", date(2025, 3, 25)
+    )
+
+
+def test_a_joint_resolution_adopted_by_one_chamber_died_with_the_session() -> None:
+    actions = _actions(INTRODUCED, ADOPTED_HOUSE, ("2025-03-01", "passage", "House"))
+
+    assert _status(actions, as_of=AFTER_SESSION, kinds=("joint resolution",)) == Outcome(
+        Status.DIED, "session-ended", SESSION_END
+    )
+
+
+def test_the_assembly_is_a_lower_chamber() -> None:
+    actions = _actions(ADOPTED_SENATE, ("2025-04-02", "passage", "Assembly"))
+
+    assert _status(actions, as_of=AFTER_SESSION, kinds=("concurrent resolution",)) == Outcome(
+        Status.PASSED, "passage", date(2025, 4, 2)
+    )
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        "Nebraska Legislature",  # unicameral
+        "Utah State Legislature",  # "signed by President/ sent for enrolling"
+        "Ohio General Assembly",  # "Sent To The Governor"
+    ],
+)
+def test_adoption_by_the_whole_legislature_counts_for_both_chambers(body: str) -> None:
+    actions = _actions(INTRODUCED, ("2025-03-30", "passage", body))
+
+    assert _status(actions, as_of=AFTER_SESSION, kinds=("joint resolution",)) == Outcome(
+        Status.PASSED, "passage", date(2025, 3, 30)
+    )
+
+
+def test_a_vetoed_joint_resolution_died_though_both_chambers_adopted_it() -> None:
+    actions = _actions(ADOPTED_HOUSE, ADOPTED_SENATE, ("2025-04-10", "executive-veto", "Governor"))
+
+    assert _status(actions, as_of=AFTER_SESSION, kinds=("joint resolution",)) == Outcome(
+        Status.DIED, "executive-veto", date(2025, 4, 10)
+    )
+
+
+def test_a_signed_joint_resolution_names_the_signature() -> None:
+    actions = _actions(
+        ADOPTED_HOUSE, ADOPTED_SENATE, ("2025-04-10", "executive-signature", "Governor")
+    )
+
+    assert _status(actions, as_of=AFTER_SESSION, kinds=("joint resolution",)).reason == (
+        "executive-signature"
+    )
+
+
+def test_a_resolution_failed_then_adopted_was_reconsidered() -> None:
+    actions = _actions(("2025-02-01", "failure", "House"), ADOPTED_HOUSE)
+
+    assert _status(actions, as_of=AFTER_SESSION, kinds=("resolution",)).status is Status.PASSED
+
+
+def test_a_bill_passed_by_both_chambers_still_needs_enactment() -> None:
+    actions = _actions(INTRODUCED, ADOPTED_HOUSE, ADOPTED_SENATE)
+
+    assert _status(actions, as_of=AFTER_SESSION, kinds=("bill",)).status is Status.DIED
 
 
 @pytest.mark.parametrize(

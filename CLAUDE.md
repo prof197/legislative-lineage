@@ -15,8 +15,12 @@ uv run lineage snapshot      # pin data/raw/*/*.zip into snapshot/manifest.json
 uv run lineage sessions --commit <sha>  # pin session dates into snapshot/sessions.csv
 uv run lineage ingest        # verify against the manifest, write data/tables/bills/*.parquet
 uv run lineage split         # split bill text into data/tables/sections/*.parquet
+uv run lineage eligible      # document-type rules -> data/tables/eligible.parquet, reports/document_types.json
 uv run lineage boilerplate   # shingle stoplist -> data/tables/stoplist.parquet, reports/boilerplate.json
 uv run lineage stats         # coverage, sections, types, status per state/session -> reports/coverage.json
+uv run lineage index         # signatures, LSH bands, verified pairs, families -> data/tables/{signatures,bands,pairs,families}/, reports/index.json
+uv run lineage query FILE     # a bill's near-duplicate families, offline, from the built index
+uv run python -m benchmarks.minhash  # NumPy vs datasketch: signing and LSH index time and memory (DR-3), dev only
 ```
 
 All four checks must pass before every commit. CI runs the same four commands.
@@ -33,21 +37,34 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   status.py       passed / died / introduced from action classifications
   sections.py     clean, split at headings or into windows, normalize (pure functions)
   sectioning.py   build the sections table, one worker process per bills file
+  doctypes.py     document-type rules (DR-5): which records are matched
   boilerplate.py  pattern list that flags boilerplate-only sections
   shingles.py     word 5-gram shingles, 32-bit hashes (NumPy; values pinned by a test)
+  minhash.py      MinHash signatures, exact (a·x + b) mod p (pure functions; values pinned)
+  signatures.py   build the signatures table, one worker process per sections file
+  lsh.py          LSH banding: band keys, sorted-array buckets, the cap (pure functions)
+  bands.py        build the band index from the signatures; cap counter and cap sweep
+  verify.py       re-estimate candidates from full signatures; the verification threshold
+  families.py     same-state families: bill match shares, connected components (pure functions)
+  pairs.py        verify candidates, store cross-state pairs, write families
+  index.py        `lineage index`: signatures, bands, pairs and families, then reports/index.json
+  query.py        `lineage query`: sign a bill's text, look up its bands, verify, group by family
   stoplist.py     document-frequency stoplist and its report
   stats.py        coverage report: the measurements that replace the design's estimates
   queries.py      every SQL query the pipeline runs (DR-4)
   disk.py         free-space floor checked before large writes
+benchmarks/       dev-only measurements that need dev dependencies (datasketch)
+  memory.py       current and peak memory as the OS charges it (macOS physical footprint)
 tests/            pytest; small committed fixtures only
   fixtures/openstates/  trimmed real records in archive layout (README + *_bills.json)
 snapshot/manifest.json  the pinned snapshot: per-archive size, SHA-256, Generated At
 snapshot/sessions.csv   session start/end dates and carryover, from a pinned scrapers commit
+rules/document_types.csv  which document types are matched, per state; first fitting rule wins
 reports/          committed outputs of pipeline commands; README and DESIGN numbers cite them
 DESIGN.md         design, alternatives, scaling limits, failure modes, decision records
 data/             local snapshots and derived tables; gitignored, never committed
   raw/<ST>/*.zip  Open States session archives, never edited
-  tables/         Parquet tables written by the pipeline
+  tables/         Parquet tables written by the pipeline; signatures/, bands/ and pairs/ hold .npy arrays
 ```
 
 ## Conventions
@@ -61,6 +78,7 @@ data/             local snapshots and derived tables; gitignored, never committe
 - Every number in README.md or DESIGN.md comes from a committed eval or benchmark output, with the command that reproduces it. Never hard-code a result.
 - Fix random seeds. The snapshot is pinned by `snapshot/manifest.json`; an archive's as-of date is its README's Generated At.
 - Before a large write, call `disk.require_free_space` with an upper bound on the bytes written. The default floor is 20 GiB free.
+- Open DuckDB through `queries.connect_quiet` or `queries.connect`, which cap a query's spill to disk at the same floor.
 - Secrets come only from environment variables. `.env` is gitignored.
 - Model calls happen only in the explanation step and the provisional precision labels. Retrieval runs with no API key.
 - Commits use conventional messages, one build step per commit. The body gives the engineering reason: the tradeoff, the measurement, the alternative rejected.

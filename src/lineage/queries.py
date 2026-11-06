@@ -11,6 +11,8 @@ from typing import Any
 
 import duckdb
 
+from lineage.disk import spill_budget
+
 # The fields of Open States' JSON export (format 1.0) that the pipeline reads. Declaring the
 # schema instead of letting DuckDB infer it per file keeps every archive's Parquet identical in
 # shape, turns absent keys (some records have no `raw_text`) into NULL, and ignores the rest.
@@ -41,10 +43,19 @@ def _struct_literal(columns: dict[str, str]) -> str:
     return "{" + ", ".join(f"{_sql_string(k)}: {_sql_string(v)}" for k, v in columns.items()) + "}"
 
 
+def _cap_spill(con: duckdb.DuckDBPyConnection, directory: Path) -> None:
+    # DuckDB lets a query that outgrows memory spill up to 90% of the free disk. Capping it at
+    # the floor makes such a query fail with an out-of-memory error instead of filling the disk.
+    # The cap is per connection; the worker processes scan one file each and do not spill.
+    con.execute(f"SET max_temp_directory_size = '{spill_budget(directory)}B'")
+
+
 def connect_quiet() -> duckdb.DuckDBPyConnection:
     """A connection that prints no progress bar, which would interleave across processes."""
     con = duckdb.connect()
     con.execute("SET enable_progress_bar = false")
+    # Without a temp_directory setting, DuckDB spills to .tmp under the working directory.
+    _cap_spill(con, Path.cwd())
     return con
 
 
@@ -53,23 +64,25 @@ def connect(*, memory_limit: str, temp_directory: Path) -> duckdb.DuckDBPyConnec
     con.execute(f"SET memory_limit = {_sql_string(memory_limit)}")
     # Spill to the data disk, which the caller has checked for space, not the system temp dir.
     con.execute(f"SET temp_directory = {_sql_string(str(temp_directory))}")
+    _cap_spill(con, temp_directory)
     return con
 
 
 def outcome_actions(
     con: duckdb.DuckDBPyConnection, *, json_path: Path, kinds: list[str]
-) -> list[tuple[str, list[dict[str, Any]]]]:
-    """Each bill's id with only the actions classified as one of `kinds`.
+) -> list[tuple[str, list[str], list[dict[str, Any]]]]:
+    """Each bill's id and classification, with only the actions classified as one of `kinds`.
 
     Status depends on a handful of classifications, so filtering in SQL keeps the rows that
     reach Python small.
     """
     query = f"""
-        SELECT id, list_filter(actions, lambda a: list_has_any(a.classification, $kinds))
+        SELECT id, coalesce(classification, []),
+               list_filter(actions, lambda a: list_has_any(a.classification, $kinds))
         FROM read_json($json_path, format = 'array',
                        columns = {_struct_literal(BILL_JSON_COLUMNS)})
     """
-    rows: list[tuple[str, list[dict[str, Any]]]] = con.execute(
+    rows: list[tuple[str, list[str], list[dict[str, Any]]]] = con.execute(
         query, {"json_path": str(json_path), "kinds": kinds}
     ).fetchall()
     return rows
@@ -224,6 +237,120 @@ def write_stoplist(
     con.execute(query, {"hashes": hashes, "sections": sections})
 
 
+def matchable_sections(
+    con: duckdb.DuckDBPyConnection, *, sections_path: Path, eligible_path: Path
+) -> duckdb.DuckDBPyConnection:
+    """Start a scan of one sections file's matchable sections: (bill id, ordinal, normalized).
+
+    Matchable means the bill's document type is eligible (DR-5) and the section is not flagged
+    as boilerplate. Rows come in key order, so anything built from them is reproducible. Read
+    it with `fetchmany`.
+    """
+    return con.execute(
+        """
+        SELECT s.bill_id, s.ordinal, s.normalized
+        FROM read_parquet($sections) s
+        SEMI JOIN (SELECT id FROM read_parquet($eligible) WHERE eligible) e ON s.bill_id = e.id
+        WHERE s.boilerplate IS NULL
+        ORDER BY s.bill_id, s.ordinal
+        """,
+        {"sections": str(sections_path), "eligible": str(eligible_path)},
+    )
+
+
+def count_sections(con: duckdb.DuckDBPyConnection, *, sections_glob: str) -> int:
+    row: tuple[int] | None = con.execute(
+        "SELECT count(*) FROM read_parquet($glob)", {"glob": sections_glob}
+    ).fetchone()
+    return row[0] if row else 0
+
+
+def write_signature_keys(
+    con: duckdb.DuckDBPyConnection, *, parquet_path: Path, bill_ids: list[str], ordinals: list[int]
+) -> None:
+    """The keys of a signature matrix, row for row."""
+    query = f"""
+        COPY (
+            SELECT
+                CAST(unnest($bill_ids) AS VARCHAR) AS bill_id,
+                CAST(unnest($ordinals) AS INTEGER) AS ordinal
+        ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
+    """
+    con.execute(query, {"bill_ids": bill_ids, "ordinals": ordinals})
+
+
+def read_signature_keys(
+    con: duckdb.DuckDBPyConnection, *, parquet_path: Path
+) -> tuple[list[str], list[int]]:
+    rows: list[tuple[str, int]] = con.execute(
+        "SELECT bill_id, ordinal FROM read_parquet($p)", {"p": str(parquet_path)}
+    ).fetchall()
+    return [b for b, _ in rows], [o for _, o in rows]
+
+
+def signature_bill_ids_at(
+    con: duckdb.DuckDBPyConnection, *, parquet_path: Path, rows: list[int]
+) -> dict[int, str]:
+    """The bill id of each wanted row of one signature keys file, by row number."""
+    found: list[tuple[int, str]] = con.execute(
+        """
+        SELECT file_row_number, bill_id FROM read_parquet($p, file_row_number = true)
+        WHERE file_row_number IN (SELECT unnest($rows))
+        """,
+        {"p": str(parquet_path), "rows": rows},
+    ).fetchall()
+    return dict(found)
+
+
+@dataclass(frozen=True, slots=True)
+class BillSummary:
+    id: str
+    state: str
+    session: str
+    identifier: str
+    title: str
+    status: str | None
+    family: str
+    family_bills: int
+
+
+def bill_summaries(
+    con: duckdb.DuckDBPyConnection, *, bills_glob: str, families_path: Path, ids: list[str]
+) -> list[BillSummary]:
+    """What a query result shows for each wanted bill, with its family and the family's size."""
+    rows: list[tuple[str, str, str, str, str, str | None, str, int]] = con.execute(
+        """
+        WITH families AS (SELECT bill_id, family FROM read_parquet($families)),
+        wanted AS (SELECT bill_id, family FROM families WHERE bill_id IN (SELECT unnest($ids))),
+        sizes AS (
+            SELECT family, count(*) AS bills FROM families
+            WHERE family IN (SELECT family FROM wanted) GROUP BY family
+        )
+        SELECT b.id, b.state, b.session, b.identifier, b.title, b.status, w.family, s.bills
+        FROM wanted w
+        JOIN read_parquet($bills) b ON b.id = w.bill_id
+        JOIN sizes s USING (family)
+        """,
+        {"families": str(families_path), "bills": bills_glob, "ids": ids},
+    ).fetchall()
+    return [BillSummary(*row) for row in rows]
+
+
+def bill_states(con: duckdb.DuckDBPyConnection, *, bills_glob: str) -> dict[str, str]:
+    """Every bill's state, by bill id."""
+    rows: list[tuple[str, str]] = con.execute(
+        "SELECT id, state FROM read_parquet($bills)", {"bills": bills_glob}
+    ).fetchall()
+    return dict(rows)
+
+
+def read_stoplist(con: duckdb.DuckDBPyConnection, *, parquet_path: Path) -> list[int]:
+    rows: list[tuple[int]] = con.execute(
+        "SELECT hash FROM read_parquet($p) ORDER BY hash", {"p": str(parquet_path)}
+    ).fetchall()
+    return [h for (h,) in rows]
+
+
 def boilerplate_counts(con: duckdb.DuckDBPyConnection, *, sections_glob: str) -> dict[str, int]:
     """Sections flagged by each boilerplate pattern."""
     rows: list[tuple[str, int]] = con.execute(
@@ -232,6 +359,84 @@ def boilerplate_counts(con: duckdb.DuckDBPyConnection, *, sections_glob: str) ->
         {"glob": sections_glob},
     ).fetchall()
     return dict(rows)
+
+
+# ---- Document-type eligibility (`lineage eligible`, DR-5) -----------------------------------
+
+
+@dataclass(frozen=True, slots=True)
+class RecordType:
+    id: str
+    state: str
+    type: str  # classifications joined by "+"
+    title: str
+
+
+def record_types(con: duckdb.DuckDBPyConnection, *, bills_glob: str) -> list[RecordType]:
+    rows: list[tuple[str, str, str, str]] = con.execute(
+        "SELECT id, state, array_to_string(classification, '+'), coalesce(title, '') "
+        "FROM read_parquet($bills) ORDER BY id",
+        {"bills": bills_glob},
+    ).fetchall()
+    return [RecordType(*row) for row in rows]
+
+
+def write_eligibility(
+    con: duckdb.DuckDBPyConnection,
+    *,
+    parquet_path: Path,
+    ids: list[str],
+    eligible: list[bool],
+    rules: list[int | None],
+) -> None:
+    query = f"""
+        COPY (
+            SELECT
+                CAST(unnest($ids) AS VARCHAR) AS id,
+                CAST(unnest($eligible) AS BOOLEAN) AS eligible,
+                CAST(unnest($rules) AS INTEGER) AS rule
+        ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
+    """
+    con.execute(query, {"ids": ids, "eligible": eligible, "rules": rules})
+
+
+def write_families(
+    con: duckdb.DuckDBPyConnection, *, parquet_path: Path, bill_ids: list[str], families: list[str]
+) -> None:
+    query = f"""
+        COPY (
+            SELECT
+                CAST(unnest($ids) AS VARCHAR) AS bill_id,
+                CAST(unnest($families) AS VARCHAR) AS family
+        ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
+    """
+    con.execute(query, {"ids": bill_ids, "families": families})
+
+
+def read_families(con: duckdb.DuckDBPyConnection, *, parquet_path: Path) -> dict[str, str]:
+    rows: list[tuple[str, str]] = con.execute(
+        "SELECT bill_id, family FROM read_parquet($p)", {"p": str(parquet_path)}
+    ).fetchall()
+    return dict(rows)
+
+
+def eligible_text_by_state(
+    con: duckdb.DuckDBPyConnection, *, bills_glob: str, sections_glob: str, eligible_path: str
+) -> dict[str, tuple[int, int]]:
+    """Per state: eligible records that yielded sections, and eligible records."""
+    rows: list[tuple[str, int, int]] = con.execute(
+        """
+        WITH sectioned AS (SELECT DISTINCT bill_id AS id FROM read_parquet($sections))
+        SELECT b.state,
+               count(*) FILTER (WHERE b.id IN (SELECT id FROM sectioned)),
+               count(*)
+        FROM read_parquet($bills) b JOIN read_parquet($eligible) e USING (id)
+        WHERE e.eligible
+        GROUP BY b.state ORDER BY b.state
+        """,
+        {"bills": bills_glob, "sections": sections_glob, "eligible": eligible_path},
+    ).fetchall()
+    return {state: (sectioned, total) for state, sectioned, total in rows}
 
 
 # ---- Coverage statistics (`lineage stats`) -------------------------------------------------
@@ -319,10 +524,14 @@ def status_by_type(
     return out
 
 
-def adopted_resolutions_shown_died(
+def resolutions_adopted_by_one_chamber(
     con: duckdb.DuckDBPyConnection, *, bills_glob: str
 ) -> list[tuple[str, str, int]]:
-    """Resolutions with a passage action that status calls died because the session ended."""
+    """Resolutions with a passage action that still died when the session ended.
+
+    Adoption passes a resolution, so these are joint and concurrent measures that only one
+    chamber adopted.
+    """
     rows: list[tuple[str, str, int]] = con.execute(
         f"SELECT state, {_TYPE} AS type, count(*) FROM read_parquet($bills) "
         f"WHERE {_TYPE} LIKE '%resolution%' AND status_reason = 'session-ended' "

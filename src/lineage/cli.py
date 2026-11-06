@@ -1,6 +1,7 @@
 """The `lineage` command line. Each subcommand is a thin wrapper over a library function."""
 
 import os
+import time
 from pathlib import Path
 from typing import Annotated
 
@@ -8,8 +9,11 @@ import typer
 
 from lineage import __version__
 from lineage.disk import GiB, InsufficientDiskSpaceError
+from lineage.doctypes import RULES, DocTypesError, build_eligibility
 from lineage.fetch import SOURCE, fetch_raw
+from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
+from lineage.query import IndexMissingError, query_text
 from lineage.sectioning import SectioningError, build_sections
 from lineage.sessions import (
     CARRYOVER,
@@ -27,6 +31,8 @@ app = typer.Typer(no_args_is_help=True, add_completion=False)
 
 RawOption = Annotated[Path, typer.Option("--raw", help="Directory of Open States archives.")]
 ManifestOption = Annotated[Path, typer.Option("--manifest", help="Snapshot manifest (committed).")]
+TablesOption = Annotated[Path, typer.Option("--tables", help="Directory of Parquet tables.")]
+RulesOption = Annotated[Path, typer.Option("--rules", help="Document-type rules (committed).")]
 MinFreeOption = Annotated[
     float, typer.Option("--min-free-gib", help="Refuse to run if disk would drop below this.")
 ]
@@ -161,9 +167,7 @@ def ingest(
 
 @app.command()
 def split(
-    tables: Annotated[Path, typer.Option("--tables", help="Directory of Parquet tables.")] = Path(
-        "data/tables"
-    ),
+    tables: TablesOption = Path("data/tables"),
     workers: Annotated[int, typer.Option("--workers", help="Worker processes.")] = (
         os.cpu_count() or 1
     ),
@@ -183,11 +187,32 @@ def split(
 
 
 @app.command()
-def boilerplate(
-    tables: Annotated[Path, typer.Option("--tables", help="Directory of Parquet tables.")] = Path(
-        "data/tables"
+def eligible(
+    tables: TablesOption = Path("data/tables"),
+    rules: RulesOption = RULES,
+    report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = Path(
+        "reports/document_types.json"
     ),
+) -> None:
+    """Decide which records are matched, by the document-type rules, and count each rule."""
+    try:
+        doc = build_eligibility(tables, rules_path=rules, report_path=report)
+    except DocTypesError as e:
+        typer.echo(str(e), err=True)
+        raise typer.Exit(1) from None
+    totals = doc["totals"]
+    typer.echo(
+        f"{totals['eligible']:,} of {totals['records']:,} records eligible, "
+        f"{totals['eligible_with_sections']:,} with sections; "
+        f"no text: {', '.join(doc['states_without_text']) or 'none'} -> {report}"
+    )
+
+
+@app.command()
+def boilerplate(
+    tables: TablesOption = Path("data/tables"),
     manifest: ManifestOption = Path("snapshot/manifest.json"),
+    rules: RulesOption = RULES,
     max_share: Annotated[
         float,
         typer.Option(
@@ -209,6 +234,7 @@ def boilerplate(
             workers=workers,
             report_path=report,
             manifest_sha256=file_sha256(manifest),
+            rules_sha256=file_sha256(rules),
         )
     except StoplistError as e:
         typer.echo(str(e), err=True)
@@ -222,10 +248,88 @@ def boilerplate(
 
 
 @app.command()
-def stats(
-    tables: Annotated[Path, typer.Option("--tables", help="Directory of Parquet tables.")] = Path(
-        "data/tables"
+def index(
+    tables: TablesOption = Path("data/tables"),
+    workers: Annotated[int, typer.Option("--workers", help="Worker processes.")] = (
+        os.cpu_count() or 1
     ),
+    min_free_gib: MinFreeOption = 20.0,
+    report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = Path(
+        "reports/index.json"
+    ),
+) -> None:
+    """Build the search index: signatures, LSH bands, verified cross-state pairs, families."""
+    started = time.monotonic()
+    try:
+        doc = build_index(
+            tables, workers=workers, floor_bytes=int(min_free_gib * GiB), report_path=report
+        )
+    except (StoplistError, InsufficientDiskSpaceError) as e:
+        typer.echo(str(e), err=True)
+        raise typer.Exit(1) from None
+    counts, lsh = doc["sections"], doc["lsh"]
+    pairs, capped = lsh["candidate_pairs"], lsh["capped"]
+    verified, families = doc["pairs"]["verified"], doc["families"]
+    typer.echo(
+        f"{counts['signed']:,} of {counts['matchable']:,} matchable sections signed "
+        f"({counts['too_short']:,} too short, {counts['all_stoplisted']:,} all stoplisted) -> "
+        f"{tables / 'signatures'} ({doc['signature_bytes'] / GiB:.2f} GiB)\n"
+        f"{lsh['bands']} bands x {lsh['rows']} rows -> {tables / 'bands'} "
+        f"({lsh['index_bytes'] / GiB:.2f} GiB): {pairs['all']:,} candidate pairs, "
+        f"{pairs['cross_state']:,} across states; {capped['buckets']:,} buckets over the cap "
+        f"of {lsh['bucket_cap']} skipped, dropping {capped['cross_state_pairs_lost']:,} "
+        f"cross-state pairs\n"
+        f"{verified['all']:,} verified at an estimate of {doc['pairs']['threshold']} or more: "
+        f"{verified['cross_state']:,} cross-state pairs -> {tables / 'pairs'}; "
+        f"{families['families_of_two_or_more']:,} same-state families of two or more bills "
+        f"({families['bills_in_them']:,} bills) -> {tables / 'families'}\n"
+        f"{time.monotonic() - started:.0f}s, {report}"
+    )
+
+
+@app.command()
+def query(
+    file: Annotated[
+        Path,
+        typer.Argument(help="The bill's text, as a plain-text file.", exists=True, dir_okay=False),
+    ],
+    tables: TablesOption = Path("data/tables"),
+    limit: Annotated[int, typer.Option("--limit", help="Families to show.")] = 20,
+) -> None:
+    """Find a bill's relatives in the index, offline: bills that share its text, by section."""
+    started = time.monotonic()
+    try:
+        result = query_text(file.read_text(), tables)
+    except (IndexMissingError, StoplistError) as e:
+        typer.echo(str(e), err=True)
+        raise typer.Exit(1) from None
+    typer.echo(f"{file}: {result.sections} sections, {result.signed} signed")
+    if not result.matches:
+        typer.echo("No near-duplicates found in the index.")
+        return
+    typer.echo(
+        f"{'share':>5}  {'best':>4}  {'state':<5}  {'session':<10}  {'bill':<12}  "
+        f"{'family':>6}  {'status':<10}  title"
+    )
+    for m in result.matches[:limit]:
+        typer.echo(
+            f"{m.share:>5.0%}  {m.best_estimate:>4.2f}  {m.state:<5}  {m.session:<10}  "
+            f"{m.identifier:<12}  {m.family_bills:>6}  {m.status or '':<10}  {m.title[:70]}"
+        )
+    hidden = len(result.matches) - limit
+    more = f"; {hidden:,} more not shown (--limit)" if hidden > 0 else ""
+    noun = "family matches" if len(result.matches) == 1 else "families match"
+    typer.echo(
+        f"{len(result.matches):,} {noun}{more}. Share: of the query's signed sections, "
+        f"the share with a match in the family. Best: the highest estimated similarity of a "
+        f"matched section. Family: the state's near-identical bills, counted once. "
+        f"{time.monotonic() - started:.1f}s"
+    )
+
+
+@app.command()
+def stats(
+    tables: TablesOption = Path("data/tables"),
     manifest: ManifestOption = Path("snapshot/manifest.json"),
     sessions: Annotated[
         Path, typer.Option("--sessions", help="Session dates CSV (committed).")

@@ -1,0 +1,76 @@
+{
+ "command": "uv run python -m benchmarks.minhash",
+ "machine": {
+  "cpu": "Apple M1 Max",
+  "cores": 10,
+  "memory_bytes": 34359738368,
+  "platform": "macOS-15.7.3-arm64-arm-64bit-Mach-O",
+  "python": "3.13.2",
+  "numpy": "2.5.4",
+  "datasketch": "2.0.0"
+ },
+ "scope": "full corpus",
+ "num_perm": 128,
+ "memory_sample_sections": 20000,
+ "memory_bound_bytes": 17179869184,
+ "engines": {
+  "numpy": {
+   "engine": "numpy",
+   "sections": 1916250,
+   "shingles": 477224285,
+   "read_seconds": 309.0,
+   "sign_seconds": 269.7,
+   "retained_bytes_per_section": 512.3,
+   "peak_memory_bytes": 3050744576,
+   "seconds_per_million_shingles": 0.565,
+   "signature_memory_bytes": 981694875,
+   "within_overnight_bound": true
+  },
+  "datasketch": {
+   "engine": "datasketch",
+   "sections": 1916250,
+   "shingles": 477224285,
+   "read_seconds": 308.5,
+   "sign_seconds": 101.6,
+   "retained_bytes_per_section": 784.7,
+   "peak_memory_bytes": 4101977280,
+   "seconds_per_million_shingles": 0.213,
+   "signature_memory_bytes": 1503681375,
+   "within_overnight_bound": true
+  }
+ },
+ "datasketch_over_numpy_sign_time": 0.38,
+ "lsh": {
+  "bands": 32,
+  "rows": 4,
+  "input": "the signatures table, loaded into memory",
+  "engines": {
+   "numpy": {
+    "engine": "numpy",
+    "sections": 1916250,
+    "inserted": 1916250,
+    "seconds": 10.5,
+    "index_bytes": 713115264,
+    "peak_memory_bytes": 2233423360,
+    "completed": true,
+    "stopped_because": null,
+    "index_bytes_per_section": 372.1,
+    "within_memory_bound": true,
+    "signing_matches_index_build": true
+   },
+   "datasketch": {
+    "engine": "datasketch",
+    "sections": 1916250,
+    "inserted": 1916250,
+    "seconds": 571.3,
+    "index_bytes": 15333783232,
+    "peak_memory_bytes": 16443100352,
+    "completed": true,
+    "stopped_because": null,
+    "index_bytes_per_section": 8002.0,
+    "within_memory_bound": true,
+    "signing_matches_index_build": true
+   }
+  }
+ }
+}
