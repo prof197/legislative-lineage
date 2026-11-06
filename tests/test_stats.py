@@ -95,6 +95,7 @@ def test_reports_the_known_status_gaps(tables: tuple[Path, Path]) -> None:
     # SR 1065 was adopted by the Senate, which passes a simple resolution.
     assert doc["status_gaps"]["resolutions_adopted_by_one_chamber"] == {}
     assert doc["status_gaps"]["reached_governor_shown_died"] == {}
+    assert doc["status_gaps"]["enacted_in_words"] == {}
     assert doc["sessions_without_end_date"] == {"sessions": 0, "bills_left_introduced": 0}
 
 

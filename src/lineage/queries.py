@@ -69,21 +69,24 @@ def connect(*, memory_limit: str, temp_directory: Path) -> duckdb.DuckDBPyConnec
 
 
 def outcome_actions(
-    con: duckdb.DuckDBPyConnection, *, json_path: Path, kinds: list[str]
+    con: duckdb.DuckDBPyConnection, *, json_path: Path, kinds: list[str], wording: str
 ) -> list[tuple[str, list[str], list[dict[str, Any]]]]:
-    """Each bill's id and classification, with only the actions classified as one of `kinds`.
+    """Each bill's id and classification, with only the actions classified as one of `kinds` or
+    described in words matching the `wording` pattern.
 
-    Status depends on a handful of classifications, so filtering in SQL keeps the rows that
-    reach Python small.
+    Status depends on a handful of actions, so filtering in SQL keeps the rows that reach Python
+    small.
     """
     query = f"""
         SELECT id, coalesce(classification, []),
-               list_filter(actions, lambda a: list_has_any(a.classification, $kinds))
+               list_filter(actions, lambda a: list_has_any(a.classification, $kinds)
+                                              OR regexp_matches(coalesce(a.description, ''),
+                                                                $wording))
         FROM read_json($json_path, format = 'array',
                        columns = {_struct_literal(BILL_JSON_COLUMNS)})
     """
     rows: list[tuple[str, list[str], list[dict[str, Any]]]] = con.execute(
-        query, {"json_path": str(json_path), "kinds": kinds}
+        query, {"json_path": str(json_path), "kinds": kinds, "wording": wording}
     ).fetchall()
     return rows
 
@@ -676,6 +679,18 @@ def reached_governor_shown_died(
         f"AND list_has_any({_ACTION_CLASSES}, ['executive-receipt', 'enrolled']) "
         "GROUP BY ALL ORDER BY state, type",
         {"bills": bills_glob},
+    ).fetchall()
+    return rows
+
+
+def status_reason_counts(
+    con: duckdb.DuckDBPyConnection, *, bills_glob: str, reason: str
+) -> list[tuple[str, str, int]]:
+    """Records per state and type whose status was decided by `reason`."""
+    rows: list[tuple[str, str, int]] = con.execute(
+        f"SELECT state, {_TYPE} AS type, count(*) FROM read_parquet($bills) "
+        "WHERE status_reason = $reason GROUP BY ALL ORDER BY state, type",
+        {"bills": bills_glob, "reason": reason},
     ).fetchall()
     return rows
 

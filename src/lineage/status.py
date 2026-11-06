@@ -6,6 +6,7 @@ legislatures, the biennium) ended without passage. Anything else is introduced. 
 judged as of the archive's Generated At, never today. See DESIGN.md#bill-status.
 """
 
+import re
 from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import date, datetime
@@ -25,6 +26,7 @@ class Action:
     classification: tuple[str, ...]
     order: int
     organization: str  # the body that acted, as the export names it: "Senate", "House", ...
+    description: str = ""
 
 
 @dataclass(frozen=True, slots=True)
@@ -39,6 +41,24 @@ class Outcome:
 ENACTED = frozenset({"executive-signature", "became-law", "veto-override-passage"})
 KILLED = frozenset({"executive-veto", "failure", "veto-override-failure"})
 SESSION_ENDED = "session-ended"
+ENACTED_IN_WORDS = "enacted-in-words"
+# Some exports record an enactment in words only, with no classification: Oklahoma's "Becomes
+# law without Governor's signature", Arkansas's "Approved by the Governor", Connecticut's
+# "PUBLIC ACT 25-61", a Massachusetts or Florida chapter number. Read as unclassified, those laws
+# died with their session. The wording is matched only on actions that carry no outcome
+# classification; a motion to override names the governor's objections and does not match.
+# RE2 (DuckDB) and Python's re both accept this pattern; the SQL pre-filter uses it too.
+ENACTED_WORDING = (
+    r"(?i)(\bwithout (the )?(governor'?s )?signature"
+    r"|\b(approved|signed) by (the )?(lieutenant |acting )?governor\b"
+    r"|^public act (no\. )?\d+-\d+"
+    r"|^(signed\b[^,]*, )?chapter \d+ of the acts of \d{4}"
+    r"|^chapter no\. \d+-\d+"
+    r"|^chapter \d+, \(?\d{4} laws"
+    r"|\bsession law chapter \d+"
+    r"|\bassigned a chapter number)"
+)
+_ENACTED_WORDING = re.compile(ENACTED_WORDING)
 # Every classification `bill_status` reads; other actions cannot change a bill's status.
 OUTCOME_CLASSIFICATIONS = ENACTED | KILLED | {"passage"}
 
@@ -131,7 +151,7 @@ def bill_status(
     session_end: date | None,
     as_of: date,
 ) -> Outcome:
-    """Explicit outcomes first, then adoption, then the session's end.
+    """Explicit outcomes first, classified then in words, then adoption, then the session's end.
 
     `kinds` is the record's classification; `as_of` is the archive's Generated At.
     """
@@ -141,6 +161,9 @@ def bill_status(
     if enacted:
         last = enacted[-1]
         return Outcome(Status.PASSED, _deciding(last, ENACTED), local_date(last.date, state))
+    worded = [a for a in ordered if _enacted_in_words(a)]
+    if worded:
+        return Outcome(Status.PASSED, ENACTED_IN_WORDS, local_date(worded[-1].date, state))
 
     killed = [a for a in ordered if KILLED.intersection(a.classification)]
     # A chamber can reconsider a failed vote; a later passage means the bill is alive again.
@@ -158,6 +181,12 @@ def bill_status(
     if session_end is not None and as_of > session_end:
         return Outcome(Status.DIED, SESSION_ENDED, session_end)
     return Outcome(Status.INTRODUCED, None, None)
+
+
+def _enacted_in_words(action: Action) -> bool:
+    if OUTCOME_CLASSIFICATIONS.intersection(action.classification) - {"passage"}:
+        return False
+    return _ENACTED_WORDING.search(action.description) is not None
 
 
 def _adoption(ordered: Sequence[Action], kinds: Sequence[str]) -> Action | None:

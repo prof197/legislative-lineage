@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import duckdb
@@ -7,6 +8,7 @@ from lineage import queries
 from lineage.disk import InsufficientDiskSpaceError
 from lineage.ingest import ingest
 from lineage.snapshot import SnapshotError, scan, write_manifest
+from lineage.status import ENACTED_WORDING, OUTCOME_CLASSIFICATIONS
 from tests.conftest import SESSIONS
 
 
@@ -156,3 +158,35 @@ def test_status_columns_keep_their_types_when_every_value_is_null(
         "SELECT DISTINCT typeof(status_reason), typeof(status_date) FROM bills"
     )
     assert types.fetchall() == [("VARCHAR", "DATE")]
+
+
+def test_status_reads_unclassified_actions_whose_wording_records_an_enactment(
+    tmp_path: Path,
+) -> None:
+    def action(description: str, kinds: list[str], order: int) -> dict[str, object]:
+        return {
+            "organization__name": "House",
+            "description": description,
+            "date": "2025-05-20",
+            "classification": kinds,
+            "order": order,
+        }
+
+    bill = {
+        "id": "ok-1",
+        "classification": ["bill"],
+        "actions": [
+            action("Second Reading referred to Rules", [], 0),
+            action("Third Reading, Measure passed", ["passage"], 1),
+            action("Becomes law without Governor's signature 05/20/2025", [], 2),
+        ],
+    }
+    path = tmp_path / "bills.json"
+    path.write_text(json.dumps([bill]))
+
+    with queries.connect_quiet() as con:
+        ((_, _, actions),) = queries.outcome_actions(
+            con, json_path=path, kinds=sorted(OUTCOME_CLASSIFICATIONS), wording=ENACTED_WORDING
+        )
+
+    assert [a["order"] for a in actions] == [1, 2]

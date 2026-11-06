@@ -153,28 +153,23 @@
     "resolution": 5
    },
    "AR": {
-    "bill": 13,
-    "concurrent resolution": 13,
-    "joint resolution": 2
+    "bill": 13
    },
    "CO": {
     "bill": 45
    },
    "FL": {
-    "bill": 38,
+    "bill": 35,
     "memorial": 1
    },
    "HI": {
-    "bill": 8
-   },
-   "ID": {
     "bill": 8
    },
    "IL": {
     "bill": 2
    },
    "KS": {
-    "bill": 60
+    "bill": 53
    },
    "LA": {
     "bill": 72,
@@ -182,7 +177,7 @@
     "resolution": 1568
    },
    "MI": {
-    "bill": 14
+    "bill": 13
    },
    "MT": {
     "bill": 20,
@@ -195,10 +190,7 @@
     "bill": 11
    },
    "NE": {
-    "bill": 16
-   },
-   "NH": {
-    "bill": 8
+    "bill": 9
    },
    "NV": {
     "bill": 96
@@ -207,11 +199,10 @@
     "bill": 1
    },
    "OK": {
-    "bill": 69,
     "joint resolution": 1
    },
    "TN": {
-    "bill": 5
+    "bill": 2
    },
    "TX": {
     "bill": 2,
@@ -226,6 +217,56 @@
    },
    "WI": {
     "joint resolution": 95
+   }
+  },
+  "enacted_in_words": {
+   "AR": {
+    "concurrent memorial": 1,
+    "concurrent resolution": 37,
+    "joint resolution": 4
+   },
+   "CT": {
+    "bill": 10
+   },
+   "FL": {
+    "bill": 3
+   },
+   "IA": {
+    "bill": 6
+   },
+   "ID": {
+    "bill": 8
+   },
+   "KS": {
+    "bill": 8
+   },
+   "KY": {
+    "bill": 1
+   },
+   "MA": {
+    "bill": 9
+   },
+   "MD": {
+    "bill": 3
+   },
+   "MI": {
+    "bill": 1
+   },
+   "NE": {
+    "bill": 7
+   },
+   "NH": {
+    "bill": 20
+   },
+   "OK": {
+    "bill": 383,
+    "joint resolution": 6
+   },
+   "OR": {
+    "bill": 4
+   },
+   "TN": {
+    "bill": 3
    }
   }
  },
@@ -674,13 +715,16 @@
      "passed": 2249
     },
     "concurrent memorial": {
-     "died": 2
+     "died": 1,
+     "passed": 1
     },
     "concurrent resolution": {
-     "died": 45
+     "died": 8,
+     "passed": 37
     },
     "joint resolution": {
-     "died": 77
+     "died": 73,
+     "passed": 4
     },
     "memorial": {
      "died": 41
@@ -1269,8 +1313,8 @@
    },
    "status": {
     "bill": {
-     "died": 8347,
-     "passed": 798
+     "died": 8337,
+     "passed": 808
     },
     "joint resolution": {
      "died": 1011,
@@ -1646,9 +1690,9 @@
    },
    "status": {
     "bill": {
-     "died": 6175,
+     "died": 6172,
      "introduced": 3,
-     "passed": 1131
+     "passed": 1134
     },
     "concurrent resolution": {
      "died": 22,
@@ -1979,8 +2023,8 @@
    },
    "status": {
     "bill": {
-     "died": 4774,
-     "passed": 716
+     "died": 4768,
+     "passed": 722
     },
     "concurrent resolution": {
      "died": 16,
@@ -2111,8 +2155,8 @@
    },
    "status": {
     "bill": {
-     "died": 1343,
-     "passed": 1320
+     "died": 1335,
+     "passed": 1328
     },
     "concurrent resolution": {
      "died": 59,
@@ -2411,8 +2455,8 @@
    },
    "status": {
     "bill": {
-     "died": 2284,
-     "passed": 457
+     "died": 2276,
+     "passed": 465
     },
     "concurrent resolution": {
      "died": 86,
@@ -2532,8 +2576,8 @@
    },
    "status": {
     "bill": {
-     "died": 3737,
-     "passed": 730
+     "died": 3736,
+     "passed": 731
     },
     "concurrent resolution": {
      "died": 134,
@@ -2848,8 +2892,8 @@
    },
    "status": {
     "bill": {
-     "died": 23288,
-     "passed": 711
+     "died": 23279,
+     "passed": 720
     },
     "proposed bill": {
      "died": 12049
@@ -2961,8 +3005,8 @@
    },
    "status": {
     "bill": {
-     "died": 6674,
-     "passed": 3580
+     "died": 6671,
+     "passed": 3583
     },
     "joint resolution": {
      "died": 45,
@@ -3104,9 +3148,9 @@
    },
    "status": {
     "bill": {
-     "died": 2900,
+     "died": 2899,
      "introduced": 3467,
-     "passed": 783
+     "passed": 784
     },
     "resolution": {
      "died": 114,
@@ -3933,8 +3977,8 @@
    },
    "status": {
     "bill": {
-     "died": 2330,
-     "passed": 612
+     "died": 2323,
+     "passed": 619
     },
     "resolution": {
      "died": 573,
@@ -4052,9 +4096,9 @@
    },
    "status": {
     "bill": {
-     "died": 2572,
-     "introduced": 694,
-     "passed": 1281
+     "died": 2555,
+     "introduced": 691,
+     "passed": 1301
     },
     "concurrent resolution": {
      "died": 16,
@@ -4882,9 +4926,9 @@
    },
    "status": {
     "bill": {
-     "died": 9320,
-     "introduced": 5697,
-     "passed": 2356
+     "died": 9251,
+     "introduced": 5383,
+     "passed": 2739
     },
     "concurrent resolution": {
      "died": 43,
@@ -5057,8 +5101,8 @@
    },
    "status": {
     "bill": {
-     "died": 5193,
-     "passed": 1503
+     "died": 5189,
+     "passed": 1507
     },
     "concurrent resolution": {
      "died": 48,
@@ -5644,8 +5688,8 @@
    },
    "status": {
     "bill": {
-     "died": 9276,
-     "passed": 2368
+     "died": 9273,
+     "passed": 2371
     },
     "joint resolution": {
      "died": 597,
