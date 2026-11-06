@@ -121,7 +121,7 @@ Enacting clauses, effective dates, severability clauses, repealers and amending 
 
 ## Near-duplicate stage
 
-Comparing every pair of sections is out of reach, so this stage summarizes each section in a short signature from which the similarity of any two can be estimated, and proposes for comparison only pairs whose signatures suggest they are alike. `lineage index` builds the signatures ([DR-3](#dr-3)).
+Comparing every pair of sections is out of reach, so this stage summarizes each section in a short signature from which the similarity of any two can be estimated, and proposes for comparison only pairs whose signatures suggest they are alike. `lineage index` builds the signatures and the band index that proposes the pairs ([DR-3](#dr-3)).
 
 **Shingle sets.** A section is represented by its set of distinct word 5-gram hashes, less the stoplist. A section shorter than five words has no shingle, and one whose every shingle is stoplisted has none left. Neither gets a signature, and `reports/index.json` counts both.
 
@@ -139,6 +139,14 @@ Comparing every pair of sections is out of reach, so this stage summarizes each 
 
 **Test oracle.** datasketch, a development-only dependency, signs the same pairs of sets as the NumPy implementation: 200 pairs at each of five Jaccard levels from 0.1 to 0.9, with the exact similarity known by construction. For both engines, the mean error is within four standard errors of zero, and the two engines' means agree within the same bound. Each engine's root-mean-square error is within 20% of the theoretical standard error, since an error that is too small would point to correlated permutations just as surely as one that is too large. The two use different hash families, so the test compares estimates, not values.
 
+**LSH banding.** Each signature is cut into 32 bands of 4 values. Two sections become candidates when all four values of at least one band agree. A pair with Jaccard similarity *s* agrees on a given band with probability *s*<sup>4</sup>, so it becomes a candidate with probability 1 − (1 − *s*<sup>4</sup>)<sup>32</sup>. That S-curve is 0.05 at *s* = 0.2, 0.56 at 0.4, 0.87 at 0.5 and 0.99 at 0.6, and it rises most steeply near (1/32)<sup>1/4</sup> ≈ 0.42. The setting leans toward recall, because verification discards a false candidate cheaply while a pair that is never proposed is lost for good. 32 × 4 is the proposed start, and the ablation sweeps it.
+
+**S-curve test.** The curve assumes each band's four values come from independent permutations, which a linear hash family only approximates. So the test bands real signatures rather than simulated agreements: 500 pairs of sets at each of five similarities from 0.2 to 0.6, with the exact Jaccard similarity known by construction. At every level, the share of pairs that become candidates is within four binomial standard errors of the curve.
+
+**Band keys and buckets.** Each band's four values are hashed to one 64-bit key with SplitMix64's finalizer. Equal keys from unequal bands would only add a candidate that verification removes, and with two million sections a band expects fewer than 10<sup>−6</sup> of them. Each band's keys are sorted together with the row behind each key, and runs of equal keys are the buckets, so the index is two dense matrices of 12 bytes per section per band rather than millions of dictionary entries. It is stored in `bands/` beside the signatures and memory-mapped by queries. Pairs from all the buckets of one size are formed together from one matrix, and a pair that shares several bands is kept once.
+
+**Bucket cap.** A bucket larger than the cap yields no pairs, and `reports/index.json` counts the buckets, section memberships and pairs skipped. The large buckets are boilerplate that the stoplist misses because it is common only within one state, such as a state's own wording of effective-date, appropriation and transition clauses. A cap set too low would also cut real copying: interstate compacts put the same section into bills in dozens of states. So the report sweeps a range of caps and, for each, counts the buckets skipped, those spanning more than one state, and the cross-state candidates the cap removes for good, after checking every band a pair shares. The proposed cap is 500, the smallest in the sweep that removes cross-state candidates from no more than one bucket. The numbers are under [Measured facts](#measured-facts).
+
 ## Alternatives considered
 
 | Alternative | Reason rejected | Evidence |
@@ -155,7 +163,7 @@ Comparing every pair of sections is out of reach, so this stage summarizes each 
 
 ## Scaling limits
 
-The section count sets the size of everything downstream. The 1,917,646 signed sections' MinHash signatures take 0.98 GB (`uv run lineage index` → `reports/index.json`, `signature_bytes`). Ten times the corpus is about 10 GB, which no longer fits comfortably in a laptop's memory.
+The section count sets the size of everything downstream. The 1,917,646 signed sections' MinHash signatures take 0.98 GB, and their band index 0.74 GB (`uv run lineage index` → `reports/index.json`, `signature_bytes` and `lsh.index_bytes`). Ten times the corpus is about 17 GB, which no longer fits comfortably in a laptop's memory.
 
 | Pressure | What breaks first at 10× | Response |
 |---|---|---|
@@ -210,11 +218,19 @@ Each entry names the command that produces it and the committed file it reads fr
 
 **Signatures** (`uv run lineage index` → `reports/index.json`). 1,917,646 of the 1,939,354 matchable sections are signed. 21,706 are shorter than five words, and 2 lose every shingle to the stoplist. After the stoplist, the median section has 165 distinct shingles, the 99th percentile 2,089 and the largest 261,324. The signatures take 0.98 GB.
 
-**MinHash engines** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`). On one core of an Apple M1 Max, signing every section took 283 s with the NumPy implementation and 114 s with datasketch's batch path. Signatures hold 512 and 785 bytes per section. See [DR-3](#dr-3).
+**LSH bands** (same command and file, `lsh`). The band index takes 0.74 GB. At 32 × 4 with the cap at 500, the bands propose 15,766,146 distinct candidate pairs, of which 364,267 (2.3%) cross state lines. The largest bucket holds 1,387 sections. Summed over bands, the cap skips 388 buckets and the 126,883,011 pairs inside them. The cap sweep:
+
+| Cap | Buckets skipped | Of those, spanning more than one state | Most states in a skipped bucket | Cross-state candidates lost |
+|---|---|---|---|---|
+| 100 | 3,622 | 51 | 33 | 70,574 |
+| 200 | 1,744 | 30 | 33 | 43,340 |
+| 500 | 388 | 1 | 2 | 501 |
+| 1,000 | 67 | 0 | 1 | 0 |
+| 2,000 | 0 | 0 | 0 | 0 |
+
+**MinHash engines** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`). On one core of an Apple M1 Max, signing every section took 285 s with the NumPy implementation and 111 s with datasketch's batch path. Signatures hold 512 and 785 bytes per section. Building the LSH index over the same stored signatures took 12 s with NumPy and 449 s with datasketch's insertion session. The index added 0.67 GiB and 14.3 GiB to the process, and the build's peak memory, signatures included, was 2.1 GiB and 15.3 GiB, against the 16 GiB bound. See [DR-3](#dr-3).
 
 **To be measured.**
-- LSH index build time and peak memory for both engines, on the same signatures (step 11).
-- Candidate rate against the theoretical LSH S-curve (step 11).
 - Commission recall, pooled and by act (`lineage eval commission`, M3).
 - Stage ablation: recall and precision for each stage alone and both together (M4).
 - Cost and runtime per stage (M5).
@@ -282,11 +298,11 @@ Existing team expertise with Next.js is a secondary, maintainability factor: it 
 <a id="dr-3"></a>
 ### DR-3 · MinHash engine: an own NumPy implementation, with datasketch as the test oracle
 
-**Status:** accepted, 2026-11-05. Signing was measured in step 10, below. The LSH index half of the measurement is pending (step 11).
+**Status:** under review, 2026-11-05. The step 11 measurement below meets the condition under *Would reverse it*.
 
 **Context.** The near-duplicate stage signs every section in the corpus and buckets the signatures by LSH band. The hot paths are hashing each shingle under every permutation, taking the minimum per permutation, hashing each band to a key, and grouping equal keys. At corpus scale, any per-element Python work in those loops dominates runtime and memory. The implementation also has to be simple enough to verify by reading.
 
-The binding constraints are two. The full corpus must be signed within an overnight run, and the LSH index must fit in memory, both on the reference laptop. That is the machine the benchmarks run on, and each benchmark output records its CPU, core count and memory.
+The binding constraints are two. The full corpus must be signed within an overnight run, and the LSH index must fit in memory, both on the reference laptop. That is the machine the benchmarks run on, and each benchmark output records its CPU, core count and memory. Fitting in memory means that a full index build, signatures plus LSH index, peaks within 16 GiB, half of the reference laptop's 32 GiB, leaving the rest for the operating system and the later stages. The bound was fixed before the index was measured.
 
 **Options.**
 
@@ -308,10 +324,18 @@ The step 10 benchmark puts both engines through the same work. It runs datasketc
 
 **Measured in step 10** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`; Apple M1 Max, 10 cores, 32 GiB). The benchmark gave each engine one core and the same 1,917,646 stoplisted sections, 478,175,576 shingles in all.
 
-- **Signing time.** The NumPy implementation took 283 s and datasketch 114 s. Since version 2.0, datasketch's default permutation is a multiply-add modulo 2<sup>32</sup>, a few array operations per shingle. The exact modular arithmetic here takes more than a dozen. The context above expected per-element Python work to dominate datasketch's time. On this corpus it does not.
+- **Signing time.** The NumPy implementation took 285 s and datasketch 111 s. Since version 2.0, datasketch's default permutation is a multiply-add modulo 2<sup>32</sup>, a few array operations per shingle. The exact modular arithmetic here takes more than a dozen. The context above expected per-element Python work to dominate datasketch's time. On this corpus it does not.
 - **Signature memory.** The NumPy matrix holds 512 bytes per section and datasketch's objects 785 (`tracemalloc`, on a 20,000-section sample), or 0.98 GB against 1.50 GB for the corpus.
 
-Both engines are far inside the overnight bound. This record now turns on its second condition, whether datasketch's LSH index fits in memory, which step 11 measures.
+Both engines are far inside the overnight bound, so this record turned on its second condition, which step 11 measured.
+
+**Measured in step 11** (same command and file). Each engine built its index of 32 bands × 4 rows in a fresh process from the stored signatures table, loaded into memory. datasketch inserted every row through `MinHashLSH.insertion_session`, under a watchdog that would have stopped the build at the memory bound or the disk floor. It did not stop.
+
+- **Peak memory.** NumPy peaked at 2.1 GiB and datasketch at 15.3 GiB, 0.7 GiB inside the 16 GiB bound. Peak memory is the process's physical footprint, which on macOS includes compressed pages that the resident set size leaves out.
+- **Index memory.** The index added 0.67 GiB with NumPy, its two dense matrices, and 14.3 GiB with datasketch, about 8 KB per section in dictionaries of byte strings and sets.
+- **Build time.** 12 s and 449 s.
+
+datasketch therefore meets both conditions below, with 4% of the memory bound to spare.
 
 **Would reverse it.** If, on the reference laptop, datasketch builds signatures for the full corpus within an overnight run (eight hours of wall-clock time) *and* its LSH index fits in memory, then datasketch meets the constraints that justified owning the code, and it becomes the engine. A raw speed ratio is not the test: a slower library that meets both constraints is still the cheaper thing to maintain. If the NumPy implementation itself misses either bound, a compiled library replaces it, and the oracle tests carry over.
 

@@ -12,16 +12,17 @@
  "scope": "full corpus",
  "num_perm": 128,
  "memory_sample_sections": 20000,
+ "memory_bound_bytes": 17179869184,
  "engines": {
   "numpy": {
    "engine": "numpy",
    "sections": 1917646,
    "shingles": 478175576,
-   "read_seconds": 326.1,
-   "sign_seconds": 283.0,
+   "read_seconds": 330.0,
+   "sign_seconds": 285.0,
    "retained_bytes_per_section": 512.3,
-   "rss_peak_bytes": 2806530048,
-   "seconds_per_million_shingles": 0.592,
+   "peak_memory_bytes": 3386141312,
+   "seconds_per_million_shingles": 0.596,
    "signature_memory_bytes": 982410046,
    "within_overnight_bound": true
   },
@@ -29,15 +30,47 @@
    "engine": "datasketch",
    "sections": 1917646,
    "shingles": 478175576,
-   "read_seconds": 337.9,
-   "sign_seconds": 114.1,
+   "read_seconds": 332.8,
+   "sign_seconds": 111.0,
    "retained_bytes_per_section": 784.7,
-   "rss_peak_bytes": 2451423232,
-   "seconds_per_million_shingles": 0.239,
+   "peak_memory_bytes": 4115215744,
+   "seconds_per_million_shingles": 0.232,
    "signature_memory_bytes": 1504776816,
    "within_overnight_bound": true
   }
  },
- "datasketch_over_numpy_sign_time": 0.4,
- "lsh_index": "measured in step 11"
+ "datasketch_over_numpy_sign_time": 0.39,
+ "lsh": {
+  "bands": 32,
+  "rows": 4,
+  "input": "the signatures table, loaded into memory",
+  "engines": {
+   "numpy": {
+    "engine": "numpy",
+    "sections": 1917646,
+    "inserted": 1917646,
+    "seconds": 12.0,
+    "index_bytes": 721438208,
+    "peak_memory_bytes": 2227492416,
+    "completed": true,
+    "stopped_because": null,
+    "index_bytes_per_section": 376.2,
+    "within_memory_bound": true,
+    "signing_matches_index_build": true
+   },
+   "datasketch": {
+    "engine": "datasketch",
+    "sections": 1917646,
+    "inserted": 1917646,
+    "seconds": 448.7,
+    "index_bytes": 15320446912,
+    "peak_memory_bytes": 16442494400,
+    "completed": true,
+    "stopped_because": null,
+    "index_bytes_per_section": 7989.2,
+    "within_memory_bound": true,
+    "signing_matches_index_build": true
+   }
+  }
+ }
 }

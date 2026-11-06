@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 
 import duckdb
@@ -9,7 +8,7 @@ from lineage import queries
 from lineage.disk import InsufficientDiskSpaceError
 from lineage.minhash import NUM_PERM, permutations, signatures
 from lineage.shingles import section_shingles
-from lineage.signatures import build_index, load_signatures
+from lineage.signatures import build_signatures, load_signatures
 from lineage.stoplist import StoplistError, apply_stoplist
 
 STOPLISTED = "is hereby amended to read as follows"
@@ -65,8 +64,8 @@ def tables(tmp_path: Path) -> Path:
     return tables
 
 
-def test_signs_every_matchable_section_that_has_a_shingle(tables: Path, tmp_path: Path) -> None:
-    build_index(tables, workers=1, floor_bytes=0, report_path=tmp_path / "index.json")
+def test_signs_every_matchable_section_that_has_a_shingle(tables: Path) -> None:
+    build_signatures(tables, workers=1, floor_bytes=0)
 
     table = load_signatures(tables)
 
@@ -79,7 +78,7 @@ def test_signs_every_matchable_section_that_has_a_shingle(tables: Path, tmp_path
         assert np.array_equal(row, expected)
 
 
-def test_the_stoplist_is_applied_before_signing(tables: Path, tmp_path: Path) -> None:
+def test_the_stoplist_is_applied_before_signing(tables: Path) -> None:
     text = TEXTS[("b1", 1)] + " " + STOPLISTED
     (tables / "sections" / "b.parquet").unlink()
     with duckdb.connect() as con:
@@ -96,7 +95,7 @@ def test_the_stoplist_is_applied_before_signing(tables: Path, tmp_path: Path) ->
             queries.read_stoplist(con, parquet_path=tables / "stoplist.parquet"), dtype=np.uint32
         )
 
-    build_index(tables, workers=1, floor_bytes=0, report_path=tmp_path / "index.json")
+    build_signatures(tables, workers=1, floor_bytes=0)
 
     table = load_signatures(tables)
     (kept,) = apply_stoplist(section_shingles([text]), stoplist)
@@ -104,13 +103,9 @@ def test_the_stoplist_is_applied_before_signing(tables: Path, tmp_path: Path) ->
     assert np.array_equal(table.values[-1], signatures([kept], permutations())[0])
 
 
-def test_reports_what_was_signed_and_why_the_rest_was_not(tables: Path, tmp_path: Path) -> None:
-    report = tmp_path / "index.json"
+def test_reports_what_was_signed_and_why_the_rest_was_not(tables: Path) -> None:
+    doc = build_signatures(tables, workers=2, floor_bytes=0)
 
-    doc = build_index(tables, workers=2, floor_bytes=0, report_path=report)
-
-    assert json.loads(report.read_text()) == doc
-    assert doc["command"] == "uv run lineage index"
     assert doc["minhash"] == {"num_perm": NUM_PERM, "seed": 42, "prime": "2^61 - 1"}
     assert doc["sections"] == {
         "matchable": 5,
@@ -123,8 +118,8 @@ def test_reports_what_was_signed_and_why_the_rest_was_not(tables: Path, tmp_path
     assert doc["signature_bytes"] == 3 * NUM_PERM * 4
 
 
-def test_each_signature_file_memory_maps(tables: Path, tmp_path: Path) -> None:
-    build_index(tables, workers=1, floor_bytes=0, report_path=tmp_path / "index.json")
+def test_each_signature_file_memory_maps(tables: Path) -> None:
+    build_signatures(tables, workers=1, floor_bytes=0)
 
     files = sorted((tables / "signatures").glob("*.npy"))
     mapped = np.concatenate([np.load(f, mmap_mode="r") for f in files])
@@ -132,18 +127,18 @@ def test_each_signature_file_memory_maps(tables: Path, tmp_path: Path) -> None:
     assert np.array_equal(mapped, load_signatures(tables).values)
 
 
-def test_refuses_without_a_stoplist(tables: Path, tmp_path: Path) -> None:
+def test_refuses_without_a_stoplist(tables: Path) -> None:
     (tables / "stoplist.parquet").unlink()
 
     with pytest.raises(StoplistError, match="lineage boilerplate"):
-        build_index(tables, workers=1, floor_bytes=0, report_path=tmp_path / "index.json")
+        build_signatures(tables, workers=1, floor_bytes=0)
 
 
 def test_refuses_to_fill_the_disk_and_leaves_no_partial_output(
-    tables: Path, tmp_path: Path
+    tables: Path,
 ) -> None:
     with pytest.raises(InsufficientDiskSpaceError):
-        build_index(tables, workers=1, floor_bytes=1 << 62, report_path=tmp_path / "index.json")
+        build_signatures(tables, workers=1, floor_bytes=1 << 62)
 
     assert sorted(p.name for p in tables.iterdir()) == [
         "eligible.parquet",

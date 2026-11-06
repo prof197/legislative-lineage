@@ -8,7 +8,6 @@ to form a shingle, or every shingle stoplisted. See DESIGN.md#dr-3.
 """
 
 import hashlib
-import json
 import multiprocessing
 import shutil
 import tempfile
@@ -30,7 +29,6 @@ from lineage.stoplist import apply_stoplist, load_stoplist
 # Fork after DuckDB has started threads can deadlock the child; spawn starts each worker clean.
 _SPAWN = multiprocessing.get_context("spawn")
 
-COMMAND = "uv run lineage index"
 _FETCH_SECTIONS = 5_000
 _ROW_BYTES = NUM_PERM * 4
 # Generous per-row and per-file allowances for the compressed key files.
@@ -97,10 +95,8 @@ def _quantile(values: NDArray[np.int64], q: float) -> int:
     return int(np.quantile(values, q, method="inverted_cdf")) if values.size else 0
 
 
-def build_index(
-    tables_dir: Path, *, workers: int, floor_bytes: int, report_path: Path
-) -> dict[str, Any]:
-    """Rebuild `<tables>/signatures/` from the matchable sections, and write the report."""
+def build_signatures(tables_dir: Path, *, workers: int, floor_bytes: int) -> dict[str, Any]:
+    """Rebuild `<tables>/signatures/` from the matchable sections and return its report."""
     # Largest first, so the slowest files do not start last and leave the other workers idle.
     parts = sorted(
         (tables_dir / "sections").glob("*.parquet"), key=lambda p: p.stat().st_size, reverse=True
@@ -140,8 +136,7 @@ def build_index(
         raise
 
     sizes = np.concatenate([c.set_sizes for c in counts]) if counts else np.empty(0, np.int64)
-    doc: dict[str, Any] = {
-        "command": COMMAND,
+    return {
         # The stoplist's content, which every signature depends on.
         "stoplist_sha256": hashlib.sha256(stoplist.tobytes()).hexdigest(),
         "minhash": {"num_perm": NUM_PERM, "seed": SEED, "prime": "2^61 - 1"},
@@ -159,9 +154,6 @@ def build_index(
         },
         "signature_bytes": int(sizes.size) * _ROW_BYTES,
     }
-    report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(doc, indent=1) + "\n")
-    return doc
 
 
 def load_signatures(tables_dir: Path) -> SignatureTable:

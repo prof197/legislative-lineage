@@ -288,6 +288,14 @@ def read_signature_keys(
     return [b for b, _ in rows], [o for _, o in rows]
 
 
+def bill_states(con: duckdb.DuckDBPyConnection, *, bills_glob: str) -> dict[str, str]:
+    """Every bill's state, by bill id."""
+    rows: list[tuple[str, str]] = con.execute(
+        "SELECT id, state FROM read_parquet($bills)", {"bills": bills_glob}
+    ).fetchall()
+    return dict(rows)
+
+
 def read_stoplist(con: duckdb.DuckDBPyConnection, *, parquet_path: Path) -> list[int]:
     rows: list[tuple[int]] = con.execute(
         "SELECT hash FROM read_parquet($p) ORDER BY hash", {"p": str(parquet_path)}

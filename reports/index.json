@@ -18,5 +18,60 @@
   "p99": 2089,
   "max": 261324
  },
- "signature_bytes": 981834752
+ "signature_bytes": 981834752,
+ "lsh": {
+  "bands": 32,
+  "rows": 4,
+  "threshold": 0.42,
+  "index_bytes": 736376064,
+  "bucket_cap": 500,
+  "largest_bucket": 1387,
+  "capped": {
+   "buckets": 388,
+   "section_memberships": 296930,
+   "pairs": 126883011
+  },
+  "candidate_pairs": {
+   "all": 15766146,
+   "cross_state": 364267,
+   "same_state": 15401879
+  },
+  "cap_sweep": [
+   {
+    "cap": 100,
+    "buckets_over_cap": 3622,
+    "multi_state_buckets_over_cap": 51,
+    "most_states_in_a_capped_bucket": 33,
+    "cross_state_pairs_lost": 70574
+   },
+   {
+    "cap": 200,
+    "buckets_over_cap": 1744,
+    "multi_state_buckets_over_cap": 30,
+    "most_states_in_a_capped_bucket": 33,
+    "cross_state_pairs_lost": 43340
+   },
+   {
+    "cap": 500,
+    "buckets_over_cap": 388,
+    "multi_state_buckets_over_cap": 1,
+    "most_states_in_a_capped_bucket": 2,
+    "cross_state_pairs_lost": 501
+   },
+   {
+    "cap": 1000,
+    "buckets_over_cap": 67,
+    "multi_state_buckets_over_cap": 0,
+    "most_states_in_a_capped_bucket": 1,
+    "cross_state_pairs_lost": 0
+   },
+   {
+    "cap": 2000,
+    "buckets_over_cap": 0,
+    "multi_state_buckets_over_cap": 0,
+    "most_states_in_a_capped_bucket": 0,
+    "cross_state_pairs_lost": 0
+   }
+  ]
+ }
 }

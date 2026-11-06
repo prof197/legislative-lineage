@@ -11,6 +11,7 @@ from lineage import __version__
 from lineage.disk import GiB, InsufficientDiskSpaceError
 from lineage.doctypes import RULES, DocTypesError, build_eligibility
 from lineage.fetch import SOURCE, fetch_raw
+from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
 from lineage.sectioning import SectioningError, build_sections
 from lineage.sessions import (
@@ -21,7 +22,6 @@ from lineage.sessions import (
     session_rows,
     write_sessions,
 )
-from lineage.signatures import build_index
 from lineage.snapshot import SnapshotError, load_manifest, scan, write_manifest
 from lineage.stats import write_coverage
 from lineage.stoplist import StoplistError, build_stoplist, file_sha256
@@ -257,7 +257,7 @@ def index(
         "reports/index.json"
     ),
 ) -> None:
-    """Build the search index: a MinHash signature for every matchable section."""
+    """Build the search index: MinHash signatures and LSH bands for every matchable section."""
     started = time.monotonic()
     try:
         doc = build_index(
@@ -266,12 +266,17 @@ def index(
     except (StoplistError, InsufficientDiskSpaceError) as e:
         typer.echo(str(e), err=True)
         raise typer.Exit(1) from None
-    counts = doc["sections"]
+    counts, lsh = doc["sections"], doc["lsh"]
+    pairs, capped = lsh["candidate_pairs"], lsh["capped"]
     typer.echo(
         f"{counts['signed']:,} of {counts['matchable']:,} matchable sections signed "
         f"({counts['too_short']:,} too short, {counts['all_stoplisted']:,} all stoplisted) -> "
-        f"{tables / 'signatures'} ({doc['signature_bytes'] / GiB:.2f} GiB, "
-        f"{time.monotonic() - started:.0f}s), {report}"
+        f"{tables / 'signatures'} ({doc['signature_bytes'] / GiB:.2f} GiB)\n"
+        f"{lsh['bands']} bands x {lsh['rows']} rows -> {tables / 'bands'} "
+        f"({lsh['index_bytes'] / GiB:.2f} GiB): {pairs['all']:,} candidate pairs, "
+        f"{pairs['cross_state']:,} across states; {capped['buckets']:,} buckets over the cap "
+        f"of {lsh['bucket_cap']} skipped\n"
+        f"{time.monotonic() - started:.0f}s, {report}"
     )
 
 

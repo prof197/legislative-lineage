@@ -18,8 +18,8 @@ uv run lineage split         # split bill text into data/tables/sections/*.parqu
 uv run lineage eligible      # document-type rules -> data/tables/eligible.parquet, reports/document_types.json
 uv run lineage boilerplate   # shingle stoplist -> data/tables/stoplist.parquet, reports/boilerplate.json
 uv run lineage stats         # coverage, sections, types, status per state/session -> reports/coverage.json
-uv run lineage index         # MinHash signatures -> data/tables/signatures/, reports/index.json
-uv run python -m benchmarks.minhash  # NumPy vs datasketch signing time and memory (DR-3), dev only
+uv run lineage index         # signatures + LSH bands -> data/tables/{signatures,bands}/, reports/index.json
+uv run python -m benchmarks.minhash  # NumPy vs datasketch: signing and LSH index time and memory (DR-3), dev only
 ```
 
 All four checks must pass before every commit. CI runs the same four commands.
@@ -41,11 +41,15 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   shingles.py     word 5-gram shingles, 32-bit hashes (NumPy; values pinned by a test)
   minhash.py      MinHash signatures, exact (a·x + b) mod p (pure functions; values pinned)
   signatures.py   build the signatures table, one worker process per sections file
+  lsh.py          LSH banding: band keys, sorted-array buckets, the cap (pure functions)
+  bands.py        build the band index from the signatures; cap counter and cap sweep
+  index.py        `lineage index`: signatures, then bands, then reports/index.json
   stoplist.py     document-frequency stoplist and its report
   stats.py        coverage report: the measurements that replace the design's estimates
   queries.py      every SQL query the pipeline runs (DR-4)
   disk.py         free-space floor checked before large writes
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
+  memory.py       current and peak memory as the OS charges it (macOS physical footprint)
 tests/            pytest; small committed fixtures only
   fixtures/openstates/  trimmed real records in archive layout (README + *_bills.json)
 snapshot/manifest.json  the pinned snapshot: per-archive size, SHA-256, Generated At
@@ -55,7 +59,7 @@ reports/          committed outputs of pipeline commands; README and DESIGN numb
 DESIGN.md         design, alternatives, scaling limits, failure modes, decision records
 data/             local snapshots and derived tables; gitignored, never committed
   raw/<ST>/*.zip  Open States session archives, never edited
-  tables/         Parquet tables written by the pipeline; signatures/ holds .npy matrices
+  tables/         Parquet tables written by the pipeline; signatures/ and bands/ hold .npy matrices
 ```
 
 ## Conventions
