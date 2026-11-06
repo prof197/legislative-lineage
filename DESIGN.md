@@ -14,6 +14,7 @@ Sections marked **To be measured** fill in as the build reaches them. Every numb
 - [Sections](#sections)
 - [Boilerplate](#boilerplate)
 - [Near-duplicate stage](#near-duplicate-stage)
+- [Commission recall](#commission-recall)
 - [Alternatives considered](#alternatives-considered)
 - [Scaling limits](#scaling-limits)
 - [Known failure modes](#known-failure-modes)
@@ -154,6 +155,16 @@ Comparing every pair of sections is out of reach, so this stage summarizes each 
 **Families.** A state files the same text many times: companion bills in each chamber, a bill refiled in a later session, or one template for many resolutions. Lineage counts the other states that carry a provision, so each state's copies are grouped into a family that counts once. Two bills of one state are linked when, in each direction, at least 80% of the bill's signed sections have a verified match among the other's, and families are the connected components of the links. Requiring a share, not any one match, keeps a clause both bills happen to share from linking them. Requiring it in both directions keeps an omnibus bill from absorbing each small bill it contains. The share of 0.8 is proposed and was set from the measured distribution (`reports/index.json`, `families.min_share_histogram`). Shares spike at the fractions of small bills, 1/3, 1/2, 2/3 and 3/4, where a short bill shares one or two clauses with another, and again at 1. Between 0.70 and 0.95 they are sparse, and 0.8 sits there, past the 3/4 spike. The report's sweep shows what a lower share costs: at 0.5 the largest family grows to 1,282 bills, chained through shared clauses, while from 2/3 up it stays at 764. The largest families are one template filed many times, such as Georgia's notices of local bills, New Mexico's placeholder bills and Massachusetts's study orders, which is what a family should collapse. A family is named by its first bill id in sort order and stored in `families/`.
 
 **Query.** `lineage query FILE` treats a bill's text exactly as the corpus was treated: it is cleaned, split and normalized, boilerplate-only sections are set aside, and the rest are shingled, stoplisted and signed. Each signature's band keys are found in the memory-mapped band index by binary search, and a bucket over the cap yields nothing, as in the build. Each candidate is verified against its stored signature at the build's threshold. Matches are grouped by family and ranked by the share of the query's signed sections that the family matches, scored from the query's side so a provision carried inside a larger bill still ranks high. A query reads only the index pages its keys land on and needs no network or API key. Results are shown through each family's best-matching bill, with the family's size.
+
+## Commission recall
+
+The external ground truth is the Uniform Law Commission's list of enactments. Starting from a uniform act's text, the eval asks what share of the bills that enacted it the pipeline finds.
+
+**Act text.** The ULC holds the copyright in its acts. Its [terms of use](https://www.uniformlaws.org/termsofuse) let anyone view, copy, print and distribute the site's content for informational, noncommercial purposes, unmodified and with the copyright notice or other attribution. Modifying it is allowed only as part of a legislative process. The terms say nothing specific about showing an act on another website. The act files themselves download behind a separate copyright notice, which this check did not open. So:
+
+- The repository never contains act text. Its code is MIT-licensed, and an act committed beside it would read as offered under that license, which includes the right to modify. Act texts live in `data/acts/`, which is gitignored, and each user downloads them from the ULC under its terms.
+- The eval uses them locally, as query documents.
+- The site may show an act's text unmodified, with the ULC's copyright notice and a link to the act's page, as informational, noncommercial use, unless the notice on the act download is narrower. That notice is read when the acts are downloaded, and this paragraph will record what it says. If it is narrower, a comparison starts from the earliest enacted state version instead, which is public domain like every bill.
 
 ## Alternatives considered
 
