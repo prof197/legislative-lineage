@@ -8,6 +8,9 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 import pytest
+from typer.testing import CliRunner
+
+from lineage.cli import app
 
 FIXTURES = Path(__file__).parent / "fixtures" / "openstates"
 # Real session dates for the fixture archives, copied from snapshot/sessions.csv.
@@ -76,3 +79,29 @@ def upstream(raw_dir: Path, tmp_path: Path) -> Iterator[Upstream]:
     yield Upstream(root, f"http://127.0.0.1:{server.server_address[1]}/", user_agents)
     server.shutdown()
     server.server_close()
+
+
+def _invoke(*args: str) -> None:
+    result = CliRunner().invoke(app, list(args))
+    assert result.exit_code == 0, result.output
+
+
+@pytest.fixture(scope="session")
+def corpus(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """The fixture archives taken through every pipeline command; returns the tables dir."""
+    root = tmp_path_factory.mktemp("corpus")
+    raw, manifest, tables = build_raw_dir(root), root / "manifest.json", root / "tables"
+    reports = root / "reports"
+    no_floor = ("--min-free-gib", "0")
+    _invoke("snapshot", "--raw", str(raw), "--manifest", str(manifest))
+    _invoke("ingest", "--raw", str(raw), "--manifest", str(manifest), "--out", str(tables),
+         "--sessions", str(SESSIONS), *no_floor)  # fmt: skip
+    _invoke("split", "--tables", str(tables), "--workers", "1", *no_floor)
+    _invoke("eligible", "--tables", str(tables), "--report", str(reports / "types.json"))
+    # Five bills are too few for a document-frequency stoplist: at the corpus's 0.1% share,
+    # every shingle would be stoplisted. A share of 1 stoplists nothing.
+    _invoke("boilerplate", "--tables", str(tables), "--manifest", str(manifest), "--max-share", "1",
+         "--report", str(reports / "boilerplate.json"), "--workers", "1")  # fmt: skip
+    _invoke("index", "--tables", str(tables), "--workers", "1", "--report",
+         str(reports / "index.json"), *no_floor)  # fmt: skip
+    return tables

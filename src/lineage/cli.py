@@ -13,6 +13,7 @@ from lineage.doctypes import RULES, DocTypesError, build_eligibility
 from lineage.fetch import SOURCE, fetch_raw
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
+from lineage.query import IndexMissingError, query_text
 from lineage.sectioning import SectioningError, build_sections
 from lineage.sessions import (
     CARRYOVER,
@@ -283,6 +284,46 @@ def index(
         f"{families['families_of_two_or_more']:,} same-state families of two or more bills "
         f"({families['bills_in_them']:,} bills) -> {tables / 'families'}\n"
         f"{time.monotonic() - started:.0f}s, {report}"
+    )
+
+
+@app.command()
+def query(
+    file: Annotated[
+        Path,
+        typer.Argument(help="The bill's text, as a plain-text file.", exists=True, dir_okay=False),
+    ],
+    tables: TablesOption = Path("data/tables"),
+    limit: Annotated[int, typer.Option("--limit", help="Families to show.")] = 20,
+) -> None:
+    """Find a bill's relatives in the index, offline: bills that share its text, by section."""
+    started = time.monotonic()
+    try:
+        result = query_text(file.read_text(), tables)
+    except (IndexMissingError, StoplistError) as e:
+        typer.echo(str(e), err=True)
+        raise typer.Exit(1) from None
+    typer.echo(f"{file}: {result.sections} sections, {result.signed} signed")
+    if not result.matches:
+        typer.echo("No near-duplicates found in the index.")
+        return
+    typer.echo(
+        f"{'share':>5}  {'best':>4}  {'state':<5}  {'session':<10}  {'bill':<12}  "
+        f"{'family':>6}  {'status':<10}  title"
+    )
+    for m in result.matches[:limit]:
+        typer.echo(
+            f"{m.share:>5.0%}  {m.best_estimate:>4.2f}  {m.state:<5}  {m.session:<10}  "
+            f"{m.identifier:<12}  {m.family_bills:>6}  {m.status or '':<10}  {m.title[:70]}"
+        )
+    hidden = len(result.matches) - limit
+    more = f"; {hidden:,} more not shown (--limit)" if hidden > 0 else ""
+    noun = "family matches" if len(result.matches) == 1 else "families match"
+    typer.echo(
+        f"{len(result.matches):,} {noun}{more}. Share: of the query's signed sections, "
+        f"the share with a match in the family. Best: the highest estimated similarity of a "
+        f"matched section. Family: the state's near-identical bills, counted once. "
+        f"{time.monotonic() - started:.1f}s"
     )
 
 

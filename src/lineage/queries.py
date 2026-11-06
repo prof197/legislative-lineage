@@ -288,6 +288,54 @@ def read_signature_keys(
     return [b for b, _ in rows], [o for _, o in rows]
 
 
+def signature_bill_ids_at(
+    con: duckdb.DuckDBPyConnection, *, parquet_path: Path, rows: list[int]
+) -> dict[int, str]:
+    """The bill id of each wanted row of one signature keys file, by row number."""
+    found: list[tuple[int, str]] = con.execute(
+        """
+        SELECT file_row_number, bill_id FROM read_parquet($p, file_row_number = true)
+        WHERE file_row_number IN (SELECT unnest($rows))
+        """,
+        {"p": str(parquet_path), "rows": rows},
+    ).fetchall()
+    return dict(found)
+
+
+@dataclass(frozen=True, slots=True)
+class BillSummary:
+    id: str
+    state: str
+    session: str
+    identifier: str
+    title: str
+    status: str | None
+    family: str
+    family_bills: int
+
+
+def bill_summaries(
+    con: duckdb.DuckDBPyConnection, *, bills_glob: str, families_path: Path, ids: list[str]
+) -> list[BillSummary]:
+    """What a query result shows for each wanted bill, with its family and the family's size."""
+    rows: list[tuple[str, str, str, str, str, str | None, str, int]] = con.execute(
+        """
+        WITH families AS (SELECT bill_id, family FROM read_parquet($families)),
+        wanted AS (SELECT bill_id, family FROM families WHERE bill_id IN (SELECT unnest($ids))),
+        sizes AS (
+            SELECT family, count(*) AS bills FROM families
+            WHERE family IN (SELECT family FROM wanted) GROUP BY family
+        )
+        SELECT b.id, b.state, b.session, b.identifier, b.title, b.status, w.family, s.bills
+        FROM wanted w
+        JOIN read_parquet($bills) b ON b.id = w.bill_id
+        JOIN sizes s USING (family)
+        """,
+        {"families": str(families_path), "bills": bills_glob, "ids": ids},
+    ).fetchall()
+    return [BillSummary(*row) for row in rows]
+
+
 def bill_states(con: duckdb.DuckDBPyConnection, *, bills_glob: str) -> dict[str, str]:
     """Every bill's state, by bill id."""
     rows: list[tuple[str, str]] = con.execute(

@@ -170,3 +170,51 @@ def load_signatures(tables_dir: Path) -> SignatureTable:
             matrices.append(cast("NDArray[np.uint32]", np.load(path)))
     values = np.concatenate(matrices) if matrices else np.empty((0, NUM_PERM), dtype=np.uint32)
     return SignatureTable(bill_ids, np.array(ordinals, dtype=np.int64), values)
+
+
+@dataclass(frozen=True, slots=True)
+class SignatureFiles:
+    """The signatures table on disk, memory-mapped. Rows are numbered across files in order."""
+
+    matrices: list[NDArray[np.uint32]]
+    keys: list[Path]
+    starts: NDArray[np.int64]  # the first row of each file
+
+
+def open_signatures(tables_dir: Path) -> SignatureFiles:
+    """Memory-map every signatures file, reading no rows until they are asked for."""
+    files = sorted((tables_dir / "signatures").glob("*.npy"))
+    matrices = [cast("NDArray[np.uint32]", np.load(path, mmap_mode="r")) for path in files]
+    sizes = np.array([m.shape[0] for m in matrices], dtype=np.int64)
+    starts = np.concatenate([[0], np.cumsum(sizes)[:-1]]).astype(np.int64)
+    return SignatureFiles(matrices, [p.with_suffix(".parquet") for p in files], starts)
+
+
+def _by_file(files: SignatureFiles, rows: NDArray[np.int64]) -> NDArray[np.int64]:
+    return np.searchsorted(files.starts, rows, side="right") - 1
+
+
+def signature_values(files: SignatureFiles, rows: NDArray[np.int64]) -> NDArray[np.uint32]:
+    """The signatures of the given rows, in the order given."""
+    out = np.empty((rows.size, NUM_PERM), dtype=np.uint32)
+    which = _by_file(files, rows)
+    used: list[int] = np.unique(which).tolist()
+    for f in used:
+        here = which == f
+        out[here] = files.matrices[f][rows[here] - files.starts[f]]
+    return out
+
+
+def signature_bill_ids(files: SignatureFiles, rows: NDArray[np.int64]) -> list[str]:
+    """The bill id behind each of the given rows, in the order given."""
+    out = [""] * rows.size
+    which = _by_file(files, rows)
+    used: list[int] = np.unique(which).tolist()
+    with queries.connect_quiet() as con:
+        for f in used:
+            positions = np.flatnonzero(which == f)
+            local = (rows[positions] - files.starts[f]).tolist()
+            ids = queries.signature_bill_ids_at(con, parquet_path=files.keys[f], rows=local)
+            for position, row in zip(positions.tolist(), local, strict=True):
+                out[position] = ids[row]
+    return out

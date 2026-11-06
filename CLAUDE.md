@@ -19,6 +19,7 @@ uv run lineage eligible      # document-type rules -> data/tables/eligible.parqu
 uv run lineage boilerplate   # shingle stoplist -> data/tables/stoplist.parquet, reports/boilerplate.json
 uv run lineage stats         # coverage, sections, types, status per state/session -> reports/coverage.json
 uv run lineage index         # signatures, LSH bands, verified pairs, families -> data/tables/{signatures,bands,pairs,families}/, reports/index.json
+uv run lineage query FILE     # a bill's near-duplicate families, offline, from the built index
 uv run python -m benchmarks.minhash  # NumPy vs datasketch: signing and LSH index time and memory (DR-3), dev only
 ```
 
@@ -47,6 +48,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   families.py     same-state families: bill match shares, connected components (pure functions)
   pairs.py        verify candidates, store cross-state pairs, write families
   index.py        `lineage index`: signatures, bands, pairs and families, then reports/index.json
+  query.py        `lineage query`: sign a bill's text, look up its bands, verify, group by family
   stoplist.py     document-frequency stoplist and its report
   stats.py        coverage report: the measurements that replace the design's estimates
   queries.py      every SQL query the pipeline runs (DR-4)
