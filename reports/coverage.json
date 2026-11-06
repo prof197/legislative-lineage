@@ -5,7 +5,7 @@
  "definitions": {
   "missing_text": "the record has no raw_text",
   "blank_text": "raw_text has no character Python's str.isspace() rejects",
-  "text_without_sections": "non-blank text that cleaning reduces to nothing",
+  "text_without_sections": "non-blank text that cleaning reduces to nothing or to a notice that the text is not available",
   "split_at_headings": "bills split by the heading rule, not the window fallback",
   "commemorative_title_candidates": "(?i)\\b(commend|congratulat|condolence|mourn|in memory of|honou?ring|recogniz(e|es|ing))"
  },
@@ -13,10 +13,10 @@
   "records": 525633,
   "missing_text": 11675,
   "blank_text": 141770,
-  "text_without_sections": 2,
-  "with_sections": 372186,
+  "text_without_sections": 1394,
+  "with_sections": 370794,
   "split_at_headings": 257085,
-  "sections": 2186931
+  "sections": 2185234
  },
  "sessions_without_end_date": {
   "sessions": 0,
@@ -4950,11 +4950,11 @@
      "records": 11809,
      "missing_text": 0,
      "blank_text": 697,
-     "text_without_sections": 0,
-     "with_sections": 11112,
+     "text_without_sections": 413,
+     "with_sections": 10699,
      "split_at_headings": 7465,
      "sections": {
-      "total": 70659,
+      "total": 70100,
       "median": 4.0,
       "p90": 12,
       "max": 2015
@@ -4972,7 +4972,7 @@
      "with_sections": 91,
      "split_at_headings": 57,
      "sections": {
-      "total": 627,
+      "total": 626,
       "median": 4.0,
       "p90": 16,
       "max": 59
@@ -4986,11 +4986,11 @@
      "records": 169,
      "missing_text": 0,
      "blank_text": 16,
-     "text_without_sections": 0,
-     "with_sections": 153,
+     "text_without_sections": 1,
+     "with_sections": 152,
      "split_at_headings": 85,
      "sections": {
-      "total": 1074,
+      "total": 1073,
       "median": 4.0,
       "p90": 13,
       "max": 77
@@ -5004,11 +5004,11 @@
      "records": 598,
      "missing_text": 0,
      "blank_text": 62,
-     "text_without_sections": 0,
-     "with_sections": 536,
+     "text_without_sections": 62,
+     "with_sections": 474,
      "split_at_headings": 194,
      "sections": {
-      "total": 2473,
+      "total": 2398,
       "median": 2.0,
       "p90": 9,
       "max": 283
@@ -5022,11 +5022,11 @@
      "records": 399,
      "missing_text": 0,
      "blank_text": 75,
-     "text_without_sections": 0,
-     "with_sections": 324,
+     "text_without_sections": 34,
+     "with_sections": 290,
      "split_at_headings": 98,
      "sections": {
-      "total": 1581,
+      "total": 1538,
       "median": 2.0,
       "p90": 8,
       "max": 277
@@ -5040,13 +5040,13 @@
      "records": 593,
      "missing_text": 0,
      "blank_text": 14,
-     "text_without_sections": 0,
-     "with_sections": 579,
+     "text_without_sections": 44,
+     "with_sections": 535,
      "split_at_headings": 358,
      "sections": {
-      "total": 4517,
+      "total": 4460,
       "median": 4.0,
-      "p90": 13,
+      "p90": 14,
       "max": 275
      }
     },
@@ -5058,13 +5058,13 @@
      "records": 692,
      "missing_text": 0,
      "blank_text": 20,
-     "text_without_sections": 0,
-     "with_sections": 672,
+     "text_without_sections": 25,
+     "with_sections": 647,
      "split_at_headings": 379,
      "sections": {
-      "total": 4516,
+      "total": 4479,
       "median": 4.0,
-      "p90": 12,
+      "p90": 13,
       "max": 210
      }
     },
@@ -5076,13 +5076,13 @@
      "records": 11503,
      "missing_text": 0,
      "blank_text": 935,
-     "text_without_sections": 0,
-     "with_sections": 10568,
+     "text_without_sections": 813,
+     "with_sections": 9755,
      "split_at_headings": 7483,
      "sections": {
-      "total": 68534,
+      "total": 67619,
       "median": 4.0,
-      "p90": 12,
+      "p90": 13,
       "max": 427
      }
     }
@@ -5781,7 +5781,7 @@
      "with_sections": 2271,
      "split_at_headings": 2037,
      "sections": {
-      "total": 8394,
+      "total": 8390,
       "median": 2.0,
       "p90": 6,
       "max": 490
@@ -5817,7 +5817,7 @@
      "with_sections": 2204,
      "split_at_headings": 1965,
      "sections": {
-      "total": 8446,
+      "total": 8444,
       "median": 2.0,
       "p90": 6,
       "max": 490
@@ -5853,7 +5853,7 @@
      "with_sections": 76,
      "split_at_headings": 62,
      "sections": {
-      "total": 269,
+      "total": 268,
       "median": 2.0,
       "p90": 4,
       "max": 41
@@ -5889,7 +5889,7 @@
      "with_sections": 658,
      "split_at_headings": 484,
      "sections": {
-      "total": 2194,
+      "total": 2192,
       "median": 2.0,
       "p90": 7,
       "max": 68

@@ -1,67 +1,67 @@
 {
  "command": "uv run lineage index",
- "stoplist_sha256": "a87b743d9ef533fbee0a1f04f0b3095d9422b8369cc0b2778e99040af2a7aecf",
+ "stoplist_sha256": "1727765382848baa79269f2da6b8b8d3747ed6fec1d473fc66bf00869083c1f1",
  "minhash": {
   "num_perm": 128,
   "seed": 42,
   "prime": "2^61 - 1"
  },
  "sections": {
-  "matchable": 1939354,
-  "signed": 1917646,
+  "matchable": 1937958,
+  "signed": 1916250,
   "too_short": 21706,
   "all_stoplisted": 2
  },
  "shingle_set_size": {
-  "median": 165,
-  "p90": 485,
-  "p99": 2089,
+  "median": 164,
+  "p90": 486,
+  "p99": 2090,
   "max": 261324
  },
- "signature_bytes": 981834752,
+ "signature_bytes": 981120000,
  "lsh": {
   "bands": 32,
   "rows": 4,
   "threshold": 0.42,
-  "index_bytes": 736376064,
+  "index_bytes": 735840000,
   "bucket_cap": 500,
-  "largest_bucket": 1387,
+  "largest_bucket": 1277,
   "capped": {
-   "buckets": 388,
-   "section_memberships": 296930,
-   "pairs": 126883011,
+   "buckets": 356,
+   "section_memberships": 252569,
+   "pairs": 96156777,
    "cross_state_pairs_lost": 501
   },
   "candidate_pairs": {
-   "all": 15766146,
-   "cross_state": 364267,
-   "same_state": 15401879
+   "all": 15321302,
+   "cross_state": 364291,
+   "same_state": 14957011
   },
   "cap_sweep": [
    {
     "cap": 100,
-    "buckets_over_cap": 3622,
+    "buckets_over_cap": 3576,
     "multi_state_buckets_over_cap": 51,
     "most_states_in_a_capped_bucket": 33,
     "cross_state_pairs_lost": 70574
    },
    {
     "cap": 200,
-    "buckets_over_cap": 1744,
+    "buckets_over_cap": 1708,
     "multi_state_buckets_over_cap": 30,
     "most_states_in_a_capped_bucket": 33,
     "cross_state_pairs_lost": 43340
    },
    {
     "cap": 500,
-    "buckets_over_cap": 388,
+    "buckets_over_cap": 356,
     "multi_state_buckets_over_cap": 1,
     "most_states_in_a_capped_bucket": 2,
     "cross_state_pairs_lost": 501
    },
    {
     "cap": 1000,
-    "buckets_over_cap": 67,
+    "buckets_over_cap": 35,
     "multi_state_buckets_over_cap": 0,
     "most_states_in_a_capped_bucket": 1,
     "cross_state_pairs_lost": 0

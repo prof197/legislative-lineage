@@ -26,7 +26,7 @@ Model legislation spreads by copying. An interest group, a uniform-law body or a
 
 Three properties of the corpus make this hard:
 
-- **Size.** Every bill from all 50 states over four years. Comparing every pair of sections is quadratic: *N* sections make *N*(*N* − 1)/2 pairs, so the method has to find candidates without enumerating pairs. The snapshot has *N* = 2,186,931 sections (`uv run lineage stats`, `reports/coverage.json`), which is about 2.4 × 10¹² pairs.
+- **Size.** Every bill from all 50 states over four years. Comparing every pair of sections is quadratic: *N* sections make *N*(*N* − 1)/2 pairs, so the method has to find candidates without enumerating pairs. The snapshot has *N* = 2,185,234 sections (`uv run lineage stats`, `reports/coverage.json`), which is about 2.4 × 10¹² pairs.
 - **The unit is the section, not the bill.** A copied provision often sits inside a much larger bill, such as an elections omnibus or a budget. Similarity between whole bills dilutes it below any useful threshold.
 - **Copying is not always verbatim.** Reordered clauses and substituted terms break exact-text methods, while generic legal phrasing ("the department shall…") makes meaning-based methods over-match.
 
@@ -98,6 +98,7 @@ The unit of matching is the section, not the bill. Provisions travel between sta
 
 **Cleaning.** Before splitting, the text is cleaned:
 - Line endings are unified.
+- Style sheets left by the source's conversion from HTML are removed. Every Texas and West Virginia record with text carries style rules before the bill, and Texas's Word exports carry a whole style sheet inside an HTML comment. HTML comments are dropped. A style rule is dropped only when its line holds nothing but rules whose bodies are lowercase `property: value` declarations, because Kansas marks amendments with braces and other states brace parts of forms.
 - Text is NFKC-normalized, so non-breaking spaces and ligatures become plain characters.
 - Format, private-use and control characters are dropped. Kentucky's export, for example, puts a private-use glyph before each heading.
 - Runs of spaces collapse to one.
@@ -106,7 +107,7 @@ The unit of matching is the section, not the bill. Provisions travel between sta
 
 **Headings.** A section starts at a line that opens with `Section 1.`, `SECTION 1.`, `Sec. 1.`, `SEC. 1.` or `§ 1.`, with a colon accepted in place of the period. The number can be code-style (`1-101`, `2a`). Alaska's leading asterisk and Washington's `NEW SECTION.` are skipped. A heading must start its line, so a line opening with a quotation mark is not a heading. That keeps the sections of an act being amended, quoted inside the bill, from splitting it. Lowercase "section" at the start of a line is ignored, because there it is a wrapped cross-reference far more often than a heading. Text before the first heading becomes section 0.
 
-**Fallback.** A bill with no heading is cut into windows of at least 200 words on paragraph boundaries. A paragraph longer than a window is cut by words, and a short remainder joins the window before it. Every bill with text therefore yields sections, and the `by_heading` flag records which rule produced them. `lineage stats` reports the heading hit rate per state.
+**Fallback.** A bill with no heading is cut into windows of at least 200 words on paragraph boundaries. A paragraph longer than a window is cut by words, and a short remainder joins the window before it. Every bill with text therefore yields sections, and the `by_heading` flag records which rule produced them. The exception is text that cleaning reduces to nothing, or to Texas's notice that a version's text is not available, which is treated as no text and counted as text without sections. `lineage stats` reports the heading hit rate per state.
 
 **Normalized text** is case-folded words and numbers separated by single spaces, with the section sign spelled out so that "§ 2" and "Section 2" normalize alike. Shingling and hashing read it. The display text is kept for alignment and the site.
 
@@ -164,7 +165,7 @@ Comparing every pair of sections is out of reach, so this stage summarizes each 
 
 ## Scaling limits
 
-The section count sets the size of everything downstream. The 1,917,646 signed sections' MinHash signatures take 0.98 GB, and their band index 0.74 GB (`uv run lineage index` → `reports/index.json`, `signature_bytes` and `lsh.index_bytes`). Ten times the corpus is about 17 GB, which no longer fits comfortably in a laptop's memory.
+The section count sets the size of everything downstream. The 1,916,250 signed sections' MinHash signatures take 0.98 GB, and their band index 0.74 GB (`uv run lineage index` → `reports/index.json`, `signature_bytes` and `lsh.index_bytes`). Ten times the corpus is about 17 GB, which no longer fits comfortably in a laptop's memory.
 
 | Pressure | What breaks first at 10× | Response |
 |---|---|---|
@@ -182,7 +183,7 @@ These carry into the README's known-failure-modes section. Each has a mitigation
 | Failure | Effect | Mitigation or disclosure |
 |---|---|---|
 | The stored text is often the introduced version ([Open States stores one version's text per bill](https://github.com/openstates/openstates-core/blob/main/openstates/data/models/bill.py)) | Amendments made during passage are invisible to "what changed" | Fetch enacted versions for featured matches; measure the share of enacted bills stored as introduced text and state it |
-| Text extraction failed, or the source is a scanned image | No text, so no matches. This includes enacted bills in states that otherwise have text | Measured per state and session (`reports/coverage.json`). The recall eval names "no text in source" as a miss reason and reports recall both over all enactments and over enactments with text |
+| Text extraction failed, or the source is a scanned image | No text, so no matches. This includes enacted bills in states that otherwise have text, and 1,392 Texas records whose text is only a notice to see the PDF | Measured per state and session (`reports/coverage.json`). The recall eval names "no text in source" as a miss reason and reports recall both over all enactments and over enactments with text |
 | Amendment-style bills | New text sits inside old statute text, so matches can land on the old law | Drop struck text where its markup survives extraction; section-level scoring limits the damage |
 | Omnibus bills | The provision is a small share of the bill | Score from the query side; display matches by section |
 | Boilerplate leakage | False matches on shared clauses | Document-frequency stoplist, the LSH bucket cap, and the ablation's false-match rate |
@@ -204,33 +205,33 @@ Each entry names the command that produces it and the committed file it reads fr
 **Snapshot** (`uv run lineage snapshot` → `snapshot/manifest.json`). 220 archives, 6.42 GiB, for the 50 states' sessions overlapping 2023–2026. Generated At dates run from 2023-03-01 to 2026-11-05. `reports/coverage.json` gives the range per state.
 
 **Text coverage** (`uv run lineage stats` → `reports/coverage.json`).
-- Of 525,633 records, 11,675 have no text and 141,770 have blank text. 372,186 (70.8%) yield sections.
+- Of 525,633 records, 11,675 have no text and 141,770 have blank text. 1,394 have text that cleaning reduces to nothing, 1,392 of them Texas notices that a version's text is not available and the PDF should be consulted. 370,794 (70.5%) yield sections.
 - Connecticut, Maine and South Dakota publish blank text for every record. Maryland, Nebraska, New Hampshire, Montana and Indiana have text for under a third of their records.
 
 **Sections** (same command and file).
-- 2,186,931 sections.
-- The heading rule splits 257,085 of the 372,186 bills with text (69.1%), and the window fallback splits the rest.
+- 2,185,234 sections.
+- The heading rule splits 257,085 of the 370,794 bills with text (69.3%), and the window fallback splits the rest.
 - Ohio, Washington, New Hampshire, New Jersey and Missouri split almost entirely by windows (98% or more). Their exports lack line breaks or section numbers, or number sections without the word "Section".
 
 **Document types** (same command and file). Record counts by classification per state, the title-pattern count of likely commemorative measures within each type, and status by type. These set DR-5's type rules.
 
-**Eligibility** (`uv run lineage eligible` → `reports/document_types.json`). 456,189 of 525,633 records are of an eligible type, and 316,051 of those yield sections. Every rule's count, per state, is in the file, with sample titles for each rule that reads titles and every title a rule's `unless` pattern spared.
+**Eligibility** (`uv run lineage eligible` → `reports/document_types.json`). 456,189 of 525,633 records are of an eligible type, and 314,664 of those yield sections. Every rule's count, per state, is in the file, with sample titles for each rule that reads titles and every title a rule's `unless` pattern spared.
 
-**Boilerplate** (`uv run lineage boilerplate` → `reports/boilerplate.json`). Sections flagged by each pattern, and the shingles and shingle occurrences that each candidate stoplist threshold removes. 1,939,354 sections are matchable. At the proposed 0.1% share, 3,963 shingles are stoplisted, removing 4.0% of shingle occurrences.
+**Boilerplate** (`uv run lineage boilerplate` → `reports/boilerplate.json`). Sections flagged by each pattern, and the shingles and shingle occurrences that each candidate stoplist threshold removes. 1,937,958 sections are matchable. At the proposed 0.1% share, 3,847 shingles are stoplisted, removing 3.8% of shingle occurrences.
 
-**Signatures** (`uv run lineage index` → `reports/index.json`). 1,917,646 of the 1,939,354 matchable sections are signed. 21,706 are shorter than five words, and 2 lose every shingle to the stoplist. After the stoplist, the median section has 165 distinct shingles, the 99th percentile 2,089 and the largest 261,324. The signatures take 0.98 GB.
+**Signatures** (`uv run lineage index` → `reports/index.json`). 1,916,250 of the 1,937,958 matchable sections are signed. 21,706 are shorter than five words, and 2 lose every shingle to the stoplist. After the stoplist, the median section has 164 distinct shingles, the 99th percentile 2,090 and the largest 261,324. The signatures take 0.98 GB.
 
-**LSH bands** (same command and file, `lsh`). The band index takes 0.74 GB. At 32 × 4 with the cap at 500, the bands propose 15,766,146 distinct candidate pairs, of which 364,267 (2.3%) cross state lines. The largest bucket holds 1,387 sections. Summed over bands, the cap skips 388 buckets and the 126,883,011 pairs inside them. 501 cross-state candidates appear only in skipped buckets and are lost. The cap sweep:
+**LSH bands** (same command and file, `lsh`). The band index takes 0.74 GB. At 32 × 4 with the cap at 500, the bands propose 15,321,302 distinct candidate pairs, of which 364,291 (2.4%) cross state lines. The largest bucket holds 1,277 sections. Summed over bands, the cap skips 356 buckets and the 96,156,777 pairs inside them. 501 cross-state candidates appear only in skipped buckets and are lost. The cap sweep:
 
 | Cap | Buckets skipped | Of those, spanning more than one state | Most states in a skipped bucket | Cross-state candidates lost |
 |---|---|---|---|---|
-| 100 | 3,622 | 51 | 33 | 70,574 |
-| 200 | 1,744 | 30 | 33 | 43,340 |
-| 500 | 388 | 1 | 2 | 501 |
-| 1,000 | 67 | 0 | 1 | 0 |
+| 100 | 3,576 | 51 | 33 | 70,574 |
+| 200 | 1,708 | 30 | 33 | 43,340 |
+| 500 | 356 | 1 | 2 | 501 |
+| 1,000 | 35 | 0 | 1 | 0 |
 | 2,000 | 0 | 0 | 0 | 0 |
 
-**MinHash engines** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`). On one core of an Apple M1 Max, signing every section took 285 s with the NumPy implementation and 111 s with datasketch's batch path. Signatures hold 512 and 785 bytes per section. Building the LSH index over the same stored signatures took 12 s with NumPy and 449 s with datasketch's insertion session. The index added 0.67 GiB and 14.3 GiB to the process, and the build's peak memory, signatures included, was 2.1 GiB and 15.3 GiB, against the 16 GiB bound. See [DR-3](#dr-3).
+**MinHash engines** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`). On one core of an Apple M1 Max, signing every section took 270 s with the NumPy implementation and 102 s with datasketch's batch path. Signatures hold 512 and 785 bytes per section. Building the LSH index over the same stored signatures took 10 s with NumPy and 571 s with datasketch's insertion session. The index added 0.66 GiB and 14.3 GiB to the process, and the build's peak memory, signatures included, was 2.1 GiB and 15.3 GiB, against the 16 GiB bound. See [DR-3](#dr-3).
 
 **To be measured.**
 - Commission recall, pooled and by act (`lineage eval commission`, M3).
@@ -320,9 +321,9 @@ Existing team expertise with Next.js is a secondary, maintainability factor: it 
 
 The benchmark puts both engines through the same work. It runs datasketch through its batch path, never a per-shingle loop, so the comparison is with the library at its best. It records wall-clock time and peak memory for building the signatures and the LSH index, on the full corpus.
 
-**Measured in step 10** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`; Apple M1 Max, 10 cores, 32 GiB). The benchmark gave each engine one core and the same 1,917,646 stoplisted sections, 478,175,576 shingles in all.
+**Measured in step 10** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`; Apple M1 Max, 10 cores, 32 GiB). The benchmark gave each engine one core and the same 1,916,250 stoplisted sections, 477,224,285 shingles in all.
 
-- **Signing time.** The NumPy implementation took 285 s and datasketch 111 s. The context above expected per-element Python work to dominate datasketch's time. On this corpus it does not.
+- **Signing time.** The NumPy implementation took 270 s and datasketch 102 s. The context above expected per-element Python work to dominate datasketch's time. On this corpus it does not.
 - **Signature memory.** The NumPy matrix holds 512 bytes per section and datasketch's objects 785 (`tracemalloc`, on a 20,000-section sample), or 0.98 GB against 1.50 GB for the corpus.
 
 **Why signing is slower here.** The cost is the permutation arithmetic, not data layout. datasketch 2.0's default scheme computes *a*·*x* + *b* in wrapping 32-bit integers: two array operations on 4-byte values for each shingle and permutation. The exact (*a*·*x* + *b*) mod *p* takes about sixteen operations on 8-byte values (`minhash._hash_into`), and NumPy runs each as a separate pass over the run's arrays. A profile on one core found that hash to be nearly all of the signing time, and changing the run length or removing the two temporary arrays it allocates did not change the time materially. No small fix remains. Fusing the passes needs compiled code, which the options above rejected. A multiply-add modulo 2<sup>32</sup> would change every stored signature, and its accuracy would rest on empirical tests rather than on the pairwise independence of the mod-*p* family. Signing runs once per snapshot, in parallel, so the gap is left as it is.
@@ -330,8 +331,8 @@ The benchmark puts both engines through the same work. It runs datasketch throug
 **Measured in step 11** (same command and file). Each engine built its index of 32 bands × 4 rows in a fresh process from the stored signatures table, loaded into memory. datasketch inserted every row through `MinHashLSH.insertion_session`, under a watchdog that would have stopped the build at the memory bound or the disk floor. It did not stop.
 
 - **Peak memory.** NumPy peaked at 2.1 GiB and datasketch at 15.3 GiB, 0.7 GiB inside the 16 GiB bound. Peak memory is the process's physical footprint, which on macOS includes compressed pages that the resident set size leaves out.
-- **Index memory.** The index added 0.67 GiB with NumPy, its two dense matrices, and 14.3 GiB with datasketch, about 8 KB per section in dictionaries of byte strings and sets.
-- **Build time.** 12 s and 449 s.
+- **Index memory.** The index added 0.66 GiB with NumPy, its two dense matrices, and 14.3 GiB with datasketch, about 8 KB per section in dictionaries of byte strings and sets.
+- **Build time.** 10 s and 571 s.
 
 datasketch therefore met both conditions of the criterion as first written, with 4% of the memory bound to spare.
 
@@ -340,12 +341,12 @@ datasketch therefore met both conditions of the criterion as first written, with
 **Against the full criterion, datasketch fails.**
 
 - Its index is 14.3 GiB of Python dictionaries inside the building process. It has no file format and cannot be memory-mapped, so every query would first have to bring all of it into memory, whether by loading a serialized copy split across release assets or by rebuilding it.
-- Rebuilding it on the user's machine from the signatures took 449 s on the reference laptop and peaked at 15.3 GiB, more than a laptop with 16 GiB of memory can hold.
+- Rebuilding it on the user's machine from the signatures took 571 s on the reference laptop and peaked at 15.3 GiB, more than a laptop with 16 GiB of memory can hold.
 - On the reference laptop itself, the headroom is 4%, which a few more sessions of bills would use up.
 
 This project's index is two `.npy` matrices, 0.74 GB in all (`reports/index.json`, `lsh.index_bytes`), each under the limit. A query memory-maps them and reads only the pages its keys land on.
 
-**The hybrid, rejected.** datasketch's signing feeding this project's band index would meet the full criterion. It would save at most the 174 s of single-core signing time that step 10 measured, less once spread over the worker processes of a build that runs once per snapshot. In exchange, datasketch would become a runtime dependency rather than a test oracle, and the signatures would depend on its hash scheme staying fixed across releases.
+**The hybrid, rejected.** datasketch's signing feeding this project's band index would meet the full criterion. It would save at most the 168 s of single-core signing time that step 10 measured, less once spread over the worker processes of a build that runs once per snapshot. In exchange, datasketch would become a runtime dependency rather than a test oracle, and the signatures would depend on its hash scheme staying fixed across releases.
 
 **Consequences.**
 

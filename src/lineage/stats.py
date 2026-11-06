@@ -114,7 +114,10 @@ def coverage(tables_dir: Path, *, sessions_path: Path, manifest_path: Path) -> d
         "definitions": {
             "missing_text": "the record has no raw_text",
             "blank_text": "raw_text has no character Python's str.isspace() rejects",
-            "text_without_sections": "non-blank text that cleaning reduces to nothing",
+            "text_without_sections": (
+                "non-blank text that cleaning reduces to nothing or to a notice that the text "
+                "is not available"
+            ),
             "split_at_headings": "bills split by the heading rule, not the window fallback",
             "commemorative_title_candidates": COMMEMORATIVE_TITLE,
         },

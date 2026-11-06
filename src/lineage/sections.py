@@ -36,6 +36,27 @@ _GUTTER_MIN_SHARE = 0.5
 _HEADER_MIN_REPEATS = 3
 _HEADER_MAX_WORDS = 8
 _NOT_WORD = re.compile(r"[\W_]+")
+# Style sheets survive the source's conversion from HTML: Texas's Word exports carry one inside
+# an HTML comment, and Texas's and West Virginia's other pages put style rules before the text.
+# A rule's body must be nothing but lowercase `property: value` declarations, and a rule is
+# dropped only on lines that hold nothing else, so braces in bill text (Kansas marks amendments
+# with them) are never taken for a rule. Items end at a mandatory separator, so a failing match
+# cannot backtrack exponentially.
+_HTML_COMMENT = re.compile(r"<!--.*?-->", re.DOTALL)
+_SELECTOR = r"[\w.#*@:-]+(?:(?:[ \t]*,\s*|[ \t]+)[\w.#*@:-]+)*"
+_DECLARATION = r"\s*[a-z][a-z0-9-]*\s*:[^;{}]*"
+_DECLARATIONS = rf"(?=\s*[a-z])(?:{_DECLARATION};)*(?:{_DECLARATION})?\s*"
+_RULE = rf"{_SELECTOR}\s*\{{{_DECLARATIONS}\}}"
+_STYLE_RULES = re.compile(rf"^[ \t]*{_RULE}(?:\s*{_RULE})*[ \t]*$", re.MULTILINE)
+# What Texas publishes in place of a version's text, normalized.
+_NO_TEXT_NOTICES = frozenset(
+    {
+        "this version is not currently available but is coming soon in the meantime please see "
+        "the pdf for the content of this bill",
+        "an html version of this bill is not available please see the pdf for the content of "
+        "this bill for additional information consult the legislative budget board s website",
+    }
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -98,8 +119,9 @@ def _strip_running_headers(lines: list[str]) -> list[str]:
 
 
 def clean(raw: str) -> str:
-    """Display text: one newline convention, no invisible characters, no line-number gutter."""
+    """Display text: one newline convention; no style sheet, invisible character or gutter."""
     text = unicodedata.normalize("NFKC", raw.replace("\r\n", "\n").replace("\r", "\n"))
+    text = _STYLE_RULES.sub("", _HTML_COMMENT.sub("", text))
     text = _invisible().sub("", text)
     lines = _strip_gutter([" ".join(line.split()) for line in text.split("\n")])
     lines = _strip_running_headers(lines)
@@ -146,7 +168,7 @@ def _windows(text: str) -> list[Section]:
 
 def split_sections(raw: str | None) -> Split:
     text = clean(raw or "")
-    if not text:
+    if not text or normalize(text) in _NO_TEXT_NOTICES:
         return Split([], by_heading=False)
     matches = list(_HEADING.finditer(text))
     if not matches:
