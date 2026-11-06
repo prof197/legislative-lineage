@@ -395,6 +395,26 @@ def enactment_bills(
     return [EnactmentBill(*row) for row in rows]
 
 
+def listed_bills(
+    con: duckdb.DuckDBPyConnection, *, bills_glob: str, states: list[str]
+) -> list[tuple[Any, ...]]:
+    """Every bill of the given states: what matching needs, its title and last passage date."""
+    passages = "list_filter(actions, lambda a: list_contains(a.classification, 'passage'))"
+    return con.execute(
+        f"""
+        SELECT
+            id, state, session, identifier, status, status_date,
+            len(list_distinct(list_transform({passages}, lambda a: a.organization__name))),
+            coalesce(title, ''),
+            TRY_CAST(list_max(list_transform({passages}, lambda a: left(a.date, 10))) AS DATE)
+        FROM read_parquet($bills)
+        WHERE state IN (SELECT unnest($states))
+        ORDER BY id
+        """,
+        {"bills": bills_glob, "states": states},
+    ).fetchall()
+
+
 def signature_rows_of(
     con: duckdb.DuckDBPyConnection, *, keys_paths: list[Path], bill_ids: list[str]
 ) -> list[tuple[int, int, str]]:

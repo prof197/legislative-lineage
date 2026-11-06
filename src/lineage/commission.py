@@ -161,7 +161,7 @@ def _both(records: list[dict[str, Any]]) -> dict[str, Any]:
     return {"all": _recall(records), "with_text": _recall([r for r in records if r["with_text"]])}
 
 
-def _excluded(row: Enactment, first_year: int) -> str | None:
+def excluded_reason(row: Enactment, first_year: int) -> str | None:
     if row.state is None:
         return "District of Columbia: the corpus is the 50 states"
     if row.year < first_year:
@@ -169,7 +169,7 @@ def _excluded(row: Enactment, first_year: int) -> str | None:
     return None
 
 
-def _session_years(
+def session_years(
     sessions: dict[tuple[str, str], Session],
 ) -> dict[tuple[str, str], tuple[int, int]]:
     return {
@@ -194,8 +194,8 @@ def evaluate(
     unknown = sorted({r.act for r in rows} - set(query_texts))
     if unknown:
         raise CommissionError(f"no query text for {', '.join(unknown)}")
-    excluded = [(r, why) for r in rows if (why := _excluded(r, first_year)) is not None]
-    counted = [r for r in rows if _excluded(r, first_year) is None]
+    excluded = [(r, why) for r in rows if (why := excluded_reason(r, first_year)) is not None]
+    counted = [r for r in rows if excluded_reason(r, first_year) is None]
 
     with queries.connect_quiet() as con:
         bills = queries.enactment_bills(
@@ -209,7 +209,7 @@ def evaluate(
             substitute=AMENDMENT_SUBSTITUTE,
         )
     by_id = {b.id: b for b in bills}
-    years = _session_years(sessions)
+    years = session_years(sessions)
     records_for_matching = [
         BillRecord(b.id, b.state, b.session, b.identifier, b.status, b.status_date,
                    b.passage_chambers)

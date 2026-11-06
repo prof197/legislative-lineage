@@ -184,6 +184,8 @@ So:
 
 "Passed" is a passed status, or a passage action recorded in every chamber, since a bill signed after its session ends can still carry a status of died. `lineage.ulc` implements the rule, and each enactment's results name the step that matched it.
 
+The resolved mapping is committed as `reports/answer_key.csv` (`uv run lineage eval answer-key`) so every row can be checked by eye. Each bill a row resolved to is listed with its Open States id, title, chambers passed and last passage date, along with the step that found it and the listed number it matched. Rows that are not counted are listed with the reason. The key needs only the bills table, so it can be checked before the index is built. A test fails if the committed key and the committed results name different bills.
+
 **Found.** An enactment is found when any of its bills belongs to a family among the act text's relatives at or above the cutoff. The cutoff is proposed: the top 50 families, each with at least one verified section. The results record each found enactment's rank and share, and recall at a minimum share, so another cutoff can be read from them without rerunning. An enactment is "with text" when at least one of its bills has stored text, and recall is reported over all enactments and over those with text.
 
 **Miss reasons.** Each miss is classified automatically. Each bill an enactment names gets the first reason that applies, and the enactment takes the reason of the bill that got furthest through the pipeline. The stage reasons are measured by replaying LSH and verification on the bill's own stored signatures, with the query's band keys, the bucket cap and the verification threshold.

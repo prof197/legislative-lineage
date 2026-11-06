@@ -10,6 +10,7 @@ import typer
 
 from lineage import __version__
 from lineage.acts import ACTS_DIR
+from lineage.answer_key import ANSWER_KEY, build_answer_key, render_answer_key
 from lineage.commission import RESULTS, CommissionError, commission_recall, write_results
 from lineage.disk import GiB, InsufficientDiskSpaceError
 from lineage.doctypes import RULES, DocTypesError, build_eligibility, rule_samples
@@ -405,6 +406,30 @@ def eval_commission(
         typer.echo(f"recall, {label}: {r['found']}/{r['enactments']} = {share:.1%}")
     misses = ", ".join(f"{k} {v}" for k, v in section["miss_reasons"].items())
     typer.echo(f"misses: {misses or 'none'} -> {results}")
+
+
+@eval_app.command("answer-key")
+def eval_answer_key(
+    tables: TablesOption = Path("data/tables"),
+    enactments: Annotated[
+        Path, typer.Option("--enactments", help="The commission's enactment lists (committed).")
+    ] = ENACTMENTS,
+    sessions: Annotated[
+        Path, typer.Option("--sessions", help="Session dates CSV (committed).")
+    ] = Path("snapshot/sessions.csv"),
+    out: Annotated[Path, typer.Option("--out", help="Answer key CSV (committed).")] = ANSWER_KEY,
+) -> None:
+    """The bills each commission list row resolved to, for checking the mapping by eye."""
+    try:
+        note, rows = build_answer_key(tables, enactments_path=enactments, sessions_path=sessions)
+    except UlcError as e:
+        typer.echo(str(e), err=True)
+        raise typer.Exit(1) from None
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(render_answer_key(rows, note))
+    counted = {(r["act"], r["jurisdiction"], r["year"]) for r in rows if r["counted"] == "yes"}
+    resolved = {(r["act"], r["jurisdiction"], r["year"]) for r in rows if r["openstates_id"]}
+    typer.echo(f"{len(resolved)} of {len(counted)} counted rows resolved to a bill -> {out}")
 
 
 @eval_app.command("readme")

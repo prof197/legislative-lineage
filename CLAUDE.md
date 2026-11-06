@@ -22,6 +22,7 @@ uv run lineage stats --samples  # also: sample titles per document-type rule -> 
 uv run lineage index         # signatures, LSH bands, verified pairs, families -> data/tables/{signatures,bands,pairs,families}/, reports/index.json
 uv run lineage query FILE     # a bill's near-duplicate families, offline, from the built index
 uv run lineage eval commission  # commission recall, act texts from data/acts/ -> reports/results.json
+uv run lineage eval answer-key  # each commission list row and the bills it resolved to -> reports/answer_key.csv
 uv run lineage eval readme   # regenerate README.md's results table from reports/results.json
 uv run python -m evals.fixture  # rebuild tests/fixtures/commission/ from the local snapshot, dev only
 uv run python -m benchmarks.minhash  # NumPy vs datasketch: signing and LSH index time and memory (DR-3), dev only
@@ -55,6 +56,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   query.py        `lineage query`: sign a bill's text, look up its bands, verify, group by family
   acts.py         uniform act texts as eval queries: keep the sections, drop comments and notes
   ulc.py          the commission's enactment lists, and the bills each enactment names
+  answer_key.py   `lineage eval answer-key`: the resolved list rows, for checking by eye
   commission.py   `lineage eval commission`: recall, a miss reason per enactment, the results JSON
   results_table.py  the README results table, rendered from reports/results.json
   stoplist.py     document-frequency stoplist and its report
@@ -73,6 +75,7 @@ snapshot/sessions.csv   session start/end dates and carryover, from a pinned scr
 rules/document_types.csv  which document types are matched, per state; first fitting rule wins
 reports/          committed outputs of pipeline commands; README and DESIGN numbers cite them
   results.json    eval results, one section per eval; the README results table reads it
+  answer_key.csv  each commission list row and the corpus bills it resolved to
 DESIGN.md         design, alternatives, scaling limits, failure modes, decision records
 data/             local snapshots and derived tables; gitignored, never committed
   raw/<ST>/*.zip  Open States session archives, never edited
