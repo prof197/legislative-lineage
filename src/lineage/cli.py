@@ -1,5 +1,6 @@
 """The `lineage` command line. Each subcommand is a thin wrapper over a library function."""
 
+import json
 import os
 import time
 from pathlib import Path
@@ -9,7 +10,7 @@ import typer
 
 from lineage import __version__
 from lineage.disk import GiB, InsufficientDiskSpaceError
-from lineage.doctypes import RULES, DocTypesError, build_eligibility
+from lineage.doctypes import RULES, DocTypesError, build_eligibility, rule_samples
 from lineage.fetch import SOURCE, fetch_raw
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
@@ -337,6 +338,17 @@ def stats(
     report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = Path(
         "reports/coverage.json"
     ),
+    rules: RulesOption = RULES,
+    samples: Annotated[
+        bool,
+        typer.Option(
+            "--samples",
+            help="Also write sample titles for each document-type rule to a local file.",
+        ),
+    ] = False,
+    samples_report: Annotated[
+        Path, typer.Option("--samples-report", help="Sample titles JSON (local, gitignored).")
+    ] = Path("data/reports/document_type_samples.json"),
 ) -> None:
     """Measure text coverage, sections, document types and status per state and session."""
     doc = write_coverage(tables, sessions_path=sessions, manifest_path=manifest, report_path=report)
@@ -346,3 +358,12 @@ def stats(
         f"blank, {t['with_sections']:,} with sections ({t['split_at_headings']:,} at headings), "
         f"{t['sections']:,} sections -> {report}"
     )
+    if samples:
+        try:
+            found = rule_samples(tables, rules_path=rules)
+        except DocTypesError as e:
+            typer.echo(str(e), err=True)
+            raise typer.Exit(1) from None
+        samples_report.parent.mkdir(parents=True, exist_ok=True)
+        samples_report.write_text(json.dumps(found, indent=1, ensure_ascii=False) + "\n")
+        typer.echo(f"sample titles for {len(found['rules'])} rules -> {samples_report}")

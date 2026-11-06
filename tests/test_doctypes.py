@@ -3,8 +3,17 @@ from pathlib import Path
 
 import duckdb
 import pytest
+from typer.testing import CliRunner
 
-from lineage.doctypes import RULES, DocTypesError, build_eligibility, decide, load_rules
+from lineage.cli import app
+from lineage.doctypes import (
+    RULES,
+    DocTypesError,
+    build_eligibility,
+    decide,
+    load_rules,
+    rule_samples,
+)
 from lineage.ingest import ingest
 from lineage.sectioning import build_sections
 from lineage.snapshot import scan, write_manifest
@@ -203,17 +212,19 @@ def test_writes_eligibility_and_a_report_counting_each_rule(tables: Path, tmp_pa
         f"FROM read_parquet('{tables / 'eligible.parquet'}') e "
         f"JOIN read_parquet('{tables / 'bills' / '*.parquet'}') b USING (id) ORDER BY ALL"
     ).fetchall()
+    numbers = {(r.state, r.type, r.title is None): r.number for r in load_rules(RULES)}
+    bill, resolution = numbers["*", "bill", True], numbers["*", "resolution", True]
     # SR 1065 recognizes a week: a simple resolution, excluded by the default rule.
-    assert ("GA", "SR 1065", False, 11) in rows
-    assert ("GA", "SB 238", True, 6) in rows
+    assert ("GA", "SR 1065", False, resolution) in rows
+    assert ("GA", "SB 238", True, bill) in rows
     assert all(rule is not None for *_, rule in rows)
 
     assert json.loads(report.read_text()) == doc
     assert doc["command"] == "uv run lineage eligible"
     by_rule = {r["rule"]: r for r in doc["rules"]}
-    assert by_rule[6]["records"] == 4
-    assert by_rule[11]["records"] == 1
-    assert by_rule[11]["by_state"] == {"GA": 1}
+    assert by_rule[bill]["records"] == 4
+    assert by_rule[resolution]["records"] == 1
+    assert by_rule[resolution]["by_state"] == {"GA": 1}
     assert doc["totals"] == {"records": 5, "eligible": 4, "eligible_with_sections": 2}
     assert doc["unlisted_types"] == {}
 
@@ -223,3 +234,61 @@ def test_reports_states_whose_eligible_records_all_lack_text(tables: Path, tmp_p
 
     # Alaska's only record has blank text and Hawaii's none at all; Georgia's have text.
     assert doc["states_without_text"] == ["AK", "HI"]
+
+
+SAMPLED_RULES = (
+    "*,resolution,recogni,crime,exclude,ceremonial\n"
+    "*,resolution,week,,exclude,observance\n"
+    "*,bill,,,match,bill\n"
+)
+
+
+def test_the_committed_report_counts_rules_without_naming_titles(
+    tables: Path, tmp_path: Path
+) -> None:
+    rules = _rules(tmp_path, SAMPLED_RULES)
+
+    doc = build_eligibility(tables, rules_path=rules, report_path=tmp_path / "r.json")
+
+    assert "Crime Victim" not in json.dumps(doc)
+    assert doc["rules"][0]["spared_by_state"] == {"GA": 1}
+    assert doc["rules"][1]["by_state"] == {"GA": 1}
+
+
+def test_samples_name_the_titles_each_rule_caught_or_spared(tables: Path, tmp_path: Path) -> None:
+    rules = _rules(tmp_path, SAMPLED_RULES)
+
+    doc = rule_samples(tables, rules_path=rules)
+
+    assert doc["command"] == "uv run lineage stats --samples"
+    spared, caught = doc["rules"]
+    assert spared["rule"] == 1
+    assert spared["sample_titles"] == []
+    assert [t[:40] for t in spared["spared_titles"]] == ["GA: National Crime Victim's Rights Week;"]
+    assert caught["rule"] == 2
+    assert [t[:40] for t in caught["sample_titles"]] == ["GA: National Crime Victim's Rights Week;"]
+
+
+def test_stats_writes_the_samples_only_on_request(tables: Path, tmp_path: Path) -> None:
+    local = tmp_path / "local" / "samples.json"
+    args = [
+        "stats",
+        "--rules",
+        str(_rules(tmp_path, SAMPLED_RULES)),
+        "--tables",
+        str(tables),
+        "--manifest",
+        str(tmp_path / "manifest.json"),
+        "--sessions",
+        str(SESSIONS),
+        "--report",
+        str(tmp_path / "coverage.json"),
+        "--samples-report",
+        str(local),
+    ]
+
+    assert CliRunner().invoke(app, args).exit_code == 0
+    assert not local.exists()
+    result = CliRunner().invoke(app, [*args, "--samples"])
+    assert result.exit_code == 0, result.output
+    assert json.loads(local.read_text())["rules"]

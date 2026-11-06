@@ -19,6 +19,7 @@ from lineage import queries
 from lineage.stoplist import file_sha256
 
 COMMAND = "uv run lineage eligible"
+SAMPLES_COMMAND = "uv run lineage stats --samples"
 RULES = Path(__file__).parents[2] / "rules" / "document_types.csv"
 _COLUMNS = ["state", "type", "title", "unless", "decision", "reason"]
 _DECISIONS = {"match": True, "exclude": False}
@@ -96,8 +97,19 @@ def _stable(record_id: str) -> str:
     return hashlib.sha256(record_id.encode()).hexdigest()
 
 
+def _spares(rule: Rule, record: queries.RecordType) -> bool:
+    """Whether `rule` would have caught `record` but for its `unless` pattern."""
+    return (
+        rule.unless is not None
+        and rule.state in ("*", record.state)
+        and rule.type == record.type
+        and (rule.title is None or rule.title.search(record.title) is not None)
+        and rule.unless.search(record.title) is not None
+    )
+
+
 def build_eligibility(tables_dir: Path, *, rules_path: Path, report_path: Path) -> dict[str, Any]:
-    """Write `<tables>/eligible.parquet` (id, eligible, rule) and the report."""
+    """Write `<tables>/eligible.parquet` (id, eligible, rule) and the report of counts."""
     rules = load_rules(rules_path)
     bills = str(tables_dir / "bills" / "*.parquet")
     with queries.connect_quiet() as con:
@@ -120,28 +132,19 @@ def build_eligibility(tables_dir: Path, *, rules_path: Path, report_path: Path) 
         )
 
     by_rule: dict[int, Counter[str]] = defaultdict(Counter)
-    samples: dict[int, list[tuple[str, str, str]]] = defaultdict(list)
+    spared: dict[int, Counter[str]] = defaultdict(Counter)
     unlisted: Counter[str] = Counter()
     for record, rule in decided:
+        for candidate in rules:
+            if _spares(candidate, record):
+                spared[candidate.number][record.state] += 1
         if rule is None:
             unlisted[record.type] += 1
             continue
         by_rule[rule.number][record.state] += 1
-        if rule.title is not None or rule.unless is not None:
-            samples[rule.number].append((_stable(record.id), record.state, record.title))
-    # Titles a rule's `unless` pattern spared: the ones a looser pattern would have caught.
-    spared: dict[int, list[tuple[str, str]]] = defaultdict(list)
-    for record, _ in decided:
-        for rule in rules:
-            if (
-                rule.unless is not None
-                and rule.state in ("*", record.state)
-                and rule.type == record.type
-                and (rule.title is None or rule.title.search(record.title))
-                and rule.unless.search(record.title)
-            ):
-                spared[rule.number].append((record.state, record.title))
 
+    # Counts only. Titles of commemorations name private people, so the committed report
+    # carries none; `lineage stats --samples` writes them to a local file instead.
     doc: dict[str, Any] = {
         "command": COMMAND,
         "rules_sha256": file_sha256(rules_path),
@@ -163,18 +166,8 @@ def build_eligibility(tables_dir: Path, *, rules_path: Path, report_path: Path) 
                 "by_state": dict(sorted(by_rule[rule.number].items())),
             }
             | (
-                {
-                    "sample_titles": [
-                        f"{state}: {title}"
-                        for _, state, title in sorted(samples[rule.number])[:_SAMPLE]
-                    ]
-                }
-                if rule.number in samples
-                else {}
-            )
-            | (
-                {"spared_titles": [f"{s}: {t}" for s, t in sorted(set(spared[rule.number]))]}
-                if rule.number in spared
+                {"spared_by_state": dict(sorted(spared[rule.number].items()))}
+                if rule.unless is not None
                 else {}
             )
             for rule in rules
@@ -190,3 +183,40 @@ def build_eligibility(tables_dir: Path, *, rules_path: Path, report_path: Path) 
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "\n")
     return doc
+
+
+def rule_samples(tables_dir: Path, *, rules_path: Path) -> dict[str, Any]:
+    """Sample titles for each rule that reads titles, and every title an `unless` spared.
+
+    Written only to a local, gitignored file. The titles are public records, and anyone can
+    reproduce the file from the pinned snapshot, but commemorations name private people.
+    """
+    rules = load_rules(rules_path)
+    with queries.connect_quiet() as con:
+        records = queries.record_types(con, bills_glob=str(tables_dir / "bills" / "*.parquet"))
+    samples: dict[int, list[tuple[str, str, str]]] = defaultdict(list)
+    spared: dict[int, set[tuple[str, str]]] = defaultdict(set)
+    for record in records:
+        rule = decide(rules, record.state, record.type, record.title)
+        if rule is not None and (rule.title is not None or rule.unless is not None):
+            samples[rule.number].append((_stable(record.id), record.state, record.title))
+        for candidate in rules:
+            if _spares(candidate, record):
+                spared[candidate.number].add((record.state, record.title))
+    return {
+        "command": SAMPLES_COMMAND,
+        "rules_sha256": file_sha256(rules_path),
+        "rules": [
+            {
+                "rule": rule.number,
+                "reason": rule.reason,
+                "sample_titles": [
+                    f"{state}: {title}"
+                    for _, state, title in sorted(samples[rule.number])[:_SAMPLE]
+                ],
+                "spared_titles": [f"{s}: {t}" for s, t in sorted(spared[rule.number])],
+            }
+            for rule in rules
+            if rule.number in samples or rule.number in spared
+        ],
+    }
