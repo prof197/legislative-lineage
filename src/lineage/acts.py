@@ -20,14 +20,17 @@ ACTS = (
 )
 ACTS_DIR = Path("data/acts")
 
-# "Section 1. Short Title", or "[Section 3. Registration" for an optional section.
-_HEADING = re.compile(r"^\s*\[?Section\s+\d+[A-Za-z]?\.", re.IGNORECASE)
-_FIRST_HEADING = re.compile(r"^\s*\[?Section\s+1\.", re.IGNORECASE)
+# "Section 1. Short Title", or "[Section 3. Registration" for an optional section. Acts
+# divided into articles number sections by article ("Section 101.") under headings such as
+# "[Article] 1", or "[[Article] 3" for an optional article.
+_HEADING = re.compile(
+    r"^\s*(?:\[?Section\s+\d+[A-Za-z]?\.|\[{0,2}Article\]?\s+\d+\s*$)", re.IGNORECASE
+)
 # A table-of-contents entry ends in its page number, after a tab, dot leaders or a wide gap.
 _CONTENTS_ENTRY = re.compile(r"(?:\t|\.{3,}|\s{2,})\s*\d+\s*$")
-# A comment runs from its heading to the next section.
+# A comment, or a legislative note, runs from its heading to the next section or article:
+# in the commission's final acts both close a section, and either can run several paragraphs.
 _COMMENT = re.compile(r"^\s*(?:official\s+)?(?:comments?|reporter'?s\s+notes?)\s*$", re.IGNORECASE)
-# A legislative note runs to the next blank line, heading or comment.
 _NOTE = re.compile(r"^\s*(?:legislative|drafting)\s+notes?\b", re.IGNORECASE)
 
 
@@ -35,28 +38,24 @@ class ActTextError(Exception):
     pass
 
 
-def _is_heading(line: str, pattern: re.Pattern[str] = _HEADING) -> bool:
-    return pattern.match(line) is not None and _CONTENTS_ENTRY.search(line) is None
+def _is_heading(line: str) -> bool:
+    return _HEADING.match(line) is not None and _CONTENTS_ENTRY.search(line) is None
 
 
 def enacted_text(raw: str) -> str:
     """The act's numbered sections, without front matter, comments or legislative notes."""
     lines = raw.replace("\r\n", "\n").replace("\r", "\n").split("\n")
-    start = next((i for i, line in enumerate(lines) if _is_heading(line, _FIRST_HEADING)), None)
+    start = next((i for i, line in enumerate(lines) if _is_heading(line)), None)
     if start is None:
-        raise ActTextError("no Section 1 heading: is this the act's final text?")
+        raise ActTextError("no section or article heading: is this the act's final text?")
     kept: list[str] = []
-    in_comment = in_note = False
+    dropping = False
     for line in lines[start:]:
         if _is_heading(line):
-            in_comment = in_note = False
-        elif _COMMENT.match(line):
-            in_comment, in_note = True, False
-        elif _NOTE.match(line):
-            in_note = True
-        elif in_note and not line.strip():
-            in_note = False
-        if not (in_comment or in_note):
+            dropping = False
+        elif _COMMENT.match(line) or _NOTE.match(line):
+            dropping = True
+        if not dropping:
             kept.append(line.rstrip())
     return re.sub(r"\n{3,}", "\n\n", "\n".join(kept)).strip() + "\n"
 

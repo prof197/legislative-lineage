@@ -2,7 +2,8 @@
 
 The act below is invented, laid out the way the commission's final acts are: a title page and
 committee list, a table of contents, a prefatory note, then sections, each followed by an
-official comment or a legislative note. No real act text is committed (DESIGN.md#commission-recall).
+official comment or a legislative note of one or more paragraphs. No real act text is committed
+(DESIGN.md#commission-recall).
 """
 
 from pathlib import Path
@@ -74,6 +75,8 @@ after acquiring it.
 
 Legislative Note: Bracketed text may be adapted to the state's own offices and periods.
 
+A state may set a shorter period for an owner that registers many widgets.
+
 Section 4. Effective Date
 
 This [act] takes effect [effective date].
@@ -97,6 +100,7 @@ def test_keeps_the_sections_and_drops_everything_else() -> None:
         "Legislative Note",
         "cross-reference its definition",
         "Bracketed text may be adapted",
+        "A state may set a shorter period",
     ):
         assert dropped not in text
 
@@ -108,8 +112,42 @@ def test_a_bracketed_optional_section_is_kept_as_a_section() -> None:
     assert "Section 3 sets out" not in text  # from a comment, not the act
 
 
+# Longer acts are divided into articles, with sections numbered by article; an optional article
+# can be no more than a bracketed heading and a note.
+ARTICLES = """\
+Uniform Widget Registration Act
+
+Copyright © 2099 by the commission
+
+Uniform Widget Registration Act
+[Article] 1
+General Provisions
+\tSection 101. Title
+\tThis [act] may be cited as the Uniform Widget Registration Act.
+[[Article] 2
+Widget Registry]
+Legislative Note: A state that wishes to keep a registry has two options:
+(1) The state may insert a registry as Article 2 of this act.
+(2) The state may omit Article 2.
+[Article] 3
+Miscellaneous Provisions
+\tSection 301. Effective Date
+\tThis [act] takes effect [effective date].
+"""
+
+
+def test_an_act_in_articles_starts_at_its_first_article() -> None:
+    text = enacted_text(ARTICLES)
+
+    assert text.startswith("[Article] 1\nGeneral Provisions\n\tSection 101. Title")
+    for kept in ("[[Article] 2", "Widget Registry]", "[Article] 3", "Section 301. Effective Date"):
+        assert kept in text
+    for dropped in ("Copyright", "Legislative Note", "two options", "(1) The state may insert"):
+        assert dropped not in text
+
+
 def test_an_act_with_no_numbered_sections_is_refused() -> None:
-    with pytest.raises(ActTextError, match="no Section 1"):
+    with pytest.raises(ActTextError, match="no section or article heading"):
         enacted_text("Uniform Widget Registration Act\n\nPrefatory Note\n\nWidgets matter.\n")
 
 
