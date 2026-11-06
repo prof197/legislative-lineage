@@ -1,0 +1,348 @@
+[
+ {
+  "id": "ocd-bill/36bad521-9e60-4a20-a39f-aa6a9c7216a0",
+  "legislative_session": "2026",
+  "identifier": "HB 7265",
+  "title": "AN ACT RELATING TO FINANCIAL INSTITUTIONS -- THE RHODE ISLAND SPECIAL DEPOSITS ACT",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "House",
+    "description": "01/23/2026 Introduced, referred to House Corporations",
+    "date": "2026-01-23",
+    "classification": [
+     "introduction",
+     "referral-committee"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Rhode Island General Assembly",
+    "description": "01/23/2026 Scheduled for hearing and/or consideration  (01/27/2026)",
+    "date": "2026-01-23",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "Rhode Island General Assembly",
+    "description": "01/27/2026 Committee recommended measure be held for further study",
+    "date": "2026-01-27",
+    "classification": [
+     "committee-failure"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "Rhode Island General Assembly",
+    "description": "03/06/2026 Scheduled for consideration  (03/12/2026)",
+    "date": "2026-03-06",
+    "classification": [],
+    "order": 3
+   },
+   {
+    "organization__name": "Rhode Island General Assembly",
+    "description": "03/12/2026 Committee recommends passage",
+    "date": "2026-03-12",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 4
+   },
+   {
+    "organization__name": "House",
+    "description": "03/13/2026 Placed on House Calendar  (03/19/2026)",
+    "date": "2026-03-13",
+    "classification": [
+     "reading-3"
+    ],
+    "order": 5
+   },
+   {
+    "organization__name": "House",
+    "description": "03/19/2026 House read and passed",
+    "date": "2026-03-19",
+    "classification": [
+     "passage"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "Senate",
+    "description": "03/27/2026 Referred to Senate Commerce",
+    "date": "2026-03-27",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 7
+   },
+   {
+    "organization__name": "Rhode Island General Assembly",
+    "description": "05/01/2026 Scheduled for consideration  (05/05/2026)",
+    "date": "2026-05-01",
+    "classification": [],
+    "order": 8
+   },
+   {
+    "organization__name": "Rhode Island General Assembly",
+    "description": "05/05/2026 Committee recommends passage in concurrence",
+    "date": "2026-05-05",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "Senate",
+    "description": "06/05/2026 Placed on Senate Calendar  (06/09/2026)",
+    "date": "2026-06-05",
+    "classification": [
+     "reading-3"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "Senate",
+    "description": "06/09/2026 Senate passed in concurrence",
+    "date": "2026-06-09",
+    "classification": [
+     "passage"
+    ],
+    "order": 11
+   },
+   {
+    "organization__name": "Office of the Governor",
+    "description": "06/16/2026 Transmitted to Governor",
+    "date": "2026-06-16",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 12
+   },
+   {
+    "organization__name": "Office of the Governor",
+    "description": "06/19/2026 Signed by Governor",
+    "date": "2026-06-19",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 13
+   }
+  ],
+  "versions": [
+   {
+    "note": "7265",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver.rilegislature.gov/BillText/BillText26/HouseText26/H7265.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "-- H 7265\nSECTION 1. Title 19 of the General Laws entitled \"FINANCIAL INSTITUTIONS\" is\nhereby amended by adding thereto the following chapter:\nCHAPTER 35\nTHE RHODE ISLAND SPECIAL DEPOSITS ACT\n19-35-1. Short title.\nThis chapter shall be known and may be cited as the \"Uniform Special Deposits Act.\"\n19-35-2. Definitions.\nAs used in this chapter, the following words and terms have the following meanings:\n(1) \"Account agreement\" means an agreement that:\n(i) Is in a record between a bank and one or more depositors;\n(ii) May have one or more beneficiaries as additional parties; and\n(iii) States the intention of the parties to establish a special deposit governed by this chapter.\n(2) \"Bank\" means a person engaged in the business of banking and includes a savings bank,\nsavings and loan association, credit union, trust company, other financial institution as defined in\nthis title, and other regulated institution as defined in this title. Each branch or separate office of a\nbank is a separate bank for the purpose of this chapter.\n(3) \"Beneficiary\" means a person that:\n(i) Is identified as a beneficiary in an account agreement; or\n(ii) If not identified as a beneficiary in an account agreement, may be entitled to payment\nfrom a special deposit:\n(A) Under the account agreement; or\n(B) On termination of the special deposit.\n(4) \"Contingency\" means an event or circumstance stated in an account agreement that is\nnot certain to occur but must occur before the bank is obligated to pay a beneficiary.\n(5) \"Creditor process\" means attachment, garnishment, levy, notice of lien, sequestration,\nor similar process issued by or on behalf of a creditor or other claimant.\n(6) \"Depositor\" means a person that establishes or funds a special deposit.\n(7) \"Good faith\" means honesty in fact and observance of reasonable commercial standards\nof fair dealing.\n(8) \"Knowledge\" of a fact means:\n(i) With respect to a beneficiary, actual knowledge of the fact; or\n(ii) With respect to a bank holding a special deposit:\n(A) If the bank:\n(I) Has established a reasonable routine for communicating material information to an\nindividual to whom the bank has assigned responsibility for the special deposit; and\n(II) Maintains reasonable compliance with the routine, actual knowledge of the fact by that\nindividual; or\n(B) If the bank has not established and maintained reasonable compliance with a routine\ndescribed in subsection (8)(ii)(A)(I) of this section or otherwise exercised due diligence, implied\nknowledge of the fact that would have come to the attention of an individual to whom the bank has\nassigned responsibility for the special deposit.\n(9) \"Obligated to pay a beneficiary\" or \"obligation to pay a beneficiary\" means a\nbeneficiary is entitled under the account agreement to receive from the bank a payment when:\n(i) A contingency has occurred; and\n(ii) The bank has knowledge the contingency has occurred.\n(10) \"Permissible purpose\" means a governmental, regulatory, commercial, charitable, or\ntestamentary objective of the parties stated in an account agreement. The term includes an objective\nto:\n(i) Hold funds:\n(A) In escrow, including for a purchase and sale, lease, buyback, or other transaction;\n(B) As a security deposit of a tenant;\n(C) That may be distributed to a person as remuneration, retirement or other benefit, or\ncompensation under a judgment, consent decree, court order, or other decision of a tribunal; or\n(D) For distribution to a defined class of persons, after identification of the class members\nand their interest in the funds;\n(ii) Provide assurance with respect to an obligation created by contract, such as earnest\nmoney to ensure a transaction closes;\n(iii) Settle an obligation that arises in the operation of a payment system, securities\nsettlement system, or other financial market infrastructure;\n(iv) Provide assurance with respect to an obligation that arises in the operation of a payment\nsystem, securities settlement system, or other financial market infrastructure; or\n(v) Hold margin, other cash collateral, or funds that support the orderly functioning of\nfinancial market infrastructure or the performance of an obligation with respect to the\ninfrastructure.\n(11) \"Person\" means an individual, estate, business or nonprofit entity, government or\ngovernmental subdivision, agency, or instrumentality, or other legal entity. The term includes a\nprotected series, however denominated, of an entity if the protected series is established under law\nthat limits, or limits if conditions specified under law are satisfied, the ability of a creditor of the\nentity or of any other protected series of the entity to satisfy a claim from assets of the protected\nseries.\n(12) \"Record\" means information:\n(i) Inscribed on a tangible medium; or\n(ii) Stored in an electronic or other medium and retrievable in perceivable form.\n(13) \"Special deposit\" means a deposit that satisfies §19-35-5.\n(14) \"State\" means a state of the United States, the District of Columbia, Puerto Rico, the\nUnited States Virgin Islands, or any other territory or possession subject to the jurisdiction of the\nUnited States. The term includes an agency or instrumentality of the state.\n19-35-3. Scope, choice of law, and forum.\n(a) This chapter applies to a special deposit under an account agreement that states the\nintention of the parties to establish a special deposit governed by this chapter, regardless of whether\na party to the account agreement or a transaction related to the special deposit, or the special deposit\nitself, has a reasonable relation to this state.\n(b) The parties to an account agreement may choose a forum in this state for settling a\ndispute arising out of the special deposit, regardless of whether a party to the account agreement or\na transaction related to the special deposit, or the special deposit itself, has a reasonable relation to\nthis state.\n(c) This chapter does not affect:\n(1) A right or obligation relating to a deposit other than a special deposit under this chapter;\nor\n(2) The voidability of a deposit or transfer that is fraudulent or voidable under other law.\n19-35-4. Variation by agreement or amendment.\n(a) The effect of §§ 19-35-2 through 19-35-6, §§ 19-35-8 through 19-35-11, and § 19-35-\n14 shall not be varied by agreement, except as provided in those sections. Subject to subsection (b)\nof this section, the effect of §§ 19-35-7, 19-35-12, and 19-35-13 may be varied by agreement.\n(b) A provision in an account agreement or other record that substantially excuses liability\nor substantially limits remedies, for failure to perform an obligation under this chapter is not\nsufficient to vary the effect of a provision of this chapter.\n(c) If a beneficiary is a party to an account agreement, the bank and the depositor may\namend the agreement, without the consent of the beneficiary only if the agreement expressly\npermits the amendment.\n(d) If a beneficiary is not a party to an account agreement and the bank and the depositor\nknow the beneficiary has knowledge of the agreement's terms, the bank and the depositor may\namend the agreement, without the consent of the beneficiary only if the amendment does not\nadversely and materially affect a payment right of the beneficiary.\n(e) If a beneficiary is not a party to an account agreement and the bank and the depositor\ndo not know whether the beneficiary has knowledge of the agreement's terms, the bank and the\ndepositor may amend the agreement, without the consent of the beneficiary only if the amendment\nis made in good faith.\n19-35-5. Requirements for special deposit.\nA deposit is a special deposit if it is:\n(1) A deposit of funds in a bank under an account agreement;\n(2) For the benefit of at least two (2) beneficiaries, one or more of which may be a\ndepositor;\n(3) Denominated in a medium of exchange that is currently authorized or adopted by a\ndomestic or foreign government;\n(4) For a permissible purpose stated in the account agreement; and\n(5) Subject to a contingency.\n19-35-6. Permissible purpose.\n(a) A special deposit shall serve at least one permissible purpose stated in the account\nagreement from the time the special deposit is created in the account agreement until termination\nof the special deposit.\n(b) If, before termination of the special deposit, the bank or a court determines the special\ndeposit no longer satisfies subsection (a) of this section, §§ 19-35-8 through 19-35-11 cease to\napply to any funds deposited in the special deposit, after the special deposit ceases to satisfy\nsubsection (a) of this section.\n(c) If, before termination of a special deposit, the bank determines the special deposit no\nlonger satisfies subsection (a) of this section, the bank may take action it believes is necessary under\nthe circumstances, including terminating the special deposit.\n19-35-7. Payment to beneficiary by bank.\n(a) Unless the account agreement provides otherwise, the bank is obligated to pay a\nbeneficiary, if there are sufficient actually and finally collected funds in the balance of the special\ndeposit.\n(b) Except as provided in subsection (c) of this section, the obligation to pay the beneficiary\nis excused if the funds available in the special deposit are insufficient to cover such payment.\n(c) Unless the account agreement provides otherwise, if the funds available in the special\ndeposit are insufficient to cover an obligation to pay a beneficiary, a beneficiary may elect to be\npaid the funds that are available or, if there is more than one beneficiary, a pro rata share of the\nfunds available. Payment to the beneficiary making the election under this subsection discharges\nthe bank's obligation to pay a beneficiary and does not constitute an accord and satisfaction with\nrespect to another person obligated to the beneficiary.\n(d) Unless the account agreement provides otherwise, the obligation of the bank obligated\nto pay a beneficiary is immediately due and payable.\n(e) The bank may discharge its obligation under this section by:\n(1) Crediting another transaction account of the beneficiary; or\n(2) Taking other action that:\n(i) Is permitted under the account agreement for the bank to obtain a discharge; or\n(ii) Otherwise would constitute a discharge under law.\n(f) If the bank obligated to pay a beneficiary has incurred an obligation to discharge the\nobligation of another person, the obligation of the other person is discharged if action by the bank\nunder subsection (e) of this section would constitute a discharge of the obligation of the other person\nunder law that determines whether an obligation is satisfied.\n19-35-8. Property interest of depositor or beneficiary.\n(a) Neither a depositor nor a beneficiary has a property interest in a special deposit.\n(b) Any property interest with respect to a special deposit is only in the right to receive\npayment if the bank is obligated to pay a beneficiary and not in the special deposit itself. Any\nproperty interest under this subsection is determined by this chapter.\n19-35-9. When creditor process is enforceable against bank.\n(a) Subject to subsection (b) of this section, creditor process with respect to a special\ndeposit is not enforceable against the bank holding the special deposit.\n(b) Creditor process is enforceable against the bank holding a special deposit with respect\nto an amount the bank is obligated to pay a beneficiary or a depositor if the process:\n(1) Is served on the bank;\n(2) Provides sufficient information to permit the bank to identify the depositor or the\nbeneficiary from the bank's books and records; and\n(3) Gives the bank a reasonable opportunity to act on the process.\n(c) Creditor process served on a bank before it is enforceable against the bank under\nsubsection (b) of this section, does not create a right of the creditor against the bank or a duty of\nthe bank to the creditor. Rhode Island general laws shall determine whether creditor process creates\na lien enforceable against the beneficiary on a contingent interest of a beneficiary, including a\ndepositor as a beneficiary, even if not enforceable against the bank.\n19-35-10. Injunction or similar relief.\nA court may enjoin, or grant similar relief that would have the effect of enjoining, a bank\nfrom paying a depositor or beneficiary, only if payment would constitute a material fraud or\nfacilitate a material fraud with respect to a special deposit.\n19-35-11. Recoupment or set off.\n(a) Except as provided in subsections (b) or (c) of this section, a bank may not exercise a\nright of recoupment or set off against a special deposit.\n(b) An account agreement may authorize the bank to debit the special deposit:\n(1) When the bank becomes obligated to pay a beneficiary, in an amount that does not\nexceed the amount necessary to discharge the obligation;\n(2) For a fee assessed by the bank that relates to an overdraft in the special deposit account;\n(3) For costs incurred by the bank that relate directly to the special deposit; or\n(4) To reverse an earlier credit posted by the bank to the balance of the special deposit\naccount, if the reversal occurs under an event or circumstance warranted under Rhode Island\ngeneral laws governing mistake and restitution.\n(c) The bank holding a special deposit may exercise a right of recoupment or set off against\nan obligation to pay a beneficiary, even if the bank funds payment from the special deposit.\n19-35-12. Duties and liability of bank.\n(a) A bank does not have a fiduciary duty to any person with respect to a special deposit.\n(b) When the bank holding a special deposit becomes obligated to pay a beneficiary, a\ndebtor-creditor relationship arises between the bank and beneficiary.\n(c) The bank holding a special deposit has a duty to a beneficiary to comply with the\naccount agreement, as set forth in this chapter.\n(d) If the bank holding a special deposit does not comply with the account agreement as\nset forth in this chapter, the bank is liable to a depositor or beneficiary only for damages proximately\ncaused by the noncompliance. Except as provided by Rhode Island general laws, the bank is not\nliable for consequential, special, or punitive damages.\n(e) The bank holding a special deposit may rely on records presented in compliance with\nthe account agreement to determine whether the bank is obligated to pay a beneficiary.\n(f) If the account agreement requires payment on presentation of a record, the bank shall\ndetermine within a reasonable time whether the record is sufficient to require payment. If the\nagreement requires action by the bank on presentation of a record, the bank is not liable for relying\nin good faith on the genuineness of the record, if the record appears on its face to be genuine.\n(g) Unless the account agreement provides otherwise, the bank is not required to determine\nwhether a permissible purpose stated in the agreement continues to exist.\n19-35-13. Term and termination.\n(a) Unless otherwise provided in the account agreement, a special deposit terminates five\n(5) years after the date the special deposit was first funded.\n(b) Unless otherwise provided in the account agreement, if the bank cannot identify or\nlocate a beneficiary entitled to payment when the special deposit is terminated, and a balance\nremains in the special deposit, the bank shall pay the balance to the depositor or depositors as a\nbeneficiary or beneficiaries.\n(c) A bank that pays the remaining balance, as provided under subsection (b) of this section,\nhas no further obligation with respect to the special deposit.\n19-35-14. Principles of law and equity.\nThe Rhode Island general laws regarding consumer protection, banking deposits, escheat\nand abandoned or unclaimed property, equity, contracts, principal and agent, estoppel, fraud,\nmisrepresentation, duress, coercion, mistake, and bankruptcy, supplement this chapter except to the\nextent that any statute is inconsistent with this chapter.\n19-35-15. Uniformity of application and construction.\nIn applying and construing this chapter, a court shall consider the promotion of uniformity\nof the law among jurisdictions that enact it.\n19-35-16. Transitional provision.\nThis chapter applies to:\n(1) A special deposit made under an account agreement executed on or after the effective\ndate of this chapter; and\n(2) A deposit made under an agreement executed before the effective date of this chapter,\nif:\n(i) All parties entitled to amend the agreement agree to make the deposit a special deposit\ngoverned by this chapter; and\n(ii) The special deposit referenced in the amended agreement satisfies § 19-35-5.\n19-35-17. Severability clause.\nIf a provision of this chapter or its application to a person or circumstance is held invalid,\nthe invalidity does not affect any other provision or application of this chapter that can be given\neffect without the invalid provision.\nSECTION 2. This act shall take effect upon passage.\nThis act would establish the Rhode Island Special Deposits Act to be governed by an\naccount agreement between the bank and the depositor or its beneficiary.\nThis act would take effect upon passage.",
+  "raw_text_url": "http://webserver.rilegislature.gov/BillText/BillText26/HouseText26/H7265.pdf"
+ },
+ {
+  "id": "ocd-bill/444c0221-c9f6-4c9d-8d10-09fff45e1a3d",
+  "legislative_session": "2026",
+  "identifier": "SB 2965",
+  "title": "AN ACT RELATING TO STATE AFFAIRS AND GOVERNMENT -- UNIFORM ELECTRONIC TRANSACTIONS ACT",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "03/04/2026 Introduced, referred to Senate Judiciary",
+    "date": "2026-03-04",
+    "classification": [
+     "introduction",
+     "referral-committee"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Rhode Island General Assembly",
+    "description": "05/15/2026 Scheduled for hearing and/or consideration  (05/21/2026)",
+    "date": "2026-05-15",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "Rhode Island General Assembly",
+    "description": "05/21/2026 Committee recommended measure be held for further study",
+    "date": "2026-05-21",
+    "classification": [
+     "committee-failure"
+    ],
+    "order": 2
+   }
+  ],
+  "versions": [
+   {
+    "note": "2965",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver.rilegislature.gov/BillText/BillText26/SenateText26/S2965.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "-- S 2965\nSECTION 1. Section 42-127.1-8 of the General Laws in Chapter 42-127.1 entitled\n\"Uniform Electronic Transactions Act\" is hereby amended to read as follows:\n42-127.1-8. Provision of information in writing — Presentation of records.\n(a) If parties have agreed to conduct a transaction by electronic means and a law requires\na person to provide, send, or deliver information, in writing, to another person, the requirement is\nsatisfied if the information is provided, sent, or delivered, as the case may be, in an electronic record\ncapable of retention by the recipient at the time of receipt. An electronic record is not capable of\nretention by the recipient if the sender or its information processing system inhibits the ability of\nthe recipient to print or store the electronic record.\n(b) If a law other than this chapter requires a record:\n(1) to be posted or displayed in a certain manner;\n(2) to be sent, communicated, or transmitted by a specified method, or\n(3) to contain information that is formatted in a certain manner, the following rules apply:\n(i) The record must be posted or displayed in the manner specified in the other law.\n(ii) Except as otherwise provided in subdivision (d)(2), the record must be sent,\ncommunicated, or transmitted by the method specified in the other law.\n(iii) The record must contain the information formatted in the manner specified in the other\nlaw.\n(c) If a sender inhibits the ability of a recipient to store or print an electronic record, the\nelectronic record is not enforceable against the recipient.\n(d) The requirements of this section may not be varied by agreement, but:\n(1) To the extent a law other than this chapter requires information to be provided, sent, or\ndelivered in writing but permits that requirement to be varied by agreement, the requirement under\nsubsection (a) that the information be in the form of an electronic record capable of retention may\nalso be varied by agreement; and\n(2) A requirement under a law other than this chapter to send, communicate, or transmit a\nrecord by first-class mail, postage prepaid or regular United States mail, may be varied by\nagreement to the extent permitted by the other law; and\n(3) A party may condition their agreement to conduct a transaction by electronic means\nbased upon their stated desire to obtain and receive a written copy of the document in English or\nSpanish, before electronic execution of any agreement or any performance is required of the party.\nSECTION 2. This act shall take effect upon passage.\nThis act would allow a party to condition a transaction by electronic means on their stated\ndesire to obtain and receive a written copy of the document in English or Spanish before electronic\nexecution of the agreement or performance is required of the party.\nThis act would take effect upon passage.",
+  "raw_text_url": "http://webserver.rilegislature.gov/BillText/BillText26/SenateText26/S2965.pdf"
+ },
+ {
+  "id": "ocd-bill/b2babde4-079b-4895-8bf9-0ce02047df0b",
+  "legislative_session": "2026",
+  "identifier": "SB 2519",
+  "title": "AN ACT RELATING TO FINANCIAL INSTITUTIONS -- THE RHODE ISLAND SPECIAL DEPOSITS ACT",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "02/13/2026 Introduced, referred to Senate Commerce",
+    "date": "2026-02-13",
+    "classification": [
+     "introduction",
+     "referral-committee"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Rhode Island General Assembly",
+    "description": "04/10/2026 Scheduled for hearing and/or consideration  (04/14/2026)",
+    "date": "2026-04-10",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "Rhode Island General Assembly",
+    "description": "04/14/2026 Committee recommended measure be held for further study",
+    "date": "2026-04-14",
+    "classification": [
+     "committee-failure"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "Rhode Island General Assembly",
+    "description": "04/24/2026 Scheduled for consideration  (04/28/2026)",
+    "date": "2026-04-24",
+    "classification": [],
+    "order": 3
+   },
+   {
+    "organization__name": "Rhode Island General Assembly",
+    "description": "04/28/2026 Committee recommends passage",
+    "date": "2026-04-28",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 4
+   },
+   {
+    "organization__name": "Senate",
+    "description": "04/29/2026 Placed on Senate Calendar  (05/05/2026)",
+    "date": "2026-04-29",
+    "classification": [
+     "reading-3"
+    ],
+    "order": 5
+   },
+   {
+    "organization__name": "Senate",
+    "description": "05/05/2026 Senate read and passed",
+    "date": "2026-05-05",
+    "classification": [
+     "passage"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "House",
+    "description": "05/06/2026 Referred to House Corporations",
+    "date": "2026-05-06",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 7
+   },
+   {
+    "organization__name": "Rhode Island General Assembly",
+    "description": "05/29/2026 Scheduled for consideration  (06/02/2026)",
+    "date": "2026-05-29",
+    "classification": [],
+    "order": 8
+   },
+   {
+    "organization__name": "Rhode Island General Assembly",
+    "description": "06/02/2026 Committee recommends passage in concurrence",
+    "date": "2026-06-02",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "House",
+    "description": "06/05/2026 Placed on the House Consent Calendar  (06/08/2026)",
+    "date": "2026-06-05",
+    "classification": [
+     "reading-3"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "House",
+    "description": "06/08/2026 House passed in concurrence",
+    "date": "2026-06-08",
+    "classification": [
+     "passage"
+    ],
+    "order": 11
+   },
+   {
+    "organization__name": "Office of the Governor",
+    "description": "06/16/2026 Transmitted to Governor",
+    "date": "2026-06-16",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 12
+   },
+   {
+    "organization__name": "Office of the Governor",
+    "description": "06/19/2026 Signed by Governor",
+    "date": "2026-06-19",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 13
+   }
+  ],
+  "versions": [
+   {
+    "note": "2519",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver.rilegislature.gov/BillText/BillText26/SenateText26/S2519.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "-- S 2519\nSECTION 1. Title 19 of the General Laws entitled \"FINANCIAL INSTITUTIONS\" is\nhereby amended by adding thereto the following chapter:\nCHAPTER 35\nTHE RHODE ISLAND SPECIAL DEPOSITS ACT\n19-35-1. Short title.\nThis chapter shall be known and may be cited as the \"Uniform Special Deposits Act.\"\n19-35-2. Definitions.\nAs used in this chapter, the following words and terms have the following meanings:\n(1) \"Account agreement\" means an agreement that:\n(i) Is in a record between a bank and one or more depositors;\n(ii) May have one or more beneficiaries as additional parties; and\n(iii) States the intention of the parties to establish a special deposit governed by this chapter.\n(2) \"Bank\" means a person engaged in the business of banking and includes a savings bank,\nsavings and loan association, credit union, trust company, other financial institution as defined in\nthis title, and other regulated institution as defined in this title. Each branch or separate office of a\nbank is a separate bank for the purpose of this chapter.\n(3) \"Beneficiary\" means a person that:\n(i) Is identified as a beneficiary in an account agreement; or\n(ii) If not identified as a beneficiary in an account agreement, may be entitled to payment\nfrom a special deposit:\n(A) Under the account agreement; or\n(B) On termination of the special deposit.\n(4) \"Contingency\" means an event or circumstance stated in an account agreement that is\nnot certain to occur but must occur before the bank is obligated to pay a beneficiary.\n(5) \"Creditor process\" means attachment, garnishment, levy, notice of lien, sequestration,\nor similar process issued by or on behalf of a creditor or other claimant.\n(6) \"Depositor\" means a person that establishes or funds a special deposit.\n(7) \"Good faith\" means honesty in fact and observance of reasonable commercial standards\nof fair dealing.\n(8) \"Knowledge\" of a fact means:\n(i) With respect to a beneficiary, actual knowledge of the fact; or\n(ii) With respect to a bank holding a special deposit:\n(A) If the bank:\n(I) Has established a reasonable routine for communicating material information to an\nindividual to whom the bank has assigned responsibility for the special deposit; and\n(II) Maintains reasonable compliance with the routine, actual knowledge of the fact by that\nindividual; or\n(B) If the bank has not established and maintained reasonable compliance with a routine\ndescribed in subsection (8)(ii)(A)(I) of this section or otherwise exercised due diligence, implied\nknowledge of the fact that would have come to the attention of an individual to whom the bank has\nassigned responsibility for the special deposit.\n(9) \"Obligated to pay a beneficiary\" or \"obligation to pay a beneficiary\" means a\nbeneficiary is entitled under the account agreement to receive from the bank a payment when:\n(i) A contingency has occurred; and\n(ii) The bank has knowledge the contingency has occurred.\n(10) \"Permissible purpose\" means a governmental, regulatory, commercial, charitable, or\ntestamentary objective of the parties stated in an account agreement. The term includes an objective\nto:\n(i) Hold funds:\n(A) In escrow, including for a purchase and sale, lease, buyback, or other transaction;\n(B) As a security deposit of a tenant;\n(C) That may be distributed to a person as remuneration, retirement or other benefit, or\ncompensation under a judgment, consent decree, court order, or other decision of a tribunal; or\n(D) For distribution to a defined class of persons, after identification of the class members\nand their interest in the funds;\n(ii) Provide assurance with respect to an obligation created by contract, such as earnest\nmoney to ensure a transaction closes;\n(iii) Settle an obligation that arises in the operation of a payment system, securities\nsettlement system, or other financial market infrastructure;\n(iv) Provide assurance with respect to an obligation that arises in the operation of a payment\nsystem, securities settlement system, or other financial market infrastructure; or\n(v) Hold margin, other cash collateral, or funds that support the orderly functioning of\nfinancial market infrastructure or the performance of an obligation with respect to the\ninfrastructure.\n(11) \"Person\" means an individual, estate, business or nonprofit entity, government or\ngovernmental subdivision, agency, or instrumentality, or other legal entity. The term includes a\nprotected series, however denominated, of an entity if the protected series is established under law\nthat limits, or limits if conditions specified under law are satisfied, the ability of a creditor of the\nentity or of any other protected series of the entity to satisfy a claim from assets of the protected\nseries.\n(12) \"Record\" means information:\n(i) Inscribed on a tangible medium; or\n(ii) Stored in an electronic or other medium and retrievable in perceivable form.\n(13) \"Special deposit\" means a deposit that satisfies §19-35-5.\n(14) \"State\" means a state of the United States, the District of Columbia, Puerto Rico, the\nUnited States Virgin Islands, or any other territory or possession subject to the jurisdiction of the\nUnited States. The term includes an agency or instrumentality of the state.\n19-35-3. Scope, choice of law, and forum.\n(a) This chapter applies to a special deposit under an account agreement that states the\nintention of the parties to establish a special deposit governed by this chapter, regardless of whether\na party to the account agreement or a transaction related to the special deposit, or the special deposit\nitself, has a reasonable relation to this state.\n(b) The parties to an account agreement may choose a forum in this state for settling a\ndispute arising out of the special deposit, regardless of whether a party to the account agreement or\na transaction related to the special deposit, or the special deposit itself, has a reasonable relation to\nthis state.\n(c) This chapter does not affect:\n(1) A right or obligation relating to a deposit other than a special deposit under this chapter;\nor\n(2) The voidability of a deposit or transfer that is fraudulent or voidable under other law.\n19-35-4. Variation by agreement or amendment.\n(a) The effect of §§ 19-35-2 through 19-35-6, §§ 19-35-8 through 19-35-11, and § 19-35-\n14 shall not be varied by agreement, except as provided in those sections. Subject to subsection (b)\nof this section, the effect of §§ 19-35-7, 19-35-12, and 19-35-13 may be varied by agreement.\n(b) A provision in an account agreement or other record that substantially excuses liability\nor substantially limits remedies, for failure to perform an obligation under this chapter is not\nsufficient to vary the effect of a provision of this chapter.\n(c) If a beneficiary is a party to an account agreement, the bank and the depositor may\namend the agreement, without the consent of the beneficiary only if the agreement expressly\npermits the amendment.\n(d) If a beneficiary is not a party to an account agreement and the bank and the depositor\nknow the beneficiary has knowledge of the agreement's terms, the bank and the depositor may\namend the agreement, without the consent of the beneficiary only if the amendment does not\nadversely and materially affect a payment right of the beneficiary.\n(e) If a beneficiary is not a party to an account agreement and the bank and the depositor\ndo not know whether the beneficiary has knowledge of the agreement's terms, the bank and the\ndepositor may amend the agreement, without the consent of the beneficiary only if the amendment\nis made in good faith.\n19-35-5. Requirements for special deposit.\nA deposit is a special deposit if it is:\n(1) A deposit of funds in a bank under an account agreement;\n(2) For the benefit of at least two (2) beneficiaries, one or more of which may be a\ndepositor;\n(3) Denominated in a medium of exchange that is currently authorized or adopted by a\ndomestic or foreign government;\n(4) For a permissible purpose stated in the account agreement; and\n(5) Subject to a contingency.\n19-35-6. Permissible purpose.\n(a) A special deposit shall serve at least one permissible purpose stated in the account\nagreement from the time the special deposit is created in the account agreement until termination\nof the special deposit.\n(b) If, before termination of the special deposit, the bank or a court determines the special\ndeposit no longer satisfies subsection (a) of this section, §§ 19-35-8 through 19-35-11 cease to\napply to any funds deposited in the special deposit, after the special deposit ceases to satisfy\nsubsection (a) of this section.\n(c) If, before termination of a special deposit, the bank determines the special deposit no\nlonger satisfies subsection (a) of this section, the bank may take action it believes is necessary under\nthe circumstances, including terminating the special deposit.\n19-35-7. Payment to beneficiary by bank.\n(a) Unless the account agreement provides otherwise, the bank is obligated to pay a\nbeneficiary, if there are sufficient actually and finally collected funds in the balance of the special\ndeposit.\n(b) Except as provided in subsection (c) of this section, the obligation to pay the beneficiary\nis excused if the funds available in the special deposit are insufficient to cover such payment.\n(c) Unless the account agreement provides otherwise, if the funds available in the special\ndeposit are insufficient to cover an obligation to pay a beneficiary, a beneficiary may elect to be\npaid the funds that are available or, if there is more than one beneficiary, a pro rata share of the\nfunds available. Payment to the beneficiary making the election under this subsection discharges\nthe bank's obligation to pay a beneficiary and does not constitute an accord and satisfaction with\nrespect to another person obligated to the beneficiary.\n(d) Unless the account agreement provides otherwise, the obligation of the bank obligated\nto pay a beneficiary is immediately due and payable.\n(e) The bank may discharge its obligation under this section by:\n(1) Crediting another transaction account of the beneficiary; or\n(2) Taking other action that:\n(i) Is permitted under the account agreement for the bank to obtain a discharge; or\n(ii) Otherwise would constitute a discharge under law.\n(f) If the bank obligated to pay a beneficiary has incurred an obligation to discharge the\nobligation of another person, the obligation of the other person is discharged if action by the bank\nunder subsection (e) of this section would constitute a discharge of the obligation of the other person\nunder law that determines whether an obligation is satisfied.\n19-35-8. Property interest of depositor or beneficiary.\n(a) Neither a depositor nor a beneficiary has a property interest in a special deposit.\n(b) Any property interest with respect to a special deposit is only in the right to receive\npayment if the bank is obligated to pay a beneficiary and not in the special deposit itself. Any\nproperty interest under this subsection is determined by this chapter.\n19-35-9. When creditor process is enforceable against bank.\n(a) Subject to subsection (b) of this section, creditor process with respect to a special\ndeposit is not enforceable against the bank holding the special deposit.\n(b) Creditor process is enforceable against the bank holding a special deposit with respect\nto an amount the bank is obligated to pay a beneficiary or a depositor if the process:\n(1) Is served on the bank;\n(2) Provides sufficient information to permit the bank to identify the depositor or the\nbeneficiary from the bank's books and records; and\n(3) Gives the bank a reasonable opportunity to act on the process.\n(c) Creditor process served on a bank before it is enforceable against the bank under\nsubsection (b) of this section, does not create a right of the creditor against the bank or a duty of\nthe bank to the creditor. Rhode Island general laws shall determine whether creditor process creates\na lien enforceable against the beneficiary on a contingent interest of a beneficiary, including a\ndepositor as a beneficiary, even if not enforceable against the bank.\n19-35-10. Injunction or similar relief.\nA court may enjoin, or grant similar relief that would have the effect of enjoining, a bank\nfrom paying a depositor or beneficiary, only if payment would constitute a material fraud or\nfacilitate a material fraud with respect to a special deposit.\n19-35-11. Recoupment or set off.\n(a) Except as provided in subsections (b) or (c) of this section, a bank may not exercise a\nright of recoupment or set off against a special deposit.\n(b) An account agreement may authorize the bank to debit the special deposit:\n(1) When the bank becomes obligated to pay a beneficiary, in an amount that does not\nexceed the amount necessary to discharge the obligation;\n(2) For a fee assessed by the bank that relates to an overdraft in the special deposit account;\n(3) For costs incurred by the bank that relate directly to the special deposit; or\n(4) To reverse an earlier credit posted by the bank to the balance of the special deposit\naccount, if the reversal occurs under an event or circumstance warranted under Rhode Island\ngeneral laws governing mistake and restitution.\n(c) The bank holding a special deposit may exercise a right of recoupment or set off against\nan obligation to pay a beneficiary, even if the bank funds payment from the special deposit.\n19-35-12. Duties and liability of bank.\n(a) A bank does not have a fiduciary duty to any person with respect to a special deposit.\n(b) When the bank holding a special deposit becomes obligated to pay a beneficiary, a\ndebtor-creditor relationship arises between the bank and beneficiary.\n(c) The bank holding a special deposit has a duty to a beneficiary to comply with the\naccount agreement, as set forth in this chapter.\n(d) If the bank holding a special deposit does not comply with the account agreement as\nset forth in this chapter, the bank is liable to a depositor or beneficiary only for damages proximately\ncaused by the noncompliance. Except as provided by Rhode Island general laws, the bank is not\nliable for consequential, special, or punitive damages.\n(e) The bank holding a special deposit may rely on records presented in compliance with\nthe account agreement to determine whether the bank is obligated to pay a beneficiary.\n(f) If the account agreement requires payment on presentation of a record, the bank shall\ndetermine within a reasonable time whether the record is sufficient to require payment. If the\nagreement requires action by the bank on presentation of a record, the bank is not liable for relying\nin good faith on the genuineness of the record, if the record appears on its face to be genuine.\n(g) Unless the account agreement provides otherwise, the bank is not required to determine\nwhether a permissible purpose stated in the agreement continues to exist.\n19-35-13. Term and termination.\n(a) Unless otherwise provided in the account agreement, a special deposit terminates five\n(5) years after the date the special deposit was first funded.\n(b) Unless otherwise provided in the account agreement, if the bank cannot identify or\nlocate a beneficiary entitled to payment when the special deposit is terminated, and a balance\nremains in the special deposit, the bank shall pay the balance to the depositor or depositors as a\nbeneficiary or beneficiaries.\n(c) A bank that pays the remaining balance, as provided under subsection (b) of this section,\nhas no further obligation with respect to the special deposit.\n19-35-14. Principles of law and equity.\nThe Rhode Island general laws regarding consumer protection, banking deposits, escheat\nand abandoned or unclaimed property, equity, contracts, principal and agent, estoppel, fraud,\nmisrepresentation, duress, coercion, mistake, and bankruptcy, supplement this chapter except to the\nextent that any statute is inconsistent with this chapter.\n19-35-15. Uniformity of application and construction.\nIn applying and construing this chapter, a court shall consider the promotion of uniformity\nof the law among jurisdictions that enact it.\n19-35-16. Transitional provision.\nThis chapter applies to:\n(1) A special deposit made under an account agreement executed on or after the effective\ndate of this chapter; and\n(2) A deposit made under an agreement executed before the effective date of this chapter,\nif:\n(i) All parties entitled to amend the agreement agree to make the deposit a special deposit\ngoverned by this chapter; and\n(ii) The special deposit referenced in the amended agreement satisfies § 19-35-5.\n19-35-17. Severability clause.\nIf a provision of this chapter or its application to a person or circumstance is held invalid,\nthe invalidity does not affect any other provision or application of this chapter that can be given\neffect without the invalid provision.\nSECTION 2. This act shall take effect upon passage.\nThis act would establish the Rhode Island Special Deposits Act to be governed by an\naccount agreement between the bank and the depositor or its beneficiary.\nThis act would take effect upon passage.",
+  "raw_text_url": "http://webserver.rilegislature.gov/BillText/BillText26/SenateText26/S2519.pdf"
+ }
+]

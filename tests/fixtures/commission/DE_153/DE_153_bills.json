@@ -1,0 +1,282 @@
+[
+ {
+  "id": "ocd-bill/75aaddc4-4261-47f5-977b-fc6618d7df33",
+  "legislative_session": "153",
+  "identifier": "SB 80",
+  "title": "AN ACT TO AMEND TITLE 10 OF THE DELAWARE CODE RELATING TO THE UNIFORM PUBLIC EXPRESSION PROTECTION ACT.",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Introduced and Assigned to Executive Committee in Senate",
+    "date": "2025-03-25",
+    "classification": [
+     "introduction",
+     "referral-committee"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported Out of Committee (Executive) in Senate with 5 Favorable, 1 On Its Merits",
+    "date": "2025-05-07",
+    "classification": [
+     "committee-passage",
+     "committee-passage-favorable"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Passed By Senate. Votes: 20 YES 1 ABSENT",
+    "date": "2025-05-14",
+    "classification": [
+     "passage"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "House",
+    "description": "Assigned to Judiciary Committee in House",
+    "date": "2025-05-15",
+    "classification": [
+     "introduction",
+     "referral-committee"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "House",
+    "description": "Reported Out of Committee (Judiciary) in House with 7 On Its Merits",
+    "date": "2025-06-11",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 4
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Amendment HA 1 to SB 80 - Introduced and Placed With Bill",
+    "date": "2025-06-18",
+    "classification": [
+     "amendment-introduction"
+    ],
+    "order": 5
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Amendment HA 2 to SB 80 - Introduced and Placed With Bill",
+    "date": "2025-06-25",
+    "classification": [
+     "amendment-introduction"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "House",
+    "description": "Amendment HA 1 to SB 80 - Stricken in House",
+    "date": "2025-06-25",
+    "classification": [],
+    "order": 7
+   },
+   {
+    "organization__name": "House",
+    "description": "Amendment HA 2 to SB 80 - Passed In House by Voice Vote",
+    "date": "2025-06-25",
+    "classification": [
+     "amendment-passage"
+    ],
+    "order": 8
+   },
+   {
+    "organization__name": "House",
+    "description": "Passed By House. Votes: 38 YES 1 NOT VOTING 1 ABSENT 1 VACANT",
+    "date": "2025-06-25",
+    "classification": [
+     "passage"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Passed By Senate. Votes: 21 YES",
+    "date": "2025-06-26",
+    "classification": [
+     "passage"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "Office of the Governor",
+    "description": "Signed by Governor",
+    "date": "2025-09-15",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 11
+   }
+  ],
+  "versions": [
+   {
+    "note": "Bill Text",
+    "date": "",
+    "links": [
+     {
+      "url": "https://legis.delaware.gov/json/BillDetail/GeneratePdfDocument?legislationId=142002&legislationTypeId=1&docTypeId=2&legislationName=SB80",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://legis.delaware.gov/json/BillDetail/GenerateHtmlDocument?legislationId=142002&legislationTypeId=1&docTypeId=2&legislationName=SB80",
+      "media_type": "text/html"
+     }
+    ]
+   },
+   {
+    "note": "HA 2 to SB 80",
+    "date": "",
+    "links": [
+     {
+      "url": "http://legis.delaware.gov/json/BillDetail/GenerateHtmlDocument?legislationId=142628&legislationTypeId=5&docTypeId=2",
+      "media_type": "text/html"
+     },
+     {
+      "url": "http://legis.delaware.gov/json/BillDetail/GeneratePdfDocument?legislationId=142628&legislationTypeId=5&docTypeId=2",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "\n      \n         \n      \n      \n        \n      \n      \n         \n      \n    \n\n      \n         \n      \n      \n        SYNOPSIS\n      \n      \n        This Amendment clarifies that the Uniform Public Expression Act (\"Act\") does not apply to a cause of action: \n      \n      \n        (1) By a governmental unit or an employee or agent of a governmental unit acting in an official capacity to enforce any law, regulation, or ordinance;\n      \n      \n        (2) Based on a common law fraud claim; or\n      \n      \n        (3) Alleging a violation of either Subchapter II or III of Chapter 25 of Title 6 of the Delaware Code.\n      \n      \n        \n      \n      \n        However, the Act does apply to such actions when the cause of action is a legal action against a person related to the communication, gathering, receiving, posting, or processing of consumer opinions or commentary, evaluations of consumer complaints, or reviews or ratings of businesses.\n      \n      \n        \n      \n      \n        This Amendment is substantively similar to House Amendment No. 1 to Senate Bill No. 80; however, it makes necessary technical corrections to citations and to include a citation to § 6002(d) of Title 6, created by this Amendment, in § 6007(a)(1) of Title 6. \n      \n      \n        \n      \n      \n         \n      \n    \n",
+  "raw_text_url": "http://legis.delaware.gov/json/BillDetail/GenerateHtmlDocument?legislationId=142628&legislationTypeId=5&docTypeId=2"
+ },
+ {
+  "id": "ocd-bill/7db74289-ed82-4865-b52f-1b72dd515bd4",
+  "legislative_session": "153",
+  "identifier": "HB 147",
+  "title": "AN ACT TO AMEND TITLE 12, TITLE 18, TITLE 25, AND TITLE 30 OF THE DELAWARE CODE RELATING TO THE UNIFORM REAL PROPERTY TRANSFER ON DEATH ACT.",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "House",
+    "description": "Adopted in lieu of the original bill HB 147, and Assigned to Administration Committee in House",
+    "date": "2025-05-13",
+    "classification": [
+     "introduction",
+     "referral-committee"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "House",
+    "description": "Reported Out of Committee (Administration) in House with 5 On Its Merits",
+    "date": "2025-05-14",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "Amendment HA 1 to HS 1 - Introduced and Placed With Bill",
+    "date": "2025-06-06",
+    "classification": [
+     "amendment-introduction"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "House",
+    "description": "Amendment HA 1 to HS 1 - Passed In House by Voice Vote",
+    "date": "2025-06-10",
+    "classification": [
+     "amendment-passage"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "House",
+    "description": "Passed By House. Votes: 40 YES 1 ABSENT",
+    "date": "2025-06-10",
+    "classification": [
+     "passage"
+    ],
+    "order": 4
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Assigned to Executive Committee in Senate",
+    "date": "2025-06-10",
+    "classification": [
+     "introduction",
+     "referral-committee"
+    ],
+    "order": 5
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported Out of Committee (Executive) in Senate with 5 On Its Merits",
+    "date": "2025-06-18",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Passed By Senate. Votes: 21 YES",
+    "date": "2025-06-30",
+    "classification": [
+     "passage"
+    ],
+    "order": 7
+   },
+   {
+    "organization__name": "Office of the Governor",
+    "description": "Signed by Governor",
+    "date": "2025-09-05",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 8
+   }
+  ],
+  "versions": [
+   {
+    "note": "Bill Text",
+    "date": "",
+    "links": [
+     {
+      "url": "https://legis.delaware.gov/json/BillDetail/GeneratePdfDocument?legislationId=142272&legislationTypeId=6&docTypeId=2&legislationName=HS1forHB147",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://legis.delaware.gov/json/BillDetail/GenerateHtmlDocument?legislationId=142272&legislationTypeId=6&docTypeId=2&legislationName=HS1forHB147",
+      "media_type": "text/html"
+     }
+    ]
+   },
+   {
+    "note": "HA 1 to HS 1 for HB 147",
+    "date": "",
+    "links": [
+     {
+      "url": "http://legis.delaware.gov/json/BillDetail/GenerateHtmlDocument?legislationId=142452&legislationTypeId=5&docTypeId=2",
+      "media_type": "text/html"
+     },
+     {
+      "url": "http://legis.delaware.gov/json/BillDetail/GeneratePdfDocument?legislationId=142452&legislationTypeId=5&docTypeId=2",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "\n      \n         \n      \n      \n        AMEND House Substitute No. 1 for House Bill No. 147 on line 255 by inserting “\n        ; executor or administrator inventorying of and access to property transferred by transfer on death deed; failure to file not invalidating\n        ” after “\n        certificate\n        ” and before the period therein.\n      \n      \n        FURTHER AMEND House Substitute No. 1 for House Bill No. 147 by inserting the following after line 262 and before line 263:\n      \n      \n        “\n        (d) If a probate estate is opened with a Register of Wills for the transferor, property transferred to a beneficiary by transfer on death deed must be inventoried in accordance with § 1905 of Title 12. If a probate estate is not opened for the transferor, an inventory form does not need to be filed with a Register of Wills.\n      \n      \n        (e) By and through letters testamentary or of administration, the person designated as an executor or administrator shall have authority to access and safeguard personal property of the transferor held by the transferor at the time of death on real property titled in the transferor’s own name transferred at the transferor’s death by transfer on death deed.\n      \n      \n        (f) A valid transfer on death deed transfers the real property immediately on the transferor’s death. Failure to file a notice form, death certificate, or inventory form under this section does not invalidate an otherwise valid transfer on death deed.\n        ”.\n      \n      \n        FURTHER AMEND House Substitute No. 1 for House Bill No. 147 on lines 294 to 295 by deleting “\n        seized, which does not include real estate\n        ” before “\n        transferred\n        ” therein and inserting in lieu thereof “\n        seized or which\n        ”.\n      \n      \n         \n      \n    \n\n      \n         \n      \n      \n        SYNOPSIS\n      \n      \n        This Amendment does all of the following:\n      \n      \n        (1) Requires property transferred by a transfer on death deed to be inventoried along with other property of the deceased owner (“transferor”) if a probate estate is opened for the transferor with the Register of Wills.\n      \n      \n        (2) Makes clear that the executor or administrator of the transferor’s estate has authority to access and safeguard personal property of the transferor held by the transferor at the time of death on real property titled in the transferor’s own name transferred at the transferor’s death by a transfer on death deed.\n      \n      \n        (3) Makes clear that a valid transfer on death deed transfers the real property immediately on the transferor’s death and that the failure to file a notice form, death certificate, or inventory form under § 218 of Title 12, created by Hosue Substitute No. 1 for House Bill No. 147, does not invalidate an otherwise valid transfer on death deed.\n      \n      \n         \n      \n    \n",
+  "raw_text_url": "http://legis.delaware.gov/json/BillDetail/GenerateHtmlDocument?legislationId=142452&legislationTypeId=5&docTypeId=2"
+ }
+]

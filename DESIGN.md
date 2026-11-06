@@ -14,6 +14,7 @@ Sections marked **To be measured** fill in as the build reaches them. Every numb
 - [Sections](#sections)
 - [Boilerplate](#boilerplate)
 - [Near-duplicate stage](#near-duplicate-stage)
+- [Commission recall](#commission-recall)
 - [Alternatives considered](#alternatives-considered)
 - [Scaling limits](#scaling-limits)
 - [Known failure modes](#known-failure-modes)
@@ -27,7 +28,7 @@ Model legislation spreads by copying. An interest group, a uniform-law body or a
 Three properties of the corpus make this hard:
 
 - **Size.** Every bill from all 50 states over four years. Comparing every pair of sections is quadratic: *N* sections make *N*(*N* − 1)/2 pairs, so the method has to find candidates without enumerating pairs. The snapshot has *N* = 2,185,234 sections (`uv run lineage stats`, `reports/coverage.json`), which is about 2.4 × 10¹² pairs.
-- **The unit is the section, not the bill.** A copied provision often sits inside a much larger bill, such as an elections omnibus or a budget. Similarity between whole bills dilutes it below any useful threshold.
+- **The unit is the section, not the bill.** A copied provision often sits inside a much larger bill, such as a code revision or a budget. Similarity between whole bills dilutes it below any useful threshold.
 - **Copying is not always verbatim.** Reordered clauses and substituted terms break exact-text methods, while generic legal phrasing ("the department shall…") makes meaning-based methods over-match.
 
 The tool reports shared text and timing. It does not claim who wrote a bill, or which of two similar bills came first in any causal sense.
@@ -151,9 +152,55 @@ Comparing every pair of sections is out of reach, so this stage summarizes each 
 
 **Verification.** Each candidate's similarity is re-estimated from all 128 values and kept as the count of agreeing positions, one byte per pair. Pairs estimated below 0.5, fewer than 64 agreements, are dropped. The threshold of 0.5 is proposed. At 0.5 the S-curve already proposes 87% of pairs, so what verification keeps is what the bands find reliably, while below the curve's midpoint whether a pair is proposed at all is largely chance. The candidates' estimates show no valley to set the threshold by: cross-state candidates spread from 0.1 to 1 (`reports/index.json`, `pairs.estimate_histogram`). Partial or reworded copying below the threshold is the semantic stage's to find, and the ablation sweeps the threshold. Verified cross-state pairs are stored in `pairs/` by signature row. Same-state pairs serve only to form families.
 
-**Families.** A state files the same text many times: companion bills in each chamber, a bill refiled in a later session, or one template for many resolutions. Lineage counts the other states that carry a provision, so each state's copies are grouped into a family that counts once. Two bills of one state are linked when, in each direction, at least 80% of the bill's signed sections have a verified match among the other's, and families are the connected components of the links. Requiring a share, not any one match, keeps a clause both bills happen to share from linking them. Requiring it in both directions keeps an omnibus bill from absorbing each small bill it contains. The share of 0.8 is proposed and was set from the measured distribution (`reports/index.json`, `families.min_share_histogram`). Shares spike at the fractions of small bills, 1/3, 1/2, 2/3 and 3/4, where a short bill shares one or two clauses with another, and again at 1. Between 0.70 and 0.95 they are sparse, and 0.8 sits there, past the 3/4 spike. The report's sweep shows what a lower share costs: at 0.5 the largest family grows to 1,282 bills, chained through shared clauses, while from 2/3 up it stays at 830. The largest families are one template filed many times, such as Tennessee's memorial resolutions and New Mexico's placeholder bills, which is what a family should collapse. A family is named by its first bill id in sort order and stored in `families/`.
+**Families.** A state files the same text many times: companion bills in each chamber, a bill refiled in a later session, or one template for many resolutions. Lineage counts the other states that carry a provision, so each state's copies are grouped into a family that counts once. Two bills of one state are linked when, in each direction, at least 80% of the bill's signed sections have a verified match among the other's, and families are the connected components of the links. Requiring a share, not any one match, keeps a clause both bills happen to share from linking them. Requiring it in both directions keeps an omnibus bill from absorbing each small bill it contains. The share of 0.8 is proposed and was set from the measured distribution (`reports/index.json`, `families.min_share_histogram`). Shares spike at the fractions of small bills, 1/3, 1/2, 2/3 and 3/4, where a short bill shares one or two clauses with another, and again at 1. Between 0.70 and 0.95 they are sparse, and 0.8 sits there, past the 3/4 spike. The report's sweep shows what a lower share costs: at 0.5 the largest family grows to 1,282 bills, chained through shared clauses, while from 2/3 up it stays at 764. The largest families are one template filed many times, such as Georgia's notices of local bills, New Mexico's placeholder bills and Massachusetts's study orders, which is what a family should collapse. A family is named by its first bill id in sort order and stored in `families/`.
 
 **Query.** `lineage query FILE` treats a bill's text exactly as the corpus was treated: it is cleaned, split and normalized, boilerplate-only sections are set aside, and the rest are shingled, stoplisted and signed. Each signature's band keys are found in the memory-mapped band index by binary search, and a bucket over the cap yields nothing, as in the build. Each candidate is verified against its stored signature at the build's threshold. Matches are grouped by family and ranked by the share of the query's signed sections that the family matches, scored from the query's side so a provision carried inside a larger bill still ranks high. A query reads only the index pages its keys land on and needs no network or API key. Results are shown through each family's best-matching bill, with the family's size.
+
+## Commission recall
+
+The external ground truth is the Uniform Law Commission's list of enactments. Starting from a uniform act's text, the eval asks what share of the bills that enacted it the pipeline finds.
+
+**Act text.** The ULC holds the copyright in its acts. Its [terms of use](https://www.uniformlaws.org/termsofuse) let anyone view, copy, print and distribute the site's content for informational, noncommercial purposes, unmodified and with the copyright notice or other attribution. Modifying it is allowed only as part of a legislative process. The terms say nothing specific about showing an act on another website. Downloading an act's final text shows no separate notice or terms. Each act prints its own notice in its front matter:
+
+| Act | Edition used | Notice printed in the act |
+|---|---|---|
+| Uniform Public Expression Protection Act | Final act without prefatory note and comments, October 2, 2020 | Copyright © 2020 By National Conference of Commissioners on Uniform State Laws |
+| Uniform Special Deposits Act | Final act without prefatory note and comments, January 13, 2025 | Copyright © 2023 By National Conference of Commissioners on Uniform State Laws |
+| Uniform Electronic Estate Planning Documents Act | Final act without prefatory note and comments, September 28, 2022 | Copyright © 2022 By National Conference of Commissioners on Uniform State Laws |
+
+So:
+
+- The repository never contains act text. Its code is MIT-licensed, and an act committed beside it would read as offered under that license, which includes the right to modify. Act texts live in `data/acts/`, which is gitignored, and each user downloads them from the ULC under its terms (README, [Data](README.md#data)).
+- The eval uses them locally, as query documents.
+- The site may show an act's text unmodified, with the act's own copyright notice above and a link to the act's page, as informational, noncommercial use. No narrower notice came with the download, so the terms of use are the whole of the permission.
+
+**Act texts as queries.** An act as the commission publishes it is mostly not law: a title page and committee list, a table of contents, a prefatory note, and an official comment or legislative note after many sections. States enact the sections. Scoring is from the query's side, the share of the query's sections a bill matches, so every comment left in would lower every enacted bill's score. The editions above already leave out the prefatory note and comments, but each still carries legislative notes, which tell a state how to adapt a section and can run several paragraphs. `lineage.acts` keeps the numbered sections, including bracketed optional ones, and the article headings of an act divided into articles. It drops the front matter up to the first section or article heading that is not a contents entry, and each comment or legislative note up to the next section or article heading. In the commission's final acts, both close a section. The words each act keeps, and each file's SHA-256, are recorded in the eval's results, so a different edition or conversion is visible.
+
+**Finding an enactment's bills.** The ground truth is `evals/ulc_enactments.csv`, every row of each act's bill list on the day it was read. Rows the list shows only as introduced are not enactments and are skipped. The District of Columbia is excluded, since the corpus is the 50 states, and so are enactments listed before 2023, where the corpus begins. Enacted and Substantially Similar are reported as separate strata. A row's cell can name several bills, usually companions in each chamber, so bill numbers are compared in one form: Colorado's year prefix ("HB 24-1232") is dropped, and "H 40" and "HB 40" compare equal. Each enactment's bills are found by state, number and session year, in three steps:
+
+1. Every bill the cell names in a session whose years contain the listed year. A bill shown passed after that year is a later bill reusing the number and is dropped. If any of the rest passed, these are the enactment's bills.
+2. Otherwise, a named bill that passed in the session ending the year before. The list's year can be the signing year: Ohio's act passed both chambers in December 2024, the last month of its session, and is listed under 2025.
+3. Otherwise, the bills of step 1, recorded as matched by number only.
+
+"Passed" is a passed status, or a passage action recorded in every chamber, since a bill signed after its session ends can still carry a status of died. `lineage.ulc` implements the rule, and each enactment's results name the step that matched it.
+
+**Found.** An enactment is found when any of its bills belongs to a family among the act text's relatives at or above the cutoff. The cutoff is proposed: the top 50 families, each with at least one verified section. The results record each found enactment's rank and share, and recall at a minimum share, so another cutoff can be read from them without rerunning. An enactment is "with text" when at least one of its bills has stored text, and recall is reported over all enactments and over those with text.
+
+**Miss reasons.** Each miss is classified automatically. Each bill an enactment names gets the first reason that applies, and the enactment takes the reason of the bill that got furthest through the pipeline. The stage reasons are measured by replaying LSH and verification on the bill's own stored signatures, with the query's band keys, the bucket cap and the verification threshold.
+
+- `not_in_corpus`: no bill the cell names is in the snapshot in the session years.
+- `no_text_in_source`: the export has no text for the bill, as for every Connecticut, Maine and South Dakota record.
+- `amendment_only`: the stored text is an amendment that does not replace the whole bill (see [Known failure modes](#known-failure-modes)).
+- `excluded_type`: the document-type rules exclude the record ([DR-5](#dr-5--match-only-document-types-that-can-carry-law)).
+- `no_usable_text`: the text yields no signed section, because every section is boilerplate or stoplisted.
+- `not_proposed`: no section of the bill shares a band key with any section of the act.
+- `bucket_cap`: a section pair would have verified, but every band it shares is in a bucket over the cap.
+- `verification`: a section pair was proposed, but none reached the verification threshold.
+- `below_cutoff`: the bill's family is among the relatives, ranked below the cutoff.
+
+**Pipeline regression test.** The act texts cannot be committed, so CI cannot compute the headline number. Instead, `tests/test_commission.py` runs every pipeline command on a committed fixture: the bills each enactment names, among distractors that are bills of other uniform acts from the same archives. They share the commission's drafting conventions and closing sections, which makes them hard negatives. Each act is queried with its earliest enacted state version, and that version's own enactment is left out. The test fails if any enactment it found when written is lost. `uv run python -m evals.fixture` rebuilds the fixture from the snapshot. It leaves out omnibus bills over 40,000 characters. Its number is not the recall the README reports, because a state's version differs from the act.
+
+**Results.** `uv run lineage eval commission` writes the `commission` section of `reports/results.json`: recall pooled, per act and per stratum, the miss-reason counts, and each enactment with its bills, their stages and their best similarity to the act. It also records the SHA-256 of the enactment file and of each act's text, before and after the comments and notes are dropped. The README's results table is generated from this file.
 
 ## Alternatives considered
 
@@ -162,7 +209,7 @@ Comparing every pair of sections is out of reach, so this stage summarizes each 
 | Compare all pairs | Quadratic in the number of sections: about 2.4 × 10¹² pairs at the measured *N* | Arithmetic on the measured section count |
 | Embeddings only | No exact-span evidence to highlight, a higher cost per section, and weaker on legal boilerplate that sounds alike | To be measured by the stage ablation (M4) |
 | Embeddings as a reranker of LSH candidates | A reranker can only reorder pairs LSH already proposed, so it can never recover a paraphrase LSH missed | Follows from the design |
-| Whole bills as the unit | Dilutes provisions carried inside omnibus bills | To be shown by commission-recall misses (M3) |
+| Whole bills as the unit | Dilutes provisions carried inside omnibus bills | Commission-recall misses show the cost at a smaller scale: a bill split into a few chapter-sized sections is never proposed against the act's short ones (`reports/results.json`, each bill's `signed_sections` and `stage`) |
 | Scope the corpus by topic keywords | Makes recall circular, since only bills that match the keywords can be found, and it removes the hard negatives | Follows from the design |
 | LLM calls or a hosted vector database in retrieval | Breaks the keyless and static constraints | Constraint |
 | A query server behind the site | Breaks the static constraint | Constraint |
@@ -171,7 +218,7 @@ Comparing every pair of sections is out of reach, so this stage summarizes each 
 
 ## Scaling limits
 
-The section count sets the size of everything downstream. The 1,916,250 signed sections' MinHash signatures take 0.98 GB, and their band index 0.74 GB (`uv run lineage index` → `reports/index.json`, `signature_bytes` and `lsh.index_bytes`). Ten times the corpus is about 17 GB, which no longer fits comfortably in a laptop's memory.
+The section count sets the size of everything downstream. The 1,904,743 signed sections' MinHash signatures take 0.98 GB, and their band index 0.73 GB (`uv run lineage index` → `reports/index.json`, `signature_bytes` and `lsh.index_bytes`). Ten times the corpus is about 17 GB, which no longer fits comfortably in a laptop's memory.
 
 | Pressure | What breaks first at 10× | Response |
 |---|---|---|
@@ -193,8 +240,10 @@ These carry into the README's known-failure-modes section. Each has a mitigation
 | Amendment-style bills | New text sits inside old statute text, so matches can land on the old law | Drop struck text where its markup survives extraction; section-level scoring limits the damage |
 | Omnibus bills | The provision is a small share of the bill | Score from the query side; display matches by section |
 | Boilerplate leakage | False matches on shared clauses | Document-frequency stoplist, the LSH bucket cap, and the ablation's false-match rate |
-| A state's own boilerplate that stays under both the bucket cap and the corpus-wide stoplist | A query section carrying such a clause, such as a Texas federal-waiver section that an Illinois model bill reuses, matches hundreds of that state's bills, each listed as a family with a small share | Results rank by the share of the query matched, so whole-bill relatives lead. A per-state stoplist, counted over families, is tested in the ablation (M4) |
-| A family joins bills whose only signed text is a shared template | Georgia's local bills, whose stored text is often only the notice of intention to introduce them, form one family of 764 (`reports/index.json`, `families.largest`) | They can match no other state through the notice, so cross-state counts are unaffected. Disclosed |
+| A state's own boilerplate that stays under both the bucket cap and the corpus-wide stoplist | A query section carrying such a clause, such as a state's standard request for a federal waiver, matches hundreds of that state's bills, each listed as a family with a small share | Results rank by the share of the query matched, so whole-bill relatives lead. A per-state stoplist, counted over families, is tested in the ablation (M4) |
+| The stored text is an amendment, not the bill | An amendment that changes a few lines can match only on those lines, so the bill it amends is missed or scores low. 5,737 records in 13 states are such partial amendments (`reports/coverage.json`, `amendment_only`) | Counted per state and session from each text's opening. A substitute that replaces the whole bill is counted too but matches like a bill. Disclosed |
+| A Georgia local bill whose stored text is only its notice | Georgia publishes a notice of intention before a local bill is introduced, and for 774 of its bills the export stores that notice and the sponsor's affidavit in place of the bill: 318 in 2023–24, 3 in the 2023 special session, 355 in 2025–26 and 98 in the 2026 special session (`uv run lineage stats` → `reports/coverage.json`, `georgia_local_notices`). Georgia is the hosted state, so these bill pages have no bill text to compare, and 764 of them form one family through the shared notice wording (`reports/index.json`, `families.largest`) | They can match no other state through the notice, so cross-state counts are unaffected. Disclosed as a known gap. How the site shows these bills is decided when the site is built |
+| A bill that enacts a whole chapter under one `SECTION 1.`, its code sections headed by citation alone (`44-7-301. Definitions.`) | The splitter does not take a bare citation as a heading, so the chapter is one section, which cannot match a copied provision's sections at the verification threshold | The recall eval records each missed bill's signed sections and stage (`reports/results.json`). Taking citation headings as section breaks is proposed for M4, measured by the recall it recovers and the false splits it adds |
 | A copied section that sits in an LSH bucket over the cap in every band it shares | The pair is never proposed | Each build counts the cross-state pairs the cap drops (`reports/index.json`), and the recall eval names "bucket cap" as a miss reason |
 | Legal phrasing that sounds alike | The semantic stage pairs unrelated sections | Label meaning-only matches as such, tune the cosine threshold, and run the precision sample |
 | An explanation with valid citations but a wrong summary | A claim cites a real difference but describes it wrongly | A hand-labeled faithfulness eval, and the cited spans shown beside each claim |
@@ -214,6 +263,8 @@ Each entry names the command that produces it and the committed file it reads fr
 
 **Text coverage** (`uv run lineage stats` → `reports/coverage.json`).
 - Of 525,633 records, 11,675 have no text and 141,770 have blank text. 1,394 have text that cleaning reduces to nothing, 1,392 of them Texas notices that a version's text is not available and the PDF should be consulted. 370,794 (70.5%) yield sections.
+- In Georgia, 774 records hold only a local bill's notice of intention and its affidavit, with no bill text (`georgia_local_notices`, per session). They yield sections from the notice, so they count as text here; the known failure modes below say what that costs.
+- 7,588 records store an amendment in place of the bill (`totals.amendment_only`, and `amendment_only` per session). 1,851 of them replace everything after the enacting clause, so they carry a full substitute text. The other 5,737 hold only the lines they change. By state: Louisiana 3,242, Illinois 1,807 (1,201 substitutes), Pennsylvania 376, Virginia 358 (all substitutes), Oklahoma 293, Vermont 276, Wisconsin 256, Delaware 233, Oregon 229, New Hampshire 220, Georgia 207, Nebraska 54, Mississippi 31 and Alabama 6.
 - Connecticut, Maine and South Dakota publish blank text for every record. Maryland, Nebraska, New Hampshire, Montana and Indiana have text for under a third of their records.
 
 **Sections** (same command and file).
@@ -223,32 +274,32 @@ Each entry names the command that produces it and the committed file it reads fr
 
 **Document types** (same command and file). Record counts by classification per state, the title-pattern count of likely commemorative measures within each type, and status by type. These set DR-5's type rules.
 
-**Eligibility** (`uv run lineage eligible` → `reports/document_types.json`). 456,189 of 525,633 records are of an eligible type, and 314,664 of those yield sections. Every rule's count, per state, is in the file, with sample titles for each rule that reads titles and every title a rule's `unless` pattern spared.
+**Eligibility** (`uv run lineage eligible` → `reports/document_types.json`). 447,389 of 525,633 records are of an eligible type, and 307,659 of those yield sections. Every rule's count, per state, is in the file, and for a rule with an `unless` pattern, the count per state of the titles it spared. The titles themselves are not committed, because commemorations name private people. `uv run lineage stats --samples` writes a sample of each title rule's titles and every spared title to `data/reports/document_type_samples.json`, a local file anyone can reproduce from the pinned snapshot.
 
-**Boilerplate** (`uv run lineage boilerplate` → `reports/boilerplate.json`). Sections flagged by each pattern, and the shingles and shingle occurrences that each candidate stoplist threshold removes. 1,937,958 sections are matchable. At the proposed 0.1% share, 3,847 shingles are stoplisted, removing 3.8% of shingle occurrences.
+**Boilerplate** (`uv run lineage boilerplate` → `reports/boilerplate.json`). Sections flagged by each pattern, and the shingles and shingle occurrences that each candidate stoplist threshold removes. 1,926,447 sections are matchable. At the proposed 0.1% share, 3,788 shingles are stoplisted, removing 3.8% of shingle occurrences.
 
-**Signatures** (`uv run lineage index` → `reports/index.json`). 1,916,250 of the 1,937,958 matchable sections are signed. 21,706 are shorter than five words, and 2 lose every shingle to the stoplist. After the stoplist, the median section has 164 distinct shingles, the 99th percentile 2,090 and the largest 261,324. The signatures take 0.98 GB.
+**Signatures** (`uv run lineage index` → `reports/index.json`). 1,904,743 of the 1,926,447 matchable sections are signed. 21,702 are shorter than five words, and 2 lose every shingle to the stoplist. After the stoplist, the median section has 163 distinct shingles, the 99th percentile 2,096 and the largest 261,324. The signatures take 0.98 GB.
 
-**LSH bands** (same command and file, `lsh`). The band index takes 0.74 GB. At 32 × 4 with the cap at 500, the bands propose 15,321,302 distinct candidate pairs, of which 364,291 (2.4%) cross state lines. The largest bucket holds 1,277 sections. Summed over bands, the cap skips 356 buckets and the 96,156,777 pairs inside them. 501 cross-state candidates appear only in skipped buckets and are lost. The cap sweep:
+**LSH bands** (same command and file, `lsh`). The band index takes 0.73 GB. At 32 × 4 with the cap at 500, the bands propose 14,979,580 distinct candidate pairs, of which 364,277 (2.4%) cross state lines. The largest bucket holds 1,277 sections. Summed over bands, the cap skips 356 buckets and the 96,156,777 pairs inside them. 501 cross-state candidates appear only in skipped buckets and are lost. The cap sweep:
 
 | Cap | Buckets skipped | Of those, spanning more than one state | Most states in a skipped bucket | Cross-state candidates lost |
 |---|---|---|---|---|
-| 100 | 3,576 | 51 | 33 | 70,574 |
-| 200 | 1,708 | 30 | 33 | 43,340 |
+| 100 | 3,557 | 51 | 33 | 70,574 |
+| 200 | 1,705 | 30 | 33 | 43,340 |
 | 500 | 356 | 1 | 2 | 501 |
 | 1,000 | 35 | 0 | 1 | 0 |
 | 2,000 | 0 | 0 | 0 | 0 |
 
-**Verification and families** (same command and file, `pairs` and `families`). 10,887,538 of the 15,321,302 candidates verify at an estimate of 0.5 or more, 157,247 of them across state lines, and 4,433,764 are dropped. The stored cross-state pairs take 1.4 MB. 6,670,885 pairs of same-state bills share a verified section. 480,227 of them reach a share of 0.8 in both directions, and they form 62,982 families of two or more bills, 166,637 bills in all. The largest holds 830. The share sweep:
+**Verification and families** (same command and file, `pairs` and `families`). 10,835,678 of the 14,979,580 candidates verify at an estimate of 0.5 or more, 157,242 of them across state lines, and 4,143,902 are dropped. The stored cross-state pairs take 1.4 MB. 6,619,799 pairs of same-state bills share a verified section. 430,358 of them reach a share of 0.8 in both directions, and they form 62,372 families of two or more bills, 163,464 bills in all. The largest holds 764. The share sweep:
 
 | Share | Linked bill pairs | Families of two or more | Bills in them | Largest family |
 |---|---|---|---|---|
-| 0.5 | 1,001,683 | 67,605 | 207,739 | 1,282 |
-| 2/3 | 659,928 | 66,747 | 184,047 | 830 |
-| 0.75 | 498,192 | 64,293 | 171,743 | 830 |
-| 0.8 | 480,227 | 62,982 | 166,637 | 830 |
-| 0.9 | 461,947 | 60,997 | 159,456 | 830 |
-| 1.0 | 456,180 | 59,988 | 156,143 | 830 |
+| 0.5 | 951,367 | 66,965 | 204,391 | 1,282 |
+| 2/3 | 610,030 | 66,134 | 180,857 | 764 |
+| 0.75 | 448,316 | 63,685 | 168,573 | 764 |
+| 0.8 | 430,358 | 62,372 | 163,464 | 764 |
+| 0.9 | 412,073 | 60,385 | 156,279 | 764 |
+| 1.0 | 406,309 | 59,377 | 152,968 | 764 |
 
 **MinHash engines** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`). On one core of an Apple M1 Max, signing every section took 270 s with the NumPy implementation and 102 s with datasketch's batch path. Signatures hold 512 and 785 bytes per section. Building the LSH index over the same stored signatures took 10 s with NumPy and 571 s with datasketch's insertion session. The index added 0.66 GiB and 14.3 GiB to the process, and the build's peak memory, signatures included, was 2.1 GiB and 15.3 GiB, against the 16 GiB bound. See [DR-3](#dr-3).
 
@@ -340,7 +391,7 @@ Existing team expertise with Next.js is a secondary, maintainability factor: it 
 
 The benchmark puts both engines through the same work. It runs datasketch through its batch path, never a per-shingle loop, so the comparison is with the library at its best. It records wall-clock time and peak memory for building the signatures and the LSH index, on the full corpus.
 
-**Measured in step 10** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`; Apple M1 Max, 10 cores, 32 GiB). The benchmark gave each engine one core and the same 1,916,250 stoplisted sections, 477,224,285 shingles in all.
+**Measured in step 10** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`; Apple M1 Max, 10 cores, 32 GiB). The benchmark gave each engine one core and the same 1,916,250 stoplisted sections, 477,224,285 shingles in all. That was the corpus when the benchmark ran (`engines.numpy.sections` in the report). Later document-type rules have since left 1,904,743 signed sections (`reports/index.json`), 0.6% fewer. The comparison concerns cost per section, so it is re-run only when the corpus changes by more than 5%.
 
 - **Signing time.** The NumPy implementation took 270 s and datasketch 102 s. The context above expected per-element Python work to dominate datasketch's time. On this corpus it does not.
 - **Signature memory.** The NumPy matrix holds 512 bytes per section and datasketch's objects 785 (`tracemalloc`, on a 20,000-section sample), or 0.98 GB against 1.50 GB for the corpus.
@@ -421,9 +472,11 @@ This project's index is two `.npy` matrices, 0.74 GB in all (`reports/index.json
 - **Matched by default:** bills, appropriation bills, proposed bills, joint resolutions, and records classified as constitutional amendments. Joint resolutions stay in because many states use them to propose constitutional amendments, and some give them the force of law.
 - **Excluded by default:** simple and concurrent resolutions, memorials, commemorations, proclamations, appointments, nominations and study requests. They are formula-heavy: commendations, condolences, requests to Congress, and procedural motions written to a few templates. Matched, they would crowd every bill page with relatives that share only those templates, and their formulas would claim stoplist slots meant for legal boilerplate.
 - **Per-state exceptions** admit constitutional amendments that a state files under an excluded type, by that state's title convention: New Jersey's and Mississippi's concurrent resolutions that propose amending the constitution, and Georgia's resolutions whose titles end in "-CA". Each is a row of the table, and the report gives its count.
-- **Commemorative joint resolutions** are excluded by a title pattern. The title must open, after any type prefix, with commending, congratulating, honoring, recognizing, celebrating or mourning. A title that names a constitution, an amendment, a proposal, a right or a law is spared. The report lists a sample of excluded titles and every spared title, so false positives in both directions can be seen.
+- **Commemorative joint resolutions** are excluded by a title pattern. The title must open, after any type prefix, with commending, commemorating, congratulating, honoring, paying tribute, recognizing, celebrating or mourning. A title that names a constitution, an amendment, a proposal, a right or a law is spared. The report counts the titles each rule excluded and spared, per state, and `lineage stats --samples` lists them locally, so false positives in both directions can be checked. Tennessee files every memorial as a joint resolution titled "Memorials, <occasion> - <honoree> -", for recognitions, deaths, retirements, academic and sports achievements, interns and petitions to Congress alike. Those titles name the occasion rather than opening with a verb, and an honoree's name or cause can carry a word the guard reads as law, so a Tennessee row excludes the prefix with no guard. It was found when 830 graduation memorials formed the corpus's largest family. "Memorials, Congress" titles call on Congress, so they are kept.
+- **Commemorative and procedural joint resolutions** are excluded whatever their wording, by one row per kind: namings of highways, bridges and roads; designations of a day, week, month or year; confirmations of appointees; adjournments, recesses, joint sessions and conventions, joint rules and joint orders; and claims against the state. A joint resolution that expresses a position or calls on Congress is kept, and so is one that proposes changing the process it names, such as a constitutional amendment on confirmations. Each row's guard says what it spares.
+- **Title rules apply only to joint resolutions and to the per-state exceptions.** Bills are never excluded by title: a bill naming a bridge or designating a day is still law.
 
-**Counts** (`uv run lineage eligible` → `reports/document_types.json`). 69,444 of 525,633 records are excluded: 53,165 simple resolutions, 9,470 concurrent resolutions, 2,265 proclamations, 1,635 appointments, 1,494 commemorative joint resolutions, 780 memorials of the three kinds, 423 nominations, 188 commemorations and 24 study requests. The exceptions admit 451 New Jersey concurrent resolutions, 122 Mississippi concurrent resolutions and 102 Georgia resolutions. No record has a type the table doesn't list.
+**Counts** (`uv run lineage eligible` → `reports/document_types.json`). 78,244 of 525,633 records are excluded: 53,165 simple resolutions, 9,470 concurrent resolutions, 5,783 Tennessee memorials filed as joint resolutions, 2,265 proclamations, 1,635 appointments, 1,546 other commemorative joint resolutions, 780 memorials of the three kinds, 423 nominations, 188 commemorations and 24 study requests. Of joint resolutions, 1,074 designate an observance, 701 decide claims against the state, 602 confirm appointees, 357 are procedural and 231 name a road or bridge. The exceptions admit 451 New Jersey concurrent resolutions, 122 Mississippi concurrent resolutions and 102 Georgia resolutions. No record has a type the table doesn't list.
 
 The filter does not bias the recall eval. It selects on what kind of document a record is, independent of its subject, so it removes records that aren't law without regard to any story or act. The unrelated bills on every topic, which are the hard negatives that test precision, all remain.
 

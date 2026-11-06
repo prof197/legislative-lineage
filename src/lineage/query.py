@@ -20,7 +20,7 @@ from numpy.typing import NDArray
 from lineage import queries
 from lineage.bands import load_band_index
 from lineage.boilerplate import boilerplate_kind
-from lineage.lsh import BANDS, BUCKET_CAP, band_keys
+from lineage.lsh import BANDS, BUCKET_CAP, BandIndex, band_keys
 from lineage.minhash import NUM_PERM, permutations, signatures
 from lineage.sections import normalize, split_sections
 from lineage.shingles import section_shingles
@@ -57,7 +57,8 @@ class QueryResult:
     matches: list[Match]
 
 
-def _sign(raw: str, tables_dir: Path) -> tuple[int, NDArray[np.uint32]]:
+def sign_query(raw: str, tables_dir: Path) -> tuple[int, NDArray[np.uint32]]:
+    """The query's section count, and the signatures of its matchable sections."""
     split = split_sections(raw)
     texts = [normalize(section.text) for section in split.sections]
     matchable = [text for text in texts if boilerplate_kind(text) is None]
@@ -67,6 +68,16 @@ def _sign(raw: str, tables_dir: Path) -> tuple[int, NDArray[np.uint32]]:
     if not sets:
         return len(texts), np.empty((0, NUM_PERM), dtype=np.uint32)
     return len(texts), signatures(sets, permutations())
+
+
+def bucket_sizes(keys: NDArray[np.uint64], index: BandIndex) -> NDArray[np.int64]:
+    """The size of the bucket each key lands in, per query section and band."""
+    sizes = np.empty(keys.shape, dtype=np.int64)
+    for band in range(BANDS):
+        column = index.keys[band]
+        starts = np.searchsorted(column, keys[:, band], side="left")
+        sizes[:, band] = np.searchsorted(column, keys[:, band], side="right") - starts
+    return sizes
 
 
 def _candidates(
@@ -89,7 +100,7 @@ def _candidates(
     return codes >> 32, codes & 0xFFFF_FFFF
 
 
-def _require_index(tables_dir: Path) -> None:
+def require_index(tables_dir: Path) -> None:
     needed = [tables_dir / "bands" / "keys.npy", tables_dir / "families" / "families.parquet"]
     if not all(path.exists() for path in needed):
         raise IndexMissingError(f"no index in {tables_dir}; run `lineage index` first")
@@ -97,8 +108,8 @@ def _require_index(tables_dir: Path) -> None:
 
 def query_text(raw: str, tables_dir: Path) -> QueryResult:
     """Every family that shares verified text with `raw`, best first."""
-    _require_index(tables_dir)
-    sections, signed = _sign(raw, tables_dir)
+    require_index(tables_dir)
+    sections, signed = sign_query(raw, tables_dir)
     if not signed.shape[0]:
         return QueryResult(sections, 0, [])
     query_rows, rows = _candidates(band_keys(signed), tables_dir)

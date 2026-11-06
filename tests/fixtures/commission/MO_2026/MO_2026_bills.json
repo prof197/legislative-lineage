@@ -1,0 +1,985 @@
+[
+ {
+  "id": "ocd-bill/2ea9c4d2-3b9a-4bca-af78-390f7af46d93",
+  "legislative_session": "2026",
+  "identifier": "HB 1711",
+  "title": "Establishes the \"Uniform Interstate Depositions and Discovery Act\"",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "House",
+    "description": "Prefiled (H)",
+    "date": "2025-12-01T06:00:00+00:00",
+    "classification": [],
+    "order": 0
+   },
+   {
+    "organization__name": "House",
+    "description": "Read First Time (H)",
+    "date": "2026-01-07T06:00:00+00:00",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "Read Second Time (H)",
+    "date": "2026-01-08T06:00:00+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred: Judiciary(H)",
+    "date": "2026-02-26T06:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "House",
+    "description": "Public Hearing Completed (H)",
+    "date": "2026-03-04T06:00:00+00:00",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "House",
+    "description": "Executive Session Completed (H)",
+    "date": "2026-03-10T05:00:00+00:00",
+    "classification": [],
+    "order": 5
+   },
+   {
+    "organization__name": "House",
+    "description": "Voted Do Pass (H)",
+    "date": "2026-03-10T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "House",
+    "description": "Reported Do Pass (H) - AYES: 10 NOES: 0 PRESENT: 0",
+    "date": "2026-03-11T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 7
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred: Rules - Legislative(H)",
+    "date": "2026-03-26T05:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 8
+   },
+   {
+    "organization__name": "House",
+    "description": "Action Postponed (H)",
+    "date": "2026-05-11T05:00:00+00:00",
+    "classification": [],
+    "order": 9
+   },
+   {
+    "organization__name": "House",
+    "description": "Action Postponed (H)",
+    "date": "2026-05-13T05:00:00+00:00",
+    "classification": [],
+    "order": 10
+   },
+   {
+    "organization__name": "House",
+    "description": "Action Postponed (H)",
+    "date": "2026-05-14T05:00:00+00:00",
+    "classification": [],
+    "order": 11
+   }
+  ],
+  "versions": [
+   {
+    "note": "Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "https://documents.house.mo.gov/billtracking/bills261/hlrbillspdf/3930H.01I.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "be known as sections 510.500, 510.503, 510.506, 510.509, 510.512, 510.515, 510.518, and\n510.521, to read as follows:\n\"Uniform Interstate Depositions and Discovery Act\".\n(1) \"Foreign jurisdiction\", a state other than this state;\n(2) \"Foreign subpoena\", a subpoena issued under authority of a court of record\nof a foreign jurisdiction;\n(3) \"Person\", an individual, corporation, business trust, estate, trust,\npartnership, limited liability company, association, joint venture, public corporation,\ngovernment or political subdivision, agency or instrumentality, or any other legal or\ncommercial entity;\n(4) \"State\", a state of the United States, the District of Columbia, Puerto Rico,\nthe United States Virgin Islands, a federally recognized Indian tribe, or any territory or\ninsular possession subject to the jurisdiction of the United States;\n(5) \"Subpoena\", a document, however denominated, issued under authority of a\ncourt of record requiring a person to:\n(a) Attend and give testimony at a deposition;\n(b) Produce and permit inspection and copying of designated books, documents,\nrecords, electronically stored information, or tangible items in the possession, custody,\nor control of the person; or\n(c) Permit inspection of premises under the control of the person.\nsubmit a foreign subpoena to a clerk of court in the county in which discovery is sought\nto be conducted in this state. A request for the issuance of a subpoena under sections\n510.500 to 510.521 shall not constitute an appearance in the courts of this state.\n2. If a party submits a foreign subpoena to a clerk of court in this state, the clerk,\nin accordance with such court's procedure, shall promptly issue a subpoena for service\nupon the person to which the foreign subpoena is directed.\n3. A subpoena under subsection 2 of this section shall:\n(1) Incorporate the terms used in the foreign subpoena; and\n(2) Contain or be accompanied by the names, addresses, and telephone numbers\nof all counsel of record in the proceeding to which the subpoena relates and of any party\nnot represented by counsel.\nserved in compliance with the Missouri supreme court rules of civil procedure and laws\nof this state.\nstate, and any amendments thereto, apply to subpoenas issued under section 510.506.\nor modify a subpoena issued by a clerk of court under section 510.506 shall comply with\nthe Missouri supreme court rules of civil procedure and statutes of this state and be\nsubmitted to the court in the county in which discovery is to be conducted.\nshall be given to the need to promote uniformity of the law with respect to its subject\nmatter among states that enact it.\npending on August 28, 2026.",
+  "raw_text_url": "https://documents.house.mo.gov/billtracking/bills261/hlrbillspdf/3930H.01I.pdf"
+ },
+ {
+  "id": "ocd-bill/46682e76-7ccf-4157-962d-63fff9eecebe",
+  "legislative_session": "2026",
+  "identifier": "HB 2666",
+  "title": "Establishes the \"Uniform Public Expression Protection Act\"",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "House",
+    "description": "Prefiled (H)",
+    "date": "2026-01-05T06:00:00+00:00",
+    "classification": [],
+    "order": 0
+   },
+   {
+    "organization__name": "House",
+    "description": "Read First Time (H)",
+    "date": "2026-01-07T06:00:00+00:00",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "Read Second Time (H)",
+    "date": "2026-01-08T06:00:00+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred: Judiciary(H)",
+    "date": "2026-03-12T05:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "House",
+    "description": "Public Hearing Completed (H)",
+    "date": "2026-04-08T05:00:00+00:00",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "House",
+    "description": "Executive Session Completed (H)",
+    "date": "2026-04-15T05:00:00+00:00",
+    "classification": [],
+    "order": 5
+   },
+   {
+    "organization__name": "House",
+    "description": "Voted Do Pass (H)",
+    "date": "2026-04-15T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "House",
+    "description": "Reported Do Pass (H) - AYES: 8 NOES: 4 PRESENT: 0",
+    "date": "2026-04-15T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 7
+   }
+  ],
+  "versions": [
+   {
+    "note": "Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "https://documents.house.mo.gov/billtracking/bills261/hlrbillspdf/6374H.01I.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "",
+  "raw_text_url": "https://documents.house.mo.gov/billtracking/bills261/hlrbillspdf/6374H.01I.pdf"
+ },
+ {
+  "id": "ocd-bill/844e1d51-48ed-4db2-95c3-82255c3c677f",
+  "legislative_session": "2026",
+  "identifier": "SB 835",
+  "title": "Modifies provisions relating to court procedures",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Office of the Governor",
+    "description": "Signed by Governor",
+    "date": "2026-07-13T05:00:00+00:00",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Office of the Governor",
+    "description": "Delivered to Governor",
+    "date": "2026-05-28T05:00:00+00:00",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "Signed by House Speaker",
+    "date": "2026-05-28T05:00:00+00:00",
+    "classification": [],
+    "order": 2
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Signed by Senate President Pro Tem",
+    "date": "2026-05-28T05:00:00+00:00",
+    "classification": [],
+    "order": 3
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported Duly Enrolled Rules, Joint Rules, Resolutions & Ethics Committee",
+    "date": "2026-05-28T05:00:00+00:00",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Truly Agreed To and Finally Passed",
+    "date": "2026-05-15T05:00:00+00:00",
+    "classification": [
+     "passage"
+    ],
+    "order": 5
+   },
+   {
+    "organization__name": "House",
+    "description": "CCS H Third Read and Passed",
+    "date": "2026-05-15T05:00:00+00:00",
+    "classification": [
+     "passage",
+     "reading-3"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "House",
+    "description": "H adopts CCR --(5285S11.1SR)",
+    "date": "2026-05-15T05:00:00+00:00",
+    "classification": [],
+    "order": 7
+   },
+   {
+    "organization__name": "Senate",
+    "description": "CCS S Third Read and Passed (5285S.11S)",
+    "date": "2026-05-15T05:00:00+00:00",
+    "classification": [
+     "passage",
+     "reading-3"
+    ],
+    "order": 8
+   },
+   {
+    "organization__name": "Senate",
+    "description": "CCR S offered & adopted (5285S11.1SR)",
+    "date": "2026-05-15T05:00:00+00:00",
+    "classification": [],
+    "order": 9
+   },
+   {
+    "organization__name": "House",
+    "description": "H distributes CCR/CCS",
+    "date": "2026-05-14T05:00:00+00:00",
+    "classification": [],
+    "order": 10
+   },
+   {
+    "organization__name": "Senate",
+    "description": "S distributes CCS  (5285S.11S)",
+    "date": "2026-05-14T05:00:00+00:00",
+    "classification": [],
+    "order": 11
+   },
+   {
+    "organization__name": "Senate",
+    "description": "S distributes CCR (5285S11.1SR)",
+    "date": "2026-05-14T05:00:00+00:00",
+    "classification": [],
+    "order": 12
+   },
+   {
+    "organization__name": "House",
+    "description": "House conferees appointed: Perkins, Parker, Roberts, Butz, Johnson",
+    "date": "2026-05-13T05:00:00+00:00",
+    "classification": [],
+    "order": 13
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate conferees appointed: Crawford, Henderson, Gregory (15), May, Washington",
+    "date": "2026-05-12T05:00:00+00:00",
+    "classification": [],
+    "order": 14
+   },
+   {
+    "organization__name": "House",
+    "description": "H refuses to recede and grants conference",
+    "date": "2026-05-12T05:00:00+00:00",
+    "classification": [],
+    "order": 15
+   },
+   {
+    "organization__name": "Senate",
+    "description": "S refuses to concur in HCS, as amended and requests H recede or grant conference",
+    "date": "2026-05-11T05:00:00+00:00",
+    "classification": [],
+    "order": 16
+   },
+   {
+    "organization__name": "House",
+    "description": "H Third Read and Passed",
+    "date": "2026-05-07T05:00:00+00:00",
+    "classification": [
+     "passage",
+     "reading-3"
+    ],
+    "order": 17
+   },
+   {
+    "organization__name": "House",
+    "description": "HCS, as amended, H adopted --(5285H.07C)",
+    "date": "2026-05-07T05:00:00+00:00",
+    "classification": [],
+    "order": 18
+   },
+   {
+    "organization__name": "House",
+    "description": "HA 3 to HCS H offered & defeated (Bosley)--(5285H07.08H)",
+    "date": "2026-05-07T05:00:00+00:00",
+    "classification": [],
+    "order": 19
+   },
+   {
+    "organization__name": "House",
+    "description": "HA 2 to HCS, as amended, H adopted (5285H07.04H)",
+    "date": "2026-05-07T05:00:00+00:00",
+    "classification": [],
+    "order": 20
+   },
+   {
+    "organization__name": "House",
+    "description": "HA 1 to HA 2 to HCS H offered & adopted (Smith (46))--(5285H07.11H)",
+    "date": "2026-05-07T05:00:00+00:00",
+    "classification": [],
+    "order": 21
+   },
+   {
+    "organization__name": "House",
+    "description": "HA 2 to HCS H offered (Roberts)--(5285H07.04H)",
+    "date": "2026-05-07T05:00:00+00:00",
+    "classification": [],
+    "order": 22
+   },
+   {
+    "organization__name": "House",
+    "description": "HA 1 to HCS H offered & adopted (Roberts)--(5285H07.03H)",
+    "date": "2026-05-07T05:00:00+00:00",
+    "classification": [],
+    "order": 23
+   },
+   {
+    "organization__name": "House",
+    "description": "Reported Do Pass H Rules - Administrative",
+    "date": "2026-04-15T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 24
+   },
+   {
+    "organization__name": "House",
+    "description": "Voted Do Pass  H Rules - Administrative",
+    "date": "2026-04-15T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 25
+   },
+   {
+    "organization__name": "House",
+    "description": "HCS Referred H Rules - Administrative",
+    "date": "2026-04-08T05:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 26
+   },
+   {
+    "organization__name": "House",
+    "description": "HCS Reported Do Pass H Financial Institutions",
+    "date": "2026-04-01T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 27
+   },
+   {
+    "organization__name": "House",
+    "description": "HCS Voted Do Pass H Financial Institutions",
+    "date": "2026-04-01T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 28
+   },
+   {
+    "organization__name": "House",
+    "description": "Hearing Conducted H Financial Institutions",
+    "date": "2026-03-25T05:00:00+00:00",
+    "classification": [],
+    "order": 29
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred H Financial Institutions",
+    "date": "2026-03-12T05:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 30
+   },
+   {
+    "organization__name": "House",
+    "description": "H Second Read",
+    "date": "2026-02-23T06:00:00+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 31
+   },
+   {
+    "organization__name": "House",
+    "description": "H First Read",
+    "date": "2026-02-19T06:00:00+00:00",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 32
+   },
+   {
+    "organization__name": "Senate",
+    "description": "S Third Read and Passed",
+    "date": "2026-02-19T06:00:00+00:00",
+    "classification": [
+     "passage",
+     "reading-3"
+    ],
+    "order": 33
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported Truly Perfected S Rules, Joint Rules, Resolutions and Ethics Committee",
+    "date": "2026-02-18T06:00:00+00:00",
+    "classification": [],
+    "order": 34
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Perfected",
+    "date": "2026-02-18T06:00:00+00:00",
+    "classification": [],
+    "order": 35
+   },
+   {
+    "organization__name": "Senate",
+    "description": "SS for SCS, as amended, S adopted",
+    "date": "2026-02-18T06:00:00+00:00",
+    "classification": [
+     "passage"
+    ],
+    "order": 36
+   },
+   {
+    "organization__name": "Senate",
+    "description": "SA 1 to SS for SCS S offered & adopted  (Webber)--(5285S05.03S)",
+    "date": "2026-02-18T06:00:00+00:00",
+    "classification": [],
+    "order": 37
+   },
+   {
+    "organization__name": "Senate",
+    "description": "SS for SCS S offered (Crawford)--(5285S.05F)",
+    "date": "2026-02-18T06:00:00+00:00",
+    "classification": [],
+    "order": 38
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported from S Insurance and Banking Committee w/SCS",
+    "date": "2026-02-12T06:00:00+00:00",
+    "classification": [],
+    "order": 39
+   },
+   {
+    "organization__name": "Senate",
+    "description": "SCS Voted Do Pass (w/SCS SBs 835 & 1111) Insurance and Banking Committee (5285S.04C)",
+    "date": "2026-02-10T06:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 40
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Hearing Conducted S Insurance and Banking Committee",
+    "date": "2026-02-03T06:00:00+00:00",
+    "classification": [],
+    "order": 41
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Hearing Cancelled S Insurance and Banking Committee",
+    "date": "2026-01-27T06:00:00+00:00",
+    "classification": [],
+    "order": 42
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Second Read and Referred S Insurance and Banking Committee",
+    "date": "2026-01-08T06:00:00+00:00",
+    "classification": [
+     "reading-2",
+     "referral-committee"
+    ],
+    "order": 43
+   },
+   {
+    "organization__name": "Senate",
+    "description": "S First Read",
+    "date": "2026-01-07T06:00:00+00:00",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 44
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Prefiled",
+    "date": "2025-12-01T06:00:00+00:00",
+    "classification": [],
+    "order": 45
+   }
+  ],
+  "versions": [
+   {
+    "note": "5285S.11T - Truly Agreed to and Finally Passed",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.senate.mo.gov/26info/pdf-bill/tat/SB835.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "5285H.07C - House Committee Substitute",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.senate.mo.gov/26info/pdf-bill/House/HCS-SB/SB0835.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "5285S.05P - Perfected",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.senate.mo.gov/26info/pdf-bill/perf/SB835.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "5285S.04C - Senate Committee Substitute",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.senate.mo.gov/26info/pdf-bill/comm/SB835.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "5285S.02I - Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.senate.mo.gov/26info/pdf-bill/intro/SB835.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "2/18/2026 - SS for SCS S offered (Crawford)--(5285S.05F) 2/18/2026 - Adopted, as amended",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.senate.mo.gov/BillTracking/Bills/BillInformation?handler=AmendmentPdf&year=2026&amendmentId=99",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "2/18/2026 - SA 1 to SS for SCS S offered & adopted (Webber)--(5285S05.03S) 2/18/2026 - Adopted",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.senate.mo.gov/BillTracking/Bills/BillInformation?handler=AmendmentPdf&year=2026&amendmentId=102",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "5/15/2026 - CCR S offered & adopted (5285S11.1SR) 5/15/2026 - Adopted",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.senate.mo.gov/BillTracking/Bills/BillInformation?handler=AmendmentPdf&year=2026&amendmentId=942",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "",
+  "raw_text_url": null
+ },
+ {
+  "id": "ocd-bill/e07348b0-513f-4fda-9f17-57bcc5fb3b76",
+  "legislative_session": "2026",
+  "identifier": "SB 1067",
+  "title": "Establishes the Uniform Public Expression Protection Act, which provides procedures for dismissal of actions based on public expression",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Office of the Governor",
+    "description": "Signed by Governor",
+    "date": "2026-07-13T05:00:00+00:00",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Office of the Governor",
+    "description": "Delivered to Governor",
+    "date": "2026-05-28T05:00:00+00:00",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "Signed by House Speaker",
+    "date": "2026-05-28T05:00:00+00:00",
+    "classification": [],
+    "order": 2
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Signed by Senate President Pro Tem",
+    "date": "2026-05-28T05:00:00+00:00",
+    "classification": [],
+    "order": 3
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported Duly Enrolled Rules, Joint Rules, Resolutions & Ethics Committee",
+    "date": "2026-05-28T05:00:00+00:00",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Truly Agreed To and Finally Passed",
+    "date": "2026-05-15T05:00:00+00:00",
+    "classification": [
+     "passage"
+    ],
+    "order": 5
+   },
+   {
+    "organization__name": "House",
+    "description": "H Third Read and Passed",
+    "date": "2026-05-15T05:00:00+00:00",
+    "classification": [
+     "passage",
+     "reading-3"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "House",
+    "description": "HCS H defeated",
+    "date": "2026-05-15T05:00:00+00:00",
+    "classification": [],
+    "order": 7
+   },
+   {
+    "organization__name": "House",
+    "description": "Reported Do Pass H Fiscal Review",
+    "date": "2026-05-15T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 8
+   },
+   {
+    "organization__name": "House",
+    "description": "Voted Do Pass H Fiscal Review",
+    "date": "2026-05-15T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "House",
+    "description": "Bill Placed on H Informal Calendar",
+    "date": "2026-05-11T05:00:00+00:00",
+    "classification": [],
+    "order": 10
+   },
+   {
+    "organization__name": "House",
+    "description": "Voted Do Pass H Fiscal Review",
+    "date": "2026-05-11T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 11
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred H Fiscal Review Committee",
+    "date": "2026-05-07T05:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 12
+   },
+   {
+    "organization__name": "House",
+    "description": "HCS Reported Do Pass H Rules - Legislative",
+    "date": "2026-05-05T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 13
+   },
+   {
+    "organization__name": "House",
+    "description": "HCS Voted Do Pass H Rules - Legislative",
+    "date": "2026-05-04T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 14
+   },
+   {
+    "organization__name": "House",
+    "description": "HCS Referred H Rules - Legislative",
+    "date": "2026-04-30T05:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 15
+   },
+   {
+    "organization__name": "House",
+    "description": "HCS Reported Do Pass H Judiciary",
+    "date": "2026-04-29T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 16
+   },
+   {
+    "organization__name": "House",
+    "description": "HCS Voted Do Pass H Judiciary",
+    "date": "2026-04-29T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 17
+   },
+   {
+    "organization__name": "House",
+    "description": "Hearing Conducted H Judiciary",
+    "date": "2026-04-28T05:00:00+00:00",
+    "classification": [],
+    "order": 18
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred H Judiciary",
+    "date": "2026-04-21T05:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 19
+   },
+   {
+    "organization__name": "House",
+    "description": "H Second Read",
+    "date": "2026-04-07T05:00:00+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 20
+   },
+   {
+    "organization__name": "House",
+    "description": "H First Read",
+    "date": "2026-04-02T05:00:00+00:00",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 21
+   },
+   {
+    "organization__name": "Senate",
+    "description": "S Third Read and Passed",
+    "date": "2026-04-02T05:00:00+00:00",
+    "classification": [
+     "passage",
+     "reading-3"
+    ],
+    "order": 22
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported Truly Perfected S Rules, Joint Rules, Resolutions and Ethics Committee",
+    "date": "2026-03-31T05:00:00+00:00",
+    "classification": [],
+    "order": 23
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Perfected",
+    "date": "2026-03-31T05:00:00+00:00",
+    "classification": [],
+    "order": 24
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported from S Judiciary and Civil and Criminal Jurisprudence Committee",
+    "date": "2026-03-25T05:00:00+00:00",
+    "classification": [],
+    "order": 25
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Voted Do Pass S Judiciary and Civil and Criminal Jurisprudence Committee",
+    "date": "2026-02-04T06:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 26
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Hearing Conducted S Judiciary and Civil and Criminal Jurisprudence Committee",
+    "date": "2026-01-21T06:00:00+00:00",
+    "classification": [],
+    "order": 27
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Second Read and Referred S Judiciary and Civil and Criminal Jurisprudence Committee",
+    "date": "2026-01-15T06:00:00+00:00",
+    "classification": [
+     "reading-2",
+     "referral-committee"
+    ],
+    "order": 28
+   },
+   {
+    "organization__name": "Senate",
+    "description": "S First Read",
+    "date": "2026-01-07T06:00:00+00:00",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 29
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Prefiled",
+    "date": "2025-12-01T06:00:00+00:00",
+    "classification": [],
+    "order": 30
+   }
+  ],
+  "versions": [
+   {
+    "note": "5144H.02C - House Committee Substitute",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.senate.mo.gov/26info/pdf-bill/House/HCS-SB/SB1067.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "5144S.01T - Truly Agreed to and Finally Passed",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.senate.mo.gov/26info/pdf-bill/tat/SB1067.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "5144S.01P - Perfected",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.senate.mo.gov/26info/pdf-bill/perf/SB1067.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "5144S.01I - Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.senate.mo.gov/26info/pdf-bill/intro/SB1067.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "",
+  "raw_text_url": null
+ }
+]

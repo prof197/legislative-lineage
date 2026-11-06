@@ -1,73 +1,73 @@
 [
- {
-  "id": "ocd-bill/6bba8409-c76e-4632-be2a-67e7bac32c2a",
-  "legislative_session": "2023rs",
-  "jurisdiction_name": "Alabama",
-  "identifier": "HB 521",
-  "title": "Relating to voting; to authorize the Secretary of State to offer certain state residents the ability to register their political party affiliation and provide a list of party registrants to a political party in certain circumstances; to provide criminal penalties for violations; to provide for the repeal of this act on a certain date; and in connection therewith would have as its purpose or effect the requirement of a new or increased expenditure of local funds within the meaning of Section 111.05 of the Constitution of Alabama of 2022.",
-  "chamber": "lower",
-  "classification": [
-   "bill"
-  ],
-  "subject": [
-   "Political parties"
-  ],
-  "abstracts": [
-   {
-    "abstract": "Political parties; Secretary of State authorized to register party affiliation of residents",
-    "note": "full subject"
-   }
-  ],
-  "other_titles": [],
-  "actions": [
-   {
-    "organization__name": "House",
-    "description": "Introduced and Referred (Constitution, Campaigns and Elections)",
-    "date": "2023-05-24T04:00:00+00:00",
+  {
+    "id": "ocd-bill/dae5e582-6aeb-4a6c-857d-f871278fa676",
+    "legislative_session": "2023rs",
+    "jurisdiction_name": "Alabama",
+    "identifier": "HB 81",
+    "title": "Relating to the Alabama Board of Funeral Service; to amend Section 34-13-1, as amended by Act 2022-339, 2022 Regular Session, Sections 34-13-20, 34-13-21, and 34-13-22, Sections 34-13-23 and 34-13-27, as amended by Act 2022-339, 2022 Regular Session, Code of Alabama 1975, to rename the Alabama Board of Funeral Service as the Alabama Board of Funeral Services and to provide further for definitions and the membership of the board; to add Article 5 to Chapter 13, Title 34, Code of Alabama 1975, by amending and renumbering Sections 27-17A-1, 27-17A-3, 27-17A-4, 27-17A-10 to 27-17A-25, inclusive, 27-17A-30 to 27-17A-34, inclusive, and 27-17A-40 to 27-17A-57, inclusive, as Sections 34-13-170 to 34-13-172, inclusive, 34-13-190 to 34-13-206, inclusive, 34-13-230 to 34-13-234, inclusive, and 34-13-260 to 34-13-277, inclusive, Code of Alabama 1975; to establish the Alabama Preneed Funeral and Cemetery Act of 2023; to transfer the existing Preneed Funeral and Cemetery Act, and the regulation of preneed contracts, from the Commissioner and Department of Insurance to the Alabama Board of Funeral Service; to authorize the Department of Insurance to temporarily transfer certain funds to the board to defray costs associated with the administration and operation of the Alabama Preneed Funeral and Cemetery Act of 2023; and in connection therewith would have as its purpose or effect the requirement of a new or increased expenditure of local funds within the meaning of Section 111.05 of the Constitution of Alabama of 2022.",
+    "chamber": "lower",
     "classification": [
-     "introduction",
-     "referral"
+      "bill"
     ],
-    "order": 0
-   },
-   {
-    "organization__name": "House",
-    "description": "Read First Time in House of Origin",
-    "date": "2023-05-24T04:00:00+00:00",
-    "classification": [
-     "reading-1"
+    "subject": [
+      "Alabama Board of Funeral Service"
     ],
-    "order": 1
-   }
-  ],
-  "related_bills": [],
-  "sponsors": [
-   {
-    "name": "Matt Simpson",
-    "primary": true,
-    "classification": "primary"
-   }
-  ],
-  "documents": [],
-  "versions": [
-   {
-    "note": "Introduced",
-    "date": "",
-    "links": [
-     {
-      "url": "https://www.legislature.state.al.us/pdf/SearchableInstruments/2023RS/HB521-int.pdf",
-      "media_type": "application/pdf"
-     }
-    ]
-   }
-  ],
-  "sources": [
-   {
-    "url": "https://alison.legislature.state.al.us/bill-search"
-   }
-  ],
-  "votes": [],
-  "raw_text": "7YG92E-1\nBy Representative Simpson\nRFD: Constitution, Campaigns and Elections\nFirst Read: 24-May-23\n2023 Regular Session\nSYNOPSIS:\nThere is no provision in state law that provides\nfor political party registration.\nThis bill would authorize the Secretary of State\nto create a form posted on its website to allow\nresidents of voting age to register a political party\naffiliation with the Secretary of S",
-  "raw_text_url": "https://www.legislature.state.al.us/pdf/SearchableInstruments/2023RS/HB521-int.pdf"
- }
+    "abstracts": [
+      {
+        "abstract": "Alabama Board of Funeral Service, membership and definitions revised, Alabama Preneed Funeral and Cemetery Act of 2023 established, Department of Insurance to temporarily transfer funds to the board to defray costs.",
+        "note": "full subject"
+      }
+    ],
+    "other_titles": [],
+    "actions": [
+      {
+        "organization__name": "House",
+        "description": "Introduced and Referred (Insurance)",
+        "date": "2023-03-07T05:00:00+00:00",
+        "classification": [
+          "introduction",
+          "referral"
+        ],
+        "order": 0
+      },
+      {
+        "organization__name": "House",
+        "description": "Read First Time in House of Origin",
+        "date": "2023-03-07T05:00:00+00:00",
+        "classification": [
+          "reading-1"
+        ],
+        "order": 1
+      }
+    ],
+    "related_bills": [],
+    "sponsors": [
+      {
+        "name": "Steve Clouse",
+        "primary": true,
+        "classification": "primary"
+      }
+    ],
+    "documents": [],
+    "versions": [
+      {
+        "note": "Introduced",
+        "date": "",
+        "links": [
+          {
+            "url": "https://www.legislature.state.al.us/pdf/SearchableInstruments/2023RS/HB81-int.pdf",
+            "media_type": "application/pdf"
+          }
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "url": "https://alison.legislature.state.al.us/bill-search"
+      }
+    ],
+    "votes": [],
+    "raw_text": "7GGL22-1\nBy Representative Clouse\nRFD: Insurance\nFirst Read: 07-Mar-23\nSYNOPSIS:\nUnder existing law, the Alabama Board of Funeral\nService licenses and regulates funeral establishments,\nfuneral directors, and embalmers.\nThis bill would provide further for definitions\nand the membership of the board.\nThis bill would also establish the Alabama\nPreneed Funeral and Cemetery Act of 2023 and would\ntransf",
+    "raw_text_url": "https://www.legislature.state.al.us/pdf/SearchableInstruments/2023RS/HB81-int.pdf"
+  }
 ]

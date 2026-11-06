@@ -1,0 +1,219 @@
+[
+ {
+  "id": "ocd-bill/96704f52-935a-45e6-9313-f9e85eddae71",
+  "legislative_session": "57th-1st-regular",
+  "identifier": "SB 1206",
+  "title": "special deposits; banks; requirements; definitions",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Senate First Reading",
+    "date": "2025-01-23",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate Second Reading",
+    "date": "2025-01-27",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "Senate",
+    "description": "DPA/SE",
+    "date": "2025-02-10",
+    "classification": [
+     "amendment-passage"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "Senate",
+    "description": "DPA",
+    "date": "2025-02-25",
+    "classification": [
+     "amendment-passage"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "Senate",
+    "description": "PASSED",
+    "date": "2025-02-26",
+    "classification": [
+     "passage",
+     "reading-3"
+    ],
+    "order": 4
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Transmit to House",
+    "date": "2025-02-26",
+    "classification": [],
+    "order": 5
+   },
+   {
+    "organization__name": "House",
+    "description": "House First Reading.",
+    "date": "2025-03-06",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "House",
+    "description": "House Second Reading",
+    "date": "2025-03-10",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 7
+   },
+   {
+    "organization__name": "House",
+    "description": "DP",
+    "date": "2025-03-11",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 8
+   },
+   {
+    "organization__name": "House",
+    "description": "House Placed on Consent Calendar",
+    "date": "2025-04-01",
+    "classification": [],
+    "order": 9
+   },
+   {
+    "organization__name": "House",
+    "description": "DP",
+    "date": "2025-04-09",
+    "classification": [
+     "informal-passage"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "House",
+    "description": "PASSED",
+    "date": "2025-04-15",
+    "classification": [
+     "passage",
+     "reading-3"
+    ],
+    "order": 11
+   },
+   {
+    "organization__name": "House",
+    "description": "Transmit to Senate",
+    "date": "2025-04-15",
+    "classification": [],
+    "order": 12
+   },
+   {
+    "organization__name": "Office of the Governor",
+    "description": "Transmit to Governor",
+    "date": "2025-04-16",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 13
+   },
+   {
+    "organization__name": "Office of the Governor",
+    "description": "Signed by Governor",
+    "date": "2025-04-18",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 14
+   }
+  ],
+  "versions": [
+   {
+    "note": "Introduced Version",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.azleg.gov/legtext/57leg/1R/bills/SB1206P.htm",
+      "media_type": "text/html"
+     },
+     {
+      "url": "https://www.azleg.gov/legtext/57leg/1r/bills/sb1206p.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Senate Engrossed Version",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.azleg.gov/legtext/57leg/1R/bills/SB1206S.htm",
+      "media_type": "text/html"
+     },
+     {
+      "url": "https://www.azleg.gov/legtext/57leg/1r/bills/sb1206s.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Chaptered Version",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.azleg.gov/legtext/57leg/1R/laws/0063.htm",
+      "media_type": "text/html"
+     },
+     {
+      "url": "https://www.azleg.gov/legtext/57leg/1r/laws/0063.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "SENATE - Finance - Strike Everything",
+    "date": "",
+    "links": [
+     {
+      "url": "https://apps.azleg.gov/BillStatus/GetDocumentPdf/523153",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://apps.azleg.gov/BillStatus/GetDocumentPdf/523908",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "SENATE - Finance",
+    "date": "",
+    "links": [
+     {
+      "url": "https://apps.azleg.gov/BillStatus/GetDocumentPdf/523519",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://apps.azleg.gov/BillStatus/GetDocumentPdf/523507",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "\n\nBe it enacted by the Legislature of the\nState of Arizona:\n\nSection 1. Title 6, chapter 2, Arizona Revised\nStatutes, is amended by adding article 5.1, to read:\n\nARTICLE 5.1. SPECIAL DEPOSITS\n\nSTART_STATUTE6-251. Short title\n\nThis article may be cited as the uniform special\ndeposits act. END_STATUTE\n\nSTART_STATUTE6-252. Definitions\n\nIn this article, unless the context otherwise\nrequires:\n\n1. \"Account agreement\"\nmeans an agreement that:\n\n(a) Is in a\nrecord between a bank and one or more depositors;\n\n(b) May have\none or more beneficiaries as additional parties; and\n\n(c) States the\nintention of the parties to establish a special deposit as governed by this\nArticle.\n\n2. \"Bank\" means a person\nengaged in the business of banking and includes a savings bank, savings and\nloan association, credit union, trust company and a bank as defined in section\n6-101.  Each branch or separate office of a bank is a separate bank for\nthe purpose of this article.\n\n3. \"Beneficiary\" means a\nperson that:\n\n(a) Is\nidentified as a beneficiary in an account agreement; or\n\n(b) If not\nidentified as a beneficiary in an account agreement, may be entitled to payment\nfrom a special deposit:\n\n(i) Under the\naccount agreement; or\n\n(ii) on\ntermination of the special deposit.\n\n4. \"Contingency\" means an\nevent or circumstance stated in an account agreement that is not certain to\noccur but must occur before a bank is obligated to pay a beneficiary.\n\n5. \"Creditor process\" means\nattachment, garnishment, levy, notice of lien, sequestration, or similar\nprocess issued by or on behalf of a creditor or other claimant.\n\n6. \"Depositor\" means a\nperson that establishes or funds a special deposit.\n\n7. \"Good faith\" means\nhonesty in fact and observance of reasonable commercial standards of fair\ndealing.\n\n8. \"Knowledge\" of fact\nmeans:\n\n(a) With\nrespect to a beneficiary, actual knowledge of the fact; or\n\n(b) With\nrespect to a bank holding a special deposit:\n\n(i) if the bank\nHas established a reasonable routine for communicating material information to\nan individual to whom the bank has assigned RESPONSIBILITY for the special\ndeposit and maintains reasonable compliance with the routine, actual knowledge\nof the fact by the individual; or\n\n(ii) If the\nbank has not established and maintained reasonable compliance with a routine\ndescribed in item (i) of this subdivision or otherwise\nexercised due diligence, implied knowledge of the fact that would have come to\nthe attention of an individual to whom the bank has assigned responsibility for\nthe special deposit.\n\n9. \"Obligated\nto pay a beneficiary\" or \"Obligation to pay a beneficiary\" means\na beneficiary is entitled under the account agreement to receive from the bank\na payment when:\n\n(a) A contingency has occurred; and\n\n(b) The bank\nhas knowledge the contingency has occurred.\n\n10. \"Permissible purpose\"\nmeans a governmental, regulatory, commercial, charitable, or testamentary\nobjective of the parties stated in an account agreement.  The terms includes an\nobjective to:\n\n(a) Hold funds:\n\n(i) In escrow,\nincluding for a purchase and sale, lease, buyback, or other transaction;\n\n(ii) As a\nsecurity deposit of a tenant.\n\n(iii) That may\nbe distributed to a person as remuneration, retirement or other benefit, or\ncompensation under a judgment, consent decree, court order, or other decision\nof a tribunal; or\n\n(iv) For\ndistribution to a defined class of persons after identification of the class\nmembers and their interest in the funds;\n\n(b) Provide\nassurance with respect to an obligation created by a contract, such as earnest\nmoney to ensure a transaction closes;\n\n(c) Settle an\nobligation that arises in the operation of a payment system, securities\nsettlement system, or other financial market infrastructure.\n\n(d) Provide\nassurance with respect to an obligation that arises in the operation of a\npayment system, securities settlement system, or other financial market\ninfrastructure; or\n\n(e) Hold\nmargin, other cash collateral, or funds that support the orderly functioning of\nfinancial market infrastructure or the performance of an obligation with\nrespect to the infrastructure.\n\n11. \"Person\" means an\nindividual, estate, business or nonprofit entity, government or governmental\nsubdivision, agency, or instrumentality, or other legal entity.  The term\nincludes a protected series, however denominated, of an entity if the protected\nseries is established under law that limits, or limits if conditions specified\nunder law are SATISFIED, the ability of a creditor of the entity or of any\nother protected series of the entity to satisfy a claim from assets of the\nprotected series.\n\n12. \"Record\" means\ninformation:\n\n(a) Inscribed\non a tangible medium; or\n\n(b) Stores in\nan electronic or other medium and retrievable in perceivable form.\n\n13. \"Special deposit\" means\na deposit that satisfies section 6-255.\n\n14. \"State\" means a state\nof the United States, the District of Columbia, Puerto Rico, the United States\nVirgin Islands, or any other Territory or possession subject to the\njurisdiction of the United States.  The term includes an agency or\ninstrumentality of the state. END_STATUTE\n\nSTART_STATUTE6-253. Scope; choice of law; forum\n\nA. This\nArticle applies to a special deposit under an account agreement that states the\nintention of the parties to establish a special deposit governed by this\narticle, regardless of whether a party to the account agreement or a\ntransaction related to the special deposit, or the special deposit itself, has\na reasonable relation to this state.\n\nB. The parties to an account\nagreement may choose a forum in this state for settling a dispute arising out\nof the special deposit, regardless of whether a party to the account agreement\nor a transaction related to the special deposit, or the special deposit itself,\nhas a reasonable relation to this state.\n\nC. This article does not affect:\n\n1. A right or obligation relating to\na deposit other than a special deposit under this article; or\n\n2. The voidability of a deposit or\ntransfer that is fraudulent or voidable under other law. END_STATUTE\n\nSTART_STATUTE6-254. Variation by agreement or amendment\n\nA. The effect of this section and\nSections 6-252, 6-253, 6-255, 6-256, 6-258, 6-259,\n6-260, 6-261 and 6-264 may not be varied by agreement, except\nas provided in those sections.  Subject to subsection B of this section, the\neffect of sections 6-257, 6-262 and 6-263 may be varied by\nagreement.\n\nB. A provision in an account\nagreement or other record that substantially excuses liability or substantially\nlimits remedies for failure to perform an obligation under this article is not\nsufficient to vary the effect of this article.\n\nC. If a beneficiary is a party to an\naccount agreement, the bank and the depositor may amend the agreement WITHOUT\nthe consent of the beneficiary only if the agreement expressly permits the\namendment.\n\nD. If a beneficiary is not a party to\nan account agreement and the bank and the depositor know the beneficiary has\nknowledge of the agreement's terms, the bank and the depositor may amend the\nagreement without the consent of the beneficiary only if the amendment does not\nadversely and materially affect a payment right of the beneficiary.\n\nE. If a beneficiary is not a party to\nan account agreement and the bank and the depositor Do not know whether the\nbeneficiary has knowledge of the agreement's terms, the bank and the depositor\nmay amend the agreement without the consent of the beneficiary only if the\namendment is made in good faith. END_STATUTE\n\nSTART_STATUTE6-255. Requirements for special deposits\n\nA deposit is a special deposit if it is:\n\n1. A deposit of funds in a bank under\nan account agreement.\n\n2. For the benefit of at least two\nbeneficiaries, one or more of which may be a depositor.\n\n3. Denominated\nin a medium of exchange that is currently authorized or adopted by a domestic\nor foreign government.\n\n4. For\na permissible purpose as stated in the account agreement; and\n\n5. Subject\nto a contingency. END_STATUTE\n\nSTART_STATUTE6-256. Permissible purpose\n\nA. A\nspecial deposit must serve at least one permissible purpose stated in the\naccount agreement from the time the special deposit is created in the account\nagreement until termination of the special deposit.\n\nB. If, before termination of the\nspecial deposit, the bank or a court determines the special deposit no longer\nsatisfies subsection A of this section, Sections 6-258, 6-259, 6-260\nand 6-261 cease to apply to any funds deposited in the special deposit\nafter the special deposit ceases to satisfy subsection A of this section.\n\nC. If, before termination of a\nspecial deposit, a bank determines the special deposit no longer satisfies\nsubsection A of this section, the bank may take action it believes is necessary\nunder the circumstances, including terminating the special deposit. END_STATUTE\n\nSTART_STATUTE6-257. Payment to beneficiary by bank\n\nA. Unless the account agreement states\notherwise, the bank is obligated to pay a beneficiary if there are sufficient\nactually and finally collected funds in the balance of the special deposit.\n\nB. Except as provided in subsection C\nof this section, the obligation to pay the beneficiary is excused if the funds\navailable in the special deposit are insufficient to cover such payments.\n\nC. Unless the account agreement\nprovides otherwise, if the funds available in the special deposit are\ninsufficient to cover an obligation to pay a beneficiary, a beneficiary may\nelect to be paid the funds that are available or, if there is more than one\nbeneficiary, a pro rata share of the funds available.  Payment to the\nbeneficiary making the election under this subsection discharges the bank's\nobligation to pay a beneficiary and does not constitute an accord and\nsatisfaction with respect to another person obligated to the beneficiary.\n\nD. Unless the account agreement\nprovides otherwise, the obligation of the bank obligated to pay a beneficiary\nis immediately due and payable.\n\nE. The bank may discharge its\nobligation under this section by:\n\n1. Crediting another transaction\naccount of the beneficiary; or\n\n2. Taking other action that:\n\n(a) Is\npermitted under the account agreement for the bank to obtain a discharge; or\n\n(b) Otherwise\nwould constitute a discharge under law.\n\nF. If the bank obligated to pay a\nbeneficiary has incurred an obligation to discharge the obligation of another\nperson, the obligation of the other person is discharged if action by the bank\nunder subsection E of this section would constitute a discharge of the\nobligation of the other person under law that determines whether an obligation\nis SATISFIED. END_STATUTE\n\nSTART_STATUTE6-258. Property interest of depositor or beneficiary\n\nA. Neither\na depositor nor a beneficiary has a property interest in a special deposit.\n\nB. Any\nproperty interest with respect to a special deposit is only in the right to\nreceive payment if the bank is obligated to pay a beneficiary and not in the\nspecial deposit itself.  Any property interest under this subsection is\ndetermined under other law. END_STATUTE\n\nSTART_STATUTE6-259. When creditor process enforceable against bank\n\nA. Subject to subsection B of this\nsection, creditor process with respect to a special deposit is not enforceable\nagainst the bank holding the special deposit. \n\nB. Creditor process is enforceable\nagainst a bank Holding a special deposit with respect to an amount the bank is\nobligated to pay a beneficiary or a depositor if the process:\n\n1. Is served on the bank;\n\n2. Provides sufficient information to\npermit the bank to identify the depositor or the beneficiary from the bank's\nbooks and records; and\n\n3. Gives the bank a reasonable\nopportunity to act on the process.\n\nC. Creditor process served on a bank\nbefore it is enforceable against the bank under subsection B of this section\ndoes not create a right of the creditor against the bank or a duty of the bank\nto the creditor.  Other law determines whether creditor process creates a lien\nenforceable against the beneficiary on a contingent interest of a beneficiary,\nincluding a depositor as a beneficiary, even if not enforceable against the\nbank. END_STATUTE\n\nSTART_STATUTE6-260. Injunction or similar relief\n\nA court may enjoin, or grant similar relief that\nwould have the effect of enjoining, a bank from paying a depositor or\nbeneficiary only if payment would constitute a material fraud or facilitate a\nmaterial fraud with respect to a special deposit. END_STATUTE\n\nSTART_STATUTE6-261. Recoupment or setoff\n\nA. Except as provided in subsection B\nor C of this section, a bank may not exercise a right of recoupment or setoff\nagainst a special deposit.\n\nB. An account agreement may authorize\na bank to debit the special deposit:\n\n1. When the bank becomes obligated to\npay a beneficiary, in an amount that does not exceed the amount necessary to\ndischarge the obligation;\n\n2. For a fee assessed by the bank\nthat relates to an overdraft in the special deposit account;\n\n3. For costs incurred by the bank\nthat relate directly to the special deposit; or\n\n4. To reverse an earlier credit\nposted by the bank to the balance of the special deposit account, if the\nreversal occurs under an event or circumstance warranted under other law of\nthis state governing mistake and restitution.\n\nC. The bank holding a special deposit\nmay exercise a right of recoupment or setoff against an obligation to pay a\nbeneficiary, even if the bank funds payment from the special deposit. END_STATUTE\n\nSTART_STATUTE6-262. Duties and liability of bank\n\nA. A\nbank does not have a fiduciary duty to any person with respect to a special\ndeposit.\n\nB. When\na bank holding a special deposit becomes obligated to pay a beneficiary, a\ndebtor-creditor relationship arises between the bank and beneficiary.\n\nC. A bank holding a special deposit\nhas a duty to a beneficiary to comply with the account agreement and this\narticle.\n\nD. If the bank holding a special\ndeposit does not comply with the account agreement or this article, the bank is\nliable to a depositor or beneficiary only for damages proximately caused by the\nnoncompliance.  Except as provided by other law of this state, the bank is not\nliable for consequential, special, or punitive damages.\n\nE. The bank holding a special deposit\nmay rely on records presented in compliance with the account AGREEMENT to\ndetermine whether the bank is obligated to pay a beneficiary.\n\nF. If the account agreement requires\npayment on presentation of a record, the bank shall determine within a\nreasonable time whether the record is sufficient to require payment.  If the\nagreement requires action by the bank on presentation of a record, the bank is\nnot liable for relying in good faith on the genuineness of the record if the\nrecord appears on its face to be genuine.\n\nG. Unless the account agreement\nprovides otherwise, the bank is not required to determine whether a permissible\npurpose stated in the agreement continues to exist. END_STATUTE\n\nSTART_STATUTE6-263. Term and termination\n\nA. Unless otherwise provided in an\naccount agreement, a special deposit terminates five years after the date the\nspecial deposit was first funded.\n\nB. Unless otherwise provided in the\naccount agreement, if the bank cannot identify or locate a beneficiary entitled\nto payment when the special deposit is terminated, and a balance remains in the\nspecial deposit, the bank shall pay the balance to the depositor or depositors\nas a beneficiary or beneficiaries.\n\nC. A bank that pays the remaining\nbalance as provided under subsection B of this section has no further\nobligation to the special deposit. END_STATUTE\n\nSTART_STATUTE6-264. Principles of law and equity\n\nTitle 47, consumer protection law, law governing\ndeposits generally, law related to escheat and abandoned or unclaimed property,\nand the principles of law and equity, including law related to capacity to\ncontract, principal and agent, estoppel, fraud, misrepresentation, duress,\ncoercion, mistake, and bankruptcy, supplement this article except to the extent\ninconsistent with this article. END_STATUTE\n\nSTART_STATUTE6-265. Uniformity of application and construction\n\nIn applying and construing this article, a court\nshall consider the promotion of uniformity of the law AMONG jurisdictions that\nenact it. END_STATUTE\n\nSTART_STATUTE6-266. Transitional provision\n\nThis article\napplies to:\n\n1. A\nspecial deposit made under an account agreement executed on or after the\neffective date of this act; and\n\n2. A\ndeposit made under an agreement executed before the effective date of this act,\nif:\n\n(a) All parties\nentitled to amend the agreement agree to make the deposit a special deposit\ngoverned by this article; and\n\n(b) The special\ndeposit referenced in the amended agreement satisfies section 6-255.\nEND_STATUTE\n\nSTART_STATUTE6-267. Severability\n\nIf a provision of this article or its\napplication to a person or circumstance is held invalid, the invalidity does\nnot affect another provision or application that can be given effect without\nthe invalid provision. END_STATUTE\n\n",
+  "raw_text_url": "https://www.azleg.gov/legtext/57leg/1R/bills/SB1206S.htm"
+ }
+]

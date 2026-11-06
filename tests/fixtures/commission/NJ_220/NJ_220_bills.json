@@ -1,0 +1,203 @@
+[
+ {
+  "id": "ocd-bill/115d9931-94b4-40d4-b822-9eda98f1ae4e",
+  "legislative_session": "220",
+  "identifier": "A 4393",
+  "title": "\"Uniform Public Expression Protection Act\"; provides for expedited process for dismissal of \"Strategic Lawsuit Against Public Participation\" (\"SLAPP\").*",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Assembly",
+    "description": "Introduced in the Assembly, Referred to Assembly Judiciary Committee",
+    "date": "2022-06-27T04:00:00+00:00",
+    "classification": [
+     "introduction",
+     "referral-committee"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Assembly",
+    "description": "Reported out of Assembly Committee with Amendments and Referred to Assembly Appropriations Committee",
+    "date": "2023-05-18T04:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "Assembly",
+    "description": "Reported out of Assembly Committee, 2nd Reading",
+    "date": "2023-06-22T04:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "Assembly",
+    "description": "Substituted by S2802 (1R)",
+    "date": "2023-06-30T04:00:00+00:00",
+    "classification": [],
+    "order": 3
+   }
+  ],
+  "versions": [
+   {
+    "note": "Reprint AJU 5/18/23 1R",
+    "date": "",
+    "links": [
+     {
+      "url": "https://pub.njleg.state.nj.us/Bills/2022/A4500/4393_R1.PDF",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://pub.njleg.state.nj.us/Bills/2022/A4500/4393_R1.HTM",
+      "media_type": "text/html"
+     }
+    ]
+   },
+   {
+    "note": "Introduced Version",
+    "date": "",
+    "links": [
+     {
+      "url": "https://pub.njleg.state.nj.us/Bills/2022/A4500/4393_I1.PDF",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://pub.njleg.state.nj.us/Bills/2022/A4500/4393_I1.HTM",
+      "media_type": "text/html"
+     }
+    ]
+   }
+  ],
+  "raw_text": "",
+  "raw_text_url": null
+ },
+ {
+  "id": "ocd-bill/a12b77a8-9804-4cf9-9b98-6d510f466d34",
+  "legislative_session": "220",
+  "identifier": "S 2802",
+  "title": "\"Uniform Public Expression Protection Act\"; provides for expedited process for dismissal of \"Strategic Lawsuit Against Public Participation\" (SLAPP).*",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Introduced in the Senate, Referred to Senate Judiciary Committee",
+    "date": "2022-06-06T04:00:00+00:00",
+    "classification": [
+     "introduction",
+     "referral-committee"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported out of Senate Committee, 2nd Reading",
+    "date": "2023-03-20T04:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Referred to Senate Budget and Appropriations Committee",
+    "date": "2023-03-20T04:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported out of Senate Committee with Amendments, 2nd Reading",
+    "date": "2023-06-27T04:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Passed Senate (37-0)",
+    "date": "2023-06-30T04:00:00+00:00",
+    "classification": [
+     "passage"
+    ],
+    "order": 4
+   },
+   {
+    "organization__name": "Assembly",
+    "description": "Received in the Assembly without Reference, 2nd Reading",
+    "date": "2023-06-30T04:00:00+00:00",
+    "classification": [],
+    "order": 5
+   },
+   {
+    "organization__name": "Assembly",
+    "description": "Substituted for A4393 (1R)",
+    "date": "2023-06-30T04:00:00+00:00",
+    "classification": [],
+    "order": 6
+   },
+   {
+    "organization__name": "Assembly",
+    "description": "Passed Assembly (Passed Both Houses) (76-0-0)",
+    "date": "2023-06-30T04:00:00+00:00",
+    "classification": [
+     "passage"
+    ],
+    "order": 7
+   },
+   {
+    "organization__name": "Governor of New Jersey",
+    "description": "Approved P.L.2023, c.155.",
+    "date": "2023-09-07T04:00:00+00:00",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 8
+   }
+  ],
+  "versions": [
+   {
+    "note": "Reprint SBA 6/27/23 1R",
+    "date": "",
+    "links": [
+     {
+      "url": "https://pub.njleg.state.nj.us/Bills/2022/S3000/2802_R1.PDF",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://pub.njleg.state.nj.us/Bills/2022/S3000/2802_R1.HTM",
+      "media_type": "text/html"
+     }
+    ]
+   },
+   {
+    "note": "Introduced Version",
+    "date": "",
+    "links": [
+     {
+      "url": "https://pub.njleg.state.nj.us/Bills/2022/S3000/2802_I1.PDF",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://pub.njleg.state.nj.us/Bills/2022/S3000/2802_I1.HTM",
+      "media_type": "text/html"
+     }
+    ]
+   }
+  ],
+  "raw_text": "",
+  "raw_text_url": null
+ }
+]

@@ -1,0 +1,1113 @@
+[
+ {
+  "id": "ocd-bill/41562190-417d-4fb6-bd35-2e51f4de8240",
+  "legislative_session": "2025",
+  "identifier": "HB 144",
+  "title": "Relates to protections of real property interests and establishes the \"Uniform Easement Relocation Act\"",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "House",
+    "description": "Prefiled (H)",
+    "date": "2024-12-02T06:00:00+00:00",
+    "classification": [],
+    "order": 0
+   },
+   {
+    "organization__name": "House",
+    "description": "Read First Time (H)",
+    "date": "2025-01-08T06:00:00+00:00",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "Read Second Time (H)",
+    "date": "2025-01-09T06:00:00+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred: Local Government(H)",
+    "date": "2025-01-30T06:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "House",
+    "description": "Public Hearing Completed (H)",
+    "date": "2025-04-02T05:00:00+00:00",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "House",
+    "description": "Executive Session Continued",
+    "date": "2025-04-09T05:00:00+00:00",
+    "classification": [],
+    "order": 5
+   },
+   {
+    "organization__name": "House",
+    "description": "Action Postponed (H)",
+    "date": "2025-04-09T05:00:00+00:00",
+    "classification": [],
+    "order": 6
+   },
+   {
+    "organization__name": "House",
+    "description": "Executive Session Completed (H)",
+    "date": "2025-04-23T05:00:00+00:00",
+    "classification": [],
+    "order": 7
+   },
+   {
+    "organization__name": "House",
+    "description": "HCS Voted Do Pass (H)",
+    "date": "2025-04-23T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 8
+   },
+   {
+    "organization__name": "House",
+    "description": "HCS Reported Do Pass (H) - AYES: 14 NOES: 1 PRESENT: 0",
+    "date": "2025-04-24T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred: Rules - Legislative(H)",
+    "date": "2025-05-13T05:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 10
+   }
+  ],
+  "versions": [
+   {
+    "note": "Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "https://documents.house.mo.gov/billtracking/bills251/hlrbillspdf/0317H.01I.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "House Committee Substitute",
+    "date": "",
+    "links": [
+     {
+      "url": "https://documents.house.mo.gov/billtracking/bills251/hlrbillspdf/0317H.03C.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "known as section 442.671, to read as follows:\nEasement Relocation Act\".\n2. As used in this section, the following terms mean:\n(1) \"Appurtenant easement\", an easement tied to or dependent on ownership or\noccupancy of a unit or a parcel of real property;\n(2) \"Conservation easement\", a nonpossessory property interest created for one\nor more of the following conservation purposes:\n(a) Retaining or protecting the natural, scenic, wildlife, wildlife-habitat,\nbiological, ecological, or open-space values of real property;\n(b) Ensuring the availability of real property for agricultural, forest, outdoor-\nrecreational, or open-space uses;\n(c) Protecting natural resources, including wetlands, grasslands, and riparian\nareas;\n(d) Maintaining or enhancing air or water quality;\n(e) Preserving the historical, architectural, archeological, paleontological, or\ncultural aspects of real property; or\n(f) Any other purpose served by a conservation easement under state law;\n(3) \"Dominant estate\", an estate or interest in real property benefitted by an\nappurtenant easement;\n(4) \"Easement\", a nonpossessory property interest that:\n(a) Provides a right to enter, use, or enjoy real property owned by or in the\npossession of another; and\n(b) Imposes on the owner or possessor a duty not to interfere with the entry, use,\nor enjoyment permitted by the instrument creating the easement or, in the case of an\neasement not established by express grant or reservation, the entry, use, or enjoyment\nauthorized by law;\n(5) \"Easement holder\":\n(a) In the case of an appurtenant easement, the dominant estate owner; or\n(b) In the case of an easement in gross, public utility easement, conservation\neasement, or negative easement, the grantee of the easement or a successor;\n(6) \"Easement in gross\", an easement not tied to or dependent on ownership or\noccupancy of a unit or a parcel of real property;\n(7) \"Lessee of record\", a person holding a lessee's interest under a recorded\nlease or memorandum of lease;\n(8) \"Negative easement\", a nonpossessory property interest with a primary\npurpose of imposing on a servient estate owner a duty not to engage in a specified use of\nthe estate;\n(9) \"Person\", an individual, estate, business or nonprofit entity, public\ncorporation, government or governmental subdivision, agency, or instrumentality, or\nother legal entity;\n(10) \"Public utility easement\", a nonpossessory property interest in which the\neasement holder is a publicly regulated or publicly owned utility under federal law or\nlaw of this state or a municipality. The term includes an easement benefitting an\nintrastate utility, an interstate utility, or a utility cooperative. The term includes, but is\nnot limited to, property interests granted generally to the public for public utility use via\nplat or other instrument;\n(11) \"Real property\", an estate or interest in, over, or under land, including\nstructures, fixtures, and other things that by custom, usage, or law pass with a\nconveyance of land whether or not described or mentioned in the contract of sale or\ninstrument of conveyance. The term includes the interest of a lessor and lessee and,\nunless the interest is personal property under law of this state other than this section, an\ninterest in a common-interest community;\n(12) \"Record\", used as a noun, information that is inscribed on a tangible\nmedium or that is stored in an electronic or other medium and is retrievable in\nperceivable form;\n(13) \"Security instrument\", a mortgage, deed of trust, security deed, contract\nfor deed, lease, or other record that creates or provides for an interest in real property\nto secure payment or performance of an obligation, whether by acquisition or retention\nof a lien, a lessor's interest under a lease, or title to the real property. The term includes:\n(a) A security instrument that also creates or provides for a security interest in\npersonal property;\n(b) A modification or amendment of a security instrument; and\n(c) A record creating a lien on real property to secure an obligation under a\ncovenant running with the real property or owed by a unit owner to a common-interest\ncommunity association;\n(14) \"Security-interest holder of record\", a person holding an interest in real\nproperty created by a recorded security instrument;\n(15) \"Servient estate\", an estate or interest in real property that is burdened by\nan easement;\n(16) \"Title evidence\", a title insurance policy, preliminary title report or binder,\ntitle insurance commitment, abstract of title, attorney's opinion of title based on\nexamination of public records or an abstract of title, or any other means of reporting the\nstate of title to real property which is customary in the locality;\n(17) \"Unit\", a physical portion of a common-interest community designated for\nseparate ownership or occupancy with boundaries described in a declaration\nestablishing the common-interest community;\n(18) \"Utility cooperative\", a nonprofit entity whose purpose is to deliver a utility\nservice, such as electricity, oil, natural gas, water, sanitary sewer, storm water, or\ntelecommunications, to its customers or members and includes an electric cooperative,\nrural electric cooperative, rural water district, and rural water association.\n3. (1) Except as otherwise provided in subdivision (2) of this subsection, this\nsection applies to an easement established by express grant or reservation or by\nprescription, implication, necessity, estoppel, or other method.\n(2) This section shall not be used to relocate:\n(a) A public utility easement, conservation easement, or negative easement; or\n(b) An easement if the proposed location would encroach on an area of an estate\nburdened by a conservation easement or would interfere with the use or enjoyment of a\npublic utility easement or an easement appurtenant to a conservation easement.\n(3) This section does not apply to relocation of an easement by consent.\n4. A servient estate owner may relocate an easement under this section only if\nthe relocation does not materially:\n(1) Lessen the utility of the easement;\n(2) After the relocation, increase the burden on the easement holder in its\nreasonable use and enjoyment of the easement;\n(3) Impair an affirmative, easement-related purpose for which the easement was\ncreated;\n(4) During or after the relocation, impair the safety of the easement holder or\nanother entitled to use and enjoy the easement;\n(5) During the relocation, disrupt the use and enjoyment of the easement by the\neasement holder or another entitled to use and enjoy the easement, unless the servient\nestate owner substantially mitigates the duration and nature of the disruption;\n(6) Impair the physical condition, use, or value of the dominant estate or\nimprovements on the dominant estate; or\n(7) Impair the value of the collateral of a security-interest holder of record in the\nservient estate or dominant estate, impair a real-property interest of a lessee of record in\nthe dominant estate, or impair a recorded real-property interest of any other person in\nthe servient estate or dominant estate.\n5. (1) To obtain an order to relocate an easement under this section, a servient\nestate owner shall commence a civil action.\n(2) A servient estate owner that commences a civil action under subdivision (1)\nof this subsection:\n(a) Shall serve a summons and a complaint or petition, or both, on:\na. The easement holder whose easement is the subject of the relocation;\nb. A security-interest holder of record of an interest in the servient estate or\ndominant estate;\nc. A lessee of record of an interest in the dominant estate; and\nd. Except as otherwise provided in paragraph (b) of this subdivision, any other\nowner of a recorded real-property interest if the relocation would encroach on an area\nof the servient estate or dominant estate burdened by the interest; and\n(b) Is not required to serve a summons and a complaint or petition, or both, on\nthe owner of a recorded real-property interest in oil, gas, or minerals unless the interest\nincludes an easement to facilitate oil, gas, or mineral development.\n(3) A complaint or petition filed under this section shall state:\n(a) The intent of the servient estate owner to seek the relocation;\n(b) The nature, extent, and anticipated dates of commencement and completion\nof the proposed relocation;\n(c) The current and proposed locations of the easement;\n(d) The reason the easement is eligible for relocation under subsection 3 of this\nsection;\n(e) The reason the proposed relocation satisfies the conditions for relocation\nunder subsection 4 of this section; and\n(f) That the servient estate owner has made a reasonable attempt to notify the\nholders of any public utility easement, conservation easement, or negative easement on\nthe servient estate or dominant estate of the proposed relocation.\n(4) At any time before the court renders a final order in an action under\nsubdivision (1) of this subsection, a person served under subparagraph b., c., or d. of\nparagraph (a) of subdivision (2) of this subsection may file a document, in recordable\nform, that waives such person's rights to contest or obtain relief in connection with the\nrelocation or subordinates such person's interests to the relocation. On filing of the\ndocument, the court may order that the person is not required to answer or participate\nfurther in the action.\n6. (1) The court shall not approve relocation of an easement under this section\nunless the servient estate owner:\n(a) Establishes that the easement is eligible for relocation under subsection 3 of\nthis section; and\n(b) Satisfies the conditions for relocation under subsection 4 of this section.\n(2) An order under this section approving relocation of an easement shall:\n(a) State that the order is issued in accordance with this section;\n(b) Recite the recording data of the instrument creating the easement, if any, any\namendments, and any preservation notice required under state law;\n(c) Identify the immediately preceding location of the easement;\n(d) Describe in a legally sufficient manner the new location of the easement;\n(e) Describe mitigation required of the servient estate owner during relocation;\n(f) Refer in detail to the plans and specifications of improvements necessary for\nthe easement holder to enter, use, and enjoy the easement in the new location;\n(g) Specify conditions to be satisfied by the servient estate owner to relocate the\neasement and construct improvements necessary for the easement holder to enter, use,\nand enjoy the easement in the new location;\n(h) Include a provision for payment by the servient estate owner of expenses\nunder subsection 7 of this section;\n(i) Include a provision for compliance by the parties with the obligation of good\nfaith under subsection 8 of this section; and\n(j) Instruct the servient estate owner to record an affidavit, if required under\nsubdivision (1) of subsection 9 of this section, when the servient estate owner\nsubstantially completes relocation.\n(3) An order under subdivision (2) of this subsection may include any other\nprovision consistent with this section for the fair and equitable relocation of the\neasement.\n(4) Before a servient estate owner proceeds with relocation of an easement under\nthis section, the owner shall record, in the land records of each jurisdiction where the\nservient estate is located, a certified copy of the order under subdivision (2) of this\nsubsection.\n7. A servient estate owner is responsible for reasonable expenses of relocation of\nan easement under this section, including the expense of:\n(1) Constructing improvements on the servient estate or dominant estate in\naccordance with an order under subsection 6 of this section;\n(2) During the relocation, mitigating disruption in the use and enjoyment of the\neasement by the easement holder or another person entitled to use and enjoy the\neasement;\n(3) Obtaining a governmental approval or permit to relocate the easement and\nconstruct necessary improvements;\n(4) Preparing and recording the certified copy required by subdivision (4) of\nsubsection 6 of this section and any other document required to be recorded;\n(5) Any title work required to complete the relocation or required by a party to\nthe civil action as a result of the relocation;\n(6) Applicable premiums for title insurance related to the relocation;\n(7) Any expert necessary to review plans and specifications for an improvement\nto be constructed in the relocated easement or on the dominant estate and to confirm\ncompliance with the plans and specifications referred to in the order under paragraph\n(f) of subdivision (2) of subsection 6 of this section;\n(8) Payment of any maintenance cost associated with the relocated easement that\nis greater than the maintenance cost associated with the easement before relocation; and\n(9) Obtaining any third-party consent required to relocate the easement.\n8. After the court, under subsection 6 of this section, approves relocation of an\neasement and the servient estate owner commences the relocation, the servient estate\nowner, the easement holder, and other parties in the civil action shall act in good faith to\nfacilitate the relocation in compliance with this section.\n9. (1) If an order under subsection 6 of this section requires the construction of\nan improvement as a condition for relocation of an easement, relocation is substantially\ncomplete, and the easement holder is able to enter, use, and enjoy the easement in the\nnew location, the servient estate owner shall:\n(a) Record, in the land records of each jurisdiction where the servient estate is\nlocated, an affidavit certifying that the easement has been relocated; and\n(b) Send, by certified mail, a copy of the recorded affidavit to the easement\nholder and parties to the civil action.\n(2) Until an affidavit under subdivision (1) of this subsection is recorded and\nsent, the easement holder may enter, use, and enjoy the easement in the current location,\nsubject to the court’s order under subsection 6 of this section approving relocation.\n(3) If an order under subsection 6 of this section does not require an\nimprovement to be constructed as a condition of the relocation, recording the order\nunder subdivision (4) of subsection 6 of this section constitutes relocation.\n10. (1) Relocation of an easement under this section:\n(a) Is not a new transfer or a new grant of an interest in the servient estate or the\ndominant estate;\n(b) Is not a breach or default of, and does not trigger, a due-on-sale clause or\nother transfer-restriction clause under a security instrument, except as otherwise\ndetermined by a court under law other than this section;\n(c) Is not a breach or default of a lease, except as otherwise determined by a\ncourt under law other than this section;\n(d) Is not a breach or default by the servient estate owner of a recorded\ndocument affected by the relocation, except as otherwise determined by a court under\nlaw other than this section;\n(e) Does not affect the priority of the easement with respect to other recorded\nreal-property interests burdening the area of the servient estate where the easement was\nlocated before the relocation; and\n(f) Is not a fraudulent conveyance or voidable transaction under law.\n(2) This section does not affect any other method of relocating an easement\npermitted under law of this state other than this section.\n11. The right of a servient estate owner to relocate an easement under this\nsection shall not be waived, excluded, or restricted by agreement even if:\n(1) The instrument creating the easement prohibits relocation or contains a\nwaiver, exclusion, or restriction of this section;\n(2) The instrument creating the easement requires consent of the easement\nholder to amend the terms of the easement; or\n(3) The location of the easement is fixed by the instrument creating the easement,\nanother agreement, previous conduct, acquiescence, estoppel, or implication.\n12. In applying and construing this section, consideration shall be given to the\nneed to promote uniformity of the law with respect to its subject matter among the\nstates that enact it.\n13. This section modifies, limits, or supersedes the federal Electronic Signatures\nin Global and National Commerce Act, 15 U.S.C. Section 7001 et seq., as amended, but\ndoes not modify, limit, or supersede Section 101(c) of such federal act, 15 U.S.C. Section\n7001(c), as amended, or authorize electronic delivery of any of the notices described in\nSection 103(b) of such federal act, 15 U.S.C. Section 7003(b), as amended.\n14. This section applies to an easement created before, on, or after the effective\ndate of this section.",
+  "raw_text_url": "https://documents.house.mo.gov/billtracking/bills251/hlrbillspdf/0317H.01I.pdf"
+ },
+ {
+  "id": "ocd-bill/453ce620-242c-473e-bafc-4ec119d07b64",
+  "legislative_session": "2025",
+  "identifier": "SB 289",
+  "title": "Modifies provisions relating to estate planning, including notice for principal place of administration transfers, statutes of limitations for actions against trustees, electronic wills, and estate planning during the COVID-19 emergency",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Prefiled",
+    "date": "2024-12-01T06:00:00+00:00",
+    "classification": [],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "S First Read",
+    "date": "2025-01-08T06:00:00+00:00",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Second Read and Referred S General Laws Committee",
+    "date": "2025-02-13T06:00:00+00:00",
+    "classification": [
+     "reading-2",
+     "referral-committee"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Hearing Conducted S General Laws Committee",
+    "date": "2025-02-25T06:00:00+00:00",
+    "classification": [],
+    "order": 3
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Voted Do Pass S General Laws Committee",
+    "date": "2025-03-26T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 4
+   }
+  ],
+  "versions": [
+   {
+    "note": "Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.senate.mo.gov/25info/pdf-bill/intro/SB289.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "",
+  "raw_text_url": null
+ },
+ {
+  "id": "ocd-bill/4fd0e1e4-dc69-421b-ad2c-2cd7ee463564",
+  "legislative_session": "2025",
+  "identifier": "HB 754",
+  "title": "Modifies standards for certain financial organizations",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "House",
+    "description": "Prefiled (H)",
+    "date": "2025-01-07T06:00:00+00:00",
+    "classification": [],
+    "order": 0
+   },
+   {
+    "organization__name": "House",
+    "description": "Read First Time (H)",
+    "date": "2025-01-08T06:00:00+00:00",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "Read Second Time (H)",
+    "date": "2025-01-09T06:00:00+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred: Financial Institutions(H)",
+    "date": "2025-01-30T06:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "House",
+    "description": "Public Hearing Completed (H)",
+    "date": "2025-02-05T06:00:00+00:00",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "House",
+    "description": "Executive Session Completed (H)",
+    "date": "2025-02-11T06:00:00+00:00",
+    "classification": [],
+    "order": 5
+   },
+   {
+    "organization__name": "House",
+    "description": "Voted Do Pass (H)",
+    "date": "2025-02-11T06:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "House",
+    "description": "Reported Do Pass (H) - AYES: 13 NOES: 0 PRESENT: 0",
+    "date": "2025-02-12T06:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 7
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred: Rules - Legislative(H)",
+    "date": "2025-02-19T06:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 8
+   },
+   {
+    "organization__name": "House",
+    "description": "Executive Session Completed (H)",
+    "date": "2025-02-24T06:00:00+00:00",
+    "classification": [],
+    "order": 9
+   },
+   {
+    "organization__name": "House",
+    "description": "Voted Do Pass (H)",
+    "date": "2025-02-24T06:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "House",
+    "description": "Reported Do Pass (H) - AYES: 9 NOES: 0 PRESENT: 0",
+    "date": "2025-02-25T06:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 11
+   },
+   {
+    "organization__name": "House",
+    "description": "Taken Up for Perfection (H)",
+    "date": "2025-03-10T05:00:00+00:00",
+    "classification": [],
+    "order": 12
+   },
+   {
+    "organization__name": "House",
+    "description": "Title of Bill - Agreed To",
+    "date": "2025-03-10T05:00:00+00:00",
+    "classification": [],
+    "order": 13
+   },
+   {
+    "organization__name": "House",
+    "description": "Perfected with Amendments (H) - HA 1 to HA 1, HA 1 as amended adopted",
+    "date": "2025-03-10T05:00:00+00:00",
+    "classification": [],
+    "order": 14
+   },
+   {
+    "organization__name": "House",
+    "description": "Taken Up for Third Reading (H)",
+    "date": "2025-03-12T05:00:00+00:00",
+    "classification": [
+     "reading-3"
+    ],
+    "order": 15
+   },
+   {
+    "organization__name": "House",
+    "description": "Third Read and Passed (H) - AYES: 155 NOES: 0 PRESENT: 0",
+    "date": "2025-03-12T05:00:00+00:00",
+    "classification": [
+     "passage",
+     "reading-3"
+    ],
+    "order": 16
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported to the Senate and First Read (S)",
+    "date": "2025-03-12T05:00:00+00:00",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 17
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Second read and referred: Insurance and Banking(S)",
+    "date": "2025-03-24T05:00:00+00:00",
+    "classification": [],
+    "order": 18
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Public Hearing Scheduled (S) - Tuesday, April 1, 2025, 12:00 p.m., Senate Lounge - 3rd Floor",
+    "date": "2025-04-01T05:00:00+00:00",
+    "classification": [],
+    "order": 19
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Public Hearing Held (S)",
+    "date": "2025-04-01T05:00:00+00:00",
+    "classification": [],
+    "order": 20
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Executive Session Held (S)",
+    "date": "2025-04-08T05:00:00+00:00",
+    "classification": [],
+    "order": 21
+   },
+   {
+    "organization__name": "Senate",
+    "description": "SCS Voted Do Pass (S)",
+    "date": "2025-04-08T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 22
+   },
+   {
+    "organization__name": "Senate",
+    "description": "SCS Reported Do Pass (S)",
+    "date": "2025-04-17T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 23
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Taken Up for Third Reading (S)",
+    "date": "2025-04-28T05:00:00+00:00",
+    "classification": [
+     "reading-3"
+    ],
+    "order": 24
+   },
+   {
+    "organization__name": "House",
+    "description": "SS Offered",
+    "date": "2025-04-28T05:00:00+00:00",
+    "classification": [
+     "introduction"
+    ],
+    "order": 25
+   },
+   {
+    "organization__name": "Senate",
+    "description": "SS Adopted (S) - SA 1, SA 3, SA 4, SA 5, adopted",
+    "date": "2025-04-28T05:00:00+00:00",
+    "classification": [],
+    "order": 26
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Referred: Fiscal Oversight(S)",
+    "date": "2025-04-28T05:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 27
+   },
+   {
+    "organization__name": "House",
+    "description": "Executive Session Scheduled - Thursday, May 1, 2025, May 1, 2025, 9:35 a.m., Senate Lounge - 3rd Floor",
+    "date": "2025-04-30T05:00:00+00:00",
+    "classification": [],
+    "order": 28
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Executive Session Held (S)",
+    "date": "2025-05-01T05:00:00+00:00",
+    "classification": [],
+    "order": 29
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Voted Do Pass (S)",
+    "date": "2025-05-01T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 30
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported Do Pass (S)",
+    "date": "2025-05-01T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 31
+   },
+   {
+    "organization__name": "House",
+    "description": "Taken Up",
+    "date": "2025-05-01T05:00:00+00:00",
+    "classification": [],
+    "order": 32
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Third Read and Passed (S) - AYES: 20 NOES: 11 PRESENT: 0",
+    "date": "2025-05-01T05:00:00+00:00",
+    "classification": [
+     "passage",
+     "reading-3"
+    ],
+    "order": 33
+   },
+   {
+    "organization__name": "House",
+    "description": "Reported to the House with... (H) - SS as amended",
+    "date": "2025-05-01T05:00:00+00:00",
+    "classification": [],
+    "order": 34
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred: Fiscal Review(H)",
+    "date": "2025-05-01T05:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 35
+   },
+   {
+    "organization__name": "House",
+    "description": "Executive Session Completed (H)",
+    "date": "2025-05-05T05:00:00+00:00",
+    "classification": [],
+    "order": 36
+   },
+   {
+    "organization__name": "House",
+    "description": "Voted Do Pass (H)",
+    "date": "2025-05-05T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 37
+   },
+   {
+    "organization__name": "House",
+    "description": "Reported Do Pass (H) - AYES: 5 NOES: 2 PRESENT: 0",
+    "date": "2025-05-05T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 38
+   },
+   {
+    "organization__name": "House",
+    "description": "Taken Up",
+    "date": "2025-05-05T05:00:00+00:00",
+    "classification": [],
+    "order": 39
+   },
+   {
+    "organization__name": "House",
+    "description": "House Adopts (H) - SS SCS as amended - AYES: 128 NOES: 8 PRESENT: 5",
+    "date": "2025-05-05T05:00:00+00:00",
+    "classification": [],
+    "order": 40
+   },
+   {
+    "organization__name": "House",
+    "description": "Truly Agreed To and Finally Passed - AYES: 118 NOES: 10 PRESENT: 15",
+    "date": "2025-05-05T05:00:00+00:00",
+    "classification": [
+     "passage"
+    ],
+    "order": 41
+   },
+   {
+    "organization__name": "House",
+    "description": "House Message (H)",
+    "date": "2025-05-05T05:00:00+00:00",
+    "classification": [],
+    "order": 42
+   },
+   {
+    "organization__name": "House",
+    "description": "Signed by House Speaker (H)",
+    "date": "2025-05-29T05:00:00+00:00",
+    "classification": [],
+    "order": 43
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Signed by President Pro Tem (S)",
+    "date": "2025-05-30T05:00:00+00:00",
+    "classification": [],
+    "order": 44
+   },
+   {
+    "organization__name": "Office of the Governor",
+    "description": "Delivered to Governor",
+    "date": "2025-05-30T05:00:00+00:00",
+    "classification": [],
+    "order": 45
+   }
+  ],
+  "versions": [
+   {
+    "note": "Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "https://documents.house.mo.gov/billtracking/bills251/hlrbillspdf/1499H.02I.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Perfected",
+    "date": "",
+    "links": [
+     {
+      "url": "https://documents.house.mo.gov/billtracking/bills251/hlrbillspdf/1499H.02P.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Senate Committee Substitute",
+    "date": "",
+    "links": [
+     {
+      "url": "https://documents.house.mo.gov/billtracking/bills251/hlrbillspdf/1499S.03C.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Senate Substitute (Senate Floor Substitute)",
+    "date": "",
+    "links": [
+     {
+      "url": "https://documents.house.mo.gov/billtracking/bills251/hlrbillspdf/1499S.05F.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Truly Agreed and Finally Passed",
+    "date": "",
+    "links": [
+     {
+      "url": "https://documents.house.mo.gov/billtracking/bills251/hlrbillspdf/1499S.05T.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Amendment HA 1, A.A. (Adopted)",
+    "date": "",
+    "links": [
+     {
+      "url": "https://documents.house.mo.gov/billtracking/bills251/amendpdf/1499H02.02H.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Amendment 1499H02.04H (Distributed)",
+    "date": "",
+    "links": [
+     {
+      "url": "https://documents.house.mo.gov/billtracking/bills251/amendpdf/1499H02.04H.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Amendment HA 1 HA 1 (Adopted)",
+    "date": "",
+    "links": [
+     {
+      "url": "https://documents.house.mo.gov/billtracking/bills251/amendpdf/1499H02.05H.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Amendment SENATE AMENDMENTS (Distributed)",
+    "date": "",
+    "links": [
+     {
+      "url": "https://documents.house.mo.gov/billtracking/bills251/amendpdf/1499S05.01F.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "",
+  "raw_text_url": "https://documents.house.mo.gov/billtracking/bills251/hlrbillspdf/1499S.05T.pdf"
+ },
+ {
+  "id": "ocd-bill/6122d3cd-dbc5-4244-9c1a-a5ca2d827776",
+  "legislative_session": "2025",
+  "identifier": "HB 180",
+  "title": "Modifies and establishes provisions relating to estate planning",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "House",
+    "description": "Prefiled (H)",
+    "date": "2024-12-02T06:00:00+00:00",
+    "classification": [],
+    "order": 0
+   },
+   {
+    "organization__name": "House",
+    "description": "Read First Time (H)",
+    "date": "2025-01-08T06:00:00+00:00",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "Read Second Time (H)",
+    "date": "2025-01-09T06:00:00+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred: Emerging Issues(H)",
+    "date": "2025-05-15T05:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 3
+   }
+  ],
+  "versions": [
+   {
+    "note": "Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "https://documents.house.mo.gov/billtracking/bills251/hlrbillspdf/0155H.01I.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "sections enacted in lieu thereof, to be known as sections 456.1-108, 456.10-1005, 474.540,\n474.542, 474.544, 474.546, 474.548, 474.550, 474.552, 474.554, 474.556, 474.558, 474.560,\n474.562, 474.564, and 474.600, to read as follows:\nconnection with the designated jurisdiction, terms of a trust designating the principal place of\nadministration are valid and controlling if:\n(1) a trustee's principal place of business is located in or a trustee is a resident of the\ndesignated jurisdiction; or\n(2) all or part of the administration occurs in the designated jurisdiction.\n2. Without precluding the right of the court to order, approve, or disapprove a\ntransfer, the trustee may transfer the trust's principal place of administration to another state or\nto a jurisdiction outside of the United States that is appropriate to the trust's purposes, its\nadministration, and the interests of the beneficiaries.\n3. The trustee shall notify the qualified beneficiaries of a proposed transfer of a trust's\nprincipal place of administration not less than sixty days before initiating the transfer. The\nnotice of proposed transfer must include:\n(1) the name of the jurisdiction to which the principal place of administration is to be\ntransferred;\n(2) the address and telephone number at the new location at which the trustee can be\ncontacted;\n(3) an explanation of the reasons for the proposed transfer;\n(4) notice that a change in the place of administration may result in a change of\ngoverning law, which may affect the rights of beneficiaries in ways that are different\nfrom current governing law;\n(5) the date on which the proposed transfer is anticipated to occur; and\n[(5)] (6) the date, not less than sixty days after the giving of the notice, by which the\nqualified beneficiary must notify the trustee of an objection to the proposed transfer.\n4. The authority of a trustee under this section to transfer a trust's principal place of\nadministration without an order of a court terminates if a qualified beneficiary notifies the\ntrustee of an objection to the proposed transfer on or before the date specified in the notice.\n5. In connection with a transfer of the trust's principal place of administration, the\ntrustee may transfer some or all of the trust property to a successor trustee designated in the\nterms of the trust or appointed pursuant to section 456.7-704.\nbreach of trust more than one year after the last to occur of the date the beneficiary or a\nrepresentative of the beneficiary was sent a report that adequately disclosed the existence of a\npotential claim for breach of trust and the date the trustee informed the beneficiary of the time\nallowed for commencing a proceeding with respect to any potential claim adequately\ndisclosed on the report.\n2. A report adequately discloses the existence of a potential claim for breach of trust\nif it provides sufficient information so that the beneficiary or representative knows of the\npotential claim or should have inquired into its existence.\n3. If subsection 1 of this section does not apply, a judicial proceeding by a beneficiary\nagainst a trustee for breach of trust must be commenced within five years after the first to\noccur of:\n(1) the removal, resignation, or death of the trustee;\n(2) the occurrence of the event causing a termination of the beneficiary's interest in\nthe trust; or\n(3) the occurrence of the event causing a termination of the trust.\n\"Missouri Electronic Wills and Electronic Estate Planning Documents Act\".\n(1) \"Electronic\", technology having electrical, digital, magnetic, wireless,\noptical, electromagnetic, or similar capabilities;\n(2) \"Electronic presence\", the relationship of two or more individuals in\ndifferent locations in real time using technology enabling live, interactive audio-visual\ncommunication that allows for observation, direct interaction, and communication\nbetween or among the individuals;\n(3) \"Electronic will\", a will executed electronically in compliance with\nsubsection 1 of section 474.548;\n(4) \"Record\", information that is inscribed on a tangible medium or that is\nstored in an electronic or other medium and is retrievable in perceivable form;\n(5) \"Security procedure\", a procedure to verify that an electronic signature,\nrecord, or performance is that of a specific person or to detect a change or error in an\nelectronic record, including a procedure that uses an algorithm, code, identifying word\nor number, encryption, or callback or other acknowledgment procedure;\n(6) \"Sign\", with present intent to authenticate or adopt a record, to:\n(a) Execute or adopt a tangible symbol; or\n(b) Affix to or logically associate with the record an electronic symbol or\nprocess;\n(7) \"State\", a state of the United States, the District of Columbia, Puerto Rico,\nthe United States Virgin Islands, a federally recognized Indian tribe, or any territory or\ninsular possession subject to the jurisdiction of the United States;\n(8) \"Will\", a codicil and any testamentary instrument that appoints an executor,\nrevokes or revises another will, nominates a guardian, or expressly excludes or limits the\nright of an individual or class to succeed to property of the decedent passing by intestate\nsuccession.\nlaws of this state applicable to wills and principles of equity applies to an electronic will\nexcept as modified by sections 474.540 to 474.564.\nsection 474.548 is an electronic will under sections 474.540 to 474.564 if executed in\ncompliance with the law of the jurisdiction where the testator is:\n(1) Physically located when the will is signed; or\n(2) Domiciled, or where the testator resides, when the will is signed or when the\ntestator dies.\n(1) A record that is readable as text at the time of signing under subdivision (2)\nof this subsection and remains accessible as text for later reference;\n(2) Signed by:\n(a) The testator; or\n(b) Another individual in the testator's name, in the testator's physical presence,\nand by the testator's direction; and\n(3) Signed in the physical or electronic presence of the testator by at least two\nindividuals after witnessing:\n(a) The signing of the will under subdivision (2) of this subsection; or\n(b) The testator's acknowledgment of the signing of the will under subdivision\n(2) of this subsection or acknowledgment of the will.\n2. The intent of a testator that the record under subdivision (1) of subsection 1 of\nthis section be the testator's electronic will may be established by extrinsic evidence.\n3. In accordance with section 474.337 or 474.550, a witness to a will shall be a\nresident of a state and physically located in a state at the time of signing if no self-\nproving affidavit is signed contemporaneously with the execution of the electronic will.\nmay be made self-proved in the same manner as specified in section 474.337 or, if fewer\nthan two witnesses are physically present in the same location as the testator at the time\nof such acknowledgments, before a remote online notary authorized to perform a\nremote online notarization in this state under the law of any state or the United States,\nand evidenced by a remote online notarial certificate, in form and content substantially\nas follows, subject to the additional requirements under section 486.1165:\nState of _____\nCounty (and/or City) of _____\nI, the undersigned notary, certify that _____, the testator, and the witnesses,\nwhose names are signed to the attached or foregoing instrument, having\npersonally appeared before me by remote online means, and having been first\nduly sworn, each then declared to me that the testator signed and executed the\ninstrument as the testator's last will, and that the testator had willingly signed or\nwillingly directed another to sign for the testator, and that the testator executed it\nas the testator's free and voluntary act for the purposes therein expressed; and\nthat each of the witnesses, in the presence and hearing of the testator, signed the\nwill as witness and that to the best of the witnesses' knowledge the testator was at\nthat time eighteen or more years of age, of sound mind, and under no constraint\nor undue influence.\nIn witness thereof I have hereunto subscribed my name and affixed my official\nseal this _____ (date).\n____________________ (official signature and seal of notary)\n2. All or part of an electronic will is revoked by:\n(1) A subsequent will that revokes all or part of the electronic will expressly or\nby inconsistency;\n(2) A written instrument signed by the testator declaring the revocation; or\n(3) A physical act, if it is established by a preponderance of the evidence that the\ntestator, with the intent of revoking all or part of the will, performed the act or directed\nanother individual who performed the act in the testator's physical presence.\n3. If there is evidence that a testator signed an electronic will and neither an\nelectronic will nor a certified paper copy of the electronic will can be located after a\ntestator's death, there is a presumption that the testator revoked the electronic will even\nif no instrument or later will revoking the electronic will can be located.\nestate or, if there is no grant of administration, upon such notice and in such manner as\nthe court directs, the court may issue an order under sections 472.400 to 472.490 for a\ncustodian of an account held under a terms-of-service agreement to disclose digital\nassets for the purposes of obtaining an electronic will from the account of a deceased\nuser. If there is no grant of administration at the time the court issues the order, the\ncourt's order shall grant disclosure to the petitioner who is deemed a personal\nrepresentative under sections 472.400 to 472.490.\nby affirming under penalty of perjury that a paper copy of the electronic will is a\ncomplete, true, and accurate copy of the electronic will. If the electronic will is made\nself-proving, the certified paper copy of the will shall include the self-proving affidavit\nunder section 474.337 or 474.550.\n2. If a rule of law or procedure requires a will to be presented or retained in its\noriginal form or provides consequences for the information not being presented or\nretained in its original form, that rule of law or procedure shall be satisfied by a\ncertified paper copy of an electronic will.\nshall be given to the need to promote uniformity of the law with respect to its subject\nmatter among states that enact it.\nelectronically, and no such estate planning document shall be invalid or void solely\nbecause it is in electronic form or because it is signed electronically by a settlor, trustee,\nprincipal, grantor, declarant, or owner, or by a witness to any such person's signature.\nFor purposes of this section, \"estate planning document\" shall include, but not be\nlimited to:\n(1) A power of attorney or durable power of attorney;\n(2) A health care declaration;\n(3) An advance directive;\n(4) A power of attorney for health care or durable power of attorney for health\ncare;\n(5) A revocable trust or amendment thereto, or modification or revocation\nthereof;\n(6) An irrevocable trust;\n(7) A beneficiary deed;\n(8) A nonprobate transfer; or\n(9) A document modifying, amending, correcting, or revoking any written estate\nplanning document.\n2. (1) An electronic estate planning document or an electronic signature on such\ndocument shall be attributable to a person if it was the act of the person. The act of the\nperson may be shown in any manner, including a showing of the efficacy of a security\nprocedure applied to determine the person to which the electronic record or signature\nwas attributable.\n(2) The effect of attribution of a document or signature to a person under\nsubdivision (1) of this subsection shall be determined from the context and surrounding\ncircumstances at the time of its creation, execution, or adoption and as provided by\nother law.\n3. (1) Unless otherwise provided under its terms, any electronic estate planning\ndocument may be signed in one or more counterparts, and each separate counterpart\nmay be an electronic document or a paper document, provided that all signed\ncounterpart pages of each document are incorporated into, or attached to, the\ndocument.\n(2) An individual may create a certified paper copy of any such electronic estate\nplanning document by affirming under penalty of perjury that a paper copy of the\nelectronic estate planning document is a complete, true, and accurate copy of such\ndocument. If a rule of law or procedure requires an estate planning document to be\npresented or retained in its original form or provides consequences for the information\nnot being presented or retained in its original form, such rule of law or procedure shall\nbe satisfied by a certified paper copy of an electronic document.\n4. Any written estate planning document, other than a will, that requires one or\nmore witnesses to the signature of a principal may be witnessed by any individual or\nindividuals in the electronic presence of the principal.\n5. A person who acts in reliance upon an electronically executed written estate\nplanning document shall not be liable to any person for so relying and may assume\nwithout inquiry the valid execution of the electronically executed written estate planning\ndocument.\n6. This section does not require a written estate planning document to be\nelectronically signed.\n7. The laws of this state and principles of equity applicable to any estate\nplanning document shall apply to any electronic estate planning document except as\nmodified by this section.\nsupersede the federal Electronic Signatures in Global and National Commerce Act, 15\nU.S.C. Section 7001 et seq., but do not modify, limit, or supersede Section 101(c) of that\nact, 15 U.S.C. 7001(c), or authorize electronic delivery of any of the notices described in\nSection 103(b) of that act, 15 U.S.C. Section 7003(b).\ndecedent who dies on or after August 28, 2025, and to each other written estate planning\ndocument signed or remotely witnessed on or after August 28, 2025.\n(1) \"Applicable state of emergency\", the period between April 6, 2020, and\nDecember 31, 2021, during which a state of emergency existed due to a COVID-19\npublic health threat, as proclaimed by the governor, and during which executive orders\n20-08, 20-10, 20-12, 20-14, 20-19, 21.07, and 21.09 temporarily suspended the physical\nappearance requirements under this chapter and authorized the use of audio-visual\ntechnology to the extent that any Missouri statute required the physical presence of any\ntestator, settlor, principal, witness, notary, or other person necessary for the effective\nexecution of any estate planning document such as a will, trust, or power of attorney, or\na self-proving affidavit of the execution of such document, if the conditions set forth in\nthe executive orders were met;\n(2) \"Estate planning document\", includes, but is not limited to:\n(a) A will;\n(b) A codicil;\n(c) A power of attorney or durable power of attorney;\n(d) A health care declaration;\n(e) An advance directive;\n(f) A power of attorney for health care or a durable power of attorney for health\ncare;\n(g) A revocable trust or amendment thereto, or modification or revocation\nthereof;\n(h) An irrevocable trust;\n(i) A beneficiary deed;\n(j) A nonprobate transfer; or\n(k) A document modifying, amending, correcting, or revoking any written estate\nplanning document;\n(3) \"Necessary person\", any testator, settlor, grantor, principal, declarant,\nwitness, notary, or other person required for the effective execution of any estate\nplanning document in this state;\n(4) \"Physical presence requirement\", includes, but is not limited to, any\nrequirement of physical presence under section 404.705, 459.015, 474.320, or 474.337 or\nchapter 486.\n2. With respect to the execution of an estate planning document, a necessary\nperson shall be deemed to have satisfied any physical presence requirement under\nMissouri statute during the applicable state of emergency if the following requirements\nwere met:\n(1) The signer affirmatively represented that the signer was physically located in\nthe state of Missouri;\n(2) The notary was physically located in the state of Missouri and stated in which\ncounty the notary was physically located for the jurisdiction on the acknowledgment;\n(3) The notary identified the signers to the satisfaction of the notary and current\nlaw;\n(4) Any person whose signature was required appeared using video conference\nsoftware where live, interactive audio-visual communication between the principal,\nnotary, and any other necessary person allowed for observation, direct interaction, and\ncommunication at the time of signing; and\n(5) The notary recorded in the notary's journal the exact time and means used to\nperform the notarial act, along with all other required information, absent the wet\nsignatures.\n3. The requirements of subdivisions (1) to (5) of subsection 2 of this section shall\nbe deemed satisfied if an attorney who is licensed or authorized to practice law in\nMissouri and who was present at the remote execution signs a written acknowledgment\nmade before an officer authorized to administer oaths under the laws of this state, and\nevidenced by the officer's certificate, under official seal, affixed to or logically associated\nwith the acknowledgment. The form and content of the acknowledgment shall be\nsubstantially as follows:\nState of ______\nCounty of _____\nAFFIDAVIT OF REMOTE EXECUTION OF DOCUMENTS\nI, __________, am an attorney licensed or authorized to practice law in the state\nof Missouri.\nOn _____ (date), I convened with the following individuals via video conference\nsoftware that allowed for live, interactive audio-visual communication between\nthe parties to the conference and that also allowed for observation, direction,\ninteraction, and communication between:\n__________, the (testator, settlor, grantor, principal, or declarant);\n__________, a witness;\n__________, a second witness; and\n__________ a notary public.\nDuring the conference, __________, the (testator, settlor, grantor, principal, or\ndeclarant) signed the following estate planning document or documents: (a will,\ncodicil, power of attorney, durable power of attorney, health care declaration,\nadvance directive, health care power of attorney, revocable trust, irrevocable\ntrust, beneficiary deed, nonprobate transfer, self-proving affidavit of the\nexecution of a will, or a document modifying, amending, correcting, or\nrevoking one of these estate planning documents).\nAll the parties to the conference represented that they were physically located in\nthe state of Missouri at the time of the signing.\nI have reviewed and am familiar with the requirements of the applicable\nexecutive order or orders in effect at the time and affirm that the remote\nexecution of the estate planning document or documents met all the requirements\nof the applicable executive order or orders.\nIn witness whereof I, an officer authorized to administer oaths, have hereunto\nsubscribed my name and affixed my official seal this _____ (date).\n(Signed)\n_____________________________________________________\n(SEAL)\n_____________________________________________________\n(Official capacity of officer)",
+  "raw_text_url": "https://documents.house.mo.gov/billtracking/bills251/hlrbillspdf/0155H.01I.pdf"
+ },
+ {
+  "id": "ocd-bill/af02c054-7f7c-4cce-a942-018ba41fb795",
+  "legislative_session": "2025",
+  "identifier": "HB 176",
+  "title": "Establishes provisions relating to electronic estate planning",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "House",
+    "description": "Prefiled (H)",
+    "date": "2024-12-02T06:00:00+00:00",
+    "classification": [],
+    "order": 0
+   },
+   {
+    "organization__name": "House",
+    "description": "Read First Time (H)",
+    "date": "2025-01-08T06:00:00+00:00",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "Read Second Time (H)",
+    "date": "2025-01-09T06:00:00+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred: General Laws(H)",
+    "date": "2025-01-30T06:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "House",
+    "description": "Public Hearing Completed (H)",
+    "date": "2025-02-11T06:00:00+00:00",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "House",
+    "description": "Executive Session Completed (H)",
+    "date": "2025-02-18T06:00:00+00:00",
+    "classification": [],
+    "order": 5
+   },
+   {
+    "organization__name": "House",
+    "description": "HCS Voted Do Pass (H)",
+    "date": "2025-02-18T06:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "House",
+    "description": "HCS Reported Do Pass (H) - AYES: 11 NOES: 0 PRESENT: 0",
+    "date": "2025-02-19T06:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 7
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred: Rules - Administrative(H)",
+    "date": "2025-02-26T06:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 8
+   },
+   {
+    "organization__name": "House",
+    "description": "Executive Session Completed (H)",
+    "date": "2025-03-04T06:00:00+00:00",
+    "classification": [],
+    "order": 9
+   },
+   {
+    "organization__name": "House",
+    "description": "Voted Do Pass (H)",
+    "date": "2025-03-04T06:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "House",
+    "description": "Reported Do Pass (H) - AYES: 10 NOES: 0 PRESENT: 0",
+    "date": "2025-03-05T06:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 11
+   },
+   {
+    "organization__name": "House",
+    "description": "Placed on the Informal Perfection Calendar (H)",
+    "date": "2025-03-24T05:00:00+00:00",
+    "classification": [],
+    "order": 12
+   },
+   {
+    "organization__name": "House",
+    "description": "Taken Up for Perfection (H)",
+    "date": "2025-03-26T05:00:00+00:00",
+    "classification": [],
+    "order": 13
+   },
+   {
+    "organization__name": "House",
+    "description": "Title of Bill - Agreed To",
+    "date": "2025-03-26T05:00:00+00:00",
+    "classification": [],
+    "order": 14
+   },
+   {
+    "organization__name": "House",
+    "description": "HCS Adopted (H)",
+    "date": "2025-03-26T05:00:00+00:00",
+    "classification": [],
+    "order": 15
+   },
+   {
+    "organization__name": "House",
+    "description": "Perfected with Amendments (H) - HA 1, HA 1 to HA 2, HA 2 as amended adopted",
+    "date": "2025-03-26T05:00:00+00:00",
+    "classification": [],
+    "order": 16
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred: Fiscal Review(H)",
+    "date": "2025-03-27T05:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 17
+   },
+   {
+    "organization__name": "House",
+    "description": "Executive Session Completed (H)",
+    "date": "2025-04-01T05:00:00+00:00",
+    "classification": [],
+    "order": 18
+   },
+   {
+    "organization__name": "House",
+    "description": "Voted Do Pass (H)",
+    "date": "2025-04-01T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 19
+   },
+   {
+    "organization__name": "House",
+    "description": "Reported Do Pass (H) - AYES: 7 NOES: 0 PRESENT: 0",
+    "date": "2025-04-01T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 20
+   },
+   {
+    "organization__name": "House",
+    "description": "Taken Up for Third Reading (H)",
+    "date": "2025-04-02T05:00:00+00:00",
+    "classification": [
+     "reading-3"
+    ],
+    "order": 21
+   },
+   {
+    "organization__name": "House",
+    "description": "Third Read and Passed (H) - AYES: 142 NOES: 9 PRESENT: 0",
+    "date": "2025-04-02T05:00:00+00:00",
+    "classification": [
+     "passage",
+     "reading-3"
+    ],
+    "order": 22
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported to the Senate and First Read (S)",
+    "date": "2025-04-03T05:00:00+00:00",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 23
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Second read and referred: Judiciary and Civil and Criminal Jurisprudence(S)",
+    "date": "2025-04-10T05:00:00+00:00",
+    "classification": [],
+    "order": 24
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Public Hearing Scheduled (S) - Wednesday, April 16, 2025, 8:00 a.m., Senate Lounge - 3rd Floor",
+    "date": "2025-04-14T05:00:00+00:00",
+    "classification": [],
+    "order": 25
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Public Hearing Held (S)",
+    "date": "2025-04-16T05:00:00+00:00",
+    "classification": [],
+    "order": 26
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Executive Session Held (S)",
+    "date": "2025-04-23T05:00:00+00:00",
+    "classification": [],
+    "order": 27
+   },
+   {
+    "organization__name": "Senate",
+    "description": "SCS Voted Do Pass (S)",
+    "date": "2025-04-23T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 28
+   },
+   {
+    "organization__name": "Senate",
+    "description": "SCS Reported Do Pass (S)",
+    "date": "2025-05-07T05:00:00+00:00",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 29
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Referred: Fiscal Oversight(S)",
+    "date": "2025-05-13T05:00:00+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 30
+   }
+  ],
+  "versions": [
+   {
+    "note": "Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "https://documents.house.mo.gov/billtracking/bills251/hlrbillspdf/0150H.01I.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "House Committee Substitute",
+    "date": "",
+    "links": [
+     {
+      "url": "https://documents.house.mo.gov/billtracking/bills251/hlrbillspdf/0150H.02C.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Perfected",
+    "date": "",
+    "links": [
+     {
+      "url": "https://documents.house.mo.gov/billtracking/bills251/hlrbillspdf/0150H.02P.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Senate Committee Substitute",
+    "date": "",
+    "links": [
+     {
+      "url": "https://documents.house.mo.gov/billtracking/bills251/hlrbillspdf/0150S.03C.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Amendment HA 2, A.A. (Adopted)",
+    "date": "",
+    "links": [
+     {
+      "url": "https://documents.house.mo.gov/billtracking/bills251/amendpdf/0150H02.01H.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Amendment HA 1 (Adopted)",
+    "date": "",
+    "links": [
+     {
+      "url": "https://documents.house.mo.gov/billtracking/bills251/amendpdf/0150H02.02H.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Amendment HA 1 HA 2 (Adopted)",
+    "date": "",
+    "links": [
+     {
+      "url": "https://documents.house.mo.gov/billtracking/bills251/amendpdf/0150H02.03H.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "",
+  "raw_text_url": "https://documents.house.mo.gov/billtracking/bills251/hlrbillspdf/0150S.03C.pdf"
+ },
+ {
+  "id": "ocd-bill/b2113327-194b-408d-bca8-b8d48445317a",
+  "legislative_session": "2025",
+  "identifier": "SB 428",
+  "title": "Modifies provisions relating to estate planning, including notice for transfers of the principal place of administration of a trust, electronic wills, and estate planning during the COVID-19 state of emergency",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Prefiled",
+    "date": "2024-12-01T06:00:00+00:00",
+    "classification": [],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "S First Read",
+    "date": "2025-01-08T06:00:00+00:00",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Second Read and Referred S General Laws Committee",
+    "date": "2025-02-17T06:00:00+00:00",
+    "classification": [
+     "reading-2",
+     "referral-committee"
+    ],
+    "order": 2
+   }
+  ],
+  "versions": [
+   {
+    "note": "Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.senate.mo.gov/25info/pdf-bill/intro/SB428.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "",
+  "raw_text_url": null
+ }
+]

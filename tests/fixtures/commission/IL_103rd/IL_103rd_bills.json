@@ -1,0 +1,421 @@
+[
+ {
+  "id": "ocd-bill/a87f9d8e-1e55-43bb-a5b2-f599862f89b4",
+  "legislative_session": "103rd",
+  "identifier": "SB 1930",
+  "title": "ELECTRONIC NONTEST ESTATE DOCS",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "House",
+    "description": "Filed with Secretary by Sen. Laura Ellman",
+    "date": "2023-02-09",
+    "classification": [
+     "filing"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "House",
+    "description": "First Reading",
+    "date": "2023-02-09",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred to Assignments",
+    "date": "2023-02-09",
+    "classification": [],
+    "order": 2
+   }
+  ],
+  "versions": [
+   {
+    "note": "Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "https://beta.ilga.gov/Legislation/BillStatus/FullText?LegDocId=183358&DocName=10300SB1930&DocNum=1930&DocTypeID=SB&LegID=146789&GAID=17&SessionID=112&SpecSess=&Session=&Print=1",
+      "media_type": "text/html"
+     },
+     {
+      "url": "https://beta.ilga.gov/documents/legislation/103/SB/PDF/10300SB1930.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "\r\n  \n\r\n  \n\r\n \nSee Index\n\r\n \n    \nAmends the Electronic Wills and Remote Witnesses Act. Changes the \nshort title of the Act to the Electronic Wills, Electronic Estate Planning \nDocuments, and Remote Witnesses Act. Defines \"electronic\", \"information\", \n\"nontestamentary estate planning document\", \"person\", \"record\", \"security \nprocedure\", \"settlor\", \"sign\", \"state\", \"terms of trust\", \"trust \ninstrument\", and \"will\". Creates the Electronic Nontestamentary Estate \nPlanning\r\nDocuments Article. Sets forth provisions related to: \nconstruction; scope; principles of law and equity; use of an electronic \nrecord or signature; recognition of an electronic nontestamentary estate \nplanning document and electronic signature; attribution and effect of an \nelectronic record and electronic signature; notarization and \nacknowledgment; witnessing and attestation; retention of an electronic \nrecord; certification of a paper copy; admissibility in evidence; relation \nto the Electronic Signatures in Global and National Commerce Act; \napplication; and severability. Makes conforming changes in the Probate Act \nof 1975. Effective January 1, 2024.\n\r\n  \n\r\n  \n\r\n  \n    \nAN ACT concerning civil law.\n\r\n  \n    \nBe it enacted by the People of the State of Illinois,\r\n \nrepresented in the General Assembly:\n\r\n  \n\r\n \n    \nSection 5. \nThe Probate Act of 1975 is amended  by changing \nSections 1-2.25, 8-1, and 8-2 as follows:\n    \n(755 ILCS 5/1-2.25)\n    \nSec. 1-2.25. \n\r\n\nWhere this Act requires information to be \n\"written\" or \"in writing\", or provides for certain \nconsequences if it is not, an electronic record under the \nElectronic Wills\n, Electronic Estate Planning Documents,\n and \nRemote Witnesses Act satisfies the provisions of this Act.\n(Source: P.A. 102-167, eff. 7-26-21.)\n\r\n\n\r\n\n\r\n\n    \n(755 ILCS 5/8-1)\n  \n(from Ch. 110 1/2, par. 8-1)\n\r\n\n\r\n\n\r\n\n    \nSec. 8-1. \nContest of\r\nadmission of will to probate; notice.\n    \n(a)  Within 6 months after the admission\r\nto probate of a \ndomestic will in accordance with the provisions\r\nof Section 6-4 \nor Section 20-20 or 20-25 of the Electronic Wills\n, Electronic \nEstate Planning Documents,\n and Remote Witnesses Act, or of a \nforeign will in accordance with the provisions of\r\nArticle VII \nof this Act, any interested person may file a petition in the \nproceeding\r\nfor the administration of the testator's estate or, \nif no proceeding is\r\npending,\r\nin the court in which the will was \nadmitted to probate, to contest the validity\r\nof the will. \n\r\n\n    \n(b) The petitioner shall cause a copy of the petition to be \nmailed or\r\ndelivered\r\nto the representative, to his or her\r\n\nattorney of\r\nrecord, and to each heir and legatee whose name is \nlisted in the petition to\r\nadmit the will to probate and in any \namended petition filed in accordance with\r\nSection 6-11,\r\nat the \naddress stated in the petition or amended petition.  Filing a\r\n\npleading constitutes a waiver of the mailing or delivery of \nthe notice to the\r\nperson filing the pleading.  Failure to mail \nor deliver a copy of the petition\r\nto an heir or a legatee does \nnot extend the time within which a petition to\r\ncontest\r\nthe will \nmay be filed under subsection (a) of this Section or affect the\r\n\nvalidity of the \njudgment\n \njudgement\n entered in the proceeding.\n\r\n\n    \n(c) Any contestant or proponent may demand a\r\ntrial by \njury.  An issue\r\nshall be made whether or not the instrument \nproduced is\r\nthe will of the testator.  The contestant shall in \nthe first instance proceed\r\nwith proof to establish the \ninvalidity of the will.  At the close of the\r\ncontestant's case, \nthe proponent may present evidence to sustain the will.\r\nAn \nauthenticated transcript of the testimony of any witness or \nother party taken at the\r\ntime of the hearing on the admission \nof the will to probate, or an affidavit\r\nof any witness or other \nparty received as evidence under subsection 6-4(b), paragraphs \n(c) and (e) of Section 20-20 of the Electronic Wills\n, \nElectronic Estate Planning Documents,\n and Remote Witnesses \nAct, or Section 20-25 of the Electronic Wills\n, Electronic \nEstate Planning Documents,\n and Remote Witnesses Act, is \nadmissible in\r\nevidence.\n\r\n\n    \n(d) The right to institute or continue a proceeding to \ncontest the validity\r\nof a will survives and descends to the \nheir, legatee, representative, grantee\r\nor assignee of the \nperson entitled to institute the proceeding.\n\r\n\n    \n(e) It is the duty of the representative to defend a \nproceeding to contest\r\nthe validity of the will.  The court may \norder the representative to defend\r\nthe proceeding or prosecute \nan appeal from the judgment.  If the representative\r\nfails or \nrefuses to do so when ordered by the court, or if there is no\r\n\nrepresentative then acting, the court, upon its\r\nmotion or on \napplication of any interested person, may appoint a special\r\n\nadministrator to defend or appeal in his stead.\n\r\n\n    \n(f) An action to set aside or contest the validity of a \nrevocable inter\r\nvivos trust agreement or declaration of trust \nto which a legacy is provided by\r\nthe settlor's will which is \nadmitted to probate shall be commenced within and\r\nnot after \nthe time to contest the validity of a will as provided in\r\n\nsubsection (a) of this Section\r\nand Section 13-223 of the Code \nof Civil Procedure.\n\r\n\n    \n(g) This amendatory Act of 1995 applies to pending cases \nas well as cases\r\ncommenced on or after its effective date.\n\r\n\n(Source: P.A. 102-167, eff. 7-26-21.)\n\r\n\n\r\n\n\r\n\n\r\n\n    \n(755 ILCS 5/8-2)\n  \n(from Ch. 110 1/2, par. 8-2)\n\r\n\n\r\n\n\r\n\n    \nSec. 8-2. \nContest of denial of admission of will to \nprobate. \n\r\n\n    \n(a) Within\r\n6 months after the entry of an order denying \nadmission to probate of a domestic\r\nwill in accordance with the \nprovisions of Section 6-4 or Section 20-20 or 20-25 of the \nElectronic Wills\n, Electronic Estate Planning Documents,\n and \nRemote Witnesses Act, or of a foreign will\r\nin accordance with \nthe provisions of Article VII of this Act, any interested \nperson\r\ndesiring to contest the denial of admission may file a \npetition to admit\r\nthe will to probate in the proceeding for the \nadministration of the\r\ndecedent's estate\r\nor, if no proceeding \nis pending, in the court which\r\ndenied admission of the\r\nwill to \nprobate.  The petition must state the facts required to be \nstated\r\nin Section 6-2 or 6-20, whichever is applicable. \n\r\n\n    \n(b) The petitioner shall cause a copy of the petition to be \nmailed or\r\ndelivered\r\n to the representative, to his or her \nattorney of record, and to\r\neach\r\nheir and legatee whose name is \nlisted in the petition to admit the will to\r\nprobate and in any \namended petition filed in accordance with Section 6-11, at\r\nthe \naddress stated in the petition or amended petition.  Filing a \npleading\r\nconstitutes a waiver of the\r\nmailing or delivery of \nthe notice to the person\r\nfiling the pleading.  Failure to mail \nor deliver a copy of the petition to an\r\nheir or legatee does \nnot extend the time within which a petition to admit the\r\nwill\r\n\nto probate may be filed under subsection (a) of Section 8-1 or\r\n\naffect the validity of the judgment entered in the proceeding.\n\r\n\n    \n(c) Any proponent or contestant may demand a\r\ntrial by \njury.  An issue\r\nshall be made whether or not the instrument \nproduced is the will of the\r\ntestator.  The proponent shall in \nthe first instance proceed\r\nwith proof to establish the \nvalidity of the will and may introduce any evidence\r\ncompetent \nto establish a will.  Any interested person may oppose the \npetition\r\nand may introduce any evidence admissible in a will \ncontest under Section\r\n8-1.  At the close of the contestant's \ncase, the proponent may present further\r\nevidence to sustain \nthe will.\n\r\n\n    \n(d) The right to institute or continue a proceeding to \ncontest the denial\r\nof admission of a will to probate survives \nand descends to the heir, legatee,\r\nrepresentative, grantee or \nassignee of the person entitled to institute\r\nthe proceeding.\n\r\n\n    \n(e) The court may order the representative to defend a \nproceeding to probate\r\nthe will or prosecute an appeal from the \njudgment.  If the representative\r\nfails or refuses to do so when \nordered by the court, or if there is no\r\nrepresentative then \nacting, the court, upon its\r\nmotion or on application of any \ninterested person, may appoint a special\r\nadministrator to do \nso in his stead.\n\r\n\n    \n(f) A person named as executor in a will that has been \ndenied admission\r\nto probate has no duty to file or support a \npetition under Section 8-2.\n\r\n\n    \n(g) This amendatory Act of 1995 applies to pending cases \nas well as cases\r\ncommenced on or after its effective date.\n\r\n\n(Source: P.A. 102-167, eff. 7-26-21.)\n\r\n\n    \nSection 10. \nThe Electronic Wills and Remote Witnesses Act \nis amended  by changing Sections 1-1, 1-5, 1-15, and 1-20 and  by \nadding Article 11 as follows:\n    \n(755 ILCS 6/1-1)\n\r\n\n    \nSec. 1-1. \nShort title. \nThis Act may be cited as the \nElectronic Wills\n, Electronic Estate Planning Documents,\n and \nRemote Witnesses Act.\n\r\n\n(Source: P.A. 102-167, eff. 7-26-21.)\n    \n(755 ILCS 6/1-5)\n\r\n\n    \nSec. 1-5. \nPurpose.  \nThe purpose of this Act is to provide \nfor: (1) the valid execution, attestation, self-proving, and \nprobate of electronic wills, paper copies of electronic wills, \nand wills attested to by witnesses through audio-video \ncommunication; \n(2) the valid execution of  electronic \nnontestamentary estate planning documents and validation of \nelectronic signatures on  nontestamentary estate planning \ndocuments;\n and \n(3)\n \n(2)\n  the valid execution, attestation, and \nwitnessing of documents, other than wills, through audio-video \ncommunication.\n\r\n\n(Source: P.A. 102-167, eff. 7-26-21.)\n    \n(755 ILCS 6/1-15)\n\r\n\n    \nSec. 1-15. \nRelation to Probate Act of 1975\n, other \nstatutes,\n and common law. \nAll electronic wills, paper copies \nof electronic wills, and wills attested to under this Act are \nsubject to all requirements of the Probate Act of 1975 and the \ncommon law, but to the extent the common law or any provision \nof the Probate Act of 1975 conflicts with or is modified by \nthis Act, the requirements of this Act control. \nNontestamentary estate planning documents executed in \naccordance with this Act are subject to all requirements of \nthe various statutes applicable thereto, but to the extent the \ncommon law or any statute conflicts with or is modified by this \nAct, the requirements of this Act control.\n \n\r\n\n(Source: P.A. 102-167, eff. 7-26-21.)\n    \n(755 ILCS 6/1-20)\n\r\n\n    \nSec. 1-20. \nDefinitions. \nAs used in this Act:\n    \n\"Audio-video communication\" means communication by which a \nperson can hear, see, and communicate with another person in \nreal time using electronic means. A person's visual or hearing \nimpairment does not prohibit or limit that person's use of \naudio-visual communication under this Act.\n    \n\"Electronic\" means relating to technology having \nelectrical, digital, magnetic, wireless, optical, \nelectromagnetic, or similar capabilities.\n \n    \n\"Electronic record\" means a record generated, \ncommunicated, received, or stored by electronic means for use \nin an information system or for transmission from one \ninformation system to another.\n    \n\"Electronic signature\" means a signature in electronic \nform that uses a security procedure under the Electronic \nCommerce Security Act and attached to or logically associated \nwith an electronic record.\n    \n\"Electronic will\" is a will that is created and maintained \nas a tamper-evident electronic record.\n    \n\"Identity proofing\" means a process or service through \nwhich a third person affirms the identity of an individual \nthrough a review of personal information from public and \nproprietary data sources, including: (1) by means of dynamic \nknowledge-based authentication, including a review of personal \ninformation from public or proprietary data sources; or (2) by \nmeans of an analysis of biometric data, including, but not \nlimited to, facial recognition, voiceprint analysis, or \nfingerprint analysis.\n    \n\"Information\" includes data, text, images, codes, computer \nprograms, software, and databases.\n    \n\"Nontestamentary estate planning document\" means a record \nrelating to estate planning that is readable as text at the \ntime of signing and is not a will or contained in a will. \n\"Nontestamentary estate planning document\" includes a record \nreadable as text at the time of signing that creates, \nexercises, modifies, releases, or revokes: (1) a trust \ninstrument;\r\n(2) a trust power that under the terms of the trust \nrequires a signed record;\r\n(3) a certification of a trust under \nSection 1013 of the Illinois Trust Code;\r\n(4) a power of \nattorney that is durable under Article II of the Illinois \nPower of Attorney Act;\r\n(5) an agent's certification under \nSection 2-8 of the Illinois Power of Attorney Act of the \nvalidity of a power of attorney and the agent's authority;\r\n(6) \na power of appointment;\r\n(7) an advance directive, including a \nhealth care power of attorney, directive to physicians, \nnatural death statement, living will, and medical or physician \norder for life-sustaining treatment;\r\n(8) a record directing \nthe disposition of an individual's body after death;\r\n(9) a \nnomination of a guardian for the signing individual;\r\n(10) a \nnomination of a guardian for a minor child or disabled adult \nchild;\r\n(11) a mental health treatment declaration;\r\n(12) a \ncommunity property survivorship agreement;\r\n(13) a disclaimer \nunder Section 2-7 of the Probate Act of 1975; and\r\n(14) any \nother record intended to carry out an individual's intent \nregarding property or health care while incapacitated or on \ndeath. \"Nontestamentary estate planning document\" does not \ninclude a deed of real property or a certificate of title for a  \nvehicle, watercraft, or aircraft.\n    \n\"Paper copy\" means a tamper-evident electronic record that \nis printed and contains the following: (1) the text of the \ndocument; (2) the electronic signature of the signer; (3) a \nreadable copy of the evidence of any changes displayed in the \nelectronic record; and (4) any exhibits, attestation clauses, \naffidavits, or other items forming a part of the document or \ncontained in the electronic record.\n    \n\"Paper document\" means a document that is written or \nprinted on paper.\n    \n\"Person\" means an individual, estate, business or \nnonprofit entity, government or governmental subdivision, \nagency, or instrumentality, or other legal entity.\n \n    \n\"Physical presence\" means being in the same physical \nlocation as another person and close enough to see and know the \nother person is signing a document.\n    \n\"Power of attorney\" means a record that grants authority \nto an agent to act in place of the principal, even if the term \nis not used in the record.\n \n    \n\"Presence\" includes: (1) physical presence; or (2) being \nin a different physical location from another person, but \nable, using audio-video communication, to know the person is \nsigning a document in real time.\n    \n\"Record\" means information: (1) inscribed on a tangible \nmedium; or\r\n(2) stored in an electronic or other medium and \nretrievable in a perceivable\r\nform.\n \n    \n\"Remote witness\" means a person attesting to a document \nwho is in the presence of the signer or testator through \naudio-video communication.\n    \n\"Rule of law\" means any statute, ordinance, common law \nrule, court decision, or other rule of law enacted, \nestablished, or promulgated by this State or any agency, \ncommission, department, court, other authority, or political \nsubdivision of this State.\n    \n\"Security procedure\" means a procedure to verify that an \nelectronic signature, record, or performance is that of a \nspecific person or to detect a change or error in an electronic \nrecord. \"Security procedure\" includes a procedure that uses an \nalgorithm, code, identifying word or number, encryption, or \ncallback or other acknowledgment procedure.\n \n    \n\"Settlor\" means a person, including a testator, that \ncreates or contributes property to a trust.\n \n    \n\"Signature\" includes an electronic signature and an ink \nsignature.\n    \n\"Sign\" means, with present intent to authenticate or adopt \na record, to:\r\n(1) execute or adopt a tangible symbol; or\r\n(2) \nattach to or logically associate with the record an electronic \nsignature.\n    \n\"State\" means a state of the United States, the District \nof Columbia, Puerto Rico, the United States Virgin Islands, or \nother territory or possession subject to the jurisdiction of \nthe United States. \"State\" includes a federally recognized \nIndian tribe.\n \n    \n\"Tamper-evident\" means a feature of an electronic record \nby which any change to the electronic record is displayed.\n    \n\"Terms of trust\" means: (1) the manifestation of the \nsettlor's intent regarding a trust's provisions as (i) \nexpressed in the trust instrument or\r\n(ii) established by other \nevidence that would be admissible in a judicial proceeding; or\r\n\n(2) the trust's provisions as established, determined, or \namended by (i) a trustee or other person in accordance with \napplicable law,\r\n(ii) a court order, or\r\n(iii) a nonjudicial \nsettlement agreement under Section 111 of the Illinois Trust \nCode.\n    \n\"Trust instrument\" means an instrument executed by the \nsettlor that contains terms of the trust, including any \namendments.\n    \n\"Will\" includes a codicil and a testamentary instrument \nthat merely appoints an executor, revokes or revises another \nwill, nominates a guardian, or expressly excludes or limits \nthe right of an individual or class to succeed to property of \nthe decedent passing by intestate succession.\n \n\r\n\n(Source: P.A. 102-167, eff. 7-26-21.)\n    \n(755 ILCS 6/Art. 11 heading new)\nArticle 11. \nElectronic Nontestamentary Estate Planning \nDocuments\n    \n(755 ILCS 6/11-5 new)\n    \nSec. 11-5. \nConstruction. \nThis Article shall be construed \nand applied to:\n    \n    \n(1) facilitate electronic estate planning documents \nand signatures consistent with other law; and\n    \n    \n(2) be consistent with reasonable practices concerning \nelectronic documents and signatures and continued \nexpansion of those practices.\n    \n(755 ILCS 6/11-10 new)\n    \nSec. 11-10. \nScope.\n    \n(a) Except as provided in subsection (b), this Article \napplies to an electronic nontestamentary estate planning \ndocument and an electronic signature on a nontestamentary \nestate planning document.\n    \n(b) This Article does not apply to a nontestamentary \nestate planning document if the document precludes use of an \nelectronic record or electronic signature.\n    \n(c) This Article does not affect the validity of an \nelectronic record or electronic signature that is valid under:\n    \n    \n(1) the Illinois Uniform Electronic Transactions Act;\n    \n    \n(2) any other Section of this Act; or\n    \n    \n(3) any other State law relating to nontestamentary \nestate planning documents.\n    \n(755 ILCS 6/11-15 new)\n    \nSec. 11-15. \nPrinciples of law and equity. \nThe law of this \nState and principles of equity applicable to a nontestamentary \nestate planning document apply to an electronic \nnontestamentary estate planning document except as modified by \nthis Article.\n    \n(755 ILCS 6/11-20 new)\n    \nSec. 11-20. \nUse of electronic record or signature not \nrequired.\n    \n(a) This Article does not require a nontestamentary estate \nplanning document or signature on a nontestamentary estate \nplanning document to be created, generated, sent, \ncommunicated, received, stored, or otherwise processed or used \nby electronic means or in electronic form.\n    \n(b) A person is not required to have a nontestamentary \nestate planning document in electronic form or signed \nelectronically even if the person previously created or signed \na nontestamentary estate planning document by electronic \nmeans.\n    \n(c) A person may not waive the provisions of this Section.\n    \n(755 ILCS 6/11-25 new)\n    \nSec. 11-25. \nRecognition of electronic nontestamentary \nestate planning document and electronic signature.\n    \n(a) A nontestamentary estate planning document or a \nsignature on a nontestamentary estate planning document may \nnot be denied legal effect or enforceability solely because it \nis in electronic form.\n    \n(b) If other law of this State requires a nontestamentary \nestate planning document to be in writing, an electronic \nrecord of the document satisfies the requirement.\n    \n(c) If other law of this State requires a signature on a \nnontestamentary estate planning document, an electronic \nsignature satisfies the requirement.\n    \n(755 ILCS 6/11-30 new)\n    \nSec. 11-30. \nAttribution and effect of electronic record \nand electronic signature.\n    \n(a) An electronic nontestamentary estate planning document \nor electronic signature on an electronic nontestamentary \nestate planning document is attributable to a person if it was \nthe act of the person. The act of the person may be shown in \nany manner, including by showing the efficacy of a security \nprocedure applied to determine the person to which the \nelectronic record or electronic signature was attributable.\n    \n(b) The effect of attribution to a person under subsection \n(a) of a document or signature is determined from the context \nand surrounding circumstances at the time of its creation, \nexecution, or adoption and as provided by other law.\n    \n(755 ILCS 6/11-35 new)\n    \nSec. 11-35. \nNotarization and acknowledgment. \nIf other law \nof this State requires a signature or record to be notarized, \nacknowledged, verified, or made under oath, the requirement is \nsatisfied with respect to an electronic nontestamentary estate \nplanning document if an individual authorized to perform the \nnotarization, acknowledgment, verification, or oath attaches \nor logically associates the individual's electronic signature \non the document together with all other information required \nto be included under the other law.\n    \n(755 ILCS 6/11-40 new)\n    \nSec. 11-40. \nWitnessing and attestation.\n    \n(a) If other law of this State bases the validity of a \nnontestamentary estate planning document on whether it is \nsigned, witnessed, or attested by another individual, the \nsignature, witnessing, or attestation of that individual may \nbe electronic.\n    \n(b) As used in this subsection (b), \"electronic presence\" \nmeans that 2 or more individuals in different locations are \nable to communicate in real time to the same extent as if the \nindividuals were physically present in the same location. If \nother law of this State bases the validity of a \nnontestamentary estate planning document on whether it is \nsigned, witnessed, or attested by another individual in the \npresence of the individual signing the document, the presence \nrequirement is satisfied if the individuals are in each \nother's electronic presence.\n    \n(755 ILCS 6/11-45 new)\n    \nSec. 11-45. \nRetention of electronic record; original.\n    \n(a) Except as provided in subsection (b), if other law of \nthis State requires an electronic nontestamentary estate \nplanning document to be retained, transmitted, copied, or \nfiled, the requirement is satisfied by retaining, \ntransmitting, copying, or filing an electronic record that:\n    \n    \n(1) accurately reflects the information in the \ndocument after it was first generated in final form as an \nelectronic record or under Section 11-30; and\n    \n    \n(2) remains accessible to the extent required by the \nother law.\n    \n(b) A requirement under subsection (a) to retain a record \ndoes not apply to information the sole purpose of which is to \nenable the record to be sent, communicated, or received.\n    \n(c) A person may satisfy subsection (a) by using the \nservices of another person.\n    \n(d) If other law of this State requires a nontestamentary \nestate planning document to be presented or retained in its \noriginal form, or provides consequences if a nontestamentary \nestate planning document is not presented or retained in its \noriginal form, an electronic record retained in accordance \nwith subsection (a) satisfies the other law.\n    \n(e) This Section does not preclude a governmental agency \nfrom specifying requirements for the retention of a record \nsubject to the agency's jurisdiction in addition to those in \nthis Section. In this Section, \"governmental agency\" means an \nexecutive, legislative, or judicial agency, department, board, \ncommission, authority, institution, or instrumentality of the \nfederal government or of a state or of a county, municipality, \nor other political subdivision of a state.\n    \n(755 ILCS 6/11-50 new)\n    \nSec. 11-50. \nCertification of paper copy. \nAn individual may \ncreate a certified paper copy of an electronic nontestamentary \nestate planning document by affirming under penalty of perjury \nthat the paper copy is a complete and accurate copy of the \ndocument.\n    \n(755 ILCS 6/11-55 new)\n    \nSec. 11-55. \nAdmissibility in evidence. \nEvidence relating \nto an electronic nontestamentary estate planning document or \nan electronic signature on the document may not be excluded in \na proceeding solely because it is in electronic form.\n    \n(755 ILCS 6/11-60 new)\n    \nSec. 11-60. \nRelation to the Electronic Signatures in \nGlobal and National Commerce Act. \nThis Article modifies, \nlimits, or supersedes the Electronic Signatures in Global and \nNational Commerce Act, 15 U.S.C. Section 7001 et seq., but \ndoes not modify, limit, or supersede 15 U.S.C. Section 7001(c) \nor authorize electronic delivery of any of the notices \ndescribed in 15 U.S.C. Section 7003(b).\n    \n(755 ILCS 6/11-65 new)\n    \nSec. 11-65. \nApplication. \nThis Article applies to an \nelectronic nontestamentary estate planning document created, \nsigned, generated, sent, communicated, received, or stored \nbefore, on, or after the effective date of this amendatory Act \nof the 103rd General Assembly.\n    \n(755 ILCS 6/11-70 new)\n    \nSec. 11-70. \nSeverability. \nIf a provision of this Article \nor its application to a person or circumstance is held \ninvalid, the invalidity does not affect another provision or \napplication that can be given effect without the invalid \nprovision.\n\r\n \n    \nSection 99. \nEffective date. \nThis Act takes effect January \n1, 2024.\n \n\r\n  \n\r\n\n    \n755 ILCS 5/1-2.25\n \n    \n755 ILCS 5/8-1\nfrom Ch. 110 1/2, par. 8-1\n \n \n    \n755 ILCS 5/8-2\nfrom Ch. 110 1/2, par. 8-2\n \n    \n755 ILCS 6/1-1\n    \n755 ILCS 6/1-5\n    \n755 ILCS 6/1-15\n    \n755 ILCS 6/1-20\n    \n755 ILCS 6/Art. 11 heading \n    \nnew\n    \n755 ILCS 6/11-5 new\n    \n755 ILCS 6/11-10 new\n    \n755 ILCS 6/11-15 new\n    \n755 ILCS 6/11-20 new\n    \n755 ILCS 6/11-25 new\n    \n755 ILCS 6/11-30 new\n    \n755 ILCS 6/11-35 new\n    \n755 ILCS 6/11-40 new\n    \n755 ILCS 6/11-45 new\n    \n755 ILCS 6/11-50 new\n    \n755 ILCS 6/11-55 new\n    \n755 ILCS 6/11-60 new\n    \n755 ILCS 6/11-65 new\n    \n755 ILCS 6/11-70 new\n",
+  "raw_text_url": "https://beta.ilga.gov/Legislation/BillStatus/FullText?LegDocId=183358&DocName=10300SB1930&DocNum=1930&DocTypeID=SB&LegID=146789&GAID=17&SessionID=112&SpecSess=&Session=&Print=1"
+ },
+ {
+  "id": "ocd-bill/fcf5bbbf-1572-4766-af1a-47649b26178a",
+  "legislative_session": "103rd",
+  "identifier": "HB 2269",
+  "title": "ELECTRONIC NONTEST ESTATE DOCS",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "House",
+    "description": "Filed with the Clerk by Rep. Margaret Croke",
+    "date": "2023-02-09",
+    "classification": [
+     "filing"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "House",
+    "description": "First Reading",
+    "date": "2023-02-14",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred to Rules Committee",
+    "date": "2023-02-14",
+    "classification": [],
+    "order": 2
+   },
+   {
+    "organization__name": "House",
+    "description": "Assigned to Judiciary - Civil Committee",
+    "date": "2023-02-21",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "House",
+    "description": "Do Pass / Short Debate Judiciary - Civil Committee;  015-000-000",
+    "date": "2023-03-01",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "House",
+    "description": "Placed on Calendar 2nd Reading - Short Debate",
+    "date": "2023-03-01",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 5
+   },
+   {
+    "organization__name": "House",
+    "description": "House Floor Amendment No. 1 Filed with Clerk by Rep. Margaret Croke",
+    "date": "2023-03-02",
+    "classification": [
+     "amendment-introduction"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "House",
+    "description": "House Floor Amendment No. 1 Referred to Rules Committee",
+    "date": "2023-03-02",
+    "classification": [],
+    "order": 7
+   },
+   {
+    "organization__name": "House",
+    "description": "House Floor Amendment No. 1 Rules Refers to Judiciary - Civil Committee",
+    "date": "2023-03-07",
+    "classification": [],
+    "order": 8
+   },
+   {
+    "organization__name": "House",
+    "description": "Added Co-Sponsor Rep. Dan Ugaste",
+    "date": "2023-03-15",
+    "classification": [],
+    "order": 9
+   },
+   {
+    "organization__name": "House",
+    "description": "House Floor Amendment No. 1 Recommends Be Adopted Judiciary - Civil Committee;  012-000-000",
+    "date": "2023-03-15",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "House",
+    "description": "House Floor Amendment No. 1 Adopted",
+    "date": "2023-03-21",
+    "classification": [
+     "amendment-passage"
+    ],
+    "order": 11
+   },
+   {
+    "organization__name": "House",
+    "description": "Second Reading - Short Debate",
+    "date": "2023-03-21",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 12
+   },
+   {
+    "organization__name": "House",
+    "description": "Placed on Calendar Order of 3rd Reading - Short Debate",
+    "date": "2023-03-21",
+    "classification": [],
+    "order": 13
+   },
+   {
+    "organization__name": "House",
+    "description": "Third Reading - Short Debate - Passed 110-000-000",
+    "date": "2023-03-23",
+    "classification": [
+     "passage",
+     "reading-3"
+    ],
+    "order": 14
+   },
+   {
+    "organization__name": "House",
+    "description": "Added Co-Sponsor Rep. Camille Y. Lilly",
+    "date": "2023-03-23",
+    "classification": [],
+    "order": 15
+   },
+   {
+    "organization__name": "House",
+    "description": "Arrive in Senate",
+    "date": "2023-03-27",
+    "classification": [
+     "introduction"
+    ],
+    "order": 16
+   },
+   {
+    "organization__name": "House",
+    "description": "Placed on Calendar Order of First Reading March 28, 2023",
+    "date": "2023-03-27",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 17
+   },
+   {
+    "organization__name": "House",
+    "description": "Chief Senate Sponsor Sen. Laura Ellman",
+    "date": "2023-03-30",
+    "classification": [],
+    "order": 18
+   },
+   {
+    "organization__name": "House",
+    "description": "First Reading",
+    "date": "2023-03-30",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 19
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred to Assignments",
+    "date": "2023-03-30",
+    "classification": [],
+    "order": 20
+   },
+   {
+    "organization__name": "House",
+    "description": "Assigned to Judiciary",
+    "date": "2023-05-04",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 21
+   },
+   {
+    "organization__name": "House",
+    "description": "Rule 2-10 Committee Deadline Established As May 11, 2023",
+    "date": "2023-05-04",
+    "classification": [],
+    "order": 22
+   },
+   {
+    "organization__name": "House",
+    "description": "Waive Posting Notice",
+    "date": "2023-05-05",
+    "classification": [],
+    "order": 23
+   },
+   {
+    "organization__name": "House",
+    "description": "Do Pass Judiciary;  006-000-000",
+    "date": "2023-05-10",
+    "classification": [],
+    "order": 24
+   },
+   {
+    "organization__name": "House",
+    "description": "Placed on Calendar Order of 2nd Reading May 11, 2023",
+    "date": "2023-05-10",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 25
+   },
+   {
+    "organization__name": "House",
+    "description": "Second Reading",
+    "date": "2023-05-11",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 26
+   },
+   {
+    "organization__name": "House",
+    "description": "Placed on Calendar Order of 3rd Reading May 15, 2023",
+    "date": "2023-05-11",
+    "classification": [],
+    "order": 27
+   },
+   {
+    "organization__name": "House",
+    "description": "Rule 2-10 Third Reading Deadline Established As May 25, 2023",
+    "date": "2023-05-11",
+    "classification": [],
+    "order": 28
+   },
+   {
+    "organization__name": "House",
+    "description": "Rule 2-10 Third Reading Deadline Established As May 19, 2023",
+    "date": "2023-05-12",
+    "classification": [],
+    "order": 29
+   },
+   {
+    "organization__name": "House",
+    "description": "Third Reading - Passed; 057-000-000",
+    "date": "2023-05-17",
+    "classification": [
+     "passage",
+     "reading-3"
+    ],
+    "order": 30
+   },
+   {
+    "organization__name": "House",
+    "description": "Passed Both Houses",
+    "date": "2023-05-17",
+    "classification": [],
+    "order": 31
+   },
+   {
+    "organization__name": "House",
+    "description": "Sent to the Governor",
+    "date": "2023-06-15",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 32
+   },
+   {
+    "organization__name": "House",
+    "description": "Governor Approved",
+    "date": "2023-07-28",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 33
+   },
+   {
+    "organization__name": "House",
+    "description": "Effective Date January 1, 2024",
+    "date": "2023-07-28",
+    "classification": [],
+    "order": 34
+   },
+   {
+    "organization__name": "House",
+    "description": "Public Act . . . . . . . . . 103-0301",
+    "date": "2023-07-28",
+    "classification": [
+     "became-law"
+    ],
+    "order": 35
+   }
+  ],
+  "versions": [
+   {
+    "note": "House Amendment 001",
+    "date": "",
+    "links": [
+     {
+      "url": "https://beta.ilga.gov/Legislation/BillStatus/FullText?LegDocId=186112&DocName=10300HB2269ham001&DocNum=2269&DocTypeID=HB&LegID=146986&GAID=17&SessionID=112&SpecSess=&Session=&Print=1",
+      "media_type": "text/html"
+     },
+     {
+      "url": "https://beta.ilga.gov/documents/legislation/103/HB/PDF/10300HB2269ham001.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Enrolled",
+    "date": "",
+    "links": [
+     {
+      "url": "https://beta.ilga.gov/Legislation/BillStatus/FullText?LegDocId=183553&DocName=10300HB2269enr&DocNum=2269&DocTypeID=HB&LegID=146986&GAID=17&SessionID=112&SpecSess=&Session=&Print=1",
+      "media_type": "text/html"
+     },
+     {
+      "url": "https://beta.ilga.gov/documents/legislation/103/HB/PDF/10300HB2269enr.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Engrossed",
+    "date": "",
+    "links": [
+     {
+      "url": "https://beta.ilga.gov/Legislation/BillStatus/FullText?LegDocId=183553&DocName=10300HB2269eng&DocNum=2269&DocTypeID=HB&LegID=146986&GAID=17&SessionID=112&SpecSess=&Session=&Print=1",
+      "media_type": "text/html"
+     },
+     {
+      "url": "https://beta.ilga.gov/documents/legislation/103/HB/PDF/10300HB2269eng.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "https://beta.ilga.gov/Legislation/BillStatus/FullText?LegDocId=183553&DocName=10300HB2269&DocNum=2269&DocTypeID=HB&LegID=146986&GAID=17&SessionID=112&SpecSess=&Session=&Print=1",
+      "media_type": "text/html"
+     },
+     {
+      "url": "https://beta.ilga.gov/documents/legislation/103/HB/PDF/10300HB2269.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "\r\n  \n\r\n  \n\r\n \nSee Index\n\r\n \n    \nAmends the Electronic Wills and Remote Witnesses Act. Changes the \nshort title of the Act to the Electronic Wills, Electronic Estate Planning \nDocuments, and Remote Witnesses Act. Defines \"electronic\", \"information\", \n\"nontestamentary estate planning document\", \"person\", \"record\", \"security \nprocedure\", \"settlor\", \"sign\", \"state\", \"terms of trust\", \"trust \ninstrument\", and \"will\". Creates the Electronic Nontestamentary Estate \nPlanning\r\nDocuments Article. Sets forth provisions related to: \nconstruction; scope; principles of law and equity; use of an electronic \nrecord or signature; recognition of an electronic nontestamentary estate \nplanning document and electronic signature; attribution and effect of an \nelectronic record and electronic signature; notarization and \nacknowledgment; witnessing and attestation; retention of an electronic \nrecord; certification of a paper copy; admissibility in evidence; relation \nto the Electronic Signatures in Global and National Commerce Act; \napplication; and severability. Makes conforming changes in the Probate Act \nof 1975. Effective January 1, 2024.\n\r\n  \n\r\n  \n\r\n  \n    \nAN ACT concerning civil law.\n\r\n  \n    \nBe it enacted by the People of the State of Illinois,\r\n \nrepresented in the General Assembly:\n\r\n  \n\r\n \n    \nSection 5. \nThe Probate Act of 1975 is amended  by changing \nSections 1-2.25, 8-1, and 8-2 as follows:\n    \n(755 ILCS 5/1-2.25)\n    \nSec. 1-2.25. \n\r\n\nWhere this Act requires information to be \n\"written\" or \"in writing\", or provides for certain \nconsequences if it is not, an electronic record under the \nElectronic Wills\n, Electronic Estate Planning Documents,\n and \nRemote Witnesses Act satisfies the provisions of this Act.\n(Source: P.A. 102-167, eff. 7-26-21.)\n\r\n\n\r\n\n\r\n\n    \n(755 ILCS 5/8-1)\n  \n(from Ch. 110 1/2, par. 8-1)\n\r\n\n\r\n\n\r\n\n    \nSec. 8-1. \nContest of\r\nadmission of will to probate; notice.\n    \n(a)  Within 6 months after the admission\r\nto probate of a \ndomestic will in accordance with the provisions\r\nof Section 6-4 \nor Section 20-20 or 20-25 of the Electronic Wills\n, Electronic \nEstate Planning Documents,\n and Remote Witnesses Act, or of a \nforeign will in accordance with the provisions of\r\nArticle VII \nof this Act, any interested person may file a petition in the \nproceeding\r\nfor the administration of the testator's estate or, \nif no proceeding is\r\npending,\r\nin the court in which the will was \nadmitted to probate, to contest the validity\r\nof the will. \n\r\n\n    \n(b) The petitioner shall cause a copy of the petition to be \nmailed or\r\ndelivered\r\nto the representative, to his or her\r\n\nattorney of\r\nrecord, and to each heir and legatee whose name is \nlisted in the petition to\r\nadmit the will to probate and in any \namended petition filed in accordance with\r\nSection 6-11,\r\nat the \naddress stated in the petition or amended petition.  Filing a\r\n\npleading constitutes a waiver of the mailing or delivery of \nthe notice to the\r\nperson filing the pleading.  Failure to mail \nor deliver a copy of the petition\r\nto an heir or a legatee does \nnot extend the time within which a petition to\r\ncontest\r\nthe will \nmay be filed under subsection (a) of this Section or affect the\r\n\nvalidity of the \njudgment\n \njudgement\n entered in the proceeding.\n\r\n\n    \n(c) Any contestant or proponent may demand a\r\ntrial by \njury.  An issue\r\nshall be made whether or not the instrument \nproduced is\r\nthe will of the testator.  The contestant shall in \nthe first instance proceed\r\nwith proof to establish the \ninvalidity of the will.  At the close of the\r\ncontestant's case, \nthe proponent may present evidence to sustain the will.\r\nAn \nauthenticated transcript of the testimony of any witness or \nother party taken at the\r\ntime of the hearing on the admission \nof the will to probate, or an affidavit\r\nof any witness or other \nparty received as evidence under subsection 6-4(b), paragraphs \n(c) and (e) of Section 20-20 of the Electronic Wills\n, \nElectronic Estate Planning Documents,\n and Remote Witnesses \nAct, or Section 20-25 of the Electronic Wills\n, Electronic \nEstate Planning Documents,\n and Remote Witnesses Act, is \nadmissible in\r\nevidence.\n\r\n\n    \n(d) The right to institute or continue a proceeding to \ncontest the validity\r\nof a will survives and descends to the \nheir, legatee, representative, grantee\r\nor assignee of the \nperson entitled to institute the proceeding.\n\r\n\n    \n(e) It is the duty of the representative to defend a \nproceeding to contest\r\nthe validity of the will.  The court may \norder the representative to defend\r\nthe proceeding or prosecute \nan appeal from the judgment.  If the representative\r\nfails or \nrefuses to do so when ordered by the court, or if there is no\r\n\nrepresentative then acting, the court, upon its\r\nmotion or on \napplication of any interested person, may appoint a special\r\n\nadministrator to defend or appeal in his stead.\n\r\n\n    \n(f) An action to set aside or contest the validity of a \nrevocable inter\r\nvivos trust agreement or declaration of trust \nto which a legacy is provided by\r\nthe settlor's will which is \nadmitted to probate shall be commenced within and\r\nnot after \nthe time to contest the validity of a will as provided in\r\n\nsubsection (a) of this Section\r\nand Section 13-223 of the Code \nof Civil Procedure.\n\r\n\n    \n(g) This amendatory Act of 1995 applies to pending cases \nas well as cases\r\ncommenced on or after its effective date.\n\r\n\n(Source: P.A. 102-167, eff. 7-26-21.)\n\r\n\n\r\n\n\r\n\n\r\n\n    \n(755 ILCS 5/8-2)\n  \n(from Ch. 110 1/2, par. 8-2)\n\r\n\n\r\n\n\r\n\n    \nSec. 8-2. \nContest of denial of admission of will to \nprobate. \n\r\n\n    \n(a) Within\r\n6 months after the entry of an order denying \nadmission to probate of a domestic\r\nwill in accordance with the \nprovisions of Section 6-4 or Section 20-20 or 20-25 of the \nElectronic Wills\n, Electronic Estate Planning Documents,\n and \nRemote Witnesses Act, or of a foreign will\r\nin accordance with \nthe provisions of Article VII of this Act, any interested \nperson\r\ndesiring to contest the denial of admission may file a \npetition to admit\r\nthe will to probate in the proceeding for the \nadministration of the\r\ndecedent's estate\r\nor, if no proceeding \nis pending, in the court which\r\ndenied admission of the\r\nwill to \nprobate.  The petition must state the facts required to be \nstated\r\nin Section 6-2 or 6-20, whichever is applicable. \n\r\n\n    \n(b) The petitioner shall cause a copy of the petition to be \nmailed or\r\ndelivered\r\n to the representative, to his or her \nattorney of record, and to\r\neach\r\nheir and legatee whose name is \nlisted in the petition to admit the will to\r\nprobate and in any \namended petition filed in accordance with Section 6-11, at\r\nthe \naddress stated in the petition or amended petition.  Filing a \npleading\r\nconstitutes a waiver of the\r\nmailing or delivery of \nthe notice to the person\r\nfiling the pleading.  Failure to mail \nor deliver a copy of the petition to an\r\nheir or legatee does \nnot extend the time within which a petition to admit the\r\nwill\r\n\nto probate may be filed under subsection (a) of Section 8-1 or\r\n\naffect the validity of the judgment entered in the proceeding.\n\r\n\n    \n(c) Any proponent or contestant may demand a\r\ntrial by \njury.  An issue\r\nshall be made whether or not the instrument \nproduced is the will of the\r\ntestator.  The proponent shall in \nthe first instance proceed\r\nwith proof to establish the \nvalidity of the will and may introduce any evidence\r\ncompetent \nto establish a will.  Any interested person may oppose the \npetition\r\nand may introduce any evidence admissible in a will \ncontest under Section\r\n8-1.  At the close of the contestant's \ncase, the proponent may present further\r\nevidence to sustain \nthe will.\n\r\n\n    \n(d) The right to institute or continue a proceeding to \ncontest the denial\r\nof admission of a will to probate survives \nand descends to the heir, legatee,\r\nrepresentative, grantee or \nassignee of the person entitled to institute\r\nthe proceeding.\n\r\n\n    \n(e) The court may order the representative to defend a \nproceeding to probate\r\nthe will or prosecute an appeal from the \njudgment.  If the representative\r\nfails or refuses to do so when \nordered by the court, or if there is no\r\nrepresentative then \nacting, the court, upon its\r\nmotion or on application of any \ninterested person, may appoint a special\r\nadministrator to do \nso in his stead.\n\r\n\n    \n(f) A person named as executor in a will that has been \ndenied admission\r\nto probate has no duty to file or support a \npetition under Section 8-2.\n\r\n\n    \n(g) This amendatory Act of 1995 applies to pending cases \nas well as cases\r\ncommenced on or after its effective date.\n\r\n\n(Source: P.A. 102-167, eff. 7-26-21.)\n\r\n\n    \nSection 10. \nThe Electronic Wills and Remote Witnesses Act \nis amended  by changing Sections 1-1, 1-5, 1-15, and 1-20 and  by \nadding Article 11 as follows:\n    \n(755 ILCS 6/1-1)\n\r\n\n    \nSec. 1-1. \nShort title. \nThis Act may be cited as the \nElectronic Wills\n, Electronic Estate Planning Documents,\n and \nRemote Witnesses Act.\n\r\n\n(Source: P.A. 102-167, eff. 7-26-21.)\n    \n(755 ILCS 6/1-5)\n\r\n\n    \nSec. 1-5. \nPurpose.  \nThe purpose of this Act is to provide \nfor: (1) the valid execution, attestation, self-proving, and \nprobate of electronic wills, paper copies of electronic wills, \nand wills attested to by witnesses through audio-video \ncommunication; \n(2) the valid execution of  electronic \nnontestamentary estate planning documents and validation of \nelectronic signatures on  nontestamentary estate planning \ndocuments;\n and \n(3)\n \n(2)\n  the valid execution, attestation, and \nwitnessing of documents, other than wills, through audio-video \ncommunication.\n\r\n\n(Source: P.A. 102-167, eff. 7-26-21.)\n    \n(755 ILCS 6/1-15)\n\r\n\n    \nSec. 1-15. \nRelation to Probate Act of 1975\n, other \nstatutes,\n and common law. \nAll electronic wills, paper copies \nof electronic wills, and wills attested to under this Act are \nsubject to all requirements of the Probate Act of 1975 and the \ncommon law, but to the extent the common law or any provision \nof the Probate Act of 1975 conflicts with or is modified by \nthis Act, the requirements of this Act control. \nNontestamentary estate planning documents executed in \naccordance with this Act are subject to all requirements of \nthe various statutes applicable thereto, but to the extent the \ncommon law or any statute conflicts with or is modified by this \nAct, the requirements of this Act control.\n \n\r\n\n(Source: P.A. 102-167, eff. 7-26-21.)\n    \n(755 ILCS 6/1-20)\n\r\n\n    \nSec. 1-20. \nDefinitions. \nAs used in this Act:\n    \n\"Audio-video communication\" means communication by which a \nperson can hear, see, and communicate with another person in \nreal time using electronic means. A person's visual or hearing \nimpairment does not prohibit or limit that person's use of \naudio-visual communication under this Act.\n    \n\"Electronic\" means relating to technology having \nelectrical, digital, magnetic, wireless, optical, \nelectromagnetic, or similar capabilities.\n \n    \n\"Electronic record\" means a record generated, \ncommunicated, received, or stored by electronic means for use \nin an information system or for transmission from one \ninformation system to another.\n    \n\"Electronic signature\" means a signature in electronic \nform that uses a security procedure under the Electronic \nCommerce Security Act and attached to or logically associated \nwith an electronic record.\n    \n\"Electronic will\" is a will that is created and maintained \nas a tamper-evident electronic record.\n    \n\"Identity proofing\" means a process or service through \nwhich a third person affirms the identity of an individual \nthrough a review of personal information from public and \nproprietary data sources, including: (1) by means of dynamic \nknowledge-based authentication, including a review of personal \ninformation from public or proprietary data sources; or (2) by \nmeans of an analysis of biometric data, including, but not \nlimited to, facial recognition, voiceprint analysis, or \nfingerprint analysis.\n    \n\"Information\" includes data, text, images, codes, computer \nprograms, software, and databases.\n    \n\"Nontestamentary estate planning document\" means a record \nrelating to estate planning that is readable as text at the \ntime of signing and is not a will or contained in a will. \n\"Nontestamentary estate planning document\" includes a record \nreadable as text at the time of signing that creates, \nexercises, modifies, releases, or revokes: (1) a trust \ninstrument;\r\n(2) a trust power that under the terms of the trust \nrequires a signed record;\r\n(3) a certification of a trust under \nSection 1013 of the Illinois Trust Code;\r\n(4) a power of \nattorney that is durable under Article II of the Illinois \nPower of Attorney Act;\r\n(5) an agent's certification under \nSection 2-8 of the Illinois Power of Attorney Act of the \nvalidity of a power of attorney and the agent's authority;\r\n(6) \na power of appointment;\r\n(7) an advance directive, including a \nhealth care power of attorney, directive to physicians, \nnatural death statement, living will, and medical or physician \norder for life-sustaining treatment;\r\n(8) a record directing \nthe disposition of an individual's body after death;\r\n(9) a \nnomination of a guardian for the signing individual;\r\n(10) a \nnomination of a guardian for a minor child or disabled adult \nchild;\r\n(11) a mental health treatment declaration;\r\n(12) a \ncommunity property survivorship agreement;\r\n(13) a disclaimer \nunder Section 2-7 of the Probate Act of 1975; and\r\n(14) any \nother record intended to carry out an individual's intent \nregarding property or health care while incapacitated or on \ndeath. \"Nontestamentary estate planning document\" does not \ninclude a deed of real property or a certificate of title for a  \nvehicle, watercraft, or aircraft.\n    \n\"Paper copy\" means a tamper-evident electronic record that \nis printed and contains the following: (1) the text of the \ndocument; (2) the electronic signature of the signer; (3) a \nreadable copy of the evidence of any changes displayed in the \nelectronic record; and (4) any exhibits, attestation clauses, \naffidavits, or other items forming a part of the document or \ncontained in the electronic record.\n    \n\"Paper document\" means a document that is written or \nprinted on paper.\n    \n\"Person\" means an individual, estate, business or \nnonprofit entity, government or governmental subdivision, \nagency, or instrumentality, or other legal entity.\n \n    \n\"Physical presence\" means being in the same physical \nlocation as another person and close enough to see and know the \nother person is signing a document.\n    \n\"Power of attorney\" means a record that grants authority \nto an agent to act in place of the principal, even if the term \nis not used in the record.\n \n    \n\"Presence\" includes: (1) physical presence; or (2) being \nin a different physical location from another person, but \nable, using audio-video communication, to know the person is \nsigning a document in real time.\n    \n\"Record\" means information: (1) inscribed on a tangible \nmedium; or\r\n(2) stored in an electronic or other medium and \nretrievable in a perceivable\r\nform.\n \n    \n\"Remote witness\" means a person attesting to a document \nwho is in the presence of the signer or testator through \naudio-video communication.\n    \n\"Rule of law\" means any statute, ordinance, common law \nrule, court decision, or other rule of law enacted, \nestablished, or promulgated by this State or any agency, \ncommission, department, court, other authority, or political \nsubdivision of this State.\n    \n\"Security procedure\" means a procedure to verify that an \nelectronic signature, record, or performance is that of a \nspecific person or to detect a change or error in an electronic \nrecord. \"Security procedure\" includes a procedure that uses an \nalgorithm, code, identifying word or number, encryption, or \ncallback or other acknowledgment procedure.\n \n    \n\"Settlor\" means a person, including a testator, that \ncreates or contributes property to a trust.\n \n    \n\"Signature\" includes an electronic signature and an ink \nsignature.\n    \n\"Sign\" means, with present intent to authenticate or adopt \na record, to:\r\n(1) execute or adopt a tangible symbol; or\r\n(2) \nattach to or logically associate with the record an electronic \nsignature.\n    \n\"State\" means a state of the United States, the District \nof Columbia, Puerto Rico, the United States Virgin Islands, or \nother territory or possession subject to the jurisdiction of \nthe United States. \"State\" includes a federally recognized \nIndian tribe.\n \n    \n\"Tamper-evident\" means a feature of an electronic record \nby which any change to the electronic record is displayed.\n    \n\"Terms of trust\" means: (1) the manifestation of the \nsettlor's intent regarding a trust's provisions as (i) \nexpressed in the trust instrument or\r\n(ii) established by other \nevidence that would be admissible in a judicial proceeding; or\r\n\n(2) the trust's provisions as established, determined, or \namended by (i) a trustee or other person in accordance with \napplicable law,\r\n(ii) a court order, or\r\n(iii) a nonjudicial \nsettlement agreement under Section 111 of the Illinois Trust \nCode.\n    \n\"Trust instrument\" means an instrument executed by the \nsettlor that contains terms of the trust, including any \namendments.\n    \n\"Will\" includes a codicil and a testamentary instrument \nthat merely appoints an executor, revokes or revises another \nwill, nominates a guardian, or expressly excludes or limits \nthe right of an individual or class to succeed to property of \nthe decedent passing by intestate succession.\n \n\r\n\n(Source: P.A. 102-167, eff. 7-26-21.)\n    \n(755 ILCS 6/Art. 11 heading new)\nArticle 11. \nElectronic Nontestamentary Estate Planning \nDocuments\n    \n(755 ILCS 6/11-5 new)\n    \nSec. 11-5. \nConstruction. \nThis Article shall be construed \nand applied to:\n    \n    \n(1) facilitate electronic estate planning documents \nand signatures consistent with other law; and\n    \n    \n(2) be consistent with reasonable practices concerning \nelectronic documents and signatures and continued \nexpansion of those practices.\n    \n(755 ILCS 6/11-10 new)\n    \nSec. 11-10. \nScope.\n    \n(a) Except as provided in subsection (b), this Article \napplies to an electronic nontestamentary estate planning \ndocument and an electronic signature on a nontestamentary \nestate planning document.\n    \n(b) This Article does not apply to a nontestamentary \nestate planning document if the document precludes use of an \nelectronic record or electronic signature.\n    \n(c) This Article does not affect the validity of an \nelectronic record or electronic signature that is valid under:\n    \n    \n(1) the Illinois Uniform Electronic Transactions Act;\n    \n    \n(2) any other Section of this Act; or\n    \n    \n(3) any other State law relating to nontestamentary \nestate planning documents.\n    \n(755 ILCS 6/11-15 new)\n    \nSec. 11-15. \nPrinciples of law and equity. \nThe law of this \nState and principles of equity applicable to a nontestamentary \nestate planning document apply to an electronic \nnontestamentary estate planning document except as modified by \nthis Article.\n    \n(755 ILCS 6/11-20 new)\n    \nSec. 11-20. \nUse of electronic record or signature not \nrequired.\n    \n(a) This Article does not require a nontestamentary estate \nplanning document or signature on a nontestamentary estate \nplanning document to be created, generated, sent, \ncommunicated, received, stored, or otherwise processed or used \nby electronic means or in electronic form.\n    \n(b) A person is not required to have a nontestamentary \nestate planning document in electronic form or signed \nelectronically even if the person previously created or signed \na nontestamentary estate planning document by electronic \nmeans.\n    \n(c) A person may not waive the provisions of this Section.\n    \n(755 ILCS 6/11-25 new)\n    \nSec. 11-25. \nRecognition of electronic nontestamentary \nestate planning document and electronic signature.\n    \n(a) A nontestamentary estate planning document or a \nsignature on a nontestamentary estate planning document may \nnot be denied legal effect or enforceability solely because it \nis in electronic form.\n    \n(b) If other law of this State requires a nontestamentary \nestate planning document to be in writing, an electronic \nrecord of the document satisfies the requirement.\n    \n(c) If other law of this State requires a signature on a \nnontestamentary estate planning document, an electronic \nsignature satisfies the requirement.\n    \n(755 ILCS 6/11-30 new)\n    \nSec. 11-30. \nAttribution and effect of electronic record \nand electronic signature.\n    \n(a) An electronic nontestamentary estate planning document \nor electronic signature on an electronic nontestamentary \nestate planning document is attributable to a person if it was \nthe act of the person. The act of the person may be shown in \nany manner, including by showing the efficacy of a security \nprocedure applied to determine the person to which the \nelectronic record or electronic signature was attributable.\n    \n(b) The effect of attribution to a person under subsection \n(a) of a document or signature is determined from the context \nand surrounding circumstances at the time of its creation, \nexecution, or adoption and as provided by other law.\n    \n(755 ILCS 6/11-35 new)\n    \nSec. 11-35. \nNotarization and acknowledgment. \nIf other law \nof this State requires a signature or record to be notarized, \nacknowledged, verified, or made under oath, the requirement is \nsatisfied with respect to an electronic nontestamentary estate \nplanning document if an individual authorized to perform the \nnotarization, acknowledgment, verification, or oath attaches \nor logically associates the individual's electronic signature \non the document together with all other information required \nto be included under the other law.\n    \n(755 ILCS 6/11-40 new)\n    \nSec. 11-40. \nWitnessing and attestation.\n    \n(a) If other law of this State bases the validity of a \nnontestamentary estate planning document on whether it is \nsigned, witnessed, or attested by another individual, the \nsignature, witnessing, or attestation of that individual may \nbe electronic.\n    \n(b) As used in this subsection (b), \"electronic presence\" \nmeans that 2 or more individuals in different locations are \nable to communicate in real time to the same extent as if the \nindividuals were physically present in the same location. If \nother law of this State bases the validity of a \nnontestamentary estate planning document on whether it is \nsigned, witnessed, or attested by another individual in the \npresence of the individual signing the document, the presence \nrequirement is satisfied if the individuals are in each \nother's electronic presence.\n    \n(755 ILCS 6/11-45 new)\n    \nSec. 11-45. \nRetention of electronic record; original.\n    \n(a) Except as provided in subsection (b), if other law of \nthis State requires an electronic nontestamentary estate \nplanning document to be retained, transmitted, copied, or \nfiled, the requirement is satisfied by retaining, \ntransmitting, copying, or filing an electronic record that:\n    \n    \n(1) accurately reflects the information in the \ndocument after it was first generated in final form as an \nelectronic record or under Section 11-30; and\n    \n    \n(2) remains accessible to the extent required by the \nother law.\n    \n(b) A requirement under subsection (a) to retain a record \ndoes not apply to information the sole purpose of which is to \nenable the record to be sent, communicated, or received.\n    \n(c) A person may satisfy subsection (a) by using the \nservices of another person.\n    \n(d) If other law of this State requires a nontestamentary \nestate planning document to be presented or retained in its \noriginal form, or provides consequences if a nontestamentary \nestate planning document is not presented or retained in its \noriginal form, an electronic record retained in accordance \nwith subsection (a) satisfies the other law.\n    \n(e) This Section does not preclude a governmental agency \nfrom specifying requirements for the retention of a record \nsubject to the agency's jurisdiction in addition to those in \nthis Section. In this Section, \"governmental agency\" means an \nexecutive, legislative, or judicial agency, department, board, \ncommission, authority, institution, or instrumentality of the \nfederal government or of a state or of a county, municipality, \nor other political subdivision of a state.\n    \n(755 ILCS 6/11-50 new)\n    \nSec. 11-50. \nCertification of paper copy. \nAn individual may \ncreate a certified paper copy of an electronic nontestamentary \nestate planning document by affirming under penalty of perjury \nthat the paper copy is a complete and accurate copy of the \ndocument.\n    \n(755 ILCS 6/11-55 new)\n    \nSec. 11-55. \nAdmissibility in evidence. \nEvidence relating \nto an electronic nontestamentary estate planning document or \nan electronic signature on the document may not be excluded in \na proceeding solely because it is in electronic form.\n    \n(755 ILCS 6/11-60 new)\n    \nSec. 11-60. \nRelation to the Electronic Signatures in \nGlobal and National Commerce Act. \nThis Article modifies, \nlimits, or supersedes the Electronic Signatures in Global and \nNational Commerce Act, 15 U.S.C. Section 7001 et seq., but \ndoes not modify, limit, or supersede 15 U.S.C. Section 7001(c) \nor authorize electronic delivery of any of the notices \ndescribed in 15 U.S.C. Section 7003(b).\n    \n(755 ILCS 6/11-65 new)\n    \nSec. 11-65. \nApplication. \nThis Article applies to an \nelectronic nontestamentary estate planning document created, \nsigned, generated, sent, communicated, received, or stored \nbefore, on, or after the effective date of this amendatory Act \nof the 103rd General Assembly.\n    \n(755 ILCS 6/11-70 new)\n    \nSec. 11-70. \nSeverability. \nIf a provision of this Article \nor its application to a person or circumstance is held \ninvalid, the invalidity does not affect another provision or \napplication that can be given effect without the invalid \nprovision.\n\r\n \n    \nSection 99. \nEffective date. \nThis Act takes effect January \n1, 2024.\n \n\r\n  \n\r\n\n    \n755 ILCS 5/1-2.25\n \n    \n755 ILCS 5/8-1\nfrom Ch. 110 1/2, par. 8-1\n \n \n    \n755 ILCS 5/8-2\nfrom Ch. 110 1/2, par. 8-2\n \n    \n755 ILCS 6/1-1\n    \n755 ILCS 6/1-5\n    \n755 ILCS 6/1-15\n    \n755 ILCS 6/1-20\n    \n755 ILCS 6/Art. 11 heading \n    \nnew\n    \n755 ILCS 6/11-5 new\n    \n755 ILCS 6/11-10 new\n    \n755 ILCS 6/11-15 new\n    \n755 ILCS 6/11-20 new\n    \n755 ILCS 6/11-25 new\n    \n755 ILCS 6/11-30 new\n    \n755 ILCS 6/11-35 new\n    \n755 ILCS 6/11-40 new\n    \n755 ILCS 6/11-45 new\n    \n755 ILCS 6/11-50 new\n    \n755 ILCS 6/11-55 new\n    \n755 ILCS 6/11-60 new\n    \n755 ILCS 6/11-65 new\n    \n755 ILCS 6/11-70 new\n",
+  "raw_text_url": "https://beta.ilga.gov/Legislation/BillStatus/FullText?LegDocId=183553&DocName=10300HB2269&DocNum=2269&DocTypeID=HB&LegID=146986&GAID=17&SessionID=112&SpecSess=&Session=&Print=1"
+ }
+]

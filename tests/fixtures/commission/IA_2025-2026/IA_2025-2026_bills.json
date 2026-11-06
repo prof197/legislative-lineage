@@ -1,0 +1,375 @@
+[
+ {
+  "id": "ocd-bill/4420bcca-8120-49af-bb03-17de3cc1da1f",
+  "legislative_session": "2025-2026",
+  "identifier": "HF 472",
+  "title": "A bill for an act creating a special motion for expedited relief in actions involving the exercise of the right of freedom of speech and of the press, the right to assemble and petition, and the right of association, and including applicability provisions.",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "House",
+    "description": "Introduced, placed on calendar.",
+    "date": "2025-02-19",
+    "classification": [
+     "introduction"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "House",
+    "description": "Passed House, yeas 91, nays 0.",
+    "date": "2025-03-11",
+    "classification": [
+     "passage"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "Explanation of vote.",
+    "date": "2025-03-12",
+    "classification": [],
+    "order": 2
+   },
+   {
+    "organization__name": "House",
+    "description": "Explanation of vote.",
+    "date": "2025-03-19",
+    "classification": [],
+    "order": 3
+   },
+   {
+    "organization__name": "House",
+    "description": "Immediate message.",
+    "date": "2025-03-11",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Message from House.",
+    "date": "2025-03-12",
+    "classification": [],
+    "order": 5
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Read first time, attached to SF 47.",
+    "date": "2025-03-12",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Placed on calendar under unfinished business.",
+    "date": "2025-04-03",
+    "classification": [],
+    "order": 7
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Substituted for SF 47.",
+    "date": "2025-04-16",
+    "classification": [],
+    "order": 8
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Amendment S-3105 filed, adopted.",
+    "date": "2025-04-16",
+    "classification": [
+     "amendment-introduction",
+     "amendment-passage"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Passed Senate, yeas 47, nays 0.",
+    "date": "2025-04-16",
+    "classification": [
+     "passage"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Immediate message.",
+    "date": "2025-04-16",
+    "classification": [],
+    "order": 11
+   },
+   {
+    "organization__name": "House",
+    "description": "Message from Senate.",
+    "date": "2025-04-17",
+    "classification": [],
+    "order": 12
+   },
+   {
+    "organization__name": "House",
+    "description": "Senate amendment H-1243 filed.",
+    "date": "2025-04-17",
+    "classification": [
+     "amendment-introduction"
+    ],
+    "order": 13
+   },
+   {
+    "organization__name": "House",
+    "description": "House concurred in Senate amendment H-1243.",
+    "date": "2025-04-24",
+    "classification": [],
+    "order": 14
+   },
+   {
+    "organization__name": "House",
+    "description": "Passed House, yeas 89, nays 0.",
+    "date": "2025-04-24",
+    "classification": [
+     "passage"
+    ],
+    "order": 15
+   },
+   {
+    "organization__name": "House",
+    "description": "Immediate message.",
+    "date": "2025-04-24",
+    "classification": [],
+    "order": 16
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Message from House.",
+    "date": "2025-04-28",
+    "classification": [],
+    "order": 17
+   },
+   {
+    "organization__name": "House",
+    "description": "Reported correctly enrolled, signed by Speaker and President, and sent to Governor.",
+    "date": "2025-05-19",
+    "classification": [],
+    "order": 18
+   },
+   {
+    "organization__name": "House",
+    "description": "Signed by Governor.",
+    "date": "2025-05-19",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 19
+   }
+  ],
+  "versions": [
+   {
+    "note": "Enrolled with Governor's Action",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.legis.iowa.gov/docs/publications/LGE/91/HF472.pdf",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://www.legis.iowa.gov/docs/publications/LGE/91/attachments/HF472.html",
+      "media_type": "text/html"
+     }
+    ]
+   },
+   {
+    "note": "Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.legis.iowa.gov/docs/publications/LGI/91/HF472.pdf",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://www.legis.iowa.gov/docs/publications/LGI/91/attachments/HF472.html",
+      "media_type": "text/html"
+     }
+    ]
+   },
+   {
+    "note": "Amendment S-3105",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.legis.iowa.gov/docs/publications/AMDI/91/S3105.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Amendment H-1243",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.legis.iowa.gov/docs/publications/AMDI/91/H1243.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Signed Enrolled Bill (PDF)",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.legis.iowa.gov/docs/publications/LGE/91/Attachments/HF472_GovLetter.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "IVVîiiEN11111'111         11         i9                       SS'L`9R9'JII\":                                                                   e;ll:. o9iViR:llüifi,ill3",
+  "raw_text_url": "https://www.legis.iowa.gov/docs/publications/LGE/91/Attachments/HF472_GovLetter.pdf"
+ },
+ {
+  "id": "ocd-bill/a61fad3c-ce0d-44b6-b046-0fab3413357b",
+  "legislative_session": "2025-2026",
+  "identifier": "SF 47",
+  "title": "A bill for an act creating a special motion for expedited relief in actions involving the exercise of the right of freedom of speech and of the press, the right to assemble and petition, and the right of association, and including applicability provisions.",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Introduced, referred to State Government.",
+    "date": "2025-01-15",
+    "classification": [
+     "introduction",
+     "referral-committee"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Rereferred to Judiciary.",
+    "date": "2025-01-17",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Subcommittee: Reichman, Blake, and Taylor.",
+    "date": "2025-01-23",
+    "classification": [],
+    "order": 2
+   },
+   {
+    "organization__name": "Iowa General Assembly",
+    "description": "Subcommittee Meeting: 01/28/2025 9:30AM Room 217 Conference Room.",
+    "date": "2025-01-27",
+    "classification": [],
+    "order": 3
+   },
+   {
+    "organization__name": "Iowa General Assembly",
+    "description": "Subcommittee recommends passage.",
+    "date": "2025-01-28",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 4
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Committee report, recommending passage.",
+    "date": "2025-02-12",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 5
+   },
+   {
+    "organization__name": "Iowa General Assembly",
+    "description": "Placed on calendar.",
+    "date": "2025-02-12",
+    "classification": [],
+    "order": 6
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Amendment S-3010 filed.",
+    "date": "2025-02-26",
+    "classification": [
+     "amendment-introduction"
+    ],
+    "order": 7
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Attached to HF 472.",
+    "date": "2025-03-12",
+    "classification": [],
+    "order": 8
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Placed on calendar under unfinished business.",
+    "date": "2025-04-03",
+    "classification": [],
+    "order": 9
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Amendment S-3010 withdrawn.",
+    "date": "2025-04-16",
+    "classification": [],
+    "order": 10
+   },
+   {
+    "organization__name": "Senate",
+    "description": "HF 472 substituted.",
+    "date": "2025-04-16",
+    "classification": [],
+    "order": 11
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Withdrawn.",
+    "date": "2025-04-16",
+    "classification": [
+     "withdrawal"
+    ],
+    "order": 12
+   }
+  ],
+  "versions": [
+   {
+    "note": "Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.legis.iowa.gov/docs/publications/LGI/91/SF47.pdf",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://www.legis.iowa.gov/docs/publications/LGI/91/attachments/SF47.html",
+      "media_type": "text/html"
+     }
+    ]
+   },
+   {
+    "note": "Amendment S-3010",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.legis.iowa.gov/docs/publications/AMDI/91/S3010.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "An Act creating a special motion for expedited relief in\nactions involving the exercise of the right of freedom of\nspeech and of the press, the right to assemble and petition,\nand the right of association, and including applicability\nprovisions.\nBE IT ENACTED BY THE GENERAL ASSEMBLY OF THE STATE OF IOWA:\nSection 1. NEW SECTION. 652.1 Title.\nThis chapter may be cited as the “Uniform Public Expression\nProtection Act”.\nSec. 2. NEW SECTION. 652.2 Scope.\n1. As used in this section:\na. “Goods or services” does not include the creation,\ndissemination, exhibition, or advertisement or similar\npromotion of a dramatic, literary, musical, political,\njournalistic, or artistic work.\nb. “Governmental unit” means a public corporation\nor government or governmental subdivision, agency, or\ninstrumentality.\n2. Except as otherwise provided in subsection 3, this\nchapter applies to a cause of action asserted in a civil action\nagainst a person based on any of the following of the person:\na. Communication in a legislative, executive, judicial,\nadministrative, or other governmental proceeding.\nb. Communication on an issue under consideration or review\nin a legislative, executive, judicial, administrative, or other\ngovernmental proceeding.\nc. Exercise of the right of freedom of speech or of the\npress, the right to assemble or petition, or the right of\nassociation, guaranteed by the Constitution of the United\nStates or the Constitution of the State of Iowa, on a matter of\npublic concern.\n3. This chapter does not apply to any of the following\ncauses of action asserted:\na. Against a governmental unit or an employee or agent of a\ngovernmental unit acting or purporting to act in an official\ncapacity.\nb. By a governmental unit or an employee or agent of a\ngovernmental unit acting in an official capacity to enforce a\nlaw to protect against an imminent threat to public health or\nsafety.\nc. Against a person primarily engaged in the business of\nselling or leasing goods or services if the cause of action\narises out of a communication related to the person’s sale or\nlease of the goods or services.\nSec. 3. NEW SECTION. 652.3 Special motion for expedited\nrelief.\nNot later than sixty days after a party is served with a\npetition, crossclaim, counterclaim, third-party claim, or other\npleading that asserts a cause of action to which this chapter\napplies, or at a later time on a showing of good cause, the\nparty may file a special motion for expedited relief to dismiss\nthe cause of action or part of the cause of action.\nSec. 4. NEW SECTION. 652.4 Stay.\n1. Except as otherwise provided in subsections 4 through\n7, on the filing of a motion under section 652.3, all of the\nfollowing apply:\na. All other proceedings between the moving party and\nresponding party, including discovery and a pending hearing or\nmotion, are stayed.\nb. On motion by the moving party, the court may stay a\nhearing or motion involving another party, or discovery by\nanother party, if the hearing or ruling on the motion would\nadjudicate, or the discovery would relate to, an issue material\nto the motion under section 652.3.\n2. A stay under subsection 1 remains in effect until entry\nof an order ruling on the motion under section 652.3 and\nexpiration of the time under section 652.9 for the moving party\nto appeal the order.\n3. Except as otherwise provided in subsections 5, 6,\nand 7, if a party appeals from an order ruling on a motion\nunder section 652.3, all proceedings between all parties in\nthe action are stayed. The stay remains in effect until the\nconclusion of the appeal.\n4. During a stay under subsection 1, the court may allow\nlimited discovery if a party shows that specific information is\nnecessary to establish whether a party has satisfied or failed\nto satisfy a burden under section 652.7, subsection 1, and the\ninformation is not reasonably available unless discovery is\nallowed.\n5. A motion under section 652.10 for costs, attorney fees,\nand expenses is not subject to a stay under this section.\n6. A stay under this section does not affect a party’s\nability to voluntarily dismiss a cause of action or part of a\ncause of action or move to sever a cause of action.\n7. During a stay under this section, the court for good\ncause may hear and rule on all of the following:\na. A motion unrelated to the motion under section 652.3.\nb. A motion seeking a special or preliminary injunction to\nprotect against an imminent threat to public health or safety.\nSec. 5. NEW SECTION. 652.5 Hearing.\n1. The court shall hear a motion under section 652.3 not\nlater than sixty days after filing of the motion, unless the\ncourt orders a later hearing for any of the following:\na. To allow discovery under section 652.4, subsection 4.\nb. For other good cause.\n2. If the court orders a later hearing under subsection 1,\nparagraph “a”, the court shall hear the motion under section\n652.3 not later than sixty days after the court order allowing\nthe discovery, unless the court orders a later hearing under\nsubsection 1, paragraph “b”.\nSec. 6. NEW SECTION. 652.6 Proof.\nIn ruling on a motion under section 652.3, the court shall\nconsider the pleadings, the motion, any reply or response to\nthe motion, and any evidence that could be considered in ruling\non a motion for summary judgment under rule of civil procedure\n1.981.\nSec. 7. NEW SECTION. 652.7 Dismissal of cause of action in\nwhole or part.\n1. In ruling on a motion under section 652.3, the court\nshall dismiss with prejudice a cause of action, or part of a\ncause of action, if all of the following are true:\na. The moving party establishes under section 652.2,\nsubsection 2, that this chapter applies.\nb. The responding party fails to establish under section\n652.2, subsection 3, that this chapter does not apply.\nc. Any of the following are true:\n(1) The responding party fails to establish a prima facie\ncase as to each essential element of the cause of action.\n(2) The moving party establishes that any of the following:\n(a) The responding party failed to state a cause of action\nupon which relief can be granted.\n(b) There is no genuine issue as to any material fact and\nthe moving party is entitled to judgment as a matter of law on\nthe action or part of an action.\n2. A voluntary dismissal without prejudice of a responding\nparty’s cause of action, or part of a cause of action, that is\nthe subject of a motion under section 652.3 does not affect a\nmoving party’s right to obtain a ruling on the motion and seek\ncosts, attorney fees, and expenses under section 652.10.\n3. A voluntary dismissal with prejudice of a responding\nparty’s cause of action, or part of a cause of action, that is\nthe subject of a motion under section 652.3 establishes for the\npurpose of section 652.10 that the moving party prevailed on\nthe motion.\nSec. 8. NEW SECTION. 652.8 Ruling.\nThe court shall rule on a motion under section 652.3 not\nlater than sixty days after a hearing under section 652.5.\nSec. 9. NEW SECTION. 652.9 Appeal.\nA moving party may appeal as a matter of right from an order\ndenying, in whole or in part, a motion under section 652.3.\nThe appeal must be filed not later than thirty days after entry\nof the order.\nSec. 10. NEW SECTION. 652.10 Costs, attorney fees, and\nexpenses.\nOn a motion under section 652.3, the court shall award court\ncosts, reasonable attorney fees, and reasonable litigation\nexpenses related to the motion in the following circumstances:\n1. To the moving party if the moving party prevails on the\nmotion.\n2. To the responding party if the responding party prevails\non the motion and the court finds that the motion was frivolous\nor filed solely with intent to delay the proceeding.\nSec. 11. NEW SECTION. 652.11 Construction.\nThis chapter shall be broadly construed and applied to\nprotect the exercise of the right of freedom of speech and of\nthe press, the right to assemble and petition, and the right\nof association, guaranteed by the Constitution of the United\nStates or the Constitution of the State of Iowa.\nSec. 12. NEW SECTION. 652.12 Uniformity of application and\nconstruction.\nIn applying and construing this chapter, consideration shall\nbe given to the need to promote uniformity of the law with\nrespect to its subject matter among states that enact it.\nSec. 13. APPLICABILITY. This Act applies to a civil action\nfiled or cause of action asserted in a civil action on or after\nthe effective date of this Act.\nEXPLANATION\nThe inclusion of this explanation does not constitute agreement with\nthe explanation’s substance by the members of the general assembly.\nThis bill enacts the “Uniform Public Expression Protection\nAct”, which creates a special motion for expedited relief in\nactions involving the exercise of the right of freedom of\nspeech and of the press, the right to assemble and petition,\nand the right of association.\nThe bill applies to a cause of action asserted in a civil\naction against a person based on the person’s communication\nin a legislative, executive, judicial, administrative, or\nother governmental proceeding; communication on an issue under\nconsideration or review in a legislative, executive, judicial,\nadministrative, or other governmental proceeding; or exercise\nof the person’s first amendment right on a matter of public\nconcern.\nThe bill does not apply to causes of action against a\ngovernmental unit or an employee or agent of a governmental\nunit acting or purporting to act in an official capacity; by\na governmental unit or an employee or agent of a governmental\nunit acting in an official capacity to enforce or protect\nagainst an imminent threat to public health or safety; or\nagainst a person engaged in the business of selling or leasing\ngoods or services if the cause of action arises out of a\ncommunication related to a person’s sale or lease of the goods\nor services.\nThe bill defines “goods or services” to not include the\ncreation, dissemination, exhibition, or advertisement or\nsimilar promotion of a dramatic, literary, musical, political,\njournalistic, or artistic work, and defines “governmental unit”\nto mean a public corporation or government or governmental\nsubdivision, agency, or instrumentality.\nThe bill provides that no later than 60 days after being\nserved with a cause of action to which the bill applies, or\nat a later time upon showing of good cause, a party may file\na special motion for expedited relief to dismiss the cause\nof action or part of the cause of action. The filing of\nthe special motion stays all other proceedings between the\nparties, and the court has discretion to stay a proceeding\ninvolving another party if the hearing or ruling on motion\nwould adjudicate an issue material to the motion. A hearing\nshall be held no later than 60 days after filing the motion,\nunless the court orders a later hearing to allow discovery\nor for good cause. A stay remains in effect until an order\nruling on the motion is entered and the 30-day appeal period\nfollowing the order has concluded. During a stay, the court\nmay allow limited discovery if a party shows the information\nis not reasonably available and that specific information\nis necessary to establish whether a party has satisfied the\nparty’s burden under the bill. The court may also, for good\ncause, hear and rule on motions unrelated to the special motion\nand a motion seeking an injunction. The bill provides that a\nmotion for costs, attorney fees, and expenses is not subject\nto the special motion for expedited relief stay. The parties’\nability to voluntarily dismiss or move to sever is not affected\nby the special motion for expedited relief stay.\nThe bill provides that in ruling on a special motion for\nexpedited relief, the court shall dismiss with prejudice a\ncause of action, or part of a cause of action, if the moving\nparty establishes that the bill applies, the responding party\nfails to establish that the bill does not apply, and either the\nresponding party fails to establish a prima facie case as to\neach essential element of the cause of action or the moving\nparty establishes that the responding party failed to state a\ncause of action upon which relief can be granted or there is no\ngenuine issue as to any material fact and the moving party is\nentitled to judgment as a matter of law on the cause of action\nor part of the cause of action.\nThe bill provides that the court may award court costs,\nreasonable attorney fees, and reasonable litigation fees\nrelating to the special motion to the prevailing party.\nThe bill is a uniform Act drafted by the national conference\nof commissioners on uniform state laws. The bill applies to\nactions that are filed on or after the effective date of the\nbill.",
+  "raw_text_url": "https://www.legis.iowa.gov/docs/publications/LGI/91/SF47.pdf"
+ }
+]

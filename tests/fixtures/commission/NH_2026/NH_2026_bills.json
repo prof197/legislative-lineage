@@ -1,0 +1,173 @@
+[
+ {
+  "id": "ocd-bill/97b9eec9-c325-456e-b254-044c9c114bae",
+  "legislative_session": "2026",
+  "identifier": "HB 1502",
+  "title": "governing special bank and credit union deposits.",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "House",
+    "description": "Introduced 01/07/2026 and referred to Commerce and Consumer Affairs  HJ 1  P. 23",
+    "date": "2025-12-10",
+    "classification": [
+     "introduction",
+     "referral-committee"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "House",
+    "description": "Public Hearing: 01/29/2026 10:15 am GP 229",
+    "date": "2026-01-22",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "Full Committee Work Session: 02/18/2026 02:00 pm GP 229",
+    "date": "2026-02-13",
+    "classification": [],
+    "order": 2
+   },
+   {
+    "organization__name": "House",
+    "description": "Executive Session: 03/03/2026 01:00 pm GP 229",
+    "date": "2026-02-25",
+    "classification": [],
+    "order": 3
+   },
+   {
+    "organization__name": "House",
+    "description": "Committee Report: Ought to Pass  03/03/2026 (Vote 14-0; CC)  HC 10  P. 8",
+    "date": "2026-03-05",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 4
+   },
+   {
+    "organization__name": "House",
+    "description": "Ought to Pass: MA VV 03/11/2026  HJ 7  P. 12",
+    "date": "2026-03-11",
+    "classification": [
+     "passage"
+    ],
+    "order": 5
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Introduced 03/12/2026 and Referred to Commerce;  SJ 7",
+    "date": "2026-03-17",
+    "classification": [
+     "introduction",
+     "referral-committee"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Hearing: 03/31/2026, Room 100, SH, 10:25 am;  SC 11",
+    "date": "2026-03-18",
+    "classification": [],
+    "order": 7
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Committee Report: Ought to Pass, 05/07/2026; Vote 5-0; CC;  SC 17",
+    "date": "2026-04-30",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 8
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Ought to Pass: MA, VV; OT3rdg; 05/07/2026;  SJ 11",
+    "date": "2026-05-07",
+    "classification": [
+     "passage"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Enrolled Bill Amendment # 2026-2139e Adopted, VV, (In recess of 06/04/2026);  SJ 14",
+    "date": "2026-06-10",
+    "classification": [
+     "amendment-passage"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "House",
+    "description": "Enrolled Bill Amendment # 2026-2139e: AA VV (in recess of) 06/04/2026  HJ 15  P. 45",
+    "date": "2026-06-10",
+    "classification": [],
+    "order": 11
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Enrolled Adopted, VV, (In recess 06/04/2026);  SJ 14",
+    "date": "2026-06-23",
+    "classification": [
+     "enrolled"
+    ],
+    "order": 12
+   },
+   {
+    "organization__name": "House",
+    "description": "Enrolled (in recess of) 06/04/2026  HJ 15",
+    "date": "2026-06-23",
+    "classification": [],
+    "order": 13
+   },
+   {
+    "organization__name": "House",
+    "description": "Signed by Governor Ayotte 07/02/2026; Chapter 228; eff. 8/31/2026",
+    "date": "2026-07-10",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 14
+   }
+  ],
+  "versions": [
+   {
+    "note": "Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "https://gc.nh.gov/bill_Status/pdf.aspx?id=23846&q=billVersion",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Version adopted by both bodies",
+    "date": "",
+    "links": [
+     {
+      "url": "https://gc.nh.gov/bill_Status/pdf.aspx?id=32338&q=billVersion",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "CHAPTERED FINAL VERSION",
+    "date": "",
+    "links": [
+     {
+      "url": "https://gc.nh.gov/bill_Status/pdf.aspx?id=34061&q=billVersion",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "",
+  "raw_text_url": null
+ }
+]

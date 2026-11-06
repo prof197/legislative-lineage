@@ -24,10 +24,10 @@ def _readme_field(readme: str, key: str) -> str:
     raise KeyError(key)
 
 
-def build_raw_dir(root: Path) -> Path:
+def build_raw_dir(root: Path, fixtures: Path = FIXTURES) -> Path:
     """Zip each fixture the way Open States does: README plus STATE/session/*_bills.json, stored."""
     raw = root / "raw"
-    for fixture in sorted(FIXTURES.iterdir()):
+    for fixture in sorted(p for p in fixtures.iterdir() if p.is_dir()):
         readme = (fixture / "README").read_text()
         state = _readme_field(readme, "State")
         session = _readme_field(readme, "Session")
@@ -86,22 +86,36 @@ def _invoke(*args: str) -> None:
     assert result.exit_code == 0, result.output
 
 
-@pytest.fixture(scope="session")
-def corpus(tmp_path_factory: pytest.TempPathFactory) -> Path:
-    """The fixture archives taken through every pipeline command; returns the tables dir."""
-    root = tmp_path_factory.mktemp("corpus")
-    raw, manifest, tables = build_raw_dir(root), root / "manifest.json", root / "tables"
+def build_tables(root: Path, fixtures: Path, sessions: Path) -> Path:
+    """Fixture archives taken through every pipeline command; returns the tables dir."""
+    raw, manifest, tables = build_raw_dir(root, fixtures), root / "manifest.json", root / "tables"
     reports = root / "reports"
     no_floor = ("--min-free-gib", "0")
     _invoke("snapshot", "--raw", str(raw), "--manifest", str(manifest))
     _invoke("ingest", "--raw", str(raw), "--manifest", str(manifest), "--out", str(tables),
-         "--sessions", str(SESSIONS), *no_floor)  # fmt: skip
+         "--sessions", str(sessions), *no_floor)  # fmt: skip
     _invoke("split", "--tables", str(tables), "--workers", "1", *no_floor)
     _invoke("eligible", "--tables", str(tables), "--report", str(reports / "types.json"))
-    # Five bills are too few for a document-frequency stoplist: at the corpus's 0.1% share,
-    # every shingle would be stoplisted. A share of 1 stoplists nothing.
+    # A few dozen bills are too few for a document-frequency stoplist: at the corpus's 0.1%
+    # share, every shingle would be stoplisted. A share of 1 stoplists nothing.
     _invoke("boilerplate", "--tables", str(tables), "--manifest", str(manifest), "--max-share", "1",
          "--report", str(reports / "boilerplate.json"), "--workers", "1")  # fmt: skip
     _invoke("index", "--tables", str(tables), "--workers", "1", "--report",
          str(reports / "index.json"), *no_floor)  # fmt: skip
     return tables
+
+
+@pytest.fixture(scope="session")
+def corpus(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """The fixture archives taken through every pipeline command; returns the tables dir."""
+    return build_tables(tmp_path_factory.mktemp("corpus"), FIXTURES, SESSIONS)
+
+
+COMMISSION = Path(__file__).parent / "fixtures" / "commission"
+
+
+@pytest.fixture(scope="session")
+def commission_corpus(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """The commission enactments among distractors (built by `evals/fixture.py`), indexed."""
+    root = tmp_path_factory.mktemp("commission")
+    return build_tables(root, COMMISSION, COMMISSION / "sessions.csv")

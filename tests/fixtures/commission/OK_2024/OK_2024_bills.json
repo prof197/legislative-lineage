@@ -1,0 +1,742 @@
+[
+ {
+  "id": "ocd-bill/30eb426e-5e8c-4be3-ba3b-9b3ec2f479a1",
+  "legislative_session": "2024",
+  "identifier": "SB 1819",
+  "title": "Banking; creating the Uniform Special Deposits Act; providing conditions for use of special deposits. Effective date.",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "First Reading",
+    "date": "2024-02-05",
+    "classification": [
+     "introduction",
+     "reading-1"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Authored by Senator Hall",
+    "date": "2024-02-05",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Second Reading referred to Business and Commerce",
+    "date": "2024-02-06",
+    "classification": [
+     "reading-2",
+     "referral-committee"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported Do Pass Business and Commerce committee; CR filed",
+    "date": "2024-02-19",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Coauthored by Representative Lepak (principal House author)",
+    "date": "2024-03-05",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "Senate",
+    "description": "General Order, Considered",
+    "date": "2024-03-14",
+    "classification": [],
+    "order": 5
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Measure passed:  Ayes: 45  Nays: 0",
+    "date": "2024-03-14",
+    "classification": [
+     "passage"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Referred for engrossment",
+    "date": "2024-03-14",
+    "classification": [],
+    "order": 7
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Engrossed to House",
+    "date": "2024-03-18",
+    "classification": [
+     "passage"
+    ],
+    "order": 8
+   },
+   {
+    "organization__name": "House",
+    "description": "First Reading",
+    "date": "2024-03-18",
+    "classification": [
+     "introduction",
+     "reading-1"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "House",
+    "description": "Second Reading referred to Banking, Financial Services and Pensions",
+    "date": "2024-03-25",
+    "classification": [
+     "reading-2",
+     "referral-committee"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "House",
+    "description": "CR; Do Pass Banking, Financial Services and Pensions Committee",
+    "date": "2024-04-01",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 11
+   },
+   {
+    "organization__name": "House",
+    "description": "General Order",
+    "date": "2024-04-18",
+    "classification": [],
+    "order": 12
+   },
+   {
+    "organization__name": "House",
+    "description": "Third Reading, Measure passed:  Ayes: 91 Nays: 0",
+    "date": "2024-04-18",
+    "classification": [
+     "passage",
+     "reading-3"
+    ],
+    "order": 13
+   },
+   {
+    "organization__name": "House",
+    "description": "Signed, returned to Senate",
+    "date": "2024-04-18",
+    "classification": [],
+    "order": 14
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Referred for enrollment",
+    "date": "2024-04-18",
+    "classification": [],
+    "order": 15
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Enrolled, to House",
+    "date": "2024-04-22",
+    "classification": [],
+    "order": 16
+   },
+   {
+    "organization__name": "House",
+    "description": "Signed, returned to Senate",
+    "date": "2024-04-22",
+    "classification": [],
+    "order": 17
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Sent to Governor",
+    "date": "2024-04-22",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 18
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Approved by Governor 04/26/2024",
+    "date": "2024-04-26",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 19
+   }
+  ],
+  "versions": [
+   {
+    "note": "Enrolled (final version)",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver1.lsb.state.ok.us/cf_pdf/2023-24 ENR/SB/SB1819 ENR.PDF",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Engrossed",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver1.lsb.state.ok.us/cf_pdf/2023-24 ENGR/SB/SB1819 ENGR.PDF",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Floor (Senate)",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver1.lsb.state.ok.us/cf_pdf/2023-24 FLR/SFLR/SB1819 SFLR.PDF",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Floor (House)",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver1.lsb.state.ok.us/cf_pdf/2023-24 FLR/HFLR/SB1819 HFLR.PDF",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver1.lsb.state.ok.us/cf_pdf/2023-24 INT/SB/SB1819 INT.PDF",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "",
+  "raw_text_url": null
+ },
+ {
+  "id": "ocd-bill/b3dfcdfa-04f8-46e6-844c-0d5df728f308",
+  "legislative_session": "2024",
+  "identifier": "HB 3819",
+  "title": "Professions and occupations; Uniform Building Code Commission Act; definitions; vice-chair duties; Commission powers and duties; training; energy payback.",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "House",
+    "description": "First Reading",
+    "date": "2024-02-05",
+    "classification": [
+     "introduction",
+     "reading-1"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "House",
+    "description": "Authored by Representative Sims",
+    "date": "2024-02-05",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "Second Reading referred to Business and Commerce",
+    "date": "2024-02-06",
+    "classification": [
+     "reading-2",
+     "referral-committee"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "House",
+    "description": "CR; Do Pass, amended by committee substitute Business and Commerce Committee",
+    "date": "2024-02-28",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "House",
+    "description": "Authored by Senator Newhouse (principal Senate author)",
+    "date": "2024-02-28",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "House",
+    "description": "General Order",
+    "date": "2024-03-13",
+    "classification": [],
+    "order": 5
+   },
+   {
+    "organization__name": "House",
+    "description": "Amended by floor substitute",
+    "date": "2024-03-13",
+    "classification": [],
+    "order": 6
+   },
+   {
+    "organization__name": "House",
+    "description": "Third Reading, Measure passed:  Ayes: 88 Nays: 2",
+    "date": "2024-03-13",
+    "classification": [
+     "passage",
+     "reading-3"
+    ],
+    "order": 7
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred for engrossment",
+    "date": "2024-03-13",
+    "classification": [],
+    "order": 8
+   },
+   {
+    "organization__name": "House",
+    "description": "Engrossed, signed, to Senate",
+    "date": "2024-03-18",
+    "classification": [
+     "passage"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "Senate",
+    "description": "First Reading",
+    "date": "2024-03-18",
+    "classification": [
+     "introduction",
+     "reading-1"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Second Reading referred to Business and Commerce",
+    "date": "2024-03-27",
+    "classification": [
+     "reading-2",
+     "referral-committee"
+    ],
+    "order": 11
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported Do Pass as amended Business and Commerce committee; CR filed",
+    "date": "2024-04-01",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 12
+   }
+  ],
+  "versions": [
+   {
+    "note": "HB3819 FULLPCS1 LONNIE SIMS-SW.PDF",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver1.lsb.state.ok.us/cf_pdf/2023-24 COMMITTEE AMENDMENTS/House/HB3819 FULLPCS1 LONNIE SIMS-SW.PDF",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Committee Amendment 1",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver1.lsb.state.ok.us/cf_pdf/2023-24 COMMITTEE AMENDMENTS/Senate/HB3819 CA1.PDF",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "1 Floor Amendment by SIMS",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver1.lsb.state.ok.us/cf_pdf/2023-24 FLOOR AMENDMENTS/House/HB3819 FA1 SIMSLO-SW.PDF",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Engrossed",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver1.lsb.state.ok.us/cf_pdf/2023-24 ENGR/hB/HB3819 ENGR.PDF",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Floor (Senate)",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver1.lsb.state.ok.us/cf_pdf/2023-24 FLR/SFLR/HB3819 SFLR.PDF",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Floor (House)",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver1.lsb.state.ok.us/cf_pdf/2023-24 FLR/HFLR/HB3819 HFLR.PDF",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "House Committee Substitute",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver1.lsb.state.ok.us/cf_pdf/2023-24 COMMITTEE SUBS/HCS/HB3819 CS.PDF",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver1.lsb.state.ok.us/cf_pdf/2023-24 INT/hB/HB3819 INT.PDF",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "STATE OF OKLAHOMA\n2nd Session of the 59th Legislature (2024)\nHOUSE BILL 3819                           By: Sims\nAS INTRODUCED\nAn Act relating to professions and occupations;\namending 59 O.S. 2021, Sections 1000.22, 1000.23, and\n1000.24, as amended by Section 1, Chapter 56, O.S.L.\n2023 (59 O.S. Supp. 2023, Section 1000.24), which\nrelate to the Oklahoma Uniform Building Code\nCommission Act; creating definitions; adding vice-\nchair duties; modifying Commission powers and duties;\nrequiring a workforce development process; creating\nenergy payback requirements.\nBE IT ENACTED BY THE PEOPLE OF THE STATE OF OKLAHOMA:\nSECTION 1.       NEW LAW       A new section of law to be codified\nin the Oklahoma Statutes as Section 1000.20a of Title 59, unless\nthere is created a duplication in numbering, reads as follows:\nThe words \"payback period\", when used in this act, shall mean\nthe amount of time a system, design, or project takes to generate\nthe amount of energy used to produce the said system, design, or\nproject.\nSECTION 2.       AMENDATORY       59 O.S. 2021, Section 1000.22, is\namended to read as follows:\nSection 1000.22    1.   The Oklahoma Uniform Building Code\nCommission shall organize immediately after July 1, 2009, and\nannually thereafter, by electing from among its members a chair and\na vice-chair.    The Commission shall hold regularly scheduled\nmeetings at least once each quarter at a time and place determined\nby the Commission and may hold such special meetings, emergency\nmeetings or continued or reconvened meetings as found by the\nCommission to be necessary.    A majority of the members of the\nCommission shall constitute a quorum for the transaction of\nbusiness.\n2.   The chair shall preside at meetings of the Commission, set\nthe agenda, including any agenda items provided by the vice-chair,\nsign orders and other required documents, coordinate Commission\nactivities and perform such other duties as may be prescribed by the\nCommission.\n3.   The vice-chair shall perform the duties of the chair during\nthe absence or disability of the chair, may set items on the agenda,\nand shall perform such other duties as may be prescribed by the\nCommission.\n4.   The Oklahoma Uniform Building Code Commission Chief\nExecutive Officer, at the discretion of the Commission, shall:\na.     keep a record of all proceedings of the Commission and\ncertify to actions of the Commission,\nb.     oversee the receipt and deposit of all monies received\nby the Commission in the appropriate revolving funds,\nc.     submit, at the first regular meeting of the Commission\nafter the end of each fiscal year, a fully itemized\nreport of the receipts and disbursements for the prior\nfiscal year, showing the amount of funds on hand, and\nd.     perform such other duties as are prescribed in this\nact or as may be prescribed by the Commission.\n5.   The Commission shall comply with the provisions of the\nOklahoma Open Meeting Act, the Oklahoma Open Records Act and the\nAdministrative Procedures Act.\n6.   All members of the Commission and such employees as\ndetermined by the Commission shall be bonded as required by Sections\n85.26 85.58Q through 85.31 85.58V of Title 74 of the Oklahoma\nStatutes.\n7.   The liability of any member or employee of the Commission\nacting within the scope of Commission duties or employment shall be\ngoverned by The Governmental Tort Claims Act.\n8.   Members of the Oklahoma Uniform Building Code Commission and\nmembers of all technical committees shall serve without\ncompensation, but shall be reimbursed for all actual and necessary\nexpenses incurred in the performance of their duties in accordance\nwith the State Travel Reimbursement Act.\nSECTION 3.     AMENDATORY       59 O.S. 2021, Section 1000.23, is\namended to read as follows:\nSection 1000.23   A.   The Oklahoma Uniform Building Code\nCommission shall have the power and the duty to review and adopt all\nbuilding codes for residential and commercial construction to be\nused by all entities within this state.   Codes and standards adopted\nby the Commission shall be the minimum standards for residential and\ncommercial construction in this state.\nB.   All public projects shall abide by such minimum standards\nand requirements; provided, nothing in the Oklahoma Uniform Building\nCode Commission Act shall prevent or take away from state agencies\nthe authority to enact and enforce requirements containing higher\nstandards and requirements than such minimum standards and\nrequirements.\nC.   Municipalities and other political subdivisions shall abide\nby such minimum standards and requirements; provided, nothing in the\nOklahoma Uniform Building Code Commission Act shall prevent or take\naway from such municipalities and other political subdivisions the\nauthority to enact and enforce requirements containing higher\nstandards and requirements than such minimum standards and\nrequirements.\nD.   The Oklahoma Uniform Building Code Commission shall have the\npower and duty to establish a continuing education training and\ncertification process for all residential and commercial\nconstruction industry personnel affected by the codes adopted by the\nCommission, building code inspectors code officials, design\nprofessionals, and building trades workers.     The Commission shall\nestablish regional training for the purpose of training the county\nand municipal inspectors in the Uniform Building Code this training\nregionally.   The regional training shall be offered at no cost to\nthe participant and shall be funded from the funds received pursuant\nto Section 1000.25 of this title.     Each inspector operating in this\nstate on behalf of any state agency or any municipal or county\noffice may complete regional training and be issued a certification\nfor inspections by the Uniform Building Code Commission on and after\nJanuary 1, 2015.    The training and certification applications,\nqualifications and procedures shall be promulgated by rules of the\nCommission.     The Commission may establish forms and procedures to\nimplement and administer the provisions of this section A fee,\nlimited to any cost directly associated with the class, may be\nassessed to all participants other than state licensed code\nofficials.\nE.   The Commission shall establish a workforce development\nprocess with the purpose of increasing the number of available code\nofficials in Oklahoma.     Individuals may complete regional training\nand be issued a certification for inspections by the Uniform\nBuilding Code Commission.     The training and certification\napplications, qualifications and procedures shall be promulgated by\nrules of the Commission.     The Commission may establish forms and\nprocedures to implement and administer the provisions of this\nsection.\nSECTION 4.     AMENDATORY         59 O.S. 2021, Section 1000.24, as\namended by Section 1, Chapter 56, O.S.L. 2023 (59 O.S. Supp. 2023,\nSection 1000.24), is amended to read as follows:\nSection 1000.24    A.   1.   Beginning July 1, 2009, pursuant to and\nin compliance with Article I of the Administrative Procedures Act,\nthe Oklahoma Uniform Building Code Commission shall have the power\nto adopt, amend, repeal and promulgate rules as may be necessary to\nperform the duties required under the Oklahoma Uniform Building Code\nCommission Act.   Rules authorized under this section shall not\nbecome effective prior to October 1, 2009.\n2.   Beginning October 1, 2009, the Commission shall have the\npower to enforce the provisions of the Oklahoma Uniform Building\nCode Commission Act.\n3.   Any codes adopted by state agencies, municipalities or other\npolitical subdivisions of the state prior to uniform codes being\nadopted by the Oklahoma Uniform Building Code Commission, pursuant\nto the provisions of, or rules promulgated pursuant to, the Oklahoma\nUniform Building Code Commission Act, shall be considered valid and\nin effect until uniform codes are adopted by the Oklahoma Uniform\nBuilding Code Commission.\nB.   The Oklahoma Uniform Building Code Commission shall have the\nfollowing powers:\n1.   Exercise all incidental powers and duties which are\nnecessary to effectuate the provisions of the Oklahoma Uniform\nBuilding Code Commission Act;\n2.   Adopt and have an official seal;\n3.   Maintain an administrative staff, including, but not limited\nto, an Oklahoma Uniform Building Code Commission Chief Executive\nOfficer;\n4.   Direct such other expenditures as may be necessary in the\nperformance of its duties, including, but not limited to,\nexpenditures for office space, equipment, furnishings and contracts\nfor services.   All expenditures shall be made pursuant to the\nOklahoma Central Purchasing Act;\n5.   Appoint technical committees to review and recommend for\nadoption all building codes.    The technical committees shall review\nand recommend building codes with any amendments for adoption by the\nCommission; and\n6.   Create a website listing all building codes adopted by the\nCommission.   The website shall provide a method for listing all\ncodes adopted by a state agency, city or any other political\nsubdivision of the state containing higher standards and\nrequirements than the codes adopted pursuant to the Oklahoma Uniform\nBuilding Code Commission Act as required in Section 14-107 of Title\n11 of the Oklahoma Statutes.\nC.   After October 1, 2009, the Commission shall account for all\nreceipts and expenditures of the monies of the Commission, including\nannually preparing and publishing a statement of receipts and\nexpenditures of the Commission for each fiscal year.    The\nCommission's annual statement of receipts and expenditures shall be\naudited by the State Auditor and Inspector or an independent\naccounting firm, and the audit report shall be certified to the\nGovernor of this state to be true and correct, under oath, by the\nchair and vice-chair of the Commission.\nD.   Any amendments or modifications to the currently adopted\nstate codes shall be forwarded to the Oklahoma Uniform Building Code\nCommission for consideration.\nE.   1.   The Commission shall promulgate rules requiring all\nproposed energy building codes or amendments to include:\na.     A payback period analysis, or\nb.     A statement explaining why a payback period is not\napplicable to the proposed energy code or amendment.\n2.   The Commission shall not adopt any proposed energy code or\namendment that does not have a payback period of seven (7) years or\nless unless a payback period does not apply to the proposed code\nor amendment.\n59-2-8938     SW      01/10/24",
+  "raw_text_url": "http://webserver1.lsb.state.ok.us/cf_pdf/2023-24 INT/hB/HB3819 INT.PDF"
+ },
+ {
+  "id": "ocd-bill/fa4c5f9a-465f-40ec-810f-191e625fa9fd",
+  "legislative_session": "2024",
+  "identifier": "SB 468",
+  "title": "Estate planning; creating the Uniform Electronic Estate Planning Documents Act; electronic will; affidavit; electronic record and signature. Effective date.",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "First Reading",
+    "date": "2023-02-06",
+    "classification": [
+     "introduction",
+     "reading-1"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Authored by Senator Howard",
+    "date": "2023-02-06",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Second Reading referred to Judiciary",
+    "date": "2023-02-07",
+    "classification": [
+     "reading-2",
+     "referral-committee"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Coauthored by Representative Kannady (principal House author)",
+    "date": "2023-02-13",
+    "classification": [],
+    "order": 3
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported Do Pass Judiciary committee; CR filed",
+    "date": "2024-02-20",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 4
+   },
+   {
+    "organization__name": "Senate",
+    "description": "General Order, Considered",
+    "date": "2024-02-26",
+    "classification": [],
+    "order": 5
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Measure passed:  Ayes: 46  Nays: 0",
+    "date": "2024-02-26",
+    "classification": [
+     "passage"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Referred for engrossment",
+    "date": "2024-02-26",
+    "classification": [],
+    "order": 7
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Engrossed to House",
+    "date": "2024-02-27",
+    "classification": [
+     "passage"
+    ],
+    "order": 8
+   },
+   {
+    "organization__name": "House",
+    "description": "First Reading",
+    "date": "2024-02-27",
+    "classification": [
+     "introduction",
+     "reading-1"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "House",
+    "description": "Second Reading referred to Judiciary - Civil",
+    "date": "2024-03-25",
+    "classification": [
+     "reading-2",
+     "referral-committee"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "House",
+    "description": "CR; Do Pass Judiciary - Civil Committee",
+    "date": "2024-03-28",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 11
+   },
+   {
+    "organization__name": "House",
+    "description": "General Order",
+    "date": "2024-04-16",
+    "classification": [],
+    "order": 12
+   },
+   {
+    "organization__name": "House",
+    "description": "Coauthored by Representative(s) Swope",
+    "date": "2024-04-16",
+    "classification": [],
+    "order": 13
+   },
+   {
+    "organization__name": "House",
+    "description": "Amended by floor substitute",
+    "date": "2024-04-16",
+    "classification": [],
+    "order": 14
+   },
+   {
+    "organization__name": "House",
+    "description": "Third Reading, Measure passed:  Ayes: 84 Nays: 3",
+    "date": "2024-04-16",
+    "classification": [
+     "passage",
+     "reading-3"
+    ],
+    "order": 15
+   },
+   {
+    "organization__name": "House",
+    "description": "Referred for engrossment",
+    "date": "2024-04-16",
+    "classification": [],
+    "order": 16
+   },
+   {
+    "organization__name": "House",
+    "description": "Engrossed, signed, to Senate",
+    "date": "2024-04-17",
+    "classification": [
+     "passage"
+    ],
+    "order": 17
+   },
+   {
+    "organization__name": "Senate",
+    "description": "HAs read",
+    "date": "2024-04-17",
+    "classification": [],
+    "order": 18
+   },
+   {
+    "organization__name": "Senate",
+    "description": "HAs adopted",
+    "date": "2024-05-21",
+    "classification": [],
+    "order": 19
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Measure passed:  Ayes: 43  Nays: 0",
+    "date": "2024-05-21",
+    "classification": [
+     "passage"
+    ],
+    "order": 20
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Referred for enrollment",
+    "date": "2024-05-21",
+    "classification": [],
+    "order": 21
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Enrolled, to House",
+    "date": "2024-05-22",
+    "classification": [],
+    "order": 22
+   },
+   {
+    "organization__name": "House",
+    "description": "Signed, returned to Senate",
+    "date": "2024-05-22",
+    "classification": [],
+    "order": 23
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Sent to Governor",
+    "date": "2024-05-22",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 24
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Approved by Governor 05/28/2024",
+    "date": "2024-05-28",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 25
+   }
+  ],
+  "versions": [
+   {
+    "note": "1 Floor Amendment by KANNADY",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver1.lsb.state.ok.us/cf_pdf/2023-24 FLOOR AMENDMENTS/House/SB468 FA1 KANNADYCH-JL.PDF",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Enrolled (final version)",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver1.lsb.state.ok.us/cf_pdf/2023-24 ENR/SB/SB468 ENR.PDF",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Amended And Engrossed",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver1.lsb.state.ok.us/cf_pdf/2023-24 AMENDMENTS/Amendment & Engr/SB468 HASB & ENGR.PDF",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Engrossed",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver1.lsb.state.ok.us/cf_pdf/2023-24 ENGR/SB/SB468 ENGR.PDF",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Floor (Senate)",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver1.lsb.state.ok.us/cf_pdf/2023-24 FLR/SFLR/SB468 SFLR.PDF",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Floor (House)",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver1.lsb.state.ok.us/cf_pdf/2023-24 FLR/HFLR/SB468 HFLR.PDF",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Introduced",
+    "date": "",
+    "links": [
+     {
+      "url": "http://webserver1.lsb.state.ok.us/cf_pdf/2023-24 INT/SB/SB468 INT.PDF",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "STATE OF OKLAHOMA\n1st Session of the 59th Legislature (2023)\nSENATE BILL 468                       By: Howard\nAS INTRODUCED\nAn Act relating to estate planning; creating the\nUniform Electronic Estate Planning Documents Act;\nproviding short title; defining terms; construing\nprovisions; stating scope of act; providing\nexception; providing for applicability of principles\nof law and equity; clarifying that use of electronic\nrecord or signature not required; prohibiting certain\nwaiver; requiring recognition of electronic non-\ntestamentary estate planning document or signature;\nestablishing attribution and effect of electronic\nrecord and signature; establishing requirements for\nnotarization and acknowledgement; authorizing\nelectronic witnessing and attestation for certain\ndocuments; establishing requirements for retention of\ncertain electronic records; providing exception;\nallowing additional requirements imposed by\ngovernmental agency; authorizing creation of\ncertified paper copy of certain electronic documents;\nproviding for admissibility of certain electronic\ndocuments or signatures; providing for uniformity of\napplication and construction; clarifying relation to\ncertain federal provisions; specifying applicability\nof provisions to certain electronic documents;\nproviding for severability; providing for\ncodification; and providing an effective date.\nBE IT ENACTED BY THE PEOPLE OF THE STATE OF OKLAHOMA:\nSECTION 1.     NEW LAW     A new section of law to be codified\nin the Oklahoma Statutes as Section 901 of Title 84, unless there is\ncreated a duplication in numbering, reads as follows:\nThis act shall be known and may be cited as the “Uniform\nElectronic Estate Planning Documents Act”.\nSECTION 2.     NEW LAW      A new section of law to be codified\nin the Oklahoma Statutes as Section 902 of Title 84, unless there is\ncreated a duplication in numbering, reads as follows:\nAs used in the Uniform Electronic Estate Planning Documents Act:\n1.   “Electronic” means relating to technology having electrical,\ndigital, magnetic, wireless, optical, electromagnetic, or similar\ncapabilities;\n2.   “Electronic record” means a record created, generated, sent,\ncommunicated, received, or stored by electronic means;\n3.   “Electronic signature” means an electronic symbol or process\nattached to or logically associated with a record and executed or\nadopted by a person with the intent to sign the record;\n4.   “Information” includes data, text, images, codes, computer\nprograms, software, and databases;\n5.   “Non-testamentary estate planning document” means a record\nrelating to estate planning that is readable as text at the time of\nsigning and is not a will or contained in a will.   Non-testamentary\nestate planning document includes:\na.     a record readable as text at the time of signing that\ncreates, exercises, modifies, releases, or revokes:\n(1)   a trust instrument,\n(2)   a trust power that under the terms of the trust\nrequires a signed record,\n(3)   a memorandum or certification of a trust,\n(4)   a durable power of attorney,\n(5)   an agent’s certification of the validity of a\npower of attorney and the agent’s authority,\n(6)   a power of appointment,\n(7)   an advance directive including a health-care\npower of attorney, directive to physicians,\nnatural death statement, living will, and medical\nor physician order for life-sustaining treatment,\n(8)   a record directing disposition of an individual’s\nbody after death,\n(9)   a nomination of a guardian for the signing\nindividual,\n(10) a nomination of a guardian for a minor child or\ndisabled adult child,\n(11) a mental health treatment declaration, or\n(12) any other record intended to carry out an\nindividual’s intent regarding property or health\ncare while incapacitated or on death, and\nb.    Non-testamentary estate planning document does not\ninclude a deed of real property or certificate of\ntitle for a motor vehicle, watercraft, or aircraft;\n6.    “Person” means an individual, estate, business or nonprofit\nentity, government or governmental subdivision, agency, or\ninstrumentality, or other legal entity;\n7.    “Power of attorney” means a record that grants authority to\nan agent to act in place of the principal, even if the term is not\nused in the record;\n8.    “Record” means information:\na.    inscribed on a tangible medium, or\nb.    stored in an electronic or other medium and\nretrievable in perceivable form;\n9.    “Security procedure” means a procedure to verify that an\nelectronic signature, record, or performance is that of a specific\nperson or to detect a change or error in an electronic record,\nincluding a procedure that uses an algorithm, code, identifying word\nor number, encryption, callback, or other acknowledgment procedure;\n10.   “Settlor” means a person, including a testator, that\ncreates or contributes property to a trust;\n11.   “Sign” means, with present intent to authenticate or adopt\na record:\na.    execute or adopt a tangible symbol, or\nb.   attach to or logically associate with the record an\nelectronic signature;\n12.    “State” means a state of the United States, the District of\nColumbia, Puerto Rico, the United States Virgin Islands, or other\nterritory or possession subject to the jurisdiction of the United\nStates.   The term includes a federally recognized Indian tribe;\n13.    “Terms of a trust” means:\na.   except as provided in subparagraph b of this\nparagraph, the manifestation of the settlor’s intent\nregarding a trust’s provisions as:\n(1)   expressed in the trust instrument, or\n(2)   established by other evidence that would be\nadmissible in a judicial proceeding; or\nb.   the trust’s provisions as established, determined, or\namended by:\n(1)   a trustee or other person in accordance with\napplicable law,\n(2)   a court order, or\n(3)   a nonjudicial settlement agreement;\n14.    “Trust instrument” means an instrument executed by the\nsettlor or other person authorized by law that contains terms of the\ntrust including any amendments; and\n15.    “Will” includes a codicil and a testamentary instrument\nthat appoints an executor, revokes or revises another will,\nnominates a guardian, or expressly excludes or limits the right of\nan individual or class to succeed to property of the decedent\npassing by intestate succession.\nSECTION 3.        NEW LAW   A new section of law to be codified\nin the Oklahoma Statutes as Section 903 of Title 84, unless there is\ncreated a duplication in numbering, reads as follows:\nThis act shall be construed and applied to facilitate electronic\nestate planning documents and signatures consistent with other law\nand be consistent with reasonable practices concerning electronic\ndocuments and signatures and continued expansion of those practices.\nSECTION 4.        NEW LAW   A new section of law to be codified\nin the Oklahoma Statutes as Section 904 of Title 84, unless there is\ncreated a duplication in numbering, reads as follows:\nA.   Except as provided in subsection B of this section, this act\nshall apply to an electronic non-testamentary estate planning\ndocument and an electronic signature on a non-testamentary estate\nplanning document.\nB.   This act shall not apply to a non-testamentary estate\nplanning document if the document precludes use of an electronic\nrecord or electronic signature.\nC.   This act shall not affect the validity of an electronic\nrecord or electronic signature that is valid under the Uniform\nElectronic Transactions Act, Section 15-101 et seq. of Title 12A of\nthe Oklahoma Statutes or other law of this state authorizing the use\nof electronic records or electronic signatures.\nSECTION 5.     NEW LAW      A new section of law to be codified\nin the Oklahoma Statutes as Section 905 of Title 84, unless there is\ncreated a duplication in numbering, reads as follows:\nThe law of this state and principles of equity applicable to a\nnon-testamentary estate planning document shall apply to an\nelectronic non-testamentary estate planning document except as\nmodified by this act.\nSECTION 6.      NEW LAW     A new section of law to be codified\nin the Oklahoma Statutes as Section 906 of Title 84, unless there is\ncreated a duplication in numbering, reads as follows:\nA.   This act shall not require a non-testamentary estate\nplanning document or signature on a non-testamentary estate planning\ndocument to be created, generated, sent, communicated, received,\nstored, or otherwise processed or used by electronic means or in\nelectronic form.\nB.   A person shall not be required to have a non-testamentary\nestate planning document in electronic form or signed electronically\neven if the person previously created or signed a non-testamentary\nestate planning document by electronic means.\nC.   No person shall waive the provisions of this section.\nSECTION 7.      NEW LAW     A new section of law to be codified\nin the Oklahoma Statutes as Section 907 of Title 84, unless there is\ncreated a duplication in numbering, reads as follows:\nA.   A non-testamentary estate planning document or a signature\non a non-testamentary estate planning document may not be denied\nlegal effect or enforceability solely because it is in electronic\nform.\nB.   If other laws of this state require a non-testamentary\nestate planning document to be in writing, an electronic record of\nthe document shall satisfy such requirement.\nC.   If other laws of this state require a signature on a non-\ntestamentary estate planning document, an electronic signature shall\nsatisfy such requirement.\nSECTION 8.      NEW LAW     A new section of law to be codified\nin the Oklahoma Statutes as Section 908 of Title 84, unless there is\ncreated a duplication in numbering, reads as follows:\nA.   An electronic non-testamentary estate planning document or\nelectronic signature on an electronic non-testamentary estate\nplanning document is attributable to a person if it was the act of\nthe person.    The act of the person may be shown in any manner\nincluding by showing the efficacy of a security procedure applied to\ndetermine the person to which the electronic record or electronic\nsignature was attributable.\nB.   The effect of attribution to a person under subsection A of\nthis section of a document or signature is determined from the\ncontext and surrounding circumstances at the time of its creation,\nexecution, or adoption and as provided by law.\nSECTION 9.     NEW LAW     A new section of law to be codified\nin the Oklahoma Statutes as Section 909 of Title 84, unless there is\ncreated a duplication in numbering, reads as follows:\nIf the laws of this state require a signature or record to be\nnotarized, acknowledged, verified, or made under oath, the\nrequirement shall be satisfied with respect to an electronic non-\ntestamentary estate planning document if an individual authorized to\nperform the notarization, acknowledgment, verification, or oath\nattaches or logically associates the individual’s electronic\nsignature on the document together with all other information\nrequired to be included under law.\nSECTION 10.     NEW LAW     A new section of law to be codified\nin the Oklahoma Statutes as Section 910 of Title 84, unless there is\ncreated a duplication in numbering, reads as follows:\nA.   If the laws of this state base the validity of a non-\ntestamentary estate planning document on whether it is signed,\nwitnessed, or attested by another individual, the signature,\nwitnessing, or attestation of that individual may be electronic.\nB.   For the purposes of this subsection, “electronic presence”\nmeans that two or more individuals in different locations are able\nto communicate in real time to the same extent as if the individuals\nwere physically present in the same location.   If the laws of this\nstate base the validity of a non-testamentary estate planning\ndocument on whether it is signed, witnessed, or attested by another\nindividual in the presence of the individual signing the document,\nthe presence requirement shall be satisfied if the individuals are\nin each other’s electronic presence.\nSECTION 11.     NEW LAW     A new section of law to be codified\nin the Oklahoma Statutes as Section 911 of Title 84, unless there is\ncreated a duplication in numbering, reads as follows:\nA.   Except as provided in subsection B of this section, if the\nlaws of this state require an electronic non-testamentary estate\nplanning document to be retained, transmitted, copied, or filed, the\nrequirement is satisfied by retaining, transmitting, copying, or\nfiling an electronic record that:\n1.   Accurately reflects the information in the document after it\nwas first generated in final form as an electronic record or under\nSection 12 of this act; and\n2.   Remains accessible to the extent required by the other law.\nB.   A requirement under subsection A of this section to retain a\nrecord does not apply to information the sole purpose of which is to\nenable the record to be sent, communicated, or received.\nC.   A person may satisfy the requirements of subsection A of\nthis section by using the services of another person.\nD.   If the laws of this state require a non-testamentary estate\nplanning document to be presented or retained in its original form\nor provides consequences if a non-testamentary estate planning\ndocument is not presented or retained in its original form, an\nelectronic record retained in accordance with subsection A of this\nsection satisfies such requirement.\nE.   The provisions of this section do not preclude a\ngovernmental agency from specifying requirements for the retention\nof a record subject to the agency’s jurisdiction in addition to the\nrequirements provided in this section.   For the purposes of this\nsection, “governmental agency” means an executive, legislative, or\njudicial agency, department, board, commission, authority,\ninstitution, or instrumentality of the federal government or of a\nstate or of a county, municipality, or other political subdivision\nof a state.\nSECTION 12.     NEW LAW     A new section of law to be codified\nin the Oklahoma Statutes as Section 912 of Title 84, unless there is\ncreated a duplication in numbering, reads as follows:\nAn individual may create a certified paper copy of an electronic\nnon-testamentary estate planning document by affirming under penalty\nof perjury that the paper copy is a complete and accurate copy of\nthe document.\nSECTION 13.     NEW LAW      A new section of law to be codified\nin the Oklahoma Statutes as Section 913 of Title 84, unless there is\ncreated a duplication in numbering, reads as follows:\nEvidence relating to an electronic non-testamentary estate\nplanning document or an electronic signature on the document may not\nbe excluded in a proceeding solely because such evidence is in\nelectronic form.\nSECTION 14.     NEW LAW      A new section of law to be codified\nin the Oklahoma Statutes as Section 914 of Title 84, unless there is\ncreated a duplication in numbering, reads as follows:\nIn applying and construing this uniform act, a court shall\nconsider the promotion of uniformity of the law among jurisdictions\nthat enact it.\nSECTION 15.     NEW LAW     A new section of law to be codified\nin the Oklahoma Statutes as Section 915 of Title 84, unless there is\ncreated a duplication in numbering, reads as follows:\nThis act modifies, limits, or supersedes the Electronic\nSignatures in Global and National Commerce Act, 15 U.S.C. Section\n7001 et seq., as amended, but does not modify, limit, or supersede\n15 U.S.C. Section 7001(c), or authorize electronic delivery of any\nof the notices described in 15 U.S.C. Section 7003(b).\nSECTION 16.     NEW LAW     A new section of law to be codified\nin the Oklahoma Statutes as Section 916 of Title 84, unless there is\ncreated a duplication in numbering, reads as follows:\nThis act shall apply to an electronic non-testamentary estate\nplanning document created, signed, generated, sent, communicated,\nreceived, or stored prior to, on, or after the effective date of\nthis act.\nSECTION 17.       NEW LAW      A new section of law to be codified\nin the Oklahoma Statutes as Section 917 of Title 84, unless there is\ncreated a duplication in numbering, reads as follows:\nIf a provision of this act or its application to a person or\ncircumstance is held invalid, the invalidity does not affect another\nprovision or application that can be given effect without the\ninvalid provision.\nSECTION 18.   This act shall become effective November 1, 2023.\n59-1-227         TEK        1/17/2023 1:00:49 PM",
+  "raw_text_url": "http://webserver1.lsb.state.ok.us/cf_pdf/2023-24 INT/SB/SB468 INT.PDF"
+ }
+]

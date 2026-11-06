@@ -1,0 +1,197 @@
+[
+ {
+  "id": "ocd-bill/26a84ccf-f59b-4813-9757-8e12e1bf471b",
+  "legislative_session": "2026",
+  "identifier": "SB 137",
+  "title": "establish procedures for anti-SLAPP actions to protect the exercise of a person's constitutional rights, including freedom of speech.",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "First read in Senate and referred to Senate Judiciary S.J. 120",
+    "date": "2026-01-27",
+    "classification": [
+     "introduction",
+     "reading-1",
+     "referral-committee"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Scheduled for hearing S.J. 1",
+    "date": "2026-02-05",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Judiciary Motion to amend , Passed, S.J. 14 Amendment 137A",
+    "date": "2026-02-05",
+    "classification": [
+     "amendment-introduction",
+     "amendment-passage"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Judiciary Do Pass Amended , Passed, YEAS 7, NAYS 0 S.J. 15",
+    "date": "2026-02-05",
+    "classification": [],
+    "order": 3
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Certified uncontested, placed on consent , Passed, S.J. 15",
+    "date": "2026-02-05",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Senate Do Pass Amended , Passed, YEAS 33, NAYS 0 S.J. 221",
+    "date": "2026-02-09",
+    "classification": [],
+    "order": 5
+   },
+   {
+    "organization__name": "House",
+    "description": "First read in House and referred to House Judiciary H.J. 279",
+    "date": "2026-02-10",
+    "classification": [
+     "introduction",
+     "reading-1",
+     "referral-committee"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "House",
+    "description": "Scheduled for hearing",
+    "date": "2026-03-04",
+    "classification": [],
+    "order": 7
+   },
+   {
+    "organization__name": "House",
+    "description": "Judiciary Do Pass , Passed, YEAS 12, NAYS 0",
+    "date": "2026-03-04",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 8
+   },
+   {
+    "organization__name": "House",
+    "description": "Certified uncontested, placed on consent , Passed,",
+    "date": "2026-03-04",
+    "classification": [],
+    "order": 9
+   },
+   {
+    "organization__name": "House",
+    "description": "House of Representatives Do Pass Amended , Passed, YEAS 65, NAYS 2 H.J. 523",
+    "date": "2026-03-05",
+    "classification": [],
+    "order": 10
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Signed by the President S.J. 505",
+    "date": "2026-03-09",
+    "classification": [
+     "passage"
+    ],
+    "order": 11
+   },
+   {
+    "organization__name": "House",
+    "description": "Signed by the Speaker H.J. 553",
+    "date": "2026-03-10",
+    "classification": [
+     "passage"
+    ],
+    "order": 12
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Delivered to the Governor on 2026-03-11 S.J. 520",
+    "date": "2026-03-11",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 13
+   },
+   {
+    "organization__name": "Office of the Governor",
+    "description": "Signed by the Governor on 2026-03-30 S.J. 548",
+    "date": "2026-03-30",
+    "classification": [
+     "executive-signature",
+     "executive-signature"
+    ],
+    "order": 14
+   }
+  ],
+  "versions": [
+   {
+    "note": "Introduced",
+    "date": "2026-01-26",
+    "links": [
+     {
+      "url": "https://mylrc.sdlegislature.gov/api/Documents/297673.pdf",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://sdlegislature.gov/Session/Bill/26918/297673",
+      "media_type": "text/html"
+     }
+    ]
+   },
+   {
+    "note": "Senate Judiciary Engrossed",
+    "date": "2026-02-05",
+    "links": [
+     {
+      "url": "https://mylrc.sdlegislature.gov/api/Documents/301614.pdf",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://sdlegislature.gov/Session/Bill/26918/301614",
+      "media_type": "text/html"
+     }
+    ]
+   },
+   {
+    "note": "Enrolled",
+    "date": "2026-03-09",
+    "links": [
+     {
+      "url": "https://mylrc.sdlegislature.gov/api/Documents/306424.pdf",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://sdlegislature.gov/Session/Bill/26918/306424",
+      "media_type": "text/html"
+     }
+    ]
+   },
+   {
+    "note": "137A",
+    "date": "",
+    "links": [
+     {
+      "url": "https://mylrc.sdlegislature.gov/api/Documents/298410.pdf",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "",
+  "raw_text_url": "https://sdlegislature.gov/Session/Bill/26918/306424"
+ }
+]

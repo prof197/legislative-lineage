@@ -1,0 +1,271 @@
+[
+ {
+  "id": "ocd-bill/2d79a7ee-4ea4-41db-9049-ab45b0f27bfd",
+  "legislative_session": "131",
+  "identifier": "LD 870",
+  "title": "An Act To Strengthen Freedom Of Speech Protections By Extending Laws Against Strategic Lawsuits Against Public Participation",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Committee on JUDICIARY suggested and ordered printed REFERENCE to the Committee on JUDICIARY Ordered sent down forthwith for concurrence",
+    "date": "2023-02-28",
+    "classification": [],
+    "order": 0
+   },
+   {
+    "organization__name": "House",
+    "description": "The Bill was REFERRED to the Committee on JUDICIARY.",
+    "date": "2023-02-28",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "In concurrence. ORDERED SENT FORTHWITH.",
+    "date": "2023-02-28",
+    "classification": [],
+    "order": 2
+   },
+   {
+    "organization__name": "Senate",
+    "description": "CARRIED OVER, in the same posture, to a subsequent special or regular session of the 131st Legislature, pursuant to Joint Order SP 594.",
+    "date": "2023-03-30",
+    "classification": [],
+    "order": 3
+   },
+   {
+    "organization__name": "Senate",
+    "description": "CARRIED OVER, in the same posture, to any special or regular session of the 131st Legislature, pursuant to Joint Order SP 847.",
+    "date": "2023-07-26",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reports READ",
+    "date": "2024-03-25",
+    "classification": [],
+    "order": 5
+   },
+   {
+    "organization__name": "Senate",
+    "description": "On motion by Senator CARNEY of Cumberland The Majority Ought to Pass As Amended Report ACCEPTED",
+    "date": "2024-03-25",
+    "classification": [],
+    "order": 6
+   },
+   {
+    "organization__name": "Senate",
+    "description": "READ ONCE",
+    "date": "2024-03-25",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 7
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Committee Amendment \"A\" (S-604) READ and ADOPTED",
+    "date": "2024-03-25",
+    "classification": [
+     "committee-passage-favorable"
+    ],
+    "order": 8
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Under suspension of the Rules, READ A SECOND TIME and PASSED TO BE ENGROSSED AS AMENDED by Committee Amendment \"A\" (S-604)",
+    "date": "2024-03-25",
+    "classification": [
+     "reading-2",
+     "reading-3"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Ordered sent down forthwith for concurrence",
+    "date": "2024-03-25",
+    "classification": [],
+    "order": 10
+   },
+   {
+    "organization__name": "House",
+    "description": "Reports READ.",
+    "date": "2024-03-27",
+    "classification": [],
+    "order": 11
+   },
+   {
+    "organization__name": "House",
+    "description": "On motion of Representative MOONEN of Portland, the Majority Ought to Pass as Amended Report was ACCEPTED.",
+    "date": "2024-03-27",
+    "classification": [],
+    "order": 12
+   },
+   {
+    "organization__name": "House",
+    "description": "The Bill was READ ONCE.",
+    "date": "2024-03-27",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 13
+   },
+   {
+    "organization__name": "House",
+    "description": "Committee Amendment \"A\" (S-604) was READ and ADOPTED.",
+    "date": "2024-03-27",
+    "classification": [
+     "committee-passage-favorable",
+     "passage"
+    ],
+    "order": 14
+   },
+   {
+    "organization__name": "House",
+    "description": "Under suspension of the rules, the Bill was given its SECOND READING without REFERENCE to the Committee on Bills in the Second Reading.",
+    "date": "2024-03-27",
+    "classification": [],
+    "order": 15
+   },
+   {
+    "organization__name": "House",
+    "description": "The Bill was PASSED TO BE ENGROSSED as Amended by Committee Amendment \"A\" (S-604).",
+    "date": "2024-03-27",
+    "classification": [
+     "reading-3"
+    ],
+    "order": 16
+   },
+   {
+    "organization__name": "House",
+    "description": "In concurrence. ORDERED SENT FORTHWITH.",
+    "date": "2024-03-27",
+    "classification": [],
+    "order": 17
+   },
+   {
+    "organization__name": "House",
+    "description": "PASSED TO BE ENACTED.",
+    "date": "2024-03-28",
+    "classification": [
+     "passage"
+    ],
+    "order": 18
+   },
+   {
+    "organization__name": "House",
+    "description": "Sent for concurrence. ORDERED SENT FORTHWITH.",
+    "date": "2024-03-28",
+    "classification": [],
+    "order": 19
+   },
+   {
+    "organization__name": "Senate",
+    "description": "PASSED TO BE ENACTED, in concurrence.",
+    "date": "2024-04-01",
+    "classification": [
+     "passage"
+    ],
+    "order": 20
+   },
+   {
+    "organization__name": "Maine Legislature",
+    "description": "Work Session Held - TABLED",
+    "date": "2023-05-04T04:00:00+00:00",
+    "classification": [],
+    "order": 21
+   },
+   {
+    "organization__name": "Maine Legislature",
+    "description": "Work Session Held - TABLED",
+    "date": "2023-05-25T04:00:00+00:00",
+    "classification": [],
+    "order": 22
+   },
+   {
+    "organization__name": "Maine Legislature",
+    "description": "Carry Over Requested",
+    "date": "2023-06-01T04:00:00+00:00",
+    "classification": [],
+    "order": 23
+   },
+   {
+    "organization__name": "Maine Legislature",
+    "description": "Carry Over Approved",
+    "date": "2023-07-25T04:00:00+00:00",
+    "classification": [],
+    "order": 24
+   },
+   {
+    "organization__name": "Maine Legislature",
+    "description": "Work Session Held - TABLED",
+    "date": "2024-01-10T05:00:00+00:00",
+    "classification": [],
+    "order": 25
+   },
+   {
+    "organization__name": "Maine Legislature",
+    "description": "Work Session Held",
+    "date": "2024-01-23T05:00:00+00:00",
+    "classification": [],
+    "order": 26
+   },
+   {
+    "organization__name": "Maine Legislature",
+    "description": "Voted - Divided Report",
+    "date": "2024-01-23T05:00:00+00:00",
+    "classification": [],
+    "order": 27
+   },
+   {
+    "organization__name": "Maine Legislature",
+    "description": "Reported Out - OTP-AM/ONTP",
+    "date": "2024-03-22T04:00:00+00:00",
+    "classification": [],
+    "order": 28
+   }
+  ],
+  "versions": [
+   {
+    "note": "Final Disposition",
+    "date": "",
+    "links": [
+     {
+      "url": "http://www.mainelegislature.org/legis/bills/getPDF.asp?paper=SP0367&item=3&snum=131",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Adopted Amendments",
+    "date": "",
+    "links": [
+     {
+      "url": "http://www.mainelegislature.org/legis/bills/getPDF.asp?paper=SP0367&item=2&snum=131",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "Documents and Disposition",
+    "date": "",
+    "links": [
+     {
+      "url": "http://www.mainelegislature.org/legis/bills/getPDF.asp?paper=SP0367&item=1&snum=131",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "",
+  "raw_text_url": "http://www.mainelegislature.org/legis/bills/getPDF.asp?paper=SP0367&item=3&snum=131"
+ }
+]

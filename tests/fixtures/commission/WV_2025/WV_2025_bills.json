@@ -1,0 +1,537 @@
+[
+ {
+  "id": "ocd-bill/171b2484-52fb-4dda-b3e3-0baa57ed5099",
+  "legislative_session": "2025",
+  "identifier": "SB 561",
+  "title": "Relating to Uniform Special Deposits Act",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Filed for introduction",
+    "date": "2025-02-20",
+    "classification": [
+     "filing"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "To Banking and Insurance",
+    "date": "2025-02-20",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Introduced in Senate",
+    "date": "2025-02-20",
+    "classification": [
+     "introduction"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "Senate",
+    "description": "To Banking and Insurance",
+    "date": "2025-02-20",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 3
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Reported do pass",
+    "date": "2025-03-06",
+    "classification": [
+     "committee-passage"
+    ],
+    "order": 4
+   },
+   {
+    "organization__name": "Senate",
+    "description": "On 1st reading",
+    "date": "2025-03-07",
+    "classification": [],
+    "order": 5
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Read 1st time",
+    "date": "2025-03-07",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 6
+   },
+   {
+    "organization__name": "Senate",
+    "description": "On 2nd reading",
+    "date": "2025-03-10",
+    "classification": [],
+    "order": 7
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Read 2nd time",
+    "date": "2025-03-10",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 8
+   },
+   {
+    "organization__name": "Senate",
+    "description": "On 3rd reading",
+    "date": "2025-03-11",
+    "classification": [],
+    "order": 9
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Read 3rd time",
+    "date": "2025-03-11",
+    "classification": [
+     "reading-3"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Passed Senate (Roll No. 94)",
+    "date": "2025-03-11",
+    "classification": [
+     "passage"
+    ],
+    "order": 11
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Ordered to House",
+    "date": "2025-03-11",
+    "classification": [],
+    "order": 12
+   },
+   {
+    "organization__name": "House",
+    "description": "House received Senate message",
+    "date": "2025-03-12",
+    "classification": [],
+    "order": 13
+   },
+   {
+    "organization__name": "House",
+    "description": "Introduced in House",
+    "date": "2025-03-12",
+    "classification": [
+     "introduction"
+    ],
+    "order": 14
+   },
+   {
+    "organization__name": "House",
+    "description": "To Finance",
+    "date": "2025-03-12",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 15
+   },
+   {
+    "organization__name": "House",
+    "description": "To House Finance",
+    "date": "2025-03-12",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 16
+   },
+   {
+    "organization__name": "House",
+    "description": "Do pass",
+    "date": "2025-04-09",
+    "classification": [],
+    "order": 17
+   },
+   {
+    "organization__name": "House",
+    "description": "Immediate consideration",
+    "date": "2025-04-09",
+    "classification": [],
+    "order": 18
+   },
+   {
+    "organization__name": "House",
+    "description": "Read 1st time",
+    "date": "2025-04-09",
+    "classification": [
+     "reading-1"
+    ],
+    "order": 19
+   },
+   {
+    "organization__name": "House",
+    "description": "On 2nd reading, Special Calendar",
+    "date": "2025-04-10",
+    "classification": [],
+    "order": 20
+   },
+   {
+    "organization__name": "House",
+    "description": "Read 2nd time",
+    "date": "2025-04-10",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 21
+   },
+   {
+    "organization__name": "House",
+    "description": "On 3rd reading, Special Calendar",
+    "date": "2025-04-11",
+    "classification": [],
+    "order": 22
+   },
+   {
+    "organization__name": "House",
+    "description": "Read 3rd time",
+    "date": "2025-04-11",
+    "classification": [
+     "reading-3"
+    ],
+    "order": 23
+   },
+   {
+    "organization__name": "House",
+    "description": "Passed House (Roll No. 509)",
+    "date": "2025-04-11",
+    "classification": [
+     "passage"
+    ],
+    "order": 24
+   },
+   {
+    "organization__name": "House",
+    "description": "Completed legislative action",
+    "date": "2025-04-11",
+    "classification": [],
+    "order": 25
+   },
+   {
+    "organization__name": "House",
+    "description": "Communicated to Senate",
+    "date": "2025-04-11",
+    "classification": [],
+    "order": 26
+   },
+   {
+    "organization__name": "Senate",
+    "description": "House Message received",
+    "date": "2025-04-12",
+    "classification": [],
+    "order": 27
+   },
+   {
+    "organization__name": "Senate",
+    "description": "To Governor 4/17/25",
+    "date": "2025-04-17",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 28
+   },
+   {
+    "organization__name": "Senate",
+    "description": "To Governor 4/17/25 - Senate Journal",
+    "date": "2025-04-12",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 29
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Approved by Governor 4/30/2025",
+    "date": "2025-04-30",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 30
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Approved by Governor 4/30/2025 - Senate Journal",
+    "date": "2025-04-12",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 31
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Chapter 40, Acts, Regular Session, 2025",
+    "date": "2025-08-08",
+    "classification": [
+     "became-law"
+    ],
+    "order": 32
+   }
+  ],
+  "versions": [
+   {
+    "note": "Enrolled Version",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.wvlegislature.gov/Bill_Text_HTML/2025_SESSIONS/RS/bills/sb561 enr.docx",
+      "media_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+     },
+     {
+      "url": "https://www.wvlegislature.gov/Bill_Text_HTML/2025_SESSIONS/RS/bills/sb561 enr.pdf",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://www.wvlegislature.gov/Bill_Status/bills_text.cfm?billdoc=sb561%20enr.htm&yr=2025&sesstype=RS&i=561",
+      "media_type": "text/html"
+     }
+    ]
+   },
+   {
+    "note": "Introduced Version",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.wvlegislature.gov/Bill_Text_HTML/2025_SESSIONS/RS/bills/sb561 intr.docx",
+      "media_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+     },
+     {
+      "url": "https://www.wvlegislature.gov/Bill_Text_HTML/2025_SESSIONS/RS/bills/sb561 intr.pdf",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://www.wvlegislature.gov/Bill_Status/bills_text.cfm?billdoc=sb561%20intr.htm&yr=2025&sesstype=RS&i=561",
+      "media_type": "text/html"
+     }
+    ]
+   }
+  ],
+  "raw_text": "",
+  "raw_text_url": null
+ },
+ {
+  "id": "ocd-bill/2f6e1810-6119-44f6-83b3-d27d28e18c78",
+  "legislative_session": "2025",
+  "identifier": "HB 2745",
+  "title": "Uniform Special Deposits Act",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "House",
+    "description": "Filed for introduction",
+    "date": "2025-02-21",
+    "classification": [
+     "filing"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "House",
+    "description": "To Judiciary",
+    "date": "2025-02-21",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "House",
+    "description": "Introduced in House",
+    "date": "2025-02-21",
+    "classification": [
+     "introduction"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "House",
+    "description": "To House Judiciary",
+    "date": "2025-02-21",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 3
+   }
+  ],
+  "versions": [
+   {
+    "note": "Introduced Version",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.wvlegislature.gov/Bill_Text_HTML/2025_SESSIONS/RS/bills/hb2745 intr.docx",
+      "media_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+     },
+     {
+      "url": "https://www.wvlegislature.gov/Bill_Text_HTML/2025_SESSIONS/RS/bills/hb2745 intr.pdf",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://www.wvlegislature.gov/Bill_Status/bills_text.cfm?billdoc=hb2745%20intr.htm&yr=2025&sesstype=RS&i=2745",
+      "media_type": "text/html"
+     }
+    ]
+   }
+  ],
+  "raw_text": "\n\n\n\n\n \n  .cs4B09651A{text-align:center;text-indent:0pt;margin:0pt 0pt 0pt 0pt;line-height:2}\n  .cs12504C81{color:#000000;background-color:transparent;font-family:Arial;font-size:22pt;font-weight:bold;font-style:normal;text-transform:uppercase;}\n  .csDC685BE1{text-align:center;text-indent:0pt;margin:0pt 0pt 48pt 0pt;line-height:2}\n  .cs3BC7FF6A{color:#000000;background-color:transparent;font-family:Arial;font-size:18pt;font-weight:bold;font-style:normal;text-transform:uppercase;}\n  .csA79677C3{color:#000000;background-color:transparent;font-family:Arial;font-size:18pt;font-weight:bold;font-style:normal;}\n  .csF36D445B{text-align:center;text-indent:0pt;margin:0pt 0pt 18pt 0pt;line-height:2}\n  .cs9C2C975F{color:#000000;background-color:transparent;font-family:Arial;font-size:22pt;font-weight:bold;font-style:normal;}\n  .csCA3E41D9{text-align:center;text-indent:0pt;margin:0pt 90pt 6pt 90pt;line-height:2}\n  .csBB3ABC40{color:#000000;background-color:transparent;font-family:Arial;font-size:12pt;font-weight:normal;font-style:normal;font-variant:small-caps;}\n  .csBA891411{text-align:center;text-indent:0pt;margin:0pt 90pt 0pt 90pt;line-height:2}\n  .csA9049697{color:#000000;background-color:transparent;font-family:Arial;font-size:12pt;font-weight:normal;font-style:normal;}\n  .cs488BC2{text-align:justify;text-indent:-36pt;margin:0pt 0pt 0pt 36pt;line-height:2;page-break-before:always}\n  .csE736517A{color:#000000;background-color:transparent;font-family:Arial;font-size:11pt;font-weight:normal;font-style:normal;}\n  .cs55F91DED{text-align:left;text-indent:0pt;margin:0pt 0pt 0pt 0pt;line-height:2}\n  .cs50A3B802{color:#000000;background-color:transparent;font-family:Arial;font-size:11pt;font-weight:normal;font-style:italic;}\n  .cs70D5A6FA{text-align:left;text-indent:-36pt;margin:0pt 0pt 0pt 36pt;line-height:2}\n  .cs290C878F{color:#000000;background-color:transparent;font-family:Arial;font-size:12pt;font-weight:bold;font-style:normal;text-decoration: underline;text-transform:uppercase;}\n  .cs5BCBAEC9{color:#000000;background-color:transparent;font-family:Arial;font-size:11pt;font-weight:bold;font-style:normal;text-decoration: underline;}\n  .cs45E53620{text-align:justify;text-indent:36pt;margin:0pt 0pt 0pt 0pt;line-height:2}\n  .csF2E808A1{color:#000000;background-color:transparent;font-family:Arial;font-size:11pt;font-weight:normal;font-style:normal;text-decoration: underline;}\n  .cs7EC4F623{text-align:justify;text-indent:36pt;margin:0pt 0pt 0pt 0pt;line-height:2;background-color:#FFFFFF}\n  .cs56A9D0A9{color:#000000;background-color:transparent;font-family:'Times New Roman';font-size:12pt;font-weight:normal;font-style:normal;text-decoration: underline;}\n  .cs13A1C9D2{color:#000000;background-color:transparent;font-family:Arial;font-size:11pt;font-weight:normal;font-style:italic;text-decoration: underline;}\n  .csDE8452F9{text-align:justify;text-indent:0pt;margin:0pt 36pt 11pt 36pt}\n  .csAD690475{color:#000000;background-color:transparent;font-family:Arial;font-size:10pt;font-weight:normal;font-style:normal;}\n \n WEST virginia legislature2025 regular sessionIntroducedHouse Bill 2745By Delegates W. Clark, Hall, and Williams[Introduced February 21, 2025; referred to the Committee on the Judiciary]A BILL to amend the Code of West Virginia, 1931, as amended, by adding thereto a new article, designated §31A-9-1, §31A-9-2, §31A-9-3, §31A-9-4, §31A-9-5, §31A-9-6, §31A-9-7, §31A-9-8, §31A-9-9, §31A-9-10, §31A-9-11, §31A-9-12, §31A-9-13, §31A-9-14, §31A-9-15, and §31A-9-16, all relating to the Uniform Special Deposits Act; providing citation; defining terms; providing for applicability to special deposits in certain circumstances; providing exceptions; allowing variation by agreement or amendment; setting forth requirements for a special deposit; requiring permissible purpose for special deposit; allowing termination of special deposit in certain circumstances; describing when bank is obligated to pay beneficiary; clarifying who has a property interest in special deposit; providing for creditor process enforceability in certain circumstances; permitting injunctive or similar relief by court; generally prohibiting recoupment or set off against special deposit; providing exceptions to prohibition on recoupment or set off against special deposit; describing duties and liability of bank holding special deposit; terminating special deposit after five years unless otherwise agreed; providing for payment of remaining balance; providing for supplementation of article by specified West Virginia laws; providing for promotion of uniformity; and providing applicability after effective date. Be it enacted by the Legislature of West Virginia:\n  ARTICLE 9.  the uniform special deposits act.\n \n  §31A-9-1. Title.\n This article may be cited as the Uniform Special Deposits Act.\n  §31A-9-2. Definitions.\n In this article:(1) \"Account agreement\" means an agreement that:(A) Is in a record between a bank and one or more depositors; (B) May have one or more beneficiaries as additional parties; and (C) States the intention of the parties to establish a special deposit governed by this article.(2) \"Bank\" means a person engaged in the business of banking and includes a savings bank, savings and loan association, credit union, trust company, and a bank as defined in §31A-1-2 of this code. Each branch or separate office of a bank is a separate bank for the purpose of this article. (3) \"Beneficiary\" means a person that:(A) Is identified as a beneficiary in an account agreement; or(B) If not identified as a beneficiary in an account agreement, may be entitled to payment from a special deposit:(i) Under the account agreement; or(ii) On termination of the special deposit.(4) \"Contingency\" means an event or circumstance stated in an account agreement that is not certain to occur but must occur before the bank is obligated to pay a beneficiary.(5) \"Creditor process\" means attachment, garnishment, levy, notice of lien, sequestration, or similar process issued by or on behalf of a creditor or other claimant.(6) \"Depositor\" means a person that establishes or funds a special deposit.(7) \"Good faith\" means honesty in fact and observance of reasonable commercial standards of fair dealing.(8) \"Knowledge\" of a fact means:(A) With respect to a beneficiary, actual knowledge of the fact; or(B) With respect to a bank holding a special deposit:(i) If the bank: (I) Has established a reasonable routine for communicating material information to an individual to whom the bank has assigned responsibility for the special deposit; and (II) Maintains reasonable compliance with the routine, actual knowledge of the fact by that individual; or(ii) If the bank has not established and maintained reasonable compliance with a routine described in subparagraph (i) of this paragraph or otherwise exercised due diligence, implied knowledge of the fact that would have come to the attention of an individual to whom the bank has assigned responsibility for the special deposit. (9) \"Obligated to pay a beneficiary\" means a beneficiary is entitled under the account agreement to receive from the bank a payment when:(A) A contingency has occurred; and(B) The bank has knowledge the contingency has occurred.(10) \"Obligation to pay a beneficiary\" has a corresponding meaning.(11) \"Permissible purpose\" means a governmental, regulatory, commercial, charitable, or testamentary objective of the parties stated in an account agreement. The term includes an objective to:(A) Hold funds:(i) In escrow, including for a purchase and sale, lease, buyback, or other transaction;(ii) As a security deposit of a tenant;(iii) That may be distributed to a person as remuneration, retirement, or other benefit, or compensation under a judgment, consent decree, court order, or other decision of a tribunal; or(iv) For distribution to a defined class of persons after identification of the class members and their interest in the funds;(B) Provide assurance with respect to an obligation created by contract, such as earnest money to ensure a transaction closes;(C) Settle an obligation that arises in the operation of a payment system, securities settlement system, or other financial market infrastructure; (D) Provide assurance with respect to an obligation that arises in the operation of a payment system, securities settlement system, or other financial market infrastructure; or(E) Hold margin, other cash collateral, or funds that support the orderly functioning of financial market infrastructure or the performance of an obligation with respect to the infrastructure.(12) \"Person\" means an individual, estate, business or nonprofit entity, government or governmental subdivision, agency, or instrumentality, or other legal entity. The term includes a protected series, however denominated, of an entity if the protected series is established under law that limits, or limits if conditions specified under law are satisfied, the ability of a creditor of the entity or of any other protected series of the entity to satisfy a claim from assets of the protected series.(13) \"Record\" means information:(A) Inscribed on a tangible medium; or(B) Stored in an electronic or other medium and retrievable in perceivable form.(14) \"Special deposit\" means a deposit that satisfies §31A-9-5 of this code.(15) \"State\" means a state of the United States, the District of Columbia, Puerto Rico, the United States Virgin Islands, or any other territory or possession subject to the jurisdiction of the United States. The term includes an agency or instrumentality of the state.\n  §31A-9-3. Scope; choice of Law; forum.\n (a) This article applies to a special deposit under an account agreement that states the intention of the parties to establish a special deposit governed by this article, regardless of whether a party to the account agreement or a transaction related to the special deposit, or the special deposit itself, has a reasonable relation to this state.(b) The parties to an account agreement may choose a forum in this state for settling a dispute arising out of the special deposit, regardless of whether a party to the account agreement or a transaction related to the special deposit, or the special deposit itself, has a reasonable relation to this state.(c) This article does not affect:(1) A right or obligation relating to a deposit other than a special deposit under this article; or(2) The voidability of a deposit or transfer that is fraudulent or voidable under other law.\n  §31A-9-4. Variation by agreement or amendment.\n (a) The effect of §31A-9-2 through §31A-9-6, §31A-9-8 through §31A-9-11, and §31A-9-14 of this code may not be varied by agreement, except as provided in those sections. Subject to subsection (b) of this section, the effect of §31A-9-7, §31A-9-12, and §31A-9-13 of this code may be varied by agreement.(b) A provision in an account agreement or other record that substantially excuses liability or substantially limits remedies for failure to perform an obligation under this article is not sufficient to vary the effect of a provision of this article.(c) If a beneficiary is a party to an account agreement, the bank and the depositor may amend the agreement without the consent of the beneficiary only if the agreement expressly permits the amendment.(d) If a beneficiary is not a party to an account agreement and the bank and the depositor know the beneficiary has knowledge of the agreement's terms, the bank and the depositor may amend the agreement without the consent of the beneficiary only if the amendment does not adversely and materially affect a payment right of the beneficiary.(e) If a beneficiary is not a party to an account agreement and the bank and the depositor do not know whether the beneficiary has knowledge of the agreement's terms, the bank and the depositor may amend the agreement without the consent of the beneficiary only if the amendment is made in good faith.\n  §31A-9-5. Requirements for special deposit.\n A deposit is a special deposit if it is:(1) A deposit of funds in a bank under an account agreement; (2) For the benefit of at least two beneficiaries, one or more of which may be a depositor;(3) Denominated in a medium of exchange that is currently authorized or adopted by a domestic or foreign government;(4) For a permissible purpose stated in the account agreement; and(5) Subject to a contingency.\n  §31A-9-6. Permissible purpose.\n (a) A special deposit must serve at least one permissible purpose stated in the account agreement from the time the special deposit is created in the account agreement until termination of the special deposit.(b) If, before termination of the special deposit, the bank or a court determines the special deposit no longer satisfies subsection (a) of this section, the provisions of §31A-9-8 through §31A-9-11 of this code cease to apply to any funds deposited in the special deposit after the special deposit ceases to satisfy subsection (a) of this section.(c) If, before termination of a special deposit, the bank determines the special deposit no longer satisfies subsection (a) of this section, the bank may take action it believes is necessary under the circumstances, including terminating the special deposit.\n  §31A-9-7. Payment to beneficiary by bank.\n (a) Unless the account agreement provides otherwise, the bank is obligated to pay a beneficiary if there are sufficient actually and finally collected funds in the balance of the special deposit. (b) Except as provided in subsection (c) of this section, the obligation to pay the beneficiary is excused if the funds available in the special deposit are insufficient to cover such payment.(c) Unless the account agreement provides otherwise, if the funds available in the special deposit are insufficient to cover an obligation to pay a beneficiary, a beneficiary may elect to be paid the funds that are available or, if there is more than one beneficiary, a pro rata share of the funds available. Payment to the beneficiary making the election under this subsection discharges the bank's obligation to pay a beneficiary and does not constitute an accord and satisfaction with respect to another person obligated to the beneficiary.(d) Unless the account agreement provides otherwise, the obligation of the bank obligated to pay a beneficiary is immediately due and payable.(e) The bank may discharge its obligation under this section by: (1) Crediting another transaction account of the beneficiary; or (2) Taking other action that: (A)  Is permitted under the account agreement for the bank to obtain a discharge; or (B)  Otherwise would constitute a discharge under law.(f) If the bank obligated to pay a beneficiary has incurred an obligation to discharge the obligation of another person, the obligation of the other person is discharged if action by the bank under subsection (e) of this section would constitute a discharge of the obligation of the other person under law that determines whether an obligation is satisfied.\n  §31A-9-8 Property interest of depositor or beneficiary.\n (a) Neither a depositor nor a beneficiary has a property interest in a special deposit.(b) Any property interest with respect to a special deposit is only in the right to receive payment if the bank is obligated to pay a beneficiary and not in the special deposit itself. Any property interest under this subsection is determined under other law.\n  §31A-9-9. When creditor process enforceable against bank.\n (a) Subject to subsection (b) of this section, creditor process with respect to a special deposit is not enforceable against the bank holding the special deposit. (b) Creditor process is enforceable against the bank holding a special deposit with respect to an amount the bank is obligated to pay a beneficiary or a depositor if the process:(1)  Is served on the bank;(2) Provides sufficient information to permit the bank to identify the depositor or the beneficiary from the bank's books and records; and(3) Gives the bank a reasonable opportunity to act on the process.(c) Creditor process served on a bank before it is enforceable against the bank under subsection (b) of this section does not create a right of the creditor against the bank or a duty of the bank to the creditor. Other law determines whether creditor process creates a lien enforceable against the beneficiary on a contingent interest of a beneficiary, including a depositor as a beneficiary, even if not enforceable against the bank.\n  §31A-9-10. Injunction or similar relief.\n A court may enjoin or grant similar relief that would have the effect of enjoining a bank from paying a depositor or beneficiary only if payment would constitute a material fraud or facilitate a material fraud with respect to a special deposit.\n  §31A-9-11. Recoupment or set off.\n (a) Except as provided in subsection (b) or subsection (c) of this section, a bank may not exercise a right of recoupment or set off against a special deposit. (b) An account agreement may authorize the bank to debit the special deposit:(1) When the bank becomes obligated to pay a beneficiary, in an amount that does not exceed the amount necessary to discharge the obligation;(2) For a fee assessed by the bank that relates to an overdraft in the special deposit account; (3) For costs incurred by the bank that relate directly to the special deposit; or(4) To reverse an earlier credit posted by the bank to the balance of the special deposit account, if the reversal occurs under an event or circumstance warranted under other law of this state governing mistake and restitution.(c) The bank holding a special deposit may exercise a right of recoupment or set off against an obligation to pay a beneficiary, even if the bank funds payment from the special deposit.\n  §31A-9-12. Duties and liability of bank.\n (a) A bank does not have a fiduciary duty to any person with respect to a special deposit. (b) When the bank holding a special deposit becomes obligated to pay a beneficiary, a debtor-creditor relationship arises between the bank and beneficiary.(c) The bank holding a special deposit has a duty to a beneficiary to comply with the account agreement and this article. (d) If the bank holding a special deposit does not comply with the account agreement or this article, the bank is liable to a depositor or beneficiary only for damages proximately caused by the noncompliance. Except as provided by other law of this state, the bank is not liable for consequential, special, or punitive damages.(e) The bank holding a special deposit may rely on records presented in compliance with the account agreement to determine whether the bank is obligated to pay a beneficiary.(f) If the account agreement requires payment on presentation of a record, the bank shall determine within a reasonable time whether the record is sufficient to require payment. If the agreement requires action by the bank on presentation of a record, the bank is not liable for relying in good faith on the genuineness of the record if the record appears on its face to be genuine.(g) Unless the account agreement provides otherwise, the bank is not required to determine whether a permissible purpose stated in the agreement continues to exist.\n  §31A-9-13. Term and termination.\n (a) Unless otherwise provided in the account agreement, a special deposit terminates five years after the date the special deposit was first funded.(b) Unless otherwise provided in the account agreement, if the bank cannot identify or locate a beneficiary entitled to payment when the special deposit is terminated, and a balance remains in the special deposit, the bank shall pay the balance to the depositor or depositors as a beneficiary or beneficiaries.(c)  A bank that pays the remaining balance as provided under subsection (b) of this section has no further obligation with respect to the special deposit.\n  §31A-9-14. Principles of law and equity.\n The provisions of Chapter 46 and Chapter 46A of this code, law governing deposits generally, law related to escheat and abandoned or unclaimed property, and the principles of law and equity, including law related to capacity to contract, principal and agent, estoppel, fraud, misrepresentation, duress, coercion, mistake, and bankruptcy, supplement this article except to the extent inconsistent with this article. \n  §31A-9-15. Uniformity of application and construction.\n In applying and construing this uniform act, a court shall consider the promotion of uniformity of the law among jurisdictions that enact it.\n  §31A-9-16. Transitional provision.\n This article applies to:(1) A special deposit made under an account agreement executed on or after the effective date of this article; and(2) A deposit made under an agreement executed before enactment of this article, if:(A) All parties entitled to amend the agreement agree to make the deposit a special deposit governed by this article; and(B) The special deposit referenced in the amended agreement satisfies §31A-9-5 of this code.NOTE: The purpose of this bill is to provide for the creation of the Uniform Special Deposits Act.This bill was recommended for passage during the 2025 legislative session by the Commission on Interstate Cooperation.Strike-throughs indicate language that would be stricken from a heading or the present law and underscoring indicates new language that would be added.\n\n\n",
+  "raw_text_url": "https://www.wvlegislature.gov/Bill_Status/bills_text.cfm?billdoc=hb2745%20intr.htm&yr=2025&sesstype=RS&i=2745"
+ },
+ {
+  "id": "ocd-bill/3f132cbe-39c4-4d47-bd86-53905d8cb66d",
+  "legislative_session": "2025",
+  "identifier": "SB 910",
+  "title": "Increasing fee under Uniform Securities Act",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Filed for introduction",
+    "date": "2025-03-24",
+    "classification": [
+     "filing"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "To Finance",
+    "date": "2025-03-24",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Introduced in Senate",
+    "date": "2025-03-24",
+    "classification": [
+     "introduction"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "Senate",
+    "description": "To Finance",
+    "date": "2025-03-24",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 3
+   }
+  ],
+  "versions": [
+   {
+    "note": "Introduced Version",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.wvlegislature.gov/Bill_Text_HTML/2025_SESSIONS/RS/bills/sb910 intr.docx",
+      "media_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+     },
+     {
+      "url": "https://www.wvlegislature.gov/Bill_Text_HTML/2025_SESSIONS/RS/bills/sb910 intr.pdf",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://www.wvlegislature.gov/Bill_Status/bills_text.cfm?billdoc=sb910%20intr.htm&yr=2025&sesstype=RS&i=910",
+      "media_type": "text/html"
+     }
+    ]
+   }
+  ],
+  "raw_text": "\n\n\n\n\n \n  .cs4B09651A{text-align:center;text-indent:0pt;margin:0pt 0pt 0pt 0pt;line-height:2}\n  .cs12504C81{color:#000000;background-color:transparent;font-family:Arial;font-size:22pt;font-weight:bold;font-style:normal;text-transform:uppercase;}\n  .csDC685BE1{text-align:center;text-indent:0pt;margin:0pt 0pt 48pt 0pt;line-height:2}\n  .cs3BC7FF6A{color:#000000;background-color:transparent;font-family:Arial;font-size:18pt;font-weight:bold;font-style:normal;text-transform:uppercase;}\n  .csA79677C3{color:#000000;background-color:transparent;font-family:Arial;font-size:18pt;font-weight:bold;font-style:normal;}\n  .csCA3E41D9{text-align:center;text-indent:0pt;margin:0pt 90pt 6pt 90pt;line-height:2}\n  .csBB3ABC40{color:#000000;background-color:transparent;font-family:Arial;font-size:12pt;font-weight:normal;font-style:normal;font-variant:small-caps;}\n  .csBA891411{text-align:center;text-indent:0pt;margin:0pt 90pt 0pt 90pt;line-height:2}\n  .csA9049697{color:#000000;background-color:transparent;font-family:Arial;font-size:12pt;font-weight:normal;font-style:normal;}\n  .cs488BC2{text-align:justify;text-indent:-36pt;margin:0pt 0pt 0pt 36pt;line-height:2;page-break-before:always}\n  .csE736517A{color:#000000;background-color:transparent;font-family:Arial;font-size:11pt;font-weight:normal;font-style:normal;}\n  .cs55F91DED{text-align:left;text-indent:0pt;margin:0pt 0pt 0pt 0pt;line-height:2}\n  .cs50A3B802{color:#000000;background-color:transparent;font-family:Arial;font-size:11pt;font-weight:normal;font-style:italic;}\n  .csCA36641A{text-align:justify;text-indent:-36pt;margin:0pt 0pt 0pt 36pt;line-height:2}\n  .cs317696C1{color:#000000;background-color:transparent;font-family:Arial;font-size:12pt;font-weight:bold;font-style:normal;text-transform:uppercase;}\n  .cs6D9F0C8B{color:#000000;background-color:transparent;font-family:Arial;font-size:11pt;font-weight:bold;font-style:normal;}\n  .cs45E53620{text-align:justify;text-indent:36pt;margin:0pt 0pt 0pt 0pt;line-height:2}\n  .csB2FCAD92{color:#000000;background-color:transparent;font-family:Arial;font-size:11pt;font-weight:normal;font-style:normal;text-decoration: line-through;}\n  .csF2E808A1{color:#000000;background-color:transparent;font-family:Arial;font-size:11pt;font-weight:normal;font-style:normal;text-decoration: underline;}\n  .csDE8452F9{text-align:justify;text-indent:0pt;margin:0pt 36pt 11pt 36pt}\n  .csAD690475{color:#000000;background-color:transparent;font-family:Arial;font-size:10pt;font-weight:normal;font-style:normal;}\n \n West Virginia Legislature2025 REGULAR SESSIONIntroducedSenate Bill 910Senator Smith (Mr. President)[Introduced on March 24, 2025; referred to the Committee on Finance]A BILL to amend and reenact §32-4-406 of the Code of West Virginia, 1931, as amended, relating to increasing fees under the Uniform Securities Act.Be it enacted by the Legislature of West Virginia: \n  Article 4. General Provisions.\n \n  §32-4-406. Administration of chapter; operating fund for securities department.\n (a) This chapter shall be administered by the Auditor of this state and he or she is hereby designated, and shall be, the commissioner of securities of this state. He or she has the power and authority to appoint or employ such assistants as are necessary for the administration of this chapter.(b) The Auditor shall set up a special operating fund for the securities division in his or her office. The Auditor shall pay into the fund 20 percent 30% of all fees collected as provided for in this chapter. If, at the end of any fiscal year, the balance in the special operating fund exceeds 20 percent of the gross revenues from the special operating fund operations, the excess shall be transferred to the General Revenue Fund.The special operating fund shall be used by the Auditor to fund the operation of the securities division and the general operations of the Auditor’s office. The special operating fund shall be appropriated by line item by the Legislature.(c) Moneys payable for assessments established by §32-4-407a of this code shall be collected by the commissioner and deposited into the General Revenue Fund.(d) It is unlawful for the commissioner or any of his or her officers or employees to use for personal benefit any information which is filed with or obtained by the commissioner and which is not made public. No provision of this chapter authorizes the commissioner or any of his or her officers or employees to disclose any information except among themselves or when necessary or appropriate in a proceeding or investigation under this chapter. No provision of the chapter either creates or derogates from any privilege which exists at common law or otherwise when documentary or other evidence is sought under a subpoena directed to the commissioner or any of his or her officers or employees. NOTE: The purpose of this bill is to increase fees under the Uniform Securities Act.This section is new; therefore, strike-throughs and underscoring have been omitted.\n\n\n",
+  "raw_text_url": "https://www.wvlegislature.gov/Bill_Status/bills_text.cfm?billdoc=sb910%20intr.htm&yr=2025&sesstype=RS&i=910"
+ },
+ {
+  "id": "ocd-bill/987cd5b1-60d8-47e0-b04f-56bba3cf528e",
+  "legislative_session": "2025",
+  "identifier": "SB 39",
+  "title": "Uniform Special Deposits Act",
+  "chamber": "upper",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Senate",
+    "description": "Filed for introduction",
+    "date": "2025-02-12",
+    "classification": [
+     "filing"
+    ],
+    "order": 0
+   },
+   {
+    "organization__name": "Senate",
+    "description": "To Banking and Insurance then Judiciary",
+    "date": "2025-02-12",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 1
+   },
+   {
+    "organization__name": "Senate",
+    "description": "Introduced in Senate",
+    "date": "2025-02-12",
+    "classification": [
+     "introduction"
+    ],
+    "order": 2
+   },
+   {
+    "organization__name": "Senate",
+    "description": "To Banking and Insurance",
+    "date": "2025-02-12",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 3
+   }
+  ],
+  "versions": [
+   {
+    "note": "Introduced Version",
+    "date": "",
+    "links": [
+     {
+      "url": "https://www.wvlegislature.gov/Bill_Text_HTML/2025_SESSIONS/RS/bills/sb39 intr.docx",
+      "media_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+     },
+     {
+      "url": "https://www.wvlegislature.gov/Bill_Text_HTML/2025_SESSIONS/RS/bills/sb39 intr.pdf",
+      "media_type": "application/pdf"
+     },
+     {
+      "url": "https://www.wvlegislature.gov/Bill_Status/bills_text.cfm?billdoc=sb39%20intr.htm&yr=2025&sesstype=RS&i=39",
+      "media_type": "text/html"
+     }
+    ]
+   }
+  ],
+  "raw_text": "",
+  "raw_text_url": null
+ }
+]

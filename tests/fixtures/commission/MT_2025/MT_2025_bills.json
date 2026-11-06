@@ -1,0 +1,1371 @@
+[
+ {
+  "id": "ocd-bill/6f42fae2-b316-4da2-b4c8-c8ee43443091",
+  "legislative_session": "2025",
+  "identifier": "HB 292",
+  "title": "Establish the uniform public expression protection act",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Montana Legislature",
+    "description": "(LC) Drafter Assigned",
+    "date": "2024-12-06T16:03:29+00:00",
+    "classification": [],
+    "order": 0
+   },
+   {
+    "organization__name": "Montana Legislature",
+    "description": "(LC) Draft in Legal Review",
+    "date": "2024-12-24T13:59:46+00:00",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "Montana Legislature",
+    "description": "(LC) Draft in Edit",
+    "date": "2025-01-11T17:22:18+00:00",
+    "classification": [],
+    "order": 2
+   },
+   {
+    "organization__name": "Montana Legislature",
+    "description": "(LC) Draft in Input/Proofing",
+    "date": "2025-01-14T19:04:02+00:00",
+    "classification": [],
+    "order": 3
+   },
+   {
+    "organization__name": "Montana Legislature",
+    "description": "(LC) Draft in Final Drafter Review",
+    "date": "2025-01-15T12:16:30+00:00",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "Montana Legislature",
+    "description": "(LC) Draft in Assembly",
+    "date": "2025-01-16T13:14:54+00:00",
+    "classification": [],
+    "order": 5
+   },
+   {
+    "organization__name": "Montana Legislature",
+    "description": "(LC) Draft Ready for Delivery",
+    "date": "2025-01-16T15:56:43+00:00",
+    "classification": [],
+    "order": 6
+   },
+   {
+    "organization__name": "Montana Legislature",
+    "description": "(LC) Draft Delivered to Requester",
+    "date": "2025-01-21T18:02:55+00:00",
+    "classification": [],
+    "order": 7
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Introduced",
+    "date": "2025-01-22T23:01:44+00:00",
+    "classification": [],
+    "order": 8
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Referred to Committee - (H) Judiciary",
+    "date": "2025-01-23T18:53:18+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 9
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) 1st Reading",
+    "date": "2025-01-23T20:08:20+00:00",
+    "classification": [],
+    "order": 10
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Hearing - (H) Judiciary",
+    "date": "2025-01-28T21:08:52+00:00",
+    "classification": [],
+    "order": 11
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Committee Executive Action - (H) Judiciary",
+    "date": "2025-02-06T19:07:28+00:00",
+    "classification": [],
+    "order": 12
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Committee Report - (H) Judiciary",
+    "date": "2025-02-06T20:33:43+00:00",
+    "classification": [],
+    "order": 13
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) 2nd Reading Motion to Amend",
+    "date": "2025-02-11T21:20:00+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 14
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) 2nd Reading",
+    "date": "2025-02-11T21:22:00+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 15
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) 3rd Reading",
+    "date": "2025-02-13T21:19:00+00:00",
+    "classification": [],
+    "order": 16
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Transmitted to Senate",
+    "date": "2025-02-14T18:45:38+00:00",
+    "classification": [],
+    "order": 17
+   },
+   {
+    "organization__name": "Senate",
+    "description": "(S) Referred to Committee - (S) Judiciary",
+    "date": "2025-02-14T18:50:39+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 18
+   },
+   {
+    "organization__name": "Senate",
+    "description": "(S) Hearing - (S) Judiciary",
+    "date": "2025-03-18T15:16:11+00:00",
+    "classification": [],
+    "order": 19
+   },
+   {
+    "organization__name": "Senate",
+    "description": "(S) Committee Executive Action - (S) Judiciary",
+    "date": "2025-03-25T16:41:50+00:00",
+    "classification": [],
+    "order": 20
+   },
+   {
+    "organization__name": "Senate",
+    "description": "(S) Committee Report - (S) Judiciary",
+    "date": "2025-03-25T19:41:00+00:00",
+    "classification": [],
+    "order": 21
+   },
+   {
+    "organization__name": "Senate",
+    "description": "(S) Scheduled for 2nd Reading",
+    "date": "2025-04-01T19:00:00+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 22
+   },
+   {
+    "organization__name": "Senate",
+    "description": "(S) 2nd Reading",
+    "date": "2025-04-01T19:13:00+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 23
+   },
+   {
+    "organization__name": "Senate",
+    "description": "(S) Scheduled for 3rd Reading",
+    "date": "2025-04-02T19:00:00+00:00",
+    "classification": [
+     "reading-3"
+    ],
+    "order": 24
+   },
+   {
+    "organization__name": "Senate",
+    "description": "(S) 3rd Reading",
+    "date": "2025-04-02T21:58:00+00:00",
+    "classification": [],
+    "order": 25
+   },
+   {
+    "organization__name": "Senate",
+    "description": "(S) Returned to House with Amendments",
+    "date": "2025-04-02T23:08:34+00:00",
+    "classification": [],
+    "order": 26
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Scheduled for 2nd Reading",
+    "date": "2025-04-14T19:00:00+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 27
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) 2nd Reading Senate Amendments",
+    "date": "2025-04-14T20:20:00+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 28
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Scheduled for 3rd Reading",
+    "date": "2025-04-15T19:00:00+00:00",
+    "classification": [
+     "reading-3"
+    ],
+    "order": 29
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) 3rd Reading Senate Amendments",
+    "date": "2025-04-15T20:35:00+00:00",
+    "classification": [],
+    "order": 30
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Sent to Enrolling",
+    "date": "2025-04-15T22:08:55+00:00",
+    "classification": [],
+    "order": 31
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Returned from Enrolling",
+    "date": "2025-04-16T03:49:29+00:00",
+    "classification": [],
+    "order": 32
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Signed by Speaker",
+    "date": "2025-04-18T20:50:00+00:00",
+    "classification": [
+     "passage"
+    ],
+    "order": 33
+   },
+   {
+    "organization__name": "Senate",
+    "description": "(S) Signed by President",
+    "date": "2025-04-22T13:30:24+00:00",
+    "classification": [
+     "passage"
+    ],
+    "order": 34
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Transmitted to Governor",
+    "date": "2025-04-22T18:10:24+00:00",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 35
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Signed by Governor",
+    "date": "2025-05-01T21:14:29+00:00",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 36
+   },
+   {
+    "organization__name": "Montana Legislature",
+    "description": "Chapter Number Assigned",
+    "date": "2025-05-05T14:01:41+00:00",
+    "classification": [
+     "became-law"
+    ],
+    "order": 37
+   }
+  ],
+  "versions": [
+   {
+    "note": "HB0292_1(1).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=273689",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_1(2).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=273960",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_1(3).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=275498",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_1(4).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=276544",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_1(5).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=281057",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_1(6).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=281058",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_1(7).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=281059",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_1(8).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=281060",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_1.pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=273688",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_2(1).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=281062",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_2(10).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=298269",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_2(11).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=298270",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_2(12).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=298271",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_2(2).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=281063",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_2(3).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=281064",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_2(4).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=281075",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_2(5).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=281076",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_2(6).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=281081",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_2(7).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=282477",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_2(8).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=298040",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_2(9).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=298268",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_2.pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=281061",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_3(1).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=298273",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_3(2).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=298274",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_3(3).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=298275",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_3(4).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=298336",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_3(5).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=298338",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_3(6).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=298340",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_3(7).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=303427",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_3(8).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=311175",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_3(9).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=311176",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_3.pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=298272",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_X(1).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=311179",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_X(10).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=326961",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_X(2).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=311180",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_X(3).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=311430",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_X(4).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=311431",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_X(5).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=311432",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_X(6).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=317006",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_X(7).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=320575",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_X(8).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=324623",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_X(9).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=326462",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292_X.pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=311177",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292.001.001_Amendments-in-Context_final-full(1).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=280491",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292.001.001_Amendments-in-Context_final-full.pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=280412",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0292.002.001_Amendments-in-Context_final-full.pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=297895",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "LC2032.pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=271418",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "_____________ BILL NO. _____________\nINTRODUCED BY _________________________________________________\nA BILL FOR AN ACT ENTITLED: “AN ACT ESTABLISHING THE UNIFORM PUBLIC EXPRESSION\nPROTECTION ACT; PROVIDING PROTECTIONS FOR CERTAIN ACTIONS INVOLVING FREEDOM OF\nSPEECH AND FREEDOM OF ASSEMBLY; PROVIDING FOR EXPEDITED RELIEF; PROVIDING FOR AN\nAWARD OF ATTORNEY FEES; PROVIDING DEFINITIONS; AND PROVIDING AN APPLICABILITY DATE.”\nBE IT ENACTED BY THE LEGISLATURE OF THE STATE OF MONTANA:\nNEW SECTION. Section 1.          Short title. [Sections 1 through 12] may be cited as the \"Uniform Public\nExpression Protection Act\".\nNEW SECTION. Section 2.          Scope -- definitions. (1) Except as otherwise provided in subsection (2),\n[sections 1 through 12] APPLY to a claim for relief asserted in a civil action against a person based on the\nperson's:\n(a)      communication in a legislative, executive, judicial, administrative, or other governmental\nproceeding;\n(b)      communication on an issue under consideration or review in a legislative, executive, judicial,\nadministrative, or other governmental proceeding; or\n(c)      exercise of the right of freedom of speech or of the press, the right to assemble or petition, or\nthe right of the association, guaranteed by the UNITED STATES constitution or the Montana constitution, on a\nmatter of public concern.\n(2)      [Sections 1 through 12] do not apply to a claim for relief asserted:\n(a)      against a governmental unit or an employee or agent of a governmental unit acting or\npurporting to act in an official capacity;\n(b)      by a governmental unit or an employee or agent of a governmental unit acting in an official\ncapacity to enforce a law to protect against an imminent threat to public health or safety; or\n(c)      against a person primarily engaged in the business of selling or leasing goods or services if the\nclaim for relief arises out of a communication related to the person's sale or lease of the goods or services.\n(3)      As used in this section, the following definitions apply:\n(a)      \"Goods or services\" does not include the creation, dissemination, exhibition, or advertisement\nor similar promotion of a dramatic, literary, musical, political, journalistic, or artistic work.\n(b)      \"Governmental unit\" means a public corporation or government or governmental subdivision,\nagency, or instrumentality.\n(c)      \"Person\" means an individual, estate, trust, partnership, business or nonprofit entity,\ngovernmental unit, or other legal entity.\nNEW SECTION. Section 3.            Special motion for expedited relief. Not later than 60 days after a party\nis served with a complaint, crossclaim, counterclaim, third-party complaint, or other pleading that asserts a civil\naction to which [sections 1 through 12] applies, or at a later time on a showing of good cause, the party may file\na special motion for expedited relief to dismiss the civil action or part of the civil action.\nNEW SECTION. Section 4.            Stay. (1) Except as otherwise provided in subsections (4) through (7), on\nthe filing of a motion under [section 3]:\n(a)      all other proceedings between the moving party and responding party, including discovery and\na pending hearing or motion, are stayed; and\n(b)      on motion by the moving party, the court may stay a hearing or motion involving another party,\nor discovery by another party, if the hearing or ruling on the motion would adjudicate, or the discovery would\nrelate to, an issue material to the motion under [section 3].\n(2)      A stay under subsection (1) remains in effect until entry of an order ruling on the motion under\n[section 3] and expiration of the time under [section 9] for the moving party to appeal the order.\n(3)      Except as otherwise provided in subsections (5) through (7), if a party appeals from an order\nruling on a motion under [section 3], all proceedings between all parties in the action are stayed. The stay\nremains in effect until the conclusion of the appeal.\n(4)      During a stay under subsection (1), the court may allow limited discovery if a party shows that\nspecific information is necessary to establish whether a party has satisfied or failed to satisfy a burden under\n[section 7(1)] and the information is not reasonably available unless discovery is allowed.\n(5)      A motion under [section 10] for costs, attorney fees, and expenses is not subject to a stay\nunder this section.\n(6)      A stay under this section does not affect a party's ability voluntarily to dismiss a civil action or\npart of a civil action or move to sever a civil action.\n(7)      During a stay under this section, the court for good cause may hear and rule on:\n(a)      a motion unrelated to the motion under [section 3]; and\n(b)      a motion seeking a special or preliminary injunction to protect against an imminent threat to\npublic health or safety.\nNEW SECTION. Section 5.          Hearing. (1) The court shall hear a motion under [section 3] not later\nthan 60 days after filing of the motion unless the court orders a later hearing:\n(a)      to allow discovery under [section 4(4)]; or\n(b)      for other good cause.\n(2)      If the court orders a later hearing under subsection (1)(a), the court shall hear the motion under\n[section 3] not later than 60 days after the court order allowing the discovery, unless the court orders a later\nhearing under subsection (1)(b).\nNEW SECTION. Section 6.          Proof. In ruling on a motion under [section 3], the court shall consider the\npleadings, the motion, any reply or response to the motion, and any evidence that could be considered in ruling\non a motion for summary judgment under Rule 56 of the Montana Rules of Civil Procedure.\nNEW SECTION. Section 7.          Dismissal of cause of action in whole or in part. (1) In ruling on a\nmotion under [section 3], the court shall dismiss with prejudice a civil action, or part of a civil action, if:\n(a)      the moving party establishes under [section 2(1)] that the act applies;\n(b)      the responding party fails to establish under [section 2(2)] that [sections 1 through 12] do not\napply; and\n(c)      either:\n(i)      the responding party fails to establish a prima facie case as to each essential element of the\ncivil action; or\n(ii)     the moving party establishes that:\n(A)      the responding party failed to state a claim upon which relief can be granted; or\n(B)      there is no genuine issue as to any material fact and the moving party is entitled to judgment as\na matter of law on the civil action or part of the civil action.\n(2)      A voluntary dismissal without prejudice of a responding party's civil action, or part of a civil\naction, that is the subject of a motion under [section 3] does not affect a moving party's right to obtain a ruling\non the motion and seek costs, attorney fees, and expenses under [section 10].\n(3)      A voluntary dismissal with prejudice of a responding party's cause of action, or part of a cause\nof action, that is the subject of a motion under [section 3] establishes for the purpose of [section 10] that the\nmoving party prevailed on the motion.\nNEW SECTION. Section 8.         Ruling. The court shall rule on a motion under [section 3] not later than\n60 days after a hearing under [section 5].\nNEW SECTION. Section 9.         Appeal. A moving party may appeal as a matter of right from an order\ndenying, in whole or in part, a motion under [section 3]. The appeal must be filed not later than 30 days after\nentry of the order in a civil action between private parties, and not later than 60 days after entry of the order in a\ncivil action to which the United States or the state of Montana or a political subdivision is a party.\nNEW SECTION. Section 10.         Costs, attorney fees, and expenses. On a motion under [section 3],\nthe court shall award court costs, reasonable attorney fees, and reasonable litigation expenses related to the\nmotion:\n(1)      to the moving party if the moving party prevails on the motion; or\n(2)      to the responding party if the responding party prevails on the motion and the court finds that\nthe motion was frivolous or filed solely with intent to delay the proceeding.\nNEW SECTION. Section 11.           Construction. [Sections 1 through 12] must be broadly construed and\napplied to protect the exercise of the right of freedom of speech and of the press, the right to assemble and\npetition, and the right of association guaranteed by the United States constitution or the Montana constitution.\nNEW SECTION. Section 12.           Uniformity of application and construction. In applying and\nconstruing this uniform act, consideration must be given to the need to promote uniformity of the law with\nrespect to its subject matter among states that enact it.\nNEW SECTION. Section 13.           Codification instruction. [Sections 1 through 12] are intended to be\ncodified as an integral part of Title 27, and the provisions of Title 27 apply to [sections 1 through 12].\nNEW SECTION. Section 14.           Saving clause. [This act] does not affect a cause of action asserted\nbefore [the effective date of this act] in a civil action.\nNEW SECTION. Section 15.           Severability. If a part of [this act] is invalid, all valid parts that are\nseverable from the invalid part remain in effect. If a part of [this act] is invalid in one or more of its applications,\nthe part remains in effect in all valid applications that are severable from the invalid applications.\nNEW SECTION. Section 16.           Applicability. [This act] applies to a civil action filed or cause of action\nasserted in a civil action on or after [the effective date of this act].\n- END -",
+  "raw_text_url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=271418"
+ },
+ {
+  "id": "ocd-bill/701432fe-2484-4256-bfaf-19c56030d809",
+  "legislative_session": "2025",
+  "identifier": "HB 111",
+  "title": "Adopt Uniform Electronic Legal Material Act",
+  "chamber": "lower",
+  "classification": [
+   "bill"
+  ],
+  "actions": [
+   {
+    "organization__name": "Montana Legislature",
+    "description": "(LC) Drafter Assigned",
+    "date": "2024-09-04T18:23:08+00:00",
+    "classification": [],
+    "order": 0
+   },
+   {
+    "organization__name": "Montana Legislature",
+    "description": "(LC) Draft in Legal Review",
+    "date": "2024-11-22T19:16:27+00:00",
+    "classification": [],
+    "order": 1
+   },
+   {
+    "organization__name": "Montana Legislature",
+    "description": "(LC) Draft in Edit",
+    "date": "2024-11-22T21:43:04+00:00",
+    "classification": [],
+    "order": 2
+   },
+   {
+    "organization__name": "Montana Legislature",
+    "description": "(LC) Draft in Input/Proofing",
+    "date": "2024-11-26T19:55:09+00:00",
+    "classification": [],
+    "order": 3
+   },
+   {
+    "organization__name": "Montana Legislature",
+    "description": "(LC) Draft in Final Drafter Review",
+    "date": "2024-11-27T00:00:30+00:00",
+    "classification": [],
+    "order": 4
+   },
+   {
+    "organization__name": "Montana Legislature",
+    "description": "(LC) Draft in Assembly",
+    "date": "2024-11-27T15:41:07+00:00",
+    "classification": [],
+    "order": 5
+   },
+   {
+    "organization__name": "Montana Legislature",
+    "description": "(LC) Draft Ready for Delivery",
+    "date": "2024-12-03T23:19:02+00:00",
+    "classification": [],
+    "order": 6
+   },
+   {
+    "organization__name": "Montana Legislature",
+    "description": "(LC) Draft Delivered to Requester",
+    "date": "2024-12-26T21:09:24+00:00",
+    "classification": [],
+    "order": 7
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Introduced",
+    "date": "2024-12-26T21:10:00+00:00",
+    "classification": [],
+    "order": 8
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Fiscal Note Requested",
+    "date": "2024-12-26T21:30:00+00:00",
+    "classification": [],
+    "order": 9
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Referred to Committee - (H) State Administration",
+    "date": "2024-12-30T20:18:34+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 10
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) 1st Reading",
+    "date": "2025-01-06T18:35:00+00:00",
+    "classification": [],
+    "order": 11
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Hearing - (H) State Administration",
+    "date": "2025-01-07T02:05:00+00:00",
+    "classification": [],
+    "order": 12
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Fiscal Note Received",
+    "date": "2025-01-07T15:43:44+00:00",
+    "classification": [
+     "receipt"
+    ],
+    "order": 13
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Fiscal Note Unsigned",
+    "date": "2025-01-08T16:04:14+00:00",
+    "classification": [],
+    "order": 14
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Fiscal Note Printed",
+    "date": "2025-01-08T19:21:33+00:00",
+    "classification": [],
+    "order": 15
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Committee Executive Action - (H) State Administration",
+    "date": "2025-01-16T18:25:18+00:00",
+    "classification": [],
+    "order": 16
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Committee Report - (H) State Administration",
+    "date": "2025-01-16T20:20:54+00:00",
+    "classification": [],
+    "order": 17
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Scheduled for 2nd Reading",
+    "date": "2025-01-21T20:00:00+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 18
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) 2nd Reading",
+    "date": "2025-01-21T20:33:00+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 19
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Scheduled for 3rd Reading",
+    "date": "2025-01-22T20:00:00+00:00",
+    "classification": [
+     "reading-3"
+    ],
+    "order": 20
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) 3rd Reading",
+    "date": "2025-01-22T21:29:00+00:00",
+    "classification": [],
+    "order": 21
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Transmitted to Senate",
+    "date": "2025-01-22T22:40:00+00:00",
+    "classification": [],
+    "order": 22
+   },
+   {
+    "organization__name": "Senate",
+    "description": "(S) 1st Reading",
+    "date": "2025-01-23T20:39:27+00:00",
+    "classification": [],
+    "order": 23
+   },
+   {
+    "organization__name": "Senate",
+    "description": "(S) Referred to Committee - (S) Legislative Administration",
+    "date": "2025-02-13T17:09:08+00:00",
+    "classification": [
+     "referral-committee"
+    ],
+    "order": 24
+   },
+   {
+    "organization__name": "Senate",
+    "description": "(S) Hearing - (S) Legislative Administration",
+    "date": "2025-02-19T16:37:05+00:00",
+    "classification": [],
+    "order": 25
+   },
+   {
+    "organization__name": "Senate",
+    "description": "(S) Committee Executive Action - (S) Legislative Administration",
+    "date": "2025-02-19T19:30:42+00:00",
+    "classification": [],
+    "order": 26
+   },
+   {
+    "organization__name": "Senate",
+    "description": "(S) Committee Report - (S) Legislative Administration",
+    "date": "2025-03-03T23:37:00+00:00",
+    "classification": [],
+    "order": 27
+   },
+   {
+    "organization__name": "Senate",
+    "description": "(S) Scheduled for 2nd Reading",
+    "date": "2025-03-15T14:30:00+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 28
+   },
+   {
+    "organization__name": "Senate",
+    "description": "(S) 2nd Reading",
+    "date": "2025-03-15T15:51:00+00:00",
+    "classification": [
+     "reading-2"
+    ],
+    "order": 29
+   },
+   {
+    "organization__name": "Senate",
+    "description": "(S) Scheduled for 3rd Reading",
+    "date": "2025-03-17T19:00:00+00:00",
+    "classification": [
+     "reading-3"
+    ],
+    "order": 30
+   },
+   {
+    "organization__name": "Senate",
+    "description": "(S) 3rd Reading",
+    "date": "2025-03-17T20:10:00+00:00",
+    "classification": [],
+    "order": 31
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Sent to Enrolling",
+    "date": "2025-03-17T20:10:57+00:00",
+    "classification": [],
+    "order": 32
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Returned from Enrolling",
+    "date": "2025-03-18T18:36:22+00:00",
+    "classification": [],
+    "order": 33
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Signed by Speaker",
+    "date": "2025-03-21T23:00:36+00:00",
+    "classification": [
+     "passage"
+    ],
+    "order": 34
+   },
+   {
+    "organization__name": "Senate",
+    "description": "(S) Signed by President",
+    "date": "2025-03-24T23:00:15+00:00",
+    "classification": [
+     "passage"
+    ],
+    "order": 35
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Transmitted to Governor",
+    "date": "2025-03-25T15:11:00+00:00",
+    "classification": [
+     "executive-receipt"
+    ],
+    "order": 36
+   },
+   {
+    "organization__name": "House",
+    "description": "(H) Signed by Governor",
+    "date": "2025-04-03T21:06:09+00:00",
+    "classification": [
+     "executive-signature"
+    ],
+    "order": 37
+   },
+   {
+    "organization__name": "Montana Legislature",
+    "description": "Chapter Number Assigned",
+    "date": "2025-04-04T21:53:01+00:00",
+    "classification": [
+     "became-law"
+    ],
+    "order": 38
+   }
+  ],
+  "versions": [
+   {
+    "note": "HB0111_1(1).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=269443",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_1(2).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=275132",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_1(3).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=276201",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_1(4).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=277643",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_1(5).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=284251",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_1(6).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=294895",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_1(7).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=294898",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_1(9).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=294982",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_1.pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=269442",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_X(1).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=295369",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_X(10).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=304947",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_X(11).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=304948",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_X(12).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=310723",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_X(13).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=316661",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_X(14).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=320246",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_X(15).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=324114",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_X(16).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=325609",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_X(2).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=304723",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_X(3).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=304815",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_X(4).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=304887",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_X(5).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=304901",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_X(6).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=304906",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_X(7).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=304907",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_X(8).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=304938",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_X(9).pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=304946",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "HB0111_X.pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=294983",
+      "media_type": "application/pdf"
+     }
+    ]
+   },
+   {
+    "note": "LC0110.pdf",
+    "date": "",
+    "links": [
+     {
+      "url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=266259",
+      "media_type": "application/pdf"
+     }
+    ]
+   }
+  ],
+  "raw_text": "_____________ BILL NO. _____________\nINTRODUCED BY _________________________________________________\nBY REQUEST OF THE LEGISLATIVE COUNCIL\nA BILL FOR AN ACT ENTITLED: “AN ACT ADOPTING THE UNIFORM ELECTRONIC LEGAL MATERIAL\nACT; PROVIDING DEFINITIONS; PROVIDING FOR WHAT CONSTITUTES LEGAL MATERIAL IN THE\nOFFICIAL ELECTRONIC RECORD; PROVIDING FOR AUTHENTICATION OF THE OFFICIAL ELECTRONIC\nRECORD; PROVIDING FOR THE EFFECT OF AUTHENTICATION; REQUIRING PRESERVATION AND\nSECURITY OF LEGAL MATERIAL IN THE OFFICIAL ELECTRONIC RECORD; ENSURING PUBLIC ACCESS\nTO LEGAL MATERIAL IN THE OFFICIAL ELECTRONIC RECORD; PROVIDING STANDARDS; PROVIDING\nFOR UNIFORMITY OF APPLICATION AND CONSTRUCTION; ESTABLISHING THE RELATIONSHIP OF\nTHIS ACT WITH THE ELECTRONIC SIGNATURES IN THE GLOBAL AND NATIONAL COMMERCE ACT;\nAMENDING SECTION 1-11-103, MCA; AND PROVIDING AN EFFECTIVE DATE.”\nBE IT ENACTED BY THE LEGISLATURE OF THE STATE OF MONTANA:\nNEW SECTION. Section 1.        Short title. [Sections 1 through 11] may be cited as the \"Uniform\nElectronic Legal Material Act\".\nNEW SECTION. Section 2.        Definitions. As used in [sections 1 through 11], the following definitions\napply:\n(1)     “Electronic” means relating to technology having electrical, digital, magnetic, wireless, optical,\nelectromagnetic, or similar capabilities.\n(2)     “Legal material” means, whether or not in effect:\n(a)     the Constitution of the State of Montana;\n(b)     the Laws of Montana, also known as the session laws; or\n(c)     the Montana Code Annotated.\n(3)     “Official publisher” means:\n(a)      for the Constitution of the State of Montana, the code commissioner provided for in 1-11-201\nthrough 1-11-204 and 1-11-301 through 1-11-304;\n(b)      for the Laws of Montana, the legislative services division provided for in 5-11-201 through 5-11-\n214; and\n(c)      for the Montana Code Annotated, the code commissioner provided for in 1-11-201 through 1-\n11-204 and 1-11-301.\n(4)      “Publish” means to display, present, or release to the public, or cause to be displayed,\npresented, or released to the public, by the official publisher.\n(5)      “Record” means information that is inscribed on a tangible medium or that is stored in an\nelectronic or other medium and is retrievable in perceivable form.\n(6)      “State” means a state of the United States, the District of Columbia, Puerto Rico, the United\nStates Virgin Islands, or any territory or insular possession subject to the jurisdiction of the United States.\nNEW SECTION. Section 3.        Applicability. [Sections 1 through 11] applies to all legal material in an\nelectronic record that is designated as official under [section 4] and first published electronically on or after [the\neffective date of this act].\nNEW SECTION. Section 4.        Legal material in official electronic record. (1) If an official publisher\npublishes legal material only in an electronic record, the publisher shall:\n(a)      designate the electronic record as official; and\n(b)      comply with [sections 5, 7, and 8].\n(2)      An official publisher that publishes legal material in an electronic record and also publishes the\nmaterial in a record other than an electronic record may designate the electronic record as official if the\npublisher complies with [sections 5, 7, and 8].\nNEW SECTION. Section 5.        Authentication of official electronic record. An official publisher of\nlegal material in an electronic record that is designated as official under [section 4] shall authenticate the\nrecord. To authenticate an electronic record, the publisher shall provide a method for a user to determine that\nthe record received by the user from the publisher is unaltered from the official record published by the\npublisher.\nNEW SECTION. Section 6.        Effect of authentication. (1) Legal material in an electronic record that\nis authenticated under [section 5] is presumed to be an accurate copy of the legal material.\n(2)     If another state has adopted a law substantially similar to [sections 1 through 11], legal material\nin an electronic record that is designated as official and authenticated by the official publisher in that state is\npresumed to be an accurate copy of the legal material.\n(3)     A party contesting the authentication of legal material in an electronic record authenticated\nunder [section 5] has the burden of proving by a preponderance of the evidence that the record is not authentic.\nNEW SECTION. Section 7.        Preservation and security of legal material in official electronic\nrecord. (1) An official publisher of legal material in an electronic record that is or was designated as official\nunder [section 4] shall provide for the preservation and security of the record in an electronic form or a form that\nis not electronic.\n(2)     If legal material is preserved under subsection (1) in an electronic record, the official publisher\nshall:\n(a)     ensure the integrity of the record;\n(b)     provide for backup and disaster recovery of the record; and\n(c)     ensure the continuing usability of the material.\nNEW SECTION. Section 8.        Public access to legal material in official electronic record. An\nofficial publisher of legal material in an electronic record that is required to be preserved under [section 7] shall\nensure that the material is reasonably available for use by the public on a permanent basis.\nNEW SECTION. Section 9.        Standards. In implementing [sections 1 through 11], an official publisher\nof legal material in an electronic record shall consider:\n(1)     standards and practices of other jurisdictions;\n(2)      the most recent standards regarding authentication of, preservation and security of, and public\naccess to legal material in an electronic record and other electronic records, as promulgated by national\nstandard-setting bodies;\n(3)      the needs of users of legal material in an electronic record;\n(4)      the views of governmental officials and entities and other interested persons; and\n(5)      to the extent practicable, methods and technologies for the authentication of, preservation and\nsecurity of, and public access to legal material that are compatible with the methods and technologies used by\nother official publishers in this state and in other states that have adopted a law substantially similar to [sections\n1 through 11].\nNEW SECTION. Section 10.         Uniformity of application and construction. In applying and\nconstruing this uniform act, consideration must be given to the need to promote uniformity of the law with\nrespect to its subject matter among states that enact it.\nNEW SECTION. Section 11.         Relation to Electronic Signatures in Global and National\nCommerce Act. [Sections 1 through 11] modifies, limits, and supersedes the Electronic Signatures in Global\nand National Commerce Act, 15 U.S.C. Section 7001 et seq., but does not modify, limit, or supersede Section\n101(c) of that act, 15 U.S.C. Section 7001(c), or authorize electronic delivery of any of the notices described in\nSection 103(b) of that act, 15 U.S.C. Section 7003(b).\nSection 12. Section 1-11-103, MCA, is amended to read:\n\"1-11-103.    Effect of Montana Code Annotated -- official version. (1) The Montana Code Annotated\nis a reenactment of the Revised Codes of Montana, 1947, and the supplements thereto.\n(2)      The enactment of the Montana Code Annotated may not:\n(a)      revive a law repealed or superseded before the effective date of the Montana Code Annotated;\n(b)      affect an act done, right accrued, or obligation incurred or imposed by law prior to the effective\ndate of the Montana Code Annotated;\n(c)      affect any action, suit, or proceeding pending on the effective date of the Montana Code\nAnnotated;\n(d)      repeal statutes of a nongeneral, nonpermanent nature, such as severability, construction,\nvalidating, repealing, or similar statutes, omitted from the Montana Code Annotated.\n(3)      The Montana Code Annotated must be given effect as a continuation of the Revised Codes of\nMontana and not as a new enactment. A defect in title of any act set out in prior laws and reenacted by the\nMontana Code Annotated is cured by the enactment of the Montana Code Annotated.\n(4)      No implication or presumption of legislative construction is to be drawn from the classification\nor arrangement of the Montana Code Annotated.\n(5)      Unless specifically and expressly adopted as part of the law by the legislature, annotations,\ncode commissioner notes, catchlines, or other editorial material included in the Montana Code Annotated may\nnot be construed as part of the legislative text but are only for the purpose of convenience, orderly\narrangement, and information.\n(6)      After enactment, the Montana Code Annotated, including all subsequent replacement volumes,\nis prima facie the official laws of Montana. In case of any inconsistency in meaning arising through omission or\notherwise between the provisions of the Montana Code Annotated and the corresponding portion of the official\nenrolled bill on file with the secretary of state, effect must be given to the official enrolled bill.\n(7)      The Montana Code Annotated, prepared in accordance with part 3, or [sections 1 through 11],\nis the official version of the statutes of Montana. The official version of the statutes is the only publication of the\nstatutes that may be used in public documents. This subsection is not intended to interfere with the supreme\ncourt's authority to adopt rules of evidence pursuant to Article VII, section 2, of the Montana constitution.\"\nNEW SECTION. Section 13.          Codification instruction. [Sections 1 through 11] are intended to be\ncodified as an integral part of Title 1, and the provisions of Title 1 apply to [sections 1 through 11].\nNEW SECTION. Section 14.          Effective date. [This act] is effective October 1, 2025.\n- END -",
+  "raw_text_url": "https://api.legmt.gov/docs/v1/documents/getContent?documentId=266259"
+ }
+]
