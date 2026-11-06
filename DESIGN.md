@@ -39,6 +39,7 @@ The tool reports shared text and timing. It does not claim who wrote a bill, or 
 | Retrieval needs no API key | Both matching stages run locally: hashing, then a local embedding model. A model is called only to write the change explanations, and those replies are cached so a keyless run can replay them. |
 | Hosted output is static | All results are precomputed. The site serves JSON files and has no query server or hosted vector database. |
 | Runs on one laptop | Data structures must fit in memory or stream from disk. Hot loops are vectorized or run in compiled code, never per-element Python. |
+| Queries run offline | `lineage query` runs on a user's laptop after one download of the prebuilt index, published as [release assets](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases#storage-and-bandwidth-quotas) of under 2 GiB each. The index must be files that memory-map, not a structure rebuilt in memory on each run. |
 | Reproducible | The data snapshot date is pinned, dependencies are locked in `uv.lock`, and random seeds are fixed. |
 | Redistributable data | Bill text comes from [Open States](https://open.pluralpolicy.com/data/) bulk data, which is dedicated to the public domain. Legislators' official work is not copyrightable ([*Georgia v. Public.Resource.Org*, 2020](https://www.supremecourt.gov/opinions/19pdf/18-1150_7m58.pdf)). |
 | Explanations are grounded | Every change an explanation claims must cite an aligned span that exists, and code checks this. A claim that fails the check is dropped. |
@@ -298,11 +299,9 @@ Existing team expertise with Next.js is a secondary, maintainability factor: it 
 <a id="dr-3"></a>
 ### DR-3 · MinHash engine: an own NumPy implementation, with datasketch as the test oracle
 
-**Status:** under review, 2026-11-05. The step 11 measurement below meets the condition under *Would reverse it*.
+**Status:** decided, 2026-11-05. The step 11 measurement met the reversal criterion as first written. That criterion left out two requirements, and against the completed criterion the decision stands. Both versions of the criterion are below.
 
 **Context.** The near-duplicate stage signs every section in the corpus and buckets the signatures by LSH band. The hot paths are hashing each shingle under every permutation, taking the minimum per permutation, hashing each band to a key, and grouping equal keys. At corpus scale, any per-element Python work in those loops dominates runtime and memory. The implementation also has to be simple enough to verify by reading.
-
-The binding constraints are two. The full corpus must be signed within an overnight run, and the LSH index must fit in memory, both on the reference laptop. That is the machine the benchmarks run on, and each benchmark output records its CPU, core count and memory. Fitting in memory means that a full index build, signatures plus LSH index, peaks within 16 GiB, half of the reference laptop's 32 GiB, leaving the rest for the operating system and the later stages. The bound was fixed before the index was measured.
 
 **Options.**
 
@@ -310,24 +309,22 @@ The binding constraints are two. The full corpus must be signed within an overni
 - **An own NumPy implementation.** Signatures form one dense unsigned-integer matrix with one row per section. Shingles are hashed once to 32 bits, and each permutation is a universal hash (*a*·*x* + *b*) mod *p*, applied to all shingles in a single vectorized operation. Band keys are hashed to 64 bits, and candidate pairs come from sorting the keys and reading off runs of equal values, not from a dict.
 - **A compiled third-party MinHash library** with Rust or C++ bindings. Likely the fastest, but it adds a binary dependency and hides the algorithm behind bindings that can't be read or tested line by line.
 - **A distributed engine (Spark).** Solves a scale this corpus doesn't have, and needs a cluster.
+- **A hybrid:** datasketch's signing feeding this project's band index. Weighed after step 11, below.
 
 **Decision.** An own NumPy implementation. datasketch stays as a development-only dependency and serves as the test oracle: on the same inputs and parameters, both must produce agreeing similarity estimates.
 
-The step 10 benchmark puts both engines through the same work. It runs datasketch through its batch path, never a per-shingle loop, so the comparison is with the library at its best. It records wall-clock time and peak memory for building the signatures and the LSH index. Where a run completes on the full corpus, the full-corpus result is reported. Otherwise the result is extrapolated from a measured sample, and the report states the extrapolation.
+**The criterion as first written.** It named two binding constraints. The full corpus must be signed within an overnight run, and the LSH index must fit in memory, both on the reference laptop. That is the machine the benchmarks run on, and each benchmark output records its CPU, core count and memory. Fitting in memory means that a full index build, signatures plus LSH index, peaks within 16 GiB, half of the reference laptop's 32 GiB, leaving the rest for the operating system and the later stages. The bound was fixed before the index was measured. The criterion read:
 
-**Consequences.**
+> If, on the reference laptop, datasketch builds signatures for the full corpus within an overnight run (eight hours of wall-clock time) *and* its LSH index fits in memory, then datasketch meets the constraints that justified owning the code, and it becomes the engine. A raw speed ratio is not the test: a slower library that meets both constraints is still the cheaper thing to maintain.
 
-- Correctness is this project's to own. The oracle test, plus a test of the empirical candidate rate against the theoretical S-curve (step 11), are what make that acceptable.
-- A dense signature matrix memory-maps and shards without conversion, which is the first response to [index growth](#scaling-limits).
-- Sorting to bucket costs *O*(*n* log *n*) with predictable memory, where dict buckets fragment the heap.
-- Time and peak memory for both engines become a recorded measurement, not an assumption.
+The benchmark puts both engines through the same work. It runs datasketch through its batch path, never a per-shingle loop, so the comparison is with the library at its best. It records wall-clock time and peak memory for building the signatures and the LSH index, on the full corpus.
 
 **Measured in step 10** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`; Apple M1 Max, 10 cores, 32 GiB). The benchmark gave each engine one core and the same 1,917,646 stoplisted sections, 478,175,576 shingles in all.
 
-- **Signing time.** The NumPy implementation took 285 s and datasketch 111 s. Since version 2.0, datasketch's default permutation is a multiply-add modulo 2<sup>32</sup>, a few array operations per shingle. The exact modular arithmetic here takes more than a dozen. The context above expected per-element Python work to dominate datasketch's time. On this corpus it does not.
+- **Signing time.** The NumPy implementation took 285 s and datasketch 111 s. The context above expected per-element Python work to dominate datasketch's time. On this corpus it does not.
 - **Signature memory.** The NumPy matrix holds 512 bytes per section and datasketch's objects 785 (`tracemalloc`, on a 20,000-section sample), or 0.98 GB against 1.50 GB for the corpus.
 
-Both engines are far inside the overnight bound, so this record turned on its second condition, which step 11 measured.
+**Why signing is slower here.** The cost is the permutation arithmetic, not data layout. datasketch 2.0's default scheme computes *a*·*x* + *b* in wrapping 32-bit integers: two array operations on 4-byte values for each shingle and permutation. The exact (*a*·*x* + *b*) mod *p* takes about sixteen operations on 8-byte values (`minhash._hash_into`), and NumPy runs each as a separate pass over the run's arrays. A profile on one core found that hash to be nearly all of the signing time, and changing the run length or removing the two temporary arrays it allocates did not change the time materially. No small fix remains. Fusing the passes needs compiled code, which the options above rejected. A multiply-add modulo 2<sup>32</sup> would change every stored signature, and its accuracy would rest on empirical tests rather than on the pairwise independence of the mod-*p* family. Signing runs once per snapshot, in parallel, so the gap is left as it is.
 
 **Measured in step 11** (same command and file). Each engine built its index of 32 bands × 4 rows in a fresh process from the stored signatures table, loaded into memory. datasketch inserted every row through `MinHashLSH.insertion_session`, under a watchdog that would have stopped the build at the memory bound or the disk floor. It did not stop.
 
@@ -335,9 +332,28 @@ Both engines are far inside the overnight bound, so this record turned on its se
 - **Index memory.** The index added 0.67 GiB with NumPy, its two dense matrices, and 14.3 GiB with datasketch, about 8 KB per section in dictionaries of byte strings and sets.
 - **Build time.** 12 s and 449 s.
 
-datasketch therefore meets both conditions below, with 4% of the memory bound to spare.
+datasketch therefore met both conditions of the criterion as first written, with 4% of the memory bound to spare.
 
-**Would reverse it.** If, on the reference laptop, datasketch builds signatures for the full corpus within an overnight run (eight hours of wall-clock time) *and* its LSH index fits in memory, then datasketch meets the constraints that justified owning the code, and it becomes the engine. A raw speed ratio is not the test: a slower library that meets both constraints is still the cheaper thing to maintain. If the NumPy implementation itself misses either bound, a compiled library replaces it, and the oracle tests carry over.
+**The criterion was incomplete.** It left out two requirements that the project's plan had set before the benchmark ran, though this document did not state them until now ([Constraints](#constraints)). The prebuilt index ships as release assets, each under GitHub's 2 GiB per-file limit. `lineage query` runs offline on a user's laptop after one download of those assets. Both were added to the criterion after the step 11 result was known. That is the kind of after-the-fact change that fixing the memory bound in advance was meant to rule out, so it is stated here for the reader to weigh.
+
+**Against the full criterion, datasketch fails.**
+
+- Its index is 14.3 GiB of Python dictionaries inside the building process. It has no file format and cannot be memory-mapped, so every query would first have to bring all of it into memory, whether by loading a serialized copy split across release assets or by rebuilding it.
+- Rebuilding it on the user's machine from the signatures took 449 s on the reference laptop and peaked at 15.3 GiB, more than a laptop with 16 GiB of memory can hold.
+- On the reference laptop itself, the headroom is 4%, which a few more sessions of bills would use up.
+
+This project's index is two `.npy` matrices, 0.74 GB in all (`reports/index.json`, `lsh.index_bytes`), each under the limit. A query memory-maps them and reads only the pages its keys land on.
+
+**The hybrid, rejected.** datasketch's signing feeding this project's band index would meet the full criterion. It would save at most the 174 s of single-core signing time that step 10 measured, less once spread over the worker processes of a build that runs once per snapshot. In exchange, datasketch would become a runtime dependency rather than a test oracle, and the signatures would depend on its hash scheme staying fixed across releases.
+
+**Consequences.**
+
+- Correctness is this project's to own. The oracle test and the S-curve test of the empirical candidate rate are what make that acceptable.
+- A dense signature matrix memory-maps and shards without conversion, which is the first response to [index growth](#scaling-limits).
+- Sorting to bucket costs *O*(*n* log *n*) with predictable memory, where dict buckets fragment the heap.
+- Time and peak memory for both engines are a recorded measurement, not an assumption. The benchmark stays, so the comparison can be rerun on a new snapshot or a new datasketch release.
+
+**Would reverse it.** Revisit this decision if a maintained library offers a persistent LSH index that memory-maps and that a full build produces within the 16 GiB bound, or if the offline query path is dropped. If the NumPy implementation itself misses the overnight or memory bound, a compiled library replaces it. In either case the oracle tests carry over.
 
 <a id="dr-4"></a>
 ### DR-4 · Data tooling: DuckDB over Parquet
