@@ -17,6 +17,7 @@ from lineage.fetch import SOURCE, fetch_raw
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
 from lineage.query import IndexMissingError, query_text
+from lineage.results_table import README, ResultsTableError, rendered_readme
 from lineage.sectioning import SectioningError, build_sections
 from lineage.sessions import (
     CARRYOVER,
@@ -404,3 +405,18 @@ def eval_commission(
         typer.echo(f"recall, {label}: {r['found']}/{r['enactments']} = {share:.1%}")
     misses = ", ".join(f"{k} {v}" for k, v in section["miss_reasons"].items())
     typer.echo(f"misses: {misses or 'none'} -> {results}")
+
+
+@eval_app.command("readme")
+def eval_readme(
+    readme: Annotated[Path, typer.Option("--readme", help="The README to update.")] = README,
+    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+) -> None:
+    """Regenerate the README's results table from the results file."""
+    try:
+        text = rendered_readme(readme.read_text(), json.loads(results.read_text()))
+    except ResultsTableError as e:
+        typer.echo(str(e), err=True)
+        raise typer.Exit(1) from None
+    readme.write_text(text)
+    typer.echo(f"results table <- {results} -> {readme}")

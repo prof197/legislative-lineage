@@ -22,6 +22,7 @@ uv run lineage stats --samples  # also: sample titles per document-type rule -> 
 uv run lineage index         # signatures, LSH bands, verified pairs, families -> data/tables/{signatures,bands,pairs,families}/, reports/index.json
 uv run lineage query FILE     # a bill's near-duplicate families, offline, from the built index
 uv run lineage eval commission  # commission recall, act texts from data/acts/ -> reports/results.json
+uv run lineage eval readme   # regenerate README.md's results table from reports/results.json
 uv run python -m evals.fixture  # rebuild tests/fixtures/commission/ from the local snapshot, dev only
 uv run python -m benchmarks.minhash  # NumPy vs datasketch: signing and LSH index time and memory (DR-3), dev only
 ```
@@ -55,6 +56,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   acts.py         uniform act texts as eval queries: keep the sections, drop comments and notes
   ulc.py          the commission's enactment lists, and the bills each enactment names
   commission.py   `lineage eval commission`: recall, a miss reason per enactment, the results JSON
+  results_table.py  the README results table, rendered from reports/results.json
   stoplist.py     document-frequency stoplist and its report
   stats.py        coverage report: the measurements that replace the design's estimates
   queries.py      every SQL query the pipeline runs (DR-4)

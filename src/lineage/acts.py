@@ -18,6 +18,11 @@ ACTS = (
     "special-deposits",
     "electronic-estate-planning-documents",
 )
+ACT_NAMES = {
+    "public-expression-protection": "Public Expression Protection",
+    "special-deposits": "Special Deposits",
+    "electronic-estate-planning-documents": "Electronic Estate Planning Documents",
+}
 ACTS_DIR = Path("data/acts")
 
 # "Section 1. Short Title", or "[Section 3. Registration" for an optional section. Acts
