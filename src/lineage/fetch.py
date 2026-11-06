@@ -6,6 +6,7 @@ DESIGN.md#data-snapshot.
 """
 
 import hashlib
+import ssl
 import time
 import urllib.error
 import urllib.parse
@@ -27,6 +28,18 @@ _CHUNK = 1 << 20
 _RECHECK_BYTES = 64 * _CHUNK
 _ATTEMPTS = 3
 _TIMEOUT_SECONDS = 120
+# Some legislature servers send their certificate without its intermediate. The bundle supplies
+# those intermediates; chains must still end at a root in the default store.
+INTERMEDIATES = Path(__file__).parent / "certs" / "intermediates.pem"
+
+
+def tls_context() -> ssl.SSLContext:
+    context = ssl.create_default_context()
+    context.load_verify_locations(cafile=INTERMEDIATES)
+    return context
+
+
+_TLS = tls_context()
 
 
 class FetchError(Exception):
@@ -40,6 +53,19 @@ class FetchResult:
     bytes: int = 0
     repinned: list[str] = field(default_factory=list[str])
     problems: list[str] = field(default_factory=list[str])
+
+
+# Illinois retired beta.ilga.gov; the same paths are served from ilga.gov.
+HOST_MOVES = {"beta.ilga.gov": "ilga.gov"}
+
+
+def moved(url: str) -> str:
+    """`url` on the host that now serves it, for hosts a legislature has retired."""
+    parts = urllib.parse.urlsplit(url)
+    host = (parts.hostname or "").lower()
+    if host not in HOST_MOVES:
+        return url
+    return urllib.parse.urlunsplit(parts._replace(netloc=HOST_MOVES[host]))
 
 
 def url_for(archive: Archive, source: str) -> str:
@@ -57,7 +83,9 @@ def open_url(url: str, pause: float) -> HTTPResponse:
     request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     for attempt in range(_ATTEMPTS):
         try:
-            response: HTTPResponse = urllib.request.urlopen(request, timeout=_TIMEOUT_SECONDS)
+            response: HTTPResponse = urllib.request.urlopen(
+                request, timeout=_TIMEOUT_SECONDS, context=_TLS
+            )
             return response
         except urllib.error.HTTPError as e:
             # Only overload and server faults are worth repeating; a 404 will not change.

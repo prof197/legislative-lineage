@@ -31,11 +31,16 @@ from lineage.sessions import (
 from lineage.snapshot import SnapshotError, load_manifest, scan, write_manifest
 from lineage.stats import write_coverage
 from lineage.stoplist import StoplistError, build_stoplist, file_sha256
+from lineage.text_inventory import PLAN, REPORT, build_inventory
 from lineage.ulc import ENACTMENTS, UlcError
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
 eval_app = typer.Typer(no_args_is_help=True, help="Run an eval and write its results.")
 app.add_typer(eval_app, name="eval")
+text_app = typer.Typer(
+    no_args_is_help=True, help="The text layer: bill text fetched from the source."
+)
+app.add_typer(text_app, name="text")
 
 RawOption = Annotated[Path, typer.Option("--raw", help="Directory of Open States archives.")]
 ManifestOption = Annotated[Path, typer.Option("--manifest", help="Snapshot manifest (committed).")]
@@ -445,3 +450,20 @@ def eval_readme(
         raise typer.Exit(1) from None
     readme.write_text(text)
     typer.echo(f"results table <- {results} -> {readme}")
+
+
+@text_app.command("inventory")
+def text_inventory(
+    tables: TablesOption = Path("data/tables"),
+    plan: Annotated[Path, typer.Option("--plan", help="Fetch plan Parquet (local).")] = PLAN,
+    out: Annotated[Path, typer.Option("--out", help="Inventory JSON (committed).")] = REPORT,
+) -> None:
+    """Choose each eligible record's version to fetch, count by host, and read robots.txt."""
+    doc = build_inventory(tables, plan_path=plan, report_path=out)
+    totals = doc["totals"]
+    need = sum(n for k, n in totals.items() if k.startswith("without_text:"))
+    typer.echo(
+        f"{totals['eligible']:,} eligible records, {need:,} without usable text, "
+        f"{totals.get('without_text:planned', 0):,} with a bill version to fetch, "
+        f"on {len(doc['hosts'])} hosts -> {out}"
+    )

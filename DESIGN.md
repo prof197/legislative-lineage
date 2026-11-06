@@ -10,6 +10,7 @@ Sections marked **To be measured** fill in as the build reaches them. Every numb
 - [Constraints](#constraints)
 - [Pipeline overview](#pipeline-overview)
 - [Data snapshot](#data-snapshot)
+- [Text layer](#text-layer)
 - [Bill status](#bill-status)
 - [Sections](#sections)
 - [Boilerplate](#boilerplate)
@@ -76,6 +77,22 @@ Open States snapshot ─► ingest ─► sections ─┬─► near-duplicate s
 **Session dates.** Bill status needs to know whether a session has ended, and the export has no session dates. `snapshot/sessions.csv` (committed) holds each snapshot session's start and end dates, read from the session lists in Open States' own scraper repository at a pinned commit, which the file's header names. `lineage sessions --commit <sha>` regenerates it. The command parses those Python modules as source and never imports or runs them, and it keeps only names and dates, not code. Some legislatures sit for two years while Open States publishes each year separately, and their bills carry over from the first year to the second. For those, the CSV names the session a bill carries over to, so a first-year bill stays alive until the biennium ends. Special sessions keep their own dates.
 
 **Extraction failures.** The export has no error flag. A record whose `raw_text` is missing or blank counts as a failed extraction: it stays in the `bills` table but cannot match anything. Blank means no character that Python's `str.isspace()` rejects. `lineage stats` reports the rate per state and session.
+
+## Text layer
+
+Open States stays the source for bills, actions and the links to each bill's versions. Its stored text does not: for 145,946 of the 447,389 eligible records (32.6%) it is unusable, so the project fetches those records' text from the legislatures itself ([DR-6](#dr-6)). `lineage text inventory` measures the gap and plans the fetch (`reports/text_inventory.json`).
+
+**What counts as unusable.** A record's stored text is unusable when it is missing (8,708), blank (129,633), yields no section (1,389, mostly Texas's "see the PDF" notices), is a Georgia local-bill notice without the bill (774), or is an amendment stored in place of the bill (5,442, mostly Louisiana). The checks run in that order, so each record counts once.
+
+**Which version.** The export lists every document a legislature posts for a bill among its versions: the bill as introduced, engrossed and enrolled, and also floor amendments, fiscal and impact notes, transmittal letters and dispositions. The fetch takes the latest version whose label names the bill's own text, by date, with the export's order breaking ties. For a passed bill that is the enrolled or chaptered text. An amendment names itself ("Senate Amendment 1", "HA 1 to HB 5", Nebraska's "AM123"); the bill as amended does not ("Amended Assembly", "First Engrossment with Senate Amendments"). Maryland's labels carry the bill's title after its reading, so only the reading is examined. Each fetched text records the version's label and date. Of the records without usable text, 135,731 have a bill version to fetch, 9,293 have no link at all, 918 link only amendments (911 in New Hampshire) and 4 only an unsupported format.
+
+**Formats.** HTML is preferred where a version has it, then PDF. 60,236 of the planned records have both, 7,374 HTML only and 68,121 PDF only. Extraction keeps lines and drops markup, scripts and struck text: in a bill, struck text is current law being deleted, which is not the bill's language. PDFs are read with pypdf (BSD-3-Clause); PyMuPDF is excluded by its AGPL license. Fetched text goes through the same cleaning and splitting as exported text ([Sections](#sections)).
+
+**Politeness.** The fetcher names itself in its User-Agent, `legislative-lineage/<version> (+https://github.com/prof197/legislative-lineage)`. Before any bill page, it reads each host's robots.txt and follows the rules that apply to that agent. A robots.txt that answers 401 or 403, or a host that does not answer, bars the host; any other 4xx means no rules. Each host gets one worker and hosts run in parallel, at one request a second or the host's crawl delay if longer. Overload and server errors are retried with backoff, and a host that fails 20 times in a row is stopped for the run. A response body is extracted in memory and dropped; the store keeps the text, its SHA-256, the URL and the version. A rerun skips what is stored and retries only network and server failures.
+
+**What robots.txt allows.** Of 67 hosts, robots.txt blocks the planned links on three. California's answers 403 to the fetcher, so its 2,409 records stay disclosed rather than fetched; Tennessee's and an S3 bucket's rules block 4 more. Eight hosts set crawl delays, from 3 seconds (Nebraska) to 120 (Arizona's main site). Maine's robots.txt bars a list of named AI and search crawlers and sets no rule for other agents, so it allows this project, which identifies itself as its own tool.
+
+**Two fixes in transport.** Connecticut's, Mississippi's and Illinois's servers send their certificate without its intermediate, which browsers fetch and Python's OpenSSL does not. `src/lineage/certs/intermediates.pem` supplies the three intermediates, each with its source URL and fingerprint, and every chain must still end at a trusted root. Illinois retired `beta.ilga.gov`, which the 103rd General Assembly's links still name; the same paths are served from `ilga.gov`, and the fetcher rewrites that one host.
 
 ## Bill status
 
@@ -501,3 +518,24 @@ The filter does not bias the recall eval. It selects on what kind of document a 
 - Known gap: Nebraska's, Michigan's and Rhode Island's resolutions include constitution-titled records whose conventions are not yet checked, so they stay excluded. Each is admitted by a rule once its convention is checked and its count measured.
 
 **Would reverse it.** If the recall eval shows any listed enactment lost to "excluded type", the rule that excluded it is revised. If the precision sample shows commemorative text still producing matches, the rules widen. The exclusion of resolutions as a whole is reopened when a user wants to trace resolution campaigns, such as the same request to Congress filed in many states. That use needs the excluded types matched as their own corpus, not mixed into bill pages.
+
+### DR-6 · Own the text layer
+
+**Status:** proposed, 2026-11-06. The quality test decides which states and formats are fetched.
+
+**Context.** Open States' bulk export carries each bill's text as extracted by its scrapers. For 145,946 of 447,389 eligible records the text is unusable (`reports/text_inventory.json`): blank for 129,633, absent for 8,708, an amendment in place of the bill for 5,442. The gap is not three states, as first assumed. It covers whole sessions (Hawaii 2024 and 2025, Virginia 2025 and 2026, Massachusetts's 193rd) and most records of New Jersey, Maryland and Montana. A record with no text cannot match anything, so recall over the corpus is capped by upstream extraction. The export does keep the links to every version of each bill, on the legislatures' own sites.
+
+**Options.**
+- Wait for upstream. The gap moves with each scrape and has no error flag, and the project would inherit every regression.
+- Run Open States' scrapers. They also scrape bills, votes and people, need per-state configuration, and their code is GPL-3.0, which cannot be imported into this MIT repository. Reading their extraction for reference is fine.
+- Fetch and extract the linked versions ourselves, per state where needed.
+
+**Decision.** Own the text, not the metadata. Open States stays the source of bills, actions, status and version links. The project fetches the latest version of each bill itself from the legislature, extracts it, and records the text's source (the export or the fetch), its version label, URL and SHA-256. Scrapers, session lists and bill metadata stay upstream.
+
+**Consequences.**
+- Per-state extraction becomes this project's maintenance. Fixture tests pin each extractor's behavior, and the quality test runs before every full fetch.
+- The fetch is a network step outside the pinned snapshot. Its output is pinned the same way: each text's URL, version and SHA-256 are kept, so a rebuild can show what changed.
+- Coverage and recall are reported both ways, with the export's text alone and with the fetched text, so the gain is measured rather than assumed.
+- Hosts whose robots.txt bars this project, or that do not serve the text, stay disclosed as gaps.
+
+**Would reverse it.** If a snapshot of the export has usable text for nearly every eligible record, measured the same way, the fetch is retired for those states. If the quality test finds the fetched text no cleaner than the export's where both exist, the project keeps the export's text and discloses the gap. A legislature that asks not to be fetched is removed whatever its robots.txt says.

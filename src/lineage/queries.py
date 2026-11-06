@@ -719,3 +719,92 @@ def carryover_overlap(
     first_records, reappearing = int(row[0]), int(row[1])
     share = round(reappearing / first_records, 4) if first_records else None
     return {"first_records": first_records, "reappearing": reappearing, "share": share}
+
+
+@dataclass(frozen=True, slots=True)
+class TextPatterns:
+    """What makes a record's stored text unusable (see lineage.stats for each pattern)."""
+
+    blank: str
+    notice: str
+    enacting: str
+    opening: str
+    chars: int
+    substitute: str
+
+
+def text_population(
+    con: duckdb.DuckDBPyConnection,
+    *,
+    bills_glob: str,
+    eligible_path: Path,
+    sections_glob: str,
+    patterns: TextPatterns,
+) -> list[tuple[str, str, str, str, str, list[dict[str, Any]]]]:
+    """Each eligible record's id, state, session, status, why its stored text is unusable
+    ('usable' if it is not), and its versions.
+
+    The checks run in this order, so a record counts once: no text, blank text, text that
+    yields no section, a Georgia local notice, an amendment stored in place of the bill.
+    """
+    query = """
+        WITH split AS (SELECT DISTINCT bill_id FROM read_parquet($sections))
+        SELECT b.id, b.state, b.session, b.status,
+            CASE
+                WHEN b.raw_text IS NULL THEN 'missing'
+                WHEN regexp_full_match(b.raw_text, $blank) THEN 'blank'
+                WHEN s.bill_id IS NULL THEN 'no_sections'
+                WHEN b.state = 'GA' AND regexp_matches(b.raw_text, $notice)
+                     AND NOT regexp_matches(b.raw_text, $enacting) THEN 'ga_notice'
+                WHEN regexp_matches(left(b.raw_text, $chars), $opening)
+                     AND NOT regexp_matches(b.raw_text, $substitute) THEN 'amendment_only'
+                ELSE 'usable'
+            END AS kind,
+            coalesce(b.versions, [])
+        FROM read_parquet($bills) AS b
+        JOIN read_parquet($eligible) AS e ON e.id = b.id AND e.eligible
+        LEFT JOIN split AS s ON s.bill_id = b.id
+        ORDER BY b.id
+    """
+    rows: list[tuple[str, str, str, str, str, list[dict[str, Any]]]] = con.execute(
+        query,
+        {
+            "bills": bills_glob,
+            "eligible": str(eligible_path),
+            "sections": sections_glob,
+            "blank": patterns.blank,
+            "notice": patterns.notice,
+            "enacting": patterns.enacting,
+            "chars": patterns.chars,
+            "opening": patterns.opening,
+            "substitute": patterns.substitute,
+        },
+    ).fetchall()
+    return rows
+
+
+def write_fetch_plan(
+    con: duckdb.DuckDBPyConnection, *, columns: dict[str, list[Any]], path: Path
+) -> None:
+    """Write the text layer's fetch plan, one row per record, from parallel lists."""
+    names = list(columns)
+    select = ", ".join(f"unnest(${n})::VARCHAR AS {n}" for n in names)
+    con.execute(f"COPY (SELECT {select}) TO {_sql_string(str(path))} (FORMAT parquet)", columns)
+
+
+def fetch_plan(con: duckdb.DuckDBPyConnection, *, path: Path) -> list[dict[str, Any]]:
+    cursor = con.execute("SELECT * FROM read_parquet($path) ORDER BY id", {"path": str(path)})
+    names = [d[0] for d in cursor.description]
+    return [dict(zip(names, row, strict=True)) for row in cursor.fetchall()]
+
+
+def stored_text(
+    con: duckdb.DuckDBPyConnection, *, bills_glob: str, ids: list[str]
+) -> dict[str, tuple[str | None, str | None, list[dict[str, Any]]]]:
+    """Open States' stored text, the URL it was extracted from, and the versions, per id."""
+    rows: list[tuple[str, str | None, str | None, list[dict[str, Any]]]] = con.execute(
+        "SELECT id, raw_text, raw_text_url, coalesce(versions, []) FROM read_parquet($bills) "
+        "WHERE list_contains($ids, id)",
+        {"bills": bills_glob, "ids": ids},
+    ).fetchall()
+    return {r[0]: (r[1], r[2], r[3]) for r in rows}

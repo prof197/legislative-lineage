@@ -24,6 +24,7 @@ uv run lineage query FILE     # a bill's near-duplicate families, offline, from 
 uv run lineage eval commission  # commission recall, act texts from data/acts/ -> reports/results.json
 uv run lineage eval answer-key  # each commission list row and the bills it resolved to -> reports/answer_key.csv
 uv run lineage eval readme   # regenerate README.md's results table from reports/results.json
+uv run lineage text inventory  # version to fetch per record, by host, robots.txt read -> data/text/plan.parquet, reports/text_inventory.json
 uv run python -m evals.fixture  # rebuild tests/fixtures/commission/ from the local snapshot, dev only
 uv run python -m benchmarks.minhash  # NumPy vs datasketch: signing and LSH index time and memory (DR-3), dev only
 ```
@@ -36,7 +37,7 @@ All four checks must pass before every commit. CI runs the same four commands.
 src/lineage/      the package (import name `lineage`; distribution `legislative-lineage`)
   cli.py          Typer app; subcommands stay thin wrappers over library functions
   snapshot.py     archive manifest: scan, write, load, verify
-  fetch.py        download pinned archives; hash-checked, paced, disk-guarded
+  fetch.py        HTTP as this project (User-Agent, TLS intermediates, retired hosts); download pinned archives
   sessions.py     session dates from openstates-scrapers, parsed as source, never run
   ingest.py       raw archives -> bills Parquet, one file per archive, with status
   status.py       passed / died / introduced from action classifications
@@ -61,12 +62,16 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   results_table.py  the README results table, rendered from reports/results.json
   stoplist.py     document-frequency stoplist and its report
   stats.py        coverage report: the measurements that replace the design's estimates
+  versions.py     which bill version the text layer fetches (pure functions)
+  robots.py       robots.txt rules for this project's User-Agent
+  text_inventory.py  `lineage text inventory`: unusable text per record, the fetch plan, per-host counts
+  certs/intermediates.pem  intermediate certificates some legislature servers omit
   queries.py      every SQL query the pipeline runs (DR-4)
   disk.py         free-space floor checked before large writes
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
+  memory.py       current and peak memory as the OS charges it (macOS physical footprint)
 evals/            eval inputs: ulc_enactments.csv (hand copy of the commission's lists, dated)
   fixture.py      dev-only: builds tests/fixtures/commission/ from the snapshot
-  memory.py       current and peak memory as the OS charges it (macOS physical footprint)
 tests/            pytest; small committed fixtures only
   fixtures/openstates/  trimmed real records in archive layout (README + *_bills.json)
   fixtures/commission/  enacting bills among uniform-act distractors, same layout, + sessions.csv
@@ -76,11 +81,13 @@ rules/document_types.csv  which document types are matched, per state; first fit
 reports/          committed outputs of pipeline commands; README and DESIGN numbers cite them
   results.json    eval results, one section per eval; the README results table reads it
   answer_key.csv  each commission list row and the corpus bills it resolved to
+  text_inventory.json  records without usable text, the versions planned, hosts and their robots.txt
 DESIGN.md         design, alternatives, scaling limits, failure modes, decision records
 data/             local snapshots and derived tables; gitignored, never committed
   raw/<ST>/*.zip  Open States session archives, never edited
   acts/<act>.txt  uniform act texts, downloaded from the ULC under its terms; never committed
   tables/         Parquet tables written by the pipeline; signatures/, bands/ and pairs/ hold .npy arrays
+  text/           the text layer's fetch plan and fetched text (JSON lines per host)
 ```
 
 ## Conventions
