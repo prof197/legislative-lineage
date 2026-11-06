@@ -523,6 +523,20 @@ def notice_only_by_session(
     return rows
 
 
+def amendment_only_by_session(
+    con: duckdb.DuckDBPyConnection, *, bills_glob: str, opening: str, chars: int, substitute: str
+) -> list[tuple[str, str, int, int]]:
+    """Per state and session: records whose text opens like an amendment, and how many of those
+    replace the whole bill (match `substitute` anywhere)."""
+    rows: list[tuple[str, str, int, int]] = con.execute(
+        "SELECT state, session, count(*), count(*) FILTER (regexp_matches(raw_text, $substitute)) "
+        "FROM read_parquet($bills) WHERE regexp_matches(left(raw_text, $chars), $opening) "
+        "GROUP BY ALL ORDER BY state, session",
+        {"bills": bills_glob, "opening": opening, "chars": chars, "substitute": substitute},
+    ).fetchall()
+    return rows
+
+
 def status_by_type(
     con: duckdb.DuckDBPyConnection, *, bills_glob: str
 ) -> dict[tuple[str, str], dict[str, int]]:

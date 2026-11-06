@@ -9,7 +9,13 @@ import pytest
 from lineage.ingest import ingest
 from lineage.sectioning import build_sections
 from lineage.snapshot import scan, write_manifest
-from lineage.stats import BLANK_PATTERN, coverage, georgia_local_notices, write_coverage
+from lineage.stats import (
+    BLANK_PATTERN,
+    amendment_only,
+    coverage,
+    georgia_local_notices,
+    write_coverage,
+)
 from tests.conftest import SESSIONS
 
 
@@ -151,3 +157,58 @@ def test_reports_georgia_local_notices_per_session(tables: tuple[Path, Path]) ->
     # SB 238 is a Georgia local bill whose stored text is the bill itself.
     assert doc["georgia_local_notices"] == {"total": 0, "by_session": {}}
     assert "enacting clause" in doc["definitions"]["georgia_local_notices"]
+
+
+# Openings in each state's own format; only the first five are amendments.
+AMENDMENTS = [
+    ("LA", 'AMENDMENT NO. 1\nOn page 1, line 8, after "sewerage" delete the remainder of the line'),
+    (
+        "IL",
+        "AMENDMENT TO SENATE BILL 1212\nAMENDMENT NO. ______. Amend Senate Bill 1212 by replacing "
+        'everything after the enacting clause with the following:\n"Section 5. The Act ..."',
+    ),
+    ("PA", 'Amend Bill, page 2, line 7, by striking out the period after "DEFINITIONS)"'),
+    ("DE", 'AMEND House Bill No. 117 on line 9 by deleting " When " as it appears therein'),
+    (
+        "NH",
+        "Amend RSA 359-S:1, II as inserted by section 1 of the bill by replacing it with the "
+        "following:",
+    ),
+    ("MI", 'HOUSE BILL NO. 4748\nA bill to amend 1974 PA 258, entitled "Mental health code,"'),
+    ("CA", "california legislature\nAssembly Constitutional Amendment No. 2\nIntroduced by"),
+    ("UT", "State Weed Committee Amendments\nGENERAL SESSION\nLONG TITLE"),
+    ("NY", "Section 1. Under the authority of state plan amendment #17-0058, the department"),
+    ("GA", "LC 36 5429\nTo amend Title 34 of the Official Code of Georgia Annotated"),
+    # A marker deep inside a bill is not the document's opening.
+    ("LA", "AN ACT\nSection 1. " + "The board shall meet. " * 30 + "AMENDMENT NO. 1 On page 2"),
+]
+
+
+def test_counts_records_whose_stored_text_is_an_amendment(tmp_path: Path) -> None:
+    bills = tmp_path / "bills.parquet"
+    duckdb.execute(
+        "COPY (SELECT * FROM (VALUES "
+        + ", ".join(f"('{s}', '2025', $t{i})" for i, (s, _) in enumerate(AMENDMENTS))
+        + f") t(state, session, raw_text)) TO '{bills}'",
+        {f"t{i}": text for i, (_, text) in enumerate(AMENDMENTS)},
+    )
+
+    found = amendment_only(str(bills))
+
+    assert found == {
+        ("DE", "2025"): (1, 0),
+        ("IL", "2025"): (1, 1),  # replaces everything after the enacting clause: a substitute
+        ("LA", "2025"): (1, 0),
+        ("NH", "2025"): (1, 0),
+        ("PA", "2025"): (1, 0),
+    }
+
+
+def test_reports_amendment_only_text_per_session(tables: tuple[Path, Path]) -> None:
+    out, manifest = tables
+
+    doc = coverage(out, sessions_path=SESSIONS, manifest_path=manifest)
+
+    assert _session(doc, "GA")["amendment_only"] == {"all": 0, "substitutes": 0}
+    assert doc["totals"]["amendment_only"] == 0
+    assert "first 400 characters" in doc["definitions"]["amendment_only"]
