@@ -24,7 +24,7 @@ uv run lineage index         # signatures, LSH bands, verified pairs, families -
 uv run lineage query FILE     # a bill's near-duplicate families, offline, from the built index
 uv run lineage eval commission  # commission recall, act texts from data/acts/ -> reports/results.json (--results reports/results_exported_only.json after an --exported-only merge)
 uv run lineage eval answer-key  # each commission list row and the bills it resolved to -> reports/answer_key.csv
-uv run lineage eval readme   # regenerate README.md's results table from reports/results.json
+uv run lineage eval readme   # regenerate README.md's results table from reports/results.json and results_exported_only.json
 uv run lineage text inventory  # version to fetch per record, by host, robots.txt read -> data/text/plan.parquet, reports/text_inventory.json
 uv run lineage text sample   # quality test: fetch a seeded sample per state and format -> data/text/sample/, reports/text_quality.json
 uv run lineage text fetch    # fetch every planned record as rules/text_layer.toml says, California from its bulk download; resumable -> data/text/full/, reports/text_fetch.json

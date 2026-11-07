@@ -18,7 +18,7 @@ from lineage.fetch import SOURCE, fetch_raw
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
 from lineage.query import IndexMissingError, query_text
-from lineage.results_table import README, ResultsTableError, rendered_readme
+from lineage.results_table import EXPORTED_ONLY, README, ResultsTableError, rendered_readme
 from lineage.sectioning import SectioningError, build_sections
 from lineage.sessions import (
     CARRYOVER,
@@ -446,15 +446,23 @@ def eval_answer_key(
 def eval_readme(
     readme: Annotated[Path, typer.Option("--readme", help="The README to update.")] = README,
     results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+    exported_only: Annotated[
+        Path,
+        typer.Option("--exported-only", help="Results on Open States' text alone (committed)."),
+    ] = EXPORTED_ONLY,
 ) -> None:
-    """Regenerate the README's results table from the results file."""
+    """Regenerate the README's results table from the results files."""
     try:
-        text = rendered_readme(readme.read_text(), json.loads(results.read_text()))
+        text = rendered_readme(
+            readme.read_text(),
+            json.loads(results.read_text()),
+            json.loads(exported_only.read_text()),
+        )
     except ResultsTableError as e:
         typer.echo(str(e), err=True)
         raise typer.Exit(1) from None
     readme.write_text(text)
-    typer.echo(f"results table <- {results} -> {readme}")
+    typer.echo(f"results table <- {results}, {exported_only} -> {readme}")
 
 
 @text_app.command("inventory")
