@@ -30,9 +30,10 @@ uv run lineage text sample   # quality test: fetch a seeded sample per state and
 uv run lineage text fetch    # fetch every planned record as rules/text_layer.toml says, California from its bulk download; resumable -> data/text/full/, reports/text_fetch.json
 uv run python -m evals.fixture  # rebuild tests/fixtures/commission/ from the local snapshot, dev only
 uv run python -m benchmarks.minhash  # NumPy vs datasketch: signing and LSH index time and memory (DR-3), dev only
+LEAK_CHECK_TERMS=... uv run python -m tools.leak_check --history  # no local path or deny-listed term (any case) in any file or commit; CI runs it
 ```
 
-All four checks must pass before every commit. CI runs the same four commands.
+All four checks must pass before every commit. CI runs the same four commands, then the leak check, whose deny list comes from the `LEAK_CHECK_TERMS` repository secret. Run the leak check before every push.
 
 ## Layout
 
@@ -81,6 +82,8 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   disk.py         free-space floor checked before large writes
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
   memory.py       current and peak memory as the OS charges it (macOS physical footprint)
+tools/            dev and CI checks
+  leak_check.py   local paths and deny-listed terms in tracked files and every commit
 evals/            eval inputs: ulc_enactments.csv (hand copy of the commission's lists, dated)
   fixture.py      dev-only: builds tests/fixtures/commission/ from the snapshot
 tests/            pytest; small committed fixtures only
@@ -98,6 +101,7 @@ reports/          committed outputs of pipeline commands; README and DESIGN numb
   text_quality.json  the quality test per state and format: outcomes, usable and clean rates per reading, comparison
   text_fetch.json  the full fetch per state: outcomes, and records left out with the reason
 DESIGN.md         design, alternatives, scaling limits, failure modes, decision records
+CONTRIBUTING.md   the checks to run before a commit and a push, and the leak check
 data/             local snapshots and derived tables; gitignored, never committed
   raw/<ST>/*.zip  Open States session archives, never edited
   acts/<act>.txt  uniform act texts, downloaded from the ULC under its terms; never committed
