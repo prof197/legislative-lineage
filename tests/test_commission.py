@@ -114,7 +114,7 @@ def test_found_is_a_score_above_the_threshold_whatever_the_rank() -> None:
 def _raw_text(tables: Path, bill_id: str) -> str:
     with queries.connect_quiet() as con:
         row = con.execute(
-            "SELECT raw_text FROM read_parquet($p) WHERE id = $i",
+            "SELECT text FROM read_parquet($p) WHERE id = $i",
             {"p": str(tables / "bills" / "*.parquet"), "i": bill_id},
         ).fetchall()
     return str(row[0][0])

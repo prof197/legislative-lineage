@@ -57,8 +57,8 @@ def _empty() -> queries.SectionColumns:
     return queries.SectionColumns([], [], [], [], [], [], [])
 
 
-def _split_file(bills_file: Path, dest: Path) -> FileCounts:
-    """Split one bills file into `dest/<stem>-<n>.parquet` parts. Runs in a worker process."""
+def _split_file(texts_file: Path, dest: Path) -> FileCounts:
+    """Split one texts file into `dest/<stem>-<n>.parquet` parts. Runs in a worker process."""
     bills = with_text = by_heading = sections = 0
     columns = _empty()
     parts = 0
@@ -66,7 +66,7 @@ def _split_file(bills_file: Path, dest: Path) -> FileCounts:
     def flush(con: duckdb.DuckDBPyConnection) -> None:
         nonlocal columns, parts
         if columns.bill_id:
-            path = dest / f"{bills_file.stem}-{parts:03d}.parquet"
+            path = dest / f"{texts_file.stem}-{parts:03d}.parquet"
             queries.write_sections(con, parquet_path=path, columns=columns)
             parts += 1
             columns = _empty()
@@ -74,11 +74,11 @@ def _split_file(bills_file: Path, dest: Path) -> FileCounts:
     reader = queries.connect_quiet()
     writer = queries.connect_quiet()
     try:
-        scan = queries.open_bill_texts(reader, parquet_path=bills_file)
+        scan = queries.open_bill_texts(reader, parquet_path=texts_file)
         while batch := scan.fetchmany(_FETCH_BILLS):
-            for bill_id, raw_text in batch:
+            for bill_id, text in batch:
                 bills += 1
-                split = split_sections(raw_text)
+                split = split_sections(text)
                 if not split.sections:
                     continue
                 with_text += 1
@@ -103,16 +103,16 @@ def _split_file(bills_file: Path, dest: Path) -> FileCounts:
 
 
 def build_sections(tables_dir: Path, *, workers: int, floor_bytes: int) -> SectioningResult:
-    """Rebuild `<tables>/sections/` from `<tables>/bills/`."""
+    """Rebuild `<tables>/sections/` from `<tables>/texts/`."""
     started = time.monotonic()
     # Largest first, so the slowest files do not start last and leave the other workers idle.
     files = sorted(
-        (tables_dir / "bills").glob("*.parquet"), key=lambda p: p.stat().st_size, reverse=True
+        (tables_dir / "texts").glob("*.parquet"), key=lambda p: p.stat().st_size, reverse=True
     )
     if not files:
-        raise SectioningError(f"no bills table in {tables_dir}; run `lineage ingest` first")
+        raise SectioningError(f"no texts table in {tables_dir}; run `lineage text merge` first")
     with queries.connect_quiet() as con:
-        text = queries.text_bytes(con, bills_glob=str(tables_dir / "bills" / "*.parquet"))
+        text = queries.text_bytes(con, bills_glob=str(tables_dir / "texts" / "*.parquet"))
     # Each section is stored twice, as display text and as normalized text, and neither copy is
     # longer than the input; compressed Parquet stays under that bound.
     require_free_space(tables_dir, needed=2 * text, floor=floor_bytes)

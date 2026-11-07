@@ -1,76 +1,76 @@
 {
  "command": "uv run lineage index",
- "stoplist_sha256": "dd33d701fadfdeffd855a2eb00fa43d19af0073ac5b4f4604355a30dfa6071da",
+ "stoplist_sha256": "a50024b2e48a814aa5460dbb861c38af8239c16091f59445781767565e030a2d",
  "minhash": {
   "num_perm": 128,
   "seed": 42,
   "prime": "2^61 - 1"
  },
  "sections": {
-  "matchable": 2081174,
-  "signed": 2058452,
-  "too_short": 22720,
-  "all_stoplisted": 2
+  "matchable": 2922807,
+  "signed": 2898515,
+  "too_short": 24287,
+  "all_stoplisted": 5
  },
  "shingle_set_size": {
-  "median": 146,
-  "p90": 460,
-  "p99": 1933,
-  "max": 261326
+  "median": 137,
+  "p90": 486,
+  "p99": 2116,
+  "max": 260073
  },
- "signature_bytes": 1053927424,
+ "signature_bytes": 1484039680,
  "lsh": {
   "bands": 32,
   "rows": 4,
   "threshold": 0.42,
-  "index_bytes": 790445568,
+  "index_bytes": 1113029760,
   "bucket_cap": 1000,
-  "largest_bucket": 1847,
+  "largest_bucket": 2475,
   "capped": {
-   "buckets": 37,
-   "section_memberships": 45486,
-   "pairs": 28317289,
+   "buckets": 153,
+   "section_memberships": 229095,
+   "pairs": 178249058,
    "cross_state_pairs_lost": 0
   },
   "candidate_pairs": {
-   "all": 20934941,
-   "cross_state": 452713,
-   "same_state": 20482228
+   "all": 34792634,
+   "cross_state": 847998,
+   "same_state": 33944636
   },
   "cap_sweep": [
    {
     "cap": 100,
-    "buckets_over_cap": 3710,
-    "multi_state_buckets_over_cap": 60,
-    "most_states_in_a_capped_bucket": 35,
-    "cross_state_pairs_lost": 92783
+    "buckets_over_cap": 5713,
+    "multi_state_buckets_over_cap": 176,
+    "most_states_in_a_capped_bucket": 39,
+    "cross_state_pairs_lost": 231342
    },
    {
     "cap": 200,
-    "buckets_over_cap": 1750,
-    "multi_state_buckets_over_cap": 33,
-    "most_states_in_a_capped_bucket": 35,
-    "cross_state_pairs_lost": 55231
+    "buckets_over_cap": 2579,
+    "multi_state_buckets_over_cap": 53,
+    "most_states_in_a_capped_bucket": 39,
+    "cross_state_pairs_lost": 117429
    },
    {
     "cap": 500,
-    "buckets_over_cap": 357,
-    "multi_state_buckets_over_cap": 2,
-    "most_states_in_a_capped_bucket": 2,
-    "cross_state_pairs_lost": 2005
+    "buckets_over_cap": 881,
+    "multi_state_buckets_over_cap": 12,
+    "most_states_in_a_capped_bucket": 3,
+    "cross_state_pairs_lost": 8055
    },
    {
     "cap": 1000,
-    "buckets_over_cap": 37,
+    "buckets_over_cap": 153,
     "multi_state_buckets_over_cap": 0,
     "most_states_in_a_capped_bucket": 1,
     "cross_state_pairs_lost": 0
    },
    {
     "cap": 2000,
-    "buckets_over_cap": 0,
+    "buckets_over_cap": 4,
     "multi_state_buckets_over_cap": 0,
-    "most_states_in_a_capped_bucket": 0,
+    "most_states_in_a_capped_bucket": 1,
     "cross_state_pairs_lost": 0
    }
   ]
@@ -79,67 +79,62 @@
   "threshold": 0.5,
   "min_agreements": 64,
   "verified": {
-   "all": 14361827,
-   "cross_state": 197548,
-   "same_state": 14164279,
-   "dropped": 6573114
+   "all": 23003180,
+   "cross_state": 386803,
+   "same_state": 22616377,
+   "dropped": 11789454
   },
   "estimate_histogram": {
    "cross_state": [
-    272,
-    6993,
-    36574,
-    32851,
-    43669,
-    41820,
-    48036,
-    44950,
-    43316,
-    36645,
-    28159,
-    24831,
-    19384,
-    15246,
-    12646,
-    17321
+    1026,
+    17017,
+    26414,
+    74877,
+    80613,
+    78942,
+    90509,
+    91797,
+    85987,
+    74177,
+    56440,
+    49849,
+    39027,
+    31022,
+    26246,
+    24055
    ],
    "same_state": [
-    994,
-    51392,
-    266225,
-    572184,
-    918280,
-    1096192,
-    1425045,
-    1987637,
-    1672319,
-    1501376,
-    946761,
-    1007862,
-    1049655,
-    1338050,
-    1011189,
-    5637067
+    5830,
+    132204,
+    647796,
+    1207619,
+    1834642,
+    2383208,
+    2493260,
+    2623700,
+    2259308,
+    2140584,
+    2014315,
+    2033015,
+    1630513,
+    1706256,
+    1957368,
+    8875018
    ]
   },
-  "stored_bytes": 1777932
+  "stored_bytes": 3481227
  },
  "families": {
   "share": 0.8,
-  "same_state_bill_pairs": 9643736,
-  "linked_bill_pairs": 433189,
-  "families_of_two_or_more": 63424,
-  "bills_in_them": 165933,
+  "same_state_bill_pairs": 15537626,
+  "linked_bill_pairs": 391830,
+  "families_of_two_or_more": 87135,
+  "bills_in_them": 227125,
   "largest": [
-   {
-    "family": "ocd-bill/005896ef-09ec-46f2-aeab-e4a3521d2942",
-    "state": "GA",
-    "bills": 764
-   },
    {
     "family": "ocd-bill/003d6846-38ad-4c3a-89b3-3ec70e188592",
     "state": "NM",
-    "bills": 302
+    "bills": 318
    },
    {
     "family": "ocd-bill/00a5485f-2f35-4e7f-8bb3-3a4df0a6fd0a",
@@ -159,7 +154,7 @@
    {
     "family": "ocd-bill/031cc0f6-f6f2-47e7-ab05-75bb299824e4",
     "state": "NY",
-    "bills": 148
+    "bills": 156
    },
    {
     "family": "ocd-bill/01924b34-5344-42bf-b4da-994be7e193c6",
@@ -177,75 +172,80 @@
     "bills": 122
    },
    {
+    "family": "ocd-bill/02901618-6215-4128-ab79-f746f4441044",
+    "state": "TX",
+    "bills": 111
+   },
+   {
     "family": "ocd-bill/013d8668-9db0-40f3-9503-4e3ef20a34a7",
     "state": "CA",
     "bills": 103
    }
   ],
   "min_share_histogram": [
-   852802,
-   1117777,
-   1379459,
-   647471,
-   945196,
-   1670590,
-   1901097,
-   29370,
-   97400,
-   6601,
-   330239,
-   18712,
-   5891,
-   184368,
-   4611,
-   18963,
-   12359,
-   7188,
-   5392,
-   408250
+   1555712,
+   1873732,
+   2792599,
+   1427882,
+   1419995,
+   2736857,
+   2182674,
+   43775,
+   131459,
+   10347,
+   571064,
+   32012,
+   10390,
+   316297,
+   8204,
+   32797,
+   22927,
+   13525,
+   9950,
+   345428
   ],
   "sweep": [
    {
     "share": 0.5,
-    "linked_bill_pairs": 995973,
-    "families_of_two_or_more": 66213,
-    "bills_in_them": 205682,
-    "largest_family": 1514
+    "linked_bill_pairs": 1362594,
+    "families_of_two_or_more": 92587,
+    "bills_in_them": 296257,
+    "largest_family": 1272
    },
    {
     "share": 0.667,
-    "linked_bill_pairs": 640544,
-    "families_of_two_or_more": 66223,
-    "bills_in_them": 183402,
-    "largest_family": 815
+    "linked_bill_pairs": 748182,
+    "families_of_two_or_more": 92856,
+    "bills_in_them": 259651,
+    "largest_family": 643
    },
    {
     "share": 0.75,
-    "linked_bill_pairs": 452152,
-    "families_of_two_or_more": 64796,
-    "bills_in_them": 171337,
-    "largest_family": 764
+    "linked_bill_pairs": 424627,
+    "families_of_two_or_more": 89404,
+    "bills_in_them": 237007,
+    "largest_family": 318
    },
    {
     "share": 0.8,
-    "linked_bill_pairs": 433189,
-    "families_of_two_or_more": 63424,
-    "bills_in_them": 165933,
-    "largest_family": 764
+    "linked_bill_pairs": 391830,
+    "families_of_two_or_more": 87135,
+    "bills_in_them": 227125,
+    "largest_family": 318
    },
    {
     "share": 0.9,
-    "linked_bill_pairs": 413642,
-    "families_of_two_or_more": 61306,
-    "bills_in_them": 158136,
-    "largest_family": 764
+    "linked_bill_pairs": 355378,
+    "families_of_two_or_more": 83379,
+    "bills_in_them": 212751,
+    "largest_family": 318
    },
    {
     "share": 1.0,
-    "linked_bill_pairs": 406501,
-    "families_of_two_or_more": 60208,
-    "bills_in_them": 154480,
-    "largest_family": 764
+    "linked_bill_pairs": 342641,
+    "families_of_two_or_more": 81781,
+    "bills_in_them": 206651,
+    "largest_family": 318
    }
   ]
  }

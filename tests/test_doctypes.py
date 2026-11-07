@@ -17,6 +17,7 @@ from lineage.doctypes import (
 from lineage.ingest import ingest
 from lineage.sectioning import build_sections
 from lineage.snapshot import scan, write_manifest
+from lineage.text_merge import merge_texts
 from tests.conftest import SESSIONS
 
 HEADER = "state,type,title,unless,decision,reason\n"
@@ -300,6 +301,7 @@ def tables(raw_dir: Path, tmp_path: Path) -> Path:
     write_manifest(scan(raw_dir), manifest)
     out = tmp_path / "tables"
     ingest(raw_dir, manifest, SESSIONS, out, floor_bytes=0)
+    merge_texts(out, exported_only=True, floor_bytes=0)
     build_sections(out, workers=1, floor_bytes=0)
     return out
 

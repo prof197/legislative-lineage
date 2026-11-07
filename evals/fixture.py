@@ -52,7 +52,10 @@ _CONTESTED = (
 )
 _FIELDS = (
     "id, session AS legislative_session, identifier, title, chamber, classification, "
-    "actions, versions, raw_text, raw_text_url"
+    "versions, text AS raw_text, text_url AS raw_text_url, "
+    "list_transform(actions, lambda a: {'organization__name': a.body, "
+    "'description': a.description, 'date': a.date, 'classification': a.classification, "
+    "'order': a.\"order\"}) AS actions"
 )
 
 
@@ -78,6 +81,9 @@ def main() -> None:
         bills = queries.enactment_bills(
             con,
             bills_glob=bills_glob,
+            # The fixture copies archive records, which carry the exported text, so its checks
+            # read that text rather than the merged texts table.
+            texts_glob=bills_glob,
             eligible_path=TABLES / "eligible.parquet",
             families_path=TABLES / "families" / "families.parquet",
             states=sorted({r.state for r in counted if r.state is not None}),
@@ -122,7 +128,7 @@ def main() -> None:
             f"""
             SELECT archive, id, title FROM read_parquet($g)
             WHERE archive IN (SELECT unnest($a)) AND title ILIKE '%uniform%act%' AND {title_filter}
-              AND length(trim(coalesce(raw_text, ''))) BETWEEN $lo AND $hi
+              AND length(trim(coalesce(text, ''))) BETWEEN $lo AND $hi
             """,
             {"g": bills_glob, "a": archives, "lo": DISTRACTOR_CHARS[0], "hi": DISTRACTOR_CHARS[1]},
         ).fetchall()

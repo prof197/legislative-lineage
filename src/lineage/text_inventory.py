@@ -15,9 +15,12 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 
+import duckdb
+
 from lineage import queries
 from lineage.fetch import moved
 from lineage.robots import Robots, read_robots
+from lineage.sections import split_sections
 from lineage.stats import (
     AMENDMENT_CHARS,
     AMENDMENT_OPENING,
@@ -51,6 +54,25 @@ def _versions(raw: list[dict[str, Any]]) -> list[Version]:
         links: list[dict[str, str | None]] = v["links"] or []
         kept = tuple(Link(lk["url"], lk["media_type"] or "") for lk in links if lk["url"])
         out.append(Version(v["note"] or "", v["date"] or "", kept))
+    return out
+
+
+def _rechecked(
+    con: duckdb.DuckDBPyConnection,
+    records: list[tuple[str, str, str, str, str, list[dict[str, Any]]]],
+    bills_glob: str,
+) -> list[tuple[str, str, str, str, str, list[dict[str, Any]]]]:
+    """Resolve 'recheck:<kind>' by splitting the stored text the sections table did not hold."""
+    ids = [r[0] for r in records if r[4].startswith("recheck:")]
+    if not ids:
+        return records
+    stored = queries.stored_texts(con, bills_glob=bills_glob, ids=ids)
+    out: list[tuple[str, str, str, str, str, list[dict[str, Any]]]] = []
+    for bill_id, state, session, status, kind, versions in records:
+        if kind.startswith("recheck:"):
+            yields = bool(split_sections(stored.get(bill_id) or "").sections)
+            kind = kind.removeprefix("recheck:") if yields else "no_sections"
+        out.append((bill_id, state, session, status, kind, versions))
     return out
 
 
@@ -148,13 +170,17 @@ def build_inventory(
 ) -> dict[str, Any]:
     with queries.connect_quiet() as con:
         con.execute("SET memory_limit = '6GB'")
+        texts = tables_dir / "texts"
+        bills_glob = str(tables_dir / "bills" / "*.parquet")
         records = queries.text_population(
             con,
-            bills_glob=str(tables_dir / "bills" / "*.parquet"),
+            bills_glob=bills_glob,
             eligible_path=tables_dir / "eligible.parquet",
             sections_glob=str(tables_dir / "sections" / "*.parquet"),
             patterns=PATTERNS,
+            texts_glob=str(texts / "*.parquet") if any(texts.glob("*.parquet")) else None,
         )
+        records = _rechecked(con, records, bills_glob)
         rows = [plan_row(r) for r in records]
         del records
         plan_path.parent.mkdir(parents=True, exist_ok=True)

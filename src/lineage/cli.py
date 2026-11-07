@@ -32,6 +32,7 @@ from lineage.snapshot import SnapshotError, load_manifest, scan, write_manifest
 from lineage.stats import write_coverage
 from lineage.stoplist import StoplistError, build_stoplist, file_sha256
 from lineage.text_inventory import PLAN, REPORT, build_inventory
+from lineage.text_merge import merge_texts
 from lineage.text_quality import REPORT as QUALITY
 from lineage.text_quality import STORE, run_sample
 from lineage.text_run import REPORT as FETCH_REPORT
@@ -437,7 +438,7 @@ def eval_answer_key(
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(render_answer_key(rows, note))
     counted = {(r["act"], r["jurisdiction"], r["year"]) for r in rows if r["counted"] == "yes"}
-    resolved = {(r["act"], r["jurisdiction"], r["year"]) for r in rows if r["openstates_id"]}
+    resolved = {(r["act"], r["jurisdiction"], r["year"]) for r in rows if r["bill_id"]}
     typer.echo(f"{len(resolved)} of {len(counted)} counted rows resolved to a bill -> {out}")
 
 
@@ -509,3 +510,25 @@ def text_fetch(
     typer.echo(
         f"{ok:,} of {doc['jobs']:,} records fetched with usable text, {left:,} left out -> {out}"
     )
+
+
+@text_app.command("merge")
+def text_merge(
+    tables: TablesOption = Path("data/tables"),
+    plan: Annotated[Path, typer.Option("--plan", help="Fetch plan Parquet (local).")] = PLAN,
+    exported_only: Annotated[
+        bool, typer.Option(help="Use only the exported text, to measure without the fetch.")
+    ] = False,
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """Choose each record's text, fetched or exported -> data/tables/texts/."""
+    try:
+        counts = merge_texts(
+            tables, plan_path=plan, exported_only=exported_only,
+            floor_bytes=int(min_free_gib * GiB),
+        )  # fmt: skip
+    except InsufficientDiskSpaceError as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    shown = ", ".join(f"{source} {n:,}" for source, n in counts.items())
+    typer.echo(f"{sum(counts.values()):,} records by text source: {shown} -> {tables / 'texts'}")

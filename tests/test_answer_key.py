@@ -41,7 +41,7 @@ def _rows(tmp_path: Path) -> list[dict[str, str]]:
 def test_each_named_bill_is_a_row_with_the_listed_number_it_matched(tmp_path: Path) -> None:
     utah = [r for r in _rows(tmp_path) if r["jurisdiction"] == "Utah"]
 
-    assert [(r["matched_number"], r["openstates_id"], r["rule"]) for r in utah] == [
+    assert [(r["matched_number"], r["bill_id"], r["rule"]) for r in utah] == [
         ("HB 12", "ut-hb12", "in_year"),
         ("SB 7", "ut-sb7", "in_year"),
     ]
@@ -61,7 +61,7 @@ def test_every_list_row_appears_even_when_it_is_not_counted(tmp_path: Path) -> N
     # Counted, but no corpus bill carries the number: one row, with no bill.
     assert counted["Ohio"] == "yes"
     ohio = next(r for r in rows if r["jurisdiction"] == "Ohio")
-    assert (ohio["rule"], ohio["openstates_id"]) == ("", "")
+    assert (ohio["rule"], ohio["bill_id"]) == ("", "")
 
 
 def test_the_command_writes_the_key_from_the_fixture_corpus(
@@ -85,16 +85,14 @@ def test_the_command_writes_the_key_from_the_fixture_corpus(
         (e.act, e.jurisdiction, str(e.year)) for e in listed
     }
     # Ohio's act passed in December 2024 and is listed under 2025.
-    ohio = next(r for r in rows if r["jurisdiction"] == "Ohio" and r["openstates_id"])
+    ohio = next(r for r in rows if r["jurisdiction"] == "Ohio" and r["bill_id"])
     assert (ohio["rule"], ohio["session"], ohio["identifier"]) == ("prior_session", "135", "SB 237")
 
 
 def test_the_committed_key_and_the_committed_results_name_the_same_bills() -> None:
     _, rows = read_answer_key(ANSWER_KEY)
     key = {
-        (r["act"], r["year"], r["openstates_id"])
-        for r in rows
-        if r["counted"] == "yes" and r["openstates_id"]
+        (r["act"], r["year"], r["bill_id"]) for r in rows if r["counted"] == "yes" and r["bill_id"]
     }
     results = json.loads(RESULTS.read_text())["commission"]["enactments"]
     named = {(e["act"], str(e["year"]), b["id"]) for e in results for b in e["bills"]}

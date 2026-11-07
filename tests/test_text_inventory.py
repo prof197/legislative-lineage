@@ -64,3 +64,25 @@ def test_the_inventory_counts_the_fixture_corpus_and_writes_the_plan(
         for key, n in host["links"].items():
             if not key.endswith(":allowed"):
                 assert host["links"].get(f"{key}:allowed") == n
+
+
+def test_stored_text_the_sections_no_longer_hold_is_split_again(tmp_path: Path) -> None:
+    # Once a record's fetched text is split, the sections table says nothing about whether
+    # its stored text yields a section; the inventory splits the stored text itself.
+    from lineage.text_inventory import _rechecked  # pyright: ignore[reportPrivateUsage]
+
+    bills = tmp_path / "bills.parquet"
+    with queries.connect_quiet() as con:
+        con.execute(
+            "COPY (SELECT * FROM (VALUES ('a', 'Section 1. Fees. Section 2. Rules.'), "
+            "('b', '   ')) t(id, text)) TO '" + str(bills) + "' (FORMAT parquet)"
+        )
+        none: list[dict[str, Any]] = []
+        records = [
+            ("a", "NJ", "2025", "passed", "recheck:amendment_only", none),
+            ("b", "NJ", "2025", "passed", "recheck:usable", none),
+            ("c", "NJ", "2025", "passed", "usable", none),
+        ]
+        kinds = [r[4] for r in _rechecked(con, records, str(bills))]
+
+    assert kinds == ["amendment_only", "no_sections", "usable"]

@@ -16,6 +16,7 @@ from lineage.stats import (
     georgia_local_notices,
     write_coverage,
 )
+from lineage.text_merge import merge_texts
 from tests.conftest import SESSIONS
 
 
@@ -42,6 +43,7 @@ def tables(raw_dir: Path, tmp_path: Path) -> tuple[Path, Path]:
     write_manifest(scan(raw_dir), manifest)
     out = tmp_path / "tables"
     ingest(raw_dir, manifest, SESSIONS, out, floor_bytes=0)
+    merge_texts(out, exported_only=True, floor_bytes=0)
     build_sections(out, workers=1, floor_bytes=0)
     return out, manifest
 
@@ -144,7 +146,7 @@ def test_counts_georgia_local_bills_stored_as_their_notice_alone(tmp_path: Path)
     queries.connect_quiet().execute(
         "COPY (SELECT * FROM (VALUES "
         + ", ".join(f"('{s}', '{n}', $t{i})" for i, (s, n, _) in enumerate(rows))
-        + f") t(state, session, raw_text)) TO '{bills}'",
+        + f") t(state, session, text)) TO '{bills}'",
         {f"t{i}": text for i, (_, _, text) in enumerate(rows)},
     )
 
@@ -191,7 +193,7 @@ def test_counts_records_whose_stored_text_is_an_amendment(tmp_path: Path) -> Non
     queries.connect_quiet().execute(
         "COPY (SELECT * FROM (VALUES "
         + ", ".join(f"('{s}', '2025', $t{i})" for i, (s, _) in enumerate(AMENDMENTS))
-        + f") t(state, session, raw_text)) TO '{bills}'",
+        + f") t(state, session, text)) TO '{bills}'",
         {f"t{i}": text for i, (_, text) in enumerate(AMENDMENTS)},
     )
 

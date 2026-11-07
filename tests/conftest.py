@@ -94,6 +94,8 @@ def build_tables(root: Path, fixtures: Path, sessions: Path) -> Path:
     _invoke("snapshot", "--raw", str(raw), "--manifest", str(manifest))
     _invoke("ingest", "--raw", str(raw), "--manifest", str(manifest), "--out", str(tables),
          "--sessions", str(sessions), *no_floor)  # fmt: skip
+    _invoke("text", "merge", "--tables", str(tables), "--plan", str(root / "no-plan.parquet"),
+         *no_floor)  # fmt: skip
     _invoke("split", "--tables", str(tables), "--workers", "1", *no_floor)
     _invoke("eligible", "--tables", str(tables), "--report", str(reports / "types.json"))
     # A few dozen bills are too few for a document-frequency stoplist: at the corpus's 0.1%

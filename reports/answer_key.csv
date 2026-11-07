@@ -1,5 +1,5 @@
 # uv run lineage eval answer-key; ULC Bill List, read 2026-11-06
-act,jurisdiction,year,listed,listed_status,counted,rule,matched_number,openstates_id,session,identifier,title,status,chambers_passed,last_passage_on
+act,jurisdiction,year,listed,listed_status,counted,rule,matched_number,bill_id,session,identifier,title,status,chambers_passed,last_passage_on
 public-expression-protection,Maryland,2026,SB 251/HB 650,Introduced,no: listed as introduced,,,,,,,,,
 public-expression-protection,Michigan,2026,HB 4045,Enacted,yes,in_year,HB 4045,ocd-bill/466153a5-6ac0-4a17-b061-aecda47f1135,2025-2026,HB 4045,Civil procedure: civil actions; lawsuits for exercising rights to free expression; provide protections against. Creates new act.,passed,2,2025-12-18
 public-expression-protection,Mississippi,2026,HB 1268/HB 1476/SB 2381/SB 2734,Introduced,no: listed as introduced,,,,,,,,,

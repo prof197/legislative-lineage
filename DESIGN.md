@@ -20,6 +20,7 @@ Sections marked **To be measured** fill in as the build reaches them. Every numb
 - [Scaling limits](#scaling-limits)
 - [Known failure modes](#known-failure-modes)
 - [Measured facts](#measured-facts)
+- [Future work](#future-work)
 - [Decision records](#decision-records)
 
 ## Problem
@@ -28,7 +29,7 @@ Model legislation spreads by copying. An interest group, a uniform-law body or a
 
 Three properties of the corpus make this hard:
 
-- **Size.** Every bill from all 50 states over four years. Comparing every pair of sections is quadratic: *N* sections make *N*(*N* − 1)/2 pairs, so the method has to find candidates without enumerating pairs. The snapshot has *N* = 2,340,883 sections (`uv run lineage stats`, `reports/coverage.json`), which is about 2.7 × 10¹² pairs.
+- **Size.** Every bill from all 50 states over four years. Comparing every pair of sections is quadratic: *N* sections make *N*(*N* − 1)/2 pairs, so the method has to find candidates without enumerating pairs. The snapshot has *N* = 3,203,145 sections (`uv run lineage stats`, `reports/coverage.json`), which is about 5.1 × 10¹² pairs.
 - **The unit is the section, not the bill.** A copied provision often sits inside a much larger bill, such as a code revision or a budget. Similarity between whole bills dilutes it below any useful threshold.
 - **Copying is not always verbatim.** Reordered clauses and substituted terms break exact-text methods, while generic legal phrasing ("the department shall…") makes meaning-based methods over-match.
 
@@ -49,20 +50,21 @@ The tool reports shared text and timing. It does not claim who wrote a bill, or 
 ## Pipeline overview
 
 ```
-Open States snapshot ─► ingest ─► sections ─┬─► near-duplicate stage (MinHash + LSH) ─┐
-   (pinned JSON)       (DuckDB)  (split,    │                                          ├─► merge ─► bill scoring ─► alignment ─► explanations ─► export
-                                 normalize, └─► semantic stage (embeddings + ANN) ─────┘                              (difflib)    (only model call,  (static JSON)
-                                 boilerplate)                                                                                       cached)
+Open States snapshot ─► ingest ─► text layer ─► sections ─┬─► near-duplicate stage (MinHash + LSH) ─┐
+   (pinned JSON)       (DuckDB)  (fetch,       (split,    │                                          ├─► merge ─► bill scoring ─► alignment ─► explanations ─► export
+                                  merge)       normalize, └─► semantic stage (embeddings + ANN) ─────┘                              (difflib)    (only model call,  (static JSON)
+                                               boilerplate)                                                                                       cached)
 ```
 
 1. **Ingest.** Verify the raw archives against the committed manifest, then read the per-session JSON into Parquet tables without editing the raw files ([DR-4](#dr-4)). See [Data snapshot](#data-snapshot).
-2. **Sections.** Restrict matching to the document types that can carry law ([DR-5](#dr-5)), then split each bill on its section headings, falling back to fixed paragraph windows. Normalize the text and flag legal boilerplate such as enacting clauses, severability and effective dates, which would otherwise dominate the matches.
-3. **Near-duplicate stage.** Word shingles, MinHash signatures and LSH banding generate candidate pairs that share text, and each candidate is verified against its full signature ([DR-3](#dr-3)).
-4. **Semantic stage.** A local sentence-embedding model and an approximate nearest-neighbor index generate candidates that share meaning but not wording. This is a second candidate generator over every section, not a reranker of the first stage's output, so it can find pairs the first stage never proposed.
-5. **Merge and score.** Each match records which stage found it. A bill's score against another bill is the share of the *query* bill's text that falls in matched sections, so a provision inside a large omnibus still scores high.
-6. **Alignment.** Word-level alignment marks the spans that were copied exactly, the spans that were paraphrased, and the unmatched text.
-7. **Explanations.** For featured matches, a model summarizes what changed, citing span ids. The citations are validated in code.
-8. **Export.** Per-bill and per-story JSON for the static site ([DR-1](#dr-1), [DR-2](#dr-2)).
+2. **Text layer.** Where the export's text is unusable, fetch the bill's latest version from the legislature and extract it, then choose each record's text, fetched or exported, into one table that every later stage reads ([DR-6](#dr-6)). See [Text layer](#text-layer).
+3. **Sections.** Restrict matching to the document types that can carry law ([DR-5](#dr-5)), then split each bill on its section headings, falling back to fixed paragraph windows. Normalize the text and flag legal boilerplate such as enacting clauses, severability and effective dates, which would otherwise dominate the matches.
+4. **Near-duplicate stage.** Word shingles, MinHash signatures and LSH banding generate candidate pairs that share text, and each candidate is verified against its full signature ([DR-3](#dr-3)).
+5. **Semantic stage.** A local sentence-embedding model and an approximate nearest-neighbor index generate candidates that share meaning but not wording. This is a second candidate generator over every section, not a reranker of the first stage's output, so it can find pairs the first stage never proposed.
+6. **Merge and score.** Each match records which stage found it. A bill's score against another bill is the share of the *query* bill's text that falls in matched sections, so a provision inside a large omnibus still scores high.
+7. **Alignment.** Word-level alignment marks the spans that were copied exactly, the spans that were paraphrased, and the unmatched text.
+8. **Explanations.** For featured matches, a model summarizes what changed, citing span ids. The citations are validated in code.
+9. **Export.** Per-bill and per-story JSON for the static site ([DR-1](#dr-1), [DR-2](#dr-2)).
 
 ## Data snapshot
 
@@ -76,7 +78,7 @@ Open States snapshot ─► ingest ─► sections ─┬─► near-duplicate s
 
 **Session dates.** Bill status needs to know whether a session has ended, and the export has no session dates. `snapshot/sessions.csv` (committed) holds each snapshot session's start and end dates, read from the session lists in Open States' own scraper repository at a pinned commit, which the file's header names. `lineage sessions --commit <sha>` regenerates it. The command parses those Python modules as source and never imports or runs them, and it keeps only names and dates, not code. Some legislatures sit for two years while Open States publishes each year separately, and their bills carry over from the first year to the second. For those, the CSV names the session a bill carries over to, so a first-year bill stays alive until the biennium ends. Special sessions keep their own dates.
 
-**Extraction failures.** The export has no error flag. A record whose `raw_text` is missing or blank counts as a failed extraction: it stays in the `bills` table but cannot match anything. Blank means no character that Python's `str.isspace()` rejects. `lineage stats` reports the rate per state and session.
+**Extraction failures.** The export has no error flag. A record whose `raw_text` is missing or blank counts as a failed extraction. Blank means no character that Python's `str.isspace()` rejects. The text layer fetches those records' text from the legislatures ([Text layer](#text-layer)). A record with neither stays in the `bills` table but cannot match anything. `lineage text inventory` counts the export's failures, and `lineage stats` the records still without text after the merge, per state and session.
 
 ## Text layer
 
@@ -106,7 +108,7 @@ Open States stays the source for bills, actions and the links to each bill's ver
 
 **California.** California publishes its legislative database as a bulk download (`downloads.leginfo.legislature.ca.gov`), one zip per biennium, which state law places in the public domain. Each zip holds a table of bill versions and each version's text as XML. The fetch takes the latest active version of each record, by its action date and then its version number, keeps the measure and drops the digest and struck text, and holds it to the same usable bar. It downloads one biennium at a time, checks free space against the size the server declares before writing, and deletes the zip once read. Of the 2,409 records, 2,394 get usable text, 9 are short placeholder bills below the bar and 6, from a 2023 special session, are not in the download (`reports/text_fetch.json`).
 
-**The full fetch.** `lineage text fetch` fetches every planned record its state's rule allows, and writes outcomes per state to `reports/text_fetch.json`. Of 151,425 records, 146,815 get usable text. 3,646 links answer with an HTTP error, most of them in Montana (1,647), Ohio (1,060) and Kansas (393), whose exports name older URL schemes the sites no longer serve. 575 documents yield no text, mostly scanned PDFs without a text layer and encrypted PDFs, which pypdf reads only with an added cryptography package. 376 fall below the usable bar. 13,131 more are left out before fetching: 9,293 have no link, Indiana's 2,782 need an API key, 918 link only amendments, 133 point at New Hampshire's retired host, 4 link an unsupported format and Tennessee's 1 is disallowed.
+**The full fetch.** `lineage text fetch` fetches every planned record its state's rule allows, and writes outcomes per state to `reports/text_fetch.json`. Of 151,425 records, 146,816 get usable text. 3,646 links answer with an HTTP error, most of them in Montana (1,647), Ohio (1,060) and Kansas (393), whose exports name older URL schemes the sites no longer serve. 575 documents yield no text, mostly scanned PDFs without a text layer and encrypted PDFs, which pypdf reads only with an added cryptography package. 376 fall below the usable bar. 13,131 more are left out before fetching: 9,293 have no link, Indiana's 2,782 need an API key, 918 link only amendments, 133 point at New Hampshire's retired host, 4 link an unsupported format and Tennessee's 1 is disallowed.
 
 ## Bill status
 
@@ -171,7 +173,7 @@ Comparing every pair of sections is out of reach, so this stage summarizes each 
 
 **Exact arithmetic.** The product *a*<sub>*k*</sub>·*x* reaches 2<sup>93</sup>. Computed in NumPy's 64-bit integers it would wrap around before the remainder is taken, and the result would no longer belong to the family. The implementation splits *a*<sub>*k*</sub> at bit 32 and reduces each partial product using 2<sup>61</sup> ≡ 1 (mod *p*), so every value is exact. A test compares it with Python's arbitrary-precision integers on edge and random inputs.
 
-**Keeping 32 bits.** The final mod 2<sup>32</sup> halves the signature's size, but two different shingles can now share a value. For two sets of *n* shingles each, a false agreement at one position has probability about *n*/2<sup>33</sup>. The largest measured set has 261,326 shingles (`reports/index.json`), which puts the bias at about 3 × 10<sup>−5</sup>, against a standard error of up to 0.044.
+**Keeping 32 bits.** The final mod 2<sup>32</sup> halves the signature's size, but two different shingles can now share a value. For two sets of *n* shingles each, a false agreement at one position has probability about *n*/2<sup>33</sup>. The largest measured set has 260,073 shingles (`reports/index.json`), which puts the bias at about 3 × 10<sup>−5</sup>, against a standard error of up to 0.044.
 
 **Fixed parameters.** The 128 pairs (*a*<sub>*k*</sub>, *b*<sub>*k*</sub>) are drawn with SplitMix64 from a fixed seed rather than from a NumPy generator, because NumPy does not promise that its generators' streams stay the same across versions, and every stored signature depends on these numbers. A test pins them, along with sample signature values.
 
@@ -185,13 +187,13 @@ Comparing every pair of sections is out of reach, so this stage summarizes each 
 
 **S-curve test.** The curve assumes each band's four values come from independent permutations, which a linear hash family only approximates. So the test bands real signatures rather than simulated agreements: 500 pairs of sets at each of five similarities from 0.2 to 0.6, with the exact Jaccard similarity known by construction. At every level, the share of pairs that become candidates is within four binomial standard errors of the curve.
 
-**Band keys and buckets.** Each band's four values are hashed to one 64-bit key with SplitMix64's finalizer. Equal keys from unequal bands would only add a candidate that verification removes, and with two million sections a band expects fewer than 10<sup>−6</sup> of them. Each band's keys are sorted together with the row behind each key, and runs of equal keys are the buckets, so the index is two dense matrices of 12 bytes per section per band rather than millions of dictionary entries. It is stored in `bands/` beside the signatures and memory-mapped by queries. Pairs from all the buckets of one size are formed together from one matrix, and a pair that shares several bands is kept once.
+**Band keys and buckets.** Each band's four values are hashed to one 64-bit key with SplitMix64's finalizer. Equal keys from unequal bands would only add a candidate that verification removes, and with nearly three million sections a band expects fewer than 10<sup>−6</sup> of them. Each band's keys are sorted together with the row behind each key, and runs of equal keys are the buckets, so the index is two dense matrices of 12 bytes per section per band rather than millions of dictionary entries. It is stored in `bands/` beside the signatures and memory-mapped by queries. Pairs from all the buckets of one size are formed together from one matrix, and a pair that shares several bands is kept once.
 
-**Bucket cap.** A bucket larger than the cap yields no pairs, and `reports/index.json` counts the buckets, section memberships and pairs skipped. The large buckets are boilerplate that the stoplist misses because it is common only within one state, such as a state's own wording of effective-date, appropriation and transition clauses. A cap set too low would also cut real copying: interstate compacts put the same section into bills in dozens of states. So the report sweeps a range of caps and, for each, counts the buckets skipped, those spanning more than one state, and the cross-state candidates the cap removes for good, after checking every band a pair shares. The cap is 1,000, the smallest cap in the sweep that removes cross-state candidates from no more than one bucket. It is a performance guard, not a precision control: verification and the boilerplate rules decide what counts as a match. Raising it from 500 to 1,000 brought back 2,005 cross-state candidates, and none of them verified. Every build reports the cross-state candidates its cap drops (`lsh.capped.cross_state_pairs_lost`), and when the recall eval loses an enactment to the cap, its miss reason says so. The numbers are under [Measured facts](#measured-facts).
+**Bucket cap.** A bucket larger than the cap yields no pairs, and `reports/index.json` counts the buckets, section memberships and pairs skipped. The large buckets are boilerplate that the stoplist misses because it is common only within one state, such as a state's own wording of effective-date, appropriation and transition clauses. A cap set too low would also cut real copying: interstate compacts put the same section into bills in dozens of states. So the report sweeps a range of caps and, for each, counts the buckets skipped, those spanning more than one state, and the cross-state candidates the cap removes for good, after checking every band a pair shares. The cap is 1,000, the smallest cap in the sweep that removes cross-state candidates from no more than one bucket. It is a performance guard, not a precision control: verification and the boilerplate rules decide what counts as a match. Raising it from 500 to 1,000 brings back 8,055 cross-state candidates (`lsh.cap_sweep`). Every build reports the cross-state candidates its cap drops (`lsh.capped.cross_state_pairs_lost`), and when the recall eval loses an enactment to the cap, its miss reason says so. The numbers are under [Measured facts](#measured-facts).
 
 **Verification.** Each candidate's similarity is re-estimated from all 128 values and kept as the count of agreeing positions, one byte per pair. Pairs estimated below 0.5, fewer than 64 agreements, are dropped. The threshold of 0.5 is proposed. At 0.5 the S-curve already proposes 87% of pairs, so what verification keeps is what the bands find reliably, while below the curve's midpoint whether a pair is proposed at all is largely chance. The candidates' estimates show no valley to set the threshold by: cross-state candidates spread from 0.1 to 1 (`reports/index.json`, `pairs.estimate_histogram`). Partial or reworded copying below the threshold is the semantic stage's to find, and the ablation sweeps the threshold. Verified cross-state pairs are stored in `pairs/` by signature row. Same-state pairs serve only to form families.
 
-**Families.** A state files the same text many times: companion bills in each chamber, a bill refiled in a later session, or one template for many resolutions. Lineage counts the other states that carry a provision, so each state's copies are grouped into a family that counts once. Two bills of one state are linked when, in each direction, at least 80% of the bill's signed sections have a verified match among the other's, and families are the connected components of the links. Requiring a share, not any one match, keeps a clause both bills happen to share from linking them. Requiring it in both directions keeps an omnibus bill from absorbing each small bill it contains. The share of 0.8 is proposed and was set from the measured distribution (`reports/index.json`, `families.min_share_histogram`). Shares spike at the fractions of small bills, 1/3, 1/2, 2/3 and 3/4, where a short bill shares one or two clauses with another, and again at 1. Between 0.70 and 0.95 they are sparse, and 0.8 sits there, past the 3/4 spike. The report's sweep shows what a lower share costs: at 0.5 the largest family grows to 1,514 bills and at 2/3 to 815, chained through shared clauses, while from 0.75 up it stays at 764. The largest families are one template filed many times, such as Georgia's notices of local bills, New Mexico's placeholder bills and Massachusetts's study orders, which is what a family should collapse. A family is named by its first bill id in sort order and stored in `families/`.
+**Families.** A state files the same text many times: companion bills in each chamber, a bill refiled in a later session, or one template for many resolutions. Lineage counts the other states that carry a provision, so each state's copies are grouped into a family that counts once. Two bills of one state are linked when, in each direction, at least 80% of the bill's signed sections have a verified match among the other's, and families are the connected components of the links. Requiring a share, not any one match, keeps a clause both bills happen to share from linking them. Requiring it in both directions keeps an omnibus bill from absorbing each small bill it contains. The share of 0.8 is proposed and was set from the measured distribution (`reports/index.json`, `families.min_share_histogram`). Shares spike at the fractions of small bills, 1/3, 1/2, 2/3 and 3/4, where a short bill shares one or two clauses with another, and again at 1. Between 0.70 and 0.95 they are sparse, and 0.8 sits there, past the 3/4 spike. The report's sweep shows what a lower share costs: at 0.5 the largest family grows to 1,272 bills and at 2/3 to 643, chained through shared clauses, while from 0.75 up it stays at 318. The largest families are one template filed many times, such as New Mexico's placeholder bills, Massachusetts's study orders and its placeholders for drafts with House counsel, which is what a family should collapse. A family is named by its first bill id in sort order and stored in `families/`.
 
 **Query.** `lineage query FILE` treats a bill's text exactly as the corpus was treated: it is cleaned, split and normalized, boilerplate-only sections are set aside, and the rest are shingled, stoplisted and signed. Each signature's band keys are found in the memory-mapped band index by binary search, and a bucket over the cap yields nothing, as in the build. Each candidate is verified against its stored signature at the build's threshold. Matches are grouped by family and ranked by the share of the query's signed sections that the family matches, scored from the query's side so a provision carried inside a larger bill still ranks high. A query reads only the index pages its keys land on and needs no network or API key. Results are shown through each family's best-matching bill, with the family's size.
 
@@ -232,7 +234,7 @@ The threshold comes from the measured scores, and recall at higher thresholds is
 **Miss reasons.** Each miss is classified automatically. Each bill an enactment names gets the first reason that applies, and the enactment takes the reason of the bill that got furthest through the pipeline. The stage reasons are measured by replaying LSH and verification on the bill's own stored signatures, with the query's band keys, the bucket cap and the verification threshold.
 
 - `not_in_corpus`: no bill the cell names is in the snapshot in the session years.
-- `no_text_in_source`: the export has no text for the bill, as for every Connecticut, Maine and South Dakota record.
+- `no_text_in_source`: the bill has no text in the corpus, exported or fetched.
 - `amendment_only`: the stored text is an amendment that does not replace the whole bill (see [Known failure modes](#known-failure-modes)).
 - `excluded_type`: the document-type rules exclude the record ([DR-5](#dr-5--match-only-document-types-that-can-carry-law)).
 - `no_usable_text`: the text yields no signed section, because every section is boilerplate or stoplisted.
@@ -249,7 +251,7 @@ The threshold comes from the measured scores, and recall at higher thresholds is
 
 | Alternative | Reason rejected | Evidence |
 |---|---|---|
-| Compare all pairs | Quadratic in the number of sections: about 2.4 × 10¹² pairs at the measured *N* | Arithmetic on the measured section count |
+| Compare all pairs | Quadratic in the number of sections: about 5.1 × 10¹² pairs at the measured *N* | Arithmetic on the measured section count |
 | Embeddings only | No exact-span evidence to highlight, a higher cost per section, and weaker on legal boilerplate that sounds alike | To be measured by the stage ablation (M4) |
 | Embeddings as a reranker of LSH candidates | A reranker can only reorder pairs LSH already proposed, so it can never recover a paraphrase LSH missed | Follows from the design |
 | Whole bills as the unit | Dilutes provisions carried inside omnibus bills | Commission-recall misses show the cost at a smaller scale: a bill split into a few chapter-sized sections is never proposed against the act's short ones (`reports/results.json`, each bill's `signed_sections` and `stage`) |
@@ -261,7 +263,7 @@ The threshold comes from the measured scores, and recall at higher thresholds is
 
 ## Scaling limits
 
-The section count sets the size of everything downstream. The 2,058,452 signed sections' MinHash signatures take 1.05 GB, and their band index 0.79 GB (`uv run lineage index` → `reports/index.json`, `signature_bytes` and `lsh.index_bytes`). Ten times the corpus is about 18 GB, which no longer fits comfortably in a laptop's memory.
+The section count sets the size of everything downstream. The 2,898,515 signed sections' MinHash signatures take 1.48 GB, and their band index 1.11 GB (`uv run lineage index` → `reports/index.json`, `signature_bytes` and `lsh.index_bytes`). Ten times the corpus is about 26 GB, which no longer fits comfortably in a laptop's memory.
 
 | Pressure | What breaks first at 10× | Response |
 |---|---|---|
@@ -279,13 +281,13 @@ These carry into the README's known-failure-modes section. Each has a mitigation
 | Failure | Effect | Mitigation or disclosure |
 |---|---|---|
 | The stored text is often the introduced version ([Open States stores one version's text per bill](https://github.com/openstates/openstates-core/blob/main/openstates/data/models/bill.py)) | Amendments made during passage are invisible to "what changed" | Fetch enacted versions for featured matches; measure the share of enacted bills stored as introduced text and state it |
-| Text extraction failed, or the source is a scanned image | No text, so no matches. This includes enacted bills in states that otherwise have text, and 1,392 Texas records whose text is only a notice to see the PDF | Measured per state and session (`reports/coverage.json`). The recall eval names "no text in source" as a miss reason and reports recall both over all enactments and over enactments with text |
+| Text extraction failed, or the source is a scanned image | No text, so no matches. This includes enacted bills in states that otherwise have text | The text layer fetches the legislature's version where the export has none, and what it could not fetch is counted per state (`reports/text_fetch.json`). What is still missing is measured per state and session (`reports/coverage.json`). The recall eval names "no text in source" as a miss reason and reports recall both over all enactments and over enactments with text |
 | Amendment-style bills | New text sits inside old statute text, so matches can land on the old law | Drop struck text where its markup survives extraction; section-level scoring limits the damage |
 | Omnibus bills | The provision is a small share of the bill | Score from the query side; display matches by section |
 | Boilerplate leakage | False matches on shared clauses | Document-frequency stoplist, the LSH bucket cap, and the ablation's false-match rate |
 | A state's own boilerplate that stays under both the bucket cap and the corpus-wide stoplist | A query section carrying such a clause, such as a state's standard request for a federal waiver, matches hundreds of that state's bills, each listed as a family with a small share | Results rank by the share of the query matched, so whole-bill relatives lead. A per-state stoplist, counted over families, is tested in the ablation (M4) |
 | The stored text is an amendment, not the bill | An amendment that changes a few lines can match only on those lines, so the bill it amends is missed or scores low. 5,737 records in 13 states are such partial amendments (`reports/coverage.json`, `amendment_only`) | Counted per state and session from each text's opening. A substitute that replaces the whole bill is counted too but matches like a bill. Disclosed |
-| A Georgia local bill whose stored text is only its notice | Georgia publishes a notice of intention before a local bill is introduced, and for 774 of its bills the export stores that notice and the sponsor's affidavit in place of the bill: 318 in 2023–24, 3 in the 2023 special session, 355 in 2025–26 and 98 in the 2026 special session (`uv run lineage stats` → `reports/coverage.json`, `georgia_local_notices`). Georgia is the hosted state, so these bill pages have no bill text to compare, and 764 of them form one family through the shared notice wording (`reports/index.json`, `families.largest`) | They can match no other state through the notice, so cross-state counts are unaffected. Disclosed as a known gap. How the site shows these bills is decided when the site is built |
+| A Georgia local bill whose stored text is only its notice | Georgia publishes a notice of intention before a local bill is introduced, and for 774 of its bills the export stores that notice and the sponsor's affidavit in place of the bill: 318 in 2023–24, 3 in the 2023 special session, 355 in 2025–26 and 98 in the 2026 special session (`uv run lineage stats` → `reports/coverage.json`, `georgia_local_notices`). The text layer fetches these records' bills from the legislature: Georgia's 1,098 planned records, the notices among them, get usable text for 1,077 (`reports/text_fetch.json`), and the notices no longer form one large family (`reports/index.json`, `families.largest`) | A notice that remains can match no other state, so cross-state counts are unaffected. Disclosed per record. How the site shows these bills is decided when the site is built |
 | A citation heading the splitter misses, or one it takes wrongly | A missed citation leaves a chapter as one section, which cannot match a copied provision's sections. A wrong one splits a section at a cross-reference or a table of contents | Citation headings are taken only in bills that already split at section headings, and only when the line before does not lead into a citation (see [Sections](#sections)). A New York article's table of contents lists its sections by citation, and each listed line becomes a section holding only that caption |
 | A copied section that sits in an LSH bucket over the cap in every band it shares | The pair is never proposed | Each build counts the cross-state pairs the cap drops (`reports/index.json`), and the recall eval names "bucket cap" as a miss reason |
 | Legal phrasing that sounds alike | The semantic stage pairs unrelated sections | Label meaning-only matches as such, tune the cosine threshold, and run the precision sample |
@@ -293,7 +295,7 @@ These carry into the README's known-failure-modes section. Each has a mitigation
 | Similarity has no direction | An earlier bill is not necessarily the source | Copy states timing only, never "copied from" |
 | Legislative status is not legal standing | A law struck down in court still shows as passed | A legend line wherever status is shown |
 | A bill awaiting the governor when the session ended, whose outcome the export never recorded | Shows as died | `lineage stats` counts these per state and type (`reports/coverage.json`, `status_gaps`) |
-| A state publishes no extracted text | Its bills cannot match: Connecticut, Maine and South Dakota have no text for any eligible record (`reports/document_types.json`, `states_without_text`) | Excluded and disclosed per state. Their version links point to PDFs. A short test of Open States' own per-state conversion functions on a sample of documents decides whether to extract them, after checking that library's license and each state site's robots.txt |
+| The export has no extracted text for a state | Its bills cannot match on the export alone: Connecticut, Maine and South Dakota have no usable exported text for any eligible record (`reports/coverage.json`, `text_layer`, `usable_exported`) | The text layer fetches their PDFs: 9,255 of Connecticut's 9,260 eligible records, 4,552 of Maine's 4,665 and 2,044 of South Dakota's 2,049 yield sections (`text_layer.states`). A state left with no text would show in `reports/document_types.json`, `states_without_text` |
 | A stale snapshot | Bills filed after an archive was generated are missing, and archives were generated at different times | Every page carries the Generated At dates of the archives it draws on |
 | A substantive measure filed under an excluded document type | It can never be found | Excluded records stay in `bills`, and the recall eval names "excluded type" as a miss reason ([DR-5](#dr-5)) |
 | A state whose resolution titles mark constitutional amendments in a way no rule reads yet | Its amendments are excluded with its resolutions. Nebraska's, Michigan's and Rhode Island's resolutions carry constitution titles whose conventions are not yet checked | Listed as a known gap; each is admitted by a rule once its convention is checked and counted ([DR-5](#dr-5)) |
@@ -305,51 +307,56 @@ Each entry names the command that produces it and the committed file it reads fr
 **Snapshot** (`uv run lineage snapshot` → `snapshot/manifest.json`). 220 archives, 6.42 GiB, for the 50 states' sessions overlapping 2023–2026. Generated At dates run from 2023-03-01 to 2026-11-05. `reports/coverage.json` gives the range per state.
 
 **Text coverage** (`uv run lineage stats` → `reports/coverage.json`).
-- Of 525,633 records, 11,675 have no text and 141,770 have blank text. 1,394 have text that cleaning reduces to nothing, 1,392 of them Texas notices that a version's text is not available and the PDF should be consulted. 370,794 (70.5%) yield sections.
+- Of 525,633 records, 2,975 have no text and 28,629 have blank text. 6, all in Texas, have text that cleaning reduces to nothing. 494,023 (94.0%) yield sections.
 - In Georgia, 774 records hold only a local bill's notice of intention and its affidavit, with no bill text (`georgia_local_notices`, per session). They yield sections from the notice, so they count as text here; the known failure modes below say what that costs.
 - 7,588 records store an amendment in place of the bill (`totals.amendment_only`, and `amendment_only` per session). 1,851 of them replace everything after the enacting clause, so they carry a full substitute text. The other 5,737 hold only the lines they change. By state: Louisiana 3,242, Illinois 1,807 (1,201 substitutes), Pennsylvania 376, Virginia 358 (all substitutes), Oklahoma 293, Vermont 276, Wisconsin 256, Delaware 233, Oregon 229, New Hampshire 220, Georgia 207, Nebraska 54, Mississippi 31 and Alabama 6.
-- Connecticut, Maine and South Dakota publish blank text for every record. Maryland, Nebraska, New Hampshire, Montana and Indiana have text for under a third of their records.
+- In the export, Connecticut, Maine and South Dakota have no usable text for any eligible record (`text_layer`, `usable_exported`); with the fetched text, nearly all of their eligible records yield sections. Indiana alone yields sections for under a third of its records (1,175 of 3,957 eligible), because its documents are served only through an API that needs a key.
 
 **Sections** (same command and file).
-- 2,340,883 sections.
-- The heading rule splits 257,108 of the 370,794 bills with text (69.3%), and the window fallback splits the rest.
-- Ohio, Washington, New Hampshire and New Jersey split almost entirely by windows (99.8% or more), and Missouri nearly so (97.9%). Their exports lack line breaks or section numbers, or number sections without the word "Section".
+- 3,203,145 sections.
+- The heading rule splits 349,974 of the 494,023 bills with text (70.8%), and the window fallback splits the rest.
+- New Jersey and New Hampshire split almost entirely by windows (99.9% and 99.7%), and Missouri nearly so (96.3%). Their texts carry no section headings the splitter recognizes. Ohio's and Washington's exports split almost entirely by windows too, for lack of line breaks; their fetched text replaces the export ([Text layer](#text-layer)), and now 68.9% of Ohio's and 8.7% of Washington's records split by windows.
 
 **Document types** (same command and file). Record counts by classification per state, the title-pattern count of likely commemorative measures within each type, and status by type. These set DR-5's type rules.
 
-**Eligibility** (`uv run lineage eligible` → `reports/document_types.json`). 447,389 of 525,633 records are of an eligible type, and 307,659 of those yield sections. Every rule's count, per state, is in the file, and for a rule with an `unless` pattern, the count per state of the titles it spared. The titles themselves are not committed, because commemorations name private people. `uv run lineage stats --samples` writes a sample of each title rule's titles and every spared title to `data/reports/document_type_samples.json`, a local file anyone can reproduce from the pinned snapshot.
+**Eligibility** (`uv run lineage eligible` → `reports/document_types.json`). 447,389 of 525,633 records are of an eligible type, and 430,888 of those yield sections. Every rule's count, per state, is in the file, and for a rule with an `unless` pattern, the count per state of the titles it spared. The titles themselves are not committed, because commemorations name private people. `uv run lineage stats --samples` writes a sample of each title rule's titles and every spared title to `data/reports/document_type_samples.json`, a local file anyone can reproduce from the pinned snapshot.
 
-**Boilerplate** (`uv run lineage boilerplate` → `reports/boilerplate.json`). Sections flagged by each pattern, and the shingles and shingle occurrences that each candidate stoplist threshold removes. 2,081,174 sections are matchable. At the proposed 0.1% share, 3,359 shingles are stoplisted, removing 3.6% of shingle occurrences.
+**Boilerplate** (`uv run lineage boilerplate` → `reports/boilerplate.json`). Sections flagged by each pattern, and the shingles and shingle occurrences that each candidate stoplist threshold removes. 2,922,807 sections are matchable. At the proposed 0.1% share, 3,910 shingles are stoplisted, removing 4.2% of shingle occurrences.
 
-**Signatures** (`uv run lineage index` → `reports/index.json`). 2,058,452 of the 2,081,174 matchable sections are signed. 22,720 are shorter than five words, and 2 lose every shingle to the stoplist. After the stoplist, the median section has 146 distinct shingles, the 99th percentile 1,933 and the largest 261,326. The signatures take 1.05 GB.
+**Signatures** (`uv run lineage index` → `reports/index.json`). 2,898,515 of the 2,922,807 matchable sections are signed. 24,287 are shorter than five words, and 5 lose every shingle to the stoplist. After the stoplist, the median section has 137 distinct shingles, the 99th percentile 2,116 and the largest 260,073. The signatures take 1.48 GB.
 
-**LSH bands** (same command and file, `lsh`). The band index takes 0.79 GB. At 32 × 4 with the cap at 1,000, the bands propose 20,934,941 distinct candidate pairs, of which 452,713 (2.2%) cross state lines. The largest bucket holds 1,847 sections. Summed over bands, the cap skips 37 buckets and the 28,317,289 pairs inside them, none spanning two states, so no cross-state candidate is lost. The cap sweep:
+**LSH bands** (same command and file, `lsh`). The band index takes 1.11 GB. At 32 × 4 with the cap at 1,000, the bands propose 34,792,634 distinct candidate pairs, of which 847,998 (2.4%) cross state lines. The largest bucket holds 2,475 sections. Summed over bands, the cap skips 153 buckets and the 178,249,058 pairs inside them, none spanning two states, so no cross-state candidate is lost. The cap sweep:
 
 | Cap | Buckets skipped | Of those, spanning more than one state | Most states in a skipped bucket | Cross-state candidates lost |
 |---|---|---|---|---|
-| 100 | 3,710 | 60 | 35 | 92,783 |
-| 200 | 1,750 | 33 | 35 | 55,231 |
-| 500 | 357 | 2 | 2 | 2,005 |
-| 1,000 | 37 | 0 | 1 | 0 |
-| 2,000 | 0 | 0 | 0 | 0 |
+| 100 | 5,713 | 176 | 39 | 231,342 |
+| 200 | 2,579 | 53 | 39 | 117,429 |
+| 500 | 881 | 12 | 3 | 8,055 |
+| 1,000 | 153 | 0 | 1 | 0 |
+| 2,000 | 4 | 0 | 1 | 0 |
 
-**Verification and families** (same command and file, `pairs` and `families`). 14,361,827 of the 20,934,941 candidates verify at an estimate of 0.5 or more, 197,548 of them across state lines, and 6,573,114 are dropped. The stored cross-state pairs take 1.8 MB. 9,643,736 pairs of same-state bills share a verified section. 433,189 of them reach a share of 0.8 in both directions, and they form 63,424 families of two or more bills, 165,933 bills in all. The largest holds 764. The share sweep:
+**Verification and families** (same command and file, `pairs` and `families`). 23,003,180 of the 34,792,634 candidates verify at an estimate of 0.5 or more, 386,803 of them across state lines, and 11,789,454 are dropped. The stored cross-state pairs take 3.5 MB. 15,537,626 pairs of same-state bills share a verified section. 391,830 of them reach a share of 0.8 in both directions, and they form 87,135 families of two or more bills, 227,125 bills in all. The largest holds 318. The share sweep:
 
 | Share | Linked bill pairs | Families of two or more | Bills in them | Largest family |
 |---|---|---|---|---|
-| 0.5 | 995,973 | 66,213 | 205,682 | 1,514 |
-| 2/3 | 640,544 | 66,223 | 183,402 | 815 |
-| 0.75 | 452,152 | 64,796 | 171,337 | 764 |
-| 0.8 | 433,189 | 63,424 | 165,933 | 764 |
-| 0.9 | 413,642 | 61,306 | 158,136 | 764 |
-| 1.0 | 406,501 | 60,208 | 154,480 | 764 |
+| 0.5 | 1,362,594 | 92,587 | 296,257 | 1,272 |
+| 2/3 | 748,182 | 92,856 | 259,651 | 643 |
+| 0.75 | 424,627 | 89,404 | 237,007 | 318 |
+| 0.8 | 391,830 | 87,135 | 227,125 | 318 |
+| 0.9 | 355,378 | 83,379 | 212,751 | 318 |
+| 1.0 | 342,641 | 81,781 | 206,651 | 318 |
 
-**MinHash engines** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`). On one core of an Apple M1 Max, signing every section took 271 s with the NumPy implementation and 105 s with datasketch's batch path. Signatures hold 512 and 785 bytes per section. Building the LSH index over the same stored signatures took 11.5 s with NumPy, adding 0.70 GiB, at a peak of 2.2 GiB with the signatures included. datasketch's insertion session reached the 16 GiB bound after 2,025,000 of the 2,058,712 sections, holding 14.9 GiB of index, and the benchmark stopped it. See [DR-3](#dr-3).
+**MinHash engines** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`). On one core of an Apple M1 Max, signing every section took 397 s with the NumPy implementation and 150 s with datasketch's batch path. Signatures hold 512 and 785 bytes per section. Building the LSH index over the same stored signatures took 18.8 s with NumPy, adding 0.98 GiB, at a peak of 3.1 GiB with the signatures included. datasketch's insertion session reached the 16 GiB bound after 2,000,000 of the 2,898,515 sections, holding 14.6 GiB of index, and the benchmark stopped it. See [DR-3](#dr-3).
 
 **To be measured.**
 - Commission recall, pooled and by act (`lineage eval commission`, M3).
 - Stage ablation: recall and precision for each stage alone and both together (M4).
 - Cost and runtime per stage (M5).
+
+## Future work
+
+- **Replace Open States entirely.** The project owns bill text and still depends on Open States for bill data, so it watches two sources for change: the export's output and the legislatures' sites behind it. Its own scrapers for bill data and text, and its own mirror of the fetched text, would leave one. The bills and texts tables are the interface that change would sit behind ([DR-6](#dr-6)).
+- **Moved links.** 3,646 planned links answer with an HTTP error (`reports/text_fetch.json`), most of them in Montana (1,647), Ohio (1,060) and Kansas (393), whose exports name URL schemes the sites have since replaced. A per-host rewrite, checked on a sample as Illinois's retired host was, would recover those still served under the new scheme.
 
 ## Decision records
 
@@ -434,10 +441,10 @@ Existing team expertise with Next.js is a secondary, maintainability factor: it 
 
 The benchmark puts both engines through the same work. It runs datasketch through its batch path, never a per-shingle loop, so the comparison is with the library at its best. It records wall-clock time and peak memory for building the signatures and the LSH index, on the full corpus.
 
-**Measured in step 10** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`; Apple M1 Max, 10 cores, 32 GiB). The comparison concerns cost per section, so it is re-run when the corpus changes by more than 5%. Step 10's run gave each engine one core and the same 1,916,250 stoplisted sections. Splitting at citation headings later raised the signed sections to 2,058,712, 7.4% more, so the benchmark was re-run on them, 475,914,210 shingles in all (`engines.numpy.sections` in the report). Making the commission's standard sections boilerplate then left 2,058,452 (`reports/index.json`), 0.01% fewer. The figures below are from the re-run. Step 10's report is in git history (`git show 714f085:reports/minhash_benchmark.json`), and its signing times differ from the re-run's by under 4%.
+**Measured in step 10** (`uv run python -m benchmarks.minhash` → `reports/minhash_benchmark.json`; Apple M1 Max, 10 cores, 32 GiB). The comparison concerns cost per section, so it is re-run when the corpus changes by more than 5%. Step 10's run gave each engine one core and the same 1,916,250 stoplisted sections. Splitting at citation headings later raised the signed sections to 2,058,712, 7.4% more, so the benchmark was re-run on them (`git show 7d2ab87:reports/minhash_benchmark.json`). Fetching bill text from the legislatures ([DR-6](#dr-6)) then raised them to 2,898,515, 40.8% more, and it was re-run again on those, 701,857,057 shingles in all (`engines.numpy.sections` in the report). The figures below are from that run. Step 10's report is in git history (`git show 714f085:reports/minhash_benchmark.json`). Signing time per million shingles has stayed within 4% across the three runs, so the times grow with the corpus and the ratio between the engines holds.
 
-- **Signing time.** The NumPy implementation took 271 s and datasketch 105 s. The context above expected per-element Python work to dominate datasketch's time. On this corpus it does not.
-- **Signature memory.** The NumPy matrix holds 512 bytes per section and datasketch's objects 785 (`tracemalloc`, on a 20,000-section sample), or 1.05 GB against 1.62 GB for the corpus.
+- **Signing time.** The NumPy implementation took 397 s and datasketch 150 s. The context above expected per-element Python work to dominate datasketch's time. On this corpus it does not.
+- **Signature memory.** The NumPy matrix holds 512 bytes per section and datasketch's objects 785 (`tracemalloc`, on a 20,000-section sample), or 1.48 GB against 2.27 GB for the corpus.
 
 **Why signing is slower here.** The cost is the permutation arithmetic, not data layout. datasketch 2.0's default scheme computes *a*·*x* + *b* in wrapping 32-bit integers: two array operations on 4-byte values for each shingle and permutation. The exact (*a*·*x* + *b*) mod *p* takes about sixteen operations on 8-byte values (`minhash._hash_into`), and NumPy runs each as a separate pass over the run's arrays. A profile on one core found that hash to be nearly all of the signing time, and changing the run length or removing the two temporary arrays it allocates did not change the time materially. No small fix remains. Fusing the passes needs compiled code, which the options above rejected. A multiply-add modulo 2<sup>32</sup> would change every stored signature, and its accuracy would rest on empirical tests rather than on the pairwise independence of the mod-*p* family. Signing runs once per snapshot, in parallel, so the gap is left as it is.
 
@@ -449,7 +456,7 @@ The benchmark puts both engines through the same work. It runs datasketch throug
 
 datasketch therefore met both conditions of the criterion as first written, with 4% of the memory bound to spare.
 
-**The re-run** (`reports/minhash_benchmark.json`, `lsh`). On the 2,058,712 sections, datasketch reached the 16 GiB bound after inserting 2,025,000, holding 14.9 GiB of index, and the watchdog stopped it. NumPy built the whole index in 11.5 s, adding 0.70 GiB, at a peak of 2.2 GiB. On the current corpus, datasketch fails even the criterion as first written.
+**The re-runs** (`reports/minhash_benchmark.json`, `lsh`). On the 2,898,515 sections of the current corpus, datasketch reached the 16 GiB bound after inserting 2,000,000, holding 14.6 GiB of index, and the watchdog stopped it, as it had on the 2,058,712 of the first re-run. NumPy built the whole index in 18.8 s, adding 0.98 GiB, at a peak of 3.1 GiB. On the current corpus, datasketch fails even the criterion as first written.
 
 **The criterion was incomplete.** It left out two requirements that the project's plan had set before the benchmark ran, though this document did not state them until now ([Constraints](#constraints)). The prebuilt index ships as release assets, each under GitHub's 2 GiB per-file limit. `lineage query` runs offline on a user's laptop after one download of those assets. Both were added to the criterion after the step 11 result was known. That is the kind of after-the-fact change that fixing the memory bound in advance was meant to rule out, so it is stated here for the reader to weigh.
 
@@ -459,9 +466,9 @@ datasketch therefore met both conditions of the criterion as first written, with
 - Rebuilding it on the user's machine from the signatures took 571 s on the reference laptop in step 11 and peaked at 15.3 GiB, more than a laptop with 16 GiB of memory can hold.
 - The 4% of headroom that step 11 left on the reference laptop was gone after 7.4% more sections.
 
-This project's index is two `.npy` matrices, 0.79 GB in all (`reports/index.json`, `lsh.index_bytes`), each under the limit. A query memory-maps them and reads only the pages its keys land on.
+This project's index is two `.npy` matrices, 1.11 GB in all (`reports/index.json`, `lsh.index_bytes`), each under the limit. A query memory-maps them and reads only the pages its keys land on.
 
-**The hybrid, rejected.** datasketch's signing feeding this project's band index would meet the full criterion. It would save at most the 165 s of single-core signing time that the re-run measured, less once spread over the worker processes of a build that runs once per snapshot. In exchange, datasketch would become a runtime dependency rather than a test oracle, and the signatures would depend on its hash scheme staying fixed across releases.
+**The hybrid, rejected.** datasketch's signing feeding this project's band index would meet the full criterion. It would save at most the 246 s of single-core signing time that the latest run measured, less once spread over the worker processes of a build that runs once per snapshot. In exchange, datasketch would become a runtime dependency rather than a test oracle, and the signatures would depend on its hash scheme staying fixed across releases.
 
 **Consequences.**
 
@@ -534,9 +541,10 @@ The filter does not bias the recall eval. It selects on what kind of document a 
 
 **Would reverse it.** If the recall eval shows any listed enactment lost to "excluded type", the rule that excluded it is revised. If the precision sample shows commemorative text still producing matches, the rules widen. The exclusion of resolutions as a whole is reopened when a user wants to trace resolution campaigns, such as the same request to Congress filed in many states. That use needs the excluded types matched as their own corpus, not mixed into bill pages.
 
+<a id="dr-6"></a>
 ### DR-6 · Own the text layer
 
-**Status:** proposed, 2026-11-06. The quality test (`reports/text_quality.json`) decides which states, formats and PDF readings are fetched.
+**Status:** accepted, 2026-11-07. The quality test (`reports/text_quality.json`) decided which states, formats and PDF readings are fetched, and the full fetch (`reports/text_fetch.json`) and both recall runs measured the result.
 
 **Context.** Open States' bulk export carries each bill's text as extracted by its scrapers. For 145,946 of 447,389 eligible records the text is unusable (`reports/text_inventory.json`): blank for 129,633, absent for 8,708, an amendment in place of the bill for 5,442. The gap is not three states, as first assumed. It covers whole sessions (Hawaii 2024 and 2025, Virginia 2025 and 2026, Massachusetts's 193rd) and most records of New Jersey, Maryland and Montana. A record with no text cannot match anything, so recall over the corpus is capped by upstream extraction. The export does keep the links to every version of each bill, on the legislatures' own sites.
 
@@ -545,12 +553,14 @@ The filter does not bias the recall eval. It selects on what kind of document a 
 - Run Open States' scrapers. They also scrape bills, votes and people, need per-state configuration, and their code is GPL-3.0, which cannot be imported into this MIT repository. Reading their extraction for reference is fine.
 - Fetch and extract the linked versions ourselves, per state where needed.
 
-**Decision.** Own the text, not the metadata. Open States stays the source of bills, actions, status and version links. The project fetches the latest version of each bill itself from the legislature, extracts it, and records the text's source (the export or the fetch), its version label, URL and SHA-256. Scrapers, session lists and bill metadata stay upstream.
+**Decision.** Own the text, not the metadata. Open States stays the source of bills, actions, status and version links. The project fetches the latest version of each bill itself from the legislature, or from California's bulk download, extracts it, and records the text's source (the export, the fetch or the bulk download), its version label, URL and SHA-256. Scrapers, session lists and bill metadata stay upstream. The bills table is the boundary: ingest maps Open States' fields to the project's own names (`text`, `text_url`, each action's `body`), `lineage text merge` writes each record's chosen text to the `texts` table, and every later stage reads only those two tables. Replacing the source means replacing ingest and the fetch plan; splitting, matching and the evals do not change.
 
 **Consequences.**
 - Per-state extraction becomes this project's maintenance. Fixture tests pin each extractor's behavior, and the quality test runs before every full fetch.
 - The fetch is a network step outside the pinned snapshot. Its output is pinned the same way: each text's URL, version and SHA-256 are kept, so a rebuild can show what changed.
 - Coverage and recall are reported both ways, with the export's text alone and with the fetched text, so the gain is measured rather than assumed.
 - Hosts whose robots.txt bars this project, or that do not serve the text, stay disclosed as gaps.
+
+**Result.** What failed upstream was extraction, not the bills: the records were present with their version links, and their text was blank, absent or an amendment. Fetching those versions gives usable text to 146,816 of 151,425 planned records (`reports/text_fetch.json`). Of 447,389 eligible records, Open States' text is usable for 301,443; with the fetched text, 430,888 yield sections, 144,422 of them from fetched text and 2,394 from California's download (`uv run lineage stats` → `reports/coverage.json`, `text_layer`). Commission recall over all 36 enactments rises from 20 to 25. The export-only run is `uv run lineage text merge --exported-only`, then the pipeline through `uv run lineage eval commission --results reports/results_exported_only.json`; the same commands without those options give `reports/results.json`. Four enactments without exported text are found once their text is fetched, and one in Washington once its text is replaced. Every enactment now has text, so the 11 still missed are lost at the near-duplicate stage: 8 never proposed and 3 at verification.
 
 **Would reverse it.** If a snapshot of the export has usable text for nearly every eligible record, measured the same way, the fetch is retired for those states. If the quality test finds the fetched text no cleaner than the export's where both exist, the project keeps the export's text and discloses the gap. A legislature that asks not to be fetched is removed whatever its robots.txt says.

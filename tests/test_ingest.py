@@ -60,9 +60,7 @@ def test_missing_text_is_null_and_blank_text_is_kept_blank(
     ingest(raw_dir, manifest, SESSIONS, out, floor_bytes=0)
 
     rows = dict(
-        _bills(out)
-        .execute("SELECT state, raw_text FROM bills WHERE state IN ('HI', 'AK')")
-        .fetchall()
+        _bills(out).execute("SELECT state, text FROM bills WHERE state IN ('HI', 'AK')").fetchall()
     )
 
     assert rows == {"HI": None, "AK": ""}

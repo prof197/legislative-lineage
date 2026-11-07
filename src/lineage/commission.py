@@ -207,6 +207,7 @@ def evaluate(
         bills = queries.enactment_bills(
             con,
             bills_glob=str(tables_dir / "bills" / "*.parquet"),
+            texts_glob=str(tables_dir / "texts" / "*.parquet"),
             eligible_path=tables_dir / "eligible.parquet",
             families_path=tables_dir / "families" / "families.parquet",
             states=sorted({r.state for r in counted if r.state is not None}),

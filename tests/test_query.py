@@ -20,7 +20,7 @@ def _run(*args: str) -> str:
 def _raw_text(tables: Path, identifier: str) -> str:
     with queries.connect_quiet() as con:
         row = con.execute(
-            "SELECT raw_text FROM read_parquet($p) WHERE identifier = $i",
+            "SELECT text FROM read_parquet($p) WHERE identifier = $i",
             {"p": str(tables / "bills" / "*.parquet"), "i": identifier},
         ).fetchone()
     assert row is not None

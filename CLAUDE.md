@@ -14,14 +14,15 @@ uv run lineage fetch-raw     # download the archives the manifest pins into data
 uv run lineage snapshot      # pin data/raw/*/*.zip into snapshot/manifest.json
 uv run lineage sessions --commit <sha>  # pin session dates into snapshot/sessions.csv
 uv run lineage ingest        # verify against the manifest, write data/tables/bills/*.parquet
-uv run lineage split         # split bill text into data/tables/sections/*.parquet
+uv run lineage text merge    # each record's text, fetched or exported -> data/tables/texts/*.parquet (--exported-only: the export alone)
+uv run lineage split         # split the texts table into data/tables/sections/*.parquet
 uv run lineage eligible      # document-type rules -> data/tables/eligible.parquet, reports/document_types.json
 uv run lineage boilerplate   # shingle stoplist -> data/tables/stoplist.parquet, reports/boilerplate.json
 uv run lineage stats         # coverage, sections, types, status per state/session -> reports/coverage.json
 uv run lineage stats --samples  # also: sample titles per document-type rule -> data/reports/ (local; names private people, never committed)
 uv run lineage index         # signatures, LSH bands, verified pairs, families -> data/tables/{signatures,bands,pairs,families}/, reports/index.json
 uv run lineage query FILE     # a bill's near-duplicate families, offline, from the built index
-uv run lineage eval commission  # commission recall, act texts from data/acts/ -> reports/results.json
+uv run lineage eval commission  # commission recall, act texts from data/acts/ -> reports/results.json (--results reports/results_exported_only.json after an --exported-only merge)
 uv run lineage eval answer-key  # each commission list row and the bills it resolved to -> reports/answer_key.csv
 uv run lineage eval readme   # regenerate README.md's results table from reports/results.json
 uv run lineage text inventory  # version to fetch per record, by host, robots.txt read -> data/text/plan.parquet, reports/text_inventory.json
@@ -74,6 +75,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   text_quality.py  `lineage text sample`: the quality test, fetched text against Open States'
   text_run.py     `lineage text fetch`: the full fetch's jobs from the plan and the rules, and its report
   ca_bulk.py      California's text from its official bulk download, one biennium at a time
+  text_merge.py   `lineage text merge`: the texts table, each record's text and its source; later stages read text only from it
   queries.py      every SQL query the pipeline runs (DR-4)
   disk.py         free-space floor checked before large writes
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
@@ -89,6 +91,7 @@ rules/document_types.csv  which document types are matched, per state; first fit
 rules/text_layer.toml  the text layer's rules: usable bar, per-state format and PDF reading, content elements, replacement
 reports/          committed outputs of pipeline commands; README and DESIGN numbers cite them
   results.json    eval results, one section per eval; the README results table reads it
+  results_exported_only.json  commission recall on the export's text alone, for the comparison in DR-6
   answer_key.csv  each commission list row and the corpus bills it resolved to
   text_inventory.json  records without usable text, the versions planned, hosts and their robots.txt
   text_quality.json  the quality test per state and format: outcomes, usable and clean rates per reading, comparison
@@ -97,7 +100,7 @@ DESIGN.md         design, alternatives, scaling limits, failure modes, decision 
 data/             local snapshots and derived tables; gitignored, never committed
   raw/<ST>/*.zip  Open States session archives, never edited
   acts/<act>.txt  uniform act texts, downloaded from the ULC under its terms; never committed
-  tables/         Parquet tables written by the pipeline; signatures/, bands/ and pairs/ hold .npy arrays
+  tables/         Parquet tables written by the pipeline; bills/ holds the source's records under the project's names, texts/ each record's chosen text; signatures/, bands/ and pairs/ hold .npy arrays
   text/           the text layer's fetch plan and fetched text (JSON lines per host)
 ```
 

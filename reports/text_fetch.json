@@ -10,10 +10,10 @@
  "outcomes": {
   "extract_error": 575,
   "http_error": 3646,
-  "network_error": 2,
+  "network_error": 1,
   "not_in_bulk": 6,
   "not_usable": 376,
-  "ok": 146815,
+  "ok": 146816,
   "robots": 5
  },
  "left_out": {
@@ -209,9 +209,8 @@
    "jobs": 1759,
    "outcomes": {
     "extract_error": 138,
-    "network_error": 1,
     "not_usable": 1,
-    "ok": 1619
+    "ok": 1620
    },
    "left_out": {}
   },
