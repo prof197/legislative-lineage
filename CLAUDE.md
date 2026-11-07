@@ -99,6 +99,7 @@ reports/          committed outputs of pipeline commands; README and DESIGN numb
   results.json    eval results, one section per eval; the README results table reads it
   results_exported_only.json  commission recall on the export's text alone, for the comparison in DR-6
   answer_key.csv  each commission list row and the corpus bills it resolved to
+  answer_key_heldout.csv  the held-out lists resolved to bills; no matching is run on them before the final evaluation
   text_inventory.json  records without usable text, the versions planned, hosts and their robots.txt
   text_quality.json  the quality test per state and format: outcomes, usable and clean rates per reading, comparison
   text_fetch.json  the full fetch per state: outcomes, and records left out with the reason

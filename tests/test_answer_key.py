@@ -6,7 +6,7 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from lineage.answer_key import ANSWER_KEY, KeyBill, answer_key_rows, read_answer_key
+from lineage.answer_key import ANSWER_KEY, HELD_OUT_KEY, KeyBill, answer_key_rows, read_answer_key
 from lineage.cli import app
 from lineage.commission import RESULTS
 from lineage.ulc import BillRecord, development_bills, load_enactments
@@ -157,3 +157,15 @@ def test_the_committed_key_and_the_committed_results_name_the_same_bills() -> No
     named = {(e["act"], str(e["year"]), b["id"]) for e in results for b in e["bills"]}
 
     assert key == named
+
+
+def test_no_held_out_bill_was_studied_in_the_development_set() -> None:
+    # The list rule drops rows by state, year and number; this checks the resolved bills, which
+    # would also catch a bill listed under a different year in each set.
+    _, development = read_answer_key(ANSWER_KEY)
+    _, held_out = read_answer_key(HELD_OUT_KEY)
+    studied = {r["bill_id"] for r in development if r["bill_id"]}
+    counted = {r["bill_id"] for r in held_out if r["counted"] == "yes" and r["bill_id"]}
+
+    assert counted
+    assert not counted & studied
