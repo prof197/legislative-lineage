@@ -86,3 +86,33 @@ def test_refuses_to_run_below_the_disk_floor(tables: Path) -> None:
 def test_needs_the_texts_table(tmp_path: Path) -> None:
     with pytest.raises(SectioningError, match="lineage text merge"):
         build_sections(tmp_path, workers=1, floor_bytes=0)
+
+
+def test_each_file_is_split_by_its_own_state_rules(tmp_path: Path) -> None:
+    tables = tmp_path / "tables"
+    (tables / "bills").mkdir(parents=True)
+    (tables / "texts").mkdir()
+    text = "Section A. Enacted as follows:\n474.540. The first.\n474.542. The second.\n"
+    with queries.connect_quiet() as con:
+        for state in ("MO", "KS"):
+            con.execute(
+                f"COPY (SELECT '{state}-1' AS id, '{state}' AS state) "
+                f"TO '{tables / 'bills' / f'{state}_2025.parquet'}' (FORMAT parquet)"
+            )
+            con.execute(
+                f"COPY (SELECT '{state}-1' AS id, $text AS text) "
+                f"TO '{tables / 'texts' / f'{state}_2025.parquet'}' (FORMAT parquet)",
+                {"text": text},
+            )
+
+    build_sections(tables, workers=1, floor_bytes=0)
+
+    headings = (
+        _sections(tables)
+        .execute(
+            "SELECT bill_id, list(heading ORDER BY ordinal) FROM sections GROUP BY 1 ORDER BY 1"
+        )
+        .fetchall()
+    )
+    # Missouri's RSMo sections are headings in Missouri's bill only.
+    assert headings == [("KS-1", [None]), ("MO-1", ["Section A.", "474.540.", "474.542."])]

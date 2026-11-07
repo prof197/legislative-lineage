@@ -2,298 +2,298 @@
  "command": "uv run lineage boilerplate",
  "manifest_sha256": "59cbe08262c53a9d01a359c10bf8f7612464bcfbab2596db1627bd15584f4298",
  "rules_sha256": "7bb84d14ed3553737e1e9ebffd0d75e7d0eee0a2ccbc5be29d9a737fa30a3c11",
- "sections": 2922807,
- "distinct_shingles": 157411064,
- "shingle_occurrences": 732445913,
+ "sections": 2933847,
+ "distinct_shingles": 157130964,
+ "shingle_occurrences": 732128961,
  "max_share": 0.001,
- "max_sections": 2922,
- "stoplisted_shingles": 3910,
- "occurrences_removed": 30588856,
+ "max_sections": 2933,
+ "stoplisted_shingles": 3888,
+ "occurrences_removed": 30527568,
  "by_threshold": [
   {
    "max_share": 0.01,
-   "stoplisted_shingles": 138,
-   "occurrences_removed": 6804303
+   "stoplisted_shingles": 137,
+   "occurrences_removed": 6776239
   },
   {
    "max_share": 0.003,
-   "stoplisted_shingles": 820,
-   "occurrences_removed": 16353748
+   "stoplisted_shingles": 819,
+   "occurrences_removed": 16350875
   },
   {
    "max_share": 0.001,
-   "stoplisted_shingles": 3910,
-   "occurrences_removed": 30588856
+   "stoplisted_shingles": 3888,
+   "occurrences_removed": 30527568
   },
   {
    "max_share": 0.0003,
-   "stoplisted_shingles": 20593,
-   "occurrences_removed": 54280927
+   "stoplisted_shingles": 20444,
+   "occurrences_removed": 54147149
   },
   {
    "max_share": 0.0001,
-   "stoplisted_shingles": 94042,
-   "occurrences_removed": 88862669
+   "stoplisted_shingles": 93507,
+   "occurrences_removed": 88681316
   }
  ],
  "boilerplate_sections": {
-  "effective date": 143563,
+  "effective date": 147014,
   "enacting clause": 7472,
-  "federal e-sign relation": 148,
+  "federal e-sign relation": 159,
   "repealer": 3936,
-  "severability": 4165,
-  "uniformity clause": 240
+  "severability": 4316,
+  "uniformity clause": 265
  },
  "top_shingles": [
   {
    "shingle": "be it enacted by the",
-   "sections": 283558,
-   "share": 0.097016
+   "sections": 283586,
+   "share": 0.09666
   },
   {
    "shingle": "amended to read as follows",
    "sections": 256869,
-   "share": 0.087884
+   "share": 0.087554
   },
   {
    "shingle": "is amended to read as",
    "sections": 190131,
-   "share": 0.065051
+   "share": 0.064806
   },
   {
    "shingle": "including but not limited to",
-   "sections": 149905,
-   "share": 0.051288
+   "sections": 149310,
+   "share": 0.050892
   },
   {
    "shingle": "enacted by the legislature of",
    "sections": 115698,
-   "share": 0.039585
+   "share": 0.039436
   },
   {
    "shingle": "it enacted by the legislature",
    "sections": 115635,
-   "share": 0.039563
+   "share": 0.039414
   },
   {
    "shingle": "the legislature of the state",
    "sections": 99725,
-   "share": 0.03412
+   "share": 0.033991
   },
   {
    "shingle": "legislature of the state of",
    "sections": 99658,
-   "share": 0.034097
+   "share": 0.033968
   },
   {
    "shingle": "by the legislature of the",
    "sections": 99016,
-   "share": 0.033877
+   "share": 0.03375
   },
   {
    "shingle": "text end new text begin",
    "sections": 89920,
-   "share": 0.030765
+   "share": 0.030649
   },
   {
    "shingle": "for the purposes of this",
-   "sections": 89338,
-   "share": 0.030566
+   "sections": 89320,
+   "share": 0.030445
   },
   {
    "shingle": "this act shall take effect",
-   "sections": 80826,
-   "share": 0.027654
+   "sections": 79420,
+   "share": 0.02707
   },
   {
    "shingle": "as used in this section",
-   "sections": 79055,
-   "share": 0.027048
+   "sections": 79127,
+   "share": 0.02697
   },
   {
    "shingle": "new text end new text",
    "sections": 73095,
-   "share": 0.025008
+   "share": 0.024914
   },
   {
    "shingle": "assembly of the state of",
-   "sections": 71421,
-   "share": 0.024436
+   "sections": 71429,
+   "share": 0.024347
   },
   {
    "shingle": "general assembly of the state",
-   "sections": 71174,
-   "share": 0.024351
+   "sections": 71183,
+   "share": 0.024263
   },
   {
    "shingle": "the effective date of this",
-   "sections": 70884,
-   "share": 0.024252
+   "sections": 71015,
+   "share": 0.024205
   },
   {
    "shingle": "the people of the state",
-   "sections": 68818,
-   "share": 0.023545
-  },
-  {
-   "shingle": "people of the state of",
-   "sections": 67364,
-   "share": 0.023048
-  },
-  {
-   "shingle": "by the general assembly of",
-   "sections": 66931,
-   "share": 0.0229
-  },
-  {
-   "shingle": "enacted by the general assembly",
-   "sections": 66696,
-   "share": 0.022819
+   "sections": 68820,
+   "share": 0.023457
   },
   {
    "shingle": "is amended by adding a",
-   "sections": 66655,
-   "share": 0.022805
+   "sections": 67852,
+   "share": 0.023127
+  },
+  {
+   "shingle": "people of the state of",
+   "sections": 67362,
+   "share": 0.02296
+  },
+  {
+   "shingle": "by the general assembly of",
+   "sections": 66933,
+   "share": 0.022814
+  },
+  {
+   "shingle": "enacted by the general assembly",
+   "sections": 66704,
+   "share": 0.022736
   },
   {
    "shingle": "the provisions of this section",
-   "sections": 65969,
-   "share": 0.02257
+   "sections": 65394,
+   "share": 0.02229
   },
   {
    "shingle": "it enacted by the general",
    "sections": 63495,
-   "share": 0.021724
+   "share": 0.021642
   },
   {
    "shingle": "year to year a bill",
    "sections": 62247,
-   "share": 0.021297
+   "share": 0.021217
   },
   {
    "shingle": "or so much thereof as",
-   "sections": 60114,
-   "share": 0.020567
+   "sections": 60116,
+   "share": 0.020491
   },
   {
    "shingle": "so much thereof as may",
-   "sections": 57085,
-   "share": 0.019531
+   "sections": 57088,
+   "share": 0.019458
   },
   {
    "shingle": "thereof as may be necessary",
    "sections": 56747,
-   "share": 0.019415
+   "share": 0.019342
   },
   {
    "shingle": "much thereof as may be",
-   "sections": 56708,
-   "share": 0.019402
+   "sections": 56709,
+   "share": 0.019329
   },
   {
    "shingle": "after the effective date of",
-   "sections": 54763,
-   "share": 0.018736
+   "sections": 54765,
+   "share": 0.018667
   },
   {
    "shingle": "it enacted by the senate",
-   "sections": 54644,
-   "share": 0.018696
+   "sections": 54673,
+   "share": 0.018635
   },
   {
    "shingle": "enacted by the senate and",
-   "sections": 54641,
-   "share": 0.018695
+   "sections": 54669,
+   "share": 0.018634
   },
   {
    "shingle": "the general assembly of the",
-   "sections": 52508,
-   "share": 0.017965
+   "sections": 52518,
+   "share": 0.017901
   },
   {
    "shingle": "amended by adding a new",
-   "sections": 50751,
-   "share": 0.017364
+   "sections": 51966,
+   "share": 0.017713
   },
   {
    "shingle": "for purposes of this section",
-   "sections": 48368,
-   "share": 0.016548
+   "sections": 48482,
+   "share": 0.016525
   },
   {
    "shingle": "by the people of the",
    "sections": 48200,
-   "share": 0.016491
+   "share": 0.016429
   },
   {
    "shingle": "it enacted by the people",
    "sections": 48034,
-   "share": 0.016434
+   "share": 0.016372
   },
   {
    "shingle": "enacted by the people of",
    "sections": 48031,
-   "share": 0.016433
+   "share": 0.016371
   },
   {
    "shingle": "the purposes of this section",
-   "sections": 47918,
-   "share": 0.016395
-  },
-  {
-   "shingle": "to read as follows 1",
-   "sections": 47246,
-   "share": 0.016165
-  },
-  {
-   "shingle": "fund to the department of",
-   "sections": 46801,
-   "share": 0.016012
+   "sections": 47975,
+   "share": 0.016352
   },
   {
    "shingle": "subsection a of this section",
-   "sections": 46252,
-   "share": 0.015825
+   "sections": 47345,
+   "share": 0.016138
+  },
+  {
+   "shingle": "to read as follows 1",
+   "sections": 47203,
+   "share": 0.016089
+  },
+  {
+   "shingle": "fund to the department of",
+   "sections": 47182,
+   "share": 0.016082
   },
   {
    "shingle": "code is amended to read",
    "sections": 45177,
-   "share": 0.015457
+   "share": 0.015399
   },
   {
    "shingle": "a bill for an act",
    "sections": 44069,
-   "share": 0.015078
+   "share": 0.015021
   },
   {
    "shingle": "except as otherwise provided in",
-   "sections": 43348,
-   "share": 0.014831
+   "sections": 43365,
+   "share": 0.014781
   },
   {
    "shingle": "the department of commerce and",
-   "sections": 43320,
-   "share": 0.014821
+   "sections": 43150,
+   "share": 0.014708
   },
   {
    "shingle": "of the state of new",
-   "sections": 41359,
-   "share": 0.01415
+   "sections": 41355,
+   "share": 0.014096
   },
   {
    "shingle": "department of commerce and economic",
    "sections": 40679,
-   "share": 0.013918
+   "share": 0.013865
   },
   {
    "shingle": "is amended to read subd",
    "sections": 40593,
-   "share": 0.013888
+   "share": 0.013836
   },
   {
    "shingle": "effective date of this act",
-   "sections": 40016,
-   "share": 0.013691
+   "sections": 40064,
+   "share": 0.013656
   }
  ]
 }

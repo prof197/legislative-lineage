@@ -8,6 +8,10 @@ bill with text still yields comparable units. See DESIGN.md#sections.
 A bill that enacts a new chapter often does so under one "SECTION 1.", heading each code
 section with its citation alone ("4-9-101. Short title."). Those citations are headings too,
 or the whole chapter would be one section that cannot match the provisions it carries.
+
+Some states number bill or code sections in a form no general pattern can take without
+misreading other states' lines, so those forms are rules for that state's bills alone
+(`STATE_HEADINGS`).
 """
 
 import re
@@ -42,14 +46,88 @@ _CITATION = re.compile(
     re.MULTILINE,
 )
 # A citation is a wrapped cross-reference, not a heading, when the line before ends mid-sentence
-# on a word that introduces one ("as provided by\n1-6-105."), on a hyphen that breaks the
-# citation itself ("16a-\n4-109."), or on a struck citation that Utah replaces with the new one
-# ("Section [76-10-1236]\n76-5c-209."). A blank line between them does not change that.
+# on a word that introduces one ("as provided by\n1-6-105.", "Pub. L.\n109-248."), on a hyphen
+# that breaks the citation itself ("16a-\n4-109."), or on a struck citation that Utah replaces
+# with the new one ("Section [76-10-1236]\n76-5c-209."). A blank line between them does not
+# change that, and neither does a line number a PDF left after a lowercase "section" ("under
+# section 3"). Only that word: a page footer ("Page 2 of 3") or a capitalized title line
+# ("CHAPTER 35") also ends in a number, and a heading follows them.
 _CITES = re.compile(
     r"(?:[§-]|\d\]|\b(?:sections?|subsections?|chapters?|titles?|articles?|items?|w\.s\.|and|or|to"
-    r"|through|in|of|by|under|law|rsa))\n\n?\Z",
+    r"|through|in|of|by|under|law|rsa|pub\.[ \t]*l\.)"
+    r"|(?-i:\b(?:sections?|subsections?)[ \t]+\d{1,3}))\n\n?\Z",
     re.IGNORECASE,
 )
+
+
+@dataclass(frozen=True, slots=True)
+class StateHeadings:
+    """One state's own heading formats, each in the numbering its bills and code use."""
+
+    sections: tuple[re.Pattern[str], ...] = ()  # headings that split a bill by themselves
+    citations: tuple[re.Pattern[str], ...] = ()  # headings only within a bill already split
+    page_header: re.Pattern[str] | None = None  # a running header that changes on each page
+
+
+# Each rule applies only to its state's bills, since elsewhere a line of the same shape is an
+# outline number or a wrapped reference. A citation that follows a word introducing a reference
+# is skipped, as for the general citation rule.
+STATE_HEADINGS = {
+    # North Dakota Century Code sections are title-chapter-section ("59-22-01.", "6-08.6-04."),
+    # and the legislature's PDFs space the hyphens ("59 - 22 - 01.").
+    "ND": StateHeadings(
+        citations=(
+            re.compile(
+                r"^(?P<heading>\d+(?:\.\d+)?(?:[ \t]*-[ \t]*\d+(?:\.\d+)?){2}\.)(?=\s|$)",
+                re.MULTILINE,
+            ),
+        ),
+    ),
+    # North Carolina letters a bill section's subsections ("SECTION 45.(a)", "SECTION 2.1.(b)"),
+    # and quotes each General Statutes section a bill enacts ('"§ 50A-411.', '"§ 48-3-230.').
+    "NC": StateHeadings(
+        sections=(
+            re.compile(
+                r"^(?P<heading>SECTION[ \t]+\d+[A-Z]?(?:\.\d+[A-Z]?)*\.\([a-z]{1,2}\))(?=\s|$)",
+                re.MULTILINE,
+            ),
+        ),
+        citations=(
+            re.compile(
+                r'^"(?P<heading>§[ \t]*\d+[A-Z]*(?:-\d+[A-Z]*(?:\.\d+[A-Z]*)?)+\.)(?=\s|$)',
+                re.MULTILINE,
+            ),
+        ),
+    ),
+    # New Hampshire numbers bill sections and gives each a caption ending in a period ("1 New
+    # Chapter; Uniform Special Deposits Act.", "228:1 ..." once chaptered); RSA sections are
+    # chapter:section ("384-H:1 Short Title.", "21-I:7-a"). Its paragraphs are numbered in
+    # roman numerals and letters, so a line opening with an arabic number and a caption is not
+    # one; a caption needs three characters before its period, so "15 U.S.C." is not one.
+    "NH": StateHeadings(
+        sections=(
+            re.compile(
+                r"^(?P<heading>(?:\d+:)?\d+)(?=[ \t][A-Z][^.\n]{2,}\.(?:\s|$))", re.MULTILINE
+            ),
+        ),
+        citations=(
+            re.compile(
+                r"^(?P<heading>\d+(?:-[A-Z]{1,2})?:\d+(?:-[a-z])?)(?=[ \t][A-Z])", re.MULTILINE
+            ),
+        ),
+    ),
+    # Missouri letters a bill's sections ("Section A.", "Section B."), RSMo sections are
+    # chapter.section ("474.540.", "208.1050."), and each page after the first opens with the
+    # bill's number and the page ("SB 289 2", "CCS SS SCS HCS HB 4 12").
+    "MO": StateHeadings(
+        sections=(re.compile(r"^(?P<heading>Section[ \t]+[A-Z]\.)(?=\s|$)", re.MULTILINE),),
+        citations=(re.compile(r"^(?P<heading>\d+[A-Z]?\.\d+\.)(?=\s|$)", re.MULTILINE),),
+        page_header=re.compile(
+            r"^(?:[A-Z]{1,4} )*(?:[HS]B|[HS]J?R|[HS]C?R) \d+ \d+\n?", re.MULTILINE
+        ),
+    ),
+}
+_NO_STATE_HEADINGS = StateHeadings()
 # Arizona's export wraps each code section in markers glued to the citation:
 # "START_STATUTE6-251. Short title ... END_STATUTE".
 _STATUTE_MARKERS = re.compile(r"START_STATUTE|END_STATUTE")
@@ -190,8 +268,9 @@ def _strip_running_headers(lines: list[str]) -> list[str]:
     return [line for line in lines if not (line and _is_running_header(line, counts[line]))]
 
 
-def clean(raw: str) -> str:
-    """Display text: one newline convention; no style sheet, invisible character or gutter."""
+def clean(raw: str, state: str | None = None) -> str:
+    """Display text: one newline convention; no style sheet, invisible character, gutter, or
+    the state's running page header."""
     text = unicodedata.normalize("NFKC", raw.replace("\r\n", "\n").replace("\r", "\n"))
     text = _STYLE_RULES.sub("", _HTML_COMMENT.sub("", text))
     text = _STATUTE_MARKERS.sub("", text)
@@ -199,8 +278,12 @@ def clean(raw: str) -> str:
     lines = [" ".join(line.split()) for line in text.split("\n")]
     lines = _strip_gutter(_strip_line_numbers(lines))
     lines = _strip_running_headers(lines)
+    text = "\n".join(lines)
+    header = STATE_HEADINGS.get(state or "", _NO_STATE_HEADINGS).page_header
+    if header is not None:
+        text = header.sub("", text)
     # Keep paragraph breaks, which the window fallback uses, but never more than one.
-    return re.sub(r"\n{3,}", "\n\n", "\n".join(lines)).strip()
+    return re.sub(r"\n{3,}", "\n\n", text).strip()
 
 
 def normalize(text: str) -> str:
@@ -240,29 +323,41 @@ def _windows(text: str) -> list[Section]:
     return [Section(i, None, "\n\n".join(w)) for i, w in enumerate(windows, start=1)]
 
 
-def _headings(text: str) -> list[re.Match[str]]:
-    """Section headings, and the citation headings within a bill they already split.
-
-    Every state seen printing citation headings does so under a "SECTION 1.", so a bill with
-    no section heading keeps the window fallback: there, a citation starting a line is a
-    wrapped reference far more often than a heading.
-    """
-    sections = list(_HEADING.finditer(text))
-    if not sections:
-        return []
-    citations = [
+def _unwrapped(patterns: tuple[re.Pattern[str], ...], text: str) -> list[re.Match[str]]:
+    """Matches that do not continue a reference wrapped from the line before."""
+    return [
         m
-        for m in _CITATION.finditer(text)
+        for pattern in patterns
+        for m in pattern.finditer(text)
         if not _CITES.search(text[max(0, m.start() - 16) : m.start()])
     ]
-    return sorted([*sections, *citations], key=lambda m: m.start())
 
 
-def split_sections(raw: str | None) -> Split:
-    text = clean(raw or "")
+def _headings(text: str, state: str | None) -> list[re.Match[str]]:
+    """Section headings, and the citation headings within a bill they already split.
+
+    Every state seen printing citation headings does so under a section heading, so a bill
+    with none keeps the window fallback: there, a citation starting a line is a wrapped
+    reference far more often than a heading.
+    """
+    rules = STATE_HEADINGS.get(state or "", _NO_STATE_HEADINGS)
+    sections = [*_HEADING.finditer(text), *_unwrapped(rules.sections, text)]
+    if not sections:
+        return []
+    citations = _unwrapped((_CITATION, *rules.citations), text)
+    # Two rules can take the same line, as New Hampshire's chaptered "228:1" fits both.
+    first: dict[int, re.Match[str]] = {}
+    for m in [*sections, *citations]:
+        first.setdefault(m.start(), m)
+    return sorted(first.values(), key=lambda m: m.start())
+
+
+def split_sections(raw: str | None, state: str | None = None) -> Split:
+    """Sections of a bill's text, with `state`'s own heading rules if it has any."""
+    text = clean(raw or "", state)
     if not text or normalize(text) in _NO_TEXT_NOTICES:
         return Split([], by_heading=False)
-    matches = _headings(text)
+    matches = _headings(text, state)
     if not matches:
         return Split(_windows(text), by_heading=False)
     sections: list[Section] = []

@@ -215,6 +215,16 @@ def text_bytes(con: duckdb.DuckDBPyConnection, *, bills_glob: str) -> int:
     return int(row[0]) if row else 0
 
 
+def file_state(con: duckdb.DuckDBPyConnection, *, bills_path: Path) -> str | None:
+    """The one state of a bills file, which holds one archive; None if it holds no rows."""
+    states: list[tuple[str]] = con.execute(
+        "SELECT DISTINCT state FROM read_parquet($path)", {"path": str(bills_path)}
+    ).fetchall()
+    if len(states) > 1:
+        raise ValueError(f"{bills_path} holds {len(states)} states")
+    return states[0][0] if states else None
+
+
 def open_bill_texts(
     con: duckdb.DuckDBPyConnection, *, parquet_path: Path
 ) -> duckdb.DuckDBPyConnection:

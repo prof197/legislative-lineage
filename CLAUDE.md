@@ -47,7 +47,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   sessions.py     session dates from openstates-scrapers, parsed as source, never run
   ingest.py       raw archives -> bills Parquet, one file per archive, with status
   status.py       passed / died / introduced from action classifications
-  sections.py     clean, split at headings or into windows, normalize (pure functions)
+  sections.py     clean, split at headings (with per-state heading rules) or into windows, normalize (pure functions)
   sectioning.py   build the sections table, one worker process per bills file
   doctypes.py     document-type rules (DR-5): which records are matched
   boilerplate.py  pattern list that flags boilerplate-only sections

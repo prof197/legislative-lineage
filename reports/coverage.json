@@ -20,8 +20,8 @@
   "blank_text": 28629,
   "text_without_sections": 6,
   "with_sections": 494023,
-  "split_at_headings": 349974,
-  "sections": 3203145,
+  "split_at_headings": 356841,
+  "sections": 3217862,
   "text_fetched": 144422,
   "text_from_bulk": 2394,
   "amendment_only": 7588,
@@ -1484,7 +1484,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 7557,
+      "total": 7554,
       "median": 6.0,
       "p90": 21,
       "max": 197
@@ -1580,7 +1580,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 8914,
+      "total": 8913,
       "median": 6.0,
       "p90": 21,
       "max": 678
@@ -1628,7 +1628,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 8415,
+      "total": 8414,
       "median": 6.0,
       "p90": 21,
       "max": 214
@@ -1673,7 +1673,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 8435,
+      "total": 8418,
       "median": 1.0,
       "p90": 4,
       "max": 457
@@ -1697,7 +1697,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 5133,
+      "total": 5124,
       "median": 2.0,
       "p90": 10,
       "max": 244
@@ -1721,7 +1721,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 9891,
+      "total": 9875,
       "median": 1.0,
       "p90": 3,
       "max": 488
@@ -1745,7 +1745,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 5341,
+      "total": 5330,
       "median": 2.0,
       "p90": 8,
       "max": 492
@@ -3859,7 +3859,7 @@
      "blank_text": 51,
      "text_without_sections": 0,
      "with_sections": 2289,
-     "split_at_headings": 74,
+     "split_at_headings": 1031,
      "text_fetched": 507,
      "text_from_bulk": 0,
      "amendment_only": {
@@ -3867,9 +3867,9 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 24091,
-      "median": 4.0,
-      "p90": 25,
+      "total": 18997,
+      "median": 3.0,
+      "p90": 18,
       "max": 268
      }
     },
@@ -3883,7 +3883,7 @@
      "blank_text": 30,
      "text_without_sections": 0,
      "with_sections": 2590,
-     "split_at_headings": 83,
+     "split_at_headings": 1071,
      "text_fetched": 374,
      "text_from_bulk": 0,
      "amendment_only": {
@@ -3891,9 +3891,9 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 27276,
-      "median": 4.0,
-      "p90": 24,
+      "total": 20736,
+      "median": 3.0,
+      "p90": 17,
       "max": 424
      }
     },
@@ -3907,7 +3907,7 @@
      "blank_text": 21,
      "text_without_sections": 0,
      "with_sections": 2669,
-     "split_at_headings": 114,
+     "split_at_headings": 1253,
      "text_fetched": 1176,
      "text_from_bulk": 0,
      "amendment_only": {
@@ -3915,9 +3915,9 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 31049,
-      "median": 4.0,
-      "p90": 27,
+      "total": 23057,
+      "median": 3.0,
+      "p90": 17,
       "max": 403
      }
     },
@@ -3931,7 +3931,7 @@
      "blank_text": 1,
      "text_without_sections": 0,
      "with_sections": 28,
-     "split_at_headings": 6,
+     "split_at_headings": 26,
      "text_fetched": 2,
      "text_from_bulk": 0,
      "amendment_only": {
@@ -3939,9 +3939,9 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 360,
-      "median": 3.5,
-      "p90": 44,
+      "total": 248,
+      "median": 2.0,
+      "p90": 14,
       "max": 84
      }
     },
@@ -3963,7 +3963,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 200,
+      "total": 202,
       "median": 4.0,
       "p90": 39,
       "max": 53
@@ -3979,7 +3979,7 @@
      "blank_text": 46,
      "text_without_sections": 0,
      "with_sections": 3131,
-     "split_at_headings": 123,
+     "split_at_headings": 1527,
      "text_fetched": 1335,
      "text_from_bulk": 0,
      "amendment_only": {
@@ -3987,9 +3987,9 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 38131,
-      "median": 4.0,
-      "p90": 26,
+      "total": 28248,
+      "median": 3.0,
+      "p90": 17,
       "max": 604
      }
     }
@@ -4357,7 +4357,7 @@
      "blank_text": 20,
      "text_without_sections": 0,
      "with_sections": 1985,
-     "split_at_headings": 1970,
+     "split_at_headings": 1980,
      "text_fetched": 1376,
      "text_from_bulk": 0,
      "amendment_only": {
@@ -4365,10 +4365,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 10382,
-      "median": 3.0,
-      "p90": 7,
-      "max": 238
+      "total": 27713,
+      "median": 6.0,
+      "p90": 24,
+      "max": 2143
      }
     },
     {
@@ -4381,7 +4381,7 @@
      "blank_text": 2,
      "text_without_sections": 0,
      "with_sections": 2336,
-     "split_at_headings": 2317,
+     "split_at_headings": 2336,
      "text_fetched": 85,
      "text_from_bulk": 0,
      "amendment_only": {
@@ -4389,10 +4389,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 12478,
-      "median": 3.0,
-      "p90": 8,
-      "max": 276
+      "total": 34896,
+      "median": 6.0,
+      "p90": 27,
+      "max": 2358
      }
     },
     {
@@ -4413,10 +4413,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 19,
+      "total": 29,
       "median": 3.0,
-      "p90": 5,
-      "max": 5
+      "p90": 10,
+      "max": 10
      }
     }
    ],
@@ -4468,7 +4468,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 6191,
+      "total": 6208,
       "median": 3.0,
       "p90": 10,
       "max": 234
@@ -4492,9 +4492,9 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 6306,
+      "total": 6443,
       "median": 3.0,
-      "p90": 11,
+      "p90": 12,
       "max": 96
      }
     }
@@ -4642,7 +4642,7 @@
      "blank_text": 940,
      "text_without_sections": 0,
      "with_sections": 2,
-     "split_at_headings": 0,
+     "split_at_headings": 1,
      "text_fetched": 0,
      "text_from_bulk": 0,
      "amendment_only": {
@@ -4650,10 +4650,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 2,
-      "median": 1.0,
-      "p90": 1,
-      "max": 1
+      "total": 6,
+      "median": 3.0,
+      "p90": 5,
+      "max": 5
      }
     },
     {
@@ -4666,7 +4666,7 @@
      "blank_text": 390,
      "text_without_sections": 0,
      "with_sections": 934,
-     "split_at_headings": 2,
+     "split_at_headings": 859,
      "text_fetched": 0,
      "text_from_bulk": 0,
      "amendment_only": {
@@ -4674,10 +4674,10 @@
       "substitutes": 9
      },
      "sections": {
-      "total": 3462,
-      "median": 1.0,
-      "p90": 6,
-      "max": 208
+      "total": 5968,
+      "median": 4.0,
+      "p90": 10,
+      "max": 415
      }
     },
     {
@@ -4690,7 +4690,7 @@
      "blank_text": 854,
      "text_without_sections": 0,
      "with_sections": 224,
-     "split_at_headings": 0,
+     "split_at_headings": 151,
      "text_fetched": 0,
      "text_from_bulk": 0,
      "amendment_only": {
@@ -4698,10 +4698,10 @@
       "substitutes": 70
      },
      "sections": {
-      "total": 474,
-      "median": 1.0,
-      "p90": 3,
-      "max": 46
+      "total": 780,
+      "median": 2.0,
+      "p90": 7,
+      "max": 20
      }
     },
     {
@@ -4714,7 +4714,7 @@
      "blank_text": 39,
      "text_without_sections": 0,
      "with_sections": 1355,
-     "split_at_headings": 5,
+     "split_at_headings": 1326,
      "text_fetched": 1351,
      "text_from_bulk": 0,
      "amendment_only": {
@@ -4722,10 +4722,10 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 7092,
-      "median": 3.0,
-      "p90": 10,
-      "max": 102
+      "total": 8758,
+      "median": 4.0,
+      "p90": 12,
+      "max": 101
      }
     }
    ],
@@ -6791,7 +6791,7 @@
       "substitutes": 0
      },
      "sections": {
-      "total": 14725,
+      "total": 14724,
       "median": 6.0,
       "p90": 31,
       "max": 523

@@ -1,29 +1,29 @@
 {
  "command": "uv run lineage index",
- "stoplist_sha256": "a50024b2e48a814aa5460dbb861c38af8239c16091f59445781767565e030a2d",
+ "stoplist_sha256": "d22cb59b512c144f3a3a87c9312ea227323076e7d05db4c046c163fe452cf342",
  "minhash": {
   "num_perm": 128,
   "seed": 42,
   "prime": "2^61 - 1"
  },
  "sections": {
-  "matchable": 2922807,
-  "signed": 2898515,
-  "too_short": 24287,
+  "matchable": 2933847,
+  "signed": 2908782,
+  "too_short": 25060,
   "all_stoplisted": 5
  },
  "shingle_set_size": {
-  "median": 137,
-  "p90": 486,
+  "median": 129,
+  "p90": 494,
   "p99": 2116,
   "max": 260073
  },
- "signature_bytes": 1484039680,
+ "signature_bytes": 1489296384,
  "lsh": {
   "bands": 32,
   "rows": 4,
   "threshold": 0.42,
-  "index_bytes": 1113029760,
+  "index_bytes": 1116972288,
   "bucket_cap": 1000,
   "largest_bucket": 2475,
   "capped": {
@@ -33,31 +33,31 @@
    "cross_state_pairs_lost": 0
   },
   "candidate_pairs": {
-   "all": 34792634,
-   "cross_state": 847998,
-   "same_state": 33944636
+   "all": 35000948,
+   "cross_state": 902259,
+   "same_state": 34098689
   },
   "cap_sweep": [
    {
     "cap": 100,
-    "buckets_over_cap": 5713,
-    "multi_state_buckets_over_cap": 176,
-    "most_states_in_a_capped_bucket": 39,
-    "cross_state_pairs_lost": 231342
+    "buckets_over_cap": 5744,
+    "multi_state_buckets_over_cap": 209,
+    "most_states_in_a_capped_bucket": 40,
+    "cross_state_pairs_lost": 251771
    },
    {
     "cap": 200,
-    "buckets_over_cap": 2579,
-    "multi_state_buckets_over_cap": 53,
-    "most_states_in_a_capped_bucket": 39,
-    "cross_state_pairs_lost": 117429
+    "buckets_over_cap": 2589,
+    "multi_state_buckets_over_cap": 76,
+    "most_states_in_a_capped_bucket": 40,
+    "cross_state_pairs_lost": 133980
    },
    {
     "cap": 500,
     "buckets_over_cap": 881,
     "multi_state_buckets_over_cap": 12,
     "most_states_in_a_capped_bucket": 3,
-    "cross_state_pairs_lost": 8055
+    "cross_state_pairs_lost": 8080
    },
    {
     "cap": 1000,
@@ -79,57 +79,57 @@
   "threshold": 0.5,
   "min_agreements": 64,
   "verified": {
-   "all": 23003180,
-   "cross_state": 386803,
-   "same_state": 22616377,
-   "dropped": 11789454
+   "all": 22913493,
+   "cross_state": 415080,
+   "same_state": 22498413,
+   "dropped": 12087455
   },
   "estimate_histogram": {
    "cross_state": [
-    1026,
-    17017,
-    26414,
-    74877,
-    80613,
-    78942,
-    90509,
-    91797,
-    85987,
-    74177,
-    56440,
-    49849,
-    39027,
-    31022,
-    26246,
-    24055
+    1155,
+    18282,
+    26863,
+    77063,
+    85602,
+    83925,
+    95858,
+    98431,
+    92062,
+    79149,
+    60862,
+    53246,
+    42226,
+    33760,
+    28442,
+    25333
    ],
    "same_state": [
-    5830,
-    132204,
-    647796,
-    1207619,
-    1834642,
-    2383208,
-    2493260,
-    2623700,
-    2259308,
-    2140584,
-    2014315,
-    2033015,
-    1630513,
-    1706256,
-    1957368,
-    8875018
+    6649,
+    132937,
+    648125,
+    1232396,
+    1960766,
+    2489660,
+    2525858,
+    2603885,
+    2224723,
+    2121392,
+    1974889,
+    2028220,
+    1617399,
+    1688903,
+    1950525,
+    8892362
    ]
   },
-  "stored_bytes": 3481227
+  "stored_bytes": 3735720
  },
  "families": {
   "share": 0.8,
-  "same_state_bill_pairs": 15537626,
-  "linked_bill_pairs": 391830,
-  "families_of_two_or_more": 87135,
-  "bills_in_them": 227125,
+  "same_state_bill_pairs": 15560768,
+  "linked_bill_pairs": 389053,
+  "families_of_two_or_more": 87151,
+  "bills_in_them": 226444,
   "largest": [
    {
     "family": "ocd-bill/003d6846-38ad-4c3a-89b3-3ec70e188592",
@@ -183,68 +183,68 @@
    }
   ],
   "min_share_histogram": [
-   1555712,
-   1873732,
-   2792599,
-   1427882,
-   1419995,
-   2736857,
-   2182674,
-   43775,
-   131459,
-   10347,
-   571064,
-   32012,
-   10390,
-   316297,
-   8204,
-   32797,
-   22927,
-   13525,
-   9950,
-   345428
+   1563880,
+   1874663,
+   2794654,
+   1428512,
+   1421910,
+   2741894,
+   2193757,
+   42884,
+   130847,
+   9749,
+   570073,
+   31389,
+   9954,
+   316995,
+   7965,
+   32589,
+   22750,
+   13387,
+   9931,
+   342985
   ],
   "sweep": [
    {
     "share": 0.5,
-    "linked_bill_pairs": 1362594,
-    "families_of_two_or_more": 92587,
-    "bills_in_them": 296257,
+    "linked_bill_pairs": 1358018,
+    "families_of_two_or_more": 92731,
+    "bills_in_them": 295883,
     "largest_family": 1272
    },
    {
     "share": 0.667,
-    "linked_bill_pairs": 748182,
-    "families_of_two_or_more": 92856,
-    "bills_in_them": 259651,
+    "linked_bill_pairs": 745687,
+    "families_of_two_or_more": 93072,
+    "bills_in_them": 259461,
     "largest_family": 643
    },
    {
     "share": 0.75,
-    "linked_bill_pairs": 424627,
-    "families_of_two_or_more": 89404,
-    "bills_in_them": 237007,
+    "linked_bill_pairs": 421642,
+    "families_of_two_or_more": 89465,
+    "bills_in_them": 236366,
     "largest_family": 318
    },
    {
     "share": 0.8,
-    "linked_bill_pairs": 391830,
-    "families_of_two_or_more": 87135,
-    "bills_in_them": 227125,
+    "linked_bill_pairs": 389053,
+    "families_of_two_or_more": 87151,
+    "bills_in_them": 226444,
     "largest_family": 318
    },
    {
     "share": 0.9,
-    "linked_bill_pairs": 355378,
-    "families_of_two_or_more": 83379,
-    "bills_in_them": 212751,
+    "linked_bill_pairs": 352916,
+    "families_of_two_or_more": 83313,
+    "bills_in_them": 211970,
     "largest_family": 318
    },
    {
     "share": 1.0,
-    "linked_bill_pairs": 342641,
-    "families_of_two_or_more": 81781,
-    "bills_in_them": 206651,
+    "linked_bill_pairs": 340227,
+    "families_of_two_or_more": 81648,
+    "bills_in_them": 205757,
     "largest_family": 318
    }
   ]
