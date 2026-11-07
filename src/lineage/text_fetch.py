@@ -1,17 +1,20 @@
 """Fetch planned bill versions from the legislatures, politely, and keep only their text.
 
 Each host gets one worker, and hosts run in parallel. A host sees at most one request a second,
-or its robots.txt crawl delay if longer. Every URL is checked against the host's robots.txt for
-this project's User-Agent before it is requested. Overload and server errors are retried with
-backoff (lineage.fetch.open_url), and a host that keeps failing is stopped for the run. The
-response body is extracted in memory and dropped: the store keeps the text, its SHA-256, the URL
-fetched and the version's label, one JSON line per document in `<store>/<host>.jsonl`. A rerun
-skips what is stored, except network and server failures, which it tries again. See
-DESIGN.md#dr-6.
+or its robots.txt crawl delay if longer, from every process together (lineage.pace). Every URL
+is checked against the host's robots.txt for this project's User-Agent before it is requested;
+each read of robots.txt is recorded in `<store>/robots/<host>.jsonl`, and a host whose
+robots.txt refuses only for now is left untouched, for a later run. Overload and server errors
+are retried with backoff (lineage.fetch.open_url), and a host that keeps failing is stopped for
+the run. The response body is extracted in memory and dropped: the store keeps the text, its
+SHA-256, the URL fetched and the version's label, one JSON line per document in
+`<store>/<host>.jsonl`. A rerun skips what is stored, except network and server failures, which
+it tries again. See DESIGN.md#dr-6.
 """
 
 import hashlib
 import json
+import multiprocessing
 import os
 import threading
 import time
@@ -31,15 +34,20 @@ from urllib.parse import urlsplit
 from lineage.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.extract import ExtractError, extract
 from lineage.fetch import moved, open_url
+from lineage.pace import MIN_INTERVAL_SECONDS
 from lineage.robots import Robots, read_robots
 
-MIN_INTERVAL_SECONDS = 1.0
 # A bill's PDF is rarely over a few megabytes; an appropriations act can pass 30.
 MAX_BODY_BYTES = 64 << 20
 # Consecutive failures after which a host is left alone for the rest of the run.
 STOP_AFTER_FAILURES = 20
 _RETRIED = frozenset({"network_error", "server_error"})
 _PROBE = b"<p>Section 1. The extraction workers are running.</p>"
+
+
+class FetchInWorkerError(Exception):
+    """fetch_all was called inside a worker process, as a spawned worker re-running a script
+    with no main guard would: each such worker would fetch every host again."""
 
 
 class ExtractionWorkersError(Exception):
@@ -67,7 +75,7 @@ class Fetched:
     date: str
     outcome: str  # ok, not_usable, robots, too_large, http_error, server_error, network_error,
     # extract_error; not_in_bulk (lineage.ca_bulk)
-    status: int | None
+    status: int | None  # the response's HTTP status; for outcome robots, robots.txt's
     error: str | None
     body_bytes: int
     text: str | None
@@ -132,7 +140,7 @@ def fetch_one(
         )  # fmt: skip
 
     if not robots.allows(url):
-        return result("robots", error=f"{robots.url}: {robots.rule}")
+        return result("robots", status=robots.status, error=f"{robots.url}: {robots.rule}")
     try:
         with opener(url, MIN_INTERVAL_SECONDS * 5) as response:
             body = _read(response)
@@ -182,16 +190,16 @@ def run_host(
     store_dir: Path,
     *,
     read: Callable[[str, str], Robots] = read_robots,
-    fetch: Callable[[Job, Robots], Fetched] | None = None,
+    fetch: Callable[[Job, Robots, float], Fetched] | None = None,
     layout_too: bool = False,
     container: str | None = None,
     extractor: Callable[..., str] = extract,
     check: Callable[[str], bool] | None = None,
     floor_bytes: int = DEFAULT_FLOOR_BYTES,
-    sleep: Callable[[float], None] = time.sleep,
     stop: threading.Event | None = None,
 ) -> Counter[str]:
-    """Fetch one host's jobs in order, paced, appending each result to the host's store."""
+    """Fetch one host's jobs in order, appending each result to the host's store. `fetch`
+    replaces the request in tests; it is given the host's interval."""
     path = store_dir / f"{host}.jsonl"
     done = stored(path)
     # A changed plan (another version, another link) is fetched again.
@@ -200,20 +208,31 @@ def run_host(
     if not todo:
         return outcomes
     robots = read(urlsplit(moved(todo[0].url)).scheme or "https", host)
+    log = store_dir / "robots" / f"{host}.jsonl"
+    log.parent.mkdir(exist_ok=True)
+    with log.open("a") as f:
+        f.write(json.dumps(robots.record()) + "\n")
+    if robots.temporary:
+        # Nothing is stored, so a later run asks again; a deliberate refusal is stored below.
+        outcomes["robots_unavailable"] += len(todo)
+        return outcomes
     interval = max(MIN_INTERVAL_SECONDS, robots.crawl_delay() or 0.0)
+
+    def opener(url: str, pause: float) -> HTTPResponse:
+        return open_url(url, pause, interval=interval)
+
     failures = 0
     with path.open("a") as out:
-        for i, job in enumerate(todo):
+        for job in todo:
             if stop is not None and stop.is_set():
                 break
-            if i:
-                sleep(interval)
             fetched = (
-                fetch(job, robots)
+                fetch(job, robots, interval)
                 if fetch
                 else fetch_one(
                     job,
                     robots,
+                    opener=opener,
                     layout_too=layout_too,
                     container=container,
                     extractor=extractor,
@@ -247,6 +266,11 @@ def fetch_all(
     Hosts wait on the network, so each gets a thread. Extraction is CPU-bound pure Python,
     which threads would run one at a time, so it goes to a pool of worker processes.
     """
+    if multiprocessing.parent_process() is not None:
+        raise FetchInWorkerError(
+            "fetch_all ran in a worker process; put the calling script under "
+            'if __name__ == "__main__":'
+        )
     by_host: dict[str, list[Job]] = {}
     for job in jobs:
         by_host.setdefault(host_of(job.url), []).append(job)

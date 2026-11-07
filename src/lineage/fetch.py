@@ -16,8 +16,9 @@ from dataclasses import dataclass, field, replace
 from http.client import HTTPResponse
 from pathlib import Path
 
-from lineage import __version__
+from lineage import __version__, pace
 from lineage.disk import require_free_space
+from lineage.pace import MIN_INTERVAL_SECONDS
 from lineage.snapshot import Archive, SnapshotError, load_manifest, read_archive, write_manifest
 
 SOURCE = "https://data.openstates.org/json/latest/"
@@ -87,14 +88,20 @@ def _retry_after(error: urllib.error.HTTPError, default: float) -> float:
     return float(value) if value.isdigit() else default
 
 
-def open_url(url: str, pause: float) -> HTTPResponse:
-    """GET `url` as this project, retrying overload and server errors with backoff."""
+def open_url(url: str, pause: float, *, interval: float = MIN_INTERVAL_SECONDS) -> HTTPResponse:
+    """GET `url` as this project, retrying overload and server errors with backoff `pause`.
+
+    Every attempt waits for the host's turn (lineage.pace), at least `interval` after the last
+    request any process sent it.
+    """
     request = urllib.request.Request(request_url(url), headers={"User-Agent": USER_AGENT})
+    host = urllib.parse.urlsplit(url).hostname or ""
     for attempt in range(_ATTEMPTS):
         try:
-            response: HTTPResponse = urllib.request.urlopen(
-                request, timeout=_TIMEOUT_SECONDS, context=_TLS
-            )
+            with pace.turn(host, interval):
+                response: HTTPResponse = urllib.request.urlopen(
+                    request, timeout=_TIMEOUT_SECONDS, context=_TLS
+                )
             return response
         except urllib.error.HTTPError as e:
             # Only overload and server faults are worth repeating; a 404 will not change.
@@ -157,7 +164,7 @@ def _fetch_one(
     part = dest.with_name(dest.name + ".part")
     dest.parent.mkdir(parents=True, exist_ok=True)
     try:
-        with open_url(url_for(archive, source), pause) as response:
+        with open_url(url_for(archive, source), pause, interval=pause) as response:
             length = response.headers.get("Content-Length")
             size = int(length) if length is not None else archive.bytes
             if size != archive.bytes and not repin:
@@ -189,7 +196,8 @@ def fetch_raw(
     repin: bool = False,
     pause: float = 1.0,
 ) -> FetchResult:
-    """Download every pinned archive missing from `raw_dir`, one at a time, `pause` apart."""
+    """Download every pinned archive missing from `raw_dir`, one at a time, `pause` apart
+    (lineage.pace)."""
     pinned = load_manifest(manifest_path)
     result = FetchResult()
     todo = [a for a in pinned if not (raw_dir / a.path).exists()]
@@ -199,9 +207,7 @@ def fetch_raw(
 
     current = {a.path: a for a in pinned}
     try:
-        for i, archive in enumerate(todo):
-            if i:
-                time.sleep(pause)
+        for archive in todo:
             try:
                 landed = _fetch_one(
                     archive, raw_dir, source=source, floor=floor_bytes, repin=repin, pause=pause

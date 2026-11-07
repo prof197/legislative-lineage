@@ -66,7 +66,8 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   stoplist.py     document-frequency stoplist and its report
   stats.py        coverage report: the measurements that replace the design's estimates
   versions.py     which bill version the text layer fetches (pure functions)
-  robots.py       robots.txt rules for this project's User-Agent
+  robots.py       robots.txt rules for this project's User-Agent; temporary refusals asked again
+  pace.py         one request at a time per host, its interval apart, across every process (locked files)
   text_inventory.py  `lineage text inventory`: unusable text per record, the fetch plan, per-host counts
   certs/intermediates.pem  intermediate certificates some legislature servers omit
   extract.py      text from HTML or PDF (pypdf), lines kept, struck text dropped
@@ -115,7 +116,8 @@ data/             local snapshots and derived tables; gitignored, never committe
 - Every number in README.md or DESIGN.md comes from a committed eval or benchmark output, with the command that reproduces it. Never hard-code a result.
 - Fix random seeds. The snapshot is pinned by `snapshot/manifest.json`; an archive's as-of date is its README's Generated At.
 - Before a large write, call `disk.require_free_space` with an upper bound on the bytes written. The default floor is 20 GiB free.
-- A script that fetches through `text_fetch.fetch_all` runs under `if __name__ == "__main__":`; its extraction workers are spawned and re-import the script.
+- A script that fetches through `text_fetch.fetch_all` runs under `if __name__ == "__main__":`; its extraction workers are spawned and re-import the script, and `fetch_all` refuses to run inside one.
+- Every HTTP request goes through `fetch.open_url`, which waits for the host's turn in `lineage.pace`. Never pace requests any other way.
 - Open DuckDB only through `queries.connect_quiet` or `queries.connect`, which cap a query's spill to disk at the same floor. This holds for tests and one-off probes too; a test fails on any other `duckdb.*()` call.
 - Secrets come only from environment variables. `.env` is gitignored.
 - Model calls happen only in the explanation step and the provisional precision labels. Retrieval runs with no API key.

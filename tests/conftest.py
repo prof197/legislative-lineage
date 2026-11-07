@@ -40,6 +40,12 @@ def build_raw_dir(root: Path, fixtures: Path = FIXTURES) -> Path:
     return raw
 
 
+@pytest.fixture(autouse=True)
+def _own_pace_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    # Each test paces its requests apart from other tests and from any real run.
+    monkeypatch.setenv("LINEAGE_PACE_DIR", str(tmp_path / "pace"))
+
+
 @pytest.fixture
 def raw_dir(tmp_path: Path) -> Path:
     return build_raw_dir(tmp_path)

@@ -2,6 +2,7 @@
 
 import gzip
 import json
+import multiprocessing
 import urllib.error
 from email.message import Message
 from http.client import HTTPResponse
@@ -11,7 +12,15 @@ from typing import Any, cast
 import pytest
 
 from lineage.robots import Robots, parse_robots
-from lineage.text_fetch import ExtractionWorkersError, Fetched, Job, fetch_one, run_host
+from lineage.text_fetch import (
+    ExtractionWorkersError,
+    Fetched,
+    FetchInWorkerError,
+    Job,
+    fetch_all,
+    fetch_one,
+    run_host,
+)
 
 AT = "2099-01-02T00:00:00+00:00"
 PAGE = b"<html><body><p>Section 1. Short title.</p><p>Section 2. Fees.</p></body></html>"
@@ -97,7 +106,8 @@ def test_a_page_with_no_extractable_text_is_an_extract_error() -> None:
 
 
 def _fake_fetch(outcomes: dict[str, str]) -> Any:
-    def fetch(job: Job, robots: Robots) -> Fetched:
+    def fetch(job: Job, robots: Robots, interval: float) -> Fetched:
+        intervals.append(interval)
         outcome = outcomes.get(job.id, "ok")
         text = "t" if outcome == "ok" else None
         return Fetched(
@@ -108,6 +118,9 @@ def _fake_fetch(outcomes: dict[str, str]) -> Any:
     return fetch
 
 
+intervals: list[float] = []
+
+
 def _jobs(n: int) -> list[Job]:
     return [Job(f"b{i}", f"https://leg.example/{i}", "pdf", "Introduced", "") for i in range(n)]
 
@@ -115,21 +128,20 @@ def _jobs(n: int) -> list[Job]:
 def test_a_host_is_paced_at_its_crawl_delay_and_a_rerun_retries_only_failures(
     tmp_path: Path,
 ) -> None:
-    waits: list[float] = []
-
     def run(outcomes: dict[str, str]) -> dict[str, int]:
         return dict(
             run_host(
                 "leg.example", _jobs(3), tmp_path,
                 read=lambda s, h: _robots(b"User-agent: *\nCrawl-delay: 4\n"),
-                fetch=_fake_fetch(outcomes), sleep=waits.append, floor_bytes=0,
+                fetch=_fake_fetch(outcomes), floor_bytes=0,
             )
         )  # fmt: skip
 
+    intervals.clear()
     first = run({"b1": "network_error", "b2": "http_error"})
     second = run({})
 
-    assert waits == [4.0, 4.0]
+    assert intervals == [4.0, 4.0, 4.0, 4.0]
     assert first == {"skipped": 0, "ok": 1, "network_error": 1, "http_error": 1}
     assert second == {"skipped": 2, "ok": 1}
     rows = [json.loads(line) for line in (tmp_path / "leg.example.jsonl").read_text().splitlines()]
@@ -141,11 +153,57 @@ def test_a_host_that_keeps_failing_is_stopped(tmp_path: Path) -> None:
 
     got = run_host(
         "leg.example", jobs, tmp_path, read=lambda s, h: _robots(),
-        fetch=_fake_fetch({j.id: "server_error" for j in jobs}), sleep=lambda s: None,
-        floor_bytes=0,
+        fetch=_fake_fetch({j.id: "server_error" for j in jobs}), floor_bytes=0,
     )  # fmt: skip
 
     assert (got["server_error"], got["host_stopped"]) == (20, 1)
+
+
+def _host(tmp_path: Path, status: int | None) -> dict[str, int]:
+    # No fake fetch: a barred host must not reach the request at all.
+    robots = parse_robots("https://leg.example/robots.txt", status, b"", AT)
+    return dict(
+        run_host(
+            "leg.example", _jobs(2), tmp_path, read=lambda s, h: robots, floor_bytes=0,
+        )
+    )  # fmt: skip
+
+
+@pytest.mark.parametrize("status", [None, 429, 503])
+def test_a_temporary_robots_refusal_stores_nothing_so_a_later_run_asks_again(
+    tmp_path: Path, status: int | None
+) -> None:
+    assert _host(tmp_path, status) == {"skipped": 0, "robots_unavailable": 2}
+    assert _host(tmp_path, status) == {"skipped": 0, "robots_unavailable": 2}
+
+    assert not (tmp_path / "leg.example.jsonl").exists()
+    reads = (tmp_path / "robots" / "leg.example.jsonl").read_text().splitlines()
+    assert [json.loads(r)["status"] for r in reads] == [status, status]
+
+
+@pytest.mark.parametrize("status", [401, 403])
+def test_a_deliberate_robots_refusal_is_stored_and_not_asked_again(
+    tmp_path: Path, status: int
+) -> None:
+    assert _host(tmp_path, status) == {"skipped": 0, "robots": 2}
+    assert _host(tmp_path, status) == {"skipped": 2}
+
+    rows = [json.loads(r) for r in (tmp_path / "leg.example.jsonl").read_text().splitlines()]
+    assert {(r["outcome"], r["status"]) for r in rows} == {("robots", status)}
+    reads = (tmp_path / "robots" / "leg.example.jsonl").read_text().splitlines()
+    assert len(reads) == 1
+
+
+def test_fetch_all_refuses_to_run_inside_a_worker_process(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # A spawned worker that re-ran a script without a main guard would call fetch_all here.
+    monkeypatch.setattr(multiprocessing, "parent_process", lambda: object())
+
+    with pytest.raises(FetchInWorkerError, match="__main__"):
+        fetch_all([JOB], tmp_path)
+
+    assert list(tmp_path.iterdir()) == []
 
 
 def test_failed_extraction_workers_stop_the_run_instead_of_failing_each_document() -> None:
