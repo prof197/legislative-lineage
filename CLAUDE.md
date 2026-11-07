@@ -26,6 +26,7 @@ uv run lineage eval answer-key  # each commission list row and the bills it reso
 uv run lineage eval readme   # regenerate README.md's results table from reports/results.json
 uv run lineage text inventory  # version to fetch per record, by host, robots.txt read -> data/text/plan.parquet, reports/text_inventory.json
 uv run lineage text sample   # quality test: fetch a seeded sample per state and format -> data/text/sample/, reports/text_quality.json
+uv run lineage text fetch    # fetch every planned record as rules/text_layer.toml says, California from its bulk download; resumable -> data/text/full/, reports/text_fetch.json
 uv run python -m evals.fixture  # rebuild tests/fixtures/commission/ from the local snapshot, dev only
 uv run python -m benchmarks.minhash  # NumPy vs datasketch: signing and LSH index time and memory (DR-3), dev only
 ```
@@ -71,6 +72,8 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   text_fetch.py   polite per-host fetching: robots, pacing, backoff, resumable JSON-lines store; extraction in worker processes
   text_rules.py   rules/text_layer.toml: the usable-text bar, per-state formats and readings, the replacement rule
   text_quality.py  `lineage text sample`: the quality test, fetched text against Open States'
+  text_run.py     `lineage text fetch`: the full fetch's jobs from the plan and the rules, and its report
+  ca_bulk.py      California's text from its official bulk download, one biennium at a time
   queries.py      every SQL query the pipeline runs (DR-4)
   disk.py         free-space floor checked before large writes
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
@@ -89,6 +92,7 @@ reports/          committed outputs of pipeline commands; README and DESIGN numb
   answer_key.csv  each commission list row and the corpus bills it resolved to
   text_inventory.json  records without usable text, the versions planned, hosts and their robots.txt
   text_quality.json  the quality test per state and format: outcomes, usable and clean rates per reading, comparison
+  text_fetch.json  the full fetch per state: outcomes, and records left out with the reason
 DESIGN.md         design, alternatives, scaling limits, failure modes, decision records
 data/             local snapshots and derived tables; gitignored, never committed
   raw/<ST>/*.zip  Open States session archives, never edited

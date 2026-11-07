@@ -66,7 +66,7 @@ class Fetched:
     note: str
     date: str
     outcome: str  # ok, not_usable, robots, too_large, http_error, server_error, network_error,
-    # extract_error
+    # extract_error; not_in_bulk (lineage.ca_bulk)
     status: int | None
     error: str | None
     body_bytes: int

@@ -810,6 +810,18 @@ def fetch_plan(con: duckdb.DuckDBPyConnection, *, path: Path) -> list[dict[str, 
     return [dict(zip(names, row, strict=True)) for row in cursor.fetchall()]
 
 
+def identifiers(
+    con: duckdb.DuckDBPyConnection, *, bills_glob: str, ids: list[str]
+) -> list[tuple[str, str, str]]:
+    """(id, session, identifier) for each id."""
+    rows: list[tuple[str, str, str]] = con.execute(
+        "SELECT id, session, identifier FROM read_parquet($bills) "
+        "WHERE list_contains($ids, id) ORDER BY id",
+        {"bills": bills_glob, "ids": ids},
+    ).fetchall()
+    return rows
+
+
 def stored_text(
     con: duckdb.DuckDBPyConnection, *, bills_glob: str, ids: list[str]
 ) -> dict[str, tuple[str | None, str | None, list[dict[str, Any]]]]:

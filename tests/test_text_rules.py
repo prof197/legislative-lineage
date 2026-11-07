@@ -98,3 +98,29 @@ def test_the_committed_rules_agree_with_the_committed_quality_report() -> None:
             rate = cell["readings"][reading]["usable_rate"]
             assert rate is not None, (state, fmt)
             assert rate >= rules.min_usable_rate, (state, fmt)
+
+
+def test_full_run_jobs_follow_each_states_rule(rules: TextRules) -> None:
+    from lineage.text_run import plan_jobs
+
+    def row(i: str, state: str, kind: str, html: bool = True) -> dict[str, Any]:
+        return {
+            "id": i, "state": state, "kind": kind, "outcome": "planned", "note": "Enrolled",
+            "date": "", "html_url": f"https://{state}.example/{i}.htm" if html else None,
+            "pdf_url": f"https://{state}.example/{i}.pdf",
+        }  # fmt: skip
+
+    plan = [
+        row("oh1", "OH", "blank"), row("oh2", "OH", "blank", html=False),
+        row("oh3", "OH", "usable"), row("ga1", "GA", "blank"), row("ga2", "GA", "usable"),
+        row("ca1", "CA", "missing"), row("in1", "IN", "blank"), row("tx1", "TX", "blank"),
+    ]  # fmt: skip
+
+    jobs, bulk, left = plan_jobs(plan, rules, replace={"OH"})
+
+    assert [(j.id, j.format, j.layout) for j in jobs] == [
+        ("oh1", "html", False), ("oh2", "pdf", False), ("oh3", "html", False),
+        ("ga1", "pdf", True),
+    ]  # fmt: skip
+    assert bulk == ["ca1"]
+    assert left == {("IN", "pages are built by scripts"): 1, ("TX", "no rule"): 1}

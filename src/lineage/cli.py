@@ -34,6 +34,8 @@ from lineage.stoplist import StoplistError, build_stoplist, file_sha256
 from lineage.text_inventory import PLAN, REPORT, build_inventory
 from lineage.text_quality import REPORT as QUALITY
 from lineage.text_quality import STORE, run_sample
+from lineage.text_run import REPORT as FETCH_REPORT
+from lineage.text_run import run_fetch
 from lineage.ulc import ENACTMENTS, UlcError
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
@@ -485,3 +487,25 @@ def text_sample(
     sampled = sum(sum(c["sampled"].values()) for c in cells)
     ok = sum(c["outcomes"].get("ok", 0) for c in cells)
     typer.echo(f"{ok:,} of {sampled:,} sampled documents extracted, {len(cells)} cells -> {out}")
+
+
+@text_app.command("fetch")
+def text_fetch(
+    tables: TablesOption = Path("data/tables"),
+    plan: Annotated[Path, typer.Option("--plan", help="Fetch plan Parquet (local).")] = PLAN,
+    out: Annotated[Path, typer.Option("--out", help="Fetch report JSON (committed).")] = (
+        FETCH_REPORT
+    ),
+    fetch: Annotated[bool, typer.Option(help="Fetch what the store lacks before counting.")] = True,
+) -> None:
+    """Fetch every planned record's text, as rules/text_layer.toml says; resumable."""
+    try:
+        doc = run_fetch(tables, plan_path=plan, report_path=out, fetch=fetch)
+    except InsufficientDiskSpaceError as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    ok = doc["outcomes"].get("ok", 0)
+    left = sum(doc["left_out"].values())
+    typer.echo(
+        f"{ok:,} of {doc['jobs']:,} records fetched with usable text, {left:,} left out -> {out}"
+    )

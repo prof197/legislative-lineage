@@ -1,0 +1,468 @@
+{
+ "command": "uv run lineage text fetch",
+ "replaced_states": [
+  "AR",
+  "OH",
+  "OR",
+  "WA"
+ ],
+ "jobs": 151425,
+ "outcomes": {
+  "extract_error": 575,
+  "http_error": 3646,
+  "network_error": 2,
+  "not_in_bulk": 6,
+  "not_usable": 376,
+  "ok": 146815,
+  "robots": 5
+ },
+ "left_out": {
+  "documents are served only through an API that needs a registered key": 2782,
+  "no_bill_version": 918,
+  "no_link": 9293,
+  "retired host: New Hampshire's old site; its ids no longer resolve": 133,
+  "robots.txt disallows the bill links": 1,
+  "unsupported_format": 4
+ },
+ "states": {
+  "AK": {
+   "jobs": 3,
+   "outcomes": {
+    "ok": 3
+   },
+   "left_out": {
+    "no_link": 5
+   }
+  },
+  "AL": {
+   "jobs": 110,
+   "outcomes": {
+    "extract_error": 2,
+    "ok": 106,
+    "robots": 2
+   },
+   "left_out": {}
+  },
+  "AR": {
+   "jobs": 3556,
+   "outcomes": {
+    "not_usable": 1,
+    "ok": 3555
+   },
+   "left_out": {}
+  },
+  "AZ": {
+   "jobs": 261,
+   "outcomes": {
+    "extract_error": 5,
+    "ok": 256
+   },
+   "left_out": {}
+  },
+  "CA": {
+   "jobs": 2409,
+   "outcomes": {
+    "not_in_bulk": 6,
+    "not_usable": 9,
+    "ok": 2394
+   },
+   "left_out": {}
+  },
+  "CO": {
+   "jobs": 484,
+   "outcomes": {
+    "not_usable": 4,
+    "ok": 477,
+    "robots": 3
+   },
+   "left_out": {
+    "no_link": 1
+   }
+  },
+  "CT": {
+   "jobs": 9255,
+   "outcomes": {
+    "ok": 9255
+   },
+   "left_out": {
+    "no_link": 5
+   }
+  },
+  "DE": {
+   "jobs": 1292,
+   "outcomes": {
+    "http_error": 41,
+    "not_usable": 1,
+    "ok": 1250
+   },
+   "left_out": {}
+  },
+  "GA": {
+   "jobs": 1098,
+   "outcomes": {
+    "extract_error": 7,
+    "not_usable": 14,
+    "ok": 1077
+   },
+   "left_out": {}
+  },
+  "HI": {
+   "jobs": 9359,
+   "outcomes": {
+    "http_error": 12,
+    "not_usable": 4,
+    "ok": 9343
+   },
+   "left_out": {}
+  },
+  "IA": {
+   "jobs": 1210,
+   "outcomes": {
+    "extract_error": 27,
+    "ok": 1183
+   },
+   "left_out": {
+    "no_link": 4
+   }
+  },
+  "ID": {
+   "jobs": 32,
+   "outcomes": {
+    "ok": 32
+   },
+   "left_out": {}
+  },
+  "IL": {
+   "jobs": 3308,
+   "outcomes": {
+    "not_usable": 3,
+    "ok": 3305
+   },
+   "left_out": {
+    "no_link": 877
+   }
+  },
+  "IN": {
+   "jobs": 0,
+   "outcomes": {},
+   "left_out": {
+    "documents are served only through an API that needs a registered key": 2782
+   }
+  },
+  "KS": {
+   "jobs": 916,
+   "outcomes": {
+    "http_error": 393,
+    "network_error": 1,
+    "ok": 522
+   },
+   "left_out": {}
+  },
+  "KY": {
+   "jobs": 25,
+   "outcomes": {
+    "ok": 25
+   },
+   "left_out": {
+    "no_link": 80
+   }
+  },
+  "LA": {
+   "jobs": 2975,
+   "outcomes": {
+    "not_usable": 9,
+    "ok": 2966
+   },
+   "left_out": {
+    "no_link": 60
+   }
+  },
+  "MA": {
+   "jobs": 15153,
+   "outcomes": {
+    "extract_error": 218,
+    "http_error": 198,
+    "not_usable": 266,
+    "ok": 14471
+   },
+   "left_out": {
+    "no_link": 156
+   }
+  },
+  "MD": {
+   "jobs": 9162,
+   "outcomes": {
+    "ok": 9162
+   },
+   "left_out": {}
+  },
+  "ME": {
+   "jobs": 4552,
+   "outcomes": {
+    "ok": 4552
+   },
+   "left_out": {
+    "no_link": 113
+   }
+  },
+  "MI": {
+   "jobs": 1759,
+   "outcomes": {
+    "extract_error": 138,
+    "network_error": 1,
+    "not_usable": 1,
+    "ok": 1619
+   },
+   "left_out": {}
+  },
+  "MN": {
+   "jobs": 6947,
+   "outcomes": {
+    "ok": 6947
+   },
+   "left_out": {}
+  },
+  "MO": {
+   "jobs": 3444,
+   "outcomes": {
+    "extract_error": 2,
+    "http_error": 13,
+    "not_usable": 31,
+    "ok": 3398
+   },
+   "left_out": {
+    "no_link": 11
+   }
+  },
+  "MS": {
+   "jobs": 2312,
+   "outcomes": {
+    "http_error": 4,
+    "not_usable": 1,
+    "ok": 2307
+   },
+   "left_out": {}
+  },
+  "MT": {
+   "jobs": 3380,
+   "outcomes": {
+    "extract_error": 1,
+    "http_error": 1647,
+    "not_usable": 1,
+    "ok": 1731
+   },
+   "left_out": {
+    "no_link": 5666
+   }
+  },
+  "NC": {
+   "jobs": 1466,
+   "outcomes": {
+    "not_usable": 5,
+    "ok": 1461
+   },
+   "left_out": {}
+  },
+  "ND": {
+   "jobs": 379,
+   "outcomes": {
+    "ok": 379
+   },
+   "left_out": {}
+  },
+  "NE": {
+   "jobs": 2340,
+   "outcomes": {
+    "not_usable": 7,
+    "ok": 2333
+   },
+   "left_out": {}
+  },
+  "NH": {
+   "jobs": 1354,
+   "outcomes": {
+    "extract_error": 3,
+    "ok": 1351
+   },
+   "left_out": {
+    "no_bill_version": 911,
+    "no_link": 1233,
+    "retired host: New Hampshire's old site; its ids no longer resolve": 133
+   }
+  },
+  "NJ": {
+   "jobs": 18892,
+   "outcomes": {
+    "http_error": 7,
+    "ok": 18885
+   },
+   "left_out": {
+    "no_bill_version": 1,
+    "no_link": 558,
+    "unsupported_format": 4
+   }
+  },
+  "NM": {
+   "jobs": 39,
+   "outcomes": {
+    "ok": 39
+   },
+   "left_out": {}
+  },
+  "NV": {
+   "jobs": 807,
+   "outcomes": {
+    "ok": 807
+   },
+   "left_out": {}
+  },
+  "NY": {
+   "jobs": 40,
+   "outcomes": {
+    "ok": 40
+   },
+   "left_out": {}
+  },
+  "OH": {
+   "jobs": 2579,
+   "outcomes": {
+    "http_error": 1060,
+    "not_usable": 2,
+    "ok": 1517
+   },
+   "left_out": {}
+  },
+  "OK": {
+   "jobs": 4799,
+   "outcomes": {
+    "extract_error": 99,
+    "not_usable": 3,
+    "ok": 4697
+   },
+   "left_out": {
+    "no_bill_version": 6,
+    "no_link": 111
+   }
+  },
+  "OR": {
+   "jobs": 6825,
+   "outcomes": {
+    "ok": 6825
+   },
+   "left_out": {}
+  },
+  "PA": {
+   "jobs": 4985,
+   "outcomes": {
+    "extract_error": 4,
+    "ok": 4981
+   },
+   "left_out": {
+    "no_link": 2
+   }
+  },
+  "RI": {
+   "jobs": 575,
+   "outcomes": {
+    "ok": 575
+   },
+   "left_out": {}
+  },
+  "SC": {
+   "jobs": 3,
+   "outcomes": {
+    "ok": 3
+   },
+   "left_out": {
+    "no_link": 4
+   }
+  },
+  "SD": {
+   "jobs": 2049,
+   "outcomes": {
+    "not_usable": 5,
+    "ok": 2044
+   },
+   "left_out": {}
+  },
+  "TN": {
+   "jobs": 0,
+   "outcomes": {},
+   "left_out": {
+    "robots.txt disallows the bill links": 1
+   }
+  },
+  "TX": {
+   "jobs": 2685,
+   "outcomes": {
+    "not_usable": 1,
+    "ok": 2684
+   },
+   "left_out": {
+    "no_link": 2
+   }
+  },
+  "UT": {
+   "jobs": 253,
+   "outcomes": {
+    "extract_error": 12,
+    "ok": 241
+   },
+   "left_out": {}
+  },
+  "VA": {
+   "jobs": 6945,
+   "outcomes": {
+    "extract_error": 14,
+    "not_usable": 1,
+    "ok": 6930
+   },
+   "left_out": {
+    "no_link": 402
+   }
+  },
+  "VT": {
+   "jobs": 299,
+   "outcomes": {
+    "ok": 299
+   },
+   "left_out": {}
+  },
+  "WA": {
+   "jobs": 5998,
+   "outcomes": {
+    "http_error": 8,
+    "not_usable": 3,
+    "ok": 5987
+   },
+   "left_out": {}
+  },
+  "WI": {
+   "jobs": 404,
+   "outcomes": {
+    "ok": 404
+   },
+   "left_out": {}
+  },
+  "WV": {
+   "jobs": 4703,
+   "outcomes": {
+    "extract_error": 42,
+    "http_error": 263,
+    "not_usable": 4,
+    "ok": 4394
+   },
+   "left_out": {
+    "no_link": 3
+   }
+  },
+  "WY": {
+   "jobs": 4,
+   "outcomes": {
+    "extract_error": 1,
+    "ok": 3
+   },
+   "left_out": {}
+  }
+ }
+}

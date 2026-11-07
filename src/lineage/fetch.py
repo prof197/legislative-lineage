@@ -129,6 +129,26 @@ def _stream(response: HTTPResponse, part: Path, *, cap: int, floor: int) -> str:
     return digest.hexdigest()
 
 
+def download(url: str, dest: Path, *, floor: int, pause: float = 1.0) -> tuple[int, str]:
+    """Download `url` to `dest` as this project, checking the free space against the size the
+    server declares first; return the size and SHA-256. A server that declares no size is
+    refused, because the space could not be checked."""
+    part = dest.with_name(dest.name + ".part")
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        with open_url(url, pause) as response:
+            length = response.headers.get("Content-Length")
+            if length is None:
+                raise FetchError(f"{url} declares no Content-Length")
+            size = int(length)
+            require_free_space(dest.parent, needed=size, floor=floor)
+            sha256 = _stream(response, part, cap=size, floor=floor)
+        part.rename(dest)
+    finally:
+        part.unlink(missing_ok=True)
+    return size, sha256
+
+
 def _fetch_one(
     archive: Archive, raw_dir: Path, *, source: str, floor: int, repin: bool, pause: float
 ) -> Archive:
