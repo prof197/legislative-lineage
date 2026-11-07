@@ -27,6 +27,17 @@ textutil -convert txt -encoding UTF-8 -output data/acts/electronic-estate-planni
 
 This is a one-time local step, not part of the pipeline. The eval records each text file's SHA-256 in its results, so a different edition or conversion shows up there. The enactments it checks are in `evals/ulc_enactments.csv`, copied from the commission's bill list for each act, which loads only in a browser. The file's first line gives the date it was read.
 
+A held-out eval, run once at the end of M5, uses four more acts that were never examined while tuning (DESIGN.md, [Commission recall](DESIGN.md#commission-recall)). Download the same edition of each into `data/acts/held-out/` and convert it the same way:
+
+```sh
+textutil -convert txt -encoding UTF-8 -output data/acts/held-out/assignment-for-benefit-of-creditors.txt "data/acts/held-out/Assignment for Benefit of Creditors_Final Act_No Comments_2025dec11.docx"
+textutil -convert txt -encoding UTF-8 -output data/acts/held-out/easement-relocation.txt "data/acts/held-out/UERA_Final Act_NC_2020.docx"
+textutil -convert txt -encoding UTF-8 -output data/acts/held-out/mortgage-modification.txt "data/acts/held-out/Mortgage Modifcation Act_Final Act_No Comments_2024.docx"
+textutil -convert txt -encoding UTF-8 -output data/acts/held-out/directed-trust.txt "data/acts/held-out/UDTA_Final_NC_2021sep21.docx"
+```
+
+Their enactments are in `evals/ulc_enactments_heldout.csv`.
+
 ## Results
 
 <!-- results:commission -->
