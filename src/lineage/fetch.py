@@ -107,7 +107,10 @@ def open_url(url: str, pause: float, *, interval: float = MIN_INTERVAL_SECONDS) 
             # Only overload and server faults are worth repeating; a 404 will not change.
             if e.code not in {429, 500, 502, 503, 504} or attempt == _ATTEMPTS - 1:
                 raise
-            time.sleep(_retry_after(e, pause * 2 ** (attempt + 1)))
+            # An HTTPError holds the response open; close it before the next attempt.
+            wait = _retry_after(e, pause * 2 ** (attempt + 1))
+            e.close()
+            time.sleep(wait)
         except urllib.error.URLError:
             if attempt == _ATTEMPTS - 1:
                 raise
@@ -213,6 +216,8 @@ def fetch_raw(
                     archive, raw_dir, source=source, floor=floor_bytes, repin=repin, pause=pause
                 )
             except (FetchError, SnapshotError, urllib.error.URLError) as e:
+                if isinstance(e, urllib.error.HTTPError):
+                    e.close()
                 result.problems.append(f"{archive.path}: {e}")
                 continue
             result.fetched += 1

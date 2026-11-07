@@ -147,6 +147,7 @@ def fetch_one(
             status = response.status
             content_type = response.headers.get("Content-Type", "")
     except urllib.error.HTTPError as e:
+        e.close()
         kind = "server_error" if e.code >= 500 or e.code == 429 else "http_error"
         return result(kind, status=e.code, error=str(e.reason))
     except (urllib.error.URLError, TimeoutError, ConnectionError, HTTPException) as e:

@@ -76,6 +76,7 @@ def _read_once(url: str, pause: float, interval: float) -> Robots:
         with open_url(url, pause, interval=interval) as response:
             return parse_robots(url, response.status, response.read(_MAX_BYTES), read_at)
     except urllib.error.HTTPError as e:
+        e.close()
         return parse_robots(url, e.code, b"", read_at)
     except (urllib.error.URLError, TimeoutError, ConnectionError):
         return parse_robots(url, None, b"", read_at)
