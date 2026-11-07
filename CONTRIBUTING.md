@@ -22,4 +22,4 @@ It checks every tracked file and, with `--history`, every commit's diff, message
 LEAK_CHECK_TERMS=... uv run python -m tools.leak_check --history
 ```
 
-CI runs the same check on every push and pull request, with the deny list from the `LEAK_CHECK_TERMS` repository secret. The step fails while that secret is unset, so a missing secret can't pass the check on local paths alone.
+CI runs the same check on every push and pull request, with the deny list from the `LEAK_CHECK_TERMS` repository secret. GitHub gives no secrets to runs in a fork or to pull requests from one, so there the step is skipped with a notice, and the check runs once the change reaches this repository. Here the step fails while the secret is unset, so a missing secret can't pass the check on local paths alone.

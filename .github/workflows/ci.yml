@@ -35,8 +35,18 @@ jobs:
       - run: uv run pyright
       - run: uv run pytest
 
-      # The deny list lives in a repository secret, so the repo never lists it; without the
-      # secret the step fails rather than passing on local paths alone.
-      - run: uv run python -m tools.leak_check --history --require-terms
+      # The deny list lives in a repository secret, so the repo never lists it. GitHub gives no
+      # secrets to a run in a fork or to a pull request from one, so there the check is skipped
+      # with a notice; it runs when the change reaches this repository. Here a missing secret
+      # fails the step rather than passing on local paths alone.
+      - name: Leak check
         env:
           LEAK_CHECK_TERMS: ${{ secrets.LEAK_CHECK_TERMS }}
+          # A push in a fork, or a pull request whose head is in another repository.
+          FROM_FORK: ${{ github.event.repository.fork || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository) }}
+        run: |
+          if [ -z "$LEAK_CHECK_TERMS" ] && [ "$FROM_FORK" = "true" ]; then
+            echo "::notice title=Leak check skipped::Runs from forks get no repository secrets, so the deny list is unavailable here. The check runs once the change reaches this repository."
+            exit 0
+          fi
+          uv run python -m tools.leak_check --history --require-terms
