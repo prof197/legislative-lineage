@@ -201,6 +201,8 @@ Comparing every pair of sections is out of reach, so this stage summarizes each 
 
 The external ground truth is the Uniform Law Commission's list of enactments. Starting from a uniform act's text, the eval asks what share of the bills that enacted it the pipeline finds.
 
+**Development and held-out sets.** The enactments of the three acts below were used for diagnosis: the fixes made since M3 were chosen by studying their misses. Their recall is therefore a development number, not an estimate of recall on acts the project has not seen. A second answer key, of enactments of uniform acts not examined and of bills not in the first set, is committed before any further tuning. Its bills may be resolved, but the eval is not run against it and its matches are not inspected until the final evaluation at the end of M5. It is then reported once, as held-out recall, beside the development number.
+
 **Act text.** The ULC holds the copyright in its acts. Its [terms of use](https://www.uniformlaws.org/termsofuse) let anyone view, copy, print and distribute the site's content for informational, noncommercial purposes, unmodified and with the copyright notice or other attribution. Modifying it is allowed only as part of a legislative process. The terms say nothing specific about showing an act on another website. Downloading an act's final text shows no separate notice or terms. Each act prints its own notice in its front matter:
 
 | Act | Edition used | Notice printed in the act |
@@ -351,6 +353,7 @@ Each entry names the command that produces it and the committed file it reads fr
 
 **To be measured.**
 - Commission recall, pooled and by act (`lineage eval commission`, M3).
+- Held-out commission recall, on the second answer key, measured once (end of M5).
 - Stage ablation: recall and precision for each stage alone and both together (M4).
 - Cost and runtime per stage (M5).
 
