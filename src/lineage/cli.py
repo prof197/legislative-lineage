@@ -9,8 +9,8 @@ from typing import Annotated
 import typer
 
 from lineage import __version__
-from lineage.acts import ACTS_DIR
-from lineage.answer_key import ANSWER_KEY, build_answer_key, render_answer_key
+from lineage.acts import ACTS, ACTS_DIR, HELD_OUT_ACTS, HELD_OUT_DIR
+from lineage.answer_key import ANSWER_KEY, HELD_OUT_KEY, build_answer_key, render_answer_key
 from lineage.commission import RESULTS, CommissionError, commission_recall, write_results
 from lineage.disk import GiB, InsufficientDiskSpaceError
 from lineage.doctypes import RULES, DocTypesError, build_eligibility, rule_samples
@@ -37,7 +37,7 @@ from lineage.text_quality import REPORT as QUALITY
 from lineage.text_quality import STORE, run_sample
 from lineage.text_run import REPORT as FETCH_REPORT
 from lineage.text_run import run_fetch
-from lineage.ulc import ENACTMENTS, UlcError
+from lineage.ulc import ENACTMENTS, HELD_OUT_ENACTMENTS, UlcError
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
 eval_app = typer.Typer(no_args_is_help=True, help="Run an eval and write its results.")
@@ -390,25 +390,56 @@ def stats(
 def eval_commission(
     tables: TablesOption = Path("data/tables"),
     acts: Annotated[
-        Path, typer.Option("--acts", help="Directory of uniform act texts (local, gitignored).")
-    ] = ACTS_DIR,
+        Path | None,
+        typer.Option(
+            "--acts",
+            help="Directory of uniform act texts (local, gitignored) [default: data/acts/, "
+            "or data/acts/held-out/ with --held-out].",
+        ),
+    ] = None,
     enactments: Annotated[
-        Path, typer.Option("--enactments", help="The commission's enactment lists (committed).")
-    ] = ENACTMENTS,
+        Path | None,
+        typer.Option(
+            "--enactments",
+            help="The commission's enactment lists (committed) [default: the development "
+            "lists, or the held-out lists with --held-out].",
+        ),
+    ] = None,
     sessions: Annotated[
         Path, typer.Option("--sessions", help="Session dates CSV (committed).")
     ] = Path("snapshot/sessions.csv"),
     results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+    held_out: Annotated[
+        bool, typer.Option("--held-out", help="Evaluate the held-out acts (with --final only).")
+    ] = False,
+    final: Annotated[
+        bool, typer.Option("--final", help="The one final evaluation of the held-out acts.")
+    ] = False,
 ) -> None:
     """Commission recall: what share of each uniform act's enactments its text finds."""
+    if held_out and not final:
+        typer.echo(
+            "The held-out acts are evaluated once, at the end of M5 (DESIGN.md#commission-recall). "
+            "Pass --final for that run.",
+            err=True,
+        )
+        raise typer.Exit(1)
+    if final and not held_out:
+        typer.echo("--final applies only with --held-out.", err=True)
+        raise typer.Exit(1)
     try:
         section = commission_recall(
-            tables, acts_dir=acts, enactments_path=enactments, sessions_path=sessions
+            tables,
+            acts_dir=acts or (HELD_OUT_DIR if held_out else ACTS_DIR),
+            enactments_path=enactments or (HELD_OUT_ENACTMENTS if held_out else ENACTMENTS),
+            sessions_path=sessions,
+            act_ids=HELD_OUT_ACTS if held_out else ACTS,
+            development_path=ENACTMENTS if held_out else None,
         )
     except (CommissionError, IndexMissingError, StoplistError, UlcError) as e:
         typer.echo(str(e), err=True)
         raise typer.Exit(1) from None
-    write_results(results, "commission", section)
+    write_results(results, "commission_held_out" if held_out else "commission", section)
     pooled = section["recall"]["pooled"]
     for label, key in (("all enactments", "all"), ("with text", "with_text")):
         r = pooled[key]
@@ -422,16 +453,43 @@ def eval_commission(
 def eval_answer_key(
     tables: TablesOption = Path("data/tables"),
     enactments: Annotated[
-        Path, typer.Option("--enactments", help="The commission's enactment lists (committed).")
-    ] = ENACTMENTS,
+        Path | None,
+        typer.Option(
+            "--enactments",
+            help="The commission's enactment lists (committed) [default: the development "
+            "lists, or the held-out lists with --held-out].",
+        ),
+    ] = None,
     sessions: Annotated[
         Path, typer.Option("--sessions", help="Session dates CSV (committed).")
     ] = Path("snapshot/sessions.csv"),
-    out: Annotated[Path, typer.Option("--out", help="Answer key CSV (committed).")] = ANSWER_KEY,
+    out: Annotated[
+        Path | None,
+        typer.Option(
+            "--out",
+            help="Answer key CSV (committed) [default: reports/answer_key.csv, or "
+            "reports/answer_key_heldout.csv with --held-out].",
+        ),
+    ] = None,
+    held_out: Annotated[
+        bool,
+        typer.Option(
+            "--held-out", help="Resolve the held-out lists, skipping the development set's bills."
+        ),
+    ] = False,
 ) -> None:
-    """The bills each commission list row resolved to, for checking the mapping by eye."""
+    """The bills each commission list row resolved to, for checking the mapping by eye.
+
+    Resolving the held-out lists runs no matching, so it may run before the final evaluation.
+    """
+    out = out or (HELD_OUT_KEY if held_out else ANSWER_KEY)
     try:
-        note, rows = build_answer_key(tables, enactments_path=enactments, sessions_path=sessions)
+        note, rows = build_answer_key(
+            tables,
+            enactments_path=enactments or (HELD_OUT_ENACTMENTS if held_out else ENACTMENTS),
+            sessions_path=sessions,
+            development_path=ENACTMENTS if held_out else None,
+        )
     except UlcError as e:
         typer.echo(str(e), err=True)
         raise typer.Exit(1) from None

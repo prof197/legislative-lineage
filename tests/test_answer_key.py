@@ -9,7 +9,7 @@ from typer.testing import CliRunner
 from lineage.answer_key import ANSWER_KEY, KeyBill, answer_key_rows, read_answer_key
 from lineage.cli import app
 from lineage.commission import RESULTS
-from lineage.ulc import BillRecord, load_enactments
+from lineage.ulc import BillRecord, development_bills, load_enactments
 from tests.conftest import COMMISSION
 
 SNAPSHOT = """\
@@ -62,6 +62,51 @@ def test_every_list_row_appears_even_when_it_is_not_counted(tmp_path: Path) -> N
     assert counted["Ohio"] == "yes"
     ohio = next(r for r in rows if r["jurisdiction"] == "Ohio")
     assert (ohio["rule"], ohio["bill_id"]) == ("", "")
+
+
+def test_a_row_naming_a_bill_of_the_development_set_is_not_counted(tmp_path: Path) -> None:
+    development = tmp_path / "development.csv"
+    development.write_text(
+        "act,jurisdiction,year,bill_number,status\nspecial-deposits,Ohio,2098,S 9,Enacted\n"
+    )
+    path = tmp_path / "ulc.csv"
+    path.write_text(SNAPSHOT)
+
+    rows = answer_key_rows(
+        load_enactments(path), BILLS, DETAILS, YEARS, first_year=2095,
+        development=development_bills(load_enactments(development)),
+    )  # fmt: skip
+
+    counted = {r["jurisdiction"]: r["counted"] for r in rows}
+    assert counted["Ohio"] == "no: names a bill of the development set"
+    assert counted["Utah"] == "yes"
+
+
+def test_the_held_out_key_drops_rows_that_share_a_bill_with_the_development_set(
+    commission_corpus: Path, tmp_path: Path
+) -> None:
+    enactments, out = tmp_path / "held_out.csv", tmp_path / "answer_key_heldout.csv"
+    # Ohio's SB 237 enacted the Public Expression Protection Act, in the development set.
+    enactments.write_text(
+        "# ULC Bill List, read 2099-01-02\n"
+        "act,jurisdiction,year,bill_number,status\n"
+        "directed-trust,Ohio,2025,SB 237,Enacted\n"
+    )
+
+    result = CliRunner().invoke(
+        app,
+        [
+            "eval", "answer-key", "--held-out", "--tables", str(commission_corpus),
+            "--enactments", str(enactments), "--sessions", str(COMMISSION / "sessions.csv"),
+            "--out", str(out),
+        ],
+    )  # fmt: skip
+
+    assert result.exit_code == 0, result.output
+    _, rows = read_answer_key(out)
+    assert [(r["act"], r["counted"]) for r in rows] == [
+        ("directed-trust", "no: names a bill of the development set")
+    ]
 
 
 def test_the_command_writes_the_key_from_the_fixture_corpus(

@@ -7,7 +7,8 @@ sections a bill matches, so every comment left in would lower every enacted bill
 `enacted_text` keeps the numbered sections and drops the rest.
 
 Act texts are copyrighted and never committed. Each user downloads them from the commission
-into `data/acts/<act>.txt` as plain text. See DESIGN.md#commission-recall.
+into `data/acts/<act>.txt` as plain text, and the held-out acts into `data/acts/held-out/`.
+See DESIGN.md#commission-recall.
 """
 
 import re
@@ -18,12 +19,25 @@ ACTS = (
     "special-deposits",
     "electronic-estate-planning-documents",
 )
+# Acts never examined while tuning, evaluated once at the end of M5. Chosen by the commission's
+# count of enactments in the corpus years, not by anything the pipeline found.
+HELD_OUT_ACTS = (
+    "assignment-for-benefit-of-creditors",
+    "easement-relocation",
+    "mortgage-modification",
+    "directed-trust",
+)
 ACT_NAMES = {
     "public-expression-protection": "Public Expression Protection",
     "special-deposits": "Special Deposits",
     "electronic-estate-planning-documents": "Electronic Estate Planning Documents",
+    "assignment-for-benefit-of-creditors": "Assignment for Benefit of Creditors",
+    "easement-relocation": "Easement Relocation",
+    "mortgage-modification": "Mortgage Modification",
+    "directed-trust": "Directed Trust",
 }
 ACTS_DIR = Path("data/acts")
+HELD_OUT_DIR = ACTS_DIR / "held-out"
 
 # "Section 1. Short Title", or "[Section 3. Registration" for an optional section. Acts
 # divided into articles number sections by article ("Section 101.") under headings such as

@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Literal
 
 ENACTMENTS = Path("evals/ulc_enactments.csv")
+HELD_OUT_ENACTMENTS = Path("evals/ulc_enactments_heldout.csv")
 
 ULC_STATES: dict[str, str | None] = {
     "Alabama": "AL", "Alaska": "AK", "Arizona": "AZ", "Arkansas": "AR", "California": "CA",
@@ -130,6 +131,19 @@ def load_enactments(path: Path = ENACTMENTS) -> Snapshot:
             )
         )
     return Snapshot(note, rows)
+
+
+NO_BILLS: frozenset[tuple[str, int, str]] = frozenset()
+
+
+def development_bills(snapshot: Snapshot) -> frozenset[tuple[str, int, str]]:
+    """(state, listed year, bill number) for every bill the development lists name."""
+    return frozenset(
+        (r.state, r.year, canonical_number(n))
+        for r in snapshot.rows
+        if r.state is not None
+        for n in r.bill_numbers
+    )
 
 
 def _passed(bill: BillRecord) -> bool:

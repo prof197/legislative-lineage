@@ -15,7 +15,7 @@ import pytest
 from typer.testing import CliRunner
 
 from lineage import queries
-from lineage.acts import ACTS
+from lineage.acts import ACTS, HELD_OUT_ACTS
 from lineage.cli import app
 from lineage.commission import MISS_REASONS, Probe, Relative, evaluate, probe, target_reason
 from lineage.lsh import BANDS, BUCKET_CAP, ROWS
@@ -215,6 +215,46 @@ def test_the_command_says_which_act_text_is_missing(
 
     assert out.exit_code == 1
     assert ACTS[0] in out.output
+
+
+def test_the_held_out_key_is_not_evaluated_without_final(
+    commission_corpus: Path, tmp_path: Path
+) -> None:
+    results = tmp_path / "results.json"
+
+    out = CliRunner().invoke(
+        app,
+        [
+            "eval", "commission", "--held-out", "--tables", str(commission_corpus),
+            "--results", str(results),
+        ],
+    )  # fmt: skip
+
+    assert out.exit_code == 1
+    assert "--final" in out.output
+    assert not results.exists()
+
+
+def test_final_applies_only_to_the_held_out_key(commission_corpus: Path, tmp_path: Path) -> None:
+    out = CliRunner().invoke(
+        app, ["eval", "commission", "--final", "--tables", str(commission_corpus)]
+    )
+
+    assert out.exit_code == 1
+    assert "--held-out" in out.output
+
+
+def test_the_final_run_reads_the_held_out_acts(commission_corpus: Path, tmp_path: Path) -> None:
+    out = CliRunner().invoke(
+        app,
+        [
+            "eval", "commission", "--held-out", "--final", "--tables", str(commission_corpus),
+            "--acts", str(tmp_path),
+        ],
+    )  # fmt: skip
+
+    assert out.exit_code == 1
+    assert HELD_OUT_ACTS[0] in out.output
 
 
 @pytest.mark.parametrize("reason", MISS_REASONS)

@@ -24,6 +24,8 @@ uv run lineage index         # signatures, LSH bands, verified pairs, families -
 uv run lineage query FILE     # a bill's near-duplicate families, offline, from the built index
 uv run lineage eval commission  # commission recall, act texts from data/acts/ -> reports/results.json (--results reports/results_exported_only.json after an --exported-only merge)
 uv run lineage eval answer-key  # each commission list row and the bills it resolved to -> reports/answer_key.csv
+uv run lineage eval answer-key --held-out  # the held-out lists resolved, development-set bills skipped -> reports/answer_key_heldout.csv
+uv run lineage eval commission --held-out --final  # held-out recall: run once, at the end of M5, never before
 uv run lineage eval readme   # regenerate README.md's results table from reports/results.json and results_exported_only.json
 uv run lineage text inventory  # version to fetch per record, by host, robots.txt read -> data/text/plan.parquet, reports/text_inventory.json
 uv run lineage text sample   # quality test: fetch a seeded sample per state and format -> data/text/sample/, reports/text_quality.json
@@ -105,6 +107,7 @@ CONTRIBUTING.md   the checks to run before a commit and a push, and the leak che
 data/             local snapshots and derived tables; gitignored, never committed
   raw/<ST>/*.zip  Open States session archives, never edited
   acts/<act>.txt  uniform act texts, downloaded from the ULC under its terms; never committed
+  acts/held-out/<act>.txt  the held-out acts' texts, read only by the parser check and the final run
   tables/         Parquet tables written by the pipeline; bills/ holds the source's records under the project's names, texts/ each record's chosen text; signatures/, bands/ and pairs/ hold .npy arrays
   text/           the text layer's fetch plan and fetched text (JSON lines per host)
 ```

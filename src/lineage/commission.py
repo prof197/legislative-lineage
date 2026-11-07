@@ -35,9 +35,12 @@ from lineage.signatures import open_signatures
 from lineage.stats import AMENDMENT_CHARS, AMENDMENT_OPENING, AMENDMENT_SUBSTITUTE
 from lineage.ulc import (
     ENACTMENTS,
+    NO_BILLS,
     BillRecord,
     Enactment,
     Snapshot,
+    canonical_number,
+    development_bills,
     find_bills,
     load_enactments,
 )
@@ -167,11 +170,17 @@ def _both(records: list[dict[str, Any]]) -> dict[str, Any]:
     return {"all": _recall(records), "with_text": _recall([r for r in records if r["with_text"]])}
 
 
-def excluded_reason(row: Enactment, first_year: int) -> str | None:
+def excluded_reason(
+    row: Enactment, first_year: int, development: frozenset[tuple[str, int, str]] = frozenset()
+) -> str | None:
+    """Why a list row is not counted, or None. `development` holds the development set's bills,
+    which a held-out row may not share: a bill that enacted two acts was already studied."""
     if row.state is None:
         return "District of Columbia: the corpus is the 50 states"
     if row.year < first_year:
         return f"listed year {row.year} is before the corpus ({first_year}-2026)"
+    if any((row.state, row.year, canonical_number(n)) in development for n in row.bill_numbers):
+        return "names a bill of the development set"
     return None
 
 
@@ -193,6 +202,7 @@ def evaluate(
     *,
     first_year: int = FIRST_YEAR,
     min_share: float = MIN_SHARE,
+    development: frozenset[tuple[str, int, str]] = frozenset(),
 ) -> dict[str, Any]:
     """Recall of each act's enactments from its query text, with a reason for every miss."""
     require_index(tables_dir)
@@ -200,8 +210,10 @@ def evaluate(
     unknown = sorted({r.act for r in rows} - set(query_texts))
     if unknown:
         raise CommissionError(f"no query text for {', '.join(unknown)}")
-    excluded = [(r, why) for r in rows if (why := excluded_reason(r, first_year)) is not None]
-    counted = [r for r in rows if excluded_reason(r, first_year) is None]
+    excluded = [
+        (r, why) for r in rows if (why := excluded_reason(r, first_year, development)) is not None
+    ]
+    counted = [r for r in rows if excluded_reason(r, first_year, development) is None]
 
     with queries.connect_quiet() as con:
         bills = queries.enactment_bills(
@@ -381,11 +393,16 @@ def commission_recall(
     acts_dir: Path = ACTS_DIR,
     enactments_path: Path = ENACTMENTS,
     sessions_path: Path,
+    act_ids: tuple[str, ...] = ACTS,
+    development_path: Path | None = None,
 ) -> dict[str, Any]:
-    """The headline eval: each act's own text as the query."""
+    """The headline eval: each act's own text as the query.
+
+    The held-out run passes its own acts and the development lists, whose bills it skips.
+    """
     texts: dict[str, str] = {}
     acts: dict[str, dict[str, Any]] = {}
-    for act in ACTS:
+    for act in act_ids:
         path = acts_dir / f"{act}.txt"
         if not path.exists():
             raise CommissionError(
@@ -400,7 +417,12 @@ def commission_recall(
             "words_kept": len(texts[act].split()),
         }
     snapshot = load_enactments(enactments_path)
-    result = evaluate(texts, snapshot, tables_dir, load_sessions(sessions_path))
+    development = (
+        development_bills(load_enactments(development_path)) if development_path else NO_BILLS
+    )
+    result = evaluate(
+        texts, snapshot, tables_dir, load_sessions(sessions_path), development=development
+    )
     for act, stats in acts.items():
         result["queries"][act] = stats | result["queries"][act]
     return {
