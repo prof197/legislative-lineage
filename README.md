@@ -30,18 +30,18 @@ This is a one-time local step, not part of the pipeline. The eval records each t
 ## Results
 
 <!-- results:commission -->
-Commission recall: of the bills that enacted three uniform acts, the share that the act's own text finds, sharing at least one verified section with it, not counting the commission's standard closing sections. The lists were read 2026-11-06. Reproduce with `uv run lineage eval commission` → `reports/results.json`.
+Commission recall: of the bills that enacted three uniform acts, the share that the act's own text finds, sharing at least one verified section with it, not counting the commission's standard closing sections. The lists were read 2026-11-06. Reproduce with `uv run lineage eval commission` → `reports/results.json`. The second column counts the same enactments with Open States' exported text alone, before the project fetched any: `uv run lineage text merge --exported-only`, the pipeline, then `uv run lineage eval commission --results reports/results_exported_only.json`.
 
-| | All enactments | With text in the source |
+| | With the text layer | Open States' text alone |
 |---|---|---|
-| Pooled, three acts | 25 / 36 (69.4%) | 25 / 36 (69.4%) |
-| Electronic Estate Planning Documents | 7 / 9 (77.8%) | 7 / 9 (77.8%) |
-| Public Expression Protection | 8 / 14 (57.1%) | 8 / 14 (57.1%) |
-| Special Deposits | 10 / 13 (76.9%) | 10 / 13 (76.9%) |
-| Enacted | 25 / 35 (71.4%) | 25 / 35 (71.4%) |
+| Pooled, three acts | 25 / 36 (69.4%) | 20 / 36 (55.6%) |
+| Electronic Estate Planning Documents | 7 / 9 (77.8%) | 6 / 9 (66.7%) |
+| Public Expression Protection | 8 / 14 (57.1%) | 5 / 14 (35.7%) |
+| Special Deposits | 10 / 13 (76.9%) | 9 / 13 (69.2%) |
+| Enacted | 25 / 35 (71.4%) | 20 / 35 (57.1%) |
 | Substantially similar | 0 / 1 (0.0%) | 0 / 1 (0.0%) |
 
-Misses: never proposed 8, verification 3. The reasons are defined in DESIGN.md, [Commission recall](DESIGN.md#commission-recall).
+Misses with the text layer: never proposed 8, verification 3. The reasons are defined in DESIGN.md, [Commission recall](DESIGN.md#commission-recall).
 <!-- /results:commission -->
 
 These are the near-duplicate stage's numbers alone: an enactment is found only where a state kept the act's wording closely enough, section by section. The results file lists every enactment's bills, with each bill's signed sections and the stage that lost it. The commission lists no failed bills, so this measures recall only.
