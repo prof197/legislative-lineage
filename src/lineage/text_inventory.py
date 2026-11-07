@@ -4,11 +4,15 @@ Open States stays the source for bills, actions and version links; its stored te
 for about a third of eligible records. The inventory chooses each eligible record's version to
 fetch (lineage.versions), groups the records by host and link format, and reads each host's
 robots.txt for this project's User-Agent. It writes the fetch plan to `data/text/plan.parquet`
-and the counts to `reports/text_inventory.json`. Only robots.txt is requested. See
-DESIGN.md#dr-6.
+and the counts to `reports/text_inventory.json`. Only robots.txt is requested. The plan carries
+a fingerprint of what built it, and the commands that read it refuse one built from anything
+else. See DESIGN.md#dr-6.
 """
 
+import hashlib
+import inspect
 import json
+import sys
 from collections import Counter, defaultdict
 from collections.abc import Callable
 from pathlib import Path
@@ -17,8 +21,8 @@ from urllib.parse import urlsplit
 
 import duckdb
 
-from lineage import queries
-from lineage.fetch import moved
+from lineage import doctypes, queries
+from lineage.fetch import HOST_MOVES, moved
 from lineage.robots import Robots, read_robots
 from lineage.sections import split_sections
 from lineage.stats import (
@@ -34,6 +38,7 @@ from lineage.versions import Link, Version, choose_version
 COMMAND = "uv run lineage text inventory"
 REPORT = Path("reports/text_inventory.json")
 PLAN = Path("data/text/plan.parquet")
+MANIFEST = Path(__file__).parents[2] / "snapshot" / "manifest.json"
 PATTERNS = queries.TextPatterns(
     blank=BLANK_PATTERN,
     notice=GEORGIA_NOTICE,
@@ -46,6 +51,48 @@ HTML, PDF = "text/html", "application/pdf"
 PLAN_COLUMNS = (
     "id", "state", "session", "status", "kind", "outcome", "note", "date", "html_url", "pdf_url",
 )  # fmt: skip
+
+
+class StalePlanError(Exception):
+    """The fetch plan was built from other code or inputs than the ones checked out."""
+
+
+def plan_fingerprint(*, manifest: Path = MANIFEST, document_types: Path = doctypes.RULES) -> str:
+    """SHA-256 of what decides the plan's rows.
+
+    That is the code that chooses the records and each one's version, the text patterns, the
+    retired hosts, and the committed inputs: the snapshot manifest and the document-type rules.
+    The tables the inventory reads are built from those by the pipeline. A plan that outlived a
+    change to version ranking once stood in for the plan the code would build; a false alarm
+    costs one rebuild, about 60 robots.txt reads.
+    """
+    code = [
+        sys.modules[__name__],
+        inspect.getmodule(choose_version),
+        inspect.getmodule(split_sections),
+        doctypes,
+        queries.text_population,
+        queries.stored_texts,
+        moved,
+    ]
+    parts = [inspect.getsource(c).encode() for c in code if c is not None]
+    parts += [repr(sorted(HOST_MOVES.items())).encode(), repr(PATTERNS).encode()]
+    parts += [manifest.read_bytes(), document_types.read_bytes()]
+    digest = hashlib.sha256()
+    for part in parts:
+        digest.update(len(part).to_bytes(8, "big") + part)
+    return digest.hexdigest()
+
+
+def load_plan(
+    con: duckdb.DuckDBPyConnection, path: Path, *, expected: str | None = None
+) -> list[dict[str, Any]]:
+    """The plan's rows, refused unless it was built from the code and inputs checked out."""
+    if queries.fetch_plan_fingerprint(con, path=path) != (expected or plan_fingerprint()):
+        raise StalePlanError(
+            f"{path} was built from other code or inputs than these; run `{COMMAND}` again"
+        )
+    return queries.fetch_plan(con, path=path)
 
 
 def _versions(raw: list[dict[str, Any]]) -> list[Version]:
@@ -185,7 +232,9 @@ def build_inventory(
         del records
         plan_path.parent.mkdir(parents=True, exist_ok=True)
         columns = {c: [r[c] for r in rows] for c in PLAN_COLUMNS}
-        queries.write_fetch_plan(con, columns=columns, path=plan_path)
+        queries.write_fetch_plan(
+            con, columns=columns, path=plan_path, fingerprint=plan_fingerprint()
+        )
     origins = {
         _origin(url)
         for r in rows

@@ -16,7 +16,7 @@ from pathlib import Path
 from lineage import queries
 from lineage.ca_bulk import HOST as BULK_HOST
 from lineage.disk import DEFAULT_FLOOR_BYTES, require_free_space
-from lineage.text_inventory import PLAN
+from lineage.text_inventory import PLAN, load_plan
 from lineage.text_rules import RULES, load_rules, replaced_states
 from lineage.text_run import QUALITY, STORE, plan_jobs
 
@@ -76,7 +76,7 @@ def merge_texts(
             rules = load_rules(rules_path)
             replace = set(replaced_states(json.loads(quality_path.read_text()), rules))
             with queries.connect_quiet() as con:
-                plan = queries.fetch_plan(con, path=plan_path)
+                plan = load_plan(con, plan_path)
             jobs, bulk, _ = plan_jobs(plan, rules, replace)
             with fetched.open("w") as out:
                 for row in _latest_ok(store, {j.id for j in jobs} | set(bulk)):

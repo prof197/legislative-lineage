@@ -20,6 +20,7 @@ from typing import Any
 from lineage import queries
 from lineage.sections import clean, normalize, split_sections
 from lineage.text_fetch import Job, fetch_all, host_of
+from lineage.text_inventory import load_plan
 from lineage.text_rules import RULES, TextRules, load_rules, usable
 
 COMMAND = "uv run lineage text sample"
@@ -204,7 +205,7 @@ def run_sample(
 ) -> dict[str, Any]:
     rules = load_rules(rules_path)
     with queries.connect_quiet() as con:
-        plan = queries.fetch_plan(con, path=plan_path)
+        plan = load_plan(con, plan_path)
     sample = draw_sample(plan)
     if fetch:
         # PDFs are also read by word position, so the report can choose the reading per state.

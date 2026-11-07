@@ -4,9 +4,17 @@ import json
 from pathlib import Path
 from typing import Any
 
+import pytest
+
 from lineage import queries
 from lineage.robots import Robots, parse_robots
-from lineage.text_inventory import build_inventory, plan_row
+from lineage.text_inventory import (
+    StalePlanError,
+    build_inventory,
+    load_plan,
+    plan_fingerprint,
+    plan_row,
+)
 
 AT = "2099-01-02T00:00:00+00:00"
 
@@ -64,6 +72,39 @@ def test_the_inventory_counts_the_fixture_corpus_and_writes_the_plan(
         for key, n in host["links"].items():
             if not key.endswith(":allowed"):
                 assert host["links"].get(f"{key}:allowed") == n
+
+
+def test_a_plan_built_from_other_code_or_inputs_is_refused(corpus: Path, tmp_path: Path) -> None:
+    plan, report = tmp_path / "plan.parquet", tmp_path / "inventory.json"
+    build_inventory(corpus, plan_path=plan, report_path=report, read=_robots)
+
+    with queries.connect_quiet() as con:
+        assert len(load_plan(con, plan)) > 0
+        with pytest.raises(StalePlanError):
+            load_plan(con, plan, expected="0" * 64)
+
+
+def test_a_plan_without_a_fingerprint_is_refused(tmp_path: Path) -> None:
+    plan = tmp_path / "plan.parquet"
+    with queries.connect_quiet() as con:
+        con.execute(f"COPY (SELECT 'a' AS id) TO '{plan}' (FORMAT parquet)")
+
+        with pytest.raises(StalePlanError):
+            load_plan(con, plan)
+
+
+def test_the_fingerprint_follows_the_snapshot_and_the_document_type_rules(tmp_path: Path) -> None:
+    manifest, rules = tmp_path / "manifest.json", tmp_path / "document_types.csv"
+    manifest.write_text('{"archives": []}')
+    rules.write_text("state,rule\n")
+    before = plan_fingerprint(manifest=manifest, document_types=rules)
+
+    assert plan_fingerprint(manifest=manifest, document_types=rules) == before
+    manifest.write_text('{"archives": [1]}')
+    assert plan_fingerprint(manifest=manifest, document_types=rules) != before
+    manifest.write_text('{"archives": []}')
+    rules.write_text("state,rule\nAL,x\n")
+    assert plan_fingerprint(manifest=manifest, document_types=rules) != before
 
 
 def test_stored_text_the_sections_no_longer_hold_is_split_again(tmp_path: Path) -> None:

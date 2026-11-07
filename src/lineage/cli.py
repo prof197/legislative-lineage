@@ -31,7 +31,7 @@ from lineage.sessions import (
 from lineage.snapshot import SnapshotError, load_manifest, scan, write_manifest
 from lineage.stats import write_coverage
 from lineage.stoplist import StoplistError, build_stoplist, file_sha256
-from lineage.text_inventory import PLAN, REPORT, build_inventory
+from lineage.text_inventory import PLAN, REPORT, StalePlanError, build_inventory
 from lineage.text_merge import merge_texts
 from lineage.text_quality import REPORT as QUALITY
 from lineage.text_quality import STORE, run_sample
@@ -491,7 +491,11 @@ def text_sample(
     fetch: Annotated[bool, typer.Option(help="Fetch what the store lacks before judging.")] = True,
 ) -> None:
     """Fetch a seeded sample per state and format and judge its text against Open States'."""
-    doc = run_sample(tables, plan_path=plan, store=store, report_path=out, fetch=fetch)
+    try:
+        doc = run_sample(tables, plan_path=plan, store=store, report_path=out, fetch=fetch)
+    except StalePlanError as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
     cells = [c for formats in doc["states"].values() for c in formats.values()]
     sampled = sum(sum(c["sampled"].values()) for c in cells)
     ok = sum(c["outcomes"].get("ok", 0) for c in cells)
@@ -510,7 +514,7 @@ def text_fetch(
     """Fetch every planned record's text, as rules/text_layer.toml says; resumable."""
     try:
         doc = run_fetch(tables, plan_path=plan, report_path=out, fetch=fetch)
-    except InsufficientDiskSpaceError as e:
+    except (InsufficientDiskSpaceError, StalePlanError) as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
     ok = doc["outcomes"].get("ok", 0)
@@ -535,7 +539,7 @@ def text_merge(
             tables, plan_path=plan, exported_only=exported_only,
             floor_bytes=int(min_free_gib * GiB),
         )  # fmt: skip
-    except InsufficientDiskSpaceError as e:
+    except (InsufficientDiskSpaceError, StalePlanError) as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
     shown = ", ".join(f"{source} {n:,}" for source, n in counts.items())

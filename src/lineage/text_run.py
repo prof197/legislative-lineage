@@ -17,6 +17,7 @@ from lineage import queries
 from lineage.ca_bulk import fetch_california
 from lineage.disk import DEFAULT_FLOOR_BYTES
 from lineage.text_fetch import Job, fetch_all, host_of
+from lineage.text_inventory import load_plan
 from lineage.text_rules import RULES, TextRules, load_rules, replaced_states, usable
 
 COMMAND = "uv run lineage text fetch"
@@ -86,7 +87,7 @@ def run_fetch(
     rules = load_rules(rules_path)
     replace = set(replaced_states(json.loads(quality_path.read_text()), rules))
     with queries.connect_quiet() as con:
-        plan = queries.fetch_plan(con, path=plan_path)
+        plan = load_plan(con, plan_path)
     jobs, bulk, left = plan_jobs(plan, rules, replace)
     if fetch:
         fetch_all(

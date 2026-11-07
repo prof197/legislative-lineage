@@ -928,12 +928,29 @@ def stored_texts(
 
 
 def write_fetch_plan(
-    con: duckdb.DuckDBPyConnection, *, columns: dict[str, list[Any]], path: Path
+    con: duckdb.DuckDBPyConnection,
+    *,
+    columns: dict[str, list[Any]],
+    path: Path,
+    fingerprint: str,
 ) -> None:
-    """Write the text layer's fetch plan, one row per record, from parallel lists."""
+    """Write the text layer's fetch plan, one row per record, from parallel lists.
+
+    The fingerprint of what built it goes in the file's key-value metadata, so it cannot be
+    separated from the rows.
+    """
     names = list(columns)
     select = ", ".join(f"unnest(${n})::VARCHAR AS {n}" for n in names)
-    con.execute(f"COPY (SELECT {select}) TO {_sql_string(str(path))} (FORMAT parquet)", columns)
+    options = f"FORMAT parquet, KV_METADATA {{fingerprint: {_sql_string(fingerprint)}}}"
+    con.execute(f"COPY (SELECT {select}) TO {_sql_string(str(path))} ({options})", columns)
+
+
+def fetch_plan_fingerprint(con: duckdb.DuckDBPyConnection, *, path: Path) -> str | None:
+    row: tuple[bytes] | None = con.execute(
+        "SELECT value FROM parquet_kv_metadata($path) WHERE key = 'fingerprint'",
+        {"path": str(path)},
+    ).fetchone()
+    return row[0].decode() if row else None
 
 
 def fetch_plan(con: duckdb.DuckDBPyConnection, *, path: Path) -> list[dict[str, Any]]:
