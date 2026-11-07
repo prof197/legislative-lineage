@@ -86,7 +86,7 @@ benchmarks/       dev-only measurements that need dev dependencies (datasketch)
   memory.py       current and peak memory as the OS charges it (macOS physical footprint)
 tools/            dev and CI checks
   leak_check.py   local paths and deny-listed terms in tracked files and every commit
-evals/            eval inputs: ulc_enactments.csv (hand copy of the commission's lists, dated)
+evals/            eval inputs: ulc_enactments.csv (hand copy of the commission's lists, dated), ulc_enactments_heldout.csv (the held-out acts' lists, reserves included)
   fixture.py      dev-only: builds tests/fixtures/commission/ from the snapshot
 tests/            pytest; small committed fixtures only
   fixtures/openstates/  trimmed real records in archive layout (README + *_bills.json)

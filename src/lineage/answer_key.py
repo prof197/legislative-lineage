@@ -64,6 +64,7 @@ def answer_key_rows(
     *,
     first_year: int = FIRST_YEAR,
     development: frozenset[tuple[str, int, str]] = frozenset(),
+    acts: frozenset[str] | None = None,
 ) -> list[dict[str, str]]:
     """One row per named bill of each list row; one row with no bill when none resolved."""
     out: list[dict[str, str]] = []
@@ -78,7 +79,7 @@ def answer_key_rows(
         why = (
             "listed as introduced"
             if row.stratum is None
-            else excluded_reason(row, first_year, development)
+            else excluded_reason(row, first_year, development, acts)
         )
         if why is not None:
             out.append(_row(base, counted=f"no: {why}"))
@@ -120,6 +121,7 @@ def build_answer_key(
     enactments_path: Path = ENACTMENTS,
     sessions_path: Path,
     development_path: Path | None = None,
+    acts: frozenset[str] | None = None,
 ) -> tuple[str, list[dict[str, str]]]:
     """The answer key from the bills table: needs ingest only, not the index.
 
@@ -137,7 +139,7 @@ def build_answer_key(
     bills = [BillRecord(*row[:7]) for row in found]
     details = {row[0]: KeyBill(row[7], row[8]) for row in found}
     years = session_years(load_sessions(sessions_path))
-    rows = answer_key_rows(snapshot, bills, details, years, development=development)
+    rows = answer_key_rows(snapshot, bills, details, years, development=development, acts=acts)
     return f"{COMMAND}; {snapshot.read_note}", rows
 
 

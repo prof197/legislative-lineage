@@ -171,10 +171,19 @@ def _both(records: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def excluded_reason(
-    row: Enactment, first_year: int, development: frozenset[tuple[str, int, str]] = frozenset()
+    row: Enactment,
+    first_year: int,
+    development: frozenset[tuple[str, int, str]] = frozenset(),
+    acts: frozenset[str] | None = None,
 ) -> str | None:
-    """Why a list row is not counted, or None. `development` holds the development set's bills,
-    which a held-out row may not share: a bill that enacted two acts was already studied."""
+    """Why a list row is not counted, or None.
+
+    `development` holds the development set's bills, which a held-out row may not share: a bill
+    that enacted two acts was already studied. `acts`, when given, are the acts selected; the
+    held-out lists also carry the reserve acts, kept for the record.
+    """
+    if acts is not None and row.act not in acts:
+        return "a reserve act, not selected"
     if row.state is None:
         return "District of Columbia: the corpus is the 50 states"
     if row.year < first_year:
@@ -203,17 +212,20 @@ def evaluate(
     first_year: int = FIRST_YEAR,
     min_share: float = MIN_SHARE,
     development: frozenset[tuple[str, int, str]] = frozenset(),
+    acts: frozenset[str] | None = None,
 ) -> dict[str, Any]:
     """Recall of each act's enactments from its query text, with a reason for every miss."""
     require_index(tables_dir)
     rows = [r for r in snapshot.rows if r.stratum is not None]
-    unknown = sorted({r.act for r in rows} - set(query_texts))
+    excluded = [
+        (r, why)
+        for r in rows
+        if (why := excluded_reason(r, first_year, development, acts)) is not None
+    ]
+    counted = [r for r in rows if excluded_reason(r, first_year, development, acts) is None]
+    unknown = sorted({r.act for r in counted} - set(query_texts))
     if unknown:
         raise CommissionError(f"no query text for {', '.join(unknown)}")
-    excluded = [
-        (r, why) for r in rows if (why := excluded_reason(r, first_year, development)) is not None
-    ]
-    counted = [r for r in rows if excluded_reason(r, first_year, development) is None]
 
     with queries.connect_quiet() as con:
         bills = queries.enactment_bills(
@@ -341,7 +353,6 @@ def evaluate(
                 }
             )
 
-    acts = sorted(query_texts)
     strata = ("enacted", "substantially_similar")
     return {
         "threshold": {
@@ -356,7 +367,9 @@ def evaluate(
         "queries": query_stats,
         "recall": {
             "pooled": _both(records),
-            "by_act": {a: _both([r for r in records if r["act"] == a]) for a in acts},
+            "by_act": {
+                a: _both([r for r in records if r["act"] == a]) for a in sorted(query_texts)
+            },
             "by_stratum": {s: _both([r for r in records if r["stratum"] == s]) for s in strata},
         },
         "recall_by_min_share": [
@@ -421,7 +434,13 @@ def commission_recall(
         development_bills(load_enactments(development_path)) if development_path else NO_BILLS
     )
     result = evaluate(
-        texts, snapshot, tables_dir, load_sessions(sessions_path), development=development
+        texts,
+        snapshot,
+        tables_dir,
+        load_sessions(sessions_path),
+        development=development,
+        # The held-out lists carry reserve acts; the development lists hold only the acts run.
+        acts=frozenset(act_ids) if development_path else None,
     )
     for act, stats in acts.items():
         result["queries"][act] = stats | result["queries"][act]

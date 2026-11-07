@@ -82,6 +82,20 @@ def test_a_row_naming_a_bill_of_the_development_set_is_not_counted(tmp_path: Pat
     assert counted["Utah"] == "yes"
 
 
+def test_a_row_of_a_reserve_act_is_listed_but_not_counted(tmp_path: Path) -> None:
+    path = tmp_path / "ulc.csv"
+    path.write_text(SNAPSHOT + "spare-act,Utah,2098,HB 12,Enacted\n")
+
+    rows = answer_key_rows(
+        load_enactments(path), BILLS, DETAILS, YEARS, first_year=2095,
+        acts=frozenset({"widget-registration"}),
+    )  # fmt: skip
+
+    counted = {(r["act"], r["jurisdiction"]): r["counted"] for r in rows}
+    assert counted[("spare-act", "Utah")] == "no: a reserve act, not selected"
+    assert counted[("widget-registration", "Utah")] == "yes"
+
+
 def test_the_held_out_key_drops_rows_that_share_a_bill_with_the_development_set(
     commission_corpus: Path, tmp_path: Path
 ) -> None:

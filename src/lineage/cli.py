@@ -489,6 +489,7 @@ def eval_answer_key(
             enactments_path=enactments or (HELD_OUT_ENACTMENTS if held_out else ENACTMENTS),
             sessions_path=sessions,
             development_path=ENACTMENTS if held_out else None,
+            acts=frozenset(HELD_OUT_ACTS) if held_out else None,
         )
     except UlcError as e:
         typer.echo(str(e), err=True)
