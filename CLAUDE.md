@@ -120,7 +120,7 @@ data/             local snapshots and derived tables; gitignored, never committe
 - Every number in README.md or DESIGN.md comes from a committed eval or benchmark output, with the command that reproduces it. Never hard-code a result.
 - Fix random seeds. The snapshot is pinned by `snapshot/manifest.json`; an archive's as-of date is its README's Generated At.
 - Before a large write, call `disk.require_free_space` with an upper bound on the bytes written. The default floor is 20 GiB free.
-- A script that fetches through `text_fetch.fetch_all` runs under `if __name__ == "__main__":`; its extraction workers are spawned and re-import the script, and `fetch_all` refuses to run inside one.
+- Every run that touches the network goes through the `lineage` CLI, never a one-off script or `python -c`: archives, robots.txt and bill text alike. If no command does what is needed, add one to the CLI first. The CLI's spawned extraction workers never re-run a fetch, and `fetch_all` refuses to run inside one.
 - Every HTTP request goes through `fetch.open_url`, which waits for the host's turn in `lineage.pace`. Never pace requests any other way.
 - Open DuckDB only through `queries.connect_quiet` or `queries.connect`, which cap a query's spill to disk at the same floor. This holds for tests and one-off probes too; a test fails on any other `duckdb.*()` call.
 - Secrets come only from environment variables. `.env` is gitignored.
