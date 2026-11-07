@@ -30,9 +30,10 @@ uv run lineage text sample   # quality test: fetch a seeded sample per state and
 uv run lineage text fetch    # fetch every planned record as rules/text_layer.toml says, California from its bulk download; resumable -> data/text/full/, reports/text_fetch.json
 uv run python -m evals.fixture  # rebuild tests/fixtures/commission/ from the local snapshot, dev only
 uv run python -m benchmarks.minhash  # NumPy vs datasketch: signing and LSH index time and memory (DR-3), dev only
+PRIVATE_NAMES=... uv run python -m tools.private_scan --history  # no private name (any case) or home path in any file or commit; CI runs it
 ```
 
-All four checks must pass before every commit. CI runs the same four commands.
+All four checks must pass before every commit. CI runs the same four commands, then the private-material scan, whose names come from the `PRIVATE_NAMES` repository secret. Run the scan before every push.
 
 ## Layout
 
@@ -81,6 +82,8 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   disk.py         free-space floor checked before large writes
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
   memory.py       current and peak memory as the OS charges it (macOS physical footprint)
+tools/            dev and CI checks
+  private_scan.py  private names and home-directory paths in tracked files and every commit
 evals/            eval inputs: ulc_enactments.csv (hand copy of the commission's lists, dated)
   fixture.py      dev-only: builds tests/fixtures/commission/ from the snapshot
 tests/            pytest; small committed fixtures only
