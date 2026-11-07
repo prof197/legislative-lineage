@@ -6,6 +6,7 @@ DESIGN.md#data-snapshot.
 """
 
 import hashlib
+import ssl
 import time
 import urllib.error
 import urllib.parse
@@ -15,8 +16,9 @@ from dataclasses import dataclass, field, replace
 from http.client import HTTPResponse
 from pathlib import Path
 
-from lineage import __version__
+from lineage import __version__, pace
 from lineage.disk import require_free_space
+from lineage.pace import MIN_INTERVAL_SECONDS
 from lineage.snapshot import Archive, SnapshotError, load_manifest, read_archive, write_manifest
 
 SOURCE = "https://data.openstates.org/json/latest/"
@@ -27,6 +29,18 @@ _CHUNK = 1 << 20
 _RECHECK_BYTES = 64 * _CHUNK
 _ATTEMPTS = 3
 _TIMEOUT_SECONDS = 120
+# Some legislature servers send their certificate without its intermediate. The bundle supplies
+# those intermediates; chains must still end at a root in the default store.
+INTERMEDIATES = Path(__file__).parent / "certs" / "intermediates.pem"
+
+
+def tls_context() -> ssl.SSLContext:
+    context = ssl.create_default_context()
+    context.load_verify_locations(cafile=INTERMEDIATES)
+    return context
+
+
+_TLS = tls_context()
 
 
 class FetchError(Exception):
@@ -42,6 +56,28 @@ class FetchResult:
     problems: list[str] = field(default_factory=list[str])
 
 
+# Illinois retired beta.ilga.gov; the same paths are served from ilga.gov.
+HOST_MOVES = {"beta.ilga.gov": "ilga.gov"}
+
+
+def moved(url: str) -> str:
+    """`url` on the host that now serves it, for hosts a legislature has retired."""
+    parts = urllib.parse.urlsplit(url)
+    host = (parts.hostname or "").lower()
+    if host not in HOST_MOVES:
+        return url
+    return urllib.parse.urlunsplit(parts._replace(netloc=HOST_MOVES[host]))
+
+
+# Characters a URL may carry as they are; anything else, such as the spaces in Oklahoma's and
+# West Virginia's links, is percent-encoded. "%" is kept so existing escapes stay single.
+_URL_SAFE = ":/?#[]@!$&'()*+,;=%~"
+
+
+def request_url(url: str) -> str:
+    return urllib.parse.quote(url, safe=_URL_SAFE)
+
+
 def url_for(archive: Archive, source: str) -> str:
     # A few session names contain spaces, which a request line cannot carry unencoded.
     return source + urllib.parse.quote(Path(archive.path).name)
@@ -52,12 +88,20 @@ def _retry_after(error: urllib.error.HTTPError, default: float) -> float:
     return float(value) if value.isdigit() else default
 
 
-def open_url(url: str, pause: float) -> HTTPResponse:
-    """GET `url` as this project, retrying overload and server errors with backoff."""
-    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+def open_url(url: str, pause: float, *, interval: float = MIN_INTERVAL_SECONDS) -> HTTPResponse:
+    """GET `url` as this project, retrying overload and server errors with backoff `pause`.
+
+    Every attempt waits for the host's turn (lineage.pace), at least `interval` after the last
+    request any process sent it.
+    """
+    request = urllib.request.Request(request_url(url), headers={"User-Agent": USER_AGENT})
+    host = urllib.parse.urlsplit(url).hostname or ""
     for attempt in range(_ATTEMPTS):
         try:
-            response: HTTPResponse = urllib.request.urlopen(request, timeout=_TIMEOUT_SECONDS)
+            with pace.turn(host, interval):
+                response: HTTPResponse = urllib.request.urlopen(
+                    request, timeout=_TIMEOUT_SECONDS, context=_TLS
+                )
             return response
         except urllib.error.HTTPError as e:
             # Only overload and server faults are worth repeating; a 404 will not change.
@@ -92,6 +136,26 @@ def _stream(response: HTTPResponse, part: Path, *, cap: int, floor: int) -> str:
     return digest.hexdigest()
 
 
+def download(url: str, dest: Path, *, floor: int, pause: float = 1.0) -> tuple[int, str]:
+    """Download `url` to `dest` as this project, checking the free space against the size the
+    server declares first; return the size and SHA-256. A server that declares no size is
+    refused, because the space could not be checked."""
+    part = dest.with_name(dest.name + ".part")
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        with open_url(url, pause) as response:
+            length = response.headers.get("Content-Length")
+            if length is None:
+                raise FetchError(f"{url} declares no Content-Length")
+            size = int(length)
+            require_free_space(dest.parent, needed=size, floor=floor)
+            sha256 = _stream(response, part, cap=size, floor=floor)
+        part.rename(dest)
+    finally:
+        part.unlink(missing_ok=True)
+    return size, sha256
+
+
 def _fetch_one(
     archive: Archive, raw_dir: Path, *, source: str, floor: int, repin: bool, pause: float
 ) -> Archive:
@@ -100,7 +164,7 @@ def _fetch_one(
     part = dest.with_name(dest.name + ".part")
     dest.parent.mkdir(parents=True, exist_ok=True)
     try:
-        with open_url(url_for(archive, source), pause) as response:
+        with open_url(url_for(archive, source), pause, interval=pause) as response:
             length = response.headers.get("Content-Length")
             size = int(length) if length is not None else archive.bytes
             if size != archive.bytes and not repin:
@@ -132,7 +196,8 @@ def fetch_raw(
     repin: bool = False,
     pause: float = 1.0,
 ) -> FetchResult:
-    """Download every pinned archive missing from `raw_dir`, one at a time, `pause` apart."""
+    """Download every pinned archive missing from `raw_dir`, one at a time, `pause` apart
+    (lineage.pace)."""
     pinned = load_manifest(manifest_path)
     result = FetchResult()
     todo = [a for a in pinned if not (raw_dir / a.path).exists()]
@@ -142,9 +207,7 @@ def fetch_raw(
 
     current = {a.path: a for a in pinned}
     try:
-        for i, archive in enumerate(todo):
-            if i:
-                time.sleep(pause)
+        for archive in todo:
             try:
                 landed = _fetch_one(
                     archive, raw_dir, source=source, floor=floor_bytes, repin=repin, pause=pause

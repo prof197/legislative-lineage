@@ -69,21 +69,24 @@ def connect(*, memory_limit: str, temp_directory: Path) -> duckdb.DuckDBPyConnec
 
 
 def outcome_actions(
-    con: duckdb.DuckDBPyConnection, *, json_path: Path, kinds: list[str]
+    con: duckdb.DuckDBPyConnection, *, json_path: Path, kinds: list[str], wording: str
 ) -> list[tuple[str, list[str], list[dict[str, Any]]]]:
-    """Each bill's id and classification, with only the actions classified as one of `kinds`.
+    """Each bill's id and classification, with only the actions classified as one of `kinds` or
+    described in words matching the `wording` pattern.
 
-    Status depends on a handful of classifications, so filtering in SQL keeps the rows that
-    reach Python small.
+    Status depends on a handful of actions, so filtering in SQL keeps the rows that reach Python
+    small.
     """
     query = f"""
         SELECT id, coalesce(classification, []),
-               list_filter(actions, lambda a: list_has_any(a.classification, $kinds))
+               list_filter(actions, lambda a: list_has_any(a.classification, $kinds)
+                                              OR regexp_matches(coalesce(a.description, ''),
+                                                                $wording))
         FROM read_json($json_path, format = 'array',
                        columns = {_struct_literal(BILL_JSON_COLUMNS)})
     """
     rows: list[tuple[str, list[str], list[dict[str, Any]]]] = con.execute(
-        query, {"json_path": str(json_path), "kinds": kinds}
+        query, {"json_path": str(json_path), "kinds": kinds, "wording": wording}
     ).fetchall()
     return rows
 
@@ -134,10 +137,14 @@ def copy_bills_to_parquet(
                 s.status,
                 s.status_reason,
                 s.status_date,
-                b.actions,
+                -- The project's names from here on: later stages never see the export's.
+                list_transform(b.actions, lambda a: {{
+                    'body': a.organization__name, 'description': a.description,
+                    'date': a.date, 'classification': a.classification, 'order': a."order"
+                }}) AS actions,
                 b.versions,
-                b.raw_text,
-                b.raw_text_url,
+                b.raw_text AS text,
+                b.raw_text_url AS text_url,
                 CAST($generated_at AS TIMESTAMP) AS generated_at,
                 $archive AS archive
             FROM read_json($json_path, format = 'array',
@@ -162,10 +169,48 @@ def copy_bills_to_parquet(
     return count
 
 
+def write_texts(
+    con: duckdb.DuckDBPyConnection, *, bills_path: Path, fetched_path: Path, out_path: Path
+) -> None:
+    """One bills file's texts: the fetched text where `fetched_path` (JSON lines) has one,
+    else the exported text, each with its source, URL and version label."""
+    # The exported text's version: the one whose links include the URL it was extracted from.
+    query = f"""
+        COPY (
+            WITH f AS (
+                SELECT * FROM read_json($fetched, format = 'newline_delimited', columns = {{
+                    'id': 'VARCHAR', 'text': 'VARCHAR', 'source': 'VARCHAR', 'url': 'VARCHAR',
+                    'version': 'VARCHAR', 'date': 'VARCHAR'}})
+            )
+            SELECT
+                b.id,
+                coalesce(f.text, b.text) AS text,
+                CASE WHEN f.id IS NOT NULL THEN f.source
+                     WHEN b.text IS NOT NULL THEN 'openstates' END AS text_source,
+                CASE WHEN f.id IS NOT NULL THEN f.url ELSE b.text_url END AS text_url,
+                CASE WHEN f.id IS NOT NULL THEN f.version
+                     ELSE list_filter(coalesce(b.versions, []), lambda v: list_contains(
+                         list_transform(coalesce(v.links, []), lambda l: l.url), b.text_url
+                     ))[1].note END AS text_version
+            FROM read_parquet($bills) AS b
+            LEFT JOIN f USING (id)
+        ) TO {_sql_string(str(out_path))} (FORMAT parquet, COMPRESSION zstd)
+    """
+    con.execute(query, {"bills": str(bills_path), "fetched": str(fetched_path)})
+
+
+def text_sources(con: duckdb.DuckDBPyConnection, *, texts_glob: str) -> dict[str, int]:
+    """Records per text source; records with no text count under "none"."""
+    rows: list[tuple[str | None, int]] = con.execute(
+        "SELECT text_source, count(*) FROM read_parquet($t) GROUP BY ALL", {"t": texts_glob}
+    ).fetchall()
+    return {source or "none": n for source, n in sorted(rows, key=lambda r: r[0] or "")}
+
+
 def text_bytes(con: duckdb.DuckDBPyConnection, *, bills_glob: str) -> int:
-    """Total UTF-8 bytes of extracted text in the bills table, to bound what splitting writes."""
+    """Total UTF-8 bytes of text in a table, to bound what a stage writes."""
     row = con.execute(
-        "SELECT coalesce(sum(strlen(raw_text)), 0) FROM read_parquet($glob)", {"glob": bills_glob}
+        "SELECT coalesce(sum(strlen(text)), 0) FROM read_parquet($glob)", {"glob": bills_glob}
     ).fetchone()
     return int(row[0]) if row else 0
 
@@ -173,12 +218,12 @@ def text_bytes(con: duckdb.DuckDBPyConnection, *, bills_glob: str) -> int:
 def open_bill_texts(
     con: duckdb.DuckDBPyConnection, *, parquet_path: Path
 ) -> duckdb.DuckDBPyConnection:
-    """Start a scan of one bills file's ids and texts; read it with `fetchmany`.
+    """Start a scan of one texts file's ids and texts; read it with `fetchmany`.
 
     No ORDER BY: sorting would hold the whole file's text in memory before the first row.
     DuckDB keeps a single file's rows in stored order, so the output is still deterministic.
     """
-    return con.execute("SELECT id, raw_text FROM read_parquet($path)", {"path": str(parquet_path)})
+    return con.execute("SELECT id, text FROM read_parquet($path)", {"path": str(parquet_path)})
 
 
 @dataclass(frozen=True, slots=True)
@@ -347,7 +392,7 @@ class EnactmentBill:
     status: str | None
     status_date: date | None
     passage_chambers: int
-    text_chars: int  # stored text, ignoring surrounding whitespace
+    text_chars: int  # the matched text (texts table), ignoring surrounding whitespace
     amendment_only: bool  # opens like an amendment and does not replace the whole bill
     eligible: bool
     family: str | None  # None when the bill has no signed sections
@@ -357,6 +402,7 @@ def enactment_bills(
     con: duckdb.DuckDBPyConnection,
     *,
     bills_glob: str,
+    texts_glob: str,
     eligible_path: Path,
     families_path: Path,
     states: list[str],
@@ -364,19 +410,21 @@ def enactment_bills(
     chars: int,
     substitute: str,
 ) -> list[EnactmentBill]:
-    """Every bill of the given states, with its passage, text, eligibility and family."""
+    """Every bill of the given states, with its passage, text, eligibility and family. The text is
+    the one the index matched (the texts table), fetched or exported."""
     passages = "list_filter(actions, lambda a: list_contains(a.classification, 'passage'))"
     rows: list[tuple[Any, ...]] = con.execute(
         f"""
         SELECT
             b.id, b.state, b.session, b.identifier, b.status, b.status_date,
-            len(list_distinct(list_transform({passages}, lambda a: a.organization__name))),
-            length(trim(coalesce(b.raw_text, ''))),
-            coalesce(regexp_matches(left(b.raw_text, $chars), $opening)
-                     AND NOT regexp_matches(b.raw_text, $substitute), false),
+            len(list_distinct(list_transform({passages}, lambda a: a.body))),
+            length(trim(coalesce(t.text, ''))),
+            coalesce(regexp_matches(left(t.text, $chars), $opening)
+                     AND NOT regexp_matches(t.text, $substitute), false),
             coalesce(e.eligible, false),
             f.family
         FROM read_parquet($bills) b
+        LEFT JOIN read_parquet($texts) t USING (id)
         LEFT JOIN read_parquet($eligible) e USING (id)
         LEFT JOIN read_parquet($families) f ON f.bill_id = b.id
         WHERE b.state IN (SELECT unnest($states))
@@ -384,6 +432,7 @@ def enactment_bills(
         """,
         {
             "bills": bills_glob,
+            "texts": texts_glob,
             "eligible": str(eligible_path),
             "families": str(families_path),
             "states": states,
@@ -393,6 +442,26 @@ def enactment_bills(
         },
     ).fetchall()
     return [EnactmentBill(*row) for row in rows]
+
+
+def listed_bills(
+    con: duckdb.DuckDBPyConnection, *, bills_glob: str, states: list[str]
+) -> list[tuple[Any, ...]]:
+    """Every bill of the given states: what matching needs, its title and last passage date."""
+    passages = "list_filter(actions, lambda a: list_contains(a.classification, 'passage'))"
+    return con.execute(
+        f"""
+        SELECT
+            id, state, session, identifier, status, status_date,
+            len(list_distinct(list_transform({passages}, lambda a: a.body))),
+            coalesce(title, ''),
+            TRY_CAST(list_max(list_transform({passages}, lambda a: left(a.date, 10))) AS DATE)
+        FROM read_parquet($bills)
+        WHERE state IN (SELECT unnest($states))
+        ORDER BY id
+        """,
+        {"bills": bills_glob, "states": states},
+    ).fetchall()
 
 
 def signature_rows_of(
@@ -524,8 +593,14 @@ _ACTION_CLASSES = "flatten(list_transform(actions, lambda a: a.classification))"
 
 
 def coverage_by_session(
-    con: duckdb.DuckDBPyConnection, *, bills_glob: str, sections_glob: str, blank_pattern: str
+    con: duckdb.DuckDBPyConnection,
+    *,
+    bills_glob: str,
+    texts_glob: str,
+    sections_glob: str,
+    blank_pattern: str,
 ) -> list[dict[str, Any]]:
+    """Per state and session: the merged text's coverage, and where the text came from."""
     query = """
         WITH per_bill AS (
             SELECT bill_id, count(*) AS n, bool_or(by_heading) AS by_heading
@@ -534,19 +609,22 @@ def coverage_by_session(
         ),
         b AS (
             SELECT
-                *,
-                raw_text IS NOT NULL AND regexp_full_match(raw_text, $blank) AS blank
-            FROM read_parquet($bills)
+                b.*,
+                t.text AS merged,
+                t.text_source,
+                t.text IS NOT NULL AND regexp_full_match(t.text, $blank) AS blank
+            FROM read_parquet($bills) AS b
+            JOIN read_parquet($texts) AS t USING (id)
         )
         SELECT
             b.state,
             b.session,
             CAST(any_value(b.generated_at) AS VARCHAR) AS generated_at,
             count(*) AS records,
-            count(*) FILTER (WHERE b.raw_text IS NULL) AS missing_text,
+            count(*) FILTER (WHERE b.merged IS NULL) AS missing_text,
             count(*) FILTER (WHERE b.blank) AS blank_text,
             count(*) FILTER (
-                WHERE b.raw_text IS NOT NULL AND NOT b.blank AND p.bill_id IS NULL
+                WHERE b.merged IS NOT NULL AND NOT b.blank AND p.bill_id IS NULL
             ) AS text_without_sections,
             count(p.bill_id) AS with_sections,
             count(*) FILTER (WHERE p.by_heading) AS split_at_headings,
@@ -554,16 +632,57 @@ def coverage_by_session(
             quantile_cont(p.n, 0.5) AS sections_median,
             quantile_disc(p.n, 0.9) AS sections_p90,
             max(p.n) AS sections_max,
+            count(*) FILTER (WHERE b.text_source = 'legislature') AS text_fetched,
+            count(*) FILTER (WHERE b.text_source = 'ca_bulk') AS text_from_bulk,
             count(*) FILTER (WHERE b.status = 'introduced') AS introduced
         FROM b LEFT JOIN per_bill AS p ON p.bill_id = b.id
         GROUP BY b.state, b.session
         ORDER BY b.state, b.session
     """
     cursor = con.execute(
-        query, {"bills": bills_glob, "sections": sections_glob, "blank": blank_pattern}
+        query,
+        {
+            "bills": bills_glob,
+            "texts": texts_glob,
+            "sections": sections_glob,
+            "blank": blank_pattern,
+        },
     )
     names = [d[0] for d in cursor.description]
     return [dict(zip(names, row, strict=True)) for row in cursor.fetchall()]
+
+
+def text_layer_coverage(
+    con: duckdb.DuckDBPyConnection,
+    *,
+    eligible_path: Path,
+    texts_glob: str,
+    sections_glob: str,
+    plan_path: Path,
+) -> list[tuple[str, int, int, int, int, int]]:
+    """Per state, over eligible records: how many there are, how many have usable exported
+    text (the fetch plan's kind), how many yield sections from the merged text, and how many
+    of those took fetched or bulk text."""
+    rows: list[tuple[str, int, int, int, int, int]] = con.execute(
+        """
+        WITH split AS (SELECT DISTINCT bill_id FROM read_parquet($sections))
+        SELECT p.state, count(*),
+            count(*) FILTER (WHERE p.kind = 'usable'),
+            count(s.bill_id),
+            count(s.bill_id) FILTER (WHERE t.text_source = 'legislature'),
+            count(s.bill_id) FILTER (WHERE t.text_source = 'ca_bulk')
+        FROM read_parquet($plan) AS p
+        JOIN read_parquet($eligible) AS e ON e.id = p.id AND e.eligible
+        JOIN read_parquet($texts) AS t ON t.id = p.id
+        LEFT JOIN split AS s ON s.bill_id = p.id
+        GROUP BY p.state ORDER BY p.state
+        """,
+        {
+            "plan": str(plan_path), "eligible": str(eligible_path), "texts": texts_glob,
+            "sections": sections_glob,
+        },
+    ).fetchall()  # fmt: skip
+    return rows
 
 
 def type_counts(con: duckdb.DuckDBPyConnection, *, bills_glob: str) -> list[tuple[str, str, int]]:
@@ -594,8 +713,8 @@ def notice_only_by_session(
     """Records per session of `state` whose text matches `notice` but not `enacting`."""
     rows: list[tuple[str, int]] = con.execute(
         "SELECT session, count(*) FROM read_parquet($bills) "
-        "WHERE state = $state AND regexp_matches(raw_text, $notice) "
-        "AND NOT regexp_matches(raw_text, $enacting) GROUP BY ALL ORDER BY session",
+        "WHERE state = $state AND regexp_matches(text, $notice) "
+        "AND NOT regexp_matches(text, $enacting) GROUP BY ALL ORDER BY session",
         {"bills": bills_glob, "state": state, "notice": notice, "enacting": enacting},
     ).fetchall()
     return rows
@@ -607,8 +726,8 @@ def amendment_only_by_session(
     """Per state and session: records whose text opens like an amendment, and how many of those
     replace the whole bill (match `substitute` anywhere)."""
     rows: list[tuple[str, str, int, int]] = con.execute(
-        "SELECT state, session, count(*), count(*) FILTER (regexp_matches(raw_text, $substitute)) "
-        "FROM read_parquet($bills) WHERE regexp_matches(left(raw_text, $chars), $opening) "
+        "SELECT state, session, count(*), count(*) FILTER (regexp_matches(text, $substitute)) "
+        "FROM read_parquet($bills) WHERE regexp_matches(left(text, $chars), $opening) "
         "GROUP BY ALL ORDER BY state, session",
         {"bills": bills_glob, "opening": opening, "chars": chars, "substitute": substitute},
     ).fetchall()
@@ -660,6 +779,30 @@ def reached_governor_shown_died(
     return rows
 
 
+def status_counts(
+    con: duckdb.DuckDBPyConnection, *, bills_glob: str, status: str
+) -> list[tuple[str, str, int]]:
+    """Records per state and type with `status`."""
+    rows: list[tuple[str, str, int]] = con.execute(
+        f"SELECT state, {_TYPE} AS type, count(*) FROM read_parquet($bills) "
+        "WHERE status = $status GROUP BY ALL ORDER BY state, type",
+        {"bills": bills_glob, "status": status},
+    ).fetchall()
+    return rows
+
+
+def status_reason_counts(
+    con: duckdb.DuckDBPyConnection, *, bills_glob: str, reason: str
+) -> list[tuple[str, str, int]]:
+    """Records per state and type whose status was decided by `reason`."""
+    rows: list[tuple[str, str, int]] = con.execute(
+        f"SELECT state, {_TYPE} AS type, count(*) FROM read_parquet($bills) "
+        "WHERE status_reason = $reason GROUP BY ALL ORDER BY state, type",
+        {"bills": bills_glob, "reason": reason},
+    ).fetchall()
+    return rows
+
+
 def carryover_overlap(
     con: duckdb.DuckDBPyConnection, *, bills_glob: str, state: str, first: str, second: str
 ) -> dict[str, Any]:
@@ -684,3 +827,157 @@ def carryover_overlap(
     first_records, reappearing = int(row[0]), int(row[1])
     share = round(reappearing / first_records, 4) if first_records else None
     return {"first_records": first_records, "reappearing": reappearing, "share": share}
+
+
+@dataclass(frozen=True, slots=True)
+class TextPatterns:
+    """What makes a record's stored text unusable (see lineage.stats for each pattern)."""
+
+    blank: str
+    notice: str
+    enacting: str
+    opening: str
+    chars: int
+    substitute: str
+
+
+def text_population(
+    con: duckdb.DuckDBPyConnection,
+    *,
+    bills_glob: str,
+    eligible_path: Path,
+    sections_glob: str,
+    patterns: TextPatterns,
+    texts_glob: str | None = None,
+) -> list[tuple[str, str, str, str, str, list[dict[str, Any]]]]:
+    """Each eligible record's id, state, session, status, why its stored text is unusable
+    ('usable' if it is not), and its versions.
+
+    The checks run in this order, so a record counts once: no text, blank text, text that
+    yields no section, a Georgia local notice, an amendment stored in place of the bill.
+    Whether the stored text yields a section is read from the sections table, which holds the
+    split of each record's text in `texts_glob`. Where that text was fetched, not exported, the
+    sections say nothing about the stored text, and the kind is 'recheck:<later kind>': the
+    caller splits the stored text and keeps the later kind if it yields a section.
+    """
+    exported = (
+        "JOIN read_parquet($texts) AS t ON t.id = x.bill_id AND t.text_source = 'openstates'"
+        if texts_glob
+        else ""
+    )
+    fetched = "LEFT JOIN read_parquet($texts) AS t2 ON t2.id = b.id" if texts_glob else ""
+    recheck = (
+        "WHEN s.bill_id IS NULL AND t2.text_source IS DISTINCT FROM 'openstates' THEN "
+        "'recheck:' || CASE WHEN b.state = 'GA' AND regexp_matches(b.text, $notice) "
+        "AND NOT regexp_matches(b.text, $enacting) THEN 'ga_notice' "
+        "WHEN regexp_matches(left(b.text, $chars), $opening) "
+        "AND NOT regexp_matches(b.text, $substitute) THEN 'amendment_only' ELSE 'usable' END"
+        if texts_glob
+        else ""
+    )
+    query = f"""
+        WITH split AS (
+            SELECT DISTINCT x.bill_id FROM read_parquet($sections) AS x {exported}
+        )
+        SELECT b.id, b.state, b.session, b.status,
+            CASE
+                WHEN b.text IS NULL THEN 'missing'
+                WHEN regexp_full_match(b.text, $blank) THEN 'blank'
+                {recheck}
+                WHEN s.bill_id IS NULL THEN 'no_sections'
+                WHEN b.state = 'GA' AND regexp_matches(b.text, $notice)
+                     AND NOT regexp_matches(b.text, $enacting) THEN 'ga_notice'
+                WHEN regexp_matches(left(b.text, $chars), $opening)
+                     AND NOT regexp_matches(b.text, $substitute) THEN 'amendment_only'
+                ELSE 'usable'
+            END AS kind,
+            coalesce(b.versions, [])
+        FROM read_parquet($bills) AS b
+        JOIN read_parquet($eligible) AS e ON e.id = b.id AND e.eligible
+        LEFT JOIN split AS s ON s.bill_id = b.id
+        {fetched}
+        ORDER BY b.id
+    """
+    rows: list[tuple[str, str, str, str, str, list[dict[str, Any]]]] = con.execute(
+        query,
+        {
+            "bills": bills_glob,
+            "eligible": str(eligible_path),
+            "sections": sections_glob,
+            "blank": patterns.blank,
+            "notice": patterns.notice,
+            "enacting": patterns.enacting,
+            "chars": patterns.chars,
+            "opening": patterns.opening,
+            "substitute": patterns.substitute,
+        }
+        | ({"texts": texts_glob} if texts_glob else {}),
+    ).fetchall()
+    return rows
+
+
+def stored_texts(
+    con: duckdb.DuckDBPyConnection, *, bills_glob: str, ids: list[str]
+) -> dict[str, str]:
+    """The exported text of each id."""
+    rows: list[tuple[str, str]] = con.execute(
+        "SELECT id, text FROM read_parquet($bills) WHERE list_contains($ids, id)",
+        {"bills": bills_glob, "ids": ids},
+    ).fetchall()
+    return dict(rows)
+
+
+def write_fetch_plan(
+    con: duckdb.DuckDBPyConnection,
+    *,
+    columns: dict[str, list[Any]],
+    path: Path,
+    fingerprint: str,
+) -> None:
+    """Write the text layer's fetch plan, one row per record, from parallel lists.
+
+    The fingerprint of what built it goes in the file's key-value metadata, so it cannot be
+    separated from the rows.
+    """
+    names = list(columns)
+    select = ", ".join(f"unnest(${n})::VARCHAR AS {n}" for n in names)
+    options = f"FORMAT parquet, KV_METADATA {{fingerprint: {_sql_string(fingerprint)}}}"
+    con.execute(f"COPY (SELECT {select}) TO {_sql_string(str(path))} ({options})", columns)
+
+
+def fetch_plan_fingerprint(con: duckdb.DuckDBPyConnection, *, path: Path) -> str | None:
+    row: tuple[bytes] | None = con.execute(
+        "SELECT value FROM parquet_kv_metadata($path) WHERE key = 'fingerprint'",
+        {"path": str(path)},
+    ).fetchone()
+    return row[0].decode() if row else None
+
+
+def fetch_plan(con: duckdb.DuckDBPyConnection, *, path: Path) -> list[dict[str, Any]]:
+    cursor = con.execute("SELECT * FROM read_parquet($path) ORDER BY id", {"path": str(path)})
+    names = [d[0] for d in cursor.description]
+    return [dict(zip(names, row, strict=True)) for row in cursor.fetchall()]
+
+
+def identifiers(
+    con: duckdb.DuckDBPyConnection, *, bills_glob: str, ids: list[str]
+) -> list[tuple[str, str, str]]:
+    """(id, session, identifier) for each id."""
+    rows: list[tuple[str, str, str]] = con.execute(
+        "SELECT id, session, identifier FROM read_parquet($bills) "
+        "WHERE list_contains($ids, id) ORDER BY id",
+        {"bills": bills_glob, "ids": ids},
+    ).fetchall()
+    return rows
+
+
+def stored_text(
+    con: duckdb.DuckDBPyConnection, *, bills_glob: str, ids: list[str]
+) -> dict[str, tuple[str | None, str | None, list[dict[str, Any]]]]:
+    """Open States' stored text, the URL it was extracted from, and the versions, per id."""
+    rows: list[tuple[str, str | None, str | None, list[dict[str, Any]]]] = con.execute(
+        "SELECT id, text, text_url, coalesce(versions, []) FROM read_parquet($bills) "
+        "WHERE list_contains($ids, id)",
+        {"bills": bills_glob, "ids": ids},
+    ).fetchall()
+    return {r[0]: (r[1], r[2], r[3]) for r in rows}

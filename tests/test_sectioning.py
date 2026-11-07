@@ -3,10 +3,12 @@ from pathlib import Path
 import duckdb
 import pytest
 
+from lineage import queries
 from lineage.disk import InsufficientDiskSpaceError
 from lineage.ingest import ingest
 from lineage.sectioning import SectioningError, build_sections
 from lineage.snapshot import scan, write_manifest
+from lineage.text_merge import merge_texts
 from tests.conftest import SESSIONS
 
 
@@ -16,11 +18,12 @@ def tables(raw_dir: Path, tmp_path: Path) -> Path:
     write_manifest(scan(raw_dir), manifest)
     out = tmp_path / "tables"
     ingest(raw_dir, manifest, SESSIONS, out, floor_bytes=0)
+    merge_texts(out, exported_only=True, floor_bytes=0)
     return out
 
 
 def _sections(tables: Path) -> duckdb.DuckDBPyConnection:
-    con = duckdb.connect()
+    con = queries.connect_quiet()
     con.execute(
         f"CREATE VIEW sections AS SELECT * FROM read_parquet('{tables / 'sections' / '*.parquet'}')"
     )
@@ -80,6 +83,6 @@ def test_refuses_to_run_below_the_disk_floor(tables: Path) -> None:
     assert not (tables / "sections").exists()
 
 
-def test_needs_the_bills_table(tmp_path: Path) -> None:
-    with pytest.raises(SectioningError, match="lineage ingest"):
+def test_needs_the_texts_table(tmp_path: Path) -> None:
+    with pytest.raises(SectioningError, match="lineage text merge"):
         build_sections(tmp_path, workers=1, floor_bytes=0)

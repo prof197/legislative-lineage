@@ -10,11 +10,11 @@ import json
 from dataclasses import replace
 from pathlib import Path
 
-import duckdb
 import numpy as np
 import pytest
 from typer.testing import CliRunner
 
+from lineage import queries
 from lineage.acts import ACTS
 from lineage.cli import app
 from lineage.commission import MISS_REASONS, Probe, Relative, evaluate, probe, target_reason
@@ -83,7 +83,7 @@ BILL = EnactmentBill(
 )
 
 
-def test_reasons_follow_the_pipeline_from_source_text_to_cutoff() -> None:
+def test_reasons_follow_the_pipeline_from_source_text_to_the_threshold() -> None:
     proposed = Probe("verification", 0.4)
 
     def reason(bill: EnactmentBill, rows: int = 3, probed: Probe | None = proposed) -> str | None:
@@ -95,29 +95,45 @@ def test_reasons_follow_the_pipeline_from_source_text_to_cutoff() -> None:
     assert reason(BILL, rows=0, probed=None) == "no_usable_text"
     assert reason(BILL) == "verification"
     assert reason(BILL, probed=Probe("not_proposed", 0.1)) == "not_proposed"
-    ranked = target_reason(BILL, signed_rows=3, probed=None, relative=Relative(51, 0.1, "HB 12"))
-    assert ranked == "below_cutoff"
-    found = target_reason(BILL, signed_rows=3, probed=None, relative=Relative(50, 0.1, "HB 12"))
-    assert found is None
-    assert list(MISS_REASONS)[-1] == "below_cutoff"
+    low = Relative(3, 0.1, "HB 12")
+    assert target_reason(BILL, signed_rows=3, probed=None, relative=low, min_share=0.2) == (
+        "below_threshold"
+    )
+    assert list(MISS_REASONS)[-1] == "below_threshold"
+
+
+def test_found_is_a_score_above_the_threshold_whatever_the_rank() -> None:
+    # A uniform act's relatives can outnumber any fixed rank once each state's introduced,
+    # failed and enacted versions count, so rank is reported but does not decide.
+    far = Relative(400, 0.25, "HB 12")
+
+    assert target_reason(BILL, signed_rows=3, probed=None, relative=far, min_share=0.2) is None
+    assert target_reason(BILL, signed_rows=3, probed=None, relative=far) is None
 
 
 def _raw_text(tables: Path, bill_id: str) -> str:
-    with duckdb.connect() as con:
+    with queries.connect_quiet() as con:
         row = con.execute(
-            "SELECT raw_text FROM read_parquet($p) WHERE id = $i",
+            "SELECT text FROM read_parquet($p) WHERE id = $i",
             {"p": str(tables / "bills" / "*.parquet"), "i": bill_id},
         ).fetchall()
     return str(row[0][0])
 
 
-# Measured on the fixture when the test was written. A pipeline change that loses one of these
-# fails here; one that finds more should add it, so the floor only rises.
+# Measured on the fixture. A pipeline change that loses one of these fails here; one that finds
+# more should add it, so the floor only rises. Citation headings (DESIGN.md#sections) added
+# Colorado's two enactments, Idaho's, Rhode Island's and New York's, whose chapters had been
+# one section each.
 REGRESSION_FOUND = {
+    ("electronic-estate-planning-documents", "CO", 2024),
     ("electronic-estate-planning-documents", "MN", 2026),
     ("electronic-estate-planning-documents", "UT", 2026),
     ("public-expression-protection", "IA", 2025),
+    ("public-expression-protection", "ID", 2025),
     ("public-expression-protection", "MT", 2025),
+    ("special-deposits", "CO", 2024),
+    ("special-deposits", "NY", 2026),
+    ("special-deposits", "RI", 2026),
     ("special-deposits", "UT", 2025),
 }
 
@@ -126,9 +142,9 @@ def test_pipeline_regression_the_enacting_bills_are_found_among_distractors(
     commission_corpus: Path,
 ) -> None:
     build = json.loads((COMMISSION / "build.json").read_text())
-    queries = {act: _raw_text(commission_corpus, bill) for act, bill in build["queries"].items()}
+    act_texts = {act: _raw_text(commission_corpus, bill) for act, bill in build["queries"].items()}
     snapshot = load_enactments(ENACTMENTS)
-    with duckdb.connect() as con:
+    with queries.connect_quiet() as con:
         own = {
             (act, row[0], row[1])
             for act, bill in build["queries"].items()
@@ -145,7 +161,7 @@ def test_pipeline_regression_the_enacting_bills_are_found_among_distractors(
     ]
 
     result = evaluate(
-        queries, replace(snapshot, rows=rows), commission_corpus,
+        act_texts, replace(snapshot, rows=rows), commission_corpus,
         load_sessions(COMMISSION / "sessions.csv"),
     )  # fmt: skip
 
@@ -181,6 +197,10 @@ def test_the_command_writes_its_section_of_the_results(
     section = doc["commission"]
     assert section["command"] == "uv run lineage eval commission"
     assert set(section["queries"]) == set(ACTS)
+    assert section["threshold"]["status"] == "approved"
+    for act in ACTS:
+        relatives = section["queries"][act]["relatives"]
+        assert [r["rank"] for r in relatives] == list(range(1, len(relatives) + 1))
     assert len(section["queries"][ACTS[0]]["file_sha256"]) == 64
     assert section["enactments_file"]["read"].startswith("ULC Bill List, read ")
     assert "recall" in out.output

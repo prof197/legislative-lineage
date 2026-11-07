@@ -19,7 +19,7 @@ from lineage import queries
 from lineage.disk import require_free_space
 from lineage.sessions import Session, load_sessions, status_end_date
 from lineage.snapshot import Archive, bills_member, load_manifest, verify
-from lineage.status import OUTCOME_CLASSIFICATIONS, Action, bill_status
+from lineage.status import OUTCOME_CLASSIFICATIONS, STATUS_WORDING, Action, bill_status
 
 # Ample for one archive at a time; the largest bills file in the snapshot is under 300 MiB.
 _MEMORY_LIMIT = "4GB"
@@ -42,7 +42,9 @@ def _status_columns(
     end = status_end_date(sessions, archive.state, archive.session)
     as_of = date.fromisoformat(archive.generated_at[:10])
     columns = queries.StatusColumns(id=[], status=[], reason=[], on=[])
-    rows = queries.outcome_actions(con, json_path=json_path, kinds=sorted(OUTCOME_CLASSIFICATIONS))
+    rows = queries.outcome_actions(
+        con, json_path=json_path, kinds=sorted(OUTCOME_CLASSIFICATIONS), wording=STATUS_WORDING
+    )
     for bill_id, kinds, actions in rows:
         outcome = bill_status(
             [
@@ -51,6 +53,7 @@ def _status_columns(
                     classification=tuple(a["classification"]),
                     order=a["order"],
                     organization=a["organization__name"] or "",
+                    description=a["description"] or "",
                 )
                 for a in actions
             ],

@@ -4,7 +4,7 @@
  "totals": {
   "records": 525633,
   "eligible": 447389,
-  "eligible_with_sections": 307659
+  "eligible_with_sections": 430888
  },
  "rules": [
   {
@@ -566,9 +566,5 @@
   }
  ],
  "unlisted_types": {},
- "states_without_text": [
-  "CT",
-  "ME",
-  "SD"
- ]
+ "states_without_text": []
 }

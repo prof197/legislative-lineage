@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
 
-import duckdb
 import numpy as np
 import pytest
 
@@ -31,7 +30,7 @@ def tables(tmp_path: Path) -> Path:
     ids = sorted(SECTIONS)
     texts = [SECTIONS[b][1] for b in ids]
     n = len(ids)
-    with duckdb.connect() as con:
+    with queries.connect_quiet() as con:
         queries.write_sections(
             con,
             parquet_path=tables / "sections" / "s.parquet",

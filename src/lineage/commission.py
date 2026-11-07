@@ -1,14 +1,17 @@
 """`lineage eval commission`: what share of a uniform act's enactments its text finds.
 
 Each act's text is the query. An enactment is found when a bill its list row names (see
-`lineage.ulc`) belongs to a family among the query's relatives at or above the cutoff: the top
-50 families with any verified section. Every enactment that is not found gets one miss reason,
-taken from the bill that got furthest through the pipeline: no stored text, an amendment stored
-instead of the bill, an excluded document type, no matchable section, never proposed by LSH,
-proposed only through a bucket over the cap, dropped by verification, or ranked below the
-cutoff. The stage reasons are measured from the bill's own signatures, with the band keys, cap
-and threshold the query uses. Recall is reported pooled, per act and per stratum, over all
-enactments and over those with text. See DESIGN.md#commission-recall.
+`lineage.ulc`) belongs to a family among the query's relatives with a score above the threshold.
+The score is the share of the query's signed sections the family matches, and the commission's
+standard closing sections are boilerplate, so they never count. Rank is reported, not used: an
+act's relatives can outnumber any fixed rank once every state's versions count. Every enactment
+that is not found gets one miss reason, taken from the bill that got furthest through the
+pipeline: no stored text, an amendment stored instead of the bill, an excluded document type,
+no matchable section, never proposed by LSH, proposed only through a bucket over the cap,
+dropped by verification, or scored below the threshold. The stage reasons are measured from
+the bill's own signatures, with the band keys, cap and verification threshold the query uses.
+Recall is reported pooled, per act and per stratum, over all enactments and over those with
+text. See DESIGN.md#commission-recall.
 """
 
 import hashlib
@@ -45,9 +48,12 @@ RESULTS = Path("reports/results.json")
 # The corpus is the sessions of 2023-2026 (README.md#data); earlier enactments are listed but
 # cannot be found, so they are left out of recall rather than counted as misses.
 FIRST_YEAR = 2023
-# Proposed. Every found enactment's rank and share are in the results, so recall at another
-# cutoff can be read from them.
-CUTOFF_RANK = 50
+# Set from the measured scores: with the commission's standard sections as boilerplate,
+# every relative of the three act texts is a version of that act (each act's relatives are in
+# the results), so no score separates unrelated bills and one verified section is enough. Every
+# found enactment's rank and share are in the results, and recall at higher thresholds is
+# reported, so another threshold can be read from them without rerunning.
+MIN_SHARE = 0.0
 SHARE_SWEEP = (0.0, 0.1, 0.25, 0.5)
 
 # Ordered by how far through the pipeline a bill got; an enactment's reason is its furthest bill's.
@@ -60,7 +66,7 @@ MISS_REASONS = (
     "not_proposed",
     "bucket_cap",
     "verification",
-    "below_cutoff",
+    "below_threshold",
 )
 MissReason = Literal[
     "not_in_corpus",
@@ -71,7 +77,7 @@ MissReason = Literal[
     "not_proposed",
     "bucket_cap",
     "verification",
-    "below_cutoff",
+    "below_threshold",
 ]
 Stage = Literal["verified", "bucket_cap", "verification", "not_proposed"]
 
@@ -130,11 +136,11 @@ def target_reason(
     signed_rows: int,
     probed: Probe | None,
     relative: Relative | None,
-    cutoff_rank: int = CUTOFF_RANK,
+    min_share: float = MIN_SHARE,
 ) -> MissReason | None:
     """Why one bill was not found, or None when it was."""
     if relative is not None:
-        return None if relative.rank <= cutoff_rank else "below_cutoff"
+        return None if relative.share > min_share else "below_threshold"
     if bill.text_chars == 0:
         return "no_text_in_source"
     if bill.amendment_only:
@@ -161,7 +167,7 @@ def _both(records: list[dict[str, Any]]) -> dict[str, Any]:
     return {"all": _recall(records), "with_text": _recall([r for r in records if r["with_text"]])}
 
 
-def _excluded(row: Enactment, first_year: int) -> str | None:
+def excluded_reason(row: Enactment, first_year: int) -> str | None:
     if row.state is None:
         return "District of Columbia: the corpus is the 50 states"
     if row.year < first_year:
@@ -169,7 +175,7 @@ def _excluded(row: Enactment, first_year: int) -> str | None:
     return None
 
 
-def _session_years(
+def session_years(
     sessions: dict[tuple[str, str], Session],
 ) -> dict[tuple[str, str], tuple[int, int]]:
     return {
@@ -186,7 +192,7 @@ def evaluate(
     sessions: dict[tuple[str, str], Session],
     *,
     first_year: int = FIRST_YEAR,
-    cutoff_rank: int = CUTOFF_RANK,
+    min_share: float = MIN_SHARE,
 ) -> dict[str, Any]:
     """Recall of each act's enactments from its query text, with a reason for every miss."""
     require_index(tables_dir)
@@ -194,13 +200,14 @@ def evaluate(
     unknown = sorted({r.act for r in rows} - set(query_texts))
     if unknown:
         raise CommissionError(f"no query text for {', '.join(unknown)}")
-    excluded = [(r, why) for r in rows if (why := _excluded(r, first_year)) is not None]
-    counted = [r for r in rows if _excluded(r, first_year) is None]
+    excluded = [(r, why) for r in rows if (why := excluded_reason(r, first_year)) is not None]
+    counted = [r for r in rows if excluded_reason(r, first_year) is None]
 
     with queries.connect_quiet() as con:
         bills = queries.enactment_bills(
             con,
             bills_glob=str(tables_dir / "bills" / "*.parquet"),
+            texts_glob=str(tables_dir / "texts" / "*.parquet"),
             eligible_path=tables_dir / "eligible.parquet",
             families_path=tables_dir / "families" / "families.parquet",
             states=sorted({r.state for r in counted if r.state is not None}),
@@ -209,7 +216,7 @@ def evaluate(
             substitute=AMENDMENT_SUBSTITUTE,
         )
     by_id = {b.id: b for b in bills}
-    years = _session_years(sessions)
+    years = session_years(sessions)
     records_for_matching = [
         BillRecord(b.id, b.state, b.session, b.identifier, b.status, b.status_date,
                    b.passage_chambers)
@@ -236,10 +243,30 @@ def evaluate(
         }
         _, signed = sign_query(query_texts[act], tables_dir)
         sizes = bucket_sizes(band_keys(signed), index) if signed.shape[0] else None
+        targets_by_family = {
+            by_id[b.id].family
+            for row, match in zip(counted, found, strict=True)
+            if row.act == act
+            for b in match.bills
+            if by_id[b.id].family
+        }
         query_stats[act] = {
             "sections": result.sections,
             "signed": result.signed,
             "families": len(result.matches),
+            # Every relative, so the threshold's premise can be checked by reading them.
+            "relatives": [
+                {
+                    "rank": rank,
+                    "share": round(m.share, 4),
+                    "sections_matched": m.sections_matched,
+                    "state": m.state,
+                    "session": m.session,
+                    "identifier": m.identifier,
+                    "enactment": m.family in targets_by_family,
+                }
+                for rank, m in enumerate(result.matches, start=1)
+            ],
         }
         for row, match in zip(counted, found, strict=True):
             if row.act != act:
@@ -259,7 +286,7 @@ def evaluate(
                     signed_rows=len(located_rows),
                     probed=probed,
                     relative=relative,
-                    cutoff_rank=cutoff_rank,
+                    min_share=min_share,
                 )
                 if reason is not None:
                     reasons.append(reason)
@@ -275,7 +302,7 @@ def evaluate(
                         "best_estimate": round(probed.best_estimate, 4) if probed else None,
                         "rank": relative.rank if relative else None,
                         "share": relative.share if relative else None,
-                        "found": relative is not None and relative.rank <= cutoff_rank,
+                        "found": relative is not None and relative.share > min_share,
                         "reason": reason,
                     }
                 )
@@ -305,7 +332,12 @@ def evaluate(
     acts = sorted(query_texts)
     strata = ("enacted", "substantially_similar")
     return {
-        "cutoff": {"max_rank": cutoff_rank, "min_verified_sections": 1, "status": "proposed"},
+        "threshold": {
+            "score": "share of the query's signed sections that the family matches",
+            "min_share": min_share,
+            "found_when": "score above min_share",
+            "status": "approved",
+        },
         "verification_threshold": THRESHOLD,
         "bucket_cap": BUCKET_CAP,
         "first_year": first_year,

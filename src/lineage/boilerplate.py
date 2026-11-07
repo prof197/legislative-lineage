@@ -1,7 +1,10 @@
 """Flag sections that are nothing but boilerplate: enacting clauses, effective dates,
-severability and repealers.
+severability, repealers, and the Uniform Law Commission's standard closing sections.
 
-These clauses are near-identical across thousands of bills and would swamp real matches. A
+These clauses are near-identical across thousands of bills and would swamp real matches. The
+commission closes every uniform act with the same uniformity clause, and acts on electronic
+records with the same statement of their relation to the federal E-SIGN Act, so without them
+one uniform act's text matches the enactments of dozens of others. A
 short pattern list catches them; the document-frequency stoplist catches the long tail. A
 section is flagged only when almost nothing is left once its boilerplate is removed, so a
 provision that ends with an effective date stays matchable. Patterns run on normalized text
@@ -27,6 +30,14 @@ PATTERNS: dict[str, re.Pattern[str]] = {
         r"(?: \w+){0,90}? (?:invalid|unconstitutional|unenforceable|void)(?: \w+){0,60}"
         r"|\b(?:the )?provisions of this (?:act|section|chapter|article) are (?:hereby )?"
         r"(?:declared )?(?:to be )?severable\b"
+    ),
+    "uniformity clause": re.compile(
+        r"\b(?:uniformity of application and construction )?in applying and construing this"
+        r"(?: \w+){0,40}? uniformity(?: \w+){0,25}"
+    ),
+    "federal e-sign relation": re.compile(
+        r"\b(?:relation to (?:the )?electronic signatures in global and national commerce act )?"
+        r"this(?: \w+){0,3}? modifies limits (?:or|and) supersedes(?: \w+){0,80}"
     ),
     "repealer": re.compile(
         r"\ball (?:laws|acts) (?:and|or) parts of (?:laws|acts) in conflict "

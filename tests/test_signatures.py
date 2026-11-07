@@ -1,6 +1,5 @@
 from pathlib import Path
 
-import duckdb
 import numpy as np
 import pytest
 
@@ -34,7 +33,7 @@ def tables(tmp_path: Path) -> Path:
     keys = sorted(TEXTS)
     # Two sections files, as the real table has one or more per archive.
     halves = {"a.parquet": keys[:3], "b.parquet": keys[3:]}
-    with duckdb.connect() as con:
+    with queries.connect_quiet() as con:
         for name, part in halves.items():
             columns = queries.SectionColumns(
                 bill_id=[b for b, _ in part],
@@ -81,7 +80,7 @@ def test_signs_every_matchable_section_that_has_a_shingle(tables: Path) -> None:
 def test_the_stoplist_is_applied_before_signing(tables: Path) -> None:
     text = TEXTS[("b1", 1)] + " " + STOPLISTED
     (tables / "sections" / "b.parquet").unlink()
-    with duckdb.connect() as con:
+    with queries.connect_quiet() as con:
         columns = queries.SectionColumns(["b9"], [1], [None], [text], [text], [True], [None])
         queries.write_sections(con, parquet_path=tables / "sections" / "b.parquet", columns=columns)
         queries.write_eligibility(

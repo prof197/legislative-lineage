@@ -17,7 +17,7 @@ from lineage.minhash import NUM_PERM
 
 BANDS = 32
 ROWS = 4
-BUCKET_CAP = 500
+BUCKET_CAP = 1000
 
 _U27 = np.uint64(27)
 _U30 = np.uint64(30)
