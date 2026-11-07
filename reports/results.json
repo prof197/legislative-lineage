@@ -6,13 +6,14 @@
    "read": "ULC Bill List, read 2026-11-06",
    "sha256": "e9bf2c8669462772a02a65613466e974e4e05d0553f05c119d9fa9a73bd02b64"
   },
-  "cutoff": {
-   "max_rank": 50,
-   "min_verified_sections": 1,
-   "status": "proposed"
+  "threshold": {
+   "score": "share of the query's signed sections that the family matches",
+   "min_share": 0.0,
+   "found_when": "score above min_share",
+   "status": "approved"
   },
   "verification_threshold": 0.5,
-  "bucket_cap": 500,
+  "bucket_cap": 1000,
   "first_year": 2023,
   "queries": {
    "electronic-estate-planning-documents": {
@@ -21,8 +22,109 @@
     "words_in_file": 2626,
     "words_kept": 1994,
     "sections": 18,
-    "signed": 17,
-    "families": 20
+    "signed": 15,
+    "families": 11,
+    "relatives": [
+     {
+      "rank": 1,
+      "share": 0.6667,
+      "sections_matched": 10,
+      "state": "TX",
+      "session": "88",
+      "identifier": "SB 1779",
+      "enactment": false
+     },
+     {
+      "rank": 2,
+      "share": 0.5333,
+      "sections_matched": 8,
+      "state": "IL",
+      "session": "103rd",
+      "identifier": "SB 1930",
+      "enactment": true
+     },
+     {
+      "rank": 3,
+      "share": 0.4667,
+      "sections_matched": 7,
+      "state": "CO",
+      "session": "2024A",
+      "identifier": "HB 24-1248",
+      "enactment": true
+     },
+     {
+      "rank": 4,
+      "share": 0.4667,
+      "sections_matched": 7,
+      "state": "UT",
+      "session": "2026",
+      "identifier": "HB 181",
+      "enactment": true
+     },
+     {
+      "rank": 5,
+      "share": 0.4,
+      "sections_matched": 6,
+      "state": "OK",
+      "session": "2023",
+      "identifier": "SB 468",
+      "enactment": true
+     },
+     {
+      "rank": 6,
+      "share": 0.3333,
+      "sections_matched": 5,
+      "state": "KY",
+      "session": "2026RS",
+      "identifier": "SB 50",
+      "enactment": true
+     },
+     {
+      "rank": 7,
+      "share": 0.3333,
+      "sections_matched": 5,
+      "state": "WA",
+      "session": "2023-2024",
+      "identifier": "SB 5787",
+      "enactment": true
+     },
+     {
+      "rank": 8,
+      "share": 0.2,
+      "sections_matched": 3,
+      "state": "KY",
+      "session": "2025RS",
+      "identifier": "HB 720",
+      "enactment": false
+     },
+     {
+      "rank": 9,
+      "share": 0.2,
+      "sections_matched": 3,
+      "state": "PA",
+      "session": "2025-2026",
+      "identifier": "SB 1138",
+      "enactment": false
+     },
+     {
+      "rank": 10,
+      "share": 0.2,
+      "sections_matched": 3,
+      "state": "MN",
+      "session": "2025-2026",
+      "identifier": "HF 3560",
+      "enactment": true
+     },
+     {
+      "rank": 11,
+      "share": 0.0667,
+      "sections_matched": 1,
+      "state": "VA",
+      "session": "2024",
+      "identifier": "HB 1013",
+      "enactment": false
+     }
+    ]
    },
    "public-expression-protection": {
     "file_sha256": "5895e03d67ba7a07195491384658ed5c9c44762782da425c4b3383645c19a810",
@@ -30,8 +132,235 @@
     "words_in_file": 1896,
     "words_kept": 1468,
     "sections": 14,
-    "signed": 13,
-    "families": 67
+    "signed": 12,
+    "families": 25,
+    "relatives": [
+     {
+      "rank": 1,
+      "share": 0.6667,
+      "sections_matched": 8,
+      "state": "WV",
+      "session": "2025",
+      "identifier": "HB 3205",
+      "enactment": false
+     },
+     {
+      "rank": 2,
+      "share": 0.5833,
+      "sections_matched": 7,
+      "state": "NE",
+      "session": "108",
+      "identifier": "LB 1267",
+      "enactment": false
+     },
+     {
+      "rank": 3,
+      "share": 0.4167,
+      "sections_matched": 5,
+      "state": "DE",
+      "session": "152",
+      "identifier": "SB 312",
+      "enactment": false
+     },
+     {
+      "rank": 4,
+      "share": 0.4167,
+      "sections_matched": 5,
+      "state": "MS",
+      "session": "2026",
+      "identifier": "SB 2734",
+      "enactment": false
+     },
+     {
+      "rank": 5,
+      "share": 0.3333,
+      "sections_matched": 4,
+      "state": "IL",
+      "session": "104th",
+      "identifier": "HB 1077",
+      "enactment": false
+     },
+     {
+      "rank": 6,
+      "share": 0.3333,
+      "sections_matched": 4,
+      "state": "MT",
+      "session": "2025",
+      "identifier": "HB 292",
+      "enactment": true
+     },
+     {
+      "rank": 7,
+      "share": 0.3333,
+      "sections_matched": 4,
+      "state": "MS",
+      "session": "2025",
+      "identifier": "HB 1504",
+      "enactment": false
+     },
+     {
+      "rank": 8,
+      "share": 0.25,
+      "sections_matched": 3,
+      "state": "MI",
+      "session": "2023-2024",
+      "identifier": "HB 5788",
+      "enactment": true
+     },
+     {
+      "rank": 9,
+      "share": 0.25,
+      "sections_matched": 3,
+      "state": "WV",
+      "session": "2024",
+      "identifier": "SB 469",
+      "enactment": false
+     },
+     {
+      "rank": 10,
+      "share": 0.25,
+      "sections_matched": 3,
+      "state": "MS",
+      "session": "2026",
+      "identifier": "SB 2381",
+      "enactment": false
+     },
+     {
+      "rank": 11,
+      "share": 0.25,
+      "sections_matched": 3,
+      "state": "UT",
+      "session": "2023",
+      "identifier": "SB 18",
+      "enactment": true
+     },
+     {
+      "rank": 12,
+      "share": 0.1667,
+      "sections_matched": 2,
+      "state": "SC",
+      "session": "2025-2026",
+      "identifier": "S 43",
+      "enactment": false
+     },
+     {
+      "rank": 13,
+      "share": 0.1667,
+      "sections_matched": 2,
+      "state": "ID",
+      "session": "2024",
+      "identifier": "S 1325",
+      "enactment": true
+     },
+     {
+      "rank": 14,
+      "share": 0.1667,
+      "sections_matched": 2,
+      "state": "MS",
+      "session": "2026",
+      "identifier": "HB 1268",
+      "enactment": false
+     },
+     {
+      "rank": 15,
+      "share": 0.1667,
+      "sections_matched": 2,
+      "state": "NM",
+      "session": "2025",
+      "identifier": "HB 169",
+      "enactment": false
+     },
+     {
+      "rank": 16,
+      "share": 0.1667,
+      "sections_matched": 2,
+      "state": "IA",
+      "session": "2023-2024",
+      "identifier": "HSB 42",
+      "enactment": true
+     },
+     {
+      "rank": 17,
+      "share": 0.1667,
+      "sections_matched": 2,
+      "state": "IA",
+      "session": "2023-2024",
+      "identifier": "SF 2178",
+      "enactment": false
+     },
+     {
+      "rank": 18,
+      "share": 0.1667,
+      "sections_matched": 2,
+      "state": "MN",
+      "session": "2023-2024",
+      "identifier": "SF 4271",
+      "enactment": true
+     },
+     {
+      "rank": 19,
+      "share": 0.0833,
+      "sections_matched": 1,
+      "state": "NJ",
+      "session": "220",
+      "identifier": "A 4393",
+      "enactment": true
+     },
+     {
+      "rank": 20,
+      "share": 0.0833,
+      "sections_matched": 1,
+      "state": "MO",
+      "session": "2026",
+      "identifier": "SB 1468",
+      "enactment": false
+     },
+     {
+      "rank": 21,
+      "share": 0.0833,
+      "sections_matched": 1,
+      "state": "MO",
+      "session": "2026",
+      "identifier": "SB 1067",
+      "enactment": true
+     },
+     {
+      "rank": 22,
+      "share": 0.0833,
+      "sections_matched": 1,
+      "state": "UT",
+      "session": "2025",
+      "identifier": "SB 301",
+      "enactment": false
+     },
+     {
+      "rank": 23,
+      "share": 0.0833,
+      "sections_matched": 1,
+      "state": "MN",
+      "session": "2023-2024",
+      "identifier": "HF 5216",
+      "enactment": true
+     },
+     {
+      "rank": 24,
+      "share": 0.0833,
+      "sections_matched": 1,
+      "state": "MN",
+      "session": "2023-2024",
+      "identifier": "SF 3317",
+      "enactment": true
+     },
+     {
+      "rank": 25,
+      "share": 0.0833,
+      "sections_matched": 1,
+      "state": "WV",
+      "session": "2025",
+      "identifier": "HB 2756",
+      "enactment": false
+     }
+    ]
    },
    "special-deposits": {
     "file_sha256": "0fe48cda1368ecbb83eb9932a6acc6dbd921f345a9b1425a0d341a88f7ef6949",
@@ -39,58 +368,186 @@
     "words_in_file": 2892,
     "words_kept": 2676,
     "sections": 17,
-    "signed": 16,
-    "families": 11
+    "signed": 15,
+    "families": 14,
+    "relatives": [
+     {
+      "rank": 1,
+      "share": 1.0,
+      "sections_matched": 15,
+      "state": "IL",
+      "session": "104th",
+      "identifier": "HB 29",
+      "enactment": false
+     },
+     {
+      "rank": 2,
+      "share": 0.8667,
+      "sections_matched": 13,
+      "state": "MA",
+      "session": "194th",
+      "identifier": "HD 3436",
+      "enactment": false
+     },
+     {
+      "rank": 3,
+      "share": 0.8667,
+      "sections_matched": 13,
+      "state": "WV",
+      "session": "2025",
+      "identifier": "SB 561",
+      "enactment": true
+     },
+     {
+      "rank": 4,
+      "share": 0.8667,
+      "sections_matched": 13,
+      "state": "DE",
+      "session": "152",
+      "identifier": "SB 308",
+      "enactment": true
+     },
+     {
+      "rank": 5,
+      "share": 0.8667,
+      "sections_matched": 13,
+      "state": "AZ",
+      "session": "57th-1st-regular",
+      "identifier": "SB 1206",
+      "enactment": true
+     },
+     {
+      "rank": 6,
+      "share": 0.8,
+      "sections_matched": 12,
+      "state": "RI",
+      "session": "2026",
+      "identifier": "HB 7265",
+      "enactment": true
+     },
+     {
+      "rank": 7,
+      "share": 0.8,
+      "sections_matched": 12,
+      "state": "OK",
+      "session": "2024",
+      "identifier": "SB 1819",
+      "enactment": true
+     },
+     {
+      "rank": 8,
+      "share": 0.8,
+      "sections_matched": 12,
+      "state": "NE",
+      "session": "109",
+      "identifier": "LB 231",
+      "enactment": true
+     },
+     {
+      "rank": 9,
+      "share": 0.7333,
+      "sections_matched": 11,
+      "state": "WA",
+      "session": "2023-2024",
+      "identifier": "SB 5801",
+      "enactment": true
+     },
+     {
+      "rank": 10,
+      "share": 0.6667,
+      "sections_matched": 10,
+      "state": "CO",
+      "session": "2024A",
+      "identifier": "HB 24-1232",
+      "enactment": true
+     },
+     {
+      "rank": 11,
+      "share": 0.6,
+      "sections_matched": 9,
+      "state": "UT",
+      "session": "2025",
+      "identifier": "SB 294",
+      "enactment": true
+     },
+     {
+      "rank": 12,
+      "share": 0.6,
+      "sections_matched": 9,
+      "state": "MN",
+      "session": "2025-2026",
+      "identifier": "HF 2233",
+      "enactment": false
+     },
+     {
+      "rank": 13,
+      "share": 0.6,
+      "sections_matched": 9,
+      "state": "MN",
+      "session": "2025-2026",
+      "identifier": "HF 2300",
+      "enactment": false
+     },
+     {
+      "rank": 14,
+      "share": 0.5333,
+      "sections_matched": 8,
+      "state": "NY",
+      "session": "2025-2026",
+      "identifier": "A 5345",
+      "enactment": true
+     }
+    ]
    }
   },
   "recall": {
    "pooled": {
     "all": {
      "enactments": 36,
-     "found": 14,
-     "recall": 0.3889
+     "found": 25,
+     "recall": 0.6944
     },
     "with_text": {
-     "enactments": 27,
-     "found": 14,
-     "recall": 0.5185
+     "enactments": 36,
+     "found": 25,
+     "recall": 0.6944
     }
    },
    "by_act": {
     "electronic-estate-planning-documents": {
      "all": {
       "enactments": 9,
-      "found": 5,
-      "recall": 0.5556
+      "found": 7,
+      "recall": 0.7778
      },
      "with_text": {
-      "enactments": 8,
-      "found": 5,
-      "recall": 0.625
+      "enactments": 9,
+      "found": 7,
+      "recall": 0.7778
      }
     },
     "public-expression-protection": {
      "all": {
       "enactments": 14,
-      "found": 4,
-      "recall": 0.2857
+      "found": 8,
+      "recall": 0.5714
      },
      "with_text": {
-      "enactments": 9,
-      "found": 4,
-      "recall": 0.4444
+      "enactments": 14,
+      "found": 8,
+      "recall": 0.5714
      }
     },
     "special-deposits": {
      "all": {
       "enactments": 13,
-      "found": 5,
-      "recall": 0.3846
+      "found": 10,
+      "recall": 0.7692
      },
      "with_text": {
-      "enactments": 10,
-      "found": 5,
-      "recall": 0.5
+      "enactments": 13,
+      "found": 10,
+      "recall": 0.7692
      }
     }
    },
@@ -98,13 +555,13 @@
     "enacted": {
      "all": {
       "enactments": 35,
-      "found": 14,
-      "recall": 0.4
+      "found": 25,
+      "recall": 0.7143
      },
      "with_text": {
-      "enactments": 26,
-      "found": 14,
-      "recall": 0.5385
+      "enactments": 35,
+      "found": 25,
+      "recall": 0.7143
      }
     },
     "substantially_similar": {
@@ -124,30 +581,28 @@
   "recall_by_min_share": [
    {
     "min_share": 0.0,
-    "found": 14,
-    "found_with_text": 14
+    "found": 25,
+    "found_with_text": 25
    },
    {
     "min_share": 0.1,
-    "found": 14,
-    "found_with_text": 14
+    "found": 23,
+    "found_with_text": 23
    },
    {
     "min_share": 0.25,
-    "found": 9,
-    "found_with_text": 9
+    "found": 19,
+    "found_with_text": 19
    },
    {
     "min_share": 0.5,
-    "found": 4,
-    "found_with_text": 4
+    "found": 11,
+    "found_with_text": 11
    }
   ],
   "miss_reasons": {
-   "no_text_in_source": 9,
-   "not_proposed": 11,
-   "verification": 1,
-   "below_cutoff": 1
+   "not_proposed": 8,
+   "verification": 3
   },
   "excluded": [
    {
@@ -186,8 +641,8 @@
     "with_text": true,
     "found": true,
     "found_by": "SB 50",
-    "rank": 4,
-    "share": 0.2941,
+    "rank": 6,
+    "share": 0.3333,
     "miss_reason": null,
     "bills": [
      {
@@ -199,8 +654,8 @@
       "signed_sections": 135,
       "stage": "verified",
       "best_estimate": 0.7266,
-      "rank": 4,
-      "share": 0.2941,
+      "rank": 6,
+      "share": 0.3333,
       "found": true,
       "reason": null
      }
@@ -216,8 +671,8 @@
     "with_text": true,
     "found": true,
     "found_by": "HF 3560",
-    "rank": 6,
-    "share": 0.1765,
+    "rank": 10,
+    "share": 0.2,
     "miss_reason": null,
     "bills": [
      {
@@ -229,8 +684,8 @@
       "signed_sections": 14,
       "stage": "verified",
       "best_estimate": 0.6328,
-      "rank": 6,
-      "share": 0.1765,
+      "rank": 10,
+      "share": 0.2,
       "found": true,
       "reason": null
      },
@@ -243,8 +698,8 @@
       "signed_sections": 14,
       "stage": "verified",
       "best_estimate": 0.6328,
-      "rank": 6,
-      "share": 0.1765,
+      "rank": 10,
+      "share": 0.2,
       "found": true,
       "reason": null
      }
@@ -260,8 +715,8 @@
     "with_text": true,
     "found": true,
     "found_by": "HB 181",
-    "rank": 2,
-    "share": 0.4118,
+    "rank": 4,
+    "share": 0.4667,
     "miss_reason": null,
     "bills": [
      {
@@ -273,8 +728,8 @@
       "signed_sections": 16,
       "stage": "verified",
       "best_estimate": 0.8438,
-      "rank": 2,
-      "share": 0.4118,
+      "rank": 4,
+      "share": 0.4667,
       "found": true,
       "reason": null
      }
@@ -299,28 +754,28 @@
       "session": "2025",
       "identifier": "SB 289",
       "status": "died",
-      "text_chars": 0,
-      "signed_sections": 0,
-      "stage": null,
-      "best_estimate": null,
+      "text_chars": 23967,
+      "signed_sections": 16,
+      "stage": "not_proposed",
+      "best_estimate": 0.1094,
       "rank": null,
       "share": null,
       "found": false,
-      "reason": "no_text_in_source"
+      "reason": "not_proposed"
      },
      {
       "id": "ocd-bill/4fd0e1e4-dc69-421b-ad2c-2cd7ee463564",
       "session": "2025",
       "identifier": "HB 754",
-      "status": "died",
-      "text_chars": 0,
-      "signed_sections": 0,
-      "stage": null,
-      "best_estimate": null,
+      "status": "passed_legislature",
+      "text_chars": 134343,
+      "signed_sections": 104,
+      "stage": "not_proposed",
+      "best_estimate": 0.1562,
       "rank": null,
       "share": null,
       "found": false,
-      "reason": "no_text_in_source"
+      "reason": "not_proposed"
      },
      {
       "id": "ocd-bill/6122d3cd-dbc5-4244-9c1a-a5ca2d827776",
@@ -341,28 +796,28 @@
       "session": "2025",
       "identifier": "HB 176",
       "status": "died",
-      "text_chars": 0,
-      "signed_sections": 0,
-      "stage": null,
-      "best_estimate": null,
+      "text_chars": 268241,
+      "signed_sections": 206,
+      "stage": "not_proposed",
+      "best_estimate": 0.1875,
       "rank": null,
       "share": null,
       "found": false,
-      "reason": "no_text_in_source"
+      "reason": "not_proposed"
      },
      {
       "id": "ocd-bill/b2113327-194b-408d-bca8-b8d48445317a",
       "session": "2025",
       "identifier": "SB 428",
       "status": "died",
-      "text_chars": 0,
-      "signed_sections": 0,
-      "stage": null,
-      "best_estimate": null,
+      "text_chars": 22685,
+      "signed_sections": 15,
+      "stage": "not_proposed",
+      "best_estimate": 0.1328,
       "rank": null,
       "share": null,
       "found": false,
-      "reason": "no_text_in_source"
+      "reason": "not_proposed"
      },
      {
       "id": "ocd-bill/f16c85d9-9f6e-49ec-81c3-dcad51fa9377",
@@ -372,7 +827,7 @@
       "text_chars": 270297,
       "signed_sections": 221,
       "stage": "not_proposed",
-      "best_estimate": 0.1719,
+      "best_estimate": 0.1094,
       "rank": null,
       "share": null,
       "found": false,
@@ -387,26 +842,26 @@
     "bill_cell": "SB 2127",
     "stratum": "enacted",
     "match_rule": "in_year",
-    "with_text": false,
+    "with_text": true,
     "found": false,
     "found_by": null,
     "rank": null,
     "share": null,
-    "miss_reason": "no_text_in_source",
+    "miss_reason": "not_proposed",
     "bills": [
      {
       "id": "ocd-bill/463214e4-c47a-4c4b-8819-2eb952e28bdc",
       "session": "69",
       "identifier": "SB 2127",
       "status": "passed",
-      "text_chars": 0,
-      "signed_sections": 0,
-      "stage": null,
-      "best_estimate": null,
+      "text_chars": 13765,
+      "signed_sections": 3,
+      "stage": "not_proposed",
+      "best_estimate": 0.2031,
       "rank": null,
       "share": null,
       "found": false,
-      "reason": "no_text_in_source"
+      "reason": "not_proposed"
      }
     ]
    },
@@ -418,11 +873,11 @@
     "stratum": "enacted",
     "match_rule": "in_year",
     "with_text": true,
-    "found": false,
-    "found_by": null,
-    "rank": null,
-    "share": null,
-    "miss_reason": "not_proposed",
+    "found": true,
+    "found_by": "HB 24-1248",
+    "rank": 3,
+    "share": 0.4667,
+    "miss_reason": null,
     "bills": [
      {
       "id": "ocd-bill/a328ce17-079d-4d27-b601-52705b04bbf5",
@@ -430,13 +885,13 @@
       "identifier": "HB 24-1248",
       "status": "passed",
       "text_chars": 16191,
-      "signed_sections": 4,
-      "stage": "not_proposed",
-      "best_estimate": 0.4297,
-      "rank": null,
-      "share": null,
-      "found": false,
-      "reason": "not_proposed"
+      "signed_sections": 19,
+      "stage": "verified",
+      "best_estimate": 0.9297,
+      "rank": 3,
+      "share": 0.4667,
+      "found": true,
+      "reason": null
      }
     ]
    },
@@ -450,8 +905,8 @@
     "with_text": true,
     "found": true,
     "found_by": "SB 468",
-    "rank": 3,
-    "share": 0.4118,
+    "rank": 5,
+    "share": 0.4,
     "miss_reason": null,
     "bills": [
      {
@@ -462,9 +917,9 @@
       "text_chars": 16407,
       "signed_sections": 18,
       "stage": "verified",
-      "best_estimate": 0.7578,
-      "rank": 3,
-      "share": 0.4118,
+      "best_estimate": 0.6328,
+      "rank": 5,
+      "share": 0.4,
       "found": true,
       "reason": null
      }
@@ -478,25 +933,25 @@
     "stratum": "enacted",
     "match_rule": "in_year",
     "with_text": true,
-    "found": false,
-    "found_by": null,
-    "rank": null,
-    "share": null,
-    "miss_reason": "not_proposed",
+    "found": true,
+    "found_by": "SB 5787",
+    "rank": 7,
+    "share": 0.3333,
+    "miss_reason": null,
     "bills": [
      {
       "id": "ocd-bill/37e5a984-c884-486f-b704-52ac2badf061",
       "session": "2023-2024",
       "identifier": "SB 5787",
       "status": "passed",
-      "text_chars": 14341,
-      "signed_sections": 10,
-      "stage": "not_proposed",
-      "best_estimate": 0.3438,
-      "rank": null,
-      "share": null,
-      "found": false,
-      "reason": "not_proposed"
+      "text_chars": 14376,
+      "signed_sections": 17,
+      "stage": "verified",
+      "best_estimate": 0.7188,
+      "rank": 7,
+      "share": 0.3333,
+      "found": true,
+      "reason": null
      }
     ]
    },
@@ -510,8 +965,8 @@
     "with_text": true,
     "found": true,
     "found_by": "SB 1930",
-    "rank": 1,
-    "share": 0.4706,
+    "rank": 2,
+    "share": 0.5333,
     "miss_reason": null,
     "bills": [
      {
@@ -520,11 +975,11 @@
       "identifier": "SB 1930",
       "status": "died",
       "text_chars": 26746,
-      "signed_sections": 25,
+      "signed_sections": 24,
       "stage": "verified",
       "best_estimate": 0.875,
-      "rank": 1,
-      "share": 0.4706,
+      "rank": 2,
+      "share": 0.5333,
       "found": true,
       "reason": null
      },
@@ -534,11 +989,11 @@
       "identifier": "HB 2269",
       "status": "passed",
       "text_chars": 26746,
-      "signed_sections": 25,
+      "signed_sections": 24,
       "stage": "verified",
       "best_estimate": 0.875,
-      "rank": 1,
-      "share": 0.4706,
+      "rank": 2,
+      "share": 0.5333,
       "found": true,
       "reason": null
      }
@@ -551,26 +1006,26 @@
     "bill_cell": "HB 4045",
     "stratum": "enacted",
     "match_rule": "in_year",
-    "with_text": false,
-    "found": false,
-    "found_by": null,
-    "rank": null,
-    "share": null,
-    "miss_reason": "no_text_in_source",
+    "with_text": true,
+    "found": true,
+    "found_by": "HB 4045",
+    "rank": 8,
+    "share": 0.25,
+    "miss_reason": null,
     "bills": [
      {
       "id": "ocd-bill/466153a5-6ac0-4a17-b061-aecda47f1135",
       "session": "2025-2026",
       "identifier": "HB 4045",
       "status": "passed",
-      "text_chars": 0,
-      "signed_sections": 0,
-      "stage": null,
-      "best_estimate": null,
-      "rank": null,
-      "share": null,
-      "found": false,
-      "reason": "no_text_in_source"
+      "text_chars": 9530,
+      "signed_sections": 13,
+      "stage": "verified",
+      "best_estimate": 0.8594,
+      "rank": 8,
+      "share": 0.25,
+      "found": true,
+      "reason": null
      }
     ]
    },
@@ -581,54 +1036,54 @@
     "bill_cell": "HB 2666/SB 1067/SB 835",
     "stratum": "enacted",
     "match_rule": "in_year",
-    "with_text": false,
-    "found": false,
-    "found_by": null,
-    "rank": null,
-    "share": null,
-    "miss_reason": "no_text_in_source",
+    "with_text": true,
+    "found": true,
+    "found_by": "SB 1067",
+    "rank": 21,
+    "share": 0.0833,
+    "miss_reason": null,
     "bills": [
      {
       "id": "ocd-bill/46682e76-7ccf-4157-962d-63fff9eecebe",
       "session": "2026",
       "identifier": "HB 2666",
       "status": "died",
-      "text_chars": 0,
-      "signed_sections": 0,
-      "stage": null,
-      "best_estimate": null,
+      "text_chars": 11662,
+      "signed_sections": 9,
+      "stage": "not_proposed",
+      "best_estimate": 0.4062,
       "rank": null,
       "share": null,
       "found": false,
-      "reason": "no_text_in_source"
+      "reason": "not_proposed"
      },
      {
       "id": "ocd-bill/844e1d51-48ed-4db2-95c3-82255c3c677f",
       "session": "2026",
       "identifier": "SB 835",
       "status": "passed",
-      "text_chars": 0,
-      "signed_sections": 0,
-      "stage": null,
-      "best_estimate": null,
+      "text_chars": 51261,
+      "signed_sections": 41,
+      "stage": "not_proposed",
+      "best_estimate": 0.1484,
       "rank": null,
       "share": null,
       "found": false,
-      "reason": "no_text_in_source"
+      "reason": "not_proposed"
      },
      {
       "id": "ocd-bill/e07348b0-513f-4fda-9f17-57bcc5fb3b76",
       "session": "2026",
       "identifier": "SB 1067",
       "status": "passed",
-      "text_chars": 0,
-      "signed_sections": 0,
-      "stage": null,
-      "best_estimate": null,
-      "rank": null,
-      "share": null,
-      "found": false,
-      "reason": "no_text_in_source"
+      "text_chars": 12761,
+      "signed_sections": 9,
+      "stage": "verified",
+      "best_estimate": 0.5391,
+      "rank": 21,
+      "share": 0.0833,
+      "found": true,
+      "reason": null
      }
     ]
    },
@@ -639,26 +1094,26 @@
     "bill_cell": "SB 137",
     "stratum": "enacted",
     "match_rule": "in_year",
-    "with_text": false,
+    "with_text": true,
     "found": false,
     "found_by": null,
     "rank": null,
     "share": null,
-    "miss_reason": "no_text_in_source",
+    "miss_reason": "verification",
     "bills": [
      {
       "id": "ocd-bill/26a84ccf-f59b-4813-9757-8e12e1bf471b",
       "session": "2026",
       "identifier": "SB 137",
       "status": "passed",
-      "text_chars": 0,
-      "signed_sections": 0,
-      "stage": null,
-      "best_estimate": null,
+      "text_chars": 9552,
+      "signed_sections": 14,
+      "stage": "verification",
+      "best_estimate": 0.4609,
       "rank": null,
       "share": null,
       "found": false,
-      "reason": "no_text_in_source"
+      "reason": "verification"
      }
     ]
    },
@@ -700,11 +1155,11 @@
     "stratum": "enacted",
     "match_rule": "in_year",
     "with_text": true,
-    "found": false,
-    "found_by": null,
-    "rank": null,
-    "share": null,
-    "miss_reason": "not_proposed",
+    "found": true,
+    "found_by": "S 1001",
+    "rank": 13,
+    "share": 0.1667,
+    "miss_reason": null,
     "bills": [
      {
       "id": "ocd-bill/8bd05268-df20-4e80-8ea6-fee765d633f9",
@@ -712,13 +1167,13 @@
       "identifier": "S 1001",
       "status": "passed",
       "text_chars": 10437,
-      "signed_sections": 2,
-      "stage": "not_proposed",
-      "best_estimate": 0.1016,
-      "rank": null,
-      "share": null,
-      "found": false,
-      "reason": "not_proposed"
+      "signed_sections": 15,
+      "stage": "verified",
+      "best_estimate": 0.625,
+      "rank": 13,
+      "share": 0.1667,
+      "found": true,
+      "reason": null
      }
     ]
    },
@@ -732,8 +1187,8 @@
     "with_text": true,
     "found": true,
     "found_by": "SF 47",
-    "rank": 11,
-    "share": 0.2308,
+    "rank": 16,
+    "share": 0.1667,
     "miss_reason": null,
     "bills": [
      {
@@ -756,11 +1211,11 @@
       "identifier": "SF 47",
       "status": "died",
       "text_chars": 12606,
-      "signed_sections": 14,
+      "signed_sections": 13,
       "stage": "verified",
       "best_estimate": 0.5391,
-      "rank": 11,
-      "share": 0.2308,
+      "rank": 16,
+      "share": 0.1667,
       "found": true,
       "reason": null
      }
@@ -776,8 +1231,8 @@
     "with_text": true,
     "found": true,
     "found_by": "HB 292",
-    "rank": 2,
-    "share": 0.3846,
+    "rank": 6,
+    "share": 0.3333,
     "miss_reason": null,
     "bills": [
      {
@@ -786,11 +1241,11 @@
       "identifier": "HB 292",
       "status": "passed",
       "text_chars": 9675,
-      "signed_sections": 17,
+      "signed_sections": 16,
       "stage": "verified",
-      "best_estimate": 0.9688,
-      "rank": 2,
-      "share": 0.3846,
+      "best_estimate": 0.8906,
+      "rank": 6,
+      "share": 0.3333,
       "found": true,
       "reason": null
      }
@@ -814,7 +1269,7 @@
       "id": "ocd-bill/ac8be703-90ff-46ce-a145-1871e12e3c89",
       "session": "135",
       "identifier": "SB 237",
-      "status": "died",
+      "status": "passed_legislature",
       "text_chars": 11343,
       "signed_sections": 9,
       "stage": "not_proposed",
@@ -833,26 +1288,26 @@
     "bill_cell": "LD 870",
     "stratum": "enacted",
     "match_rule": "in_year",
-    "with_text": false,
+    "with_text": true,
     "found": false,
     "found_by": null,
     "rank": null,
     "share": null,
-    "miss_reason": "no_text_in_source",
+    "miss_reason": "not_proposed",
     "bills": [
      {
       "id": "ocd-bill/2d79a7ee-4ea4-41db-9049-ab45b0f27bfd",
       "session": "131",
       "identifier": "LD 870",
-      "status": "died",
-      "text_chars": 0,
-      "signed_sections": 0,
-      "stage": null,
-      "best_estimate": null,
+      "status": "passed_legislature",
+      "text_chars": 2936,
+      "signed_sections": 2,
+      "stage": "not_proposed",
+      "best_estimate": 0.0,
       "rank": null,
       "share": null,
       "found": false,
-      "reason": "no_text_in_source"
+      "reason": "not_proposed"
      }
     ]
    },
@@ -866,8 +1321,8 @@
     "with_text": true,
     "found": true,
     "found_by": "SF 4271",
-    "rank": 10,
-    "share": 0.2308,
+    "rank": 18,
+    "share": 0.1667,
     "miss_reason": null,
     "bills": [
      {
@@ -878,9 +1333,9 @@
       "text_chars": 23946,
       "signed_sections": 18,
       "stage": "verified",
-      "best_estimate": 0.5391,
-      "rank": 16,
-      "share": 0.1538,
+      "best_estimate": 0.5312,
+      "rank": 24,
+      "share": 0.0833,
       "found": true,
       "reason": null
      },
@@ -892,9 +1347,9 @@
       "text_chars": 886434,
       "signed_sections": 288,
       "stage": "verified",
-      "best_estimate": 0.5391,
-      "rank": 15,
-      "share": 0.1538,
+      "best_estimate": 0.5312,
+      "rank": 23,
+      "share": 0.0833,
       "found": true,
       "reason": null
      },
@@ -906,9 +1361,9 @@
       "text_chars": 23946,
       "signed_sections": 18,
       "stage": "verified",
-      "best_estimate": 0.5391,
-      "rank": 16,
-      "share": 0.1538,
+      "best_estimate": 0.5312,
+      "rank": 24,
+      "share": 0.0833,
       "found": true,
       "reason": null
      },
@@ -920,9 +1375,9 @@
       "text_chars": 524097,
       "signed_sections": 173,
       "stage": "verified",
-      "best_estimate": 0.5469,
-      "rank": 10,
-      "share": 0.2308,
+      "best_estimate": 0.5312,
+      "rank": 18,
+      "share": 0.1667,
       "found": true,
       "reason": null
      }
@@ -940,7 +1395,7 @@
     "found_by": null,
     "rank": null,
     "share": null,
-    "miss_reason": "below_cutoff",
+    "miss_reason": "not_proposed",
     "bills": [
      {
       "id": "ocd-bill/10a37090-8929-4998-98bd-8825b751aee2",
@@ -948,13 +1403,13 @@
       "identifier": "HB 1466",
       "status": "passed",
       "text_chars": 15052,
-      "signed_sections": 16,
-      "stage": "verified",
-      "best_estimate": 0.5703,
-      "rank": 57,
-      "share": 0.0769,
+      "signed_sections": 15,
+      "stage": "not_proposed",
+      "best_estimate": 0.3516,
+      "rank": null,
+      "share": null,
       "found": false,
-      "reason": "below_cutoff"
+      "reason": "not_proposed"
      },
      {
       "id": "ocd-bill/6a995153-2637-4501-b3f6-8b5046e6f974",
@@ -979,40 +1434,40 @@
     "bill_cell": "S 2802/A 4393",
     "stratum": "enacted",
     "match_rule": "in_year",
-    "with_text": false,
-    "found": false,
-    "found_by": null,
-    "rank": null,
-    "share": null,
-    "miss_reason": "no_text_in_source",
+    "with_text": true,
+    "found": true,
+    "found_by": "A 4393",
+    "rank": 19,
+    "share": 0.0833,
+    "miss_reason": null,
     "bills": [
      {
       "id": "ocd-bill/115d9931-94b4-40d4-b822-9eda98f1ae4e",
       "session": "220",
       "identifier": "A 4393",
       "status": "died",
-      "text_chars": 0,
-      "signed_sections": 0,
-      "stage": null,
-      "best_estimate": null,
-      "rank": null,
-      "share": null,
-      "found": false,
-      "reason": "no_text_in_source"
+      "text_chars": 11567,
+      "signed_sections": 10,
+      "stage": "verified",
+      "best_estimate": 0.625,
+      "rank": 19,
+      "share": 0.0833,
+      "found": true,
+      "reason": null
      },
      {
       "id": "ocd-bill/a12b77a8-9804-4cf9-9b98-6d510f466d34",
       "session": "220",
       "identifier": "S 2802",
       "status": "passed",
-      "text_chars": 0,
-      "signed_sections": 0,
-      "stage": null,
-      "best_estimate": null,
-      "rank": null,
-      "share": null,
-      "found": false,
-      "reason": "no_text_in_source"
+      "text_chars": 11717,
+      "signed_sections": 10,
+      "stage": "verified",
+      "best_estimate": 0.5625,
+      "rank": 19,
+      "share": 0.0833,
+      "found": true,
+      "reason": null
      }
     ]
    },
@@ -1035,7 +1490,7 @@
       "session": "2023R1",
       "identifier": "SB 305",
       "status": "passed",
-      "text_chars": 6121,
+      "text_chars": 7722,
       "signed_sections": 3,
       "stage": "not_proposed",
       "best_estimate": 0.0391,
@@ -1056,8 +1511,8 @@
     "with_text": true,
     "found": true,
     "found_by": "SB 18",
-    "rank": 8,
-    "share": 0.2308,
+    "rank": 11,
+    "share": 0.25,
     "miss_reason": null,
     "bills": [
      {
@@ -1066,11 +1521,11 @@
       "identifier": "SB 18",
       "status": "passed",
       "text_chars": 11691,
-      "signed_sections": 18,
+      "signed_sections": 31,
       "stage": "verified",
-      "best_estimate": 0.6016,
-      "rank": 8,
-      "share": 0.2308,
+      "best_estimate": 0.7188,
+      "rank": 11,
+      "share": 0.25,
       "found": true,
       "reason": null
      }
@@ -1083,26 +1538,26 @@
     "bill_cell": "HB 1502",
     "stratum": "enacted",
     "match_rule": "in_year",
-    "with_text": false,
+    "with_text": true,
     "found": false,
     "found_by": null,
     "rank": null,
     "share": null,
-    "miss_reason": "no_text_in_source",
+    "miss_reason": "verification",
     "bills": [
      {
       "id": "ocd-bill/97b9eec9-c325-456e-b254-044c9c114bae",
       "session": "2026",
       "identifier": "HB 1502",
       "status": "passed",
-      "text_chars": 0,
-      "signed_sections": 0,
-      "stage": null,
-      "best_estimate": null,
+      "text_chars": 18880,
+      "signed_sections": 14,
+      "stage": "verification",
+      "best_estimate": 0.4922,
       "rank": null,
       "share": null,
       "found": false,
-      "reason": "no_text_in_source"
+      "reason": "verification"
      }
     ]
    },
@@ -1114,11 +1569,11 @@
     "stratum": "enacted",
     "match_rule": "in_year",
     "with_text": true,
-    "found": false,
-    "found_by": null,
-    "rank": null,
-    "share": null,
-    "miss_reason": "not_proposed",
+    "found": true,
+    "found_by": "A 5345",
+    "rank": 14,
+    "share": 0.5333,
+    "miss_reason": null,
     "bills": [
      {
       "id": "ocd-bill/8d9dff64-7011-4962-90c3-a1a28a3370d4",
@@ -1126,13 +1581,13 @@
       "identifier": "A 5345",
       "status": "passed",
       "text_chars": 18204,
-      "signed_sections": 3,
-      "stage": "not_proposed",
-      "best_estimate": 0.1406,
-      "rank": null,
-      "share": null,
-      "found": false,
-      "reason": "not_proposed"
+      "signed_sections": 19,
+      "stage": "verified",
+      "best_estimate": 0.9688,
+      "rank": 14,
+      "share": 0.5333,
+      "found": true,
+      "reason": null
      }
     ]
    },
@@ -1144,11 +1599,11 @@
     "stratum": "enacted",
     "match_rule": "in_year",
     "with_text": true,
-    "found": false,
-    "found_by": null,
-    "rank": null,
-    "share": null,
-    "miss_reason": "not_proposed",
+    "found": true,
+    "found_by": "HB 7265",
+    "rank": 6,
+    "share": 0.8,
+    "miss_reason": null,
     "bills": [
      {
       "id": "ocd-bill/36bad521-9e60-4a20-a39f-aa6a9c7216a0",
@@ -1156,13 +1611,13 @@
       "identifier": "HB 7265",
       "status": "passed",
       "text_chars": 17078,
-      "signed_sections": 2,
-      "stage": "not_proposed",
-      "best_estimate": 0.2031,
-      "rank": null,
-      "share": null,
-      "found": false,
-      "reason": "not_proposed"
+      "signed_sections": 18,
+      "stage": "verified",
+      "best_estimate": 0.9375,
+      "rank": 6,
+      "share": 0.8,
+      "found": true,
+      "reason": null
      },
      {
       "id": "ocd-bill/b2babde4-079b-4895-8bf9-0ce02047df0b",
@@ -1170,13 +1625,13 @@
       "identifier": "SB 2519",
       "status": "passed",
       "text_chars": 17078,
-      "signed_sections": 2,
-      "stage": "not_proposed",
-      "best_estimate": 0.2031,
-      "rank": null,
-      "share": null,
-      "found": false,
-      "reason": "not_proposed"
+      "signed_sections": 18,
+      "stage": "verified",
+      "best_estimate": 0.9375,
+      "rank": 6,
+      "share": 0.8,
+      "found": true,
+      "reason": null
      }
     ]
    },
@@ -1188,11 +1643,11 @@
     "stratum": "enacted",
     "match_rule": "in_year",
     "with_text": true,
-    "found": false,
-    "found_by": null,
-    "rank": null,
-    "share": null,
-    "miss_reason": "not_proposed",
+    "found": true,
+    "found_by": "SB 1206",
+    "rank": 5,
+    "share": 0.8667,
+    "miss_reason": null,
     "bills": [
      {
       "id": "ocd-bill/96704f52-935a-45e6-9313-f9e85eddae71",
@@ -1200,13 +1655,13 @@
       "identifier": "SB 1206",
       "status": "passed",
       "text_chars": 17019,
-      "signed_sections": 1,
-      "stage": "not_proposed",
-      "best_estimate": 0.1875,
-      "rank": null,
-      "share": null,
-      "found": false,
-      "reason": "not_proposed"
+      "signed_sections": 17,
+      "stage": "verified",
+      "best_estimate": 0.9531,
+      "rank": 5,
+      "share": 0.8667,
+      "found": true,
+      "reason": null
      }
     ]
    },
@@ -1220,8 +1675,8 @@
     "with_text": true,
     "found": true,
     "found_by": "LB 231",
-    "rank": 4,
-    "share": 0.75,
+    "rank": 8,
+    "share": 0.8,
     "miss_reason": null,
     "bills": [
      {
@@ -1233,8 +1688,8 @@
       "signed_sections": 17,
       "stage": "verified",
       "best_estimate": 0.7578,
-      "rank": 4,
-      "share": 0.75,
+      "rank": 8,
+      "share": 0.8,
       "found": true,
       "reason": null
      }
@@ -1262,7 +1717,7 @@
       "text_chars": 866732,
       "signed_sections": 139,
       "stage": "verification",
-      "best_estimate": 0.2578,
+      "best_estimate": 0.2656,
       "rank": null,
       "share": null,
       "found": false,
@@ -1277,26 +1732,26 @@
     "bill_cell": "SB 2123",
     "stratum": "enacted",
     "match_rule": "in_year",
-    "with_text": false,
+    "with_text": true,
     "found": false,
     "found_by": null,
     "rank": null,
     "share": null,
-    "miss_reason": "no_text_in_source",
+    "miss_reason": "not_proposed",
     "bills": [
      {
       "id": "ocd-bill/bb0205d7-bfe0-4789-99cb-0b8712f6a7f8",
       "session": "69",
       "identifier": "SB 2123",
       "status": "passed",
-      "text_chars": 0,
-      "signed_sections": 0,
-      "stage": null,
-      "best_estimate": null,
+      "text_chars": 19004,
+      "signed_sections": 3,
+      "stage": "not_proposed",
+      "best_estimate": 0.2031,
       "rank": null,
       "share": null,
       "found": false,
-      "reason": "no_text_in_source"
+      "reason": "not_proposed"
      }
     ]
    },
@@ -1310,8 +1765,8 @@
     "with_text": true,
     "found": true,
     "found_by": "SB 294",
-    "rank": 5,
-    "share": 0.625,
+    "rank": 11,
+    "share": 0.6,
     "miss_reason": null,
     "bills": [
      {
@@ -1323,8 +1778,8 @@
       "signed_sections": 24,
       "stage": "verified",
       "best_estimate": 0.7656,
-      "rank": 5,
-      "share": 0.625,
+      "rank": 11,
+      "share": 0.6,
       "found": true,
       "reason": null
      }
@@ -1339,9 +1794,9 @@
     "match_rule": "in_year",
     "with_text": true,
     "found": true,
-    "found_by": "HB 2745",
+    "found_by": "SB 561",
     "rank": 3,
-    "share": 0.8125,
+    "share": 0.8667,
     "miss_reason": null,
     "bills": [
      {
@@ -1349,14 +1804,14 @@
       "session": "2025",
       "identifier": "SB 561",
       "status": "passed",
-      "text_chars": 0,
-      "signed_sections": 0,
-      "stage": null,
-      "best_estimate": null,
-      "rank": null,
-      "share": null,
-      "found": false,
-      "reason": "no_text_in_source"
+      "text_chars": 18870,
+      "signed_sections": 16,
+      "stage": "verified",
+      "best_estimate": 0.9688,
+      "rank": 3,
+      "share": 0.8667,
+      "found": true,
+      "reason": null
      },
      {
       "id": "ocd-bill/2f6e1810-6119-44f6-83b3-d27d28e18c78",
@@ -1364,11 +1819,11 @@
       "identifier": "HB 2745",
       "status": "died",
       "text_chars": 21410,
-      "signed_sections": 16,
+      "signed_sections": 15,
       "stage": "verified",
       "best_estimate": 0.9609,
       "rank": 3,
-      "share": 0.8125,
+      "share": 0.8667,
       "found": true,
       "reason": null
      },
@@ -1377,14 +1832,14 @@
       "session": "2025",
       "identifier": "SB 39",
       "status": "died",
-      "text_chars": 0,
-      "signed_sections": 0,
-      "stage": null,
-      "best_estimate": null,
-      "rank": null,
-      "share": null,
-      "found": false,
-      "reason": "no_text_in_source"
+      "text_chars": 17366,
+      "signed_sections": 15,
+      "stage": "verified",
+      "best_estimate": 0.9688,
+      "rank": 3,
+      "share": 0.8667,
+      "found": true,
+      "reason": null
      }
     ]
    },
@@ -1396,11 +1851,11 @@
     "stratum": "enacted",
     "match_rule": "in_year",
     "with_text": true,
-    "found": false,
-    "found_by": null,
-    "rank": null,
-    "share": null,
-    "miss_reason": "not_proposed",
+    "found": true,
+    "found_by": "HB 24-1232",
+    "rank": 10,
+    "share": 0.6667,
+    "miss_reason": null,
     "bills": [
      {
       "id": "ocd-bill/340d147a-1e99-4b53-81e2-d9e760e63757",
@@ -1408,13 +1863,13 @@
       "identifier": "HB 24-1232",
       "status": "passed",
       "text_chars": 19612,
-      "signed_sections": 3,
-      "stage": "not_proposed",
-      "best_estimate": 0.1484,
-      "rank": null,
-      "share": null,
-      "found": false,
-      "reason": "not_proposed"
+      "signed_sections": 18,
+      "stage": "verified",
+      "best_estimate": 0.7188,
+      "rank": 10,
+      "share": 0.6667,
+      "found": true,
+      "reason": null
      }
     ]
    },
@@ -1428,8 +1883,8 @@
     "with_text": true,
     "found": true,
     "found_by": "SB 308",
-    "rank": 2,
-    "share": 0.875,
+    "rank": 4,
+    "share": 0.8667,
     "miss_reason": null,
     "bills": [
      {
@@ -1438,11 +1893,11 @@
       "identifier": "SB 308",
       "status": "passed",
       "text_chars": 21938,
-      "signed_sections": 18,
+      "signed_sections": 17,
       "stage": "verified",
       "best_estimate": 0.9688,
-      "rank": 2,
-      "share": 0.875,
+      "rank": 4,
+      "share": 0.8667,
       "found": true,
       "reason": null
      }
@@ -1455,26 +1910,26 @@
     "bill_cell": "SB 1819",
     "stratum": "enacted",
     "match_rule": "in_year",
-    "with_text": false,
-    "found": false,
-    "found_by": null,
-    "rank": null,
-    "share": null,
-    "miss_reason": "no_text_in_source",
+    "with_text": true,
+    "found": true,
+    "found_by": "SB 1819",
+    "rank": 7,
+    "share": 0.8,
+    "miss_reason": null,
     "bills": [
      {
       "id": "ocd-bill/30eb426e-5e8c-4be3-ba3b-9b3ec2f479a1",
       "session": "2024",
       "identifier": "SB 1819",
       "status": "passed",
-      "text_chars": 0,
-      "signed_sections": 0,
-      "stage": null,
-      "best_estimate": null,
-      "rank": null,
-      "share": null,
-      "found": false,
-      "reason": "no_text_in_source"
+      "text_chars": 20795,
+      "signed_sections": 17,
+      "stage": "verified",
+      "best_estimate": 0.8594,
+      "rank": 7,
+      "share": 0.8,
+      "found": true,
+      "reason": null
      }
     ]
    },
@@ -1488,8 +1943,8 @@
     "with_text": true,
     "found": true,
     "found_by": "SB 5801",
-    "rank": 6,
-    "share": 0.125,
+    "rank": 9,
+    "share": 0.7333,
     "miss_reason": null,
     "bills": [
      {
@@ -1497,12 +1952,12 @@
       "session": "2023-2024",
       "identifier": "SB 5801",
       "status": "passed",
-      "text_chars": 18126,
-      "signed_sections": 14,
+      "text_chars": 18215,
+      "signed_sections": 18,
       "stage": "verified",
-      "best_estimate": 0.5234,
-      "rank": 6,
-      "share": 0.125,
+      "best_estimate": 0.9531,
+      "rank": 9,
+      "share": 0.7333,
       "found": true,
       "reason": null
      }

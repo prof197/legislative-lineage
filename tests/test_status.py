@@ -265,10 +265,88 @@ def test_a_resolution_failed_then_adopted_was_reconsidered() -> None:
     assert _status(actions, as_of=AFTER_SESSION, kinds=("resolution",)).status is Status.PASSED
 
 
-def test_a_bill_passed_by_both_chambers_still_needs_enactment() -> None:
+def test_votes_in_both_chambers_alone_do_not_show_the_legislature_finished() -> None:
+    # Hawaii's conference deaths, Maryland's refused concurrences and New Jersey's bills
+    # replaced by their companions all passed both chambers in some form.
     actions = _actions(INTRODUCED, ADOPTED_HOUSE, ADOPTED_SENATE)
 
     assert _status(actions, as_of=AFTER_SESSION, kinds=("bill",)).status is Status.DIED
+
+
+@pytest.mark.parametrize(
+    "description",
+    [
+        "Concurred in House amendments",  # Ohio
+        "PASSED TO BE ENACTED, in concurrence.",  # Maine
+        "Delivered to Governor",  # Missouri, Kentucky
+        "Enrolled Bill Signed",  # Mississippi
+        "Enacted and laid before the Governor",  # Massachusetts
+        "Ordered Enrolled",  # North Carolina
+        "Reported correctly enrolled, signed by Speaker and President",  # Iowa
+        "Speaker signed.",  # Oregon
+        "Ready to Enroll",  # Alabama
+        "Transmitted to Secretary of the State",  # Connecticut
+        "Sent to the Governor",  # Texas, Ohio
+    ],
+)
+def test_wording_that_the_legislature_finished_passed_the_legislature(description: str) -> None:
+    actions = [*_actions(INTRODUCED), Action("2025-03-30", (), 5, "House", description)]
+
+    outcome = _status(actions, as_of=AFTER_SESSION, kinds=("bill",))
+
+    assert outcome == Outcome(Status.PASSED_LEGISLATURE, "finished-in-words", date(2025, 3, 30))
+
+
+def test_a_refused_concurrence_is_not_the_legislature_finishing() -> None:
+    actions = [*_actions(INTRODUCED), Action("2025-03-30", (), 5, "House", "House Refuses Concur")]
+
+    assert _status(actions, as_of=AFTER_SESSION, kinds=("bill",)).status is Status.DIED
+
+
+@pytest.mark.parametrize("step", ["enrolled", "executive-receipt"])
+def test_an_enrolled_bill_or_one_the_governor_received_passed_the_legislature(step: str) -> None:
+    actions = _actions(INTRODUCED, ADOPTED_HOUSE, ("2025-03-30", step, "Senate"))
+
+    outcome = _status(actions, as_of=DURING_SESSION, kinds=("bill",))
+
+    assert outcome == Outcome(Status.PASSED_LEGISLATURE, step, date(2025, 3, 30))
+
+
+def test_a_bill_one_chamber_passed_died_with_the_session() -> None:
+    actions = _actions(INTRODUCED, ADOPTED_HOUSE)
+
+    assert _status(actions, as_of=AFTER_SESSION, kinds=("bill",)).status is Status.DIED
+
+
+def test_a_bill_both_chambers_passed_then_vetoed_died() -> None:
+    actions = _actions(INTRODUCED, ADOPTED_HOUSE, ADOPTED_SENATE, ("2025-04-10", "executive-veto"))
+
+    assert _status(actions, as_of=AFTER_SESSION, kinds=("bill",)).status is Status.DIED
+
+
+def test_an_enrolled_resolution_was_adopted() -> None:
+    # Louisiana records a resolution's adoption in words ("Read by title, rules suspended,
+    # adopted."); the enrollment that follows is classified.
+    actions = _actions(("2023-04-24", "", "House"), ("2023-04-25", "enrolled", "House"))
+
+    outcome = _status(actions, as_of=AFTER_SESSION, kinds=("resolution",))
+
+    assert outcome == Outcome(Status.PASSED, "passage", date(2023, 4, 25))
+
+
+def test_a_record_listed_newest_first_is_read_in_date_order() -> None:
+    # Louisiana, Nebraska, North Carolina and others list actions newest first. Read in export
+    # order, the veto came before the passages and the bill looked alive again.
+    newest_first = [
+        Action("2023-06-20", ("executive-veto",), 0, "Executive"),
+        Action("2023-06-01", ("passage",), 1, "House"),
+        Action("2023-06-01", ("reading-3",), 2, "House"),
+        Action("2023-05-16", ("passage",), 3, "Senate"),
+    ]
+
+    outcome = _status(newest_first, as_of=AFTER_SESSION, kinds=("bill",))
+
+    assert outcome == Outcome(Status.DIED, "executive-veto", date(2023, 6, 20))
 
 
 @pytest.mark.parametrize(
@@ -297,3 +375,54 @@ def test_every_snapshot_state_has_an_export_time_zone() -> None:
     manifest = Path(__file__).parents[1] / "snapshot" / "manifest.json"
 
     assert {a.state for a in load_manifest(manifest)} <= set(EXPORT_TIMEZONES)
+
+
+def _worded(description: str) -> list[Action]:
+    passed = _actions(INTRODUCED, PASSED_HOUSE, PASSED_SENATE)
+    return [*passed, Action("2025-05-20", (), len(passed), "Executive", description)]
+
+
+@pytest.mark.parametrize(
+    "description",
+    [
+        "Becomes law without Governor's signature 05/20/2025",  # Oklahoma
+        "Approved by the Governor",  # Arkansas
+        "Law Without Signature 05/20/2025; Chapter 112; eff. 07/19/2025",  # New Hampshire
+        "Enacted in accordance with Article 44 Part II of the N.H. Constitution without the "
+        "signature of the governor.",
+        "PUBLIC ACT 25-61",  # Connecticut
+        "Signed by the Lieutenant Governor, Chapter 81 of the Acts of 2024",  # Massachusetts
+        "Chapter No. 2025-104",  # Florida
+        "Chapter 393, (2025 Laws): Effective date January 1, 2026.",  # Oregon
+        "Law without signature - March 28, 2025    Session Law Chapter 140",  # Idaho
+        "Item vetoed, signed by Governor.",  # Iowa
+    ],
+)
+def test_an_enactment_recorded_only_in_words_passed(description: str) -> None:
+    assert _status(_worded(description), as_of=AFTER_SESSION) == Outcome(
+        Status.PASSED, "enacted-in-words", date(2025, 5, 20)
+    )
+
+
+@pytest.mark.parametrize(
+    "description",
+    [
+        # "Delivered to Governor" is not an enactment either: the legislature finished (above).
+        "Laid before the Governor",
+        # A motion to override, not the override itself: the vote is classified when it passes.
+        "Rountree MO120 That the bill becomes law notwithstanding the objections of the Governor",
+        "Taken from the files on motion and referred to Subcommittee on chapter 3 of the acts "
+        "of 2024",
+    ],
+)
+def test_other_wording_about_the_governor_or_a_chapter_is_not_an_enactment(
+    description: str,
+) -> None:
+    assert _status(_worded(description), as_of=AFTER_SESSION).status == Status.DIED
+
+
+def test_a_classified_outcome_is_read_before_the_wording() -> None:
+    actions = [*_worded("Approved by the Governor")]
+    actions[-1] = Action("2025-05-20", ("executive-signature",), 3, "Executive", "Approved")
+
+    assert _status(actions, as_of=AFTER_SESSION).reason == "executive-signature"

@@ -1,0 +1,1863 @@
+{
+ "command": "uv run lineage text inventory",
+ "plan": "data/text/plan.parquet",
+ "totals": {
+  "eligible": 447389,
+  "with_text:no_bill_version": 82,
+  "with_text:planned": 301361,
+  "without_text:no_bill_version": 918,
+  "without_text:no_link": 9293,
+  "without_text:planned": 135731,
+  "without_text:unsupported_format": 4
+ },
+ "states": {
+  "AK": {
+   "eligible": 1479,
+   "kind:blank": 8,
+   "outcome:no_link": 5,
+   "outcome:planned": 3,
+   "with_text": 1471,
+   "with_text:html_and_pdf": 1471,
+   "without_text": 8,
+   "without_text:html_and_pdf": 3
+  },
+  "AL": {
+   "eligible": 3734,
+   "kind:amendment_only": 6,
+   "kind:blank": 104,
+   "outcome:planned": 110,
+   "with_text": 3624,
+   "with_text:pdf_only": 3624,
+   "without_text": 110,
+   "without_text:pdf_only": 110
+  },
+  "AR": {
+   "eligible": 3556,
+   "with_text": 3556,
+   "with_text:pdf_only": 3556
+  },
+  "AZ": {
+   "eligible": 6979,
+   "kind:blank": 261,
+   "outcome:planned": 261,
+   "with_text": 6718,
+   "with_text:html_and_pdf": 6642,
+   "with_text:pdf_only": 76,
+   "without_text": 261,
+   "without_text:html_and_pdf": 230,
+   "without_text:pdf_only": 31
+  },
+  "CA": {
+   "eligible": 9259,
+   "kind:blank": 2409,
+   "outcome:planned": 2409,
+   "with_text": 6850,
+   "with_text:html_only": 1387,
+   "with_text:pdf_only": 5463,
+   "without_text": 2409,
+   "without_text:html_only": 335,
+   "without_text:pdf_only": 2074
+  },
+  "CO": {
+   "eligible": 2970,
+   "kind:blank": 485,
+   "outcome:no_link": 1,
+   "outcome:planned": 484,
+   "with_text": 2485,
+   "with_text:html_and_pdf": 32,
+   "with_text:pdf_only": 2453,
+   "without_text": 485,
+   "without_text:html_and_pdf": 3,
+   "without_text:pdf_only": 481
+  },
+  "CT": {
+   "eligible": 9260,
+   "kind:blank": 9260,
+   "outcome:no_link": 5,
+   "outcome:planned": 9255,
+   "without_text": 9260,
+   "without_text:pdf_only": 9255
+  },
+  "DE": {
+   "eligible": 1662,
+   "kind:amendment_only": 230,
+   "kind:blank": 1062,
+   "outcome:planned": 1292,
+   "with_text": 370,
+   "with_text:html_and_pdf": 370,
+   "without_text": 1292,
+   "without_text:html_and_pdf": 1249,
+   "without_text:pdf_only": 43
+  },
+  "FL": {
+   "eligible": 7411,
+   "with_text": 7411,
+   "with_text:html_and_pdf": 3819,
+   "with_text:pdf_only": 3592
+  },
+  "GA": {
+   "eligible": 4561,
+   "kind:amendment_only": 199,
+   "kind:blank": 125,
+   "kind:ga_notice": 774,
+   "outcome:planned": 1098,
+   "with_text": 3463,
+   "with_text:pdf_only": 3463,
+   "without_text": 1098,
+   "without_text:pdf_only": 1098
+  },
+  "HI": {
+   "eligible": 17149,
+   "kind:blank": 651,
+   "kind:missing": 8708,
+   "outcome:planned": 9359,
+   "with_text": 7790,
+   "with_text:html_and_pdf": 7790,
+   "without_text": 9359,
+   "without_text:html_and_pdf": 9359
+  },
+  "IA": {
+   "eligible": 7849,
+   "kind:blank": 1214,
+   "outcome:no_link": 4,
+   "outcome:planned": 1210,
+   "with_text": 6635,
+   "with_text:html_and_pdf": 6256,
+   "with_text:pdf_only": 379,
+   "without_text": 1214,
+   "without_text:html_and_pdf": 913,
+   "without_text:pdf_only": 297
+  },
+  "ID": {
+   "eligible": 2686,
+   "kind:blank": 32,
+   "outcome:planned": 32,
+   "with_text": 2654,
+   "with_text:pdf_only": 2654,
+   "without_text": 32,
+   "without_text:pdf_only": 32
+  },
+  "IL": {
+   "eligible": 20199,
+   "kind:amendment_only": 598,
+   "kind:blank": 3587,
+   "outcome:no_link": 877,
+   "outcome:planned": 3308,
+   "with_text": 16014,
+   "with_text:html_and_pdf": 16014,
+   "without_text": 4185,
+   "without_text:html_and_pdf": 3308
+  },
+  "IN": {
+   "eligible": 3957,
+   "kind:blank": 2782,
+   "outcome:planned": 2782,
+   "with_text": 1175,
+   "with_text:pdf_only": 1175,
+   "without_text": 2782,
+   "without_text:pdf_only": 2782
+  },
+  "KS": {
+   "eligible": 2741,
+   "kind:blank": 916,
+   "outcome:planned": 916,
+   "with_text": 1825,
+   "with_text:html_and_pdf": 814,
+   "with_text:pdf_only": 1011,
+   "without_text": 916,
+   "without_text:html_and_pdf": 522,
+   "without_text:pdf_only": 394
+  },
+  "KY": {
+   "eligible": 4585,
+   "kind:blank": 105,
+   "outcome:no_link": 80,
+   "outcome:planned": 25,
+   "with_text": 4480,
+   "with_text:pdf_only": 4480,
+   "without_text": 105,
+   "without_text:pdf_only": 25
+  },
+  "LA": {
+   "eligible": 5223,
+   "kind:amendment_only": 2969,
+   "kind:blank": 66,
+   "outcome:no_link": 60,
+   "outcome:planned": 2975,
+   "with_text": 2188,
+   "with_text:pdf_only": 2188,
+   "without_text": 3035,
+   "without_text:pdf_only": 2975
+  },
+  "MA": {
+   "eligible": 36048,
+   "kind:blank": 15307,
+   "kind:no_sections": 2,
+   "outcome:no_link": 156,
+   "outcome:planned": 15153,
+   "with_text": 20739,
+   "with_text:pdf_only": 20739,
+   "without_text": 15309,
+   "without_text:pdf_only": 15153
+  },
+  "MD": {
+   "eligible": 10303,
+   "kind:blank": 9162,
+   "outcome:planned": 9162,
+   "with_text": 1141,
+   "with_text:pdf_only": 1141,
+   "without_text": 9162,
+   "without_text:pdf_only": 9162
+  },
+  "ME": {
+   "eligible": 4665,
+   "kind:blank": 4665,
+   "outcome:no_link": 113,
+   "outcome:planned": 4552,
+   "without_text": 4665,
+   "without_text:pdf_only": 4552
+  },
+  "MI": {
+   "eligible": 7150,
+   "kind:blank": 1759,
+   "outcome:planned": 1759,
+   "with_text": 5391,
+   "with_text:html_and_pdf": 5391,
+   "without_text": 1759,
+   "without_text:html_and_pdf": 1476,
+   "without_text:html_only": 152,
+   "without_text:pdf_only": 131
+  },
+  "MN": {
+   "eligible": 21541,
+   "kind:blank": 6947,
+   "outcome:planned": 6947,
+   "with_text": 14594,
+   "with_text:html_and_pdf": 11023,
+   "with_text:html_only": 3571,
+   "without_text": 6947,
+   "without_text:html_and_pdf": 46,
+   "without_text:html_only": 6901
+  },
+  "MO": {
+   "eligible": 10643,
+   "kind:blank": 3455,
+   "outcome:no_link": 11,
+   "outcome:planned": 3444,
+   "with_text": 7188,
+   "with_text:pdf_only": 7188,
+   "without_text": 3455,
+   "without_text:pdf_only": 3444
+  },
+  "MS": {
+   "eligible": 13466,
+   "kind:amendment_only": 5,
+   "kind:blank": 2307,
+   "outcome:planned": 2312,
+   "with_text": 11154,
+   "with_text:html_and_pdf": 11154,
+   "without_text": 2312,
+   "without_text:html_and_pdf": 2312
+  },
+  "MT": {
+   "eligible": 12279,
+   "kind:blank": 9046,
+   "outcome:no_link": 5666,
+   "outcome:planned": 3380,
+   "with_text": 3233,
+   "with_text:pdf_only": 3233,
+   "without_text": 9046,
+   "without_text:pdf_only": 3380
+  },
+  "NC": {
+   "eligible": 4276,
+   "kind:blank": 1466,
+   "outcome:planned": 1466,
+   "with_text": 2810,
+   "with_text:pdf_only": 2810,
+   "without_text": 1466,
+   "without_text:pdf_only": 1466
+  },
+  "ND": {
+   "eligible": 1983,
+   "kind:blank": 379,
+   "outcome:planned": 379,
+   "with_text": 1604,
+   "with_text:pdf_only": 1604,
+   "without_text": 379,
+   "without_text:pdf_only": 379
+  },
+  "NE": {
+   "eligible": 2942,
+   "kind:amendment_only": 54,
+   "kind:blank": 2286,
+   "outcome:planned": 2340,
+   "with_text": 602,
+   "with_text:pdf_only": 602,
+   "without_text": 2340,
+   "without_text:pdf_only": 2340
+  },
+  "NH": {
+   "eligible": 4607,
+   "kind:amendment_only": 141,
+   "kind:blank": 3490,
+   "outcome:no_bill_version": 911,
+   "outcome:no_link": 1233,
+   "outcome:planned": 1487,
+   "with_text": 976,
+   "with_text:html_and_pdf": 897,
+   "without_text": 3631,
+   "without_text:html_and_pdf": 363,
+   "without_text:pdf_only": 1124
+  },
+  "NJ": {
+   "eligible": 32322,
+   "kind:blank": 19455,
+   "outcome:no_bill_version": 1,
+   "outcome:no_link": 558,
+   "outcome:planned": 18892,
+   "outcome:unsupported_format": 4,
+   "with_text": 12867,
+   "with_text:html_and_pdf": 12867,
+   "without_text": 19455,
+   "without_text:html_and_pdf": 18892
+  },
+  "NM": {
+   "eligible": 3759,
+   "kind:blank": 39,
+   "outcome:planned": 39,
+   "with_text": 3720,
+   "with_text:html_and_pdf": 2736,
+   "with_text:html_only": 20,
+   "with_text:pdf_only": 964,
+   "without_text": 39,
+   "without_text:html_and_pdf": 11,
+   "without_text:html_only": 12,
+   "without_text:pdf_only": 16
+  },
+  "NV": {
+   "eligible": 2343,
+   "kind:blank": 807,
+   "outcome:planned": 807,
+   "with_text": 1536,
+   "with_text:pdf_only": 1536,
+   "without_text": 807,
+   "without_text:pdf_only": 807
+  },
+  "NY": {
+   "eligible": 41515,
+   "kind:blank": 40,
+   "outcome:planned": 40,
+   "with_text": 41475,
+   "with_text:html_and_pdf": 34364,
+   "with_text:pdf_only": 7111,
+   "without_text": 40,
+   "without_text:html_and_pdf": 8,
+   "without_text:pdf_only": 32
+  },
+  "OH": {
+   "eligible": 2579,
+   "kind:blank": 25,
+   "outcome:planned": 25,
+   "with_text": 2554,
+   "with_text:html_and_pdf": 1507,
+   "with_text:pdf_only": 1047,
+   "without_text": 25,
+   "without_text:html_and_pdf": 13,
+   "without_text:pdf_only": 12
+  },
+  "OK": {
+   "eligible": 17751,
+   "kind:amendment_only": 293,
+   "kind:blank": 4623,
+   "outcome:no_bill_version": 6,
+   "outcome:no_link": 111,
+   "outcome:planned": 4799,
+   "with_text": 12835,
+   "with_text:pdf_only": 12832,
+   "without_text": 4916,
+   "without_text:pdf_only": 4799
+  },
+  "OR": {
+   "eligible": 6825,
+   "kind:amendment_only": 227,
+   "kind:blank": 84,
+   "outcome:planned": 311,
+   "with_text": 6514,
+   "with_text:pdf_only": 6514,
+   "without_text": 311,
+   "without_text:pdf_only": 311
+  },
+  "PA": {
+   "eligible": 8053,
+   "kind:amendment_only": 376,
+   "kind:blank": 4611,
+   "outcome:no_link": 2,
+   "outcome:planned": 4985,
+   "with_text": 3066,
+   "with_text:html_and_pdf": 3066,
+   "without_text": 4987,
+   "without_text:html_and_pdf": 4985
+  },
+  "RI": {
+   "eligible": 8703,
+   "kind:blank": 575,
+   "outcome:planned": 575,
+   "with_text": 8128,
+   "with_text:pdf_only": 8128,
+   "without_text": 575,
+   "without_text:pdf_only": 575
+  },
+  "SC": {
+   "eligible": 4546,
+   "kind:blank": 7,
+   "outcome:no_link": 4,
+   "outcome:planned": 3,
+   "with_text": 4539,
+   "with_text:html_only": 4539,
+   "without_text": 7,
+   "without_text:html_only": 3
+  },
+  "SD": {
+   "eligible": 2049,
+   "kind:blank": 2049,
+   "outcome:planned": 2049,
+   "without_text": 2049,
+   "without_text:html_and_pdf": 1862,
+   "without_text:pdf_only": 187
+  },
+  "TN": {
+   "eligible": 11824,
+   "kind:blank": 1,
+   "outcome:planned": 1,
+   "with_text": 11823,
+   "with_text:pdf_only": 11823,
+   "without_text": 1,
+   "without_text:pdf_only": 1
+  },
+  "TX": {
+   "eligible": 18784,
+   "kind:blank": 1300,
+   "kind:no_sections": 1387,
+   "outcome:no_link": 2,
+   "outcome:planned": 2685,
+   "with_text": 16097,
+   "with_text:html_and_pdf": 16097,
+   "without_text": 2687,
+   "without_text:html_and_pdf": 2685
+  },
+  "UT": {
+   "eligible": 3708,
+   "kind:blank": 253,
+   "outcome:planned": 253,
+   "with_text": 3455,
+   "with_text:pdf_only": 3455,
+   "without_text": 253,
+   "without_text:pdf_only": 253
+  },
+  "VA": {
+   "eligible": 11708,
+   "kind:blank": 7347,
+   "outcome:no_link": 402,
+   "outcome:planned": 6945,
+   "with_text": 4361,
+   "with_text:html_and_pdf": 4361,
+   "without_text": 7347,
+   "without_text:html_and_pdf": 6938,
+   "without_text:pdf_only": 7
+  },
+  "VT": {
+   "eligible": 2550,
+   "kind:amendment_only": 88,
+   "kind:blank": 211,
+   "outcome:planned": 299,
+   "with_text": 2251,
+   "with_text:pdf_only": 2251,
+   "without_text": 299,
+   "without_text:pdf_only": 299
+  },
+  "WA": {
+   "eligible": 5998,
+   "kind:blank": 12,
+   "outcome:planned": 12,
+   "with_text": 5986,
+   "with_text:html_and_pdf": 5986,
+   "without_text": 12,
+   "without_text:html_and_pdf": 12
+  },
+  "WI": {
+   "eligible": 4918,
+   "kind:amendment_only": 256,
+   "kind:blank": 148,
+   "outcome:planned": 404,
+   "with_text": 4514,
+   "with_text:html_and_pdf": 4514,
+   "without_text": 404,
+   "without_text:html_and_pdf": 404
+  },
+  "WV": {
+   "eligible": 10537,
+   "kind:blank": 4706,
+   "outcome:no_link": 3,
+   "outcome:planned": 4703,
+   "with_text": 5831,
+   "with_text:html_and_pdf": 5642,
+   "with_text:html_only": 189,
+   "without_text": 4706,
+   "without_text:html_and_pdf": 4641,
+   "without_text:html_only": 62
+  },
+  "WY": {
+   "eligible": 1754,
+   "kind:blank": 4,
+   "outcome:planned": 4,
+   "with_text": 1750,
+   "with_text:pdf_only": 1750,
+   "without_text": 4,
+   "without_text:pdf_only": 4
+  }
+ },
+ "hosts": {
+  "pub.njleg.state.nj.us": {
+   "states": [
+    "NJ"
+   ],
+   "links": {
+    "with_text:html": 12867,
+    "with_text:html:allowed": 12867,
+    "with_text:pdf": 12867,
+    "with_text:pdf:allowed": 12867,
+    "without_text:html": 18892,
+    "without_text:html:allowed": 18892,
+    "without_text:pdf": 18892,
+    "without_text:pdf:allowed": 18892
+   },
+   "robots": {
+    "url": "https://pub.njleg.state.nj.us/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "dc595e66648611314f4a3c511c2c95bc2690ef4c90f77671de83734da8b649be",
+    "read_at": "2026-11-07T08:19:12+00:00"
+   }
+  },
+  "legislation.nysenate.gov": {
+   "states": [
+    "NY"
+   ],
+   "links": {
+    "with_text:pdf": 41475,
+    "with_text:pdf:allowed": 41475,
+    "without_text:pdf": 40,
+    "without_text:pdf:allowed": 40
+   },
+   "robots": {
+    "url": "http://legislation.nysenate.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "7c55f46de40de31de6cd1ddebe7663ace5183933647b3600c2a328c135299b13",
+    "read_at": "2026-11-07T08:19:07+00:00"
+   }
+  },
+  "ilga.gov": {
+   "states": [
+    "IL"
+   ],
+   "links": {
+    "with_text:html": 16014,
+    "with_text:html:allowed": 16014,
+    "with_text:pdf": 16014,
+    "with_text:pdf:allowed": 16014,
+    "without_text:html": 3308,
+    "without_text:html:allowed": 3308,
+    "without_text:pdf": 3308,
+    "without_text:pdf:allowed": 3308
+   },
+   "robots": {
+    "url": "https://ilga.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "67945944ed49bb66a7aaab9f6e15962424fdd27ed3d60bf0dcbd8dbbfd07e6f7",
+    "read_at": "2026-11-07T08:19:05+00:00"
+   }
+  },
+  "capitol.texas.gov": {
+   "states": [
+    "TX"
+   ],
+   "links": {
+    "with_text:html": 16097,
+    "with_text:html:allowed": 16097,
+    "with_text:pdf": 16097,
+    "with_text:pdf:allowed": 16097,
+    "without_text:html": 2685,
+    "without_text:html:allowed": 2685,
+    "without_text:pdf": 2685,
+    "without_text:pdf:allowed": 2685
+   },
+   "robots": {
+    "url": "http://capitol.texas.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "c4dccb65e1059c10446e5890ae66f57bc490b606aaa5e881df0bfa95e4d9c714",
+    "read_at": "2026-11-07T08:19:04+00:00"
+   }
+  },
+  "malegislature.gov": {
+   "states": [
+    "MA"
+   ],
+   "links": {
+    "with_text:pdf": 20739,
+    "with_text:pdf:allowed": 20739,
+    "without_text:pdf": 15153,
+    "without_text:pdf:allowed": 15153
+   },
+   "robots": {
+    "url": "https://malegislature.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "4d7d7b87c0e85e9089c43d50160a21cd3d0b6fd3de11116e2133b75d6143c2ad",
+    "read_at": "2026-11-07T08:19:09+00:00"
+   }
+  },
+  "assembly.state.ny.us": {
+   "states": [
+    "NY"
+   ],
+   "links": {
+    "with_text:html": 34364,
+    "with_text:html:allowed": 34364,
+    "without_text:html": 8,
+    "without_text:html:allowed": 8
+   },
+   "robots": {
+    "url": "http://assembly.state.ny.us/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "28193bdd982586677464a248a320aeffeb73097c7666d21b553cbb34d4a707b3",
+    "read_at": "2026-11-07T08:19:04+00:00"
+   }
+  },
+  "www.revisor.mn.gov": {
+   "states": [
+    "MN"
+   ],
+   "links": {
+    "with_text:html": 14594,
+    "with_text:html:allowed": 14594,
+    "with_text:pdf": 11023,
+    "with_text:pdf:allowed": 11023,
+    "without_text:html": 6947,
+    "without_text:html:allowed": 6947,
+    "without_text:pdf": 46,
+    "without_text:pdf:allowed": 46
+   },
+   "robots": {
+    "url": "https://www.revisor.mn.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "ab30559ef28003bb0a3d1a6bc79ee2e025771936aa5b55d83824995e4f841edd",
+    "read_at": "2026-11-07T08:19:16+00:00"
+   }
+  },
+  "billstatus.ls.state.ms.us": {
+   "states": [
+    "MS"
+   ],
+   "links": {
+    "with_text:html": 11154,
+    "with_text:html:allowed": 11154,
+    "with_text:pdf": 11154,
+    "with_text:pdf:allowed": 11154,
+    "without_text:html": 2312,
+    "without_text:html:allowed": 2312,
+    "without_text:pdf": 2312,
+    "without_text:pdf:allowed": 2312
+   },
+   "robots": {
+    "url": "http://billstatus.ls.state.ms.us/robots.txt",
+    "status": 404,
+    "rule": "no rules",
+    "crawl_delay": null,
+    "sha256": null,
+    "read_at": "2026-11-07T08:19:04+00:00"
+   }
+  },
+  "capitol.hawaii.gov": {
+   "states": [
+    "HI"
+   ],
+   "links": {
+    "with_text:html": 2490,
+    "with_text:html:allowed": 2490,
+    "with_text:pdf": 2490,
+    "with_text:pdf:allowed": 2490,
+    "without_text:html": 6178,
+    "without_text:html:allowed": 6178,
+    "without_text:pdf": 6178,
+    "without_text:pdf:allowed": 6178
+   },
+   "robots": {
+    "url": "https://capitol.hawaii.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "64b5e1cdb539e3691fa05bc71bd065c58ab27c52c09c65bb7e668eb763d28a51",
+    "read_at": "2026-11-07T08:19:04+00:00"
+   }
+  },
+  "data.capitol.hawaii.gov": {
+   "states": [
+    "HI"
+   ],
+   "links": {
+    "with_text:html": 5300,
+    "with_text:html:allowed": 5300,
+    "with_text:pdf": 5300,
+    "with_text:pdf:allowed": 5300,
+    "without_text:html": 3181,
+    "without_text:html:allowed": 3181,
+    "without_text:pdf": 3181,
+    "without_text:pdf:allowed": 3181
+   },
+   "robots": {
+    "url": "https://data.capitol.hawaii.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "6d60108a943779b563b663e2d307d8a90f8df3622519d47f21ff5e8bb3cd3819",
+    "read_at": "2026-11-07T08:19:04+00:00"
+   }
+  },
+  "www.wvlegislature.gov": {
+   "states": [
+    "WV"
+   ],
+   "links": {
+    "with_text:html": 3738,
+    "with_text:html:allowed": 3738,
+    "with_text:pdf": 3585,
+    "with_text:pdf:allowed": 3585,
+    "without_text:html": 4440,
+    "without_text:html:allowed": 4440,
+    "without_text:pdf": 4393,
+    "without_text:pdf:allowed": 4393
+   },
+   "robots": {
+    "url": "https://www.wvlegislature.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "2a705e14585819b370177e2bcaca7e94e9a92935e61a30d213a02c7b22d04b9c",
+    "read_at": "2026-11-07T08:19:17+00:00"
+   }
+  },
+  "www.palegis.us": {
+   "states": [
+    "PA"
+   ],
+   "links": {
+    "with_text:html": 3066,
+    "with_text:html:allowed": 3066,
+    "with_text:pdf": 3066,
+    "with_text:pdf:allowed": 3066,
+    "without_text:html": 4985,
+    "without_text:html:allowed": 4985,
+    "without_text:pdf": 4985,
+    "without_text:pdf:allowed": 4985
+   },
+   "robots": {
+    "url": "https://www.palegis.us/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "7428b8dee10f5bd4168c00fd6b2537a5e8a8776e9474fcb407dc706eeed3e4ce",
+    "read_at": "2026-11-07T08:19:16+00:00"
+   }
+  },
+  "www.legis.iowa.gov": {
+   "states": [
+    "IA"
+   ],
+   "links": {
+    "with_text:html": 6256,
+    "with_text:html:allowed": 6256,
+    "with_text:pdf": 6635,
+    "with_text:pdf:allowed": 6635,
+    "without_text:html": 913,
+    "without_text:html:allowed": 913,
+    "without_text:pdf": 1210,
+    "without_text:pdf:allowed": 1210
+   },
+   "robots": {
+    "url": "https://www.legis.iowa.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "4b4f0471893df31aaa43cfc221f0a0ca66e61268c70b593505ba022c2a6bb488",
+    "read_at": "2026-11-07T08:19:14+00:00"
+   }
+  },
+  "legislature.mi.gov": {
+   "states": [
+    "MI"
+   ],
+   "links": {
+    "with_text:html": 5391,
+    "with_text:html:allowed": 5391,
+    "with_text:pdf": 5391,
+    "with_text:pdf:allowed": 5391,
+    "without_text:html": 1628,
+    "without_text:html:allowed": 1628,
+    "without_text:pdf": 1607,
+    "without_text:pdf:allowed": 1607
+   },
+   "robots": {
+    "url": "https://legislature.mi.gov/robots.txt",
+    "status": 404,
+    "rule": "no rules",
+    "crawl_delay": null,
+    "sha256": null,
+    "read_at": "2026-11-07T08:19:08+00:00"
+   }
+  },
+  "www.azleg.gov": {
+   "states": [
+    "AZ"
+   ],
+   "links": {
+    "with_text:html": 6642,
+    "with_text:html:allowed": 6642,
+    "with_text:pdf": 6642,
+    "with_text:pdf:allowed": 6642,
+    "without_text:html": 230,
+    "without_text:html:allowed": 230,
+    "without_text:pdf": 230,
+    "without_text:pdf:allowed": 230
+   },
+   "robots": {
+    "url": "https://www.azleg.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": 120.0,
+    "sha256": "f9317ac9b6563e48e308f91ea5bd4011ed499ada1ba2896855e8203b99085c80",
+    "read_at": "2026-11-07T08:19:13+00:00"
+   }
+  },
+  "lis.blob.core.windows.net": {
+   "states": [
+    "VA"
+   ],
+   "links": {
+    "without_text:html": 6746,
+    "without_text:html:allowed": 6746,
+    "without_text:pdf": 6746,
+    "without_text:pdf:allowed": 6746
+   },
+   "robots": {
+    "url": "https://lis.blob.core.windows.net/robots.txt",
+    "status": 400,
+    "rule": "no rules",
+    "crawl_delay": null,
+    "sha256": null,
+    "read_at": "2026-11-07T08:19:08+00:00"
+   }
+  },
+  "lawfilesext.leg.wa.gov": {
+   "states": [
+    "WA"
+   ],
+   "links": {
+    "with_text:html": 5986,
+    "with_text:html:allowed": 5986,
+    "with_text:pdf": 5986,
+    "with_text:pdf:allowed": 5986,
+    "without_text:html": 12,
+    "without_text:html:allowed": 12,
+    "without_text:pdf": 12,
+    "without_text:pdf:allowed": 12
+   },
+   "robots": {
+    "url": "http://lawfilesext.leg.wa.gov/robots.txt",
+    "status": 404,
+    "rule": "no rules",
+    "crawl_delay": null,
+    "sha256": null,
+    "read_at": "2026-11-07T08:19:05+00:00"
+   }
+  },
+  "flsenate.gov": {
+   "states": [
+    "FL"
+   ],
+   "links": {
+    "with_text:html": 3819,
+    "with_text:html:allowed": 3819,
+    "with_text:pdf": 7411,
+    "with_text:pdf:allowed": 7411
+   },
+   "robots": {
+    "url": "https://flsenate.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "0133a7a99ca7a48b8c47ed6a52d2c4c549e7f61c97fd16bd950c987464068796",
+    "read_at": "2026-11-07T08:19:05+00:00"
+   }
+  },
+  "mgaleg.maryland.gov": {
+   "states": [
+    "MD"
+   ],
+   "links": {
+    "with_text:pdf": 1141,
+    "with_text:pdf:allowed": 1141,
+    "without_text:pdf": 9162,
+    "without_text:pdf:allowed": 9162
+   },
+   "robots": {
+    "url": "http://mgaleg.maryland.gov/robots.txt",
+    "status": 404,
+    "rule": "no rules",
+    "crawl_delay": null,
+    "sha256": null,
+    "read_at": "2026-11-07T08:19:09+00:00"
+   }
+  },
+  "docs.legis.wisconsin.gov": {
+   "states": [
+    "WI"
+   ],
+   "links": {
+    "with_text:html": 4514,
+    "with_text:html:allowed": 4514,
+    "with_text:pdf": 4514,
+    "with_text:pdf:allowed": 4514,
+    "without_text:html": 404,
+    "without_text:html:allowed": 404,
+    "without_text:pdf": 404,
+    "without_text:pdf:allowed": 404
+   },
+   "robots": {
+    "url": "https://docs.legis.wisconsin.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "4bace78f2c6a86665265015ac8d0bcdfde1620f2601401700e907b1286c80065",
+    "read_at": "2026-11-07T08:19:04+00:00"
+   }
+  },
+  "www.cga.ct.gov": {
+   "states": [
+    "CT"
+   ],
+   "links": {
+    "without_text:pdf": 9255,
+    "without_text:pdf:allowed": 9255
+   },
+   "robots": {
+    "url": "https://www.cga.ct.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "0508c677f509a5100f8d889443f1d49815ab34e9fe643c4362040742c0c2fc16",
+    "read_at": "2026-11-07T08:19:14+00:00"
+   }
+  },
+  "lis.virginia.gov": {
+   "states": [
+    "VA"
+   ],
+   "links": {
+    "with_text:html": 4361,
+    "with_text:html:allowed": 4361,
+    "with_text:pdf": 4361,
+    "with_text:pdf:allowed": 4361,
+    "without_text:html": 192,
+    "without_text:html:allowed": 192,
+    "without_text:pdf": 192,
+    "without_text:pdf:allowed": 192
+   },
+   "robots": {
+    "url": "https://lis.virginia.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "e912e24c35de5e2b6e8b3401e38eb03de436da756d46a986493dcbe245fe4ef2",
+    "read_at": "2026-11-07T08:19:09+00:00"
+   }
+  },
+  "www.oklegislature.gov": {
+   "states": [
+    "OK"
+   ],
+   "links": {
+    "with_text:pdf": 7458,
+    "with_text:pdf:allowed": 7458,
+    "without_text:pdf": 1559,
+    "without_text:pdf:allowed": 1559
+   },
+   "robots": {
+    "url": "https://www.oklegislature.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "a676c21fd1960ed2b3b586d43e258958c02b1173e13d5f24968aa9d65554884a",
+    "read_at": "2026-11-07T08:19:16+00:00"
+   }
+  },
+  "webserver.rilegislature.gov": {
+   "states": [
+    "RI"
+   ],
+   "links": {
+    "with_text:pdf": 8128,
+    "with_text:pdf:allowed": 8128,
+    "without_text:pdf": 575,
+    "without_text:pdf:allowed": 575
+   },
+   "robots": {
+    "url": "http://webserver.rilegislature.gov/robots.txt",
+    "status": 404,
+    "rule": "no rules",
+    "crawl_delay": null,
+    "sha256": null,
+    "read_at": "2026-11-07T08:19:12+00:00"
+   }
+  },
+  "webserver1.lsb.state.ok.us": {
+   "states": [
+    "OK"
+   ],
+   "links": {
+    "with_text:pdf": 5374,
+    "with_text:pdf:allowed": 5374,
+    "without_text:pdf": 3240,
+    "without_text:pdf:allowed": 3240
+   },
+   "robots": {
+    "url": "http://webserver1.lsb.state.ok.us/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "a676c21fd1960ed2b3b586d43e258958c02b1173e13d5f24968aa9d65554884a",
+    "read_at": "2026-11-07T08:19:13+00:00"
+   }
+  },
+  "documents.house.mo.gov": {
+   "states": [
+    "MO"
+   ],
+   "links": {
+    "with_text:pdf": 5698,
+    "with_text:pdf:allowed": 5698,
+    "without_text:pdf": 1315,
+    "without_text:pdf:allowed": 1315
+   },
+   "robots": {
+    "url": "https://documents.house.mo.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": 20.0,
+    "sha256": "88f34e59ccd0e23fa8bfccdb73fe16d549c3951c3a75abc3d331dcac838d6219",
+    "read_at": "2026-11-07T08:19:05+00:00"
+   }
+  },
+  "olis.oregonlegislature.gov": {
+   "states": [
+    "OR"
+   ],
+   "links": {
+    "with_text:pdf": 6514,
+    "with_text:pdf:allowed": 6514,
+    "without_text:pdf": 311,
+    "without_text:pdf:allowed": 311
+   },
+   "robots": {
+    "url": "https://olis.oregonlegislature.gov/robots.txt",
+    "status": 404,
+    "rule": "no rules",
+    "crawl_delay": null,
+    "sha256": null,
+    "read_at": "2026-11-07T08:19:11+00:00"
+   }
+  },
+  "www.nmlegis.gov": {
+   "states": [
+    "NM"
+   ],
+   "links": {
+    "with_text:html": 2756,
+    "with_text:html:allowed": 2756,
+    "with_text:pdf": 3700,
+    "with_text:pdf:allowed": 3700,
+    "without_text:html": 23,
+    "without_text:html:allowed": 23,
+    "without_text:pdf": 27,
+    "without_text:pdf:allowed": 27
+   },
+   "robots": {
+    "url": "https://www.nmlegis.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "27da4e642d81d8c52d9322097d2548d56964e1dbc3ccc5af1210efaa2dd4ea99",
+    "read_at": "2026-11-07T08:19:15+00:00"
+   }
+  },
+  "www.legis.la.gov": {
+   "states": [
+    "LA"
+   ],
+   "links": {
+    "with_text:pdf": 2188,
+    "with_text:pdf:allowed": 2188,
+    "without_text:pdf": 2975,
+    "without_text:pdf:allowed": 2975
+   },
+   "robots": {
+    "url": "https://www.legis.la.gov/robots.txt",
+    "status": 404,
+    "rule": "no rules",
+    "crawl_delay": null,
+    "sha256": null,
+    "read_at": "2026-11-07T08:19:14+00:00"
+   }
+  },
+  "api.legmt.gov": {
+   "states": [
+    "MT"
+   ],
+   "links": {
+    "with_text:pdf": 3230,
+    "with_text:pdf:allowed": 3230,
+    "without_text:pdf": 1733,
+    "without_text:pdf:allowed": 1733
+   },
+   "robots": {
+    "url": "https://api.legmt.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": 10.0,
+    "sha256": "dc2f08337f914b83104b1cc09a2e273eec7d4003cc6fd7046411db9500c6056f",
+    "read_at": "2026-11-07T08:19:02+00:00"
+   }
+  },
+  "www.legis.state.wv.us": {
+   "states": [
+    "WV"
+   ],
+   "links": {
+    "with_text:html": 2093,
+    "with_text:html:allowed": 2093,
+    "with_text:pdf": 2057,
+    "with_text:pdf:allowed": 2057,
+    "without_text:html": 263,
+    "without_text:html:allowed": 263,
+    "without_text:pdf": 248,
+    "without_text:pdf:allowed": 248
+   },
+   "robots": {
+    "url": "http://www.legis.state.wv.us/robots.txt",
+    "status": 404,
+    "rule": "no rules",
+    "crawl_delay": null,
+    "sha256": null,
+    "read_at": "2026-11-07T08:19:14+00:00"
+   }
+  },
+  "leginfo.legislature.ca.gov": {
+   "states": [
+    "CA"
+   ],
+   "links": {
+    "with_text:html": 1387,
+    "with_text:pdf": 5463,
+    "without_text:html": 335,
+    "without_text:pdf": 2074
+   },
+   "robots": {
+    "url": "https://leginfo.legislature.ca.gov/robots.txt",
+    "status": 403,
+    "rule": "disallow all",
+    "crawl_delay": null,
+    "sha256": null,
+    "read_at": "2026-11-07T08:19:07+00:00"
+   }
+  },
+  "www.legis.ga.gov": {
+   "states": [
+    "GA"
+   ],
+   "links": {
+    "with_text:pdf": 3463,
+    "with_text:pdf:allowed": 3463,
+    "without_text:pdf": 1098,
+    "without_text:pdf:allowed": 1098
+   },
+   "robots": {
+    "url": "https://www.legis.ga.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "513375fe68989e8f75e35bc09b67cf1ef1851595317233cf380e506d73257d4c",
+    "read_at": "2026-11-07T08:19:14+00:00"
+   }
+  },
+  "www.mainelegislature.org": {
+   "states": [
+    "ME"
+   ],
+   "links": {
+    "without_text:pdf": 4552,
+    "without_text:pdf:allowed": 4552
+   },
+   "robots": {
+    "url": "http://www.mainelegislature.org/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "bc423a72fcf030243bdd1ea10c066c2668d9edc0494ebec9da27c35625426bd5",
+    "read_at": "2026-11-07T08:19:15+00:00"
+   }
+  },
+  "www.scstatehouse.gov": {
+   "states": [
+    "SC"
+   ],
+   "links": {
+    "with_text:html": 4539,
+    "with_text:html:allowed": 4539,
+    "without_text:html": 3,
+    "without_text:html:allowed": 3
+   },
+   "robots": {
+    "url": "https://www.scstatehouse.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "30aa55e0e8342137e18bd9dc7f26dff0bbcb9f23bf489c6d5117f75e2269f7ca",
+    "read_at": "2026-11-07T08:19:16+00:00"
+   }
+  },
+  "apps.legislature.ky.gov": {
+   "states": [
+    "KY"
+   ],
+   "links": {
+    "with_text:pdf": 4480,
+    "with_text:pdf:allowed": 4480,
+    "without_text:pdf": 25,
+    "without_text:pdf:allowed": 25
+   },
+   "robots": {
+    "url": "https://apps.legislature.ky.gov/robots.txt",
+    "status": 404,
+    "rule": "no rules",
+    "crawl_delay": null,
+    "sha256": null,
+    "read_at": "2026-11-07T08:19:03+00:00"
+   }
+  },
+  "www.ncleg.gov": {
+   "states": [
+    "NC"
+   ],
+   "links": {
+    "with_text:pdf": 2783,
+    "with_text:pdf:allowed": 2783,
+    "without_text:pdf": 1457,
+    "without_text:pdf:allowed": 1457
+   },
+   "robots": {
+    "url": "https://www.ncleg.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "662de01afc6b1d472428678ba290a37cb2960f41322843f2657e0c0018606b20",
+    "read_at": "2026-11-07T08:19:15+00:00"
+   }
+  },
+  "search-prod.lis.state.oh.us": {
+   "states": [
+    "OH"
+   ],
+   "links": {
+    "with_text:html": 1507,
+    "with_text:html:allowed": 1507,
+    "with_text:pdf": 2554,
+    "with_text:pdf:allowed": 2554,
+    "without_text:html": 13,
+    "without_text:html:allowed": 13,
+    "without_text:pdf": 25,
+    "without_text:pdf:allowed": 25
+   },
+   "robots": {
+    "url": "https://search-prod.lis.state.oh.us/robots.txt",
+    "status": 404,
+    "rule": "no rules",
+    "crawl_delay": null,
+    "sha256": null,
+    "read_at": "2026-11-07T08:19:12+00:00"
+   }
+  },
+  "www.kslegislature.gov": {
+   "states": [
+    "KS"
+   ],
+   "links": {
+    "with_text:html": 814,
+    "with_text:html:allowed": 814,
+    "with_text:pdf": 1825,
+    "with_text:pdf:allowed": 1825,
+    "without_text:html": 522,
+    "without_text:html:allowed": 522,
+    "without_text:pdf": 916,
+    "without_text:pdf:allowed": 916
+   },
+   "robots": {
+    "url": "https://www.kslegislature.gov/robots.txt",
+    "status": 404,
+    "rule": "no rules",
+    "crawl_delay": null,
+    "sha256": null,
+    "read_at": "2026-11-07T08:19:14+00:00"
+   }
+  },
+  "le.utah.gov": {
+   "states": [
+    "UT"
+   ],
+   "links": {
+    "with_text:pdf": 3455,
+    "with_text:pdf:allowed": 3455,
+    "without_text:pdf": 253,
+    "without_text:pdf:allowed": 253
+   },
+   "robots": {
+    "url": "https://le.utah.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": 10.0,
+    "sha256": "8a66833d4dac302d52b965debc25158d9cc19e4d1e4fe31084a4faa26782838d",
+    "read_at": "2026-11-07T08:19:06+00:00"
+   }
+  },
+  "www.senate.mo.gov": {
+   "states": [
+    "MO"
+   ],
+   "links": {
+    "with_text:pdf": 1490,
+    "with_text:pdf:allowed": 1490,
+    "without_text:pdf": 2129,
+    "without_text:pdf:allowed": 2129
+   },
+   "robots": {
+    "url": "https://www.senate.mo.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "6d8c8af5a93aa03abce77b4265821ccf1bd467879fe77c99b76084d78064abaa",
+    "read_at": "2026-11-07T08:19:17+00:00"
+   }
+  },
+  "www.arkleg.state.ar.us": {
+   "states": [
+    "AR"
+   ],
+   "links": {
+    "with_text:pdf": 3556,
+    "with_text:pdf:allowed": 3556
+   },
+   "robots": {
+    "url": "https://www.arkleg.state.ar.us/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "98fe330838e111b16a86b6e23b18f6b1b49c6f795637d229dd9f50b6554dfe71",
+    "read_at": "2026-11-07T08:19:13+00:00"
+   }
+  },
+  "legis.delaware.gov": {
+   "states": [
+    "DE"
+   ],
+   "links": {
+    "with_text:html": 370,
+    "with_text:html:allowed": 370,
+    "with_text:pdf": 370,
+    "with_text:pdf:allowed": 370,
+    "without_text:html": 1249,
+    "without_text:html:allowed": 1249,
+    "without_text:pdf": 1292,
+    "without_text:pdf:allowed": 1292
+   },
+   "robots": {
+    "url": "https://legis.delaware.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "efd49dffb1cb2258c03cfec168d51af666c77db1b6282e50b90efe9d7ecb3f35",
+    "read_at": "2026-11-07T08:19:07+00:00"
+   }
+  },
+  "www.capitol.tn.gov": {
+   "states": [
+    "TN"
+   ],
+   "links": {
+    "with_text:pdf": 6297,
+    "without_text:pdf": 1
+   },
+   "robots": {
+    "url": "https://www.capitol.tn.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "3de14c7371990ac5ab427b2e71060769da66f7d54c47f4c1f400a5787e530c19",
+    "read_at": "2026-11-07T08:19:13+00:00"
+   }
+  },
+  "www.akleg.gov": {
+   "states": [
+    "AK"
+   ],
+   "links": {
+    "with_text:html": 1471,
+    "with_text:html:allowed": 1471,
+    "with_text:pdf": 1471,
+    "with_text:pdf:allowed": 1471,
+    "without_text:html": 3,
+    "without_text:html:allowed": 3,
+    "without_text:pdf": 3,
+    "without_text:pdf:allowed": 3
+   },
+   "robots": {
+    "url": "https://www.akleg.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "3c543f8dea07e74d1e64cb585a0bbcfaf59db0683f32b8e6e20177f565b3fe43",
+    "read_at": "2026-11-07T08:19:13+00:00"
+   }
+  },
+  "nebraskalegislature.gov": {
+   "states": [
+    "NE"
+   ],
+   "links": {
+    "with_text:pdf": 602,
+    "with_text:pdf:allowed": 602,
+    "without_text:pdf": 2340,
+    "without_text:pdf:allowed": 2340
+   },
+   "robots": {
+    "url": "https://nebraskalegislature.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": 3.0,
+    "sha256": "08d243c5384b0f1a3a31879f89391659d889c613b8ad83504549fbe1ad47a0e7",
+    "read_at": "2026-11-07T08:19:11+00:00"
+   }
+  },
+  "leg.colorado.gov": {
+   "states": [
+    "CO"
+   ],
+   "links": {
+    "with_text:pdf": 2453,
+    "with_text:pdf:allowed": 2453,
+    "without_text:pdf": 481,
+    "without_text:pdf:allowed": 481
+   },
+   "robots": {
+    "url": "https://leg.colorado.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "4193e9db31147814f2979ce79125b9386e0febb6bbe39fb7901aad9d84afd5b3",
+    "read_at": "2026-11-07T08:19:06+00:00"
+   }
+  },
+  "iga.in.gov": {
+   "states": [
+    "IN"
+   ],
+   "links": {
+    "without_text:pdf": 2782,
+    "without_text:pdf:allowed": 2782
+   },
+   "robots": {
+    "url": "https://iga.in.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "61d9d1265c828684df265d5139ee43f21d5325cb19aa861c7da7816dd28ac732",
+    "read_at": "2026-11-07T08:19:05+00:00"
+   }
+  },
+  "capitol.tn.gov": {
+   "states": [
+    "TN"
+   ],
+   "links": {
+    "with_text:pdf": 5526
+   },
+   "robots": {
+    "url": "https://capitol.tn.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "3de14c7371990ac5ab427b2e71060769da66f7d54c47f4c1f400a5787e530c19",
+    "read_at": "2026-11-07T08:19:04+00:00"
+   }
+  },
+  "legislature.idaho.gov": {
+   "states": [
+    "ID"
+   ],
+   "links": {
+    "with_text:pdf": 2654,
+    "with_text:pdf:allowed": 2654,
+    "without_text:pdf": 32,
+    "without_text:pdf:allowed": 32
+   },
+   "robots": {
+    "url": "https://legislature.idaho.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "a99b18c9d28e841c905839652d13985646ff919f9815b166f3f494fad1924593",
+    "read_at": "2026-11-07T08:19:08+00:00"
+   }
+  },
+  "legislature.vermont.gov": {
+   "states": [
+    "VT"
+   ],
+   "links": {
+    "with_text:pdf": 2251,
+    "with_text:pdf:allowed": 2251,
+    "without_text:pdf": 299,
+    "without_text:pdf:allowed": 299
+   },
+   "robots": {
+    "url": "https://legislature.vermont.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": 30.0,
+    "sha256": "2ba9caf3b2812a1b3cf9730942eab5cebaa6093150c6bbf63ae0e1e1c08b3c47",
+    "read_at": "2026-11-07T08:19:08+00:00"
+   }
+  },
+  "alison.legislature.state.al.us": {
+   "states": [
+    "AL"
+   ],
+   "links": {
+    "with_text:pdf": 2522,
+    "with_text:pdf:allowed": 2522,
+    "without_text:pdf": 17,
+    "without_text:pdf:allowed": 17
+   },
+   "robots": {
+    "url": "https://alison.legislature.state.al.us/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "22f7b284aec740b6004eaaaaa405d885a28911fe63645463d456a8de85be7cc3",
+    "read_at": "2026-11-07T08:19:02+00:00"
+   }
+  },
+  "www.leg.state.nv.us": {
+   "states": [
+    "NV"
+   ],
+   "links": {
+    "with_text:pdf": 1536,
+    "with_text:pdf:allowed": 1536,
+    "without_text:pdf": 807,
+    "without_text:pdf:allowed": 807
+   },
+   "robots": {
+    "url": "https://www.leg.state.nv.us/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "e88d8ef24ee56b3ab4f52427e032821996e4fd6379ddbeb87722e9bea492f7db",
+    "read_at": "2026-11-07T08:19:14+00:00"
+   }
+  },
+  "www.gencourt.state.nh.us": {
+   "states": [
+    "NH"
+   ],
+   "links": {
+    "with_text:html": 893,
+    "with_text:html:allowed": 893,
+    "with_text:pdf": 893,
+    "with_text:pdf:allowed": 893,
+    "without_text:html": 133,
+    "without_text:html:allowed": 133,
+    "without_text:pdf": 133,
+    "without_text:pdf:allowed": 133
+   },
+   "robots": {
+    "url": "https://www.gencourt.state.nh.us/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": 11.0,
+    "sha256": "c38abbc80072afa48184bc5b243b2625babf61e3d329c1c2c9d1d95ecfc93177",
+    "read_at": "2026-11-07T08:19:14+00:00"
+   }
+  },
+  "mylrc.sdlegislature.gov": {
+   "states": [
+    "SD"
+   ],
+   "links": {
+    "without_text:pdf": 2049,
+    "without_text:pdf:allowed": 2049
+   },
+   "robots": {
+    "url": "https://mylrc.sdlegislature.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "ba5e33f39877f75ad41edfe46e15a131bb9e23da576d022cb43ce566541c48de",
+    "read_at": "2026-11-07T08:19:10+00:00"
+   }
+  },
+  "ndlegis.gov": {
+   "states": [
+    "ND"
+   ],
+   "links": {
+    "with_text:pdf": 1604,
+    "with_text:pdf:allowed": 1604,
+    "without_text:pdf": 379,
+    "without_text:pdf:allowed": 379
+   },
+   "robots": {
+    "url": "https://ndlegis.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "5385a5a071576d85a307432b28d129893ad4dc5ba14a01219de2863023956c7d",
+    "read_at": "2026-11-07T08:19:11+00:00"
+   }
+  },
+  "sdlegislature.gov": {
+   "states": [
+    "SD"
+   ],
+   "links": {
+    "without_text:html": 1862,
+    "without_text:html:allowed": 1862
+   },
+   "robots": {
+    "url": "https://sdlegislature.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "3a694e62d7104765c277f4709b6aa29ce382112131c79efdf473b02c76ee1f66",
+    "read_at": "2026-11-07T08:19:12+00:00"
+   }
+  },
+  "wyoleg.gov": {
+   "states": [
+    "WY"
+   ],
+   "links": {
+    "with_text:pdf": 1750,
+    "with_text:pdf:allowed": 1750,
+    "without_text:pdf": 4,
+    "without_text:pdf:allowed": 4
+   },
+   "robots": {
+    "url": "https://wyoleg.gov/robots.txt",
+    "status": 404,
+    "rule": "no rules",
+    "crawl_delay": null,
+    "sha256": null,
+    "read_at": "2026-11-07T08:19:17+00:00"
+   }
+  },
+  "leg.mt.gov": {
+   "states": [
+    "MT"
+   ],
+   "links": {
+    "with_text:pdf": 3,
+    "with_text:pdf:allowed": 3,
+    "without_text:pdf": 1647,
+    "without_text:pdf:allowed": 1647
+   },
+   "robots": {
+    "url": "https://leg.mt.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "e6824debefdac8de59a228ba45e4006da9351c483aa3f1cced3ab159512e4a89",
+    "read_at": "2026-11-07T08:19:06+00:00"
+   }
+  },
+  "gc.nh.gov": {
+   "states": [
+    "NH"
+   ],
+   "links": {
+    "with_text:html": 4,
+    "with_text:html:allowed": 4,
+    "with_text:pdf": 4,
+    "with_text:pdf:allowed": 4,
+    "without_text:html": 230,
+    "without_text:html:allowed": 230,
+    "without_text:pdf": 1354,
+    "without_text:pdf:allowed": 1354
+   },
+   "robots": {
+    "url": "https://gc.nh.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": 11.0,
+    "sha256": "c38abbc80072afa48184bc5b243b2625babf61e3d329c1c2c9d1d95ecfc93177",
+    "read_at": "2026-11-07T08:19:05+00:00"
+   }
+  },
+  "in-proxy.openstates.org": {
+   "states": [
+    "IN"
+   ],
+   "links": {
+    "with_text:pdf": 1175
+   },
+   "robots": {
+    "url": "http://in-proxy.openstates.org/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "efdb5938a9736727f5cce2b60355588e4fa541d19d022d222d8a09b8efd5dcce",
+    "read_at": "2026-11-07T08:19:05+00:00"
+   }
+  },
+  "www.legislature.state.al.us": {
+   "states": [
+    "AL"
+   ],
+   "links": {
+    "with_text:pdf": 388,
+    "with_text:pdf:allowed": 388,
+    "without_text:pdf": 91,
+    "without_text:pdf:allowed": 91
+   },
+   "robots": {
+    "url": "https://www.legislature.state.al.us/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "788be0c881481b3e78c64ae8b85d6b70c4755befdd3d9fa063102c930984a211",
+    "read_at": "2026-11-07T08:19:15+00:00"
+   }
+  },
+  "arc-sos.state.al.us": {
+   "states": [
+    "AL"
+   ],
+   "links": {
+    "with_text:pdf": 714,
+    "without_text:pdf": 2
+   },
+   "robots": {
+    "url": "http://arc-sos.state.al.us/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "6b9d617198422f5f8e5b467a0c92af030788095c44f9042acdf6f4bf90d68017",
+    "read_at": "2026-11-07T08:19:03+00:00"
+   }
+  },
+  "apps.azleg.gov": {
+   "states": [
+    "AZ"
+   ],
+   "links": {
+    "with_text:pdf": 76,
+    "with_text:pdf:allowed": 76,
+    "without_text:pdf": 31,
+    "without_text:pdf:allowed": 31
+   },
+   "robots": {
+    "url": "https://apps.azleg.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "7e66c29e5f3dc0c3e3a791ac0ab94a5bf9a2a46e8f3fbb825d7f31297f0f6419",
+    "read_at": "2026-11-07T08:19:03+00:00"
+   }
+  },
+  "webservices.ncleg.gov": {
+   "states": [
+    "NC"
+   ],
+   "links": {
+    "with_text:pdf": 27,
+    "with_text:pdf:allowed": 27,
+    "without_text:pdf": 9,
+    "without_text:pdf:allowed": 9
+   },
+   "robots": {
+    "url": "https://webservices.ncleg.gov/robots.txt",
+    "status": 404,
+    "rule": "no rules",
+    "crawl_delay": null,
+    "sha256": null,
+    "read_at": "2026-11-07T08:19:13+00:00"
+   }
+  },
+  "s3.us-west-2.amazonaws.com": {
+   "states": [
+    "CO"
+   ],
+   "links": {
+    "with_text:html": 32,
+    "with_text:pdf": 32,
+    "without_text:html": 3,
+    "without_text:pdf": 3
+   },
+   "robots": {
+    "url": "https://s3.us-west-2.amazonaws.com/robots.txt",
+    "status": 403,
+    "rule": "disallow all",
+    "crawl_delay": null,
+    "sha256": null,
+    "read_at": "2026-11-07T08:19:12+00:00"
+   }
+  },
+  "budget.lis.virginia.gov": {
+   "states": [
+    "VA"
+   ],
+   "links": {
+    "without_text:pdf": 7,
+    "without_text:pdf:allowed": 7
+   },
+   "robots": {
+    "url": "https://budget.lis.virginia.gov/robots.txt",
+    "status": 200,
+    "rule": "parsed",
+    "crawl_delay": null,
+    "sha256": "b81d0a2c4f5afb38b056cd449e168c5c1ba0f0c9fdb114f7d666a2c405a9de8a",
+    "read_at": "2026-11-07T08:19:04+00:00"
+   }
+  }
+ }
+}

@@ -18,6 +18,7 @@ def _words(n: int, word: str = "word") -> str:
         ("Section 1:", "Section 2:"),
         ("Section 1-101.", "Section 1-102."),
         ("Section 2a.", "Section 2b."),
+        ("§ 680-a.", "§ 680-b."),  # New York's inserted sections
     ],
 )
 def test_splits_on_each_heading_pattern(first: str, second: str) -> None:
@@ -88,6 +89,44 @@ def test_clean_keeps_numbered_lines_that_are_not_gutters() -> None:
     nj = "     1.    (New section)  All of the\n     2.    The functions"
     assert clean(nj) == "1. (New section) All of the\n2. The functions"
     assert clean("2023 Regular Session") == "2023 Regular Session"
+
+
+def test_clean_drops_line_numbers_printed_after_the_text() -> None:
+    # A PDF's margin line numbers come out glued to the line's last word (Nebraska, Georgia)
+    # or after a space (Mississippi), and count up again on each page.
+    page = (
+        "A BILL FOR AN ACT relating to revenue; to amend section1\n"
+        "77-2701, Revised Statutes Supplement, 2023,2\n"
+        "and to repeal the original sections. 3\n"
+        "Be it enacted by the people of the State of Nebraska,4\n"
+        "Section 1. Section 77-2701 is amended to read: 5\n"
+        "(a) a fee of five dollars under section 56\n"
+    )
+
+    lines = clean(page + page).splitlines()
+
+    assert lines[:6] == [
+        "A BILL FOR AN ACT relating to revenue; to amend section",
+        "77-2701, Revised Statutes Supplement, 2023,",
+        "and to repeal the original sections.",
+        "Be it enacted by the people of the State of Nebraska,",
+        "Section 1. Section 77-2701 is amended to read:",
+        "(a) a fee of five dollars under section 5",
+    ]
+    assert lines[6:] == lines[:6]
+
+
+def test_clean_drops_a_column_of_line_numbers_on_their_own_lines() -> None:
+    # Oregon's PDFs give the page's line numbers first, one per line.
+    text = "1\n2\n3\n4\n5\n6\nA BILL FOR AN ACT\nRelating to education funding."
+
+    assert clean(text) == "A BILL FOR AN ACT\nRelating to education funding."
+
+
+def test_clean_keeps_numbers_that_do_not_count_up_line_by_line() -> None:
+    text = "Section 1. The fee is $5\nSection 2. The fee is 7\nSection 3. Repeal 2\nYear 2024"
+
+    assert clean(text) == text
 
 
 def test_falls_back_to_windows_on_paragraph_boundaries() -> None:
@@ -223,3 +262,113 @@ def test_a_notice_that_the_text_is_unavailable_is_no_text(notice: str) -> None:
 def test_the_words_of_a_notice_inside_a_bill_are_kept() -> None:
     bill = "Section 1. Projects must develop water supply sources not currently available."
     assert split_sections(bill).sections[0].text == bill
+
+
+# A chapter enacted under one section, each code section headed by its citation alone, as
+# Colorado, Idaho, Rhode Island, Arizona and New York print new chapters. Invented text.
+CHAPTER = """\
+SECTION 1. In the revised statutes, add article 9 to title 4 as follows:
+ARTICLE 9
+4-9-101. Short title. This article may be cited as the Widget Act.
+4-9-102. Definitions. In this article, "widget" has the meaning in section
+4-1-201. A widget is not a gadget.
+4-9-102.5. Scope. This article applies to widgets.
+SECTION 2. Effective date. This act takes effect July 1.
+"""
+
+
+def test_a_citation_after_a_title_line_or_a_struck_clause_is_a_heading() -> None:
+    for before in ("CHAPTER 35", "THE WIDGET ACT", "Part 2. Widget Permits", "[as follows:]"):
+        text = f"SECTION 1. Adds a chapter.\n{before}\n4-9-101. Short title."
+        assert [s.heading for s in split_sections(text).sections] == ["SECTION 1.", "4-9-101."]
+
+
+def test_a_citation_heading_starting_a_line_splits_a_chapter() -> None:
+    split = split_sections(CHAPTER)
+
+    assert split.by_heading
+    assert [s.heading for s in split.sections] == [
+        "SECTION 1.",
+        "4-9-101.",
+        "4-9-102.",
+        "4-9-102.5.",
+        "SECTION 2.",
+    ]
+    assert split.sections[1].text == (
+        "4-9-101. Short title. This article may be cited as the Widget Act."
+    )
+
+
+def test_a_citation_wrapped_after_the_word_section_is_a_cross_reference() -> None:
+    sections = split_sections(CHAPTER).sections
+
+    assert sections[2].text.endswith("in section\n4-1-201. A widget is not a gadget.")
+    for before in (
+        "sections 4-1-200 and",
+        "Section",
+        "SECTIONS",
+        "§",
+        "§§",
+        "§\n",  # a blank line between
+        "as provided by",
+        "the requirements of",
+        "under W.S.",
+        "K.S.A. 4-",  # the citation itself broken at a hyphen
+        "Section [4-1-200]",  # a struck citation, replaced by the next one
+    ):
+        text = f"SECTION 1. Adds.\n4-9-101. Text that cites {before}\n4-1-201. And goes on."
+        headings = [s.heading for s in split_sections(text).sections]
+        assert headings == ["SECTION 1.", "4-9-101."], before
+
+
+@pytest.mark.parametrize(
+    "heading",
+    ["19-35-1.", "6-3901.", "7-16.1-708.", "9-33.2-10.", "15-24-101.", "39-4A-2.", "26B-9-214."],
+)
+def test_each_citation_form_is_a_heading(heading: str) -> None:
+    text = f"SECTION 1. Adds a chapter.\n{heading} Short title. The Widget Act."
+
+    assert [s.heading for s in split_sections(text).sections] == ["SECTION 1.", heading]
+
+
+@pytest.mark.parametrize(
+    "line",
+    [
+        "6-3903, Idaho Code, applies.",  # a wrapped reference, followed by a comma
+        "11-111-113 MAY BE REVISED BY AGREEMENT.",  # no period after the number
+        "2. The second numbered paragraph.",  # no hyphen: an enumerator
+        "31.150. (1) A special motion.",  # a dotted citation: also an outline number
+        "in 4-9-101. of the code",  # not at the start of a line
+        "2025-2026. This subsection expires.",  # a year range
+        "2-b. The trustees shall establish a policy.",  # New York's inserted subdivision
+        "680-a. Definitions.",  # New York's table of contents; its sections start with §
+    ],
+)
+def test_lines_that_are_not_citation_headings(line: str) -> None:
+    text = f"SECTION 1. Adds a chapter.\n{line}"
+
+    assert [s.heading for s in split_sections(text).sections] == ["SECTION 1."]
+
+
+def test_clean_drops_arizona_statute_markers() -> None:
+    raw = "ARTICLE 5.1. WIDGETS\n\nSTART_STATUTE6-251. Short title\n\nThe Widget Act. END_STATUTE"
+
+    assert clean(raw) == "ARTICLE 5.1. WIDGETS\n\n6-251. Short title\n\nThe Widget Act."
+
+
+def test_a_citation_never_replaces_the_window_fallback() -> None:
+    # Without a section heading, a citation at a line start is a wrapped reference ("Public
+    # Law\n116-260."), and taking it would turn a long bill's windows into two sections.
+    text = _words(250) + "\n" + "under Public Law\n116-260. " + _words(250)
+
+    split = split_sections(text)
+
+    assert not split.by_heading
+    assert len(split.sections) == 2
+    assert all(s.heading is None for s in split.sections)
+
+
+def test_a_citation_after_a_statute_abbreviation_is_a_cross_reference() -> None:
+    for before in ("RSA", "Public Law", "consumer protection law"):
+        text = f"SECTION 1. Adds a chapter. It applies {before}\n4-1-201. And goes on."
+        assert [s.heading for s in split_sections(text).sections] == ["SECTION 1."], before

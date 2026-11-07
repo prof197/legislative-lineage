@@ -1,6 +1,5 @@
 from pathlib import Path
 
-import duckdb
 import numpy as np
 import pytest
 
@@ -23,7 +22,7 @@ def tables(tmp_path: Path) -> Path:
     (tables / "sections").mkdir(parents=True)
     ids = [f"b{i}" for i in range(len(TEXTS))]
     n = len(TEXTS)
-    with duckdb.connect() as con:
+    with queries.connect_quiet() as con:
         queries.write_sections(
             con,
             parquet_path=tables / "sections" / "s.parquet",

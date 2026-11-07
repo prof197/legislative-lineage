@@ -3,9 +3,9 @@ import sys
 from pathlib import Path
 from typing import Any
 
-import duckdb
 import pytest
 
+from lineage import queries
 from lineage.ingest import ingest
 from lineage.sectioning import build_sections
 from lineage.snapshot import scan, write_manifest
@@ -16,12 +16,13 @@ from lineage.stats import (
     georgia_local_notices,
     write_coverage,
 )
+from lineage.text_merge import merge_texts
 from tests.conftest import SESSIONS
 
 
 def test_blank_means_no_character_python_does_not_call_whitespace() -> None:
     whitespace = "".join(chr(c) for c in range(sys.maxunicode + 1) if chr(c).isspace())
-    con = duckdb.connect()
+    con = queries.connect_quiet()
 
     def blank(text: str) -> bool:
         row = con.execute("SELECT regexp_full_match($t, $p)", {"t": text, "p": BLANK_PATTERN})
@@ -42,6 +43,7 @@ def tables(raw_dir: Path, tmp_path: Path) -> tuple[Path, Path]:
     write_manifest(scan(raw_dir), manifest)
     out = tmp_path / "tables"
     ingest(raw_dir, manifest, SESSIONS, out, floor_bytes=0)
+    merge_texts(out, exported_only=True, floor_bytes=0)
     build_sections(out, workers=1, floor_bytes=0)
     return out, manifest
 
@@ -95,6 +97,8 @@ def test_reports_the_known_status_gaps(tables: tuple[Path, Path]) -> None:
     # SR 1065 was adopted by the Senate, which passes a simple resolution.
     assert doc["status_gaps"]["resolutions_adopted_by_one_chamber"] == {}
     assert doc["status_gaps"]["reached_governor_shown_died"] == {}
+    assert doc["status_gaps"]["enacted_in_words"] == {}
+    assert doc["status_gaps"]["passed_legislature"] == {}
     assert doc["sessions_without_end_date"] == {"sessions": 0, "bills_left_introduced": 0}
 
 
@@ -139,10 +143,10 @@ def test_counts_georgia_local_bills_stored_as_their_notice_alone(tmp_path: Path)
         ("GA", "2023_24", NOTICE),
         ("AL", "2025rs", NOTICE),  # another state's text is not counted
     ]
-    duckdb.execute(
+    queries.connect_quiet().execute(
         "COPY (SELECT * FROM (VALUES "
         + ", ".join(f"('{s}', '{n}', $t{i})" for i, (s, n, _) in enumerate(rows))
-        + f") t(state, session, raw_text)) TO '{bills}'",
+        + f") t(state, session, text)) TO '{bills}'",
         {f"t{i}": text for i, (_, _, text) in enumerate(rows)},
     )
 
@@ -186,10 +190,10 @@ AMENDMENTS = [
 
 def test_counts_records_whose_stored_text_is_an_amendment(tmp_path: Path) -> None:
     bills = tmp_path / "bills.parquet"
-    duckdb.execute(
+    queries.connect_quiet().execute(
         "COPY (SELECT * FROM (VALUES "
         + ", ".join(f"('{s}', '2025', $t{i})" for i, (s, _) in enumerate(AMENDMENTS))
-        + f") t(state, session, raw_text)) TO '{bills}'",
+        + f") t(state, session, text)) TO '{bills}'",
         {f"t{i}": text for i, (_, text) in enumerate(AMENDMENTS)},
     )
 

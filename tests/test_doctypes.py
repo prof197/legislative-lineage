@@ -1,10 +1,10 @@
 import json
 from pathlib import Path
 
-import duckdb
 import pytest
 from typer.testing import CliRunner
 
+from lineage import queries
 from lineage.cli import app
 from lineage.doctypes import (
     RULES,
@@ -17,6 +17,7 @@ from lineage.doctypes import (
 from lineage.ingest import ingest
 from lineage.sectioning import build_sections
 from lineage.snapshot import scan, write_manifest
+from lineage.text_merge import merge_texts
 from tests.conftest import SESSIONS
 
 HEADER = "state,type,title,unless,decision,reason\n"
@@ -300,6 +301,7 @@ def tables(raw_dir: Path, tmp_path: Path) -> Path:
     write_manifest(scan(raw_dir), manifest)
     out = tmp_path / "tables"
     ingest(raw_dir, manifest, SESSIONS, out, floor_bytes=0)
+    merge_texts(out, exported_only=True, floor_bytes=0)
     build_sections(out, workers=1, floor_bytes=0)
     return out
 
@@ -309,7 +311,7 @@ def test_writes_eligibility_and_a_report_counting_each_rule(tables: Path, tmp_pa
 
     doc = build_eligibility(tables, rules_path=RULES, report_path=report)
 
-    con = duckdb.connect()
+    con = queries.connect_quiet()
     rows = con.execute(
         f"SELECT b.state, b.identifier, e.eligible, e.rule "
         f"FROM read_parquet('{tables / 'eligible.parquet'}') e "

@@ -3,24 +3,390 @@
  "manifest_sha256": "59cbe08262c53a9d01a359c10bf8f7612464bcfbab2596db1627bd15584f4298",
  "sessions_csv_sha256": "512942840d823e1d4848a3d6ad4cca9400e590fedd303430924337ef6dacebfc",
  "definitions": {
-  "missing_text": "the record has no raw_text",
-  "blank_text": "raw_text has no character Python's str.isspace() rejects",
+  "missing_text": "the record has no stored text",
+  "blank_text": "the stored text has no character Python's str.isspace() rejects",
   "text_without_sections": "non-blank text that cleaning reduces to nothing or to a notice that the text is not available",
   "split_at_headings": "bills split by the heading rule, not the window fallback",
+  "text_fetched": "records whose text the text layer fetched from the legislature",
+  "text_from_bulk": "records whose text came from California's bulk download",
+  "text_layer": "per state, over eligible records: usable exported text (the fetch plan's kind is usable) against text that yields sections once fetched text is merged",
   "commemorative_title_candidates": "(?i)\\b(commend|congratulat|condolence|mourn|in memory of|honou?ring|recogniz(e|es|ing))",
   "amendment_only": "text whose first 400 characters open like an amendment ((?i)\\bamendment\\s+(?:no\\.?|number)\\s*[\\d_]+\\.?\\s+(?:on\\s+page|proposed|amend|delete|strike|offered|by\\b|in\\s+the\\b)|\\bamendment\\s+to\\s+(?:house|senate|assembly)\\s+(?:bill|joint|concurrent|resolution)|\\bamendment\\s+in\\s+the\\s+nature\\s+of\\s+a\\s+substitute\\b|\\b(?:floor|committee)\\s+amend(?:ment)?s?\\s+(?:no\\.?\\s|number\\b|\\d|to\\s+(?:lb|ab|hb|sb|house|senate|assembly)\\b)|\\bamend\\s+(?:the\\s+(?:bill|title|substitute|amendments?)\\b|bill\\b|amendments?\\b)|\\bamend\\s+(?:house|senate|assembly)\\s+(?:bill|substitute|joint|concurrent|resolution)|\\bamend\\s+(?:h|s|a|l)\\.?\\s?(?:b|r|j\\.?\\s?r|c\\.?\\s?r)\\.?\\s*\\d+|\\bas\\s+inserted\\s+by\\s+section\\s+\\d+\\s+of\\s+the\\s+bill\\b|\\bstrike\\s+(?:the\\s+original\\s+sections|amendment\\s+\\d+)|\\bon\\s+page\\s+\\d+,?\\s+(?:line|at|after|delete|strike|by)); substitutes also replace the whole bill ((?i)(?:strik\\w*|replac\\w*|delet\\w*)\\s+(?:out\\s+)?(?:all|everything)\\s+after\\s+the\\s+enacting\\s+clause|in\\s+the\\s+nature\\s+of\\s+a\\s+substitute)",
   "georgia_local_notices": "Georgia records whose text has the notice of intention to introduce local legislation ((?i)notice\\s+of\\s+intention\\s+to\\s+introduce\\s+local\\s+legislation) and no enacting clause ((?i)be\\s+it\\s+enacted\\s+by\\s+the\\s+general\\s+assembly)"
  },
  "totals": {
   "records": 525633,
-  "missing_text": 11675,
-  "blank_text": 141770,
-  "text_without_sections": 1394,
-  "with_sections": 370794,
-  "split_at_headings": 257085,
-  "sections": 2185234,
+  "missing_text": 2975,
+  "blank_text": 28629,
+  "text_without_sections": 6,
+  "with_sections": 494023,
+  "split_at_headings": 349974,
+  "sections": 3203145,
+  "text_fetched": 144422,
+  "text_from_bulk": 2394,
   "amendment_only": 7588,
   "amendment_substitutes": 1851
+ },
+ "text_layer": {
+  "totals": {
+   "eligible": 447389,
+   "usable_exported": 301443,
+   "with_sections": 430888,
+   "with_sections_fetched": 144422,
+   "with_sections_bulk": 2394
+  },
+  "states": {
+   "AK": {
+    "eligible": 1479,
+    "usable_exported": 1471,
+    "with_sections": 1474,
+    "with_sections_fetched": 3,
+    "with_sections_bulk": 0
+   },
+   "AL": {
+    "eligible": 3734,
+    "usable_exported": 3624,
+    "with_sections": 3732,
+    "with_sections_fetched": 106,
+    "with_sections_bulk": 0
+   },
+   "AR": {
+    "eligible": 3556,
+    "usable_exported": 3556,
+    "with_sections": 3556,
+    "with_sections_fetched": 3555,
+    "with_sections_bulk": 0
+   },
+   "AZ": {
+    "eligible": 6979,
+    "usable_exported": 6718,
+    "with_sections": 6974,
+    "with_sections_fetched": 256,
+    "with_sections_bulk": 0
+   },
+   "CA": {
+    "eligible": 9259,
+    "usable_exported": 6850,
+    "with_sections": 9244,
+    "with_sections_fetched": 0,
+    "with_sections_bulk": 2394
+   },
+   "CO": {
+    "eligible": 2970,
+    "usable_exported": 2485,
+    "with_sections": 2962,
+    "with_sections_fetched": 477,
+    "with_sections_bulk": 0
+   },
+   "CT": {
+    "eligible": 9260,
+    "usable_exported": 0,
+    "with_sections": 9255,
+    "with_sections_fetched": 9255,
+    "with_sections_bulk": 0
+   },
+   "DE": {
+    "eligible": 1662,
+    "usable_exported": 370,
+    "with_sections": 1629,
+    "with_sections_fetched": 1250,
+    "with_sections_bulk": 0
+   },
+   "FL": {
+    "eligible": 7411,
+    "usable_exported": 7411,
+    "with_sections": 7411,
+    "with_sections_fetched": 0,
+    "with_sections_bulk": 0
+   },
+   "GA": {
+    "eligible": 4561,
+    "usable_exported": 3463,
+    "with_sections": 4554,
+    "with_sections_fetched": 1077,
+    "with_sections_bulk": 0
+   },
+   "HI": {
+    "eligible": 17149,
+    "usable_exported": 7790,
+    "with_sections": 17133,
+    "with_sections_fetched": 9343,
+    "with_sections_bulk": 0
+   },
+   "IA": {
+    "eligible": 7849,
+    "usable_exported": 6635,
+    "with_sections": 7818,
+    "with_sections_fetched": 1183,
+    "with_sections_bulk": 0
+   },
+   "ID": {
+    "eligible": 2686,
+    "usable_exported": 2654,
+    "with_sections": 2686,
+    "with_sections_fetched": 32,
+    "with_sections_bulk": 0
+   },
+   "IL": {
+    "eligible": 20199,
+    "usable_exported": 16014,
+    "with_sections": 19319,
+    "with_sections_fetched": 3305,
+    "with_sections_bulk": 0
+   },
+   "IN": {
+    "eligible": 3957,
+    "usable_exported": 1175,
+    "with_sections": 1175,
+    "with_sections_fetched": 0,
+    "with_sections_bulk": 0
+   },
+   "KS": {
+    "eligible": 2741,
+    "usable_exported": 1825,
+    "with_sections": 2347,
+    "with_sections_fetched": 522,
+    "with_sections_bulk": 0
+   },
+   "KY": {
+    "eligible": 4585,
+    "usable_exported": 4480,
+    "with_sections": 4505,
+    "with_sections_fetched": 25,
+    "with_sections_bulk": 0
+   },
+   "LA": {
+    "eligible": 5223,
+    "usable_exported": 2188,
+    "with_sections": 5162,
+    "with_sections_fetched": 2966,
+    "with_sections_bulk": 0
+   },
+   "MA": {
+    "eligible": 36048,
+    "usable_exported": 20739,
+    "with_sections": 35210,
+    "with_sections_fetched": 14471,
+    "with_sections_bulk": 0
+   },
+   "MD": {
+    "eligible": 10303,
+    "usable_exported": 1141,
+    "with_sections": 10303,
+    "with_sections_fetched": 9162,
+    "with_sections_bulk": 0
+   },
+   "ME": {
+    "eligible": 4665,
+    "usable_exported": 0,
+    "with_sections": 4552,
+    "with_sections_fetched": 4552,
+    "with_sections_bulk": 0
+   },
+   "MI": {
+    "eligible": 7150,
+    "usable_exported": 5391,
+    "with_sections": 7011,
+    "with_sections_fetched": 1620,
+    "with_sections_bulk": 0
+   },
+   "MN": {
+    "eligible": 21541,
+    "usable_exported": 14594,
+    "with_sections": 21541,
+    "with_sections_fetched": 6947,
+    "with_sections_bulk": 0
+   },
+   "MO": {
+    "eligible": 10643,
+    "usable_exported": 7188,
+    "with_sections": 10586,
+    "with_sections_fetched": 3398,
+    "with_sections_bulk": 0
+   },
+   "MS": {
+    "eligible": 13466,
+    "usable_exported": 11154,
+    "with_sections": 13461,
+    "with_sections_fetched": 2307,
+    "with_sections_bulk": 0
+   },
+   "MT": {
+    "eligible": 12279,
+    "usable_exported": 3233,
+    "with_sections": 4964,
+    "with_sections_fetched": 1731,
+    "with_sections_bulk": 0
+   },
+   "NC": {
+    "eligible": 4276,
+    "usable_exported": 2810,
+    "with_sections": 4271,
+    "with_sections_fetched": 1461,
+    "with_sections_bulk": 0
+   },
+   "ND": {
+    "eligible": 1983,
+    "usable_exported": 1604,
+    "with_sections": 1983,
+    "with_sections_fetched": 379,
+    "with_sections_bulk": 0
+   },
+   "NE": {
+    "eligible": 2942,
+    "usable_exported": 602,
+    "with_sections": 2936,
+    "with_sections_fetched": 2333,
+    "with_sections_bulk": 0
+   },
+   "NH": {
+    "eligible": 4607,
+    "usable_exported": 976,
+    "with_sections": 2468,
+    "with_sections_fetched": 1351,
+    "with_sections_bulk": 0
+   },
+   "NJ": {
+    "eligible": 32322,
+    "usable_exported": 12867,
+    "with_sections": 31752,
+    "with_sections_fetched": 18885,
+    "with_sections_bulk": 0
+   },
+   "NM": {
+    "eligible": 3759,
+    "usable_exported": 3720,
+    "with_sections": 3759,
+    "with_sections_fetched": 39,
+    "with_sections_bulk": 0
+   },
+   "NV": {
+    "eligible": 2343,
+    "usable_exported": 1536,
+    "with_sections": 2343,
+    "with_sections_fetched": 807,
+    "with_sections_bulk": 0
+   },
+   "NY": {
+    "eligible": 41515,
+    "usable_exported": 41475,
+    "with_sections": 41515,
+    "with_sections_fetched": 40,
+    "with_sections_bulk": 0
+   },
+   "OH": {
+    "eligible": 2579,
+    "usable_exported": 2554,
+    "with_sections": 2567,
+    "with_sections_fetched": 1517,
+    "with_sections_bulk": 0
+   },
+   "OK": {
+    "eligible": 17751,
+    "usable_exported": 12835,
+    "with_sections": 17534,
+    "with_sections_fetched": 4697,
+    "with_sections_bulk": 0
+   },
+   "OR": {
+    "eligible": 6825,
+    "usable_exported": 6514,
+    "with_sections": 6825,
+    "with_sections_fetched": 6825,
+    "with_sections_bulk": 0
+   },
+   "PA": {
+    "eligible": 8053,
+    "usable_exported": 3066,
+    "with_sections": 8047,
+    "with_sections_fetched": 4981,
+    "with_sections_bulk": 0
+   },
+   "RI": {
+    "eligible": 8703,
+    "usable_exported": 8128,
+    "with_sections": 8703,
+    "with_sections_fetched": 575,
+    "with_sections_bulk": 0
+   },
+   "SC": {
+    "eligible": 4546,
+    "usable_exported": 4539,
+    "with_sections": 4542,
+    "with_sections_fetched": 3,
+    "with_sections_bulk": 0
+   },
+   "SD": {
+    "eligible": 2049,
+    "usable_exported": 0,
+    "with_sections": 2044,
+    "with_sections_fetched": 2044,
+    "with_sections_bulk": 0
+   },
+   "TN": {
+    "eligible": 11824,
+    "usable_exported": 11823,
+    "with_sections": 11823,
+    "with_sections_fetched": 0,
+    "with_sections_bulk": 0
+   },
+   "TX": {
+    "eligible": 18784,
+    "usable_exported": 16097,
+    "with_sections": 18781,
+    "with_sections_fetched": 2684,
+    "with_sections_bulk": 0
+   },
+   "UT": {
+    "eligible": 3708,
+    "usable_exported": 3455,
+    "with_sections": 3696,
+    "with_sections_fetched": 241,
+    "with_sections_bulk": 0
+   },
+   "VA": {
+    "eligible": 11708,
+    "usable_exported": 4361,
+    "with_sections": 11291,
+    "with_sections_fetched": 6930,
+    "with_sections_bulk": 0
+   },
+   "VT": {
+    "eligible": 2550,
+    "usable_exported": 2251,
+    "with_sections": 2550,
+    "with_sections_fetched": 299,
+    "with_sections_bulk": 0
+   },
+   "WA": {
+    "eligible": 5998,
+    "usable_exported": 5986,
+    "with_sections": 5998,
+    "with_sections_fetched": 5987,
+    "with_sections_bulk": 0
+   },
+   "WI": {
+    "eligible": 4918,
+    "usable_exported": 4514,
+    "with_sections": 4918,
+    "with_sections_fetched": 404,
+    "with_sections_bulk": 0
+   },
+   "WV": {
+    "eligible": 10537,
+    "usable_exported": 5831,
+    "with_sections": 10225,
+    "with_sections_fetched": 4394,
+    "with_sections_bulk": 0
+   },
+   "WY": {
+    "eligible": 1754,
+    "usable_exported": 1750,
+    "with_sections": 1753,
+    "with_sections_fetched": 3,
+    "with_sections_bulk": 0
+   }
+  }
  },
  "sessions_without_end_date": {
   "sessions": 0,
@@ -29,7 +395,7 @@
  "status_gaps": {
   "resolutions_adopted_by_one_chamber": {
    "AK": {
-    "concurrent resolution": 18,
+    "concurrent resolution": 9,
     "joint resolution": 12
    },
    "AZ": {
@@ -40,7 +406,7 @@
     "joint resolution": 4
    },
    "CT": {
-    "joint resolution": 238
+    "joint resolution": 237
    },
    "DE": {
     "concurrent resolution": 338
@@ -63,14 +429,14 @@
     "joint resolution": 5
    },
    "KS": {
-    "concurrent resolution": 7
+    "concurrent resolution": 5
    },
    "KY": {
     "concurrent resolution": 19,
     "joint resolution": 5
    },
    "LA": {
-    "concurrent resolution": 614
+    "concurrent resolution": 36
    },
    "ME": {
     "joint resolution": 71
@@ -80,13 +446,13 @@
    },
    "MO": {
     "concurrent resolution": 21,
-    "joint resolution": 23
+    "joint resolution": 21
    },
    "MS": {
     "concurrent resolution": 18
    },
    "MT": {
-    "joint resolution": 33
+    "joint resolution": 11
    },
    "NC": {
     "joint resolution": 3
@@ -106,7 +472,7 @@
    },
    "OK": {
     "concurrent resolution": 20,
-    "joint resolution": 20
+    "joint resolution": 19
    },
    "OR": {
     "concurrent resolution": 4
@@ -116,7 +482,7 @@
     "joint resolution": 7
    },
    "SD": {
-    "joint resolution": 11
+    "joint resolution": 6
    },
    "TN": {
     "joint resolution": 289
@@ -127,7 +493,7 @@
    },
    "UT": {
     "concurrent resolution": 9,
-    "joint resolution": 26
+    "joint resolution": 23
    },
    "VA": {
     "joint resolution": 202
@@ -137,95 +503,154 @@
     "joint resolution": 118
    },
    "WI": {
-    "joint resolution": 156
+    "joint resolution": 61
    },
    "WV": {
     "concurrent resolution": 103,
     "joint resolution": 7
    }
   },
-  "reached_governor_shown_died": {
-   "AK": {
-    "concurrent resolution": 9
-   },
-   "AL": {
-    "bill": 2,
-    "resolution": 5
-   },
+  "reached_governor_shown_died": {},
+  "enacted_in_words": {
    "AR": {
-    "bill": 13,
-    "concurrent resolution": 13,
-    "joint resolution": 2
+    "concurrent memorial": 1,
+    "concurrent resolution": 37,
+    "joint resolution": 4
    },
-   "CO": {
-    "bill": 45
+   "CT": {
+    "bill": 10
    },
    "FL": {
-    "bill": 38,
-    "memorial": 1
+    "bill": 3
    },
-   "HI": {
-    "bill": 8
+   "IA": {
+    "bill": 6
    },
    "ID": {
     "bill": 8
    },
-   "IL": {
-    "bill": 2
-   },
    "KS": {
-    "bill": 60
+    "bill": 8
    },
-   "LA": {
-    "bill": 72,
-    "concurrent resolution": 577,
-    "resolution": 1568
+   "KY": {
+    "bill": 1
+   },
+   "MA": {
+    "bill": 9
+   },
+   "MD": {
+    "bill": 3
    },
    "MI": {
-    "bill": 14
-   },
-   "MT": {
-    "bill": 20,
-    "resolution": 3
-   },
-   "NC": {
-    "bill": 4
-   },
-   "ND": {
-    "bill": 11
+    "bill": 1
    },
    "NE": {
-    "bill": 16
+    "bill": 7
    },
    "NH": {
-    "bill": 8
+    "bill": 20
+   },
+   "OK": {
+    "bill": 383,
+    "joint resolution": 6
+   },
+   "OR": {
+    "bill": 4
+   },
+   "TN": {
+    "bill": 3
+   }
+  },
+  "passed_legislature": {
+   "AK": {
+    "concurrent resolution": 9
+   },
+   "AL": {
+    "bill": 6,
+    "resolution": 9
+   },
+   "AR": {
+    "bill": 13
+   },
+   "CO": {
+    "bill": 209
+   },
+   "CT": {
+    "joint resolution": 2
+   },
+   "FL": {
+    "bill": 35
+   },
+   "HI": {
+    "bill": 3
+   },
+   "IL": {
+    "bill": 4
+   },
+   "KS": {
+    "concurrent resolution": 12,
+    "resolution": 73
+   },
+   "LA": {
+    "bill": 3,
+    "concurrent resolution": 1
+   },
+   "MA": {
+    "bill": 109
+   },
+   "ME": {
+    "bill": 95
+   },
+   "MI": {
+    "bill": 15
+   },
+   "MO": {
+    "bill": 99,
+    "joint resolution": 2
+   },
+   "MS": {
+    "bill": 11
+   },
+   "ND": {
+    "bill": 11,
+    "concurrent resolution": 74
+   },
+   "NE": {
+    "bill": 2
    },
    "NV": {
     "bill": 96
    },
    "NY": {
-    "bill": 1
+    "bill": 2
+   },
+   "OH": {
+    "bill": 48
    },
    "OK": {
-    "bill": 69,
-    "joint resolution": 1
+    "joint resolution": 1,
+    "resolution": 1
+   },
+   "OR": {
+    "bill": 10
+   },
+   "SC": {
+    "bill": 6
+   },
+   "SD": {
+    "joint resolution": 5
    },
    "TN": {
-    "bill": 5
+    "bill": 2
    },
    "TX": {
-    "bill": 2,
-    "resolution": 3
+    "bill": 2
    },
    "UT": {
-    "bill": 7,
-    "joint resolution": 3
+    "bill": 7
    },
    "VA": {
-    "bill": 178
-   },
-   "WI": {
-    "joint resolution": 95
+    "bill": 185
    }
   }
  },
@@ -306,16 +731,18 @@
      "status_end_date": "2024-05-15",
      "records": 812,
      "missing_text": 0,
-     "blank_text": 11,
+     "blank_text": 10,
      "text_without_sections": 0,
-     "with_sections": 801,
-     "split_at_headings": 685,
+     "with_sections": 802,
+     "split_at_headings": 686,
+     "text_fetched": 1,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 8934,
+      "total": 8937,
       "median": 5.0,
       "p90": 24,
       "max": 265
@@ -328,16 +755,18 @@
      "status_end_date": "2026-05-20",
      "records": 857,
      "missing_text": 0,
-     "blank_text": 13,
+     "blank_text": 11,
      "text_without_sections": 0,
-     "with_sections": 844,
-     "split_at_headings": 709,
+     "with_sections": 846,
+     "split_at_headings": 710,
+     "text_fetched": 2,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 12346,
+      "total": 12364,
       "median": 6.0,
       "p90": 29,
       "max": 854
@@ -366,8 +795,9 @@
      "passed": 176
     },
     "concurrent resolution": {
-     "died": 76,
-     "passed": 83
+     "died": 67,
+     "passed": 83,
+     "passed_legislature": 9
     },
     "joint resolution": {
      "died": 88,
@@ -388,16 +818,18 @@
      "status_end_date": "2023-06-08",
      "records": 1263,
      "missing_text": 0,
-     "blank_text": 210,
+     "blank_text": 121,
      "text_without_sections": 0,
-     "with_sections": 1053,
-     "split_at_headings": 737,
+     "with_sections": 1142,
+     "split_at_headings": 826,
+     "text_fetched": 89,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 2,
       "substitutes": 0
      },
      "sections": {
-      "total": 4072,
+      "total": 4504,
       "median": 3.0,
       "p90": 6,
       "max": 185
@@ -414,12 +846,14 @@
      "text_without_sections": 0,
      "with_sections": 1203,
      "split_at_headings": 781,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 4650,
+      "total": 4673,
       "median": 3.0,
       "p90": 6,
       "max": 123
@@ -432,16 +866,18 @@
      "status_end_date": "2025-05-15",
      "records": 1427,
      "missing_text": 0,
-     "blank_text": 13,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 1414,
-     "split_at_headings": 834,
+     "with_sections": 1427,
+     "split_at_headings": 849,
+     "text_fetched": 16,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 3,
       "substitutes": 0
      },
      "sections": {
-      "total": 4670,
+      "total": 4782,
       "median": 3.0,
       "p90": 6,
       "max": 48
@@ -457,13 +893,15 @@
      "blank_text": 0,
      "text_without_sections": 0,
      "with_sections": 1507,
-     "split_at_headings": 950,
+     "split_at_headings": 951,
+     "text_fetched": 1,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 1,
       "substitutes": 0
      },
      "sections": {
-      "total": 5294,
+      "total": 5305,
       "median": 3.0,
       "p90": 6,
       "max": 38
@@ -484,12 +922,14 @@
    },
    "status": {
     "bill": {
-     "died": 2307,
-     "passed": 1427
+     "died": 2301,
+     "passed": 1427,
+     "passed_legislature": 6
     },
     "resolution": {
-     "died": 368,
-     "passed": 1298
+     "died": 359,
+     "passed": 1298,
+     "passed_legislature": 9
     }
    }
   },
@@ -505,16 +945,18 @@
      "blank_text": 0,
      "text_without_sections": 0,
      "with_sections": 1660,
-     "split_at_headings": 1007,
+     "split_at_headings": 1476,
+     "text_fetched": 1472,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 6240,
-      "median": 2.0,
-      "p90": 8,
-      "max": 193
+      "total": 12583,
+      "median": 4.0,
+      "p90": 15,
+      "max": 326
      }
     },
     {
@@ -527,13 +969,15 @@
      "blank_text": 0,
      "text_without_sections": 0,
      "with_sections": 24,
-     "split_at_headings": 21,
+     "split_at_headings": 22,
+     "text_fetched": 22,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 119,
+      "total": 126,
       "median": 6.0,
       "p90": 8,
       "max": 9
@@ -550,13 +994,15 @@
      "text_without_sections": 0,
      "with_sections": 288,
      "split_at_headings": 204,
+     "text_fetched": 179,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 2875,
-      "median": 7.0,
+      "total": 2953,
+      "median": 8.0,
       "p90": 24,
       "max": 77
      }
@@ -572,6 +1018,8 @@
      "text_without_sections": 0,
      "with_sections": 19,
      "split_at_headings": 5,
+     "text_fetched": 5,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -593,16 +1041,18 @@
      "blank_text": 0,
      "text_without_sections": 0,
      "with_sections": 1928,
-     "split_at_headings": 1018,
+     "split_at_headings": 1697,
+     "text_fetched": 1695,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 6875,
-      "median": 2.0,
-      "p90": 7,
-      "max": 162
+      "total": 17060,
+      "median": 4.0,
+      "p90": 15,
+      "max": 1513
      }
     },
     {
@@ -615,16 +1065,18 @@
      "blank_text": 0,
      "text_without_sections": 0,
      "with_sections": 279,
-     "split_at_headings": 165,
+     "split_at_headings": 206,
+     "text_fetched": 180,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 1683,
-      "median": 5.0,
-      "p90": 12,
-      "max": 45
+      "total": 2863,
+      "median": 6.0,
+      "p90": 22,
+      "max": 80
      }
     },
     {
@@ -638,6 +1090,8 @@
      "text_without_sections": 0,
      "with_sections": 2,
      "split_at_headings": 2,
+     "text_fetched": 2,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -670,17 +1124,21 @@
    },
    "status": {
     "bill": {
-     "died": 1230,
-     "passed": 2249
+     "died": 1217,
+     "passed": 2249,
+     "passed_legislature": 13
     },
     "concurrent memorial": {
-     "died": 2
+     "died": 1,
+     "passed": 1
     },
     "concurrent resolution": {
-     "died": 45
+     "died": 8,
+     "passed": 37
     },
     "joint resolution": {
-     "died": 77
+     "died": 73,
+     "passed": 4
     },
     "memorial": {
      "died": 41
@@ -699,19 +1157,21 @@
      "status_end_date": "2023-06-30",
      "records": 1675,
      "missing_text": 0,
-     "blank_text": 2,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 1673,
-     "split_at_headings": 1569,
+     "with_sections": 1675,
+     "split_at_headings": 1571,
+     "text_fetched": 2,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 6890,
-      "median": 2.0,
-      "p90": 7,
-      "max": 133
+      "total": 10874,
+      "median": 3.0,
+      "p90": 13,
+      "max": 184
      }
     },
     {
@@ -721,18 +1181,20 @@
      "status_end_date": "2024-04-20",
      "records": 1798,
      "missing_text": 0,
-     "blank_text": 2,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 1796,
-     "split_at_headings": 1693,
+     "with_sections": 1798,
+     "split_at_headings": 1695,
+     "text_fetched": 2,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 7131,
-      "median": 2.0,
-      "p90": 7,
+      "total": 11554,
+      "median": 3.0,
+      "p90": 13,
       "max": 165
      }
     },
@@ -743,18 +1205,20 @@
      "status_end_date": "2025-04-26",
      "records": 1854,
      "missing_text": 0,
-     "blank_text": 38,
+     "blank_text": 10,
      "text_without_sections": 0,
-     "with_sections": 1816,
-     "split_at_headings": 1748,
+     "with_sections": 1844,
+     "split_at_headings": 1775,
+     "text_fetched": 28,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 7290,
-      "median": 2.0,
-      "p90": 7,
+      "total": 11824,
+      "median": 3.0,
+      "p90": 13,
       "max": 149
      }
     },
@@ -765,18 +1229,20 @@
      "status_end_date": "2026-04-25",
      "records": 2190,
      "missing_text": 0,
-     "blank_text": 225,
+     "blank_text": 1,
      "text_without_sections": 0,
-     "with_sections": 1965,
-     "split_at_headings": 1882,
+     "with_sections": 2189,
+     "split_at_headings": 2106,
+     "text_fetched": 224,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 8055,
-      "median": 3.0,
-      "p90": 7,
+      "total": 14064,
+      "median": 4.0,
+      "p90": 13,
       "max": 138
      }
     }
@@ -834,16 +1300,18 @@
      "status_end_date": "2024-10-01",
      "records": 5544,
      "missing_text": 0,
-     "blank_text": 91,
+     "blank_text": 19,
      "text_without_sections": 0,
-     "with_sections": 5453,
-     "split_at_headings": 2248,
+     "with_sections": 5525,
+     "split_at_headings": 2280,
+     "text_fetched": 0,
+     "text_from_bulk": 72,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 53591,
+      "total": 54405,
       "median": 4.0,
       "p90": 16,
       "max": 1072
@@ -860,6 +1328,8 @@
      "text_without_sections": 0,
      "with_sections": 9,
      "split_at_headings": 1,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -882,6 +1352,8 @@
      "text_without_sections": 0,
      "with_sections": 11,
      "split_at_headings": 1,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -900,18 +1372,20 @@
      "status_end_date": "2026-11-30",
      "records": 5041,
      "missing_text": 0,
-     "blank_text": 2709,
+     "blank_text": 390,
      "text_without_sections": 0,
-     "with_sections": 2332,
-     "split_at_headings": 912,
+     "with_sections": 4651,
+     "split_at_headings": 2027,
+     "text_fetched": 0,
+     "text_from_bulk": 2319,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 24901,
-      "median": 4.0,
-      "p90": 19,
+      "total": 35966,
+      "median": 3.0,
+      "p90": 13,
       "max": 978
      }
     },
@@ -922,16 +1396,18 @@
      "status_end_date": "2024-12-02",
      "records": 24,
      "missing_text": 0,
-     "blank_text": 3,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 21,
-     "split_at_headings": 4,
+     "with_sections": 24,
+     "split_at_headings": 7,
+     "text_fetched": 0,
+     "text_from_bulk": 3,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 105,
+      "total": 112,
       "median": 4.0,
       "p90": 10,
       "max": 11
@@ -997,19 +1473,21 @@
      "status_end_date": "2023-05-06",
      "records": 681,
      "missing_text": 0,
-     "blank_text": 37,
+     "blank_text": 1,
      "text_without_sections": 0,
-     "with_sections": 644,
-     "split_at_headings": 614,
+     "with_sections": 680,
+     "split_at_headings": 621,
+     "text_fetched": 36,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 4456,
-      "median": 5.0,
-      "p90": 12,
-      "max": 100
+      "total": 7557,
+      "median": 6.0,
+      "p90": 21,
+      "max": 197
      }
     },
     {
@@ -1023,15 +1501,17 @@
      "text_without_sections": 0,
      "with_sections": 15,
      "split_at_headings": 14,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 109,
-      "median": 4.0,
-      "p90": 19,
-      "max": 22
+      "total": 180,
+      "median": 6.0,
+      "p90": 35,
+      "max": 41
      }
     },
     {
@@ -1041,19 +1521,21 @@
      "status_end_date": "2024-05-08",
      "records": 778,
      "missing_text": 0,
-     "blank_text": 34,
+     "blank_text": 1,
      "text_without_sections": 0,
-     "with_sections": 744,
-     "split_at_headings": 707,
+     "with_sections": 777,
+     "split_at_headings": 713,
+     "text_fetched": 33,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 5575,
-      "median": 5.0,
-      "p90": 12,
-      "max": 127
+      "total": 9651,
+      "median": 7.0,
+      "p90": 22,
+      "max": 218
      }
     },
     {
@@ -1067,15 +1549,17 @@
      "text_without_sections": 0,
      "with_sections": 14,
      "split_at_headings": 13,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 77,
-      "median": 4.5,
-      "p90": 7,
-      "max": 23
+      "total": 108,
+      "median": 5.0,
+      "p90": 10,
+      "max": 40
      }
     },
     {
@@ -1085,19 +1569,21 @@
      "status_end_date": "2025-05-07",
      "records": 733,
      "missing_text": 0,
-     "blank_text": 137,
+     "blank_text": 2,
      "text_without_sections": 0,
-     "with_sections": 596,
-     "split_at_headings": 526,
+     "with_sections": 731,
+     "split_at_headings": 660,
+     "text_fetched": 135,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 3932,
-      "median": 4.0,
-      "p90": 11,
-      "max": 189
+      "total": 8914,
+      "median": 6.0,
+      "p90": 21,
+      "max": 678
      }
     },
     {
@@ -1111,15 +1597,17 @@
      "text_without_sections": 0,
      "with_sections": 32,
      "split_at_headings": 30,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 194,
-      "median": 5.0,
-      "p90": 8,
-      "max": 20
+      "total": 313,
+      "median": 6.0,
+      "p90": 18,
+      "max": 50
      }
     },
     {
@@ -1129,19 +1617,21 @@
      "status_end_date": "2026-05-13",
      "records": 714,
      "missing_text": 0,
-     "blank_text": 274,
+     "blank_text": 1,
      "text_without_sections": 0,
-     "with_sections": 440,
-     "split_at_headings": 359,
+     "with_sections": 713,
+     "split_at_headings": 630,
+     "text_fetched": 273,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 2994,
-      "median": 4.0,
-      "p90": 11,
-      "max": 97
+      "total": 8415,
+      "median": 6.0,
+      "p90": 21,
+      "max": 214
      }
     }
    ],
@@ -1157,8 +1647,9 @@
    },
    "status": {
     "bill": {
-     "died": 1051,
-     "passed": 1919
+     "died": 842,
+     "passed": 1919,
+     "passed_legislature": 209
     }
    }
   },
@@ -1171,19 +1662,21 @@
      "status_end_date": "2023-05-04",
      "records": 3628,
      "missing_text": 0,
-     "blank_text": 3628,
+     "blank_text": 387,
      "text_without_sections": 0,
-     "with_sections": 0,
-     "split_at_headings": 0,
+     "with_sections": 3241,
+     "split_at_headings": 927,
+     "text_fetched": 3241,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 0,
-      "median": null,
-      "p90": null,
-      "max": null
+      "total": 8435,
+      "median": 1.0,
+      "p90": 4,
+      "max": 457
      }
     },
     {
@@ -1193,19 +1686,21 @@
      "status_end_date": "2024-05-08",
      "records": 1471,
      "missing_text": 0,
-     "blank_text": 1471,
+     "blank_text": 479,
      "text_without_sections": 0,
-     "with_sections": 0,
-     "split_at_headings": 0,
+     "with_sections": 992,
+     "split_at_headings": 738,
+     "text_fetched": 992,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 0,
-      "median": null,
-      "p90": null,
-      "max": null
+      "total": 5133,
+      "median": 2.0,
+      "p90": 10,
+      "max": 244
      }
     },
     {
@@ -1215,19 +1710,21 @@
      "status_end_date": "2025-06-04",
      "records": 4076,
      "missing_text": 0,
-     "blank_text": 4076,
+     "blank_text": 167,
      "text_without_sections": 0,
-     "with_sections": 0,
-     "split_at_headings": 0,
+     "with_sections": 3909,
+     "split_at_headings": 1072,
+     "text_fetched": 3909,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 0,
-      "median": null,
-      "p90": null,
-      "max": null
+      "total": 9891,
+      "median": 1.0,
+      "p90": 3,
+      "max": 488
      }
     },
     {
@@ -1237,19 +1734,21 @@
      "status_end_date": "2026-05-06",
      "records": 1283,
      "missing_text": 0,
-     "blank_text": 1283,
+     "blank_text": 170,
      "text_without_sections": 0,
-     "with_sections": 0,
-     "split_at_headings": 0,
+     "with_sections": 1113,
+     "split_at_headings": 799,
+     "text_fetched": 1113,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 0,
-      "median": null,
-      "p90": null,
-      "max": null
+      "total": 5341,
+      "median": 2.0,
+      "p90": 8,
+      "max": 492
      }
     }
    ],
@@ -1269,12 +1768,13 @@
    },
    "status": {
     "bill": {
-     "died": 8347,
-     "passed": 798
+     "died": 8337,
+     "passed": 808
     },
     "joint resolution": {
-     "died": 1011,
-     "passed": 143
+     "died": 1009,
+     "passed": 143,
+     "passed_legislature": 2
     },
     "resolution": {
      "died": 16,
@@ -1291,18 +1791,20 @@
      "status_end_date": "2024-06-30",
      "records": 1227,
      "missing_text": 0,
-     "blank_text": 447,
+     "blank_text": 160,
      "text_without_sections": 0,
-     "with_sections": 780,
-     "split_at_headings": 371,
+     "with_sections": 1067,
+     "split_at_headings": 770,
+     "text_fetched": 414,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 135,
       "substitutes": 0
      },
      "sections": {
-      "total": 4317,
+      "total": 10299,
       "median": 3.0,
-      "p90": 10,
+      "p90": 15,
       "max": 607
      }
     },
@@ -1313,19 +1815,21 @@
      "status_end_date": "2026-06-30",
      "records": 1299,
      "missing_text": 0,
-     "blank_text": 1196,
+     "blank_text": 454,
      "text_without_sections": 0,
-     "with_sections": 103,
-     "split_at_headings": 14,
+     "with_sections": 845,
+     "split_at_headings": 804,
+     "text_fetched": 836,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 98,
       "substitutes": 0
      },
      "sections": {
-      "total": 164,
-      "median": 1.0,
-      "p90": 2,
-      "max": 17
+      "total": 9627,
+      "median": 5.0,
+      "p90": 17,
+      "max": 580
      }
     }
    ],
@@ -1376,12 +1880,14 @@
      "text_without_sections": 0,
      "with_sections": 1867,
      "split_at_headings": 1773,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 12629,
+      "total": 12637,
       "median": 4.0,
       "p90": 12,
       "max": 178
@@ -1398,6 +1904,8 @@
      "text_without_sections": 0,
      "with_sections": 14,
      "split_at_headings": 13,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -1420,6 +1928,8 @@
      "text_without_sections": 0,
      "with_sections": 21,
      "split_at_headings": 17,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -1442,15 +1952,17 @@
      "text_without_sections": 0,
      "with_sections": 1953,
      "split_at_headings": 1840,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 14158,
+      "total": 14170,
       "median": 4.0,
       "p90": 13,
-      "max": 259
+      "max": 260
      }
     },
     {
@@ -1464,15 +1976,17 @@
      "text_without_sections": 0,
      "with_sections": 1986,
      "split_at_headings": 1877,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 16398,
+      "total": 16420,
       "median": 4.0,
       "p90": 15,
-      "max": 384
+      "max": 386
      }
     },
     {
@@ -1486,6 +2000,8 @@
      "text_without_sections": 0,
      "with_sections": 22,
      "split_at_headings": 22,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -1508,15 +2024,17 @@
      "text_without_sections": 0,
      "with_sections": 2,
      "split_at_headings": 2,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 104,
-      "median": 52.0,
-      "p90": 55,
-      "max": 55
+      "total": 105,
+      "median": 52.5,
+      "p90": 56,
+      "max": 56
      }
     },
     {
@@ -1530,15 +2048,17 @@
      "text_without_sections": 0,
      "with_sections": 7,
      "split_at_headings": 4,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 91,
+      "total": 93,
       "median": 7.0,
-      "p90": 34,
-      "max": 34
+      "p90": 35,
+      "max": 35
      }
     },
     {
@@ -1552,15 +2072,17 @@
      "text_without_sections": 0,
      "with_sections": 1931,
      "split_at_headings": 1821,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 13945,
+      "total": 13962,
       "median": 4.0,
       "p90": 13,
-      "max": 324
+      "max": 326
      }
     },
     {
@@ -1574,6 +2096,8 @@
      "text_without_sections": 0,
      "with_sections": 6,
      "split_at_headings": 6,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -1596,6 +2120,8 @@
      "text_without_sections": 0,
      "with_sections": 22,
      "split_at_headings": 20,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -1618,6 +2144,8 @@
      "text_without_sections": 0,
      "with_sections": 5,
      "split_at_headings": 5,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -1646,9 +2174,10 @@
    },
    "status": {
     "bill": {
-     "died": 6175,
+     "died": 6137,
      "introduced": 3,
-     "passed": 1131
+     "passed": 1134,
+     "passed_legislature": 35
     },
     "concurrent resolution": {
      "died": 22,
@@ -1659,9 +2188,9 @@
      "passed": 7
     },
     "memorial": {
-     "died": 42,
+     "died": 41,
      "introduced": 1,
-     "passed": 12
+     "passed": 13
     },
     "resolution": {
      "died": 29,
@@ -1678,18 +2207,20 @@
      "status_end_date": "2024-04-02",
      "records": 4723,
      "missing_text": 0,
-     "blank_text": 178,
+     "blank_text": 89,
      "text_without_sections": 0,
-     "with_sections": 4545,
-     "split_at_headings": 1695,
+     "with_sections": 4634,
+     "split_at_headings": 2127,
+     "text_fetched": 473,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 81,
       "substitutes": 0
      },
      "sections": {
-      "total": 14479,
+      "total": 20150,
       "median": 2.0,
-      "p90": 5,
+      "p90": 8,
       "max": 339
      }
     },
@@ -1703,13 +2234,15 @@
      "blank_text": 0,
      "text_without_sections": 0,
      "with_sections": 67,
-     "split_at_headings": 9,
+     "split_at_headings": 12,
+     "text_fetched": 3,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 134,
+      "total": 144,
       "median": 1.0,
       "p90": 6,
       "max": 10
@@ -1722,18 +2255,20 @@
      "status_end_date": "2026-04-02",
      "records": 5480,
      "missing_text": 0,
-     "blank_text": 75,
+     "blank_text": 46,
      "text_without_sections": 0,
-     "with_sections": 5405,
-     "split_at_headings": 1824,
+     "with_sections": 5434,
+     "split_at_headings": 2266,
+     "text_fetched": 502,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 125,
       "substitutes": 0
      },
      "sections": {
-      "total": 15985,
+      "total": 20949,
       "median": 2.0,
-      "p90": 5,
+      "p90": 7,
       "max": 328
      }
     },
@@ -1747,15 +2282,17 @@
      "blank_text": 0,
      "text_without_sections": 0,
      "with_sections": 176,
-     "split_at_headings": 7,
+     "split_at_headings": 98,
+     "text_fetched": 99,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 1,
       "substitutes": 0
      },
      "sections": {
-      "total": 255,
-      "median": 1.0,
-      "p90": 2,
+      "total": 587,
+      "median": 3.0,
+      "p90": 5,
       "max": 14
      }
     }
@@ -1794,18 +2331,20 @@
      "status_end_date": "2024-05-02",
      "records": 4492,
      "missing_text": 0,
-     "blank_text": 1176,
+     "blank_text": 535,
      "text_without_sections": 0,
-     "with_sections": 3316,
-     "split_at_headings": 2420,
+     "with_sections": 3957,
+     "split_at_headings": 3061,
+     "text_fetched": 641,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 12253,
+      "total": 16251,
       "median": 3.0,
-      "p90": 6,
+      "p90": 7,
       "max": 92
      }
     },
@@ -1815,20 +2354,22 @@
      "end_date": "2024-05-02",
      "status_end_date": "2024-05-02",
      "records": 6970,
-     "missing_text": 6970,
+     "missing_text": 1441,
      "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 0,
-     "split_at_headings": 0,
+     "with_sections": 5529,
+     "split_at_headings": 5529,
+     "text_fetched": 5529,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 0,
-      "median": null,
-      "p90": null,
-      "max": null
+      "total": 34650,
+      "median": 5.0,
+      "p90": 9,
+      "max": 84
      }
     },
     {
@@ -1837,20 +2378,22 @@
      "end_date": "2025-05-02",
      "status_end_date": "2026-05-08",
      "records": 4705,
-     "missing_text": 4705,
+     "missing_text": 1534,
      "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 0,
-     "split_at_headings": 0,
+     "with_sections": 3171,
+     "split_at_headings": 3171,
+     "text_fetched": 3171,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 0,
-      "median": null,
-      "p90": null,
-      "max": null
+      "total": 20362,
+      "median": 5.0,
+      "p90": 9,
+      "max": 68
      }
     },
     {
@@ -1860,16 +2403,18 @@
      "status_end_date": "2026-05-08",
      "records": 6728,
      "missing_text": 0,
-     "blank_text": 605,
+     "blank_text": 603,
      "text_without_sections": 0,
-     "with_sections": 6123,
-     "split_at_headings": 5159,
+     "with_sections": 6125,
+     "split_at_headings": 5161,
+     "text_fetched": 2,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 24332,
+      "total": 24359,
       "median": 3.0,
       "p90": 7,
       "max": 199
@@ -1893,9 +2438,10 @@
    },
    "status": {
     "bill": {
-     "died": 10326,
-     "introduced": 5728,
-     "passed": 1095
+     "died": 10343,
+     "introduced": 5708,
+     "passed": 1095,
+     "passed_legislature": 3
     },
     "concurrent resolution": {
      "died": 672,
@@ -1922,16 +2468,18 @@
      "status_end_date": "2024-04-16",
      "records": 3659,
      "missing_text": 0,
-     "blank_text": 239,
+     "blank_text": 1,
      "text_without_sections": 0,
-     "with_sections": 3420,
-     "split_at_headings": 3153,
+     "with_sections": 3658,
+     "split_at_headings": 3365,
+     "text_fetched": 238,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 37912,
+      "total": 43278,
       "median": 3.0,
       "p90": 16,
       "max": 2842
@@ -1944,18 +2492,20 @@
      "status_end_date": "2026-05-03",
      "records": 4370,
      "missing_text": 0,
-     "blank_text": 977,
+     "blank_text": 32,
      "text_without_sections": 0,
-     "with_sections": 3393,
-     "split_at_headings": 3184,
+     "with_sections": 4338,
+     "split_at_headings": 4079,
+     "text_fetched": 945,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 24856,
+      "total": 33281,
       "median": 3.0,
-      "p90": 15,
+      "p90": 16,
       "max": 210
      }
     }
@@ -1979,8 +2529,8 @@
    },
    "status": {
     "bill": {
-     "died": 4774,
-     "passed": 716
+     "died": 4768,
+     "passed": 722
     },
     "concurrent resolution": {
      "died": 16,
@@ -2008,19 +2558,21 @@
      "status_end_date": "2023-03-31",
      "records": 635,
      "missing_text": 0,
-     "blank_text": 21,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 614,
-     "split_at_headings": 577,
+     "with_sections": 635,
+     "split_at_headings": 598,
+     "text_fetched": 21,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 3192,
-      "median": 3.5,
-      "p90": 9,
-      "max": 95
+      "total": 4782,
+      "median": 5.0,
+      "p90": 13,
+      "max": 163
      }
     },
     {
@@ -2030,19 +2582,21 @@
      "status_end_date": "2024-03-29",
      "records": 718,
      "missing_text": 0,
-     "blank_text": 4,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 714,
-     "split_at_headings": 639,
+     "with_sections": 718,
+     "split_at_headings": 643,
+     "text_fetched": 4,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 3735,
+      "total": 5625,
       "median": 4.0,
-      "p90": 8,
-      "max": 62
+      "p90": 12,
+      "max": 173
      }
     },
     {
@@ -2052,19 +2606,21 @@
      "status_end_date": "2025-04-10",
      "records": 790,
      "missing_text": 0,
-     "blank_text": 6,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 784,
-     "split_at_headings": 711,
+     "with_sections": 790,
+     "split_at_headings": 717,
+     "text_fetched": 6,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 4458,
-      "median": 3.0,
-      "p90": 11,
-      "max": 111
+      "total": 6972,
+      "median": 5.0,
+      "p90": 17,
+      "max": 176
      }
     },
     {
@@ -2074,19 +2630,21 @@
      "status_end_date": "2026-04-10",
      "records": 817,
      "missing_text": 0,
-     "blank_text": 1,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 816,
-     "split_at_headings": 729,
+     "with_sections": 817,
+     "split_at_headings": 730,
+     "text_fetched": 1,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 4319,
-      "median": 4.0,
-      "p90": 9,
-      "max": 103
+      "total": 6555,
+      "median": 5.0,
+      "p90": 14,
+      "max": 176
      }
     }
    ],
@@ -2111,8 +2669,8 @@
    },
    "status": {
     "bill": {
-     "died": 1343,
-     "passed": 1320
+     "died": 1335,
+     "passed": 1328
     },
     "concurrent resolution": {
      "died": 59,
@@ -2144,19 +2702,21 @@
      "status_end_date": "2024-05-24",
      "records": 13376,
      "missing_text": 0,
-     "blank_text": 2302,
+     "blank_text": 1050,
      "text_without_sections": 0,
-     "with_sections": 11074,
-     "split_at_headings": 7553,
+     "with_sections": 12326,
+     "split_at_headings": 9083,
+     "text_fetched": 1585,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 964,
       "substitutes": 624
      },
      "sections": {
-      "total": 45130,
+      "total": 67469,
       "median": 3.0,
-      "p90": 8,
-      "max": 96
+      "p90": 9,
+      "max": 528
      }
     },
     {
@@ -2166,19 +2726,21 @@
      "status_end_date": "2027-01-12",
      "records": 12860,
      "missing_text": 0,
-     "blank_text": 2265,
+     "blank_text": 810,
      "text_without_sections": 0,
-     "with_sections": 10595,
-     "split_at_headings": 8399,
+     "with_sections": 12050,
+     "split_at_headings": 10079,
+     "text_fetched": 1720,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 843,
       "substitutes": 577
      },
      "sections": {
-      "total": 54603,
+      "total": 123543,
       "median": 3.0,
-      "p90": 10,
-      "max": 174
+      "p90": 11,
+      "max": 9711
      }
     }
    ],
@@ -2204,9 +2766,10 @@
      "introduced": 707
     },
     "bill": {
-     "died": 8871,
-     "introduced": 9187,
-     "passed": 1910
+     "died": 8869,
+     "introduced": 9185,
+     "passed": 1910,
+     "passed_legislature": 4
     },
     "constitutional amendment": {
      "died": 36,
@@ -2237,6 +2800,8 @@
      "text_without_sections": 0,
      "with_sections": 1365,
      "split_at_headings": 1287,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -2259,6 +2824,8 @@
      "text_without_sections": 0,
      "with_sections": 1,
      "split_at_headings": 0,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -2281,6 +2848,8 @@
      "text_without_sections": 0,
      "with_sections": 0,
      "split_at_headings": 0,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -2303,6 +2872,8 @@
      "text_without_sections": 0,
      "with_sections": 0,
      "split_at_headings": 0,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -2361,14 +2932,16 @@
      "text_without_sections": 0,
      "with_sections": 1011,
      "split_at_headings": 1011,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 7873,
+      "total": 8019,
       "median": 4.0,
-      "p90": 11,
+      "p90": 12,
       "max": 210
      }
     },
@@ -2379,19 +2952,21 @@
      "status_end_date": "2026-04-10",
      "records": 1483,
      "missing_text": 0,
-     "blank_text": 669,
+     "blank_text": 147,
      "text_without_sections": 0,
-     "with_sections": 814,
-     "split_at_headings": 812,
+     "with_sections": 1336,
+     "split_at_headings": 1334,
+     "text_fetched": 522,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 5662,
+      "total": 9461,
       "median": 4.0,
       "p90": 10,
-      "max": 207
+      "max": 221
      }
     }
    ],
@@ -2411,16 +2986,18 @@
    },
    "status": {
     "bill": {
-     "died": 2284,
-     "passed": 457
+     "died": 2276,
+     "passed": 465
     },
     "concurrent resolution": {
-     "died": 86,
-     "passed": 24
+     "died": 75,
+     "passed": 23,
+     "passed_legislature": 12
     },
     "resolution": {
-     "died": 138,
-     "passed": 53
+     "died": 65,
+     "passed": 53,
+     "passed_legislature": 73
     }
    }
   },
@@ -2433,19 +3010,21 @@
      "status_end_date": "2023-03-30",
      "records": 1247,
      "missing_text": 0,
-     "blank_text": 18,
+     "blank_text": 16,
      "text_without_sections": 0,
-     "with_sections": 1229,
-     "split_at_headings": 1229,
+     "with_sections": 1231,
+     "split_at_headings": 1231,
+     "text_fetched": 2,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 6129,
+      "total": 6164,
       "median": 3.0,
       "p90": 9,
-      "max": 151
+      "max": 152
      }
     },
     {
@@ -2455,19 +3034,21 @@
      "status_end_date": "2024-04-15",
      "records": 1758,
      "missing_text": 0,
-     "blank_text": 41,
+     "blank_text": 19,
      "text_without_sections": 0,
-     "with_sections": 1717,
-     "split_at_headings": 1717,
+     "with_sections": 1739,
+     "split_at_headings": 1739,
+     "text_fetched": 22,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 8539,
+      "total": 8656,
       "median": 3.0,
       "p90": 9,
-      "max": 217
+      "max": 218
      }
     },
     {
@@ -2477,16 +3058,18 @@
      "status_end_date": "2025-04-15",
      "records": 1441,
      "missing_text": 0,
-     "blank_text": 29,
+     "blank_text": 28,
      "text_without_sections": 0,
-     "with_sections": 1412,
-     "split_at_headings": 1412,
+     "with_sections": 1413,
+     "split_at_headings": 1413,
+     "text_fetched": 1,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 6627,
+      "total": 6642,
       "median": 3.0,
       "p90": 8,
       "max": 187
@@ -2503,12 +3086,14 @@
      "text_without_sections": 0,
      "with_sections": 1707,
      "split_at_headings": 1707,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 8704,
+      "total": 8717,
       "median": 3.0,
       "p90": 9,
       "max": 173
@@ -2532,8 +3117,8 @@
    },
    "status": {
     "bill": {
-     "died": 3737,
-     "passed": 730
+     "died": 3736,
+     "passed": 731
     },
     "concurrent resolution": {
      "died": 134,
@@ -2558,19 +3143,21 @@
      "status_end_date": "2023-06-08",
      "records": 1617,
      "missing_text": 0,
-     "blank_text": 19,
+     "blank_text": 15,
      "text_without_sections": 0,
-     "with_sections": 1598,
-     "split_at_headings": 390,
+     "with_sections": 1602,
+     "split_at_headings": 785,
+     "text_fetched": 540,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 613,
       "substitutes": 0
      },
      "sections": {
-      "total": 3781,
-      "median": 1.0,
-      "p90": 5,
-      "max": 51
+      "total": 6521,
+      "median": 3.0,
+      "p90": 7,
+      "max": 214
      }
     },
     {
@@ -2583,16 +3170,18 @@
      "blank_text": 0,
      "text_without_sections": 0,
      "with_sections": 6,
-     "split_at_headings": 0,
+     "split_at_headings": 2,
+     "text_fetched": 2,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 2,
       "substitutes": 0
      },
      "sections": {
-      "total": 6,
+      "total": 11,
       "median": 1.0,
-      "p90": 1,
-      "max": 1
+      "p90": 4,
+      "max": 4
      }
     },
     {
@@ -2605,16 +3194,18 @@
      "blank_text": 9,
      "text_without_sections": 0,
      "with_sections": 2253,
-     "split_at_headings": 736,
+     "split_at_headings": 1316,
+     "text_fetched": 840,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 903,
       "substitutes": 0
      },
      "sections": {
-      "total": 5585,
-      "median": 1.0,
-      "p90": 5,
-      "max": 69
+      "total": 9156,
+      "median": 3.0,
+      "p90": 7,
+      "max": 98
      }
     },
     {
@@ -2627,16 +3218,18 @@
      "blank_text": 0,
      "text_without_sections": 0,
      "with_sections": 33,
-     "split_at_headings": 20,
+     "split_at_headings": 23,
+     "text_fetched": 4,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 9,
       "substitutes": 0
      },
      "sections": {
-      "total": 150,
+      "total": 188,
       "median": 5.0,
       "p90": 8,
-      "max": 19
+      "max": 27
      }
     },
     {
@@ -2649,16 +3242,18 @@
      "blank_text": 0,
      "text_without_sections": 0,
      "with_sections": 41,
-     "split_at_headings": 16,
+     "split_at_headings": 36,
+     "text_fetched": 22,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 22,
       "substitutes": 0
      },
      "sections": {
-      "total": 92,
-      "median": 1.0,
-      "p90": 5,
-      "max": 7
+      "total": 210,
+      "median": 4.0,
+      "p90": 7,
+      "max": 42
      }
     },
     {
@@ -2671,16 +3266,18 @@
      "blank_text": 0,
      "text_without_sections": 0,
      "with_sections": 37,
-     "split_at_headings": 16,
+     "split_at_headings": 33,
+     "text_fetched": 21,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 21,
       "substitutes": 0
      },
      "sections": {
-      "total": 170,
-      "median": 2.0,
-      "p90": 13,
-      "max": 27
+      "total": 566,
+      "median": 7.0,
+      "p90": 35,
+      "max": 102
      }
     },
     {
@@ -2693,16 +3290,18 @@
      "blank_text": 23,
      "text_without_sections": 0,
      "with_sections": 1672,
-     "split_at_headings": 415,
+     "split_at_headings": 824,
+     "text_fetched": 575,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 638,
       "substitutes": 0
      },
      "sections": {
-      "total": 3973,
-      "median": 1.0,
-      "p90": 5,
-      "max": 69
+      "total": 7539,
+      "median": 3.0,
+      "p90": 8,
+      "max": 211
      }
     },
     {
@@ -2715,14 +3314,16 @@
      "blank_text": 1,
      "text_without_sections": 0,
      "with_sections": 11,
-     "split_at_headings": 5,
+     "split_at_headings": 6,
+     "text_fetched": 2,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 2,
       "substitutes": 0
      },
      "sections": {
-      "total": 52,
-      "median": 3.0,
+      "total": 69,
+      "median": 4.0,
       "p90": 15,
       "max": 15
      }
@@ -2734,19 +3335,21 @@
      "status_end_date": "2026-06-01",
      "records": 2616,
      "missing_text": 0,
-     "blank_text": 18,
+     "blank_text": 17,
      "text_without_sections": 0,
-     "with_sections": 2598,
-     "split_at_headings": 910,
+     "with_sections": 2599,
+     "split_at_headings": 1603,
+     "text_fetched": 960,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 1032,
       "substitutes": 0
      },
      "sections": {
-      "total": 7340,
-      "median": 2.0,
-      "p90": 5,
-      "max": 290
+      "total": 11496,
+      "median": 3.0,
+      "p90": 8,
+      "max": 288
      }
     }
    ],
@@ -2768,19 +3371,21 @@
    },
    "status": {
     "bill": {
-     "died": 2429,
-     "passed": 2794
+     "died": 2426,
+     "passed": 2794,
+     "passed_legislature": 3
     },
     "concurrent resolution": {
-     "died": 714,
-     "passed": 91
+     "died": 136,
+     "passed": 668,
+     "passed_legislature": 1
     },
     "concurrent study request": {
      "died": 3
     },
     "resolution": {
-     "died": 1685,
-     "passed": 582
+     "died": 117,
+     "passed": 2150
     },
     "study request": {
      "died": 21
@@ -2796,18 +3401,20 @@
      "status_end_date": "2024-07-31",
      "records": 16826,
      "missing_text": 0,
-     "blank_text": 14283,
+     "blank_text": 432,
      "text_without_sections": 0,
-     "with_sections": 2543,
-     "split_at_headings": 1258,
+     "with_sections": 16394,
+     "split_at_headings": 6398,
+     "text_fetched": 13851,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 25402,
+      "total": 97801,
       "median": 2.0,
-      "p90": 12,
+      "p90": 11,
       "max": 3580
      }
     },
@@ -2818,19 +3425,21 @@
      "status_end_date": "2026-07-31",
      "records": 19222,
      "missing_text": 0,
-     "blank_text": 1024,
-     "text_without_sections": 2,
-     "with_sections": 18196,
-     "split_at_headings": 12022,
+     "blank_text": 406,
+     "text_without_sections": 0,
+     "with_sections": 18816,
+     "split_at_headings": 12130,
+     "text_fetched": 620,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 102285,
+      "total": 107002,
       "median": 3.0,
       "p90": 10,
-      "max": 3938
+      "max": 3935
      }
     }
    ],
@@ -2848,8 +3457,9 @@
    },
    "status": {
     "bill": {
-     "died": 23288,
-     "passed": 711
+     "died": 23170,
+     "passed": 720,
+     "passed_legislature": 109
     },
     "proposed bill": {
      "died": 12049
@@ -2865,19 +3475,21 @@
      "status_end_date": "2023-04-10",
      "records": 2284,
      "missing_text": 0,
-     "blank_text": 1982,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 302,
-     "split_at_headings": 293,
+     "with_sections": 2284,
+     "split_at_headings": 2268,
+     "text_fetched": 1982,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 1090,
+      "total": 8110,
       "median": 3.0,
       "p90": 5,
-      "max": 27
+      "max": 45
      }
     },
     {
@@ -2887,19 +3499,21 @@
      "status_end_date": "2024-04-08",
      "records": 2728,
      "missing_text": 0,
-     "blank_text": 2468,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 260,
-     "split_at_headings": 254,
+     "with_sections": 2728,
+     "split_at_headings": 2711,
+     "text_fetched": 2468,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 917,
+      "total": 9380,
       "median": 3.0,
       "p90": 4,
-      "max": 30
+      "max": 43
      }
     },
     {
@@ -2909,19 +3523,21 @@
      "status_end_date": "2025-04-07",
      "records": 2617,
      "missing_text": 0,
-     "blank_text": 2592,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 25,
-     "split_at_headings": 25,
+     "with_sections": 2617,
+     "split_at_headings": 2607,
+     "text_fetched": 2592,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 242,
-      "median": 4.0,
-      "p90": 31,
-      "max": 38
+      "total": 9421,
+      "median": 3.0,
+      "p90": 4,
+      "max": 45
      }
     },
     {
@@ -2931,19 +3547,21 @@
      "status_end_date": "2026-04-13",
      "records": 2677,
      "missing_text": 0,
-     "blank_text": 2122,
+     "blank_text": 2,
      "text_without_sections": 0,
-     "with_sections": 555,
-     "split_at_headings": 536,
+     "with_sections": 2675,
+     "split_at_headings": 2643,
+     "text_fetched": 2120,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 1954,
+      "total": 9637,
       "median": 3.0,
       "p90": 4,
-      "max": 33
+      "max": 51
      }
     }
    ],
@@ -2961,8 +3579,8 @@
    },
    "status": {
     "bill": {
-     "died": 6674,
-     "passed": 3580
+     "died": 6671,
+     "passed": 3583
     },
     "joint resolution": {
      "died": 45,
@@ -2982,19 +3600,21 @@
      "status_end_date": "2024-04-17",
      "records": 2503,
      "missing_text": 0,
-     "blank_text": 2503,
+     "blank_text": 200,
      "text_without_sections": 0,
-     "with_sections": 0,
-     "split_at_headings": 0,
+     "with_sections": 2303,
+     "split_at_headings": 1632,
+     "text_fetched": 2303,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 0,
-      "median": null,
-      "p90": null,
-      "max": null
+      "total": 11079,
+      "median": 3.0,
+      "p90": 10,
+      "max": 153
      }
     },
     {
@@ -3004,19 +3624,21 @@
      "status_end_date": "2026-04-29",
      "records": 2451,
      "missing_text": 0,
-     "blank_text": 2451,
+     "blank_text": 202,
      "text_without_sections": 0,
-     "with_sections": 0,
-     "split_at_headings": 0,
+     "with_sections": 2249,
+     "split_at_headings": 1933,
+     "text_fetched": 2249,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 0,
-      "median": null,
-      "p90": null,
-      "max": null
+      "total": 12309,
+      "median": 4.0,
+      "p90": 10,
+      "max": 71
      }
     }
    ],
@@ -3034,8 +3656,9 @@
    },
    "status": {
     "bill": {
-     "died": 2902,
-     "passed": 1739
+     "died": 2807,
+     "passed": 1739,
+     "passed_legislature": 95
     },
     "joint resolution": {
      "died": 124,
@@ -3052,19 +3675,21 @@
      "status_end_date": "2024-12-22",
      "records": 4043,
      "missing_text": 0,
-     "blank_text": 830,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 3213,
-     "split_at_headings": 2362,
+     "with_sections": 4043,
+     "split_at_headings": 3163,
+     "text_fetched": 830,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 9907,
+      "total": 17864,
       "median": 2.0,
-      "p90": 6,
-      "max": 98
+      "p90": 7,
+      "max": 1689
      }
     },
     {
@@ -3074,19 +3699,21 @@
      "status_end_date": "2026-12-31",
      "records": 4242,
      "missing_text": 0,
-     "blank_text": 983,
+     "blank_text": 193,
      "text_without_sections": 0,
-     "with_sections": 3259,
-     "split_at_headings": 2401,
+     "with_sections": 4049,
+     "split_at_headings": 3163,
+     "text_fetched": 790,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 10379,
+      "total": 21959,
       "median": 2.0,
-      "p90": 6,
-      "max": 89
+      "p90": 7,
+      "max": 1739
      }
     }
    ],
@@ -3104,9 +3731,10 @@
    },
    "status": {
     "bill": {
-     "died": 2900,
-     "introduced": 3467,
-     "passed": 783
+     "died": 2885,
+     "introduced": 3466,
+     "passed": 784,
+     "passed_legislature": 15
     },
     "resolution": {
      "died": 114,
@@ -3128,6 +3756,8 @@
      "text_without_sections": 0,
      "with_sections": 11031,
      "split_at_headings": 10992,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -3146,19 +3776,21 @@
      "status_end_date": "2026-05-20",
      "records": 10590,
      "missing_text": 0,
-     "blank_text": 7013,
+     "blank_text": 112,
      "text_without_sections": 0,
-     "with_sections": 3577,
-     "split_at_headings": 3563,
+     "with_sections": 10478,
+     "split_at_headings": 10434,
+     "text_fetched": 6901,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 21636,
+      "total": 56969,
       "median": 2.0,
-      "p90": 9,
-      "max": 348
+      "p90": 8,
+      "max": 765
      }
     },
     {
@@ -3168,19 +3800,21 @@
      "status_end_date": "2025-12-31",
      "records": 48,
      "missing_text": 0,
-     "blank_text": 48,
+     "blank_text": 2,
      "text_without_sections": 0,
-     "with_sections": 0,
-     "split_at_headings": 0,
+     "with_sections": 46,
+     "split_at_headings": 45,
+     "text_fetched": 46,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 0,
-      "median": null,
-      "p90": null,
-      "max": null
+      "total": 3972,
+      "median": 19.0,
+      "p90": 230,
+      "max": 594
      }
     }
    ],
@@ -3222,18 +3856,20 @@
      "status_end_date": "2023-05-14",
      "records": 2340,
      "missing_text": 0,
-     "blank_text": 558,
+     "blank_text": 51,
      "text_without_sections": 0,
-     "with_sections": 1782,
-     "split_at_headings": 43,
+     "with_sections": 2289,
+     "split_at_headings": 74,
+     "text_fetched": 507,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 19574,
+      "total": 24091,
       "median": 4.0,
-      "p90": 27,
+      "p90": 25,
       "max": 268
      }
     },
@@ -3244,18 +3880,20 @@
      "status_end_date": "2024-05-17",
      "records": 2620,
      "missing_text": 0,
-     "blank_text": 404,
+     "blank_text": 30,
      "text_without_sections": 0,
-     "with_sections": 2216,
-     "split_at_headings": 47,
+     "with_sections": 2590,
+     "split_at_headings": 83,
+     "text_fetched": 374,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 21760,
-      "median": 3.0,
-      "p90": 23,
+      "total": 27276,
+      "median": 4.0,
+      "p90": 24,
       "max": 424
      }
     },
@@ -3266,18 +3904,20 @@
      "status_end_date": "2025-05-16",
      "records": 2690,
      "missing_text": 0,
-     "blank_text": 1197,
+     "blank_text": 21,
      "text_without_sections": 0,
-     "with_sections": 1493,
-     "split_at_headings": 23,
+     "with_sections": 2669,
+     "split_at_headings": 114,
+     "text_fetched": 1176,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 14613,
-      "median": 3.0,
-      "p90": 23,
+      "total": 31049,
+      "median": 4.0,
+      "p90": 27,
       "max": 403
      }
     },
@@ -3288,17 +3928,19 @@
      "status_end_date": "2025-06-13",
      "records": 29,
      "missing_text": 0,
-     "blank_text": 3,
+     "blank_text": 1,
      "text_without_sections": 0,
-     "with_sections": 26,
+     "with_sections": 28,
      "split_at_headings": 6,
+     "text_fetched": 2,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 358,
-      "median": 4.0,
+      "total": 360,
+      "median": 3.5,
       "p90": 44,
       "max": 84
      }
@@ -3310,19 +3952,21 @@
      "status_end_date": "2025-09-13",
      "records": 15,
      "missing_text": 0,
-     "blank_text": 4,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 11,
-     "split_at_headings": 0,
+     "with_sections": 15,
+     "split_at_headings": 2,
+     "text_fetched": 4,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 181,
+      "total": 200,
       "median": 4.0,
-      "p90": 54,
-      "max": 70
+      "p90": 39,
+      "max": 53
      }
     },
     {
@@ -3332,18 +3976,20 @@
      "status_end_date": "2026-05-15",
      "records": 3177,
      "missing_text": 0,
-     "blank_text": 1381,
+     "blank_text": 46,
      "text_without_sections": 0,
-     "with_sections": 1796,
-     "split_at_headings": 38,
+     "with_sections": 3131,
+     "split_at_headings": 123,
+     "text_fetched": 1335,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 20001,
+      "total": 38131,
       "median": 4.0,
-      "p90": 24,
+      "p90": 26,
       "max": 604
      }
     }
@@ -3365,16 +4011,18 @@
    },
    "status": {
     "bill": {
-     "died": 9856,
-     "passed": 167
+     "died": 9757,
+     "passed": 167,
+     "passed_legislature": 99
     },
     "concurrent resolution": {
      "died": 179,
      "passed": 2
     },
     "joint resolution": {
-     "died": 611,
-     "passed": 9
+     "died": 609,
+     "passed": 9,
+     "passed_legislature": 2
     },
     "resolution": {
      "died": 41,
@@ -3391,19 +4039,21 @@
      "status_end_date": "2023-04-02",
      "records": 3525,
      "missing_text": 0,
-     "blank_text": 323,
+     "blank_text": 115,
      "text_without_sections": 0,
-     "with_sections": 3202,
-     "split_at_headings": 2773,
+     "with_sections": 3410,
+     "split_at_headings": 2979,
+     "text_fetched": 208,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 6,
       "substitutes": 5
      },
      "sections": {
-      "total": 19214,
+      "total": 28145,
       "median": 4.0,
-      "p90": 11,
-      "max": 146
+      "p90": 16,
+      "max": 280
      }
     },
     {
@@ -3413,19 +4063,21 @@
      "status_end_date": "2024-05-05",
      "records": 3882,
      "missing_text": 0,
-     "blank_text": 192,
+     "blank_text": 114,
      "text_without_sections": 0,
-     "with_sections": 3690,
-     "split_at_headings": 3288,
+     "with_sections": 3768,
+     "split_at_headings": 3367,
+     "text_fetched": 79,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 8,
       "substitutes": 7
      },
      "sections": {
-      "total": 24734,
+      "total": 35320,
       "median": 4.0,
-      "p90": 11,
-      "max": 262
+      "p90": 16,
+      "max": 517
      }
     },
     {
@@ -3439,15 +4091,17 @@
      "text_without_sections": 0,
      "with_sections": 3,
      "split_at_headings": 3,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 28,
+      "total": 45,
       "median": 4.0,
-      "p90": 20,
-      "max": 20
+      "p90": 37,
+      "max": 37
      }
     },
     {
@@ -3461,15 +4115,17 @@
      "text_without_sections": 0,
      "with_sections": 3,
      "split_at_headings": 3,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 53,
+      "total": 84,
       "median": 4.0,
-      "p90": 45,
-      "max": 45
+      "p90": 76,
+      "max": 76
      }
     },
     {
@@ -3479,19 +4135,21 @@
      "status_end_date": "2025-04-06",
      "records": 3811,
      "missing_text": 0,
-     "blank_text": 688,
+     "blank_text": 119,
      "text_without_sections": 0,
-     "with_sections": 3123,
-     "split_at_headings": 2740,
+     "with_sections": 3692,
+     "split_at_headings": 3310,
+     "text_fetched": 573,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 10,
       "substitutes": 6
      },
      "sections": {
-      "total": 20094,
+      "total": 33014,
       "median": 4.0,
-      "p90": 12,
-      "max": 152
+      "p90": 16,
+      "max": 412
      }
     },
     {
@@ -3505,12 +4163,14 @@
      "text_without_sections": 0,
      "with_sections": 106,
      "split_at_headings": 102,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 1628,
+      "total": 1635,
       "median": 12.0,
       "p90": 28,
       "max": 52
@@ -3523,19 +4183,21 @@
      "status_end_date": "2026-04-15",
      "records": 4116,
      "missing_text": 0,
-     "blank_text": 1882,
+     "blank_text": 439,
      "text_without_sections": 0,
-     "with_sections": 2234,
-     "split_at_headings": 2163,
+     "with_sections": 3677,
+     "split_at_headings": 3603,
+     "text_fetched": 1443,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 7,
       "substitutes": 7
      },
      "sections": {
-      "total": 17839,
+      "total": 35176,
       "median": 4.0,
-      "p90": 15,
-      "max": 234
+      "p90": 18,
+      "max": 460
      }
     },
     {
@@ -3545,19 +4207,21 @@
      "status_end_date": "2026-07-17",
      "records": 8,
      "missing_text": 0,
-     "blank_text": 6,
+     "blank_text": 2,
      "text_without_sections": 0,
-     "with_sections": 2,
-     "split_at_headings": 2,
+     "with_sections": 6,
+     "split_at_headings": 6,
+     "text_fetched": 4,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 81,
-      "median": 40.5,
-      "p90": 75,
-      "max": 75
+      "total": 171,
+      "median": 6.0,
+      "p90": 141,
+      "max": 141
      }
     }
    ],
@@ -3579,8 +4243,9 @@
    },
    "status": {
     "bill": {
-     "died": 11778,
-     "passed": 1566
+     "died": 11767,
+     "passed": 1566,
+     "passed_legislature": 11
     },
     "concurrent resolution": {
      "died": 211,
@@ -3604,19 +4269,21 @@
      "status_end_date": "2023-04-25",
      "records": 6335,
      "missing_text": 0,
-     "blank_text": 4645,
+     "blank_text": 4634,
      "text_without_sections": 0,
-     "with_sections": 1690,
-     "split_at_headings": 1513,
+     "with_sections": 1701,
+     "split_at_headings": 1524,
+     "text_fetched": 11,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 10637,
+      "total": 11552,
       "median": 4.0,
       "p90": 12,
-      "max": 141
+      "max": 142
      }
     },
     {
@@ -3626,19 +4293,21 @@
      "status_end_date": "2025-05-03",
      "records": 6159,
      "missing_text": 0,
-     "blank_text": 4429,
+     "blank_text": 2709,
      "text_without_sections": 0,
-     "with_sections": 1730,
-     "split_at_headings": 1519,
+     "with_sections": 3450,
+     "split_at_headings": 2992,
+     "text_fetched": 1720,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 10477,
+      "total": 21519,
       "median": 4.0,
       "p90": 11,
-      "max": 160
+      "max": 173
      }
     }
    ],
@@ -3664,15 +4333,15 @@
      "passed": 1561
     },
     "joint resolution": {
-     "died": 118,
-     "passed": 87
+     "died": 117,
+     "passed": 88
     },
     "proposed bill": {
      "died": 1691
     },
     "resolution": {
-     "died": 19,
-     "passed": 184
+     "died": 15,
+     "passed": 188
     }
    }
   },
@@ -3685,19 +4354,21 @@
      "status_end_date": "2024-07-01",
      "records": 2005,
      "missing_text": 0,
-     "blank_text": 1396,
+     "blank_text": 20,
      "text_without_sections": 0,
-     "with_sections": 609,
-     "split_at_headings": 606,
+     "with_sections": 1985,
+     "split_at_headings": 1970,
+     "text_fetched": 1376,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 3105,
+      "total": 10382,
       "median": 3.0,
-      "p90": 8,
-      "max": 73
+      "p90": 7,
+      "max": 238
      }
     },
     {
@@ -3707,16 +4378,18 @@
      "status_end_date": "2026-07-01",
      "records": 2338,
      "missing_text": 0,
-     "blank_text": 87,
+     "blank_text": 2,
      "text_without_sections": 0,
-     "with_sections": 2251,
-     "split_at_headings": 2232,
+     "with_sections": 2336,
+     "split_at_headings": 2317,
+     "text_fetched": 85,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 11870,
+      "total": 12478,
       "median": 3.0,
       "p90": 8,
       "max": 276
@@ -3733,6 +4406,8 @@
      "text_without_sections": 0,
      "with_sections": 5,
      "split_at_headings": 5,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -3782,19 +4457,21 @@
      "status_end_date": "2023-05-10",
      "records": 1006,
      "missing_text": 0,
-     "blank_text": 127,
+     "blank_text": 9,
      "text_without_sections": 0,
-     "with_sections": 879,
-     "split_at_headings": 840,
+     "with_sections": 997,
+     "split_at_headings": 958,
+     "text_fetched": 118,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 3748,
+      "total": 6191,
       "median": 3.0,
-      "p90": 7,
-      "max": 137
+      "p90": 10,
+      "max": 234
      }
     },
     {
@@ -3804,19 +4481,21 @@
      "status_end_date": "2025-05-02",
      "records": 1106,
      "missing_text": 0,
-     "blank_text": 267,
+     "blank_text": 6,
      "text_without_sections": 0,
-     "with_sections": 839,
-     "split_at_headings": 789,
+     "with_sections": 1100,
+     "split_at_headings": 1050,
+     "text_fetched": 261,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 3102,
-      "median": 2.0,
-      "p90": 6,
-      "max": 57
+      "total": 6306,
+      "median": 3.0,
+      "p90": 11,
+      "max": 96
      }
     }
    ],
@@ -3836,11 +4515,13 @@
    },
    "status": {
     "bill": {
-     "died": 778,
-     "passed": 1205
+     "died": 767,
+     "passed": 1205,
+     "passed_legislature": 11
     },
     "concurrent resolution": {
-     "died": 124
+     "died": 50,
+     "passed_legislature": 74
     },
     "memorial": {
      "died": 4
@@ -3859,19 +4540,21 @@
      "status_end_date": "2024-04-19",
      "records": 2019,
      "missing_text": 0,
-     "blank_text": 1813,
+     "blank_text": 495,
      "text_without_sections": 0,
-     "with_sections": 206,
-     "split_at_headings": 190,
+     "with_sections": 1524,
+     "split_at_headings": 1507,
+     "text_fetched": 1342,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 25,
       "substitutes": 0
      },
      "sections": {
-      "total": 2868,
-      "median": 6.0,
-      "p90": 30,
-      "max": 124
+      "total": 12015,
+      "median": 4.0,
+      "p90": 15,
+      "max": 221
      }
     },
     {
@@ -3885,6 +4568,8 @@
      "text_without_sections": 0,
      "with_sections": 109,
      "split_at_headings": 107,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -3903,18 +4588,20 @@
      "status_end_date": "2026-04-19",
      "records": 1847,
      "missing_text": 0,
-     "blank_text": 1270,
+     "blank_text": 308,
      "text_without_sections": 0,
-     "with_sections": 577,
-     "split_at_headings": 366,
+     "with_sections": 1539,
+     "split_at_headings": 1291,
+     "text_fetched": 991,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 29,
       "substitutes": 0
      },
      "sections": {
-      "total": 5082,
-      "median": 3.0,
-      "p90": 16,
+      "total": 12545,
+      "median": 4.0,
+      "p90": 15,
       "max": 312
      }
     }
@@ -3933,12 +4620,13 @@
    },
    "status": {
     "bill": {
-     "died": 2330,
-     "passed": 612
+     "died": 2321,
+     "passed": 619,
+     "passed_legislature": 2
     },
     "resolution": {
-     "died": 573,
-     "passed": 460
+     "died": 574,
+     "passed": 459
     }
    }
   },
@@ -3955,6 +4643,8 @@
      "text_without_sections": 0,
      "with_sections": 2,
      "split_at_headings": 0,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -3977,6 +4667,8 @@
      "text_without_sections": 0,
      "with_sections": 934,
      "split_at_headings": 2,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 24,
       "substitutes": 9
@@ -3999,6 +4691,8 @@
      "text_without_sections": 0,
      "with_sections": 224,
      "split_at_headings": 0,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 196,
       "substitutes": 70
@@ -4017,19 +4711,21 @@
      "status_end_date": "2026-06-30",
      "records": 1394,
      "missing_text": 0,
-     "blank_text": 1390,
+     "blank_text": 39,
      "text_without_sections": 0,
-     "with_sections": 4,
-     "split_at_headings": 0,
+     "with_sections": 1355,
+     "split_at_headings": 5,
+     "text_fetched": 1351,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 16,
-      "median": 2.5,
+      "total": 7092,
+      "median": 3.0,
       "p90": 10,
-      "max": 10
+      "max": 102
      }
     }
    ],
@@ -4052,9 +4748,9 @@
    },
    "status": {
     "bill": {
-     "died": 2572,
-     "introduced": 694,
-     "passed": 1281
+     "died": 2555,
+     "introduced": 691,
+     "passed": 1301
     },
     "concurrent resolution": {
      "died": 16,
@@ -4085,19 +4781,21 @@
      "status_end_date": "2023-12-31",
      "records": 10931,
      "missing_text": 0,
-     "blank_text": 7367,
+     "blank_text": 863,
      "text_without_sections": 0,
-     "with_sections": 3564,
-     "split_at_headings": 3,
+     "with_sections": 10068,
+     "split_at_headings": 15,
+     "text_fetched": 6504,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 23589,
-      "median": 3.0,
-      "p90": 15,
-      "max": 135
+      "total": 84198,
+      "median": 4.0,
+      "p90": 19,
+      "max": 236
      }
     },
     {
@@ -4107,19 +4805,21 @@
      "status_end_date": "2025-12-31",
      "records": 12127,
      "missing_text": 0,
-     "blank_text": 9392,
+     "blank_text": 676,
      "text_without_sections": 0,
-     "with_sections": 2735,
-     "split_at_headings": 9,
+     "with_sections": 11451,
+     "split_at_headings": 15,
+     "text_fetched": 8716,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 19358,
-      "median": 4.0,
-      "p90": 16,
-      "max": 197
+      "total": 104514,
+      "median": 5.0,
+      "p90": 20,
+      "max": 693
      }
     },
     {
@@ -4129,19 +4829,21 @@
      "status_end_date": "2027-12-31",
      "records": 11504,
      "missing_text": 0,
-     "blank_text": 4213,
+     "blank_text": 548,
      "text_without_sections": 0,
-     "with_sections": 7291,
-     "split_at_headings": 14,
+     "with_sections": 10956,
+     "split_at_headings": 15,
+     "text_fetched": 3665,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 49868,
+      "total": 85062,
       "median": 4.0,
-      "p90": 15,
-      "max": 260
+      "p90": 17,
+      "max": 669
      }
     }
    ],
@@ -4193,16 +4895,18 @@
      "status_end_date": "2023-03-18",
      "records": 1294,
      "missing_text": 0,
-     "blank_text": 4,
+     "blank_text": 1,
      "text_without_sections": 0,
-     "with_sections": 1290,
-     "split_at_headings": 1025,
+     "with_sections": 1293,
+     "split_at_headings": 1028,
+     "text_fetched": 3,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 6826,
+      "total": 6838,
       "median": 3.0,
       "p90": 10,
       "max": 367
@@ -4215,16 +4919,18 @@
      "status_end_date": "2024-02-15",
      "records": 777,
      "missing_text": 0,
-     "blank_text": 1,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 776,
-     "split_at_headings": 570,
+     "with_sections": 777,
+     "split_at_headings": 571,
+     "text_fetched": 1,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 3541,
+      "total": 3547,
       "median": 3.0,
       "p90": 8,
       "max": 149
@@ -4241,6 +4947,8 @@
      "text_without_sections": 0,
      "with_sections": 17,
      "split_at_headings": 17,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -4259,16 +4967,18 @@
      "status_end_date": "2025-03-22",
      "records": 1328,
      "missing_text": 0,
-     "blank_text": 35,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 1293,
-     "split_at_headings": 1103,
+     "with_sections": 1328,
+     "split_at_headings": 1138,
+     "text_fetched": 35,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 6580,
+      "total": 6782,
       "median": 3.0,
       "p90": 10,
       "max": 161
@@ -4285,6 +4995,8 @@
      "text_without_sections": 0,
      "with_sections": 11,
      "split_at_headings": 11,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -4307,6 +5019,8 @@
      "text_without_sections": 0,
      "with_sections": 2,
      "split_at_headings": 2,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -4329,6 +5043,8 @@
      "text_without_sections": 0,
      "with_sections": 811,
      "split_at_headings": 620,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -4396,6 +5112,8 @@
      "text_without_sections": 0,
      "with_sections": 5,
      "split_at_headings": 1,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -4418,6 +5136,8 @@
      "text_without_sections": 0,
      "with_sections": 5,
      "split_at_headings": 1,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -4440,6 +5160,8 @@
      "text_without_sections": 0,
      "with_sections": 27,
      "split_at_headings": 17,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -4458,18 +5180,20 @@
      "status_end_date": "2023-06-01",
      "records": 1096,
      "missing_text": 0,
-     "blank_text": 169,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 927,
-     "split_at_headings": 888,
+     "with_sections": 1096,
+     "split_at_headings": 1048,
+     "text_fetched": 169,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 12477,
+      "total": 14628,
       "median": 6.0,
-      "p90": 32,
+      "p90": 31,
       "max": 150
      }
     },
@@ -4480,19 +5204,21 @@
      "status_end_date": "2025-06-01",
      "records": 1210,
      "missing_text": 0,
-     "blank_text": 638,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 572,
-     "split_at_headings": 535,
+     "with_sections": 1210,
+     "split_at_headings": 1162,
+     "text_fetched": 638,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 6453,
-      "median": 5.0,
-      "p90": 27,
-      "max": 192
+      "total": 16756,
+      "median": 6.0,
+      "p90": 30,
+      "max": 383
      }
     }
    ],
@@ -4508,8 +5234,9 @@
    },
    "status": {
     "bill": {
-     "died": 1274,
-     "passed": 1069
+     "died": 1178,
+     "passed": 1069,
+     "passed_legislature": 96
     }
    }
   },
@@ -4526,15 +5253,17 @@
      "text_without_sections": 0,
      "with_sections": 24269,
      "split_at_headings": 19943,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 94814,
+      "total": 103797,
       "median": 3.0,
-      "p90": 6,
-      "max": 348
+      "p90": 7,
+      "max": 369
      }
     },
     {
@@ -4544,19 +5273,21 @@
      "status_end_date": "2026-12-31",
      "records": 25531,
      "missing_text": 0,
-     "blank_text": 50,
+     "blank_text": 10,
      "text_without_sections": 0,
-     "with_sections": 25481,
-     "split_at_headings": 21448,
+     "with_sections": 25521,
+     "split_at_headings": 21483,
+     "text_fetched": 40,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 103446,
+      "total": 114277,
       "median": 3.0,
-      "p90": 7,
-      "max": 348
+      "p90": 8,
+      "max": 360
      }
     }
    ],
@@ -4575,9 +5306,10 @@
    },
    "status": {
     "bill": {
-     "died": 19011,
-     "introduced": 19965,
-     "passed": 2539
+     "died": 19010,
+     "introduced": 19964,
+     "passed": 2539,
+     "passed_legislature": 2
     },
     "concurrent resolution": {
      "died": 11,
@@ -4604,6 +5336,8 @@
      "text_without_sections": 0,
      "with_sections": 2257,
      "split_at_headings": 0,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -4626,6 +5360,8 @@
      "text_without_sections": 0,
      "with_sections": 5,
      "split_at_headings": 0,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -4644,19 +5380,21 @@
      "status_end_date": "2026-12-31",
      "records": 2624,
      "missing_text": 0,
-     "blank_text": 20,
+     "blank_text": 7,
      "text_without_sections": 0,
-     "with_sections": 2604,
-     "split_at_headings": 0,
+     "with_sections": 2617,
+     "split_at_headings": 1517,
+     "text_fetched": 1517,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 57047,
-      "median": 1.0,
-      "p90": 46,
-      "max": 6538
+      "total": 21889,
+      "median": 3.0,
+      "p90": 13,
+      "max": 2224
      }
     }
    ],
@@ -4674,9 +5412,10 @@
    },
    "status": {
     "bill": {
-     "died": 1003,
-     "introduced": 1419,
-     "passed": 157
+     "died": 958,
+     "introduced": 1416,
+     "passed": 157,
+     "passed_legislature": 48
     },
     "resolution": {
      "died": 483,
@@ -4694,16 +5433,18 @@
      "status_end_date": "2024-05-31",
      "records": 3332,
      "missing_text": 0,
-     "blank_text": 146,
+     "blank_text": 76,
      "text_without_sections": 0,
-     "with_sections": 3186,
-     "split_at_headings": 3054,
+     "with_sections": 3256,
+     "split_at_headings": 3164,
+     "text_fetched": 125,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 56,
       "substitutes": 0
      },
      "sections": {
-      "total": 14696,
+      "total": 15598,
       "median": 3.0,
       "p90": 7,
       "max": 254
@@ -4720,6 +5461,8 @@
      "text_without_sections": 0,
      "with_sections": 96,
      "split_at_headings": 91,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -4742,6 +5485,8 @@
      "text_without_sections": 0,
      "with_sections": 20,
      "split_at_headings": 19,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -4760,19 +5505,21 @@
      "status_end_date": "2024-05-31",
      "records": 5488,
      "missing_text": 0,
-     "blank_text": 3191,
+     "blank_text": 161,
      "text_without_sections": 0,
-     "with_sections": 2297,
-     "split_at_headings": 2197,
+     "with_sections": 5327,
+     "split_at_headings": 5222,
+     "text_fetched": 3061,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 32,
       "substitutes": 0
      },
      "sections": {
-      "total": 10621,
-      "median": 3.0,
-      "p90": 7,
-      "max": 193
+      "total": 27197,
+      "median": 4.0,
+      "p90": 8,
+      "max": 254
      }
     },
     {
@@ -4786,6 +5533,8 @@
      "text_without_sections": 0,
      "with_sections": 4,
      "split_at_headings": 4,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -4808,6 +5557,8 @@
      "text_without_sections": 0,
      "with_sections": 1,
      "split_at_headings": 0,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -4826,16 +5577,18 @@
      "status_end_date": "2026-05-29",
      "records": 3258,
      "missing_text": 0,
-     "blank_text": 619,
+     "blank_text": 26,
      "text_without_sections": 0,
-     "with_sections": 2639,
-     "split_at_headings": 2493,
+     "with_sections": 3232,
+     "split_at_headings": 3146,
+     "text_fetched": 664,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 71,
       "substitutes": 0
      },
      "sections": {
-      "total": 14045,
+      "total": 17539,
       "median": 4.0,
       "p90": 8,
       "max": 1526
@@ -4848,19 +5601,21 @@
      "status_end_date": "2026-05-29",
      "records": 6006,
      "missing_text": 0,
-     "blank_text": 784,
+     "blank_text": 71,
      "text_without_sections": 0,
-     "with_sections": 5222,
-     "split_at_headings": 4975,
+     "with_sections": 5935,
+     "split_at_headings": 5784,
+     "text_fetched": 847,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 134,
       "substitutes": 0
      },
      "sections": {
-      "total": 25235,
+      "total": 33308,
       "median": 4.0,
-      "p90": 7,
-      "max": 163
+      "p90": 8,
+      "max": 1524
      }
     }
    ],
@@ -4882,9 +5637,9 @@
    },
    "status": {
     "bill": {
-     "died": 9320,
-     "introduced": 5697,
-     "passed": 2356
+     "died": 9251,
+     "introduced": 5383,
+     "passed": 2739
     },
     "concurrent resolution": {
      "died": 43,
@@ -4892,14 +5647,16 @@
      "passed": 88
     },
     "joint resolution": {
-     "died": 222,
+     "died": 221,
      "introduced": 115,
-     "passed": 41
+     "passed": 41,
+     "passed_legislature": 1
     },
     "resolution": {
-     "died": 39,
+     "died": 38,
      "introduced": 18,
-     "passed": 243
+     "passed": 243,
+     "passed_legislature": 1
     }
    }
   },
@@ -4912,19 +5669,21 @@
      "status_end_date": "2023-06-25",
      "records": 2970,
      "missing_text": 0,
-     "blank_text": 84,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 2886,
-     "split_at_headings": 2389,
+     "with_sections": 2970,
+     "split_at_headings": 2896,
+     "text_fetched": 2900,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 87,
       "substitutes": 0
      },
      "sections": {
-      "total": 16545,
-      "median": 3.0,
-      "p90": 10,
-      "max": 241
+      "total": 21090,
+      "median": 4.0,
+      "p90": 12,
+      "max": 1883
      }
     },
     {
@@ -4937,16 +5696,18 @@
      "blank_text": 0,
      "text_without_sections": 0,
      "with_sections": 291,
-     "split_at_headings": 181,
+     "split_at_headings": 271,
+     "text_fetched": 271,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 28,
       "substitutes": 0
      },
      "sections": {
-      "total": 2929,
-      "median": 4.0,
-      "p90": 19,
-      "max": 232
+      "total": 3637,
+      "median": 5.0,
+      "p90": 24,
+      "max": 532
      }
     },
     {
@@ -4960,6 +5721,8 @@
      "text_without_sections": 0,
      "with_sections": 2,
      "split_at_headings": 1,
+     "text_fetched": 1,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -4981,16 +5744,18 @@
      "blank_text": 0,
      "text_without_sections": 0,
      "with_sections": 3466,
-     "split_at_headings": 2868,
+     "split_at_headings": 3360,
+     "text_fetched": 3360,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 89,
       "substitutes": 0
      },
      "sections": {
-      "total": 20181,
-      "median": 3.0,
-      "p90": 10,
-      "max": 342
+      "total": 22388,
+      "median": 4.0,
+      "p90": 11,
+      "max": 259
      }
     },
     {
@@ -5004,15 +5769,17 @@
      "text_without_sections": 0,
      "with_sections": 4,
      "split_at_headings": 2,
+     "text_fetched": 3,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 97,
-      "median": 8.0,
-      "p90": 80,
-      "max": 80
+      "total": 113,
+      "median": 6.5,
+      "p90": 99,
+      "max": 99
      }
     },
     {
@@ -5025,16 +5792,18 @@
      "blank_text": 0,
      "text_without_sections": 0,
      "with_sections": 304,
-     "split_at_headings": 195,
+     "split_at_headings": 290,
+     "text_fetched": 290,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 25,
       "substitutes": 0
      },
      "sections": {
-      "total": 2671,
-      "median": 4.0,
-      "p90": 21,
-      "max": 157
+      "total": 3184,
+      "median": 5.0,
+      "p90": 22,
+      "max": 349
      }
     }
    ],
@@ -5057,8 +5826,9 @@
    },
    "status": {
     "bill": {
-     "died": 5193,
-     "passed": 1503
+     "died": 5179,
+     "passed": 1507,
+     "passed_legislature": 10
     },
     "concurrent resolution": {
      "died": 48,
@@ -5087,18 +5857,20 @@
      "status_end_date": "2024-11-30",
      "records": 4788,
      "missing_text": 0,
-     "blank_text": 2213,
+     "blank_text": 371,
      "text_without_sections": 0,
-     "with_sections": 2575,
-     "split_at_headings": 1886,
+     "with_sections": 4417,
+     "split_at_headings": 3864,
+     "text_fetched": 2057,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 215,
       "substitutes": 0
      },
      "sections": {
-      "total": 19736,
-      "median": 4.0,
-      "p90": 12,
+      "total": 38990,
+      "median": 5.0,
+      "p90": 14,
       "max": 703
      }
     },
@@ -5109,17 +5881,19 @@
      "status_end_date": "2024-11-30",
      "records": 8,
      "missing_text": 0,
-     "blank_text": 1,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 7,
-     "split_at_headings": 1,
+     "with_sections": 8,
+     "split_at_headings": 2,
+     "text_fetched": 1,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 205,
-      "median": 13.0,
+      "total": 217,
+      "median": 12.5,
       "p90": 72,
       "max": 72
      }
@@ -5131,19 +5905,21 @@
      "status_end_date": "2026-11-30",
      "records": 5272,
      "missing_text": 0,
-     "blank_text": 3567,
+     "blank_text": 805,
      "text_without_sections": 0,
-     "with_sections": 1705,
-     "split_at_headings": 1314,
+     "with_sections": 4467,
+     "split_at_headings": 4185,
+     "text_fetched": 2923,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 161,
       "substitutes": 0
      },
      "sections": {
-      "total": 12825,
-      "median": 4.0,
-      "p90": 12,
-      "max": 573
+      "total": 40534,
+      "median": 5.0,
+      "p90": 14,
+      "max": 621
      }
     }
    ],
@@ -5181,19 +5957,21 @@
      "status_end_date": "2023-06-30",
      "records": 2675,
      "missing_text": 0,
-     "blank_text": 83,
+     "blank_text": 9,
      "text_without_sections": 0,
-     "with_sections": 2592,
-     "split_at_headings": 2049,
+     "with_sections": 2666,
+     "split_at_headings": 2123,
+     "text_fetched": 74,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 9567,
-      "median": 3.0,
-      "p90": 5,
-      "max": 125
+      "total": 17182,
+      "median": 4.0,
+      "p90": 12,
+      "max": 271
      }
     },
     {
@@ -5203,19 +5981,21 @@
      "status_end_date": "2024-06-30",
      "records": 2541,
      "missing_text": 0,
-     "blank_text": 22,
+     "blank_text": 3,
      "text_without_sections": 0,
-     "with_sections": 2519,
-     "split_at_headings": 2017,
+     "with_sections": 2538,
+     "split_at_headings": 2036,
+     "text_fetched": 19,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 9059,
-      "median": 3.0,
-      "p90": 5,
-      "max": 57
+      "total": 16400,
+      "median": 4.0,
+      "p90": 13,
+      "max": 221
      }
     },
     {
@@ -5225,19 +6005,21 @@
      "status_end_date": "2025-06-30",
      "records": 2600,
      "missing_text": 0,
-     "blank_text": 6,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 2594,
-     "split_at_headings": 2123,
+     "with_sections": 2600,
+     "split_at_headings": 2129,
+     "text_fetched": 6,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 9060,
-      "median": 3.0,
-      "p90": 5,
-      "max": 93
+      "total": 15839,
+      "median": 4.0,
+      "p90": 11,
+      "max": 223
      }
     },
     {
@@ -5247,19 +6029,21 @@
      "status_end_date": "2026-06-30",
      "records": 3020,
      "missing_text": 0,
-     "blank_text": 509,
+     "blank_text": 33,
      "text_without_sections": 0,
-     "with_sections": 2511,
-     "split_at_headings": 1990,
+     "with_sections": 2987,
+     "split_at_headings": 2466,
+     "text_fetched": 476,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 8881,
-      "median": 3.0,
-      "p90": 5,
-      "max": 45
+      "total": 19023,
+      "median": 4.0,
+      "p90": 12,
+      "max": 224
      }
     }
    ],
@@ -5295,16 +6079,18 @@
      "status_end_date": "2024-05-09",
      "records": 3977,
      "missing_text": 0,
-     "blank_text": 8,
+     "blank_text": 6,
      "text_without_sections": 0,
-     "with_sections": 3969,
-     "split_at_headings": 2248,
+     "with_sections": 3971,
+     "split_at_headings": 2250,
+     "text_fetched": 2,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 19438,
+      "total": 19447,
       "median": 3.0,
       "p90": 7,
       "max": 562
@@ -5317,16 +6103,18 @@
      "status_end_date": "2026-11-08",
      "records": 4054,
      "missing_text": 0,
-     "blank_text": 3,
+     "blank_text": 2,
      "text_without_sections": 0,
-     "with_sections": 4051,
-     "split_at_headings": 2290,
+     "with_sections": 4052,
+     "split_at_headings": 2291,
+     "text_fetched": 1,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 20643,
+      "total": 20648,
       "median": 3.0,
       "p90": 9,
       "max": 504
@@ -5349,9 +6137,10 @@
    },
    "status": {
     "bill": {
-     "died": 1860,
-     "introduced": 1881,
-     "passed": 483
+     "died": 1857,
+     "introduced": 1878,
+     "passed": 483,
+     "passed_legislature": 6
     },
     "concurrent resolution": {
      "died": 61,
@@ -5379,19 +6168,21 @@
      "status_end_date": "2023-03-27",
      "records": 517,
      "missing_text": 0,
-     "blank_text": 517,
+     "blank_text": 55,
      "text_without_sections": 0,
-     "with_sections": 0,
-     "split_at_headings": 0,
+     "with_sections": 462,
+     "split_at_headings": 460,
+     "text_fetched": 462,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 0,
-      "median": null,
-      "p90": null,
-      "max": null
+      "total": 3996,
+      "median": 5.0,
+      "p90": 16,
+      "max": 194
      }
     },
     {
@@ -5401,19 +6192,21 @@
      "status_end_date": "2024-03-25",
      "records": 560,
      "missing_text": 0,
-     "blank_text": 560,
+     "blank_text": 66,
      "text_without_sections": 0,
-     "with_sections": 0,
-     "split_at_headings": 0,
+     "with_sections": 494,
+     "split_at_headings": 493,
+     "text_fetched": 494,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 0,
-      "median": null,
-      "p90": null,
-      "max": null
+      "total": 3889,
+      "median": 4.0,
+      "p90": 15,
+      "max": 195
      }
     },
     {
@@ -5423,19 +6216,21 @@
      "status_end_date": "2025-03-31",
      "records": 571,
      "missing_text": 0,
-     "blank_text": 571,
+     "blank_text": 67,
      "text_without_sections": 0,
-     "with_sections": 0,
-     "split_at_headings": 0,
+     "with_sections": 504,
+     "split_at_headings": 500,
+     "text_fetched": 504,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 0,
-      "median": null,
-      "p90": null,
-      "max": null
+      "total": 4011,
+      "median": 4.0,
+      "p90": 13,
+      "max": 197
      }
     },
     {
@@ -5445,19 +6240,21 @@
      "status_end_date": "2025-09-10",
      "records": 2,
      "missing_text": 0,
-     "blank_text": 2,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 0,
-     "split_at_headings": 0,
+     "with_sections": 2,
+     "split_at_headings": 2,
+     "text_fetched": 2,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 0,
-      "median": null,
-      "p90": null,
-      "max": null
+      "total": 21,
+      "median": 10.5,
+      "p90": 13,
+      "max": 13
      }
     },
     {
@@ -5467,19 +6264,21 @@
      "status_end_date": "2026-03-31",
      "records": 666,
      "missing_text": 0,
-     "blank_text": 666,
+     "blank_text": 84,
      "text_without_sections": 0,
-     "with_sections": 0,
-     "split_at_headings": 0,
+     "with_sections": 582,
+     "split_at_headings": 580,
+     "text_fetched": 582,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 0,
-      "median": null,
-      "p90": null,
-      "max": null
+      "total": 4819,
+      "median": 5.0,
+      "p90": 16,
+      "max": 143
      }
     }
    ],
@@ -5510,8 +6309,9 @@
      "died": 79
     },
     "joint resolution": {
-     "died": 45,
-     "passed": 4
+     "died": 40,
+     "passed": 4,
+     "passed_legislature": 5
     }
    }
   },
@@ -5528,15 +6328,17 @@
      "text_without_sections": 0,
      "with_sections": 9664,
      "split_at_headings": 5997,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 32963,
+      "total": 36333,
       "median": 3.0,
-      "p90": 5,
-      "max": 197
+      "p90": 6,
+      "max": 379
      }
     },
     {
@@ -5550,15 +6352,17 @@
      "text_without_sections": 0,
      "with_sections": 474,
      "split_at_headings": 223,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 1351,
+      "total": 1459,
       "median": 3.0,
-      "p90": 5,
-      "max": 13
+      "p90": 6,
+      "max": 19
      }
     },
     {
@@ -5572,15 +6376,17 @@
      "text_without_sections": 0,
      "with_sections": 9092,
      "split_at_headings": 5410,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 32332,
+      "total": 36084,
       "median": 3.0,
-      "p90": 5,
-      "max": 129
+      "p90": 7,
+      "max": 169
      }
     },
     {
@@ -5594,15 +6400,17 @@
      "text_without_sections": 0,
      "with_sections": 20,
      "split_at_headings": 14,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 126,
-      "median": 4.0,
-      "p90": 11,
-      "max": 17
+      "total": 186,
+      "median": 5.0,
+      "p90": 20,
+      "max": 25
      }
     },
     {
@@ -5616,6 +6424,8 @@
      "text_without_sections": 0,
      "with_sections": 47,
      "split_at_headings": 12,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -5644,8 +6454,9 @@
    },
    "status": {
     "bill": {
-     "died": 9276,
-     "passed": 2368
+     "died": 9271,
+     "passed": 2371,
+     "passed_legislature": 2
     },
     "joint resolution": {
      "died": 597,
@@ -5666,16 +6477,18 @@
      "status_end_date": "2023-05-29",
      "records": 11809,
      "missing_text": 0,
-     "blank_text": 697,
-     "text_without_sections": 413,
-     "with_sections": 10699,
-     "split_at_headings": 7465,
+     "blank_text": 220,
+     "text_without_sections": 0,
+     "with_sections": 11589,
+     "split_at_headings": 8355,
+     "text_fetched": 890,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 70100,
+      "total": 77980,
       "median": 4.0,
       "p90": 12,
       "max": 2015
@@ -5688,18 +6501,20 @@
      "status_end_date": "2023-06-27",
      "records": 117,
      "missing_text": 0,
-     "blank_text": 26,
+     "blank_text": 17,
      "text_without_sections": 0,
-     "with_sections": 91,
-     "split_at_headings": 57,
+     "with_sections": 100,
+     "split_at_headings": 66,
+     "text_fetched": 9,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 626,
+      "total": 766,
       "median": 4.0,
-      "p90": 16,
+      "p90": 21,
       "max": 59
      }
     },
@@ -5710,18 +6525,20 @@
      "status_end_date": "2023-07-13",
      "records": 169,
      "missing_text": 0,
-     "blank_text": 16,
-     "text_without_sections": 1,
-     "with_sections": 152,
-     "split_at_headings": 85,
+     "blank_text": 8,
+     "text_without_sections": 0,
+     "with_sections": 161,
+     "split_at_headings": 94,
+     "text_fetched": 9,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 1073,
+      "total": 1229,
       "median": 4.0,
-      "p90": 13,
+      "p90": 15,
       "max": 77
      }
     },
@@ -5732,18 +6549,20 @@
      "status_end_date": "2023-11-08",
      "records": 598,
      "missing_text": 0,
-     "blank_text": 62,
-     "text_without_sections": 62,
-     "with_sections": 474,
-     "split_at_headings": 194,
+     "blank_text": 31,
+     "text_without_sections": 0,
+     "with_sections": 567,
+     "split_at_headings": 287,
+     "text_fetched": 93,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 2398,
-      "median": 2.0,
-      "p90": 9,
+      "total": 3660,
+      "median": 3.0,
+      "p90": 12,
       "max": 283
      }
     },
@@ -5754,18 +6573,20 @@
      "status_end_date": "2023-11-17",
      "records": 399,
      "missing_text": 0,
-     "blank_text": 75,
-     "text_without_sections": 34,
-     "with_sections": 290,
-     "split_at_headings": 98,
+     "blank_text": 45,
+     "text_without_sections": 1,
+     "with_sections": 353,
+     "split_at_headings": 161,
+     "text_fetched": 63,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 1538,
+      "total": 2454,
       "median": 2.0,
-      "p90": 8,
+      "p90": 14,
       "max": 277
      }
     },
@@ -5776,18 +6597,20 @@
      "status_end_date": "2025-08-15",
      "records": 593,
      "missing_text": 0,
-     "blank_text": 14,
-     "text_without_sections": 44,
-     "with_sections": 535,
-     "split_at_headings": 358,
+     "blank_text": 7,
+     "text_without_sections": 1,
+     "with_sections": 585,
+     "split_at_headings": 408,
+     "text_fetched": 50,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 4460,
+      "total": 5244,
       "median": 4.0,
-      "p90": 14,
+      "p90": 15,
       "max": 275
      }
     },
@@ -5798,19 +6621,21 @@
      "status_end_date": "2025-09-18",
      "records": 692,
      "missing_text": 0,
-     "blank_text": 20,
-     "text_without_sections": 25,
-     "with_sections": 647,
-     "split_at_headings": 379,
+     "blank_text": 13,
+     "text_without_sections": 1,
+     "with_sections": 678,
+     "split_at_headings": 410,
+     "text_fetched": 31,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 4479,
+      "total": 5450,
       "median": 4.0,
-      "p90": 13,
-      "max": 210
+      "p90": 14,
+      "max": 299
      }
     },
     {
@@ -5820,17 +6645,19 @@
      "status_end_date": "2025-06-02",
      "records": 11503,
      "missing_text": 0,
-     "blank_text": 935,
-     "text_without_sections": 813,
-     "with_sections": 9755,
-     "split_at_headings": 7483,
+     "blank_text": 206,
+     "text_without_sections": 3,
+     "with_sections": 11294,
+     "split_at_headings": 9019,
+     "text_fetched": 1539,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 67619,
-      "median": 4.0,
+      "total": 82182,
+      "median": 5.0,
       "p90": 13,
       "max": 427
      }
@@ -5854,8 +6681,9 @@
    },
    "status": {
     "bill": {
-     "died": 15527,
-     "passed": 2546
+     "died": 15525,
+     "passed": 2546,
+     "passed_legislature": 2
     },
     "concurrent resolution": {
      "died": 244,
@@ -5866,8 +6694,8 @@
      "passed": 34
     },
     "resolution": {
-     "died": 258,
-     "passed": 6323
+     "died": 255,
+     "passed": 6326
     }
    }
   },
@@ -5884,15 +6712,17 @@
      "text_without_sections": 0,
      "with_sections": 929,
      "split_at_headings": 889,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 9663,
-      "median": 4.0,
-      "p90": 19,
-      "max": 342
+      "total": 15345,
+      "median": 6.0,
+      "p90": 32,
+      "max": 513
      }
     },
     {
@@ -5906,13 +6736,15 @@
      "text_without_sections": 0,
      "with_sections": 4,
      "split_at_headings": 3,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 12,
-      "median": 3.0,
+      "total": 14,
+      "median": 4.0,
       "p90": 4,
       "max": 4
      }
@@ -5928,15 +6760,17 @@
      "text_without_sections": 0,
      "with_sections": 1,
      "split_at_headings": 1,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 7,
-      "median": 7.0,
-      "p90": 7,
-      "max": 7
+      "total": 10,
+      "median": 10.0,
+      "p90": 10,
+      "max": 10
      }
     },
     {
@@ -5946,19 +6780,21 @@
      "status_end_date": "2024-03-01",
      "records": 934,
      "missing_text": 0,
-     "blank_text": 50,
+     "blank_text": 12,
      "text_without_sections": 0,
-     "with_sections": 884,
-     "split_at_headings": 829,
+     "with_sections": 922,
+     "split_at_headings": 865,
+     "text_fetched": 38,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 8862,
-      "median": 5.0,
-      "p90": 19,
-      "max": 271
+      "total": 14725,
+      "median": 6.0,
+      "p90": 31,
+      "max": 523
      }
     },
     {
@@ -5968,17 +6804,19 @@
      "status_end_date": "2024-06-20",
      "records": 7,
      "missing_text": 0,
-     "blank_text": 1,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 6,
-     "split_at_headings": 4,
+     "with_sections": 7,
+     "split_at_headings": 5,
+     "text_fetched": 1,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 200,
-      "median": 4.5,
+      "total": 236,
+      "median": 6.0,
       "p90": 161,
       "max": 161
      }
@@ -5994,15 +6832,17 @@
      "text_without_sections": 0,
      "with_sections": 4,
      "split_at_headings": 4,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 22,
-      "median": 5.0,
-      "p90": 8,
-      "max": 8
+      "total": 31,
+      "median": 6.0,
+      "p90": 14,
+      "max": 14
      }
     },
     {
@@ -6012,18 +6852,20 @@
      "status_end_date": "2025-03-17",
      "records": 959,
      "missing_text": 0,
-     "blank_text": 214,
+     "blank_text": 12,
      "text_without_sections": 0,
-     "with_sections": 745,
-     "split_at_headings": 669,
+     "with_sections": 947,
+     "split_at_headings": 857,
+     "text_fetched": 202,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 9194,
+      "total": 11254,
       "median": 5.0,
-      "p90": 23,
+      "p90": 22,
       "max": 587
      }
     },
@@ -6038,6 +6880,8 @@
      "text_without_sections": 0,
      "with_sections": 18,
      "split_at_headings": 17,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -6060,6 +6904,8 @@
      "text_without_sections": 0,
      "with_sections": 5,
      "split_at_headings": 4,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -6082,12 +6928,14 @@
      "text_without_sections": 0,
      "with_sections": 1016,
      "split_at_headings": 935,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 10859,
+      "total": 10869,
       "median": 5.0,
       "p90": 21,
       "max": 352
@@ -6111,16 +6959,17 @@
    },
    "status": {
     "bill": {
-     "died": 1449,
-     "passed": 2140
+     "died": 1442,
+     "passed": 2140,
+     "passed_legislature": 7
     },
     "concurrent resolution": {
      "died": 26,
      "passed": 63
     },
     "joint resolution": {
-     "died": 87,
-     "passed": 77
+     "died": 84,
+     "passed": 80
     },
     "resolution": {
      "died": 9,
@@ -6137,16 +6986,18 @@
      "status_end_date": "2023-03-11",
      "records": 3082,
      "missing_text": 0,
-     "blank_text": 63,
+     "blank_text": 57,
      "text_without_sections": 0,
-     "with_sections": 3019,
-     "split_at_headings": 1761,
+     "with_sections": 3025,
+     "split_at_headings": 1780,
+     "text_fetched": 6,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 183,
       "substitutes": 183
      },
      "sections": {
-      "total": 11084,
+      "total": 11175,
       "median": 2.0,
       "p90": 5,
       "max": 266
@@ -6163,6 +7014,8 @@
      "text_without_sections": 0,
      "with_sections": 51,
      "split_at_headings": 0,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -6181,16 +7034,18 @@
      "status_end_date": "2025-02-22",
      "records": 3595,
      "missing_text": 0,
-     "blank_text": 221,
+     "blank_text": 50,
      "text_without_sections": 0,
-     "with_sections": 3374,
-     "split_at_headings": 1815,
+     "with_sections": 3545,
+     "split_at_headings": 1957,
+     "text_fetched": 171,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 175,
       "substitutes": 175
      },
      "sections": {
-      "total": 10664,
+      "total": 11419,
       "median": 2.0,
       "p90": 5,
       "max": 138
@@ -6203,16 +7058,18 @@
      "status_end_date": "2024-05-20",
      "records": 290,
      "missing_text": 0,
-     "blank_text": 5,
+     "blank_text": 4,
      "text_without_sections": 0,
-     "with_sections": 285,
+     "with_sections": 286,
      "split_at_headings": 4,
+     "text_fetched": 1,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 612,
+      "total": 637,
       "median": 1.0,
       "p90": 2,
       "max": 43
@@ -6225,19 +7082,21 @@
      "status_end_date": "2025-02-22",
      "records": 3512,
      "missing_text": 0,
-     "blank_text": 3512,
+     "blank_text": 403,
      "text_without_sections": 0,
-     "with_sections": 0,
-     "split_at_headings": 0,
+     "with_sections": 3109,
+     "split_at_headings": 1701,
+     "text_fetched": 3109,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 0,
-      "median": null,
-      "p90": null,
-      "max": null
+      "total": 10417,
+      "median": 2.0,
+      "p90": 5,
+      "max": 268
      }
     },
     {
@@ -6247,19 +7106,21 @@
      "status_end_date": "2026-03-14",
      "records": 3637,
      "missing_text": 0,
-     "blank_text": 3637,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 0,
-     "split_at_headings": 0,
+     "with_sections": 3637,
+     "split_at_headings": 2016,
+     "text_fetched": 3637,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 0,
-      "median": null,
-      "p90": null,
-      "max": null
+      "total": 14253,
+      "median": 2.0,
+      "p90": 5,
+      "max": 386
      }
     },
     {
@@ -6269,19 +7130,21 @@
      "status_end_date": "2026-05-01",
      "records": 312,
      "missing_text": 0,
-     "blank_text": 312,
+     "blank_text": 306,
      "text_without_sections": 0,
-     "with_sections": 0,
-     "split_at_headings": 0,
+     "with_sections": 6,
+     "split_at_headings": 3,
+     "text_fetched": 6,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 0,
-      "median": null,
-      "p90": null,
-      "max": null
+      "total": 374,
+      "median": 3.5,
+      "p90": 356,
+      "max": 356
      }
     }
    ],
@@ -6302,9 +7165,10 @@
    },
    "status": {
     "bill": {
-     "died": 6855,
-     "introduced": 1216,
-     "passed": 3413
+     "died": 6677,
+     "introduced": 1209,
+     "passed": 3413,
+     "passed_legislature": 185
     },
     "constitutional amendment": {
      "died": 16,
@@ -6331,18 +7195,20 @@
      "status_end_date": "2024-06-17",
      "records": 1595,
      "missing_text": 0,
-     "blank_text": 131,
+     "blank_text": 15,
      "text_without_sections": 0,
-     "with_sections": 1464,
-     "split_at_headings": 947,
+     "with_sections": 1580,
+     "split_at_headings": 1060,
+     "text_fetched": 164,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 127,
       "substitutes": 79
      },
      "sections": {
-      "total": 12155,
+      "total": 15594,
       "median": 4.0,
-      "p90": 16,
+      "p90": 20,
       "max": 830
      }
     },
@@ -6353,18 +7219,20 @@
      "status_end_date": "2026-05-29",
      "records": 1719,
      "missing_text": 0,
-     "blank_text": 116,
+     "blank_text": 21,
      "text_without_sections": 0,
-     "with_sections": 1603,
-     "split_at_headings": 990,
+     "with_sections": 1698,
+     "split_at_headings": 1095,
+     "text_fetched": 135,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 149,
       "substitutes": 109
      },
      "sections": {
-      "total": 12445,
+      "total": 14409,
       "median": 4.0,
-      "p90": 16,
+      "p90": 18,
       "max": 258
      }
     }
@@ -6418,19 +7286,21 @@
      "status_end_date": "2024-03-07",
      "records": 3093,
      "missing_text": 0,
-     "blank_text": 8,
+     "blank_text": 2,
      "text_without_sections": 0,
-     "with_sections": 3085,
-     "split_at_headings": 4,
+     "with_sections": 3091,
+     "split_at_headings": 2827,
+     "text_fetched": 2851,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 46974,
-      "median": 5.0,
-      "p90": 29,
-      "max": 2220
+      "total": 23736,
+      "median": 4.0,
+      "p90": 14,
+      "max": 1031
      }
     },
     {
@@ -6440,19 +7310,21 @@
      "status_end_date": "2026-03-06",
      "records": 3413,
      "missing_text": 0,
-     "blank_text": 8,
+     "blank_text": 2,
      "text_without_sections": 0,
-     "with_sections": 3405,
-     "split_at_headings": 2,
+     "with_sections": 3411,
+     "split_at_headings": 3109,
+     "text_fetched": 3136,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 53324,
-      "median": 5.0,
-      "p90": 30,
-      "max": 2143
+      "total": 26860,
+      "median": 4.0,
+      "p90": 13,
+      "max": 1185
      }
     }
    ],
@@ -6505,19 +7377,21 @@
      "status_end_date": "2024-05-25",
      "records": 2655,
      "missing_text": 0,
-     "blank_text": 88,
+     "blank_text": 1,
      "text_without_sections": 0,
-     "with_sections": 2567,
-     "split_at_headings": 2113,
+     "with_sections": 2654,
+     "split_at_headings": 2305,
+     "text_fetched": 208,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 121,
       "substitutes": 0
      },
      "sections": {
-      "total": 24517,
+      "total": 26611,
       "median": 3.0,
-      "p90": 14,
-      "max": 3399
+      "p90": 15,
+      "max": 3401
      }
     },
     {
@@ -6531,6 +7405,8 @@
      "text_without_sections": 0,
      "with_sections": 1,
      "split_at_headings": 1,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -6549,16 +7425,18 @@
      "status_end_date": "2026-05-25",
      "records": 2749,
      "missing_text": 0,
-     "blank_text": 71,
+     "blank_text": 10,
      "text_without_sections": 0,
-     "with_sections": 2678,
-     "split_at_headings": 2277,
+     "with_sections": 2739,
+     "split_at_headings": 2456,
+     "text_fetched": 196,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 135,
       "substitutes": 0
      },
      "sections": {
-      "total": 25924,
+      "total": 27852,
       "median": 4.0,
       "p90": 16,
       "max": 3497
@@ -6575,6 +7453,8 @@
      "text_without_sections": 0,
      "with_sections": 2,
      "split_at_headings": 2,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
@@ -6607,8 +7487,8 @@
      "passed": 519
     },
     "joint resolution": {
-     "died": 559,
-     "passed": 22
+     "died": 464,
+     "passed": 117
     },
     "resolution": {
      "died": 15,
@@ -6629,12 +7509,14 @@
      "text_without_sections": 0,
      "with_sections": 2271,
      "split_at_headings": 2037,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 8390,
+      "total": 8391,
       "median": 2.0,
       "p90": 6,
       "max": 490
@@ -6647,18 +7529,20 @@
      "status_end_date": "2023-08-11",
      "records": 89,
      "missing_text": 0,
-     "blank_text": 14,
+     "blank_text": 1,
      "text_without_sections": 0,
-     "with_sections": 75,
-     "split_at_headings": 70,
+     "with_sections": 88,
+     "split_at_headings": 83,
+     "text_fetched": 13,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 235,
+      "total": 271,
       "median": 2.0,
-      "p90": 3,
+      "p90": 4,
       "max": 37
      }
     },
@@ -6669,16 +7553,18 @@
      "status_end_date": "2024-03-09",
      "records": 2829,
      "missing_text": 0,
-     "blank_text": 625,
+     "blank_text": 53,
      "text_without_sections": 0,
-     "with_sections": 2204,
-     "split_at_headings": 1965,
+     "with_sections": 2776,
+     "split_at_headings": 2531,
+     "text_fetched": 572,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 8444,
+      "total": 11613,
       "median": 2.0,
       "p90": 6,
       "max": 490
@@ -6691,18 +7577,20 @@
      "status_end_date": "2024-05-31",
      "records": 35,
      "missing_text": 0,
-     "blank_text": 31,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 4,
-     "split_at_headings": 0,
+     "with_sections": 35,
+     "split_at_headings": 27,
+     "text_fetched": 31,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 10,
+      "total": 80,
       "median": 2.0,
-      "p90": 5,
+      "p90": 4,
       "max": 5
      }
     },
@@ -6713,16 +7601,18 @@
      "status_end_date": "2024-10-31",
      "records": 106,
      "missing_text": 0,
-     "blank_text": 30,
+     "blank_text": 8,
      "text_without_sections": 0,
-     "with_sections": 76,
-     "split_at_headings": 62,
+     "with_sections": 98,
+     "split_at_headings": 83,
+     "text_fetched": 22,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 268,
+      "total": 334,
       "median": 2.0,
       "p90": 4,
       "max": 41
@@ -6735,18 +7625,20 @@
      "status_end_date": "2025-04-12",
      "records": 2710,
      "missing_text": 0,
-     "blank_text": 1479,
+     "blank_text": 23,
      "text_without_sections": 0,
-     "with_sections": 1231,
-     "split_at_headings": 1005,
+     "with_sections": 2687,
+     "split_at_headings": 2426,
+     "text_fetched": 1456,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 4664,
+      "total": 10469,
       "median": 2.0,
-      "p90": 6,
+      "p90": 7,
       "max": 490
      }
     },
@@ -6757,19 +7649,21 @@
      "status_end_date": "2026-03-14",
      "records": 2976,
      "missing_text": 0,
-     "blank_text": 2318,
+     "blank_text": 18,
      "text_without_sections": 0,
-     "with_sections": 658,
-     "split_at_headings": 484,
+     "with_sections": 2958,
+     "split_at_headings": 2687,
+     "text_fetched": 2300,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 2192,
+      "total": 11787,
       "median": 2.0,
-      "p90": 7,
-      "max": 68
+      "p90": 8,
+      "max": 99
      }
     }
    ],
@@ -6816,19 +7710,21 @@
      "status_end_date": "2023-03-10",
      "records": 497,
      "missing_text": 0,
-     "blank_text": 1,
+     "blank_text": 0,
      "text_without_sections": 0,
-     "with_sections": 496,
-     "split_at_headings": 496,
+     "with_sections": 497,
+     "split_at_headings": 497,
+     "text_fetched": 1,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 2014,
-      "median": 4.0,
-      "p90": 5,
-      "max": 54
+      "total": 3623,
+      "median": 5.0,
+      "p90": 13,
+      "max": 82
      }
     },
     {
@@ -6838,19 +7734,21 @@
      "status_end_date": "2024-04-08",
      "records": 366,
      "missing_text": 0,
-     "blank_text": 3,
+     "blank_text": 1,
      "text_without_sections": 0,
-     "with_sections": 363,
-     "split_at_headings": 363,
+     "with_sections": 365,
+     "split_at_headings": 365,
+     "text_fetched": 2,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 1841,
-      "median": 4.0,
-      "p90": 6,
-      "max": 153
+      "total": 3106,
+      "median": 6.0,
+      "p90": 12,
+      "max": 266
      }
     },
     {
@@ -6864,15 +7762,17 @@
      "text_without_sections": 0,
      "with_sections": 556,
      "split_at_headings": 556,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 2359,
-      "median": 4.0,
-      "p90": 5,
-      "max": 46
+      "total": 4429,
+      "median": 6.0,
+      "p90": 12,
+      "max": 267
      }
     },
     {
@@ -6886,15 +7786,17 @@
      "text_without_sections": 0,
      "with_sections": 335,
      "split_at_headings": 335,
+     "text_fetched": 0,
+     "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 1700,
-      "median": 4.0,
-      "p90": 6,
-      "max": 155
+      "total": 2948,
+      "median": 6.0,
+      "p90": 14,
+      "max": 162
      }
     }
    ],

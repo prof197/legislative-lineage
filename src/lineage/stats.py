@@ -11,6 +11,7 @@ from typing import Any
 
 from lineage import queries
 from lineage.sessions import CARRYOVER, load_sessions, status_end_date
+from lineage.status import ENACTED_IN_WORDS, Status
 from lineage.stoplist import file_sha256
 
 COMMAND = "uv run lineage stats"
@@ -88,19 +89,61 @@ def amendment_only(bills_glob: str) -> dict[tuple[str, str], tuple[int, int]]:
     return {(state, session): (n, substitutes) for state, session, n, substitutes in rows}
 
 
-def coverage(tables_dir: Path, *, sessions_path: Path, manifest_path: Path) -> dict[str, Any]:
+def _text_layer(rows: list[tuple[str, int, int, int, int, int]]) -> dict[str, Any]:
+    states = {
+        state: {
+            "eligible": eligible,
+            "usable_exported": exported,
+            "with_sections": merged,
+            "with_sections_fetched": fetched,
+            "with_sections_bulk": bulk,
+        }
+        for state, eligible, exported, merged, fetched, bulk in rows
+    }
+    keys = ("eligible", "usable_exported", "with_sections", "with_sections_fetched",
+            "with_sections_bulk")  # fmt: skip
+    return {"totals": {k: sum(v[k] for v in states.values()) for k in keys}, "states": states}
+
+
+def coverage(
+    tables_dir: Path,
+    *,
+    sessions_path: Path,
+    manifest_path: Path,
+    plan_path: Path = Path("data/text/plan.parquet"),
+) -> dict[str, Any]:
     bills = str(tables_dir / "bills" / "*.parquet")
+    texts = str(tables_dir / "texts" / "*.parquet")
     sections = str(tables_dir / "sections" / "*.parquet")
     session_dates = load_sessions(sessions_path)
     with queries.connect_quiet() as con:
         per_session = queries.coverage_by_session(
-            con, bills_glob=bills, sections_glob=sections, blank_pattern=BLANK_PATTERN
+            con,
+            bills_glob=bills,
+            texts_glob=texts,
+            sections_glob=sections,
+            blank_pattern=BLANK_PATTERN,
+        )
+        text_layer = (
+            queries.text_layer_coverage(
+                con,
+                eligible_path=tables_dir / "eligible.parquet",
+                texts_glob=texts,
+                sections_glob=sections,
+                plan_path=plan_path,
+            )
+            if plan_path.exists() and (tables_dir / "eligible.parquet").exists()
+            else []
         )
         types = queries.type_counts(con, bills_glob=bills)
         commemorative = queries.title_matches(con, bills_glob=bills, pattern=COMMEMORATIVE_TITLE)
         status = queries.status_by_type(con, bills_glob=bills)
         one_chamber = queries.resolutions_adopted_by_one_chamber(con, bills_glob=bills)
         governor = queries.reached_governor_shown_died(con, bills_glob=bills)
+        in_words = queries.status_reason_counts(con, bills_glob=bills, reason=ENACTED_IN_WORDS)
+        finished = queries.status_counts(
+            con, bills_glob=bills, status=Status.PASSED_LEGISLATURE.value
+        )
         carryover = [
             {"state": state, "from": first, "to": second}
             | queries.carryover_overlap(
@@ -122,6 +165,8 @@ def coverage(tables_dir: Path, *, sessions_path: Path, manifest_path: Path) -> d
             "with_sections",
             "split_at_headings",
             "sections",
+            "text_fetched",
+            "text_from_bulk",
         ),
         0,
     )
@@ -146,6 +191,8 @@ def coverage(tables_dir: Path, *, sessions_path: Path, manifest_path: Path) -> d
                 "text_without_sections": row["text_without_sections"],
                 "with_sections": row["with_sections"],
                 "split_at_headings": row["split_at_headings"],
+                "text_fetched": row["text_fetched"],
+                "text_from_bulk": row["text_from_bulk"],
                 "amendment_only": dict(
                     zip(
                         ("all", "substitutes"),
@@ -178,13 +225,19 @@ def coverage(tables_dir: Path, *, sessions_path: Path, manifest_path: Path) -> d
         "manifest_sha256": file_sha256(manifest_path),
         "sessions_csv_sha256": file_sha256(sessions_path),
         "definitions": {
-            "missing_text": "the record has no raw_text",
-            "blank_text": "raw_text has no character Python's str.isspace() rejects",
+            "missing_text": "the record has no stored text",
+            "blank_text": "the stored text has no character Python's str.isspace() rejects",
             "text_without_sections": (
                 "non-blank text that cleaning reduces to nothing or to a notice that the text "
                 "is not available"
             ),
             "split_at_headings": "bills split by the heading rule, not the window fallback",
+            "text_fetched": "records whose text the text layer fetched from the legislature",
+            "text_from_bulk": "records whose text came from California's bulk download",
+            "text_layer": (
+                "per state, over eligible records: usable exported text (the fetch plan's "
+                "kind is usable) against text that yields sections once fetched text is merged"
+            ),
             "commemorative_title_candidates": COMMEMORATIVE_TITLE,
             "amendment_only": (
                 f"text whose first {AMENDMENT_CHARS} characters open like an amendment "
@@ -201,10 +254,13 @@ def coverage(tables_dir: Path, *, sessions_path: Path, manifest_path: Path) -> d
             "amendment_only": sum(n for n, _ in amendments.values()),
             "amendment_substitutes": sum(m for _, m in amendments.values()),
         },
+        "text_layer": _text_layer(text_layer),
         "sessions_without_end_date": unknown_end,
         "status_gaps": {
             "resolutions_adopted_by_one_chamber": _nest(one_chamber),
             "reached_governor_shown_died": _nest(governor),
+            "enacted_in_words": _nest(in_words),
+            "passed_legislature": _nest(finished),
         },
         "carryover": carryover,
         "georgia_local_notices": {"total": sum(notices.values()), "by_session": notices},

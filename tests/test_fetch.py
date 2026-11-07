@@ -1,11 +1,12 @@
 import shutil
+import ssl
 import zipfile
 from pathlib import Path
 
 import pytest
 
 from lineage.disk import InsufficientDiskSpaceError
-from lineage.fetch import USER_AGENT, fetch_raw
+from lineage.fetch import USER_AGENT, fetch_raw, moved, request_url, tls_context
 from lineage.snapshot import load_manifest, scan, verify, write_manifest
 from tests.conftest import Upstream
 
@@ -119,3 +120,29 @@ def test_refuses_to_start_below_the_disk_floor(
         fetch_raw(tmp_path / "fetched", manifest, source=upstream.url, floor_bytes=1 << 60, pause=0)
 
     assert upstream.user_agents == []
+
+
+def test_the_intermediate_bundle_adds_certificates_without_relaxing_verification() -> None:
+    context = tls_context()
+
+    assert context.verify_mode == ssl.CERT_REQUIRED
+    assert context.check_hostname
+    added = (
+        context.cert_store_stats()["x509_ca"]
+        - ssl.create_default_context().cert_store_stats()["x509_ca"]
+    )
+    assert added == 3
+
+
+def test_illinois_beta_links_are_fetched_from_the_main_site() -> None:
+    url = "https://beta.ilga.gov/Legislation/BillStatus/FullText?LegDocId=1&Print=1"
+
+    assert moved(url) == "https://ilga.gov/Legislation/BillStatus/FullText?LegDocId=1&Print=1"
+
+
+def test_spaces_in_a_link_are_escaped_and_existing_escapes_kept() -> None:
+    url = "https://www.oklegislature.gov/cf_pdf/2025-26 ENR/SB/SB1232 ENR.PDF?a=1&b=%20"
+
+    assert request_url(url) == (
+        "https://www.oklegislature.gov/cf_pdf/2025-26%20ENR/SB/SB1232%20ENR.PDF?a=1&b=%20"
+    )

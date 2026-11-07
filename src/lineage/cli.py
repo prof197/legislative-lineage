@@ -10,6 +10,7 @@ import typer
 
 from lineage import __version__
 from lineage.acts import ACTS_DIR
+from lineage.answer_key import ANSWER_KEY, build_answer_key, render_answer_key
 from lineage.commission import RESULTS, CommissionError, commission_recall, write_results
 from lineage.disk import GiB, InsufficientDiskSpaceError
 from lineage.doctypes import RULES, DocTypesError, build_eligibility, rule_samples
@@ -17,7 +18,7 @@ from lineage.fetch import SOURCE, fetch_raw
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
 from lineage.query import IndexMissingError, query_text
-from lineage.results_table import README, ResultsTableError, rendered_readme
+from lineage.results_table import EXPORTED_ONLY, README, ResultsTableError, rendered_readme
 from lineage.sectioning import SectioningError, build_sections
 from lineage.sessions import (
     CARRYOVER,
@@ -30,11 +31,21 @@ from lineage.sessions import (
 from lineage.snapshot import SnapshotError, load_manifest, scan, write_manifest
 from lineage.stats import write_coverage
 from lineage.stoplist import StoplistError, build_stoplist, file_sha256
+from lineage.text_inventory import PLAN, REPORT, build_inventory
+from lineage.text_merge import merge_texts
+from lineage.text_quality import REPORT as QUALITY
+from lineage.text_quality import STORE, run_sample
+from lineage.text_run import REPORT as FETCH_REPORT
+from lineage.text_run import run_fetch
 from lineage.ulc import ENACTMENTS, UlcError
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
 eval_app = typer.Typer(no_args_is_help=True, help="Run an eval and write its results.")
 app.add_typer(eval_app, name="eval")
+text_app = typer.Typer(
+    no_args_is_help=True, help="The text layer: bill text fetched from the source."
+)
+app.add_typer(text_app, name="text")
 
 RawOption = Annotated[Path, typer.Option("--raw", help="Directory of Open States archives.")]
 ManifestOption = Annotated[Path, typer.Option("--manifest", help="Snapshot manifest (committed).")]
@@ -407,16 +418,125 @@ def eval_commission(
     typer.echo(f"misses: {misses or 'none'} -> {results}")
 
 
+@eval_app.command("answer-key")
+def eval_answer_key(
+    tables: TablesOption = Path("data/tables"),
+    enactments: Annotated[
+        Path, typer.Option("--enactments", help="The commission's enactment lists (committed).")
+    ] = ENACTMENTS,
+    sessions: Annotated[
+        Path, typer.Option("--sessions", help="Session dates CSV (committed).")
+    ] = Path("snapshot/sessions.csv"),
+    out: Annotated[Path, typer.Option("--out", help="Answer key CSV (committed).")] = ANSWER_KEY,
+) -> None:
+    """The bills each commission list row resolved to, for checking the mapping by eye."""
+    try:
+        note, rows = build_answer_key(tables, enactments_path=enactments, sessions_path=sessions)
+    except UlcError as e:
+        typer.echo(str(e), err=True)
+        raise typer.Exit(1) from None
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(render_answer_key(rows, note))
+    counted = {(r["act"], r["jurisdiction"], r["year"]) for r in rows if r["counted"] == "yes"}
+    resolved = {(r["act"], r["jurisdiction"], r["year"]) for r in rows if r["bill_id"]}
+    typer.echo(f"{len(resolved)} of {len(counted)} counted rows resolved to a bill -> {out}")
+
+
 @eval_app.command("readme")
 def eval_readme(
     readme: Annotated[Path, typer.Option("--readme", help="The README to update.")] = README,
     results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+    exported_only: Annotated[
+        Path,
+        typer.Option("--exported-only", help="Results on Open States' text alone (committed)."),
+    ] = EXPORTED_ONLY,
 ) -> None:
-    """Regenerate the README's results table from the results file."""
+    """Regenerate the README's results table from the results files."""
     try:
-        text = rendered_readme(readme.read_text(), json.loads(results.read_text()))
+        text = rendered_readme(
+            readme.read_text(),
+            json.loads(results.read_text()),
+            json.loads(exported_only.read_text()),
+        )
     except ResultsTableError as e:
         typer.echo(str(e), err=True)
         raise typer.Exit(1) from None
     readme.write_text(text)
-    typer.echo(f"results table <- {results} -> {readme}")
+    typer.echo(f"results table <- {results}, {exported_only} -> {readme}")
+
+
+@text_app.command("inventory")
+def text_inventory(
+    tables: TablesOption = Path("data/tables"),
+    plan: Annotated[Path, typer.Option("--plan", help="Fetch plan Parquet (local).")] = PLAN,
+    out: Annotated[Path, typer.Option("--out", help="Inventory JSON (committed).")] = REPORT,
+) -> None:
+    """Choose each eligible record's version to fetch, count by host, and read robots.txt."""
+    doc = build_inventory(tables, plan_path=plan, report_path=out)
+    totals = doc["totals"]
+    need = sum(n for k, n in totals.items() if k.startswith("without_text:"))
+    typer.echo(
+        f"{totals['eligible']:,} eligible records, {need:,} without usable text, "
+        f"{totals.get('without_text:planned', 0):,} with a bill version to fetch, "
+        f"on {len(doc['hosts'])} hosts -> {out}"
+    )
+
+
+@text_app.command("sample")
+def text_sample(
+    tables: TablesOption = Path("data/tables"),
+    plan: Annotated[Path, typer.Option("--plan", help="Fetch plan Parquet (local).")] = PLAN,
+    store: Annotated[Path, typer.Option("--store", help="Fetched sample (local).")] = STORE,
+    out: Annotated[Path, typer.Option("--out", help="Quality report JSON (committed).")] = QUALITY,
+    fetch: Annotated[bool, typer.Option(help="Fetch what the store lacks before judging.")] = True,
+) -> None:
+    """Fetch a seeded sample per state and format and judge its text against Open States'."""
+    doc = run_sample(tables, plan_path=plan, store=store, report_path=out, fetch=fetch)
+    cells = [c for formats in doc["states"].values() for c in formats.values()]
+    sampled = sum(sum(c["sampled"].values()) for c in cells)
+    ok = sum(c["outcomes"].get("ok", 0) for c in cells)
+    typer.echo(f"{ok:,} of {sampled:,} sampled documents extracted, {len(cells)} cells -> {out}")
+
+
+@text_app.command("fetch")
+def text_fetch(
+    tables: TablesOption = Path("data/tables"),
+    plan: Annotated[Path, typer.Option("--plan", help="Fetch plan Parquet (local).")] = PLAN,
+    out: Annotated[Path, typer.Option("--out", help="Fetch report JSON (committed).")] = (
+        FETCH_REPORT
+    ),
+    fetch: Annotated[bool, typer.Option(help="Fetch what the store lacks before counting.")] = True,
+) -> None:
+    """Fetch every planned record's text, as rules/text_layer.toml says; resumable."""
+    try:
+        doc = run_fetch(tables, plan_path=plan, report_path=out, fetch=fetch)
+    except InsufficientDiskSpaceError as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    ok = doc["outcomes"].get("ok", 0)
+    left = sum(doc["left_out"].values())
+    typer.echo(
+        f"{ok:,} of {doc['jobs']:,} records fetched with usable text, {left:,} left out -> {out}"
+    )
+
+
+@text_app.command("merge")
+def text_merge(
+    tables: TablesOption = Path("data/tables"),
+    plan: Annotated[Path, typer.Option("--plan", help="Fetch plan Parquet (local).")] = PLAN,
+    exported_only: Annotated[
+        bool, typer.Option(help="Use only the exported text, to measure without the fetch.")
+    ] = False,
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """Choose each record's text, fetched or exported -> data/tables/texts/."""
+    try:
+        counts = merge_texts(
+            tables, plan_path=plan, exported_only=exported_only,
+            floor_bytes=int(min_free_gib * GiB),
+        )  # fmt: skip
+    except InsufficientDiskSpaceError as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    shown = ", ".join(f"{source} {n:,}" for source, n in counts.items())
+    typer.echo(f"{sum(counts.values()):,} records by text source: {shown} -> {tables / 'texts'}")

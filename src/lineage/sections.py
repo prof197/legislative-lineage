@@ -4,6 +4,10 @@ Provisions travel between states section by section, often inside omnibus bills,
 bill is too coarse to compare. A bill is split at its section headings. When none are found,
 the text is cut into windows of about `WINDOW_WORDS` words on paragraph boundaries, so every
 bill with text still yields comparable units. See DESIGN.md#sections.
+
+A bill that enacts a new chapter often does so under one "SECTION 1.", heading each code
+section with its citation alone ("4-9-101. Short title."). Those citations are headings too,
+or the whole chapter would be one section that cannot match the provisions it carries.
 """
 
 import re
@@ -16,20 +20,50 @@ from functools import cache
 WINDOW_WORDS = 200
 
 # Headings start a line: "Section 1.", "SECTION 1.", "Sec. 1.", "SEC. 1.", "§ 1.", with a colon
-# allowed for the period and code-style numbers such as "1-101" or "2a". Alaska prefixes an
-# asterisk and Washington "NEW SECTION."; both are skipped. Lowercase "section" is left out on
-# purpose: at the start of a line it is a wrapped cross-reference far more often than a heading.
+# allowed for the period and code-style numbers such as "1-101", "2a" or New York's "680-a".
+# Alaska prefixes an asterisk and Washington "NEW SECTION."; both are skipped. Lowercase
+# "section" is left out on purpose: at the start of a line it is a wrapped cross-reference far
+# more often than a heading.
 _HEADING = re.compile(
     r"^(?:\*[ \t]*)?(?:NEW SECTION\.[ \t]*)?"
     r"(?P<heading>(?:SECTION|Section|SEC\.|Sec\.|§)[ \t]*"
-    r"\d+[A-Za-z]?(?:[.-]\d+[A-Za-z]?)*[ \t]*[.:])(?=\s|$)",
+    r"\d+[A-Za-z]?(?:[.-]\d+[A-Za-z]?|-[A-Za-z]{1,2})*[ \t]*[.:])(?=\s|$)",
     re.MULTILINE,
 )
+# A code citation alone at the start of a line, then a period: "19-35-1.", "6-3901.",
+# "9-33.2-10.", "39-4A-2.". At least one hyphen is required, so enumerators ("2.") and outline
+# numbers ("31.150.") are not taken for citations, and a year range ("2025-2026.") is not one.
+# Each part after a hyphen starts with a digit: New York labels inserted subdivisions "2-b."
+# and lists an article's contents as "680-a. Definitions.", while its sections start with §.
+_CITATION = re.compile(
+    r"^(?!(?:19|20)\d\d-\d\d(?:\d\d)?\.)"
+    r"(?P<heading>\d+[A-Za-z]?(?:\.\d+[A-Za-z]?)*(?:-\d+[A-Za-z]?(?:\.\d+[A-Za-z]?)*)+\.)"
+    r"(?=\s|$)",
+    re.MULTILINE,
+)
+# A citation is a wrapped cross-reference, not a heading, when the line before ends mid-sentence
+# on a word that introduces one ("as provided by\n1-6-105."), on a hyphen that breaks the
+# citation itself ("16a-\n4-109."), or on a struck citation that Utah replaces with the new one
+# ("Section [76-10-1236]\n76-5c-209."). A blank line between them does not change that.
+_CITES = re.compile(
+    r"(?:[§-]|\d\]|\b(?:sections?|subsections?|chapters?|titles?|articles?|items?|w\.s\.|and|or|to"
+    r"|through|in|of|by|under|law|rsa))\n\n?\Z",
+    re.IGNORECASE,
+)
+# Arizona's export wraps each code section in markers glued to the citation:
+# "START_STATUTE6-251. Short title ... END_STATUTE".
+_STATUTE_MARKERS = re.compile(r"START_STATUTE|END_STATUTE")
 # A line-number gutter: a short number alone or followed by whitespace, never by "." or ")".
 _GUTTER = re.compile(r"^\d{1,3}(?=[ \t]|$)[ \t]*")
 # Treat leading numbers as a gutter only when most lines carry one, as printed bills do.
 _GUTTER_MIN_LINES = 3
 _GUTTER_MIN_SHARE = 0.5
+# Line numbers a PDF prints after the text, or in a column of their own, come out at the end of
+# each line (glued to the last word or after a space) or on lines alone. They are recognized as
+# a run of lines whose numbers count up by one, restarting at 1 on each page; a number that only
+# looks like one ends a run within a few lines.
+_LINE_RUN_MIN = 5
+_LINE_RUN_MAX_GAP = 3
 # A running page header repeats on every page: short, with a number, and without lowercase
 # ("LC 47 3375", "STATE OF WYOMING 25LSO-0123"). Repeated lines that read as text, such as
 # "is amended to read as follows:", stay; the document-frequency stoplist handles those.
@@ -104,6 +138,44 @@ def _strip_gutter(lines: list[str]) -> list[str]:
     return [_GUTTER.sub("", line, count=1) for line in lines]
 
 
+def _without_line_number(line: str, n: int) -> str | None:
+    """`line` without the line number `n` at its end, or None if it does not end with it."""
+    tag = str(n)
+    return line[: -len(tag)].rstrip() if line.endswith(tag) else None
+
+
+def _strip_line_numbers(lines: list[str]) -> list[str]:
+    out = list(lines)
+    dropped: set[int] = set()
+    run: list[tuple[int, str]] = []
+    expected = gap = 0
+
+    def close() -> None:
+        if len(run) >= _LINE_RUN_MIN:
+            for i, rest in run:
+                out[i] = rest
+                if not rest:
+                    dropped.add(i)
+
+    for i, line in enumerate(lines):
+        rest = _without_line_number(line, expected) if run else None
+        if rest is not None:
+            run.append((i, rest))
+            expected, gap = expected + 1, 0
+            continue
+        first = _without_line_number(line, 1)
+        if first is not None:
+            close()
+            run, expected, gap = [(i, first)], 2, 0
+        elif run and line:
+            gap += 1
+            if gap > _LINE_RUN_MAX_GAP:
+                close()
+                run = []
+    close()
+    return [line for i, line in enumerate(out) if i not in dropped]
+
+
 def _is_running_header(line: str, repeats: int) -> bool:
     return (
         repeats >= _HEADER_MIN_REPEATS
@@ -122,8 +194,10 @@ def clean(raw: str) -> str:
     """Display text: one newline convention; no style sheet, invisible character or gutter."""
     text = unicodedata.normalize("NFKC", raw.replace("\r\n", "\n").replace("\r", "\n"))
     text = _STYLE_RULES.sub("", _HTML_COMMENT.sub("", text))
+    text = _STATUTE_MARKERS.sub("", text)
     text = _invisible().sub("", text)
-    lines = _strip_gutter([" ".join(line.split()) for line in text.split("\n")])
+    lines = [" ".join(line.split()) for line in text.split("\n")]
+    lines = _strip_gutter(_strip_line_numbers(lines))
     lines = _strip_running_headers(lines)
     # Keep paragraph breaks, which the window fallback uses, but never more than one.
     return re.sub(r"\n{3,}", "\n\n", "\n".join(lines)).strip()
@@ -166,11 +240,29 @@ def _windows(text: str) -> list[Section]:
     return [Section(i, None, "\n\n".join(w)) for i, w in enumerate(windows, start=1)]
 
 
+def _headings(text: str) -> list[re.Match[str]]:
+    """Section headings, and the citation headings within a bill they already split.
+
+    Every state seen printing citation headings does so under a "SECTION 1.", so a bill with
+    no section heading keeps the window fallback: there, a citation starting a line is a
+    wrapped reference far more often than a heading.
+    """
+    sections = list(_HEADING.finditer(text))
+    if not sections:
+        return []
+    citations = [
+        m
+        for m in _CITATION.finditer(text)
+        if not _CITES.search(text[max(0, m.start() - 16) : m.start()])
+    ]
+    return sorted([*sections, *citations], key=lambda m: m.start())
+
+
 def split_sections(raw: str | None) -> Split:
     text = clean(raw or "")
     if not text or normalize(text) in _NO_TEXT_NOTICES:
         return Split([], by_heading=False)
-    matches = list(_HEADING.finditer(text))
+    matches = _headings(text)
     if not matches:
         return Split(_windows(text), by_heading=False)
     sections: list[Section] = []
