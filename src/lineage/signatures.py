@@ -1,6 +1,6 @@
 """Build the signatures table: one MinHash signature for every window of a matchable section.
 
-A section of up to `WHOLE_MAX` words is one window; a longer one is cut into overlapping
+A section of up to `WINDOW_WORDS` words is one window; a longer one is cut into overlapping
 windows (lineage.windows). Sections files are signed in parallel, one per worker process. Each
 writes a dense uint32 matrix with one row per window (`<stem>.npy`, which memory-maps without
 conversion) and the keys of those rows (`<stem>.parquet`: bill id, section ordinal, window).
@@ -27,7 +27,7 @@ from lineage.disk import require_free_space
 from lineage.minhash import NUM_PERM, SEED, Permutations, permutations, signatures
 from lineage.shingles import section_shingles
 from lineage.stoplist import apply_stoplist, load_stoplist
-from lineage.windows import WHOLE_MAX, WINDOW_STRIDE, WINDOW_WORDS, normalized_windows
+from lineage.windows import WINDOW_STRIDE, WINDOW_WORDS, normalized_windows
 
 # Fork after DuckDB has started threads can deadlock the child; spawn starts each worker clean.
 _SPAWN = multiprocessing.get_context("spawn")
@@ -204,7 +204,6 @@ def build_signatures(tables_dir: Path, *, workers: int, floor_bytes: int) -> dic
         "windows": {
             "words": WINDOW_WORDS,
             "stride": WINDOW_STRIDE,
-            "whole_max": WHOLE_MAX,
             "windowed_sections": sum(c.windowed for c in counts),
             "signed": int(sizes.size),
             "all_stoplisted": sum(c.windows_stoplisted for c in counts),

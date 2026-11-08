@@ -69,6 +69,11 @@ def test_writes_one_report_for_signatures_and_bands(tables: Path, tmp_path: Path
     assert (lsh["bands"], lsh["rows"], lsh["bucket_cap"]) == (32, 4, BUCKET_CAP)
     assert lsh["index_bytes"] == 4 * BANDS * 12
     assert [entry["cap"] for entry in lsh["cap_sweep"]] == list(SWEEP_CAPS)
+    # What DR-3's memory bound is checked against: the build's peak beside the machine's memory.
+    build = doc["build"]
+    assert build["workers"] == 1
+    assert 0 < build["peak_memory_bytes"] < build["machine"]["memory_bytes"]
+    assert build["peak_worker_resident_bytes"] >= 0
 
 
 def test_identical_sections_are_candidates_counted_by_state(tables: Path, tmp_path: Path) -> None:
@@ -163,7 +168,7 @@ def test_window_pairs_become_section_pairs_once_with_their_best_agreement() -> N
 def test_a_provision_inside_another_states_long_section_is_a_verified_pair(
     tmp_path: Path,
 ) -> None:
-    provision = " ".join(f"p{i}" for i in range(120))
+    provision = " ".join(f"p{i}" for i in range(90))
     filler = [f"f{i}" for i in range(2000)]
     long = " ".join([*filler[:700], provision, *filler[700:]])
     tables = tmp_path / "tables"
@@ -196,7 +201,7 @@ def test_a_provision_inside_another_states_long_section_is_a_verified_pair(
 
     doc = build_index(tables, workers=1, floor_bytes=0, report_path=tmp_path / "index.json")
 
-    # Whole, Alabama's section is a sixteenth of Alaska's; one of Alaska's windows holds it.
+    # Whole, Alabama's section is a twentieth of Alaska's; one of Alaska's windows holds it.
     assert doc["windows"]["windowed_sections"] == 1
     assert doc["pairs"]["section_pairs"] == {"cross_state": 1, "same_state": 0}
     stored = load_cross_state_pairs(tables)

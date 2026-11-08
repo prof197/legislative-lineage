@@ -5,7 +5,6 @@ import pytest
 from lineage.sections import normalize
 from lineage.shingles import section_shingles
 from lineage.windows import (
-    WHOLE_MAX,
     WINDOW_STRIDE,
     WINDOW_WORDS,
     display_windows,
@@ -25,11 +24,10 @@ def _jaccard(a: str, b: str) -> float:
 
 def test_windows_overlap_by_half() -> None:
     assert WINDOW_STRIDE * 2 == WINDOW_WORDS
-    assert WHOLE_MAX == 2 * WINDOW_WORDS
 
 
-@pytest.mark.parametrize("n", [1, 50, WHOLE_MAX])
-def test_a_section_up_to_twice_the_window_is_kept_whole(n: int) -> None:
+@pytest.mark.parametrize("n", [1, 50, WINDOW_WORDS])
+def test_a_section_up_to_one_window_is_kept_whole(n: int) -> None:
     text = "Sec. 1.\n" + " ".join(_words(n - 2))
 
     assert window_starts(n) == [0]
@@ -37,7 +35,7 @@ def test_a_section_up_to_twice_the_window_is_kept_whole(n: int) -> None:
     assert normalized_windows(text, "stored") == ["stored"]
 
 
-@pytest.mark.parametrize("n", [WHOLE_MAX + 1, 500, 2003])
+@pytest.mark.parametrize("n", [WINDOW_WORDS + 1, WINDOW_WORDS + WINDOW_STRIDE, 500, 2003])
 def test_a_longer_section_is_cut_into_windows_that_cover_it(n: int) -> None:
     words = _words(n)
 
@@ -55,7 +53,7 @@ def test_a_longer_section_is_cut_into_windows_that_cover_it(n: int) -> None:
 
 
 def test_a_window_normalizes_like_the_section_it_comes_from() -> None:
-    text = " ".join(["Under § 1-6-105.", *_words(WHOLE_MAX), "THE END."])
+    text = " ".join(["Under § 1-6-105.", *_words(WINDOW_WORDS), "THE END."])
 
     windows = normalized_windows(text, normalize(text))
 
@@ -63,16 +61,21 @@ def test_a_window_normalizes_like_the_section_it_comes_from() -> None:
     assert windows[0].startswith("under section 1 6 105 w0")
 
 
+@pytest.mark.parametrize("length", [52, WINDOW_WORDS, 150, 400])
 @pytest.mark.parametrize("offset", range(0, 1900, 37))
 def test_a_provision_inside_a_long_section_has_a_window_like_it_wherever_it_sits(
-    offset: int,
+    length: int, offset: int
 ) -> None:
-    provision = _words(150, "p")
+    provision = _words(length, "p")
     filler = _words(1900, "f")
     section = " ".join(filler[:offset] + provision + filler[offset:])
     act = " ".join(provision)
 
-    # Whole, the act section is under a tenth of the state's: no threshold of 0.5 sees it.
-    assert _jaccard(act, section) < 0.1
-    best = max(_jaccard(act, w) for w in normalized_windows(section, normalize(section)))
+    # Whole, the act section is a small part of the state's: no threshold of 0.5 sees it.
+    assert _jaccard(act, section) < 0.25
+    best = max(
+        _jaccard(a, w)
+        for a in normalized_windows(act, normalize(act))
+        for w in normalized_windows(section, normalize(section))
+    )
     assert best >= 0.5

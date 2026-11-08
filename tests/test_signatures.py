@@ -9,7 +9,7 @@ from lineage.minhash import NUM_PERM, permutations, signatures
 from lineage.shingles import section_shingles
 from lineage.signatures import build_signatures, load_signatures
 from lineage.stoplist import StoplistError, apply_stoplist
-from lineage.windows import WHOLE_MAX, WINDOW_WORDS, normalized_windows, window_starts
+from lineage.windows import WINDOW_WORDS, normalized_windows, window_starts
 
 STOPLISTED = "is hereby amended to read as follows"
 TEXTS = {
@@ -148,7 +148,7 @@ def test_refuses_to_fill_the_disk_and_leaves_no_partial_output(
 
 
 def test_a_long_section_is_signed_window_by_window(tables: Path) -> None:
-    words = [f"w{i}" for i in range(WHOLE_MAX + 1)]
+    words = [f"w{i}" for i in range(WINDOW_WORDS + 1)]
     text = " ".join(words)
     (tables / "sections" / "b.parquet").unlink()
     with queries.connect_quiet() as con:
@@ -177,13 +177,12 @@ def test_a_long_section_is_signed_window_by_window(tables: Path) -> None:
     assert doc["sections"]["signed"] == 3
     assert doc["section_words"]["split_at_headings"] == {
         "median": 10,
-        "p90": WHOLE_MAX + 1,
-        "p99": WHOLE_MAX + 1,
+        "p90": WINDOW_WORDS + 1,
+        "p99": WINDOW_WORDS + 1,
     }
     assert doc["windows"] == {
         "words": WINDOW_WORDS,
         "stride": WINDOW_WORDS // 2,
-        "whole_max": WHOLE_MAX,
         "windowed_sections": 1,
         "signed": 2 + len(windows),
         "all_stoplisted": 0,

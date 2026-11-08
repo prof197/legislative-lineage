@@ -51,7 +51,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   sectioning.py   build the sections table, one worker process per bills file
   doctypes.py     document-type rules (DR-5): which records are matched
   boilerplate.py  pattern list that flags boilerplate-only sections
-  windows.py      the matching unit: a section of up to 188 words whole, a longer one in overlapping 94-word windows (pure functions)
+  windows.py      the matching unit: a section of up to 94 words whole, a longer one in overlapping 94-word windows (pure functions)
   shingles.py     word 5-gram shingles, 32-bit hashes (NumPy; values pinned by a test)
   minhash.py      MinHash signatures, exact (a·x + b) mod p (pure functions; values pinned)
   signatures.py   build the signatures table, one row per window, one worker process per sections file
@@ -83,8 +83,8 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   text_merge.py   `lineage text merge`: the texts table, each record's text and its source; later stages read text only from it
   queries.py      every SQL query the pipeline runs (DR-4)
   disk.py         free-space floor checked before large writes
-benchmarks/       dev-only measurements that need dev dependencies (datasketch)
   memory.py       current and peak memory as the OS charges it (macOS physical footprint)
+benchmarks/       dev-only measurements that need dev dependencies (datasketch)
 tools/            dev and CI checks
   leak_check.py   local paths and deny-listed terms in tracked files and every commit
 evals/            eval inputs: ulc_enactments.csv (hand copy of the commission's lists, dated), ulc_enactments_heldout.csv (the held-out acts' lists, reserves included)
