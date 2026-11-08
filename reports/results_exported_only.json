@@ -611,7 +611,8 @@
   ],
   "miss_reasons": {
    "no_text_in_source": 9,
-   "not_proposed": 2,
+   "amendment_only": 1,
+   "not_proposed": 1,
    "verification": 3
   },
   "excluded": [
@@ -1139,7 +1140,7 @@
     "found_by": null,
     "rank": null,
     "share": null,
-    "miss_reason": "not_proposed",
+    "miss_reason": "amendment_only",
     "bills": [
      {
       "id": "ocd-bill/75aaddc4-4261-47f5-977b-fc6618d7df33",
@@ -1153,7 +1154,7 @@
       "rank": null,
       "share": null,
       "found": false,
-      "reason": "not_proposed"
+      "reason": "amendment_only"
      }
     ]
    },

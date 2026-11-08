@@ -205,7 +205,7 @@
       "state": "DE",
       "session": "152",
       "identifier": "SB 312",
-      "enactment": false
+      "enactment": true
      },
      {
       "rank": 8,
@@ -738,13 +738,13 @@
    "pooled": {
     "all": {
      "enactments": 36,
-     "found": 30,
-     "recall": 0.8333
+     "found": 31,
+     "recall": 0.8611
     },
     "with_text": {
      "enactments": 36,
-     "found": 30,
-     "recall": 0.8333
+     "found": 31,
+     "recall": 0.8611
     }
    },
    "by_act": {
@@ -763,13 +763,13 @@
     "public-expression-protection": {
      "all": {
       "enactments": 14,
-      "found": 9,
-      "recall": 0.6429
+      "found": 10,
+      "recall": 0.7143
      },
      "with_text": {
       "enactments": 14,
-      "found": 9,
-      "recall": 0.6429
+      "found": 10,
+      "recall": 0.7143
      }
     },
     "special-deposits": {
@@ -789,13 +789,13 @@
     "enacted": {
      "all": {
       "enactments": 35,
-      "found": 30,
-      "recall": 0.8571
+      "found": 31,
+      "recall": 0.8857
      },
      "with_text": {
       "enactments": 35,
-      "found": 30,
-      "recall": 0.8571
+      "found": 31,
+      "recall": 0.8857
      }
     },
     "substantially_similar": {
@@ -815,27 +815,27 @@
   "recall_by_min_share": [
    {
     "min_share": 0.0,
+    "found": 31,
+    "found_with_text": 31
+   },
+   {
+    "min_share": 0.1,
     "found": 30,
     "found_with_text": 30
    },
    {
-    "min_share": 0.1,
-    "found": 29,
-    "found_with_text": 29
-   },
-   {
     "min_share": 0.25,
-    "found": 26,
-    "found_with_text": 26
+    "found": 27,
+    "found_with_text": 27
    },
    {
     "min_share": 0.5,
-    "found": 17,
-    "found_with_text": 17
+    "found": 18,
+    "found_with_text": 18
    }
   ],
   "miss_reasons": {
-   "not_proposed": 3,
+   "not_proposed": 2,
    "verification": 3
   },
   "excluded": [
@@ -1359,25 +1359,25 @@
     "stratum": "enacted",
     "match_rule": "in_year",
     "with_text": true,
-    "found": false,
-    "found_by": null,
-    "rank": null,
-    "share": null,
-    "miss_reason": "not_proposed",
+    "found": true,
+    "found_by": "SB 80",
+    "rank": 7,
+    "share": 0.5,
+    "miss_reason": null,
     "bills": [
      {
       "id": "ocd-bill/75aaddc4-4261-47f5-977b-fc6618d7df33",
       "session": "153",
       "identifier": "SB 80",
       "status": "passed",
-      "text_chars": 1315,
-      "signed_sections": 1,
-      "stage": "not_proposed",
-      "best_estimate": 0.1328,
-      "rank": null,
-      "share": null,
-      "found": false,
-      "reason": "not_proposed"
+      "text_chars": 15678,
+      "signed_sections": 21,
+      "stage": "verified",
+      "best_estimate": 1.0,
+      "rank": 7,
+      "share": 0.5,
+      "found": true,
+      "reason": null
      }
     ]
    },
@@ -1504,10 +1504,10 @@
       "session": "135",
       "identifier": "SB 237",
       "status": "passed_legislature",
-      "text_chars": 11343,
-      "signed_sections": 9,
+      "text_chars": 23127,
+      "signed_sections": 14,
       "stage": "verification",
-      "best_estimate": 0.4609,
+      "best_estimate": 0.3281,
       "rank": null,
       "share": null,
       "found": false,

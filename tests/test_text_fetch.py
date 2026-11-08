@@ -4,6 +4,7 @@ import gzip
 import json
 import multiprocessing
 import urllib.error
+from dataclasses import asdict
 from email.message import Message
 from http.client import HTTPResponse
 from pathlib import Path
@@ -146,6 +147,27 @@ def test_a_host_is_paced_at_its_crawl_delay_and_a_rerun_retries_only_failures(
     assert second == {"skipped": 2, "ok": 1}
     rows = [json.loads(line) for line in (tmp_path / "leg.example.jsonl").read_text().splitlines()]
     assert [(r["id"], r["outcome"]) for r in rows][-1] == ("b1", "ok")
+
+
+def test_a_record_is_fetched_again_once_its_link_moves(tmp_path: Path) -> None:
+    job = _jobs(1)[0]
+    # Fetched before at the address its link then led to, and failed there for good.
+    before = Fetched(
+        job.id, job.url, "https://old.example/0", job.format, job.note, job.date,
+        "http_error", 404, "Not Found", 0, None, None, 0.0, AT,
+    )  # fmt: skip
+    (tmp_path / "leg.example.jsonl").write_text(json.dumps(asdict(before)) + "\n")
+
+    def run() -> dict[str, int]:
+        return dict(
+            run_host(
+                "leg.example", [job], tmp_path, read=lambda s, h: _robots(),
+                fetch=_fake_fetch({}), floor_bytes=0,
+            )
+        )  # fmt: skip
+
+    assert run() == {"skipped": 0, "ok": 1}
+    assert run() == {"skipped": 1}
 
 
 def test_a_host_that_keeps_failing_is_stopped(tmp_path: Path) -> None:

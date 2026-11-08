@@ -11,28 +11,28 @@
   "text_from_bulk": "records whose text came from California's bulk download",
   "text_layer": "per state, over eligible records: usable exported text (the fetch plan's kind is usable) against text that yields sections once fetched text is merged",
   "commemorative_title_candidates": "(?i)\\b(commend|congratulat|condolence|mourn|in memory of|honou?ring|recogniz(e|es|ing))",
-  "amendment_only": "text whose first 400 characters open like an amendment ((?i)\\bamendment\\s+(?:no\\.?|number)\\s*[\\d_]+\\.?\\s+(?:on\\s+page|proposed|amend|delete|strike|offered|by\\b|in\\s+the\\b)|\\bamendment\\s+to\\s+(?:house|senate|assembly)\\s+(?:bill|joint|concurrent|resolution)|\\bamendment\\s+in\\s+the\\s+nature\\s+of\\s+a\\s+substitute\\b|\\b(?:floor|committee)\\s+amend(?:ment)?s?\\s+(?:no\\.?\\s|number\\b|\\d|to\\s+(?:lb|ab|hb|sb|house|senate|assembly)\\b)|\\bamend\\s+(?:the\\s+(?:bill|title|substitute|amendments?)\\b|bill\\b|amendments?\\b)|\\bamend\\s+(?:house|senate|assembly)\\s+(?:bill|substitute|joint|concurrent|resolution)|\\bamend\\s+(?:h|s|a|l)\\.?\\s?(?:b|r|j\\.?\\s?r|c\\.?\\s?r)\\.?\\s*\\d+|\\bas\\s+inserted\\s+by\\s+section\\s+\\d+\\s+of\\s+the\\s+bill\\b|\\bstrike\\s+(?:the\\s+original\\s+sections|amendment\\s+\\d+)|\\bon\\s+page\\s+\\d+,?\\s+(?:line|at|after|delete|strike|by)); substitutes also replace the whole bill ((?i)(?:strik\\w*|replac\\w*|delet\\w*)\\s+(?:out\\s+)?(?:all|everything)\\s+after\\s+the\\s+enacting\\s+clause|in\\s+the\\s+nature\\s+of\\s+a\\s+substitute)",
+  "amendment_only": "text whose first 400 characters open like an amendment ((?i)\\bamendment\\s+(?:no\\.?|number)\\s*[\\d_]+\\.?\\s+(?:on\\s+page|proposed|amend|delete|strike|offered|by\\b|in\\s+the\\b)|\\bamendment\\s+to\\s+(?:house|senate|assembly)\\s+(?:bill|joint|concurrent|resolution)|\\bamendment\\s+in\\s+the\\s+nature\\s+of\\s+a\\s+substitute\\b|\\b(?:floor|committee)\\s+amend(?:ment)?s?\\s+(?:no\\.?\\s|number\\b|\\d|to\\s+(?:lb|ab|hb|sb|house|senate|assembly)\\b)|\\bamend\\s+(?:the\\s+(?:bill|title|substitute|amendments?)\\b|bill\\b|amendments?\\b)|\\bamend\\s+(?:house|senate|assembly)\\s+(?:bill|substitute|joint|concurrent|resolution)|\\bamend\\s+(?:h|s|a|l)\\.?\\s?(?:b|r|j\\.?\\s?r|c\\.?\\s?r)\\.?\\s*\\d+|\\bas\\s+inserted\\s+by\\s+section\\s+\\d+\\s+of\\s+the\\s+bill\\b|\\bstrike\\s+(?:the\\s+original\\s+sections|amendment\\s+\\d+)|\\bon\\s+page\\s+\\d+,?\\s+(?:line|at|after|delete|strike|by)|^\\s*synopsis\\s+this\\s+amendment\\b); substitutes also replace the whole bill ((?i)(?:strik\\w*|replac\\w*|delet\\w*)\\s+(?:out\\s+)?(?:all|everything)\\s+after\\s+the\\s+enacting\\s+clause|in\\s+the\\s+nature\\s+of\\s+a\\s+substitute)",
   "georgia_local_notices": "Georgia records whose text has the notice of intention to introduce local legislation ((?i)notice\\s+of\\s+intention\\s+to\\s+introduce\\s+local\\s+legislation) and no enacting clause ((?i)be\\s+it\\s+enacted\\s+by\\s+the\\s+general\\s+assembly)"
  },
  "totals": {
   "records": 525633,
   "missing_text": 2975,
-  "blank_text": 28629,
+  "blank_text": 28617,
   "text_without_sections": 6,
-  "with_sections": 494023,
-  "split_at_headings": 356841,
-  "sections": 3217862,
-  "text_fetched": 144422,
+  "with_sections": 494035,
+  "split_at_headings": 357899,
+  "sections": 3182343,
+  "text_fetched": 145480,
   "text_from_bulk": 2394,
-  "amendment_only": 7588,
+  "amendment_only": 7589,
   "amendment_substitutes": 1851
  },
  "text_layer": {
   "totals": {
    "eligible": 447389,
-   "usable_exported": 301443,
-   "with_sections": 430888,
-   "with_sections_fetched": 144422,
+   "usable_exported": 301442,
+   "with_sections": 430900,
+   "with_sections_fetched": 145480,
    "with_sections_bulk": 2394
   },
   "states": {
@@ -87,9 +87,9 @@
    },
    "DE": {
     "eligible": 1662,
-    "usable_exported": 370,
+    "usable_exported": 369,
     "with_sections": 1629,
-    "with_sections_fetched": 1250,
+    "with_sections_fetched": 1251,
     "with_sections_bulk": 0
    },
    "FL": {
@@ -277,8 +277,8 @@
    "OH": {
     "eligible": 2579,
     "usable_exported": 2554,
-    "with_sections": 2567,
-    "with_sections_fetched": 1517,
+    "with_sections": 2579,
+    "with_sections_fetched": 2574,
     "with_sections_bulk": 0
    },
    "OK": {
@@ -1818,15 +1818,15 @@
      "blank_text": 454,
      "text_without_sections": 0,
      "with_sections": 845,
-     "split_at_headings": 804,
-     "text_fetched": 836,
+     "split_at_headings": 805,
+     "text_fetched": 837,
      "text_from_bulk": 0,
      "amendment_only": {
-      "all": 98,
+      "all": 99,
       "substitutes": 0
      },
      "sections": {
-      "total": 9627,
+      "total": 9648,
       "median": 5.0,
       "p90": 17,
       "max": 580
@@ -5332,21 +5332,21 @@
      "status_end_date": "2024-12-31",
      "records": 2281,
      "missing_text": 0,
-     "blank_text": 24,
+     "blank_text": 12,
      "text_without_sections": 0,
-     "with_sections": 2257,
-     "split_at_headings": 0,
-     "text_fetched": 0,
+     "with_sections": 2269,
+     "split_at_headings": 1052,
+     "text_fetched": 1052,
      "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 56473,
+      "total": 21012,
       "median": 1.0,
-      "p90": 45,
-      "max": 11945
+      "p90": 14,
+      "max": 3713
      }
     },
     {
@@ -5359,18 +5359,18 @@
      "blank_text": 0,
      "text_without_sections": 0,
      "with_sections": 5,
-     "split_at_headings": 0,
-     "text_fetched": 0,
+     "split_at_headings": 5,
+     "text_fetched": 5,
      "text_from_bulk": 0,
      "amendment_only": {
       "all": 0,
       "substitutes": 0
      },
      "sections": {
-      "total": 109,
-      "median": 4.0,
-      "p90": 93,
-      "max": 93
+      "total": 30,
+      "median": 3.0,
+      "p90": 14,
+      "max": 14
      }
     },
     {
