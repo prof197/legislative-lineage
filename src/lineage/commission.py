@@ -107,9 +107,10 @@ def probe(
 ) -> Probe:
     """Replay LSH and verification for one bill's signatures against the query's.
 
-    A section pair is proposed when the two share a band key in a bucket no larger than the cap,
-    and verified when its full signatures agree in enough positions. A bill blocked only by the
-    cap is one whose pair would have verified had its bucket been under the cap.
+    Both sides are signed by window, and a section pair is as far along as its furthest pair of
+    windows. A pair is proposed when the two share a band key in a bucket no larger than the
+    cap, and verified when its full signatures agree in enough positions. A bill blocked only by
+    the cap is one whose pair would have verified had its bucket been under the cap.
     """
     agree = (query[:, None, :] == target[None, :, :]).sum(axis=2)
     shared = band_keys(query)[:, None, :] == band_keys(target)[None, :, :]
@@ -136,7 +137,7 @@ class Relative:
 def target_reason(
     bill: queries.EnactmentBill,
     *,
-    signed_rows: int,
+    signed_sections: int,
     probed: Probe | None,
     relative: Relative | None,
     min_share: float = MIN_SHARE,
@@ -150,7 +151,7 @@ def target_reason(
         return "amendment_only"
     if not bill.eligible:
         return "excluded_type"
-    if signed_rows == 0 or probed is None:
+    if signed_sections == 0 or probed is None:
         return "no_usable_text"
     if probed.stage == "verified":
         raise CommissionError(f"{bill.id} verified against the query but its family is missing")
@@ -253,8 +254,10 @@ def evaluate(
     with queries.connect_quiet() as con:
         located = queries.signature_rows_of(con, keys_paths=files.keys, bill_ids=target_ids)
     rows_of: dict[str, list[tuple[int, int]]] = {}
-    for f, row, bill_id in located:
+    sections_of: dict[str, set[int]] = {}
+    for f, row, bill_id, ordinal in located:
         rows_of.setdefault(bill_id, []).append((f, row))
+        sections_of.setdefault(bill_id, set()).add(ordinal)
 
     index = load_band_index(tables_dir)
     records: list[dict[str, Any]] = []
@@ -265,7 +268,7 @@ def evaluate(
             m.family: Relative(rank, round(m.share, 4), m.identifier)
             for rank, m in enumerate(result.matches, start=1)
         }
-        _, signed = sign_query(query_texts[act], tables_dir)
+        signed = sign_query(query_texts[act], tables_dir).values
         sizes = bucket_sizes(band_keys(signed), index) if signed.shape[0] else None
         targets_by_family = {
             by_id[b.id].family
@@ -307,7 +310,7 @@ def evaluate(
                 relative = relatives.get(record.family) if record.family else None
                 reason = target_reason(
                     record,
-                    signed_rows=len(located_rows),
+                    signed_sections=len(sections_of.get(bill.id, ())),
                     probed=probed,
                     relative=relative,
                     min_share=min_share,
@@ -321,7 +324,7 @@ def evaluate(
                         "identifier": record.identifier,
                         "status": record.status,
                         "text_chars": record.text_chars,
-                        "signed_sections": len(located_rows),
+                        "signed_sections": len(sections_of.get(bill.id, ())),
                         "stage": probed.stage if probed else None,
                         "best_estimate": round(probed.best_estimate, 4) if probed else None,
                         "rank": relative.rank if relative else None,

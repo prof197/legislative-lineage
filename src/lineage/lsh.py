@@ -17,7 +17,10 @@ from lineage.minhash import NUM_PERM
 
 BANDS = 32
 ROWS = 4
-BUCKET_CAP = 1000
+# The smallest cap in the sweep (lineage.bands.SWEEP_CAPS) that removes cross-state candidates
+# from no more than one bucket (reports/index.json, lsh.cap_sweep). Signed by window, one
+# interstate compact's sections fill buckets of over 1,000 windows in 47 to 49 states.
+BUCKET_CAP = 2000
 
 _U27 = np.uint64(27)
 _U30 = np.uint64(30)
@@ -28,6 +31,8 @@ _M2 = np.uint64(0x94D049BB133111EB)
 _LOW32 = np.uint64(0xFFFF_FFFF)
 # Pairs gathered per pass when comparing band keys row by row.
 _CHUNK = 1 << 20
+# Candidate codes held before duplicates across bands are dropped: 2 GiB of uint64.
+_MERGE_AT = 1 << 28
 
 
 @dataclass(frozen=True, slots=True)
@@ -41,7 +46,7 @@ class Candidates:
     left: NDArray[np.uint32]  # signature rows, left < right, pairs sorted and distinct
     right: NDArray[np.uint32]
     buckets_over_cap: int  # summed over bands, as are the next two
-    sections_in_capped_buckets: int
+    rows_in_capped_buckets: int
     pairs_in_capped_buckets: int
     largest_bucket: int
 
@@ -64,7 +69,7 @@ def _mix(z: NDArray[np.uint64]) -> NDArray[np.uint64]:
 def _band_key(values: NDArray[np.uint32], band: int) -> NDArray[np.uint64]:
     w = values[:, band * ROWS : (band + 1) * ROWS].astype(np.uint64)
     # Equal keys for unequal bands only add a candidate, which verification removes. Among
-    # two million sections, a band expects about n^2 / 2^65 < 10^-6 such collisions.
+    # 16 million windows, a band expects about n^2 / 2^65, under 10^-5, such collisions.
     return _mix(_mix(w[:, 0] | (w[:, 1] << _U32)) ^ (w[:, 2] | (w[:, 3] << _U32)))
 
 
@@ -124,17 +129,17 @@ def _distinct(codes: NDArray[np.uint64]) -> NDArray[np.uint64]:
 
 
 def candidate_pairs(index: BandIndex, *, cap: int = BUCKET_CAP) -> Candidates:
-    """Every pair that shares a band key in a bucket of at most `cap` sections."""
-    buckets = [_buckets(index.keys[b]) for b in range(BANDS)]
-    # The pair count is known before any pair is formed, so one array of exactly that size is
-    # filled in place; collecting per-band arrays and joining them would hold two copies.
-    pairs = sum(int((s[s <= cap] * (s[s <= cap] - 1) // 2).sum()) for _, s in buckets)
-    codes = np.empty(pairs, dtype=np.uint64)
-    filled = over = sections = skipped = largest = 0
-    for b, (starts, sizes) in enumerate(buckets):
+    """Every pair that shares a band key in a bucket of at most `cap` rows."""
+    # A pair of identical windows shares all 32 bands, so the pairs formed band by band are
+    # mostly repeats. They are dropped whenever the held pairs pass `_MERGE_AT`, which bounds
+    # memory by the distinct pairs, not by 32 times them.
+    held: list[NDArray[np.uint64]] = []
+    count = over = rows = skipped = largest = 0
+    for b in range(BANDS):
+        starts, sizes = _buckets(index.keys[b])
         capped = sizes[sizes > cap]
         over += capped.size
-        sections += int(capped.sum())
+        rows += int(capped.sum())
         skipped += int((capped * (capped - 1) // 2).sum())
         largest = max(largest, int(sizes.max()) if sizes.size else 0)
         kept = (sizes >= 2) & (sizes <= cap)
@@ -142,12 +147,15 @@ def candidate_pairs(index: BandIndex, *, cap: int = BUCKET_CAP) -> Candidates:
         # per distinct size rather than a loop per bucket.
         for size in np.unique(sizes[kept]).tolist():
             part = _codes(*_pairs_of_size(index.rows[b], starts[sizes == size], size))
-            codes[filled : filled + part.size] = part
-            filled += part.size
-    codes = _distinct(codes)
+            held.append(part)
+            count += part.size
+        if count > _MERGE_AT:
+            held = [_distinct(np.concatenate(held))]
+            count = held[0].size
+    codes = _distinct(np.concatenate(held)) if held else np.empty(0, dtype=np.uint64)
     left = (codes >> _U32).astype(np.uint32)
     right = (codes & _LOW32).astype(np.uint32)
-    return Candidates(left, right, over, sections, skipped, largest)
+    return Candidates(left, right, over, rows, skipped, largest)
 
 
 def cap_sweep(

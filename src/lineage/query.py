@@ -1,7 +1,8 @@
 """`lineage query`: find a bill's near-duplicates in the built index, offline.
 
 The query text goes through the same steps as the corpus: cleaned, split, normalized, with
-boilerplate-only sections set aside, then shingled, stoplisted and signed. Each signature's band
+boilerplate-only sections set aside, then cut into windows, shingled, stoplisted and signed. A
+query section matches a bill when any of its windows matches any of the bill's. Each band
 keys are looked up in the memory-mapped band index by binary search, and a bucket over the
 build's cap yields nothing here either. Every candidate is verified against its stored signature
 at the build's threshold. Matches are grouped by family, so a state's copies of a bill count
@@ -27,6 +28,7 @@ from lineage.shingles import section_shingles
 from lineage.signatures import open_signatures, signature_bill_ids, signature_values
 from lineage.stoplist import apply_stoplist, load_stoplist
 from lineage.verify import THRESHOLD, min_agreements
+from lineage.windows import normalized_windows
 
 
 class IndexMissingError(Exception):
@@ -53,25 +55,48 @@ class Match:
 @dataclass(frozen=True, slots=True)
 class QueryResult:
     sections: int
-    signed: int
+    signed: int  # sections with at least one signed window
     matches: list[Match]
 
 
-def sign_query(raw: str, tables_dir: Path) -> tuple[int, NDArray[np.uint32]]:
-    """The query's section count, and the signatures of its matchable sections."""
+@dataclass(frozen=True, slots=True)
+class SignedQuery:
+    sections: int
+    values: NDArray[np.uint32]  # one signature per signed window
+    section: NDArray[np.int64]  # each window's signed section, numbered from 0
+
+    @property
+    def signed(self) -> int:
+        return int(self.section[-1]) + 1 if self.section.size else 0
+
+
+def sign_query(raw: str, tables_dir: Path) -> SignedQuery:
+    """The query's section count, and the signatures of its matchable sections' windows."""
     split = split_sections(raw)
-    texts = [normalize(section.text) for section in split.sections]
-    matchable = [text for text in texts if boilerplate_kind(text) is None]
-    sets = [
-        s for s in apply_stoplist(section_shingles(matchable), load_stoplist(tables_dir)) if s.size
-    ]
+    texts = [(section.text, normalize(section.text)) for section in split.sections]
+    matchable = [(text, norm) for text, norm in texts if boilerplate_kind(norm) is None]
+    cut = [normalized_windows(text, norm) for text, norm in matchable]
+    kept = apply_stoplist(
+        section_shingles([w for windows in cut for w in windows]), load_stoplist(tables_dir)
+    )
+    sets: list[NDArray[np.uint32]] = []
+    owner: list[int] = []
+    at = 0
+    for windows in cut:
+        signed = [s for s in kept[at : at + len(windows)] if s.size]
+        at += len(windows)
+        if signed:
+            number = owner[-1] + 1 if owner else 0
+            sets += signed
+            owner += [number] * len(signed)
     if not sets:
-        return len(texts), np.empty((0, NUM_PERM), dtype=np.uint32)
-    return len(texts), signatures(sets, permutations())
+        empty = np.empty((0, NUM_PERM), dtype=np.uint32)
+        return SignedQuery(len(texts), empty, np.empty(0, dtype=np.int64))
+    return SignedQuery(len(texts), signatures(sets, permutations()), np.array(owner, np.int64))
 
 
 def bucket_sizes(keys: NDArray[np.uint64], index: BandIndex) -> NDArray[np.int64]:
-    """The size of the bucket each key lands in, per query section and band."""
+    """The size of the bucket each key lands in, per query window and band."""
     sizes = np.empty(keys.shape, dtype=np.int64)
     for band in range(BANDS):
         column = index.keys[band]
@@ -83,7 +108,7 @@ def bucket_sizes(keys: NDArray[np.uint64], index: BandIndex) -> NDArray[np.int64
 def _candidates(
     keys: NDArray[np.uint64], tables_dir: Path
 ) -> tuple[NDArray[np.int64], NDArray[np.int64]]:
-    """(query section, signature row) for every bucket a query section lands in."""
+    """(query window, signature row) for every bucket a query window lands in."""
     index = load_band_index(tables_dir)
     found: list[NDArray[np.int64]] = []
     for band in range(BANDS):
@@ -109,14 +134,14 @@ def require_index(tables_dir: Path) -> None:
 def query_text(raw: str, tables_dir: Path) -> QueryResult:
     """Every family that shares verified text with `raw`, best first."""
     require_index(tables_dir)
-    sections, signed = sign_query(raw, tables_dir)
-    if not signed.shape[0]:
-        return QueryResult(sections, 0, [])
-    query_rows, rows = _candidates(band_keys(signed), tables_dir)
+    query = sign_query(raw, tables_dir)
+    if not query.signed:
+        return QueryResult(query.sections, 0, [])
+    query_rows, rows = _candidates(band_keys(query.values), tables_dir)
     files = open_signatures(tables_dir)
-    counts = np.count_nonzero(signature_values(files, rows) == signed[query_rows], axis=1)
+    counts = np.count_nonzero(signature_values(files, rows) == query.values[query_rows], axis=1)
     kept = counts >= min_agreements(THRESHOLD)
-    query_rows, rows, counts = query_rows[kept], rows[kept], counts[kept]
+    query_rows, rows, counts = query.section[query_rows[kept]], rows[kept], counts[kept]
 
     bill_ids = signature_bill_ids(files, rows)
     with queries.connect_quiet() as con:
@@ -152,9 +177,9 @@ def query_text(raw: str, tables_dir: Path) -> QueryResult:
                 title=shown.title,
                 status=shown.status,
                 sections_matched=len(covered),
-                share=len(covered) / signed.shape[0],
+                share=len(covered) / query.signed,
                 best_estimate=max(best[b] for b in bills) / NUM_PERM,
             )
         )
     results.sort(key=lambda m: (-m.share, -m.best_estimate, m.state, m.identifier, m.bill_id))
-    return QueryResult(sections, signed.shape[0], results)
+    return QueryResult(query.sections, query.signed, results)

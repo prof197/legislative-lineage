@@ -47,18 +47,19 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   sessions.py     session dates from openstates-scrapers, parsed as source, never run
   ingest.py       raw archives -> bills Parquet, one file per archive, with status
   status.py       passed / died / introduced from action classifications
-  sections.py     clean, split at headings (with per-state heading rules) or into windows, normalize (pure functions)
+  sections.py     clean, split at headings (with per-state heading rules) or into fallback windows, normalize (pure functions)
   sectioning.py   build the sections table, one worker process per bills file
   doctypes.py     document-type rules (DR-5): which records are matched
   boilerplate.py  pattern list that flags boilerplate-only sections
+  windows.py      the matching unit: a section of up to 188 words whole, a longer one in overlapping 94-word windows (pure functions)
   shingles.py     word 5-gram shingles, 32-bit hashes (NumPy; values pinned by a test)
   minhash.py      MinHash signatures, exact (a·x + b) mod p (pure functions; values pinned)
-  signatures.py   build the signatures table, one worker process per sections file
+  signatures.py   build the signatures table, one row per window, one worker process per sections file
   lsh.py          LSH banding: band keys, sorted-array buckets, the cap (pure functions)
   bands.py        build the band index from the signatures; cap counter and cap sweep
   verify.py       re-estimate candidates from full signatures; the verification threshold
   families.py     same-state families: bill match shares, connected components (pure functions)
-  pairs.py        verify candidates, store cross-state pairs, write families
+  pairs.py        verify window candidates, store cross-state section pairs, write families
   index.py        `lineage index`: signatures, bands, pairs and families, then reports/index.json
   query.py        `lineage query`: sign a bill's text, look up its bands, verify, group by family
   acts.py         uniform act texts as eval queries: keep the sections, drop comments and notes

@@ -87,7 +87,7 @@ def test_reasons_follow_the_pipeline_from_source_text_to_the_threshold() -> None
     proposed = Probe("verification", 0.4)
 
     def reason(bill: EnactmentBill, rows: int = 3, probed: Probe | None = proposed) -> str | None:
-        return target_reason(bill, signed_rows=rows, probed=probed, relative=None)
+        return target_reason(bill, signed_sections=rows, probed=probed, relative=None)
 
     assert reason(replace(BILL, text_chars=0, amendment_only=True)) == "no_text_in_source"
     assert reason(replace(BILL, amendment_only=True, eligible=False)) == "amendment_only"
@@ -96,7 +96,7 @@ def test_reasons_follow_the_pipeline_from_source_text_to_the_threshold() -> None
     assert reason(BILL) == "verification"
     assert reason(BILL, probed=Probe("not_proposed", 0.1)) == "not_proposed"
     low = Relative(3, 0.1, "HB 12")
-    assert target_reason(BILL, signed_rows=3, probed=None, relative=low, min_share=0.2) == (
+    assert target_reason(BILL, signed_sections=3, probed=None, relative=low, min_share=0.2) == (
         "below_threshold"
     )
     assert list(MISS_REASONS)[-1] == "below_threshold"
@@ -107,8 +107,8 @@ def test_found_is_a_score_above_the_threshold_whatever_the_rank() -> None:
     # failed and enacted versions count, so rank is reported but does not decide.
     far = Relative(400, 0.25, "HB 12")
 
-    assert target_reason(BILL, signed_rows=3, probed=None, relative=far, min_share=0.2) is None
-    assert target_reason(BILL, signed_rows=3, probed=None, relative=far) is None
+    assert target_reason(BILL, signed_sections=3, probed=None, relative=far, min_share=0.2) is None
+    assert target_reason(BILL, signed_sections=3, probed=None, relative=far) is None
 
 
 def _raw_text(tables: Path, bill_id: str) -> str:

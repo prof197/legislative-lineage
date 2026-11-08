@@ -45,14 +45,14 @@ Commission recall: of the bills that enacted three uniform acts, the share that 
 
 | | With the text layer | Open States' text alone |
 |---|---|---|
-| Pooled, three acts | 28 / 36 (77.8%) | 21 / 36 (58.3%) |
-| Electronic Estate Planning Documents | 8 / 9 (88.9%) | 6 / 9 (66.7%) |
-| Public Expression Protection | 7 / 14 (50.0%) | 5 / 14 (35.7%) |
+| Pooled, three acts | 29 / 36 (80.6%) | 22 / 36 (61.1%) |
+| Electronic Estate Planning Documents | 8 / 9 (88.9%) | 7 / 9 (77.8%) |
+| Public Expression Protection | 8 / 14 (57.1%) | 5 / 14 (35.7%) |
 | Special Deposits | 13 / 13 (100.0%) | 10 / 13 (76.9%) |
-| Enacted | 28 / 35 (80.0%) | 21 / 35 (60.0%) |
+| Enacted | 29 / 35 (82.9%) | 22 / 35 (62.9%) |
 | Substantially similar | 0 / 1 (0.0%) | 0 / 1 (0.0%) |
 
-Misses with the text layer: never proposed 7, verification 1. The reasons are defined in DESIGN.md, [Commission recall](DESIGN.md#commission-recall).
+Misses with the text layer: never proposed 3, verification 4. The reasons are defined in DESIGN.md, [Commission recall](DESIGN.md#commission-recall).
 <!-- /results:commission -->
 
 These are the near-duplicate stage's numbers alone: an enactment is found only where a state kept the act's wording closely enough, section by section. The results file lists every enactment's bills, with each bill's signed sections and the stage that lost it. The commission lists no failed bills, so this measures recall only.

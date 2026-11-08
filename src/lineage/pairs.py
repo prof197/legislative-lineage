@@ -1,10 +1,13 @@
 """Verify the LSH candidates, store the cross-state pairs, and group same-state families.
 
-Reads the signatures and band index that `lineage index` writes before it. Writes two tables:
+Reads the signatures and band index that `lineage index` writes before it. Candidates are pairs
+of windows; a section pair is verified when any pair of its windows is (DESIGN.md#windows).
+Writes two tables:
 
 - `<tables>/pairs/`: the verified cross-state section pairs as three aligned vectors
-  (`left.npy` and `right.npy`, signature rows with left < right, and `agreements.npy`, the
-  signature positions on which the two agree), sorted by left row, then right.
+  (`left.npy` and `right.npy`, section numbers with left < right, and `agreements.npy`, the
+  signature positions on which their best pair of windows agrees), sorted by left, then right.
+  Sections are numbered in the signatures table's row order (`SignatureTable.sections`).
 - `<tables>/families/families.parquet`: every signed bill's family, named by the first bill id
   in the family in sort order. A bill with no near-duplicate in its state is its own family.
 
@@ -45,6 +48,31 @@ class SectionPairs:
     left: NDArray[np.uint32]
     right: NDArray[np.uint32]
     agreements: NDArray[np.uint8]
+
+
+def section_pairs(
+    section_of_row: NDArray[np.int64],
+    left: NDArray[np.uint32],
+    right: NDArray[np.uint32],
+    counts: NDArray[np.uint8],
+) -> SectionPairs:
+    """Window pairs as section pairs: each once, with its best window pair's agreements.
+
+    Sections are numbered in row order, so left < right rows give left <= right sections; a pair
+    of windows of one section is not a section pair.
+    """
+    a, b = section_of_row[left], section_of_row[right]
+    apart = a != b
+    codes = (a[apart].astype(np.uint64) << np.uint64(32)) | b[apart].astype(np.uint64)
+    best = counts[apart]
+    order = np.lexsort((-best.astype(np.int16), codes))
+    codes, best = codes[order], best[order]
+    first = np.r_[True, codes[1:] != codes[:-1]] if codes.size else np.empty(0, dtype=bool)
+    return SectionPairs(
+        (codes[first] >> np.uint64(32)).astype(np.uint32),
+        (codes[first] & np.uint64(0xFFFF_FFFF)).astype(np.uint32),
+        best[first],
+    )
 
 
 def _estimate_histogram(counts: NDArray[np.uint8]) -> list[int]:
@@ -88,19 +116,29 @@ def build_pairs(tables_dir: Path, *, floor_bytes: int) -> dict[str, Any]:
     found = candidate_pairs(load_band_index(tables_dir), cap=BUCKET_CAP)
     counts = agreements(table.values, found.left, found.right)
     states = row_states(tables_dir, table)
+    section_of_row = table.sections()
+    first_rows = np.flatnonzero(np.r_[True, section_of_row[1:] != section_of_row[:-1]])
+    bills, inverse = np.unique(
+        np.array([table.bill_ids[i] for i in first_rows.tolist()]), return_inverse=True
+    )
+    bill_of_section = inverse.astype(np.int32)
+    del table
     cross = states[found.left] != states[found.right]
     kept = counts >= min_agreements(THRESHOLD)
-    bills, inverse = np.unique(np.array(table.bill_ids), return_inverse=True)
-    bill_of_row = inverse.astype(np.int32)
     keep_cross = kept & cross
+    same = kept & ~cross
+    stored = section_pairs(
+        section_of_row, found.left[keep_cross], found.right[keep_cross], counts[keep_cross]
+    )
+    linking = section_pairs(section_of_row, found.left[same], found.right[same], counts[same])
     require_free_space(
         tables_dir,
-        needed=int(keep_cross.sum()) * _PAIR_BYTES + bills.size * _FAMILY_ROW_BYTES + (1 << 20),
+        needed=stored.left.size * _PAIR_BYTES + bills.size * _FAMILY_ROW_BYTES + (1 << 20),
         floor=floor_bytes,
     )
 
-    same = kept & ~cross
-    shares = bill_pairs(bill_of_row, found.left[same], found.right[same])
+    # Shares count sections, so a section matched through several windows counts once.
+    shares = bill_pairs(bill_of_section, linking.left, linking.right)
     sweep: list[dict[str, Any]] = []
     labels = np.arange(bills.size, dtype=np.int32)
     with queries.connect_quiet() as con:
@@ -122,9 +160,9 @@ def build_pairs(tables_dir: Path, *, floor_bytes: int) -> dict[str, Any]:
         )
 
     def write_pairs(directory: Path) -> None:
-        np.save(directory / "left.npy", found.left[keep_cross])
-        np.save(directory / "right.npy", found.right[keep_cross])
-        np.save(directory / "agreements.npy", counts[keep_cross])
+        np.save(directory / "left.npy", stored.left)
+        np.save(directory / "right.npy", stored.right)
+        np.save(directory / "agreements.npy", stored.agreements)
 
     def write_families(directory: Path) -> None:
         with queries.connect_quiet() as con:
@@ -143,18 +181,24 @@ def build_pairs(tables_dir: Path, *, floor_bytes: int) -> dict[str, Any]:
         "pairs": {
             "threshold": THRESHOLD,
             "min_agreements": min_agreements(THRESHOLD),
+            # Pairs of windows.
             "verified": {
                 "all": int(kept.sum()),
                 "cross_state": int(keep_cross.sum()),
                 "same_state": int(same.sum()),
                 "dropped": int((~kept).sum()),
             },
-            # Candidates before verification, by estimated similarity in steps of 1/16.
+            # The verified window pairs as pairs of distinct sections.
+            "section_pairs": {
+                "cross_state": int(stored.left.size),
+                "same_state": int(linking.left.size),
+            },
+            # Candidate window pairs before verification, by estimated similarity in 1/16 steps.
             "estimate_histogram": {
                 "cross_state": _estimate_histogram(counts[cross]),
                 "same_state": _estimate_histogram(counts[~cross]),
             },
-            "stored_bytes": int(keep_cross.sum()) * _PAIR_BYTES,
+            "stored_bytes": int(stored.left.size) * _PAIR_BYTES,
         },
         "families": {
             "share": FAMILY_SHARE,

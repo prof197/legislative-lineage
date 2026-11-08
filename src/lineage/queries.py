@@ -293,17 +293,23 @@ def write_stoplist(
 
 
 def matchable_sections(
-    con: duckdb.DuckDBPyConnection, *, sections_path: Path, eligible_path: Path
+    con: duckdb.DuckDBPyConnection,
+    *,
+    sections_path: Path,
+    eligible_path: Path,
+    display: bool = False,
 ) -> duckdb.DuckDBPyConnection:
-    """Start a scan of one sections file's matchable sections: (bill id, ordinal, normalized).
+    """Start a scan of one sections file's matchable sections: (bill id, ordinal, normalized),
+    or (bill id, ordinal, display text, normalized) with `display`.
 
     Matchable means the bill's document type is eligible (DR-5) and the section is not flagged
     as boilerplate. Rows come in key order, so anything built from them is reproducible. Read
     it with `fetchmany`.
     """
+    text = "s.text, " if display else ""
     return con.execute(
-        """
-        SELECT s.bill_id, s.ordinal, s.normalized
+        f"""
+        SELECT s.bill_id, s.ordinal, {text}s.normalized
         FROM read_parquet($sections) s
         SEMI JOIN (SELECT id FROM read_parquet($eligible) WHERE eligible) e ON s.bill_id = e.id
         WHERE s.boilerplate IS NULL
@@ -313,34 +319,72 @@ def matchable_sections(
     )
 
 
-def count_sections(con: duckdb.DuckDBPyConnection, *, sections_glob: str) -> int:
-    row: tuple[int] | None = con.execute(
-        "SELECT count(*) FROM read_parquet($glob)", {"glob": sections_glob}
+def window_bound(con: duckdb.DuckDBPyConnection, *, sections_glob: str, stride: int) -> int:
+    """At most how many windows the sections yield: one per `stride` of a section's display
+    words, plus one."""
+    row: tuple[int | None] | None = con.execute(
+        "SELECT sum(1 + len(string_split_regex(trim(text), '\\s+')) // $stride) "
+        "FROM read_parquet($glob)",
+        {"glob": sections_glob, "stride": stride},
     ).fetchone()
-    return row[0] if row else 0
+    return int(row[0] or 0) if row else 0
+
+
+def section_word_quantiles(
+    con: duckdb.DuckDBPyConnection, *, sections_glob: str, eligible_path: Path
+) -> dict[str, dict[str, int]]:
+    """Display words per matchable section, over all of them and over those split at headings:
+    the median, 90th and 99th percentiles."""
+    rows: list[tuple[str, int | None, int | None, int | None]] = con.execute(
+        """
+        WITH w AS (
+            SELECT s.by_heading, len(string_split_regex(trim(s.text), '\\s+')) AS words
+            FROM read_parquet($sections) s
+            SEMI JOIN (SELECT id FROM read_parquet($eligible) WHERE eligible) e ON s.bill_id = e.id
+            WHERE s.boilerplate IS NULL
+        )
+        SELECT 'all', quantile_disc(words, 0.5), quantile_disc(words, 0.9),
+            quantile_disc(words, 0.99) FROM w
+        UNION ALL
+        SELECT 'split_at_headings', quantile_disc(words, 0.5), quantile_disc(words, 0.9),
+            quantile_disc(words, 0.99) FROM w WHERE by_heading
+        """,
+        {"sections": sections_glob, "eligible": str(eligible_path)},
+    ).fetchall()
+    return {
+        name: {"median": median, "p90": p90 or 0, "p99": p99 or 0}
+        for name, median, p90, p99 in sorted(rows)
+        if median is not None
+    }
 
 
 def write_signature_keys(
-    con: duckdb.DuckDBPyConnection, *, parquet_path: Path, bill_ids: list[str], ordinals: list[int]
+    con: duckdb.DuckDBPyConnection,
+    *,
+    parquet_path: Path,
+    bill_ids: list[str],
+    ordinals: list[int],
+    windows: list[int],
 ) -> None:
-    """The keys of a signature matrix, row for row."""
+    """The keys of a signature matrix, row for row: bill id, section ordinal, window number."""
     query = f"""
         COPY (
             SELECT
                 CAST(unnest($bill_ids) AS VARCHAR) AS bill_id,
-                CAST(unnest($ordinals) AS INTEGER) AS ordinal
+                CAST(unnest($ordinals) AS INTEGER) AS ordinal,
+                CAST(unnest($windows) AS INTEGER) AS window_number
         ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
     """
-    con.execute(query, {"bill_ids": bill_ids, "ordinals": ordinals})
+    con.execute(query, {"bill_ids": bill_ids, "ordinals": ordinals, "windows": windows})
 
 
 def read_signature_keys(
     con: duckdb.DuckDBPyConnection, *, parquet_path: Path
-) -> tuple[list[str], list[int]]:
-    rows: list[tuple[str, int]] = con.execute(
-        "SELECT bill_id, ordinal FROM read_parquet($p)", {"p": str(parquet_path)}
+) -> tuple[list[str], list[int], list[int]]:
+    rows: list[tuple[str, int, int]] = con.execute(
+        "SELECT bill_id, ordinal, window_number FROM read_parquet($p)", {"p": str(parquet_path)}
     ).fetchall()
-    return [b for b, _ in rows], [o for _, o in rows]
+    return [b for b, _, _ in rows], [o for _, o, _ in rows], [w for _, _, w in rows]
 
 
 def signature_bill_ids_at(
@@ -476,13 +520,14 @@ def listed_bills(
 
 def signature_rows_of(
     con: duckdb.DuckDBPyConnection, *, keys_paths: list[Path], bill_ids: list[str]
-) -> list[tuple[int, int, str]]:
-    """(file index, row within the file, bill id) of every signature row of the wanted bills."""
+) -> list[tuple[int, int, str, int]]:
+    """(file index, row within the file, bill id, section ordinal) of every signature row of the
+    wanted bills."""
     if not keys_paths or not bill_ids:
         return []
-    found: list[tuple[str, int, str]] = con.execute(
+    found: list[tuple[str, int, str, int]] = con.execute(
         """
-        SELECT filename, file_row_number, bill_id
+        SELECT filename, file_row_number, bill_id, ordinal
         FROM read_parquet($paths, filename = true, file_row_number = true)
         WHERE bill_id IN (SELECT unnest($ids))
         ORDER BY filename, file_row_number
@@ -490,7 +535,7 @@ def signature_rows_of(
         {"paths": [str(p) for p in keys_paths], "ids": bill_ids},
     ).fetchall()
     index = {str(p): i for i, p in enumerate(keys_paths)}
-    return [(index[name], row, bill_id) for name, row, bill_id in found]
+    return [(index[name], row, bill_id, ordinal) for name, row, bill_id, ordinal in found]
 
 
 def bill_states(con: duckdb.DuckDBPyConnection, *, bills_glob: str) -> dict[str, str]:

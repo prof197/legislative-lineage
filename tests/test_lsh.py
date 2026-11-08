@@ -2,6 +2,7 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
+from lineage import lsh
 from lineage.lsh import (
     BANDS,
     ROWS,
@@ -119,6 +120,25 @@ def test_candidates_come_back_sorted_and_distinct() -> None:
     assert np.all(codes[1:] > codes[:-1])
 
 
+def test_dropping_repeats_as_pairs_pile_up_changes_no_candidate(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    values = _random_signatures(30, seed=8)
+    for i in range(0, 30, 3):  # ten triples identical in every band: 3 pairs each, 32 times over
+        for band in range(BANDS):
+            _share_band(values, i, i + 1, band)
+            _share_band(values, i, i + 2, band)
+    index = build_band_index(values)
+    expected = candidate_pairs(index, cap=100)
+
+    monkeypatch.setattr(lsh, "_MERGE_AT", 4)
+    merged = candidate_pairs(index, cap=100)
+
+    assert np.array_equal(merged.left, expected.left)
+    assert np.array_equal(merged.right, expected.right)
+    assert merged.left.size == 30
+
+
 def test_a_bucket_over_the_cap_is_skipped_and_counted() -> None:
     values = _random_signatures(12, seed=6)
     for j in range(1, 5):  # a bucket of 5 in band 0
@@ -132,7 +152,7 @@ def test_a_bucket_over_the_cap_is_skipped_and_counted() -> None:
         (a, b) for a in range(5, 9) for b in range(5, 9) if a < b
     }
     assert found.buckets_over_cap == 1
-    assert found.sections_in_capped_buckets == 5
+    assert found.rows_in_capped_buckets == 5
     assert found.pairs_in_capped_buckets == 10
     assert found.largest_bucket == 5
 

@@ -9,7 +9,7 @@ from lineage.bands import SWEEP_CAPS, load_band_index
 from lineage.disk import InsufficientDiskSpaceError
 from lineage.index import build_index
 from lineage.lsh import BANDS, BUCKET_CAP, build_band_index
-from lineage.pairs import load_cross_state_pairs, load_families
+from lineage.pairs import load_cross_state_pairs, load_families, section_pairs
 from lineage.signatures import load_signatures
 
 COPIED = "a person who knowingly sells a catalytic converter without a receipt commits a felony"
@@ -79,7 +79,7 @@ def test_identical_sections_are_candidates_counted_by_state(tables: Path, tmp_pa
     assert doc["lsh"]["largest_bucket"] == 3
     assert doc["lsh"]["capped"] == {
         "buckets": 0,
-        "section_memberships": 0,
+        "window_memberships": 0,
         "pairs": 0,
         "cross_state_pairs_lost": 0,
     }
@@ -144,3 +144,61 @@ def test_groups_same_state_copies_into_one_family(tables: Path, tmp_path: Path) 
     assert doc["families"]["families_of_two_or_more"] == 1
     assert doc["families"]["bills_in_them"] == 2
     assert doc["families"]["largest"] == [{"family": "b1", "state": "AL", "bills": 2}]
+
+
+def test_window_pairs_become_section_pairs_once_with_their_best_agreement() -> None:
+    # Rows 0-2 are section 0's windows, row 3 section 1, rows 4-5 section 2.
+    section_of_row = np.array([0, 0, 0, 1, 2, 2], dtype=np.int64)
+    left = np.array([0, 1, 2, 0, 3, 4], dtype=np.uint32)
+    right = np.array([4, 5, 5, 1, 4, 5], dtype=np.uint32)
+    counts = np.array([70, 90, 80, 128, 64, 128], dtype=np.uint8)
+
+    pairs = section_pairs(section_of_row, left, right, counts)
+
+    # (0, 1) and (4, 5) pair windows of one section and are not section pairs.
+    assert list(zip(pairs.left.tolist(), pairs.right.tolist(), strict=True)) == [(0, 2), (1, 2)]
+    assert pairs.agreements.tolist() == [90, 64]
+
+
+def test_a_provision_inside_another_states_long_section_is_a_verified_pair(
+    tmp_path: Path,
+) -> None:
+    provision = " ".join(f"p{i}" for i in range(120))
+    filler = [f"f{i}" for i in range(2000)]
+    long = " ".join([*filler[:700], provision, *filler[700:]])
+    tables = tmp_path / "tables"
+    (tables / "sections").mkdir(parents=True)
+    (tables / "bills").mkdir()
+    ids, states, texts = ["a1", "k1"], ["AL", "AK"], [provision, long]
+    with queries.connect_quiet() as con:
+        queries.write_sections(
+            con,
+            parquet_path=tables / "sections" / "s.parquet",
+            columns=queries.SectionColumns(
+                ids, [1, 1], [None, None], texts, texts, [True, True], [None, None]
+            ),
+        )
+        queries.write_eligibility(
+            con,
+            parquet_path=tables / "eligible.parquet",
+            ids=ids,
+            eligible=[True] * 2,
+            rules=[1] * 2,
+        )
+        queries.write_stoplist(
+            con, parquet_path=tables / "stoplist.parquet", hashes=[], sections=[]
+        )
+        con.execute(
+            "COPY (SELECT unnest($ids) AS id, unnest($states) AS state) TO "
+            f"'{tables / 'bills' / 'b.parquet'}' (FORMAT parquet)",
+            {"ids": ids, "states": states},
+        )
+
+    doc = build_index(tables, workers=1, floor_bytes=0, report_path=tmp_path / "index.json")
+
+    # Whole, Alabama's section is a sixteenth of Alaska's; one of Alaska's windows holds it.
+    assert doc["windows"]["windowed_sections"] == 1
+    assert doc["pairs"]["section_pairs"] == {"cross_state": 1, "same_state": 0}
+    stored = load_cross_state_pairs(tables)
+    assert (stored.left.tolist(), stored.right.tolist()) == ([0], [1])
+    assert stored.agreements[0] >= 64

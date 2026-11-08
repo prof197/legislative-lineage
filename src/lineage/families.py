@@ -35,25 +35,26 @@ class BillPairs:
 
 
 def bill_pairs(
-    bill_of_row: NDArray[np.int32], left: NDArray[np.uint32], right: NDArray[np.uint32]
+    bill_of_section: NDArray[np.int32], left: NDArray[np.uint32], right: NDArray[np.uint32]
 ) -> BillPairs:
     """Match shares for every pair of bills joined by a section pair (left[i], right[i]).
 
-    Rows are signature rows and `bill_of_row` numbers their bills from 0. Pairs within one bill
+    Sections are numbered as the signatures table numbers them (one number for all of a
+    section's windows), and `bill_of_section` numbers their bills from 0. Pairs within one bill
     are ignored. A section counts once toward a share, however many sections of the other bill
     it matches.
     """
-    sections = np.bincount(bill_of_row)
-    a, b = bill_of_row[left], bill_of_row[right]
+    sections = np.bincount(bill_of_section)
+    a, b = bill_of_section[left], bill_of_section[right]
     apart = a != b
     owner = np.concatenate([a[apart], b[apart]]).astype(np.uint64)
     other = np.concatenate([b[apart], a[apart]]).astype(np.uint64)
-    row = np.concatenate([left[apart], right[apart]])
+    section = np.concatenate([left[apart], right[apart]])
     key = (owner << _U32) | other
-    order = np.lexsort((row, key))
-    key, row = key[order], row[order]
+    order = np.lexsort((section, key))
+    key, section = key[order], section[order]
     first_of_run = np.ones(key.size, dtype=bool)
-    first_of_run[1:] = (key[1:] != key[:-1]) | (row[1:] != row[:-1])
+    first_of_run[1:] = (key[1:] != key[:-1]) | (section[1:] != section[:-1])
     keys, matched = np.unique(key[first_of_run], return_counts=True)
     owners = (keys >> _U32).astype(np.int32)
     others = (keys & _LOW32).astype(np.int32)
@@ -89,12 +90,12 @@ def linked(pairs: BillPairs, share: float = FAMILY_SHARE) -> NDArray[np.bool_]:
 
 def families(
     n_bills: int,
-    bill_of_row: NDArray[np.int32],
+    bill_of_section: NDArray[np.int32],
     left: NDArray[np.uint32],
     right: NDArray[np.uint32],
     share: float = FAMILY_SHARE,
 ) -> NDArray[np.int32]:
     """Each bill's family, labelled by its smallest bill number, from same-state section pairs."""
-    pairs = bill_pairs(bill_of_row, left, right)
+    pairs = bill_pairs(bill_of_section, left, right)
     keep = linked(pairs, share)
     return components(n_bills, pairs.first[keep], pairs.second[keep])
