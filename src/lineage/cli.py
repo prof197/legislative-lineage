@@ -1,5 +1,6 @@
 """The `lineage` command line. Each subcommand is a thin wrapper over a library function."""
 
+import datetime
 import json
 import os
 import time
@@ -19,6 +20,15 @@ from lineage.embed import load_model
 from lineage.fetch import SOURCE, FetchError, fetch_raw
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
+from lineage.labels import (
+    LABELS_PATH,
+    LabelError,
+    load_labels,
+    load_sample,
+    pending,
+    section_texts,
+    session,
+)
 from lineage.memory import MemoryBoundError
 from lineage.models import MODELS, MODELS_DIR, ModelError, fetch_model
 from lineage.neighbors import EF_SEARCH, RECALL_FLOOR, build_neighbors
@@ -476,6 +486,45 @@ def query(
 
 
 _STAGE_MARKS = {"near_duplicate": "n", "semantic": "s"}
+
+
+@app.command()
+def label(
+    sample: Annotated[
+        Path,
+        typer.Argument(
+            help="The precision sample, one pair per line.", exists=True, dir_okay=False
+        ),
+    ],
+    tables: TablesOption = Path("data/tables"),
+    labels: Annotated[
+        Path, typer.Option("--labels", help="Labels file, appended to (committed).")
+    ] = LABELS_PATH,
+    color: Annotated[bool, typer.Option("--color/--no-color", help="Mark spans in color.")] = True,
+) -> None:
+    """Label sampled matches by hand, unrelated (0) to identical (4); stop and resume at will."""
+    try:
+        pairs = pending(load_sample(sample), load_labels(labels))
+        texts = section_texts(tables, pairs)
+    except LabelError as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    if not pairs:
+        typer.echo(f"Every pair in {sample} has a label in {labels}.")
+        return
+    labels.parent.mkdir(parents=True, exist_ok=True)
+    done = session(
+        pairs,
+        texts=texts.__getitem__,
+        ask=lambda prompt: str(
+            typer.prompt(prompt, default="", show_default=False, prompt_suffix="")
+        ),
+        show=typer.echo,
+        labels_path=labels,
+        today=datetime.date.today().isoformat(),
+        color=color,
+    )
+    typer.echo(f"{done} labeled, {len(pairs) - done} left -> {labels}")
 
 
 @app.command()

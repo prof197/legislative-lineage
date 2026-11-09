@@ -21,6 +21,7 @@ Sections marked **To be measured** fill in as the build reaches them. Every numb
 - [Pair dataset](#pair-dataset)
 - [Stage ablation](#stage-ablation)
 - [Alignment](#alignment)
+- [Precision sample](#precision-sample)
 - [Alternatives considered](#alternatives-considered)
 - [Scaling limits](#scaling-limits)
 - [Known failure modes](#known-failure-modes)
@@ -388,6 +389,12 @@ A match says two sections are related; alignment shows where. Both display texts
 - **Unmatched:** text on one side only, and both sides of a pair with no copy that only the near-duplicate stage would have found.
 
 Every span has an id in reading order and its character offsets in both texts, so the site can highlight it and an explanation can cite it, which code checks ([Constraints](#constraints)). Junk detection is off, since it would treat frequent words such as "the" as unmatchable in long sections.
+
+## Precision sample
+
+Recall has an answer key; precision needs labels. A seeded sample of matches, drawn per stage, is labeled on the labeled pair dataset's scale, unrelated (0) to identical (4), so a match counts as correct when it is related or closer, the same bar the semantic stage's threshold was set to ([Pair dataset](#pair-dataset)).
+
+`uv run lineage label SAMPLE` shows each pair's two sections aligned ([Alignment](#alignment)) and asks for a label. Each label is appended to `evals/precision_labels.jsonl` with its labeler and date as soon as it is given, so labeling stops and resumes at will. The file holds pair ids and labels, never text. Provisional labels from a model, written before the hand labels are done, carry their own labeler and never stand in for a person's.
 
 ## Alternatives considered
 

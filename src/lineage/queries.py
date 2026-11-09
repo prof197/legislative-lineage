@@ -1145,6 +1145,25 @@ def matchable_bill_ids(
     return [bill for (bill,) in rows]
 
 
+def section_texts_at(
+    con: duckdb.DuckDBPyConnection, *, sections_glob: str, keys: list[tuple[str, int]]
+) -> dict[tuple[str, int], str]:
+    """The display text of each wanted (bill id, ordinal) section."""
+    rows: list[tuple[str, int, str]] = con.execute(
+        """
+        SELECT s.bill_id, s.ordinal, s.text FROM read_parquet($sections) s
+        JOIN (SELECT unnest($ids) AS bill_id, unnest($ordinals) AS ordinal) k
+            ON s.bill_id = k.bill_id AND s.ordinal = k.ordinal
+        """,
+        {
+            "sections": sections_glob,
+            "ids": [b for b, _ in keys],
+            "ordinals": [o for _, o in keys],
+        },
+    ).fetchall()
+    return {(b, o): t for b, o, t in rows}
+
+
 def matchable_section_texts(
     con: duckdb.DuckDBPyConnection, *, sections_glob: str, eligible_path: Path, ids: list[str]
 ) -> list[tuple[str, int, str]]:

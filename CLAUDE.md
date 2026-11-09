@@ -29,6 +29,7 @@ uv run lineage eval answer-key  # each commission list row and the bills it reso
 uv run lineage eval answer-key --held-out  # the held-out lists resolved, development-set bills skipped -> reports/answer_key_heldout.csv
 uv run lineage eval commission --held-out --final  # held-out recall: run once, at the end of M5, never before
 uv run lineage eval readme   # regenerate README.md's results table from reports/results.json and results_exported_only.json
+uv run lineage label SAMPLE  # label sampled matches by hand, 0 unrelated to 4 identical, resumable -> evals/precision_labels.jsonl
 uv run lineage pair-data fetch  # the labeled pair dataset at its pinned commit -> data/pair_data/ (local, evaluation only, never committed)
 uv run lineage eval pair-data  # both stages scored on the pair dataset; each model's threshold set on train+val, measured on test -> reports/pair_data.json
 uv run lineage text inventory  # version to fetch per record, by host, robots.txt read -> data/text/plan.parquet, reports/text_inventory.json
@@ -80,6 +81,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   semantic.py     the semantic stage: its model and threshold, as the pair evaluation chose them, and a query's search by meaning
   neighbors.py    `lineage neighbors`: every distinct window's nearest neighbors for the build, HNSW over the float16 vectors
   align.py        word-level alignment of a section pair: copied, paraphrased and unmatched spans, with ids and offsets (pure functions)
+  labels.py       `lineage label`: a person labels the precision sample's pairs, aligned; labels appended with their labeler
   stoplist.py     document-frequency stoplist and its report
   stats.py        coverage report: the measurements that replace the design's estimates
   versions.py     which bill version the text layer fetches (pure functions)
@@ -104,7 +106,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
 tools/            dev and CI checks
   leak_check.py   local paths and deny-listed terms in tracked files and every commit
-evals/            eval inputs: ulc_enactments.csv (hand copy of the commission's lists, dated), ulc_enactments_heldout.csv (the held-out acts' lists, reserves included)
+evals/            eval inputs: ulc_enactments.csv (hand copy of the commission's lists, dated), ulc_enactments_heldout.csv (the held-out acts' lists, reserves included), precision_labels.jsonl (the precision sample's labels: pair id, label, labeler, date; no text)
   fixture.py      dev-only: builds tests/fixtures/commission/ from the snapshot
 tests/            pytest; small committed fixtures only
   fixtures/openstates/  trimmed real records in archive layout (README + *_bills.json)
