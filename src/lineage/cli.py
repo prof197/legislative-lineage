@@ -6,7 +6,7 @@ import os
 import time
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Any
 
 import numpy as np
 import typer
@@ -26,6 +26,7 @@ from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
 from lineage.labels import (
     LABELS_PATH,
+    Item,
     LabelError,
     current_labels,
     load_labels,
@@ -37,6 +38,9 @@ from lineage.labels import (
     session,
 )
 from lineage.memory import MemoryBoundError
+from lineage.model_labels import MODEL_ID as LABEL_MODEL
+from lineage.model_labels import anthropic_ask as anthropic_label_ask
+from lineage.model_labels import label_with_model, model_pending
 from lineage.models import MODELS, MODELS_DIR, ModelError, fetch_model
 from lineage.neighbors import EF_SEARCH, RECALL_FLOOR, build_neighbors
 from lineage.neighbors import REPORT as NEIGHBORS_REPORT
@@ -45,6 +49,9 @@ from lineage.pair_data import PAIR_DATA_DIR, PairDataError, fetch_pair_data
 from lineage.pair_eval import REPORT as PAIR_REPORT
 from lineage.pair_eval import evaluate as evaluate_pairs
 from lineage.pair_eval import write_report as write_pair_report
+from lineage.precision import SAMPLE as PRECISION_SAMPLE
+from lineage.precision import SAMPLE_REPORT as PRECISION_SAMPLE_REPORT
+from lineage.precision import PrecisionError, estimate, load_sizes
 from lineage.query import IndexMissingError, query_text, require_index
 from lineage.results_table import EXPORTED_ONLY, README, ResultsTableError, rendered_readme
 from lineage.sectioning import SectioningError, build_sections
@@ -534,16 +541,11 @@ def label(
     """Label sampled matches by hand, unrelated (0) to identical (4); stop and resume at will."""
     try:
         who = person(labeler)
-        items = read_items(tables, load_sample(sample))
         embedder = _model_embedder(models_dir) if paraphrase else None
-        existing = load_labels(labels)
-        kept, dropped = current_labels(existing, section_hashes(tables, existing))
+        items, kept = _current_items(sample, tables, labels)
     except (LabelError, ModelError) as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
-    if dropped:
-        noun = "label no longer matches" if dropped == 1 else "labels no longer match"
-        typer.echo(f"{dropped} {noun} its section's text and is not counted.")
     todo = pending(items, kept)
     if not todo:
         typer.echo(f"Every pair in {sample} has a label in {labels}.")
@@ -562,6 +564,58 @@ def label(
         color=color,
     )
     typer.echo(f"{done} labeled, {len(todo) - done} left -> {labels}")
+
+
+def _current_items(
+    sample: Path, tables: Path, labels: Path
+) -> tuple[list[Item], list[dict[str, Any]]]:
+    """The sample's pairs read from the tables, and the labels whose sections still exist,
+    saying how many were dropped."""
+    items = read_items(tables, load_sample(sample))
+    existing = load_labels(labels)
+    kept, dropped = current_labels(existing, section_hashes(tables, existing))
+    if dropped:
+        noun = "label no longer matches" if dropped == 1 else "labels no longer match"
+        typer.echo(f"{dropped} {noun} its section's text and is not counted.")
+    return items, kept
+
+
+@app.command("label-model")
+def label_model(
+    sample: Annotated[
+        Path,
+        typer.Argument(
+            help="The precision sample, one pair per line.", exists=True, dir_okay=False
+        ),
+    ] = PRECISION_SAMPLE,
+    tables: TablesOption = Path("data/tables"),
+    labels: Annotated[
+        Path, typer.Option("--labels", help="Labels file, appended to (committed).")
+    ] = LABELS_PATH,
+    model: Annotated[str, typer.Option("--model", help="The model asked.")] = LABEL_MODEL,
+    live: Annotated[
+        bool, typer.Option("--live", help="Ask the model; without it nothing is sent.")
+    ] = False,
+) -> None:
+    """Provisional labels from a model, kept apart from people's; asks only with --live."""
+    try:
+        items, kept = _current_items(sample, tables, labels)
+    except LabelError as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    todo = model_pending(items, kept)
+    noun = "pair" if len(todo) == 1 else "pairs"
+    if not live:
+        typer.echo(f"{len(todo)} {noun} would be asked of {model}; run with --live to ask.")
+        return
+    labels.parent.mkdir(parents=True, exist_ok=True)
+    done, unusable = label_with_model(
+        todo,
+        ask=anthropic_label_ask(model),
+        labels_path=labels,
+        today=datetime.date.today().isoformat(),
+    )
+    typer.echo(f"{done} labeled by {model}, {unusable} unusable replies -> {labels}")
 
 
 @app.command()
@@ -881,6 +935,46 @@ def pair_data_fetch(
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
     typer.echo(f"{fetched} fetched, {present} already present -> {directory}")
+
+
+@eval_app.command("precision")
+def eval_precision(
+    sample: Annotated[
+        Path,
+        typer.Argument(
+            help="The precision sample, one pair per line.", exists=True, dir_okay=False
+        ),
+    ] = PRECISION_SAMPLE,
+    tables: TablesOption = Path("data/tables"),
+    labels: Annotated[
+        Path, typer.Option("--labels", help="Labels file (committed).")
+    ] = LABELS_PATH,
+    strata: Annotated[
+        Path, typer.Option("--strata", help="The draw's report, with each stratum's size.")
+    ] = PRECISION_SAMPLE_REPORT,
+    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+) -> None:
+    """Precision per stratum, stage and overall, from people's labels and, apart, a model's."""
+    try:
+        items, kept = _current_items(sample, tables, labels)
+        measured = estimate(items, kept, load_sizes(strata))
+    except (LabelError, PrecisionError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    section: dict[str, Any] = {"command": "uv run lineage eval precision", **measured}
+    write_results(results, "precision", section)
+    for who in ("person", "provisional_model"):
+        overall = section[who]["overall"]
+        shown = (
+            "not every stratum labeled"
+            if overall is None
+            else (
+                f"{overall['precision']:.3f} (95% {overall['interval_95'][0]:.3f}"
+                f"-{overall['interval_95'][1]:.3f})"
+            )
+        )
+        typer.echo(f"{who.replace('_', ' ')}: {shown}")
+    typer.echo(f"-> {results}")
 
 
 @eval_app.command("pair-data")

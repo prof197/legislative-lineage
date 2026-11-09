@@ -396,11 +396,19 @@ Recall has an answer key; precision needs labels. A seeded sample of matches, dr
 
 **What counts as correct.** A match is correct when it is labeled 2, 3 or 4, and wrong when it is labeled 0 or 1. That is the bar the semantic stage's threshold was set to on the pair dataset ([Pair dataset](#pair-dataset)), so precision in the corpus and on the dataset measure the same thing. This is fixed before any label is counted.
 
-**Labeling.** `uv run lineage label SAMPLE --labeler HANDLE` shows each pair's two sections aligned ([Alignment](#alignment)) and asks for a label. Each label is appended to `evals/precision_labels.jsonl` as soon as it is given, so labeling stops and resumes at will.
+**The sample.** The build's cross-state section pairs fall into three strata by the stages that found them: the near-duplicate stage alone, the semantic stage alone, or both. Each stratum is sampled apart, 100 pairs drawn without replacement under a fixed seed, so a stage that finds few pairs is still measured and the draw repeats exactly over the same build. The drawn pairs are shuffled into one labeling order, so a session stopped part way has covered every stratum about evenly. The sample file names each section by bill id and ordinal and holds no text.
+
+**The scale.** Each label comes with a definition, the same for a person and for a model: 0 unrelated, different subjects; 1 partially related, a shared subject but different provisions; 2 related, the same provision or purpose, worded or detailed differently; 3 almost identical, the same provision in mostly the same words, with small edits; 4 identical, the same text apart from formatting, numbering or place names. The names are the pair dataset's; the definitions are this project's.
+
+**Labeling.** `uv run lineage label SAMPLE --labeler HANDLE` shows each pair's two sections aligned ([Alignment](#alignment)) and asks for a label. The labeler is not told which stages found the pair, and pair ids are numbered in labeling order, so neither can sway a label. Each label is appended to `evals/precision_labels.jsonl` as soon as it is given, so labeling stops and resumes at will.
 
 **What a label records.** Each side's Open States bill id and the SHA-256 of its section's normalized text, which survive a re-split of the corpus. The section's heading and ordinal are kept for reading only, since a re-split renumbers sections. When labels are loaded, any whose text no longer matches a section of its bill is dropped and counted. The file holds no bill text.
 
 **Who labeled.** A person is recorded by GitHub handle, and the tool refuses anything that is not one. A provisional label from a model is recorded by model id and prompt version. Only a person's label takes a pair off the list.
+
+**Provisional labels.** `uv run lineage label-model SAMPLE --live` asks a model for each pair's label, from the two section texts and the scale alone, through the Anthropic SDK with structured output: one label, no prose. Each is appended to the same file under the id of the model that served it and the prompt version, and the file is the cache, so a pair is asked once per prompt version. Without `--live` the command says how many pairs it would ask and asks none. Model labels give precision an estimate before volunteers have labeled; they are never pooled with people's.
+
+**The estimate.** `uv run lineage eval precision` reports, from people's labels and apart from the model's, each stratum's precision with its Wilson 95% interval, and each stage's and the overall precision with the strata weighted by their sizes in the build, since the sample draws as many pairs from a small stratum as from a large one. The weighted interval adds two successes and two failures to each stratum before summing the variances by weight (Agresti and Coull), so a stratum labeled all correct still has an interval of some width. A weighted estimate is left out until every stratum it covers has a label. Where a person and the model both labeled a pair, the report counts how often they gave the same label and how often they agreed on whether the match is correct.
 
 ## Alternatives considered
 

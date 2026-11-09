@@ -1,0 +1,115 @@
+"""Provisional precision labels from a model: asked only with --live, recorded under the
+model id and prompt version, never taking a pair off a person's list."""
+
+import json
+from pathlib import Path
+
+import pytest
+from typer.testing import CliRunner
+
+from lineage.cli import app
+from lineage.labels import Item, Pair, Section, SectionKey, SectionRef, pending, text_sha256
+from lineage.model_labels import (
+    PROMPT_VERSION,
+    SYSTEM,
+    ModelLabel,
+    UnusableReplyError,
+    label_with_model,
+    model_pending,
+    user_message,
+)
+
+
+def _item(i: int) -> Item:
+    def section(bill: str) -> Section:
+        text = f"{bill} section text {i}"
+        return Section(SectionRef(bill, None, i, text_sha256(text)), text)
+
+    return Item(
+        Pair(f"p{i}", ("semantic",), SectionKey("a", i), SectionKey("b", i)),
+        *map(section, ("a", "b")),
+    )
+
+
+def test_the_reply_is_one_label_on_the_scale() -> None:
+    assert ModelLabel.model_validate({"label": 3}).label == 3
+    for bad in ({"label": 5}, {"label": 2, "reason": "x"}, {}):
+        with pytest.raises(ValueError, match=r"label|reason|Field"):
+            ModelLabel.model_validate(bad)
+
+
+def test_the_prompt_gives_the_scale_and_both_texts_but_not_the_stages() -> None:
+    item = _item(0)
+
+    user = json.loads(user_message(item))
+
+    assert user == {"first": item.query.text, "second": item.match.text}
+    assert "the same provision in mostly the same words" in SYSTEM
+    assert "semantic" not in SYSTEM + json.dumps(user)
+
+
+def test_labels_are_recorded_by_model_and_prompt_version_and_resume(tmp_path: Path) -> None:
+    labels = tmp_path / "labels.jsonl"
+    items = [_item(i) for i in range(3)]
+    replies = iter([(2, "claude-x"), UnusableReplyError("declined"), (0, "claude-x")])
+
+    def ask(system: str, user: str) -> tuple[int, str]:
+        reply = next(replies)
+        if isinstance(reply, Exception):
+            raise reply
+        return reply
+
+    labeled, unusable = label_with_model(items, ask=ask, labels_path=labels, today="2026-11-09")
+
+    rows = [json.loads(line) for line in labels.read_text().splitlines()]
+    assert (labeled, unusable) == (2, 1)
+    assert [(r["query"]["ordinal"], r["label"], r["labeler"]) for r in rows] == [
+        (0, 2, f"model:claude-x@{PROMPT_VERSION}"),
+        (2, 0, f"model:claude-x@{PROMPT_VERSION}"),
+    ]
+    assert [i.pair.pair for i in model_pending(items, rows)] == ["p1"]
+    assert [i.pair.pair for i in pending(items, rows)] == ["p0", "p1", "p2"]  # still a person's
+
+
+def test_a_label_under_an_older_prompt_is_asked_again() -> None:
+    item = _item(0)
+    row = {
+        "query": item.query.ref.as_dict(),
+        "match": item.match.ref.as_dict(),
+        "label": 4,
+        "labeler": "model:claude-x@v0",
+        "at": "2026-11-01",
+    }
+
+    assert model_pending([item], [row]) == [item]
+
+
+def test_without_live_the_command_says_what_it_would_ask_and_asks_nothing(
+    corpus: Path, tmp_path: Path
+) -> None:
+    from lineage import queries
+
+    with queries.connect_quiet() as con:
+        rows: list[tuple[str, int]] = con.execute(
+            "SELECT bill_id, ordinal FROM read_parquet($p) ORDER BY bill_id, ordinal LIMIT 2",
+            {"p": str(corpus / "sections" / "*.parquet")},
+        ).fetchall()
+    (qb, qo), (mb, mo) = rows
+    sample = tmp_path / "sample.jsonl"
+    row = {
+        "pair": "p0001",
+        "stages": ["semantic"],
+        "query": {"bill_id": qb, "ordinal": qo},
+        "match": {"bill_id": mb, "ordinal": mo},
+    }
+    sample.write_text(json.dumps(row) + "\n")
+    labels = tmp_path / "labels.jsonl"
+
+    result = CliRunner().invoke(
+        app, ["label-model", str(sample), "--tables", str(corpus), "--labels", str(labels)]
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "1 pair would be asked" in result.output
+    assert "--live" in result.output
+    assert not labels.exists()

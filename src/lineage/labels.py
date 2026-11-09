@@ -14,8 +14,9 @@ the SHA-256 of its section's normalized text. The heading and ordinal are kept f
 only, since a re-split renumbers sections. A label whose text no longer matches a section of
 its bill is dropped when the labels are loaded, and counted. Labelers are named by GitHub
 handle, or for a provisional model label by model id and prompt version, never by name; only a
-person's label takes a pair off the list. Each label is appended as it is given, so a session
-stops and resumes at will. Nothing here calls a model.
+person's label takes a pair off the list. A session is blind to the stages that found each
+pair. Each label is appended as it is given, so a session stops and resumes at will. Nothing
+here calls a model; provisional model labels come from lineage.model_labels.
 """
 
 import hashlib
@@ -33,6 +34,15 @@ from lineage.align import Embedder, Kind, align
 from lineage.pair_data import LABELS
 
 CORRECT_FROM = 2  # related; the pair evaluation's positive bar (lineage.pair_eval.POSITIVE_FROM)
+# What each label means, shown to a person at the start of a session and to a model in its
+# prompt, so both label on the same scale. The names are the pair dataset's.
+SCALE = (
+    "different subjects",
+    "a shared subject, but different provisions",
+    "the same provision or purpose, worded or detailed differently",
+    "the same provision in mostly the same words, with small edits",
+    "the same text, apart from formatting, numbering or place names",
+)
 LABELS_PATH = Path("evals/precision_labels.jsonl")
 PERSON = "github:"
 MODEL = "model:"
@@ -231,6 +241,13 @@ def marked(a: str, b: str, *, embed: Embedder | None = None, color: bool = True)
     return out[0], out[1]
 
 
+def scale_lines() -> list[str]:
+    return [
+        f"{i} {name.replace('_', ' ')}: {gloss}"
+        for i, (name, gloss) in enumerate(zip(LABELS, SCALE, strict=True))
+    ]
+
+
 def _prompt() -> str:
     scale = ", ".join(f"{i} {name.replace('_', ' ')}" for i, name in enumerate(LABELS))
     return f"label ({scale}; {SKIP} skip, {QUIT} quit): "
@@ -250,10 +267,12 @@ def session(
     """Ask for a label for each pair in turn; append each as it is given. Returns how many
     were labeled before the pairs ran out or the labeler quit."""
     labeled = 0
+    show("\n".join(scale_lines()))
     for n, item in enumerate(items, start=1):
         pair = item.pair
         first, second = marked(item.query.text, item.match.text, embed=embed, color=color)
-        show(f"\n--- {n} of {len(items)}: {pair.pair} (found by {', '.join(pair.stages)})")
+        # The stages that found a pair are not shown, so they cannot sway its label.
+        show(f"\n--- {n} of {len(items)}: {pair.pair}")
         show(f"query  {pair.query.bill_id} section {pair.query.ordinal}\n{first}")
         show(f"match  {pair.match.bill_id} section {pair.match.ordinal}\n{second}")
         while True:

@@ -29,9 +29,11 @@ uv run lineage eval answer-key  # each commission list row and the bills it reso
 uv run lineage eval answer-key --held-out  # the held-out lists resolved, development-set bills skipped -> reports/answer_key_heldout.csv
 uv run lineage eval commission --held-out --final  # held-out recall: run once, at the end of M5, never before
 uv run lineage eval readme   # regenerate README.md's results table from reports/results.json and results_exported_only.json
-uv run lineage label SAMPLE --labeler HANDLE  # label sampled matches by hand, 0 unrelated to 4 identical, resumable -> evals/precision_labels.jsonl
+uv run lineage label SAMPLE --labeler HANDLE  # label sampled matches by hand, 0 unrelated to 4 identical, blind to the stage, resumable -> evals/precision_labels.jsonl
 uv run lineage pair-data fetch  # the labeled pair dataset at its pinned commit -> data/pair_data/ (local, evaluation only, never committed)
 uv run lineage eval pair-data  # both stages scored on the pair dataset; each model's threshold set on train+val, measured on test -> reports/pair_data.json
+uv run lineage label-model SAMPLE  # provisional labels from a model, kept apart from people's; asks nothing without --live
+uv run lineage eval precision  # precision per stratum, stage and overall, people's and the model's apart -> reports/results.json
 uv run lineage text inventory  # version to fetch per record, by host, robots.txt read -> data/text/plan.parquet, reports/text_inventory.json
 uv run lineage text sample   # quality test: fetch a seeded sample per state and format -> data/text/sample/, reports/text_quality.json
 uv run lineage text fetch    # fetch every planned record as rules/text_layer.toml says, California from its bulk download; resumable -> data/text/full/, reports/text_fetch.json
@@ -82,6 +84,9 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   neighbors.py    `lineage neighbors`: every distinct window's nearest neighbors for the build, HNSW over the float16 vectors
   align.py        word-level alignment of a section pair: copied, paraphrased and unmatched spans, with ids and offsets (pure functions)
   labels.py       `lineage label`: a person labels the precision sample's pairs, aligned; labels keyed to survive a re-split
+  model_labels.py  provisional precision labels from a model, under its id and prompt version
+  precision.py    the precision sample's strata and seeded draw, and the estimate weighted by stratum size
+  intervals.py    the Wilson interval
   stoplist.py     document-frequency stoplist and its report
   stats.py        coverage report: the measurements that replace the design's estimates
   versions.py     which bill version the text layer fetches (pure functions)
