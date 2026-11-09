@@ -18,6 +18,10 @@ from lineage.fetch import SOURCE, FetchError, fetch_raw
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
 from lineage.models import MODELS, MODELS_DIR, fetch_model
+from lineage.pair_data import PAIR_DATA_DIR, PairDataError, fetch_pair_data
+from lineage.pair_eval import REPORT as PAIR_REPORT
+from lineage.pair_eval import evaluate as evaluate_pairs
+from lineage.pair_eval import write_report as write_pair_report
 from lineage.query import IndexMissingError, query_text
 from lineage.results_table import EXPORTED_ONLY, README, ResultsTableError, rendered_readme
 from lineage.sectioning import SectioningError, build_sections
@@ -51,6 +55,11 @@ model_app = typer.Typer(
     no_args_is_help=True, help="The embedding models the semantic stage runs, pinned by hash."
 )
 app.add_typer(model_app, name="model")
+pair_data_app = typer.Typer(
+    no_args_is_help=True,
+    help="The labeled pair dataset (Kim et al., EMNLP 2021), local and for evaluation only.",
+)
+app.add_typer(pair_data_app, name="pair-data")
 
 RawOption = Annotated[Path, typer.Option("--raw", help="Directory of Open States archives.")]
 ManifestOption = Annotated[Path, typer.Option("--manifest", help="Snapshot manifest (committed).")]
@@ -636,3 +645,42 @@ def model_fetch(
             typer.echo(f"error: {name}: {e}", err=True)
             raise typer.Exit(1) from e
         typer.echo(f"{name}: {fetched} fetched, {present} already present -> {models_dir / name}")
+
+
+@pair_data_app.command("fetch")
+def pair_data_fetch(
+    directory: Annotated[
+        Path, typer.Option("--dir", help="Directory of the dataset's files (local).")
+    ] = PAIR_DATA_DIR,
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """Download the human-annotated pair files at their pinned commit -> data/pair_data/."""
+    try:
+        fetched, present = fetch_pair_data(directory, floor=int(min_free_gib * GiB))
+    except (FetchError, InsufficientDiskSpaceError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    typer.echo(f"{fetched} fetched, {present} already present -> {directory}")
+
+
+@eval_app.command("pair-data")
+def eval_pair_data(
+    tables: TablesOption = Path("data/tables"),
+    directory: Annotated[
+        Path, typer.Option("--dir", help="Directory of the dataset's files (local).")
+    ] = PAIR_DATA_DIR,
+    report: Annotated[
+        Path, typer.Option("--report", help="Metrics JSON (committed).")
+    ] = PAIR_REPORT,
+) -> None:
+    """Score the near-duplicate stage on the labeled pair dataset -> reports/pair_data.json."""
+    try:
+        doc = evaluate_pairs(tables, data_dir=directory)
+    except (PairDataError, StoplistError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    write_pair_report(doc, report)
+    near = doc["near_duplicate"]
+    typer.echo(
+        f"near-duplicate: precision {near['precision']}, recall {near['recall']} (test) -> {report}"
+    )

@@ -1,0 +1,42 @@
+{
+ "command": "uv run lineage eval pair-data",
+ "dataset": {
+  "paper": "Kim, Griggs, Kim and Oh, Learning Bill Similarity with Annotated and Augmented Corpora of Bills, EMNLP 2021, https://aclanthology.org/2021.emnlp-main.787",
+  "pairs": {
+   "train": 3305,
+   "val": 472,
+   "test": 944
+  },
+  "positive": "label 2 (related) or higher"
+ },
+ "near_duplicate": {
+  "split": "test",
+  "verification_threshold": 0.5,
+  "precision": 0.9779,
+  "recall": 0.7731,
+  "roc_auc_of_best_agreements": 0.9867,
+  "by_label": {
+   "unrelated": {
+    "pairs": 483,
+    "found": 1
+   },
+   "partially_related": {
+    "pairs": 60,
+    "found": 6
+   },
+   "related": {
+    "pairs": 136,
+    "found": 70
+   },
+   "almost_identical": {
+    "pairs": 105,
+    "found": 80
+   },
+   "identical": {
+    "pairs": 160,
+    "found": 160
+   }
+  },
+  "unsigned_pairs": 0
+ }
+}

@@ -18,6 +18,7 @@ Sections marked **To be measured** fill in as the build reaches them. Every numb
 - [Near-duplicate stage](#near-duplicate-stage)
 - [Semantic stage](#semantic-stage)
 - [Commission recall](#commission-recall)
+- [Pair dataset](#pair-dataset)
 - [Alternatives considered](#alternatives-considered)
 - [Scaling limits](#scaling-limits)
 - [Known failure modes](#known-failure-modes)
@@ -314,6 +315,16 @@ The threshold comes from the measured scores, and recall at higher thresholds is
 
 **Development misses and the stage that owns them.** With the fetched text, 5 of the 36 development enactments are missed (`reports/results.json`, `miss_reasons`). Missouri's, Ohio's and Pennsylvania's are proposed but lost at verification, their best window pairs estimated at 0.38, 0.33 and 0.35 against the act. Oregon's, listed as substantially similar, is never proposed, at 0.16 (each bill's `best_estimate`). Their bills put the act in other words, which is the semantic stage's to find, and the stage ablation reports which of them it recovers. Maine's is never proposed because its stored text is the bill as first printed, while the enacted wording is in a separate document of adopted amendments ([Parked](#parked)). None of the five is a reason to tune the near-duplicate stage further.
 
+## Pair dataset
+
+The commission's lists test whether the pipeline finds enacted uniform acts. They cannot set the semantic stage's similarity threshold without tuning it on the 36 development enactments, and they say nothing about sections that are related without being copies. A labeled pair dataset does both.
+
+**The dataset.** Kim, Griggs, Kim and Oh, "Learning Bill Similarity with Annotated and Augmented Corpora of Bills", EMNLP 2021 ([aclanthology.org/2021.emnlp-main.787](https://aclanthology.org/2021.emnlp-main.787)). Annotators labeled 4,721 pairs of subsections of US congressional bills on a five-point scale from unrelated (0) to identical (4), split into 3,305 training, 472 validation and 944 test pairs. The texts are cut at 400 words and stripped of punctuation. A pair counts here as positive when it is labeled related (2) or closer. The bills are congressional, not state, so the dataset measures how each stage scores relatedness, not how the corpus's own text behaves.
+
+**Terms.** The authors' repository publishes no license. The files are therefore used locally for evaluation only. `uv run lineage pair-data fetch` downloads them at a pinned commit, each checked against its git blob id, into the gitignored `data/pair_data/`. They are never committed, redistributed or downloaded in CI; only the metrics computed from them are committed. Asking the authors for a license is parked ([Parked](#parked)).
+
+**The near-duplicate stage** (`uv run lineage eval pair-data` → `reports/pair_data.json`). Each subsection is treated as a section: cut into windows, shingled, stoplisted with the corpus's stoplist and signed. A pair is found when two of its windows share a band key and verify at an estimate of 0.5, as in the build. On the test split the stage finds 77.3% of the positive pairs at a precision of 97.8%. By label, it finds all 160 identical pairs, 80 of 105 almost identical, 70 of 136 related, 6 of 60 partially related and 1 of 483 unrelated. Its best window agreement alone ranks a positive pair above a negative one with a probability of 0.987 (ROC AUC). What it misses is related pairs that share meaning more than wording, which are the semantic stage's to find.
+
 ## Alternatives considered
 
 | Alternative | Reason rejected | Evidence |
@@ -438,6 +449,7 @@ The build plan is the plan. Ideas that arise along the way are recorded here wit
 |---|---|---|
 | Maine's 131st Legislature: the bill as amended | The session's export rarely links the chaptered law. For a bill rewritten in committee, the text the layer fetches is the bill as first printed, and the enacted wording is in a separate document of adopted amendments. Taking it means storing a second document per record, which the text layer does not do | A ruling allows a second document per record, or a featured story draws on a bill of that session |
 | The remaining moved links: Montana, Kansas, West Virginia's old host and Massachusetts's docket PDFs | Each needs its own scheme rewrite, checked on a sample, as Ohio's was (`reports/text_fetch.json`, `http_error` per state) | A featured story or the site's state needs a bill in one of them, or before the index release (M8), when coverage is frozen |
+| A license for the labeled pair dataset | Its repository publishes no license, so the dataset is used locally for evaluation only: never committed, redistributed or downloaded in CI, with only its metrics committed ([Pair dataset](#pair-dataset)) | The authors grant a license, which would let CI run the pair evaluation on a committed slice |
 | A per-state stoplist, and the ablation of state boilerplate | The corpus-wide stoplist and the bucket cap hold the measured false matches down, and query-side scoring ranks whole-bill relatives first ([Known failure modes](#known-failure-modes)) | The precision sample (step 25) finds a state's own boilerplate among its false matches |
 | Bracketed placeholders in the act texts | The act parser keeps an act's optional bracketed text, which a state may fill in or drop | After the final evaluation, a miss traces to a placeholder the state filled in |
 
