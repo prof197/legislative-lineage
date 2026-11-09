@@ -16,6 +16,9 @@ Words are the display text's whitespace-separated words, which is what the seman
 will embed. See DESIGN.md#windows.
 """
 
+import numpy as np
+from numpy.typing import NDArray
+
 from lineage.sections import normalize
 
 # The size of a typical section: the median section split at headings has 97 words
@@ -25,22 +28,40 @@ WINDOW_WORDS = 94
 WINDOW_STRIDE = WINDOW_WORDS // 2
 
 
-def window_starts(words: int) -> list[int]:
-    """The first word of each window of a section of `words` words."""
-    if words <= WINDOW_WORDS:
+def window_starts(
+    words: int, *, size: int = WINDOW_WORDS, stride: int = WINDOW_STRIDE
+) -> list[int]:
+    """The first word of each window of a section of `words` words.
+
+    `size` and `stride` default to the scheme both stages use; other values serve only the
+    sizing benchmark, which compares schemes."""
+    if words <= size:
         return [0]
-    starts = list(range(0, words - WINDOW_WORDS + 1, WINDOW_STRIDE))
-    if starts[-1] + WINDOW_WORDS < words:
-        starts.append(words - WINDOW_WORDS)
+    starts = list(range(0, words - size + 1, stride))
+    if starts[-1] + size < words:
+        starts.append(words - size)
     return starts
 
 
-def display_windows(text: str) -> list[str]:
+def window_counts(
+    words: NDArray[np.int64], *, size: int = WINDOW_WORDS, stride: int = WINDOW_STRIDE
+) -> NDArray[np.int64]:
+    """How many windows each section of `words` words makes: `len(window_starts(n))`, for an
+    array of word counts at once."""
+    over = np.maximum(words - size, 0)
+    return 1 + -(-over // stride)
+
+
+def display_windows(
+    text: str, *, size: int = WINDOW_WORDS, stride: int = WINDOW_STRIDE
+) -> list[str]:
     """A section's windows as display text: the section itself, or its windows' words."""
     words = text.split()
-    if len(words) <= WINDOW_WORDS:
+    if len(words) <= size:
         return [text]
-    return [" ".join(words[s : s + WINDOW_WORDS]) for s in window_starts(len(words))]
+    return [
+        " ".join(words[s : s + size]) for s in window_starts(len(words), size=size, stride=stride)
+    ]
 
 
 def normalized_windows(text: str, normalized: str) -> list[str]:

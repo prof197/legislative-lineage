@@ -1,5 +1,6 @@
 from itertools import pairwise
 
+import numpy as np
 import pytest
 
 from lineage.sections import normalize
@@ -9,6 +10,7 @@ from lineage.windows import (
     WINDOW_WORDS,
     display_windows,
     normalized_windows,
+    window_counts,
     window_starts,
 )
 
@@ -79,3 +81,18 @@ def test_a_provision_inside_a_long_section_has_a_window_like_it_wherever_it_sits
         for w in normalized_windows(section, normalize(section))
     )
     assert best >= 0.5
+
+
+@pytest.mark.parametrize(("size", "stride"), [(WINDOW_WORDS, WINDOW_STRIDE), (94, 94), (188, 94)])
+def test_window_counts_agree_with_the_windows_cut(size: int, stride: int) -> None:
+    lengths = np.arange(1, 1200, dtype=np.int64)
+
+    got = window_counts(lengths, size=size, stride=stride)
+
+    assert got.tolist() == [len(window_starts(int(n), size=size, stride=stride)) for n in lengths]
+    for n in (size + 1, 3 * size + 7):
+        text = " ".join(_words(n))
+        windows = display_windows(text, size=size, stride=stride)
+        assert len(windows) == len(window_starts(n, size=size, stride=stride))
+        assert {len(w.split()) for w in windows} == {size}
+        assert windows[-1].split()[-1] == f"w{n - 1}"

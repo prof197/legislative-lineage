@@ -1,0 +1,2370 @@
+{
+ "command": "uv run python -m benchmarks.semantic_units",
+ "seed": 20261108,
+ "machine": {
+  "cpu": "Apple M1 Max",
+  "cores": 10,
+  "memory_bytes": 34359738368,
+  "platform": "macOS-15.7.3-arm64-arm-64bit-Mach-O",
+  "python": "3.13.2",
+  "numpy": "2.5.4",
+  "datasketch": "2.0.0"
+ },
+ "sections": 2898322,
+ "distractor_bills": 3000,
+ "related_bills_left_out": 342,
+ "related_titles": "public expression protection|special deposits|electronic estate planning documents|slapp|strategic lawsuit",
+ "false_positive_rates": [
+  0.001,
+  0.0001
+ ],
+ "exact_search": {
+  "rows_timed": 1000000,
+  "query_windows": 20,
+  "top_k": 20,
+  "seconds_per_million": {
+   "bge-small-en-v1.5": 0.3621,
+   "all-MiniLM-L6-v2": 0.3569
+  },
+  "note": "page cache warm; a cold read adds the file size over the disk's read rate"
+ },
+ "schemes": {
+  "94/47": {
+   "window_words": 94,
+   "stride": 47,
+   "units": 16697172,
+   "distinct_units": 11724646,
+   "units_from_sql_word_counts": 16697172,
+   "tokens": {
+    "bge-small-en-v1.5": {
+     "median": 121,
+     "p90": 145,
+     "p99": 200,
+     "max": 536,
+     "limit": 512,
+     "over_limit_share": 0.0005
+    },
+    "all-MiniLM-L6-v2": {
+     "median": 121,
+     "p90": 145,
+     "p99": 200,
+     "max": 536,
+     "limit": 256,
+     "over_limit_share": 0.002
+    }
+   },
+   "models": {
+    "bge-small-en-v1.5": {
+     "units_per_second": 32.7,
+     "corpus_hours": 141.8,
+     "corpus_hours_distinct": 99.5,
+     "exact_search_seconds_per_query": 6.05,
+     "bytes": {
+      "vectors_float16": 12823428096,
+      "keys": 133577376,
+      "hnsw_flat": 29921332224,
+      "hnsw_float16": 17097904128,
+      "ivf_pq": 935041632,
+      "release_download": 13024184635,
+      "release_assets": 7
+     },
+     "development_recall": {
+      "units_embedded": 136553,
+      "found": {
+       "0.001": 35,
+       "0.0001": 35
+      },
+      "enactments": 36,
+      "acts": {
+       "public-expression-protection": {
+        "units": 27,
+        "cutoffs": {
+         "0.001": 0.819,
+         "0.0001": 0.8659
+        },
+        "enactments": [
+         {
+          "state": "MI",
+          "best_cosine": 0.9842,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MO",
+          "best_cosine": 0.9743,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "SD",
+          "best_cosine": 0.9406,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "DE",
+          "best_cosine": 0.9988,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ID",
+          "best_cosine": 0.9741,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "IA",
+          "best_cosine": 0.9822,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MT",
+          "best_cosine": 0.9965,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OH",
+          "best_cosine": 0.9632,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ME",
+          "best_cosine": 0.8168,
+          "rank": 130,
+          "found": {
+           "0.001": false,
+           "0.0001": false
+          }
+         },
+         {
+          "state": "MN",
+          "best_cosine": 0.9417,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "PA",
+          "best_cosine": 0.9202,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NJ",
+          "best_cosine": 0.9701,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OR",
+          "best_cosine": 0.9008,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "UT",
+          "best_cosine": 0.9947,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         }
+        ]
+       },
+       "special-deposits": {
+        "units": 50,
+        "cutoffs": {
+         "0.001": 0.8035,
+         "0.0001": 0.853
+        },
+        "enactments": [
+         {
+          "state": "NH",
+          "best_cosine": 0.9979,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NY",
+          "best_cosine": 0.9954,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "RI",
+          "best_cosine": 0.9999,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "AZ",
+          "best_cosine": 0.9992,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NE",
+          "best_cosine": 0.998,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NC",
+          "best_cosine": 1.0,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ND",
+          "best_cosine": 0.9901,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "UT",
+          "best_cosine": 0.9991,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "WV",
+          "best_cosine": 1.0,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "CO",
+          "best_cosine": 0.9991,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "DE",
+          "best_cosine": 1.0,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OK",
+          "best_cosine": 0.9878,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "WA",
+          "best_cosine": 0.9991,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         }
+        ]
+       },
+       "electronic-estate-planning-documents": {
+        "units": 38,
+        "cutoffs": {
+         "0.001": 0.8135,
+         "0.0001": 0.8559
+        },
+        "enactments": [
+         {
+          "state": "KY",
+          "best_cosine": 0.9851,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MN",
+          "best_cosine": 0.974,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "UT",
+          "best_cosine": 0.9946,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MO",
+          "best_cosine": 0.9705,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ND",
+          "best_cosine": 0.9807,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "CO",
+          "best_cosine": 0.9884,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OK",
+          "best_cosine": 0.9943,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "WA",
+          "best_cosine": 0.9874,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "IL",
+          "best_cosine": 0.9962,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         }
+        ]
+       }
+      }
+     }
+    },
+    "all-MiniLM-L6-v2": {
+     "units_per_second": 74.2,
+     "corpus_hours": 62.5,
+     "corpus_hours_distinct": 43.9,
+     "exact_search_seconds_per_query": 5.96,
+     "bytes": {
+      "vectors_float16": 12823428096,
+      "keys": 133577376,
+      "hnsw_flat": 29921332224,
+      "hnsw_float16": 17097904128,
+      "ivf_pq": 935041632,
+      "release_download": 13048107508,
+      "release_assets": 7
+     },
+     "development_recall": {
+      "units_embedded": 136553,
+      "found": {
+       "0.001": 35,
+       "0.0001": 35
+      },
+      "enactments": 36,
+      "acts": {
+       "public-expression-protection": {
+        "units": 27,
+        "cutoffs": {
+         "0.001": 0.6846,
+         "0.0001": 0.7369
+        },
+        "enactments": [
+         {
+          "state": "MI",
+          "best_cosine": 0.9802,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MO",
+          "best_cosine": 0.9617,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "SD",
+          "best_cosine": 0.9307,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "DE",
+          "best_cosine": 0.9971,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ID",
+          "best_cosine": 0.9416,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "IA",
+          "best_cosine": 0.96,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MT",
+          "best_cosine": 0.9808,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OH",
+          "best_cosine": 0.925,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ME",
+          "best_cosine": 0.6024,
+          "rank": 196,
+          "found": {
+           "0.001": false,
+           "0.0001": false
+          }
+         },
+         {
+          "state": "MN",
+          "best_cosine": 0.8955,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "PA",
+          "best_cosine": 0.8484,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NJ",
+          "best_cosine": 0.9335,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OR",
+          "best_cosine": 0.8146,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "UT",
+          "best_cosine": 0.9932,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         }
+        ]
+       },
+       "special-deposits": {
+        "units": 50,
+        "cutoffs": {
+         "0.001": 0.6342,
+         "0.0001": 0.6797
+        },
+        "enactments": [
+         {
+          "state": "NH",
+          "best_cosine": 0.9959,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NY",
+          "best_cosine": 0.9904,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "RI",
+          "best_cosine": 0.9997,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "AZ",
+          "best_cosine": 0.997,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NE",
+          "best_cosine": 0.9953,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NC",
+          "best_cosine": 1.0,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ND",
+          "best_cosine": 0.9891,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "UT",
+          "best_cosine": 0.9969,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "WV",
+          "best_cosine": 1.0,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "CO",
+          "best_cosine": 0.9928,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "DE",
+          "best_cosine": 1.0,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OK",
+          "best_cosine": 0.9795,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "WA",
+          "best_cosine": 0.9969,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         }
+        ]
+       },
+       "electronic-estate-planning-documents": {
+        "units": 38,
+        "cutoffs": {
+         "0.001": 0.6659,
+         "0.0001": 0.7248
+        },
+        "enactments": [
+         {
+          "state": "KY",
+          "best_cosine": 0.9231,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MN",
+          "best_cosine": 0.9414,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "UT",
+          "best_cosine": 0.988,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MO",
+          "best_cosine": 0.942,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ND",
+          "best_cosine": 0.9696,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "CO",
+          "best_cosine": 0.9761,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OK",
+          "best_cosine": 0.9928,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "WA",
+          "best_cosine": 0.9601,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "IL",
+          "best_cosine": 0.9898,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   }
+  },
+  "94/94": {
+   "window_words": 94,
+   "stride": 94,
+   "units": 10341843,
+   "distinct_units": 7305861,
+   "units_from_sql_word_counts": 10341843,
+   "tokens": {
+    "bge-small-en-v1.5": {
+     "median": 121,
+     "p90": 144,
+     "p99": 209,
+     "max": 536,
+     "limit": 512,
+     "over_limit_share": 0.0005
+    },
+    "all-MiniLM-L6-v2": {
+     "median": 121,
+     "p90": 144,
+     "p99": 209,
+     "max": 536,
+     "limit": 256,
+     "over_limit_share": 0.0035
+    }
+   },
+   "models": {
+    "bge-small-en-v1.5": {
+     "units_per_second": 30.3,
+     "corpus_hours": 94.8,
+     "corpus_hours_distinct": 67.0,
+     "exact_search_seconds_per_query": 3.75,
+     "bytes": {
+      "vectors_float16": 7942535424,
+      "keys": 82734744,
+      "hnsw_flat": 18532582656,
+      "hnsw_float16": 10590047232,
+      "ivf_pq": 579143208,
+      "release_download": 8092449331,
+      "release_assets": 4
+     },
+     "development_recall": {
+      "units_embedded": 84047,
+      "found": {
+       "0.001": 36,
+       "0.0001": 35
+      },
+      "enactments": 36,
+      "acts": {
+       "public-expression-protection": {
+        "units": 20,
+        "cutoffs": {
+         "0.001": 0.8152,
+         "0.0001": 0.8659
+        },
+        "enactments": [
+         {
+          "state": "MI",
+          "best_cosine": 0.9842,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MO",
+          "best_cosine": 0.9404,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "SD",
+          "best_cosine": 0.9406,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "DE",
+          "best_cosine": 0.9988,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ID",
+          "best_cosine": 0.9741,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "IA",
+          "best_cosine": 0.9822,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MT",
+          "best_cosine": 0.9965,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OH",
+          "best_cosine": 0.9632,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ME",
+          "best_cosine": 0.8168,
+          "rank": 100,
+          "found": {
+           "0.001": true,
+           "0.0001": false
+          }
+         },
+         {
+          "state": "MN",
+          "best_cosine": 0.9417,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "PA",
+          "best_cosine": 0.8951,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NJ",
+          "best_cosine": 0.9513,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OR",
+          "best_cosine": 0.8831,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "UT",
+          "best_cosine": 0.9947,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         }
+        ]
+       },
+       "special-deposits": {
+        "units": 35,
+        "cutoffs": {
+         "0.001": 0.7927,
+         "0.0001": 0.8291
+        },
+        "enactments": [
+         {
+          "state": "NH",
+          "best_cosine": 0.9979,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NY",
+          "best_cosine": 0.9954,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "RI",
+          "best_cosine": 0.9999,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "AZ",
+          "best_cosine": 0.9992,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NE",
+          "best_cosine": 0.998,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NC",
+          "best_cosine": 1.0,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ND",
+          "best_cosine": 0.9901,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "UT",
+          "best_cosine": 0.9991,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "WV",
+          "best_cosine": 1.0,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "CO",
+          "best_cosine": 0.9991,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "DE",
+          "best_cosine": 1.0,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OK",
+          "best_cosine": 0.9837,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "WA",
+          "best_cosine": 0.9991,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         }
+        ]
+       },
+       "electronic-estate-planning-documents": {
+        "units": 29,
+        "cutoffs": {
+         "0.001": 0.7979,
+         "0.0001": 0.8395
+        },
+        "enactments": [
+         {
+          "state": "KY",
+          "best_cosine": 0.9851,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MN",
+          "best_cosine": 0.9543,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "UT",
+          "best_cosine": 0.9946,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MO",
+          "best_cosine": 0.9678,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ND",
+          "best_cosine": 0.9807,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "CO",
+          "best_cosine": 0.9884,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OK",
+          "best_cosine": 0.9943,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "WA",
+          "best_cosine": 0.9864,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "IL",
+          "best_cosine": 0.989,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         }
+        ]
+       }
+      }
+     }
+    },
+    "all-MiniLM-L6-v2": {
+     "units_per_second": 73.2,
+     "corpus_hours": 39.2,
+     "corpus_hours_distinct": 27.7,
+     "exact_search_seconds_per_query": 3.69,
+     "bytes": {
+      "vectors_float16": 7942535424,
+      "keys": 82734744,
+      "hnsw_flat": 18532582656,
+      "hnsw_float16": 10590047232,
+      "ivf_pq": 579143208,
+      "release_download": 8116372204,
+      "release_assets": 4
+     },
+     "development_recall": {
+      "units_embedded": 84047,
+      "found": {
+       "0.001": 35,
+       "0.0001": 35
+      },
+      "enactments": 36,
+      "acts": {
+       "public-expression-protection": {
+        "units": 20,
+        "cutoffs": {
+         "0.001": 0.6809,
+         "0.0001": 0.7369
+        },
+        "enactments": [
+         {
+          "state": "MI",
+          "best_cosine": 0.9689,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MO",
+          "best_cosine": 0.8989,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "SD",
+          "best_cosine": 0.9307,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "DE",
+          "best_cosine": 0.9971,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ID",
+          "best_cosine": 0.9416,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "IA",
+          "best_cosine": 0.96,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MT",
+          "best_cosine": 0.9808,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OH",
+          "best_cosine": 0.925,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ME",
+          "best_cosine": 0.6024,
+          "rank": 175,
+          "found": {
+           "0.001": false,
+           "0.0001": false
+          }
+         },
+         {
+          "state": "MN",
+          "best_cosine": 0.8955,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "PA",
+          "best_cosine": 0.8259,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NJ",
+          "best_cosine": 0.9069,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OR",
+          "best_cosine": 0.8146,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "UT",
+          "best_cosine": 0.9932,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         }
+        ]
+       },
+       "special-deposits": {
+        "units": 35,
+        "cutoffs": {
+         "0.001": 0.627,
+         "0.0001": 0.6695
+        },
+        "enactments": [
+         {
+          "state": "NH",
+          "best_cosine": 0.9959,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NY",
+          "best_cosine": 0.9904,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "RI",
+          "best_cosine": 0.9997,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "AZ",
+          "best_cosine": 0.997,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NE",
+          "best_cosine": 0.9953,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NC",
+          "best_cosine": 1.0,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ND",
+          "best_cosine": 0.9891,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "UT",
+          "best_cosine": 0.9969,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "WV",
+          "best_cosine": 1.0,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "CO",
+          "best_cosine": 0.9928,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "DE",
+          "best_cosine": 1.0,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OK",
+          "best_cosine": 0.9795,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "WA",
+          "best_cosine": 0.9969,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         }
+        ]
+       },
+       "electronic-estate-planning-documents": {
+        "units": 29,
+        "cutoffs": {
+         "0.001": 0.6505,
+         "0.0001": 0.7041
+        },
+        "enactments": [
+         {
+          "state": "KY",
+          "best_cosine": 0.9231,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MN",
+          "best_cosine": 0.8986,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "UT",
+          "best_cosine": 0.988,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MO",
+          "best_cosine": 0.9407,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ND",
+          "best_cosine": 0.9696,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "CO",
+          "best_cosine": 0.9653,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OK",
+          "best_cosine": 0.9928,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "WA",
+          "best_cosine": 0.9469,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "IL",
+          "best_cosine": 0.9724,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   }
+  },
+  "188/94": {
+   "window_words": 188,
+   "stride": 94,
+   "units": 8642770,
+   "distinct_units": 6315166,
+   "units_from_sql_word_counts": 8642770,
+   "tokens": {
+    "bge-small-en-v1.5": {
+     "median": 239,
+     "p90": 278,
+     "p99": 354,
+     "max": 658,
+     "limit": 512,
+     "over_limit_share": 0.002
+    },
+    "all-MiniLM-L6-v2": {
+     "median": 239,
+     "p90": 278,
+     "p99": 354,
+     "max": 658,
+     "limit": 256,
+     "over_limit_share": 0.2445
+    }
+   },
+   "models": {
+    "bge-small-en-v1.5": {
+     "units_per_second": 16.8,
+     "corpus_hours": 143.2,
+     "corpus_hours_distinct": 104.6,
+     "exact_search_seconds_per_query": 3.13,
+     "bytes": {
+      "vectors_float16": 6637647360,
+      "keys": 69142160,
+      "hnsw_flat": 15487843840,
+      "hnsw_float16": 8850196480,
+      "ivf_pq": 483995120,
+      "release_download": 6773968683,
+      "release_assets": 4
+     },
+     "development_recall": {
+      "units_embedded": 69817,
+      "found": {
+       "0.001": 35,
+       "0.0001": 35
+      },
+      "enactments": 36,
+      "acts": {
+       "public-expression-protection": {
+        "units": 16,
+        "cutoffs": {
+         "0.001": 0.8049,
+         "0.0001": 0.8347
+        },
+        "enactments": [
+         {
+          "state": "MI",
+          "best_cosine": 0.9842,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MO",
+          "best_cosine": 0.9649,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "SD",
+          "best_cosine": 0.9495,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "DE",
+          "best_cosine": 0.9808,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ID",
+          "best_cosine": 0.9741,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "IA",
+          "best_cosine": 0.9822,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MT",
+          "best_cosine": 0.9965,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OH",
+          "best_cosine": 0.9393,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ME",
+          "best_cosine": 0.7579,
+          "rank": 161,
+          "found": {
+           "0.001": false,
+           "0.0001": false
+          }
+         },
+         {
+          "state": "MN",
+          "best_cosine": 0.923,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "PA",
+          "best_cosine": 0.9063,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NJ",
+          "best_cosine": 0.9546,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OR",
+          "best_cosine": 0.9031,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "UT",
+          "best_cosine": 0.9747,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         }
+        ]
+       },
+       "special-deposits": {
+        "units": 25,
+        "cutoffs": {
+         "0.001": 0.7883,
+         "0.0001": 0.8179
+        },
+        "enactments": [
+         {
+          "state": "NH",
+          "best_cosine": 0.9898,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NY",
+          "best_cosine": 0.9876,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "RI",
+          "best_cosine": 0.9947,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "AZ",
+          "best_cosine": 0.9935,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NE",
+          "best_cosine": 0.9808,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NC",
+          "best_cosine": 0.9937,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ND",
+          "best_cosine": 0.9804,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "UT",
+          "best_cosine": 0.9932,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "WV",
+          "best_cosine": 0.9997,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "CO",
+          "best_cosine": 0.9861,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "DE",
+          "best_cosine": 0.9937,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OK",
+          "best_cosine": 0.9931,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "WA",
+          "best_cosine": 0.9953,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         }
+        ]
+       },
+       "electronic-estate-planning-documents": {
+        "units": 22,
+        "cutoffs": {
+         "0.001": 0.7855,
+         "0.0001": 0.8344
+        },
+        "enactments": [
+         {
+          "state": "KY",
+          "best_cosine": 0.9781,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MN",
+          "best_cosine": 0.9356,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "UT",
+          "best_cosine": 0.9694,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MO",
+          "best_cosine": 0.917,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ND",
+          "best_cosine": 0.9807,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "CO",
+          "best_cosine": 0.9946,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OK",
+          "best_cosine": 0.9937,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "WA",
+          "best_cosine": 0.9864,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "IL",
+          "best_cosine": 0.9737,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         }
+        ]
+       }
+      }
+     }
+    },
+    "all-MiniLM-L6-v2": {
+     "units_per_second": 54.1,
+     "corpus_hours": 44.4,
+     "corpus_hours_distinct": 32.4,
+     "exact_search_seconds_per_query": 3.08,
+     "bytes": {
+      "vectors_float16": 6637647360,
+      "keys": 69142160,
+      "hnsw_flat": 15487843840,
+      "hnsw_float16": 8850196480,
+      "ivf_pq": 483995120,
+      "release_download": 6797891556,
+      "release_assets": 4
+     },
+     "development_recall": {
+      "units_embedded": 69817,
+      "found": {
+       "0.001": 35,
+       "0.0001": 35
+      },
+      "enactments": 36,
+      "acts": {
+       "public-expression-protection": {
+        "units": 16,
+        "cutoffs": {
+         "0.001": 0.6791,
+         "0.0001": 0.7429
+        },
+        "enactments": [
+         {
+          "state": "MI",
+          "best_cosine": 0.9733,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MO",
+          "best_cosine": 0.9325,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "SD",
+          "best_cosine": 0.9213,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "DE",
+          "best_cosine": 0.9434,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ID",
+          "best_cosine": 0.9601,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "IA",
+          "best_cosine": 0.96,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MT",
+          "best_cosine": 0.9843,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OH",
+          "best_cosine": 0.917,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ME",
+          "best_cosine": 0.6203,
+          "rank": 256,
+          "found": {
+           "0.001": false,
+           "0.0001": false
+          }
+         },
+         {
+          "state": "MN",
+          "best_cosine": 0.8955,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "PA",
+          "best_cosine": 0.8586,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NJ",
+          "best_cosine": 0.9174,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OR",
+          "best_cosine": 0.7939,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "UT",
+          "best_cosine": 0.946,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         }
+        ]
+       },
+       "special-deposits": {
+        "units": 25,
+        "cutoffs": {
+         "0.001": 0.6194,
+         "0.0001": 0.6716
+        },
+        "enactments": [
+         {
+          "state": "NH",
+          "best_cosine": 0.9838,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NY",
+          "best_cosine": 0.9833,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "RI",
+          "best_cosine": 0.9972,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "AZ",
+          "best_cosine": 0.9856,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NE",
+          "best_cosine": 0.9577,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "NC",
+          "best_cosine": 0.9931,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ND",
+          "best_cosine": 0.9735,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "UT",
+          "best_cosine": 0.9855,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "WV",
+          "best_cosine": 0.9972,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "CO",
+          "best_cosine": 0.9788,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "DE",
+          "best_cosine": 0.9945,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OK",
+          "best_cosine": 0.9822,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "WA",
+          "best_cosine": 0.992,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         }
+        ]
+       },
+       "electronic-estate-planning-documents": {
+        "units": 22,
+        "cutoffs": {
+         "0.001": 0.6512,
+         "0.0001": 0.7035
+        },
+        "enactments": [
+         {
+          "state": "KY",
+          "best_cosine": 0.9534,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MN",
+          "best_cosine": 0.8718,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "UT",
+          "best_cosine": 0.971,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "MO",
+          "best_cosine": 0.8394,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "ND",
+          "best_cosine": 0.9698,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "CO",
+          "best_cosine": 0.9875,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "OK",
+          "best_cosine": 0.9848,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "WA",
+          "best_cosine": 0.9586,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         },
+         {
+          "state": "IL",
+          "best_cosine": 0.955,
+          "rank": 1,
+          "found": {
+           "0.001": true,
+           "0.0001": true
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

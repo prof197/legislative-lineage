@@ -14,9 +14,10 @@ from lineage.answer_key import ANSWER_KEY, HELD_OUT_KEY, build_answer_key, rende
 from lineage.commission import RESULTS, CommissionError, commission_recall, write_results
 from lineage.disk import GiB, InsufficientDiskSpaceError
 from lineage.doctypes import RULES, DocTypesError, build_eligibility, rule_samples
-from lineage.fetch import SOURCE, fetch_raw
+from lineage.fetch import SOURCE, FetchError, fetch_raw
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
+from lineage.models import MODELS, MODELS_DIR, fetch_model
 from lineage.query import IndexMissingError, query_text
 from lineage.results_table import EXPORTED_ONLY, README, ResultsTableError, rendered_readme
 from lineage.sectioning import SectioningError, build_sections
@@ -46,6 +47,10 @@ text_app = typer.Typer(
     no_args_is_help=True, help="The text layer: bill text fetched from the source."
 )
 app.add_typer(text_app, name="text")
+model_app = typer.Typer(
+    no_args_is_help=True, help="The embedding models the semantic stage runs, pinned by hash."
+)
+app.add_typer(model_app, name="model")
 
 RawOption = Annotated[Path, typer.Option("--raw", help="Directory of Open States archives.")]
 ManifestOption = Annotated[Path, typer.Option("--manifest", help="Snapshot manifest (committed).")]
@@ -603,3 +608,31 @@ def text_merge(
         raise typer.Exit(1) from e
     shown = ", ".join(f"{source} {n:,}" for source, n in counts.items())
     typer.echo(f"{sum(counts.values()):,} records by text source: {shown} -> {tables / 'texts'}")
+
+
+@model_app.command("fetch")
+def model_fetch(
+    names: Annotated[
+        list[str] | None,
+        typer.Argument(help=f"Models to fetch; all when none: {', '.join(MODELS)}."),
+    ] = None,
+    models_dir: Annotated[
+        Path, typer.Option("--models", help="Directory of model files (local).")
+    ] = MODELS_DIR,
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """Download each model's pinned files that are missing or changed -> data/models/<name>/."""
+    wanted = names or list(MODELS)
+    unknown = [n for n in wanted if n not in MODELS]
+    if unknown:
+        typer.echo(
+            f"error: unknown model {', '.join(unknown)}; known: {', '.join(MODELS)}", err=True
+        )
+        raise typer.Exit(1)
+    for name in wanted:
+        try:
+            fetched, present = fetch_model(name, models_dir, floor=int(min_free_gib * GiB))
+        except (FetchError, InsufficientDiskSpaceError) as e:
+            typer.echo(f"error: {name}: {e}", err=True)
+            raise typer.Exit(1) from e
+        typer.echo(f"{name}: {fetched} fetched, {present} already present -> {models_dir / name}")

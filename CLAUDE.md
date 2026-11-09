@@ -32,6 +32,8 @@ uv run lineage text sample   # quality test: fetch a seeded sample per state and
 uv run lineage text fetch    # fetch every planned record as rules/text_layer.toml says, California from its bulk download; resumable -> data/text/full/, reports/text_fetch.json
 uv run python -m evals.fixture  # rebuild tests/fixtures/commission/ from the local snapshot, dev only
 uv run python -m benchmarks.minhash  # NumPy vs datasketch: signing and LSH index time and memory (DR-3), dev only
+uv run lineage model fetch   # the pinned embedding models' files, hash-checked -> data/models/<name>/
+uv run python -m benchmarks.semantic_units  # semantic stage sizing per window scheme: units, tokens, rate, bytes, dev recall -> reports/semantic_sizing.json, dev only
 LEAK_CHECK_TERMS=... uv run python -m tools.leak_check --history  # no local path or deny-listed term (any case) in any file or commit; CI runs it
 ```
 
@@ -84,6 +86,8 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   queries.py      every SQL query the pipeline runs (DR-4)
   disk.py         free-space floor checked before large writes
   memory.py       current and peak memory as the OS charges it (macOS physical footprint)
+  models.py       the embedding models: pinned repository revision and file hashes; fetched through fetch.download
+  embed.py        unit-length vectors from a pinned model, offline (fastembed, ONNX)
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
 tools/            dev and CI checks
   leak_check.py   local paths and deny-listed terms in tracked files and every commit
@@ -112,6 +116,7 @@ data/             local snapshots and derived tables; gitignored, never committe
   acts/held-out/<act>.txt  the held-out acts' texts, read only by the parser check and the final run
   tables/         Parquet tables written by the pipeline; bills/ holds the source's records under the project's names, texts/ each record's chosen text; signatures/, bands/ and pairs/ hold .npy arrays
   text/           the text layer's fetch plan and fetched text (JSON lines per host)
+  models/<name>/  embedding model files at their pinned revision, from `lineage model fetch`
 ```
 
 ## Conventions
