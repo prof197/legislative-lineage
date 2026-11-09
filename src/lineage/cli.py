@@ -26,7 +26,7 @@ from lineage.agreement import (
     subsample_rows,
     write_subsample,
 )
-from lineage.align import Embedder
+from lineage.align import Embedder, align
 from lineage.answer_key import ANSWER_KEY, HELD_OUT_KEY, build_answer_key, render_answer_key
 from lineage.commission import (
     RESULTS,
@@ -44,6 +44,15 @@ from lineage.disk import GiB, InsufficientDiskSpaceError
 from lineage.doctypes import RULES, DocTypesError, build_eligibility, rule_samples
 from lineage.embed import embed as embed_texts
 from lineage.embed import load_model
+from lineage.explain import CACHE_DIR as EXPLAIN_CACHE
+from lineage.explain import (
+    NotCachedError,
+    anthropic_ask,
+    explain,
+    load_pairs,
+    pair_texts,
+    prompt_spans,
+)
 from lineage.fetch import SOURCE, FetchError, fetch_raw
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
@@ -1108,6 +1117,63 @@ def label_spend(
         f"output tokens; ${ledger['spent']:,.2f} of the ${ledger['budget']:,.2f} budget spent "
         f"-> {spend}"
     )
+
+
+@app.command("explain")
+def explain_command(
+    pairs: Annotated[
+        Path,
+        typer.Argument(
+            help="Pairs to explain, one per line: origin and descendant sections.",
+            exists=True,
+            dir_okay=False,
+        ),
+    ],
+    tables: TablesOption = Path("data/tables"),
+    live: Annotated[
+        bool, typer.Option("--live", help="Ask the model for pairs not in the cache (costs money).")
+    ] = False,
+    cache: Annotated[
+        Path, typer.Option("--cache", help="Cached explanations (committed).")
+    ] = EXPLAIN_CACHE,
+    paraphrase: Annotated[
+        bool,
+        typer.Option(
+            "--paraphrase/--no-paraphrase",
+            help="Mark paraphrased sentences, with the semantic stage's model (local).",
+        ),
+    ] = True,
+    models_dir: Annotated[
+        Path, typer.Option("--models", help="Directory of model files (local).")
+    ] = MODELS_DIR,
+) -> None:
+    """Explain what each descendant changed, grounded in aligned spans; cached, or --live."""
+    try:
+        todo = load_pairs(pairs)
+        texts = pair_texts(tables, todo)
+        embedder = _model_embedder(models_dir) if paraphrase else None
+        ask = anthropic_ask() if live else None
+        for pair, (origin, descendant) in zip(todo, texts, strict=True):
+            spans = align(origin, descendant, embed=embedder).spans
+            outcome = explain(
+                prompt_spans(spans, origin, descendant, origin_side="a"),
+                spans,
+                origin_side="a",
+                ask=ask,
+                cache=cache,
+            )
+            (ob, oo), (db, do) = pair.origin, pair.descendant
+            typer.echo(f"\n{ob} section {oo} -> {db} section {do}")
+            if outcome.withheld:
+                typer.echo("  withheld: no grounded account after one retry")
+            for claim in outcome.claims:
+                cited = ", ".join([*claim.origin_span_ids, *claim.descendant_span_ids])
+                typer.echo(f"  {claim.kind}: {claim.summary} [{cited}]")
+            for claim, why in outcome.dropped:
+                typer.echo(f"  dropped ({why}): {claim.summary}")
+    except (ValueError, NotCachedError, ModelError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
 
 
 @app.command()

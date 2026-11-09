@@ -515,6 +515,12 @@ For featured matches, a model summarizes what changed between the origin and the
 
 **Grounding is checked in code.** A claim is kept only if it cites at least one span, every id it cites is a span of this alignment with text on the side it is cited for, and none is an exact copy, since a copy is not a change. A failing claim is dropped with its reason. The span check guarantees that every claim points at a real difference; whether its summary is true of that difference is the faithfulness eval's question.
 
+**Calls.** `uv run lineage explain PAIRS --live` asks `claude-opus-5-5` through the Anthropic SDK, with structured output from the same class, effort `medium`, and the API's server-side fallback for a declined request, so the cache records which model served each reply (`lineage.explain`). The key comes from `ANTHROPIC_API_KEY`. The pairs file is the scope, featured stories first. Nothing here is agentic: one request per pair.
+
+**Retry and withholding.** A failing claim is dropped and the rest are kept. A reply is unusable when it is declined, does not fit the schema, or makes claims none of which is grounded; an unusable reply is asked again once, and if the retry is unusable too, the explanation is withheld. A reply with no claims says nothing of substance changed, and is kept as such.
+
+**Cache.** Every outcome, a withheld one included, is stored under the SHA-256 of the model id, the prompt version and the spans, in `explanations/cache/`. A rerun pays only for pairs it has not seen; CI and keyless users replay the cache; a changed prompt or alignment changes the key, so a stale answer cannot be served. A cached reply is grounded again each time it is read. Without `--live`, a pair with no cached outcome is an error, never a call.
+
 ## Alternatives considered
 
 | Alternative | Reason rejected | Evidence |

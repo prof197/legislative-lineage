@@ -38,6 +38,7 @@ uv run lineage eval readme   # regenerate README.md's results table from reports
 uv run lineage label SAMPLE --labeler HANDLE  # label sampled matches by hand, 0 unrelated to 4 identical, blind to the stage, resumable -> evals/precision_labels.jsonl
 uv run lineage label-page SAMPLE --labeler HANDLE  # the same labeling as a phone page: pending pairs, aligned, blind -> data/label_page/ (local), published as a private artifact
 uv run lineage label-import SAVED --sample SAMPLE --labeler HANDLE  # the page's saved labels, checked against the sample -> evals/precision_labels.jsonl
+uv run lineage explain PAIRS  # grounded explanations from the cache -> explanations/cache/ (--live asks the model for uncached pairs; ANTHROPIC_API_KEY)
 uv run lineage pair-data fetch  # the labeled pair dataset at its pinned commit -> data/pair_data/ (local, evaluation only, never committed)
 uv run lineage eval pair-data  # both stages scored on the pair dataset; each model's threshold set on train+val, measured on test -> reports/pair_data.json
 uv run lineage eval cost  # cost and runtime per stage: the build's from its reports, each development act's query timed by stage -> reports/cost.json
@@ -110,6 +111,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   precision.py    the precision sample's strata and seeded draw, and the estimate weighted by stratum size
   intervals.py    the Wilson interval
   explanations.py the model's reply schema (Pydantic) and the span-grounding check that drops unbacked claims
+  explain.py      `lineage explain`: the prompt from aligned spans, the SDK call, retry and withholding, the cache
   stoplist.py     document-frequency stoplist and its report
   state_boilerplate.py  `lineage state-boilerplate`: a section flagged as its state's boilerplate by the other families it reaches; precision with the flag on, and the dropped pairs' sample
   stats.py        coverage report: the measurements that replace the design's estimates
@@ -153,6 +155,7 @@ reports/          committed outputs of pipeline commands; README and DESIGN numb
   text_inventory.json  records without usable text, the versions planned, hosts and their robots.txt
   text_quality.json  the quality test per state and format: outcomes, usable and clean rates per reading, comparison
   text_fetch.json  the full fetch per state: outcomes, and records left out with the reason
+explanations/cache/  model replies, one JSON file per (model, prompt version, spans) hash; replayed without a key
 DESIGN.md         design, alternatives, scaling limits, failure modes, decision records
 CONTRIBUTING.md   the checks to run before a commit and a push, and the leak check
 data/             local snapshots and derived tables; gitignored, never committed
