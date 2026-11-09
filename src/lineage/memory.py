@@ -51,3 +51,21 @@ def peak_bytes() -> int:
     if sys.platform == "darwin":
         return _darwin_counter(_LIFETIME_MAX_FOOTPRINT)
     return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024
+
+
+# DR-3's bound: a build stage within half the reference laptop's 32 GiB.
+BOUND_BYTES = 16 * 1024**3
+
+
+class MemoryBoundError(Exception):
+    pass
+
+
+def require_within(bound: int, what: str) -> None:
+    """Stop when the process's footprint has crossed `bound`, before it pushes into swap."""
+    now = current_bytes()
+    if now > bound:
+        raise MemoryBoundError(
+            f"{what}: the process holds {now / 1024**3:.2f} GiB, over the "
+            f"{bound / 1024**3:.0f} GiB bound; stopped"
+        )

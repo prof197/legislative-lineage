@@ -6,10 +6,16 @@ neighbors at or above the threshold, where IVF-PQ re-scored kept 97.2%, and sear
 (reports/ann_benchmark.json). HNSW's scores are cosines over the float16 vectors already; an
 index of compressed codes, such as IVF-PQ, has its `candidates` best re-scored against the
 vectors instead. The text itself is dropped, and the K best at or above the stage's threshold
-are kept. The result is two arrays beside the vectors, one row
-per text id: `neighbors/ids.npy` (int32, -1 where fewer than K pass) and
-`neighbors/scores.npy` (float16 cosines). A single query never needs them: it searches the
-vectors exactly (lineage.semantic). See DESIGN.md#semantic-stage.
+are kept. The result is two arrays beside the vectors, one row per text id:
+`neighbors/ids.npy` (int32, -1 where fewer than K pass) and `neighbors/scores.npy` (float16
+cosines). The index is never saved: it exists only for the build, and a single query needs
+neither it nor these arrays, since it searches the vectors exactly (lineage.semantic).
+
+The build holds to DR-3's memory bound. It refuses to start when its projected peak, the index
+at its measured bytes per vector plus its buffers, is over the bound, and stops at the first
+batch after which the process holds more. It searches CHECKED seeded texts exactly at the end
+and reports the share of their true neighbors it found, and the command stops below
+RECALL_FLOOR. See DESIGN.md#semantic-stage.
 """
 
 import json
@@ -33,7 +39,7 @@ from lineage.ann import (
     train_index,
 )
 from lineage.disk import require_free_space
-from lineage.memory import peak_bytes
+from lineage.memory import BOUND_BYTES, MemoryBoundError, peak_bytes, require_within
 from lineage.semantic import MODEL, THRESHOLD, K
 from lineage.vectors import EmbedError, load_plan, load_vectors, rows_of, vectors_dir
 
@@ -43,6 +49,11 @@ EF_SEARCH = 128  # the widest benchmarked; its search over the corpus is project
 # For an index that needs training (IVF): faiss's k-means wants at least 39 points per list,
 # and this allows 40 per list for up to 16,384 lists. HNSW over float16 needs none.
 TRAIN_ROWS = 40 * 16384
+# The index's bytes per vector, measured on the benchmark's sample (reports/ann_benchmark.json:
+# HNSW32,SQfp16 index_bytes over 1,000,000 vectors): the float16 vector and its links.
+HNSW_BYTES_PER_VECTOR = 1041
+# The build stops if this exact check finds less of the true neighbors above the threshold.
+RECALL_FLOOR = 0.99
 # Texts searched exactly once the build is done, to measure its recall over the whole corpus,
 # where neighbors are denser than in the benchmark's sample.
 CHECKED = 2000
@@ -51,6 +62,16 @@ _ADD_CHUNK = 1 << 17
 _QUERY_CHUNK = 1 << 12  # queries per pass: their candidates' vectors are gathered at once
 REPORT = Path("reports/neighbors.json")
 COMMAND = "uv run lineage neighbors"
+
+
+def projected_bytes(n: int, dim: int) -> int:
+    """The build's peak, projected: the index, the training sample, a batch of queries with
+    their float32 copies and results, and the exact check's largest block product."""
+    train = min(TRAIN_ROWS, n) * dim * (2 + 4)  # float16 rows, and the float32 copy faiss takes
+    batch = _QUERY_CHUNK * dim * (2 + 4) + _QUERY_CHUNK * (K + 1) * (8 + 4) * 3
+    # A block's scores, negated, and partitioned, at exact search's 32,768 rows a block.
+    check = min(CHECKED, n) * min(n, 1 << 15) * 4 * 3
+    return n * HNSW_BYTES_PER_VECTOR + train + batch + check
 
 
 def keep_neighbors(found: Neighbors, own: NDArray[np.int64], k: int, threshold: float) -> Neighbors:
@@ -74,8 +95,11 @@ def build_neighbors(
     nprobe: int | None = None,  # for IVF
     candidates: int | None = None,  # re-scored per text, for an index of compressed codes
     floor_bytes: int,
+    bound_bytes: int = BOUND_BYTES,
     progress: Any = print,
 ) -> dict[str, Any]:
+    """Build the neighbors and report on them. The process's memory is checked against
+    `bound_bytes` before the build, from a projection, and after every batch while it runs."""
     started = time.time()
     plan = load_plan(tables_dir)
     if plan is None:
@@ -85,6 +109,13 @@ def build_neighbors(
     out = vectors_dir(tables_dir, model) / "neighbors"
     out.mkdir(parents=True, exist_ok=True)
     require_free_space(out, needed=n * K * (4 + 2), floor=floor_bytes)
+    dim = shards[0].shape[1]
+    projected = projected_bytes(n, dim)
+    if projected > bound_bytes:
+        raise MemoryBoundError(
+            f"{spec} over {n:,} vectors is projected at {projected / 1024**3:.2f} GiB, over "
+            f"the {bound_bytes / 1024**3:.0f} GiB bound; not started"
+        )
     set_threads(THREADS)
 
     rng = np.random.default_rng(SEED)
@@ -94,6 +125,7 @@ def build_neighbors(
     for block in shards:
         for i in range(0, block.shape[0], _ADD_CHUNK):
             add(index, block[i : i + _ADD_CHUNK])
+            require_within(bound_bytes, f"indexing {spec}")
     set_search(index, nprobe=nprobe, ef_search=ef_search)
     built = time.time() - started
     progress(f"{spec}: {n:,} vectors indexed in {built:.0f}s")
@@ -116,6 +148,7 @@ def build_neighbors(
             ids[at : at + queries.shape[0]] = kept.ids
             scores[at : at + queries.shape[0]] = kept.scores
             at += queries.shape[0]
+            require_within(bound_bytes, f"searching {spec}")
         progress(f"{at:,} of {n:,} searched")
     ids.flush()
     scores.flush()
@@ -146,6 +179,9 @@ def build_neighbors(
         "build_seconds": round(built),
         "seconds": round(time.time() - started),
         "peak_memory_bytes": peak_bytes(),
+        "memory_bound_bytes": bound_bytes,
+        "projected_memory_bytes": projected,
+        "within_memory_bound": peak_bytes() <= bound_bytes,
     }
 
 

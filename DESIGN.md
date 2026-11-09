@@ -268,6 +268,8 @@ IVF-PQ's recall stops rising as more lists are probed: its 48-byte codes rank so
 
 **Index decided, 2026-11-09.** The comparison overturned IVF-PQ. The build's index is HNSW32 over float16 vectors at efSearch 128, the widest setting measured, since its search over the corpus is projected at minutes. Its scores are cosines over the float16 vectors already, so nothing is re-scored.
 
+**The index is built, used and discarded.** `lineage neighbors` keeps what the index finds, each text's neighbors in `ids.npy` and `scores.npy`, and never saves the index itself, so the index release does not ship it. A single query needs no index: it searches the memory-mapped float16 vectors exactly ([Index](#semantic-stage)). The build holds its memory to the 16 GiB bound [DR-3](#dr-3) sets. Before it starts, it projects its peak from the index's measured bytes per vector and its working buffers, and refuses a projection over the bound. While it runs, it checks its footprint after every batch of vectors it adds or searches and stops at the first crossing. Its report records the projection and the measured peak. It also stops when its exact check finds less than 0.99 of the true neighbors above the threshold, to be run again with a wider search (`--ef-search`).
+
 ## Commission recall
 
 The external ground truth is the Uniform Law Commission's list of enactments. Starting from a uniform act's text, the eval asks what share of the bills that enacted it the pipeline finds.

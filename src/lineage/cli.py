@@ -19,9 +19,10 @@ from lineage.embed import load_model
 from lineage.fetch import SOURCE, FetchError, fetch_raw
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
+from lineage.memory import MemoryBoundError
 from lineage.models import MODELS, MODELS_DIR, ModelError, fetch_model
+from lineage.neighbors import EF_SEARCH, RECALL_FLOOR, build_neighbors
 from lineage.neighbors import REPORT as NEIGHBORS_REPORT
-from lineage.neighbors import build_neighbors
 from lineage.neighbors import write_report as write_neighbors_report
 from lineage.pair_data import PAIR_DATA_DIR, PairDataError, fetch_pair_data
 from lineage.pair_eval import REPORT as PAIR_REPORT
@@ -352,19 +353,39 @@ def neighbors_command(
     report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = (
         NEIGHBORS_REPORT
     ),
+    ef_search: Annotated[
+        int, typer.Option("--ef-search", help="HNSW's search width; wider finds more.")
+    ] = EF_SEARCH,
 ) -> None:
     """Every distinct window's nearest neighbors by meaning -> <tables>/semantic/<model>/."""
     try:
-        doc = build_neighbors(tables, floor_bytes=int(min_free_gib * GiB), progress=typer.echo)
-    except (EmbedError, InsufficientDiskSpaceError) as e:
+        doc = build_neighbors(
+            tables,
+            ef_search=ef_search,
+            floor_bytes=int(min_free_gib * GiB),
+            progress=typer.echo,
+        )
+    except (EmbedError, InsufficientDiskSpaceError, MemoryBoundError) as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
     write_neighbors_report(doc, report)
+    check = doc["exact_check"]
     typer.echo(
         f"{doc['texts_with_a_neighbor']:,} of {doc['texts']:,} texts have a neighbor at a cosine "
-        f"of {doc['threshold']} or more; {doc['neighbors_kept']:,} kept; {doc['seconds']}s "
-        f"-> {report}"
+        f"of {doc['threshold']} or more; {doc['neighbors_kept']:,} kept; recall "
+        f"{check['recall']} on {check['texts']:,} texts searched exactly; peak "
+        f"{doc['peak_memory_bytes'] / GiB:.2f} GiB; {doc['seconds']}s -> {report}"
     )
+    if not doc["within_memory_bound"]:
+        typer.echo("error: the build's peak memory crossed the bound", err=True)
+        raise typer.Exit(1)
+    if check["recall"] < RECALL_FLOOR:
+        typer.echo(
+            f"error: recall {check['recall']} is below {RECALL_FLOOR}; rerun with a larger "
+            f"--ef-search than {ef_search}",
+            err=True,
+        )
+        raise typer.Exit(1)
 
 
 @app.command()
