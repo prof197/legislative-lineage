@@ -20,6 +20,7 @@ Sections marked **To be measured** fill in as the build reaches them. Every numb
 - [Commission recall](#commission-recall)
 - [Pair dataset](#pair-dataset)
 - [Stage ablation](#stage-ablation)
+- [Alignment](#alignment)
 - [Alternatives considered](#alternatives-considered)
 - [Scaling limits](#scaling-limits)
 - [Known failure modes](#known-failure-modes)
@@ -377,6 +378,16 @@ bge-small is ahead at every precision measured and in ROC AUC on both sets of pa
 **What the semantic stage adds to a query.** By meaning, an act matches more families than by wording: 64 against 12 for Electronic Estate Planning Documents, 52 against 39 for Public Expression Protection, and 22 against 25 for Special Deposits (`queries`, `families_by_stage`). 71 families across the three acts are found by meaning alone. 67 of them match a single section of the act, and 7 of them hold a development enactment (each relative's `sections_by_stage` and `enactment`). The rest are where the semantic stage's precision will be decided.
 
 **Recall only.** The commission's lists name the bills that enacted an act, not the bills that did not, so they cannot show that a match is false. On these 36 enactments, recall gives no reason to keep the near-duplicate stage, since the semantic stage alone finds everything both stages find. The near-duplicate stage's case rests on its exact spans for highlighting, its lower cost, and its precision on boilerplate that sounds alike. Each stage's precision is measured on the labeled precision sample (M5). Both stages stay, and what the sample measures the near-duplicate stage adding beyond recall is reported under [Alternatives considered](#alternatives-considered).
+
+## Alignment
+
+A match says two sections are related; alignment shows where. Both display texts are read as words, each keyed by its normalized form, so case and punctuation do not break a copy, and `difflib` finds the blocks of words the two share in order (`lineage.align`).
+
+- **Copied:** a shared block of at least five words, the shingle length. A shorter one ("the state shall") is common phrasing, not evidence, and is not kept.
+- **Paraphrased:** text on both sides between the same two copies, or between a copy and either end: the same passage in other words. A pair with no copy at all is paraphrased whole when the semantic stage matched it.
+- **Unmatched:** text on one side only, and both sides of a pair with no copy that only the near-duplicate stage would have found.
+
+Every span has an id in reading order and its character offsets in both texts, so the site can highlight it and an explanation can cite it, which code checks ([Constraints](#constraints)). Junk detection is off, since it would treat frequent words such as "the" as unmatchable in long sections.
 
 ## Alternatives considered
 

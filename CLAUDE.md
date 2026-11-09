@@ -79,6 +79,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   pair_eval.py    `lineage eval pair-data`: the stages scored on labeled pairs, metrics only
   semantic.py     the semantic stage: its model and threshold, as the pair evaluation chose them, and a query's search by meaning
   neighbors.py    `lineage neighbors`: every distinct window's nearest neighbors for the build, HNSW over the float16 vectors
+  align.py        word-level alignment of a section pair: copied, paraphrased and unmatched spans, with ids and offsets (pure functions)
   stoplist.py     document-frequency stoplist and its report
   stats.py        coverage report: the measurements that replace the design's estimates
   versions.py     which bill version the text layer fetches (pure functions)
