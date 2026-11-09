@@ -109,6 +109,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   model_labels.py  provisional precision labels from a model, under its id and prompt version; each batch's spend against the budget
   precision.py    the precision sample's strata and seeded draw, and the estimate weighted by stratum size
   intervals.py    the Wilson interval
+  explanations.py the model's reply schema (Pydantic) and the span-grounding check that drops unbacked claims
   stoplist.py     document-frequency stoplist and its report
   state_boilerplate.py  `lineage state-boilerplate`: a section flagged as its state's boilerplate by the other families it reaches; precision with the flag on, and the dropped pairs' sample
   stats.py        coverage report: the measurements that replace the design's estimates

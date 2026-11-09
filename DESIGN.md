@@ -24,6 +24,7 @@ Sections marked **To be measured** fill in as the build reaches them. Every numb
 - [Alignment](#alignment)
 - [Precision sample](#precision-sample)
 - [Cost and runtime](#cost-and-runtime)
+- [Explanations](#explanations)
 - [Alternatives considered](#alternatives-considered)
 - [Scaling limits](#scaling-limits)
 - [Known failure modes](#known-failure-modes)
@@ -505,6 +506,14 @@ A page lists the relatives that share wording apart from those found by meaning 
 The embedding's time covers the 7,195,431 texts its two logged runs embedded, not the 131,072 embedded before runs were logged (`texts_timed`). Its peak adds each process's own peak, a bound, since the peaks need not coincide. The neighbors' 74 minutes include the eight minutes the laptop slept ([Semantic stage](#semantic-stage)).
 
 **A query.** Each development act's text was queried twice in one run, the first time just after the model loaded (`query`). Warm, the near-duplicate stage took 0.14 to 0.15 s an act, the semantic stage, which embeds the act's windows and scans the 5.63 GB of vectors exactly, 2.33 to 3.67 s, and scoring 0.08 s. The first semantic query took 7.99 s. A query's times move with what else has used the page cache, so they are an order of magnitude, not a benchmark. The vectors may have been in the page cache from earlier runs, so that first query is not a measured cold start; a cold scan reads the whole vector file from disk.
+
+## Explanations
+
+For featured matches, a model summarizes what changed between the origin and the descendant. It is the pipeline's only model call, and its replies are cached so a keyless run can replay them.
+
+**Input and output.** The model sees the aligned spans with their ids ([Alignment](#alignment)), not the raw bill texts, so it sees exactly what is shared and what differs. Its reply must fit one Pydantic class, `ChangeExplanation`: at most four claims, each a kind (added, removed or changed), a summary of at most 200 characters, and the ids of the spans it cites on the origin's side and the descendant's (`lineage.explanations`). The same class gives the JSON schema sent to the model and validates the reply.
+
+**Grounding is checked in code.** A claim is kept only if it cites at least one span, every id it cites is a span of this alignment with text on the side it is cited for, and none is an exact copy, since a copy is not a change. A failing claim is dropped with its reason. The span check guarantees that every claim points at a real difference; whether its summary is true of that difference is the faithfulness eval's question.
 
 ## Alternatives considered
 
