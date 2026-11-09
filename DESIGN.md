@@ -385,8 +385,8 @@ bge-small is ahead at every precision measured and in ROC AUC on both sets of pa
 A match says two sections are related; alignment shows where. Both display texts are read as words, each keyed by its normalized form, so case and punctuation do not break a copy, and `difflib` finds the blocks of words the two share in order (`lineage.align`).
 
 - **Copied:** a shared block of at least five words, the shingle length. A shorter one ("the state shall") is common phrasing, not evidence, and is not kept.
-- **Paraphrased:** text on both sides between the same two copies, or between a copy and either end: the same passage in other words. A pair with no copy at all is paraphrased whole when the semantic stage matched it.
-- **Unmatched:** text on one side only, and both sides of a pair with no copy that only the near-duplicate stage would have found.
+- **Paraphrased:** a sentence paired by meaning. Between the copies, and over the whole pair when nothing was copied, each side's unmatched stretch is cut into sentences and clauses, and sentences are paired by the semantic stage's model: a pair whose cosine reaches the stage's threshold is a paraphrase. Pairs are taken best first and never cross, so each text still reads in order. Without the model, nothing is marked as paraphrase.
+- **Unmatched:** every sentence left unpaired, on either side.
 
 Every span has an id in reading order and its character offsets in both texts, so the site can highlight it and an explanation can cite it, which code checks ([Constraints](#constraints)). Junk detection is off, since it would treat frequent words such as "the" as unmatchable in long sections.
 

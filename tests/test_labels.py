@@ -141,11 +141,11 @@ def test_alignment_is_marked_in_plain_text() -> None:
     a = f"the department shall publish the rates for each fiscal year {tail}"
     b = f"the department shall publish the rates every biennium {tail}"
 
-    first, second = marked(a, b, meaning_match=False, color=False)
+    first, second = marked(a, b, color=False)
 
     assert first.startswith("[=the department shall publish the rates=]")
-    assert "[~for each fiscal year~]" in first
-    assert "[~every biennium~]" in second
+    assert "[+for each fiscal year+]" in first  # unmatched: no embedder pairs it
+    assert "[+every biennium+]" in second
 
 
 def _corpus_sample(corpus: Path, tmp_path: Path) -> Path:
@@ -171,7 +171,7 @@ def _corpus_sample(corpus: Path, tmp_path: Path) -> Path:
 def _args(sample: Path, corpus: Path, labels: Path, labeler: str = "octo") -> list[str]:
     return [
         "label", str(sample), "--labeler", labeler, "--tables", str(corpus),
-        "--labels", str(labels), "--no-color",
+        "--labels", str(labels), "--no-color", "--no-paraphrase",
     ]  # fmt: skip
 
 

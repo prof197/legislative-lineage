@@ -4,13 +4,17 @@ import datetime
 import json
 import os
 import time
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Annotated
 
+import numpy as np
 import typer
+from numpy.typing import NDArray
 
 from lineage import __version__
 from lineage.acts import ACTS, ACTS_DIR, HELD_OUT_ACTS, HELD_OUT_DIR
+from lineage.align import Embedder
 from lineage.answer_key import ANSWER_KEY, HELD_OUT_KEY, build_answer_key, render_answer_key
 from lineage.commission import RESULTS, CommissionError, commission_recall, write_results
 from lineage.disk import GiB, InsufficientDiskSpaceError
@@ -101,6 +105,15 @@ SemanticOption = Annotated[
         help="Search by meaning too, over the embedded corpus (`lineage embed`).",
     ),
 ]
+
+
+def _model_embedder(models_dir: Path = MODELS_DIR) -> Embedder:
+    model = load_model(SEMANTIC_MODEL, models_dir)
+
+    def embed(texts: Sequence[str]) -> NDArray[np.float32]:
+        return embed_texts(model, texts)
+
+    return embed
 
 
 def _semantic_search(tables: Path, models_dir: Path = MODELS_DIR) -> SemanticSearch:
@@ -507,14 +520,25 @@ def label(
         Path, typer.Option("--labels", help="Labels file, appended to (committed).")
     ] = LABELS_PATH,
     color: Annotated[bool, typer.Option("--color/--no-color", help="Mark spans in color.")] = True,
+    paraphrase: Annotated[
+        bool,
+        typer.Option(
+            "--paraphrase/--no-paraphrase",
+            help="Mark paraphrased sentences, with the semantic stage's model (local).",
+        ),
+    ] = True,
+    models_dir: Annotated[
+        Path, typer.Option("--models", help="Directory of model files (local).")
+    ] = MODELS_DIR,
 ) -> None:
     """Label sampled matches by hand, unrelated (0) to identical (4); stop and resume at will."""
     try:
         who = person(labeler)
         items = read_items(tables, load_sample(sample))
+        embedder = _model_embedder(models_dir) if paraphrase else None
         existing = load_labels(labels)
         kept, dropped = current_labels(existing, section_hashes(tables, existing))
-    except LabelError as e:
+    except (LabelError, ModelError) as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
     if dropped:
@@ -534,6 +558,7 @@ def label(
         labels_path=labels,
         labeler=who,
         today=datetime.date.today().isoformat(),
+        embed=embedder,
         color=color,
     )
     typer.echo(f"{done} labeled, {len(todo) - done} left -> {labels}")

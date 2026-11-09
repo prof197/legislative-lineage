@@ -29,7 +29,7 @@ from typing import Any
 import typer
 
 from lineage import queries
-from lineage.align import Kind, align
+from lineage.align import Embedder, Kind, align
 from lineage.pair_data import LABELS
 
 CORRECT_FROM = 2  # related; the pair evaluation's positive bar (lineage.pair_eval.POSITIVE_FROM)
@@ -210,9 +210,10 @@ def section_hashes(tables_dir: Path, labels: Sequence[dict[str, Any]]) -> set[tu
     return {(bill, text_sha256(normalized)) for bill, normalized in rows}
 
 
-def marked(a: str, b: str, *, meaning_match: bool, color: bool = True) -> tuple[str, str]:
-    """Both texts with their aligned spans marked: in color for a terminal, else in brackets."""
-    spans = align(a, b, meaning_match=meaning_match).spans
+def marked(a: str, b: str, *, embed: Embedder | None = None, color: bool = True) -> tuple[str, str]:
+    """Both texts with their aligned spans marked: in color for a terminal, else in brackets.
+    Without `embed`, nothing is marked as paraphrase."""
+    spans = align(a, b, embed=embed).spans
     out: list[str] = []
     for side, text in (("a", a), ("b", b)):
         parts: list[str] = []
@@ -243,6 +244,7 @@ def session(
     labels_path: Path,
     labeler: str,
     today: str,
+    embed: Embedder | None = None,
     color: bool = False,
 ) -> int:
     """Ask for a label for each pair in turn; append each as it is given. Returns how many
@@ -250,9 +252,7 @@ def session(
     labeled = 0
     for n, item in enumerate(items, start=1):
         pair = item.pair
-        first, second = marked(
-            item.query.text, item.match.text, meaning_match="semantic" in pair.stages, color=color
-        )
+        first, second = marked(item.query.text, item.match.text, embed=embed, color=color)
         show(f"\n--- {n} of {len(items)}: {pair.pair} (found by {', '.join(pair.stages)})")
         show(f"query  {pair.query.bill_id} section {pair.query.ordinal}\n{first}")
         show(f"match  {pair.match.bill_id} section {pair.match.ordinal}\n{second}")

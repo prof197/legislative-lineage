@@ -2,29 +2,40 @@
 
 Both sections' display texts are read as words, each word keyed by its normalized form, so case
 and punctuation do not break a copy. `difflib` finds the blocks of words the two share in order,
-and a block of at least MIN_COPIED words, the shingle length, is a copy; a shorter one is a
-coincidence of common phrasing and is not kept. The copies are anchors. Between two anchors, or
-between an anchor and either end, text on both sides is the same passage put in other words:
-paraphrased. Text on one side only is unmatched. A pair with no copy at all is paraphrased whole
-when the semantic stage matched it, and otherwise each side is unmatched.
+and a block of at least MIN_COPIED words, the shingle length, is an exact copy; a shorter one is
+a coincidence of common phrasing and is not kept.
+
+Between the copies, and over the whole pair when nothing was copied, lie unmatched stretches.
+Inside each stretch that has text on both sides, each side is cut into sentences, and sentences
+are paired by embedding similarity: a pair at or above THRESHOLD, the semantic stage's cosine
+(lineage.semantic), is a paraphrase. Pairs are taken best first and never cross, so each text
+still reads in order. Every sentence left unpaired is unmatched. Without an embedder nothing is
+marked as paraphrase.
 
 Every span carries an id, numbered in reading order, and its character offsets in each display
 text, so the site can highlight it and an explanation's claims can cite it, which code then
-checks (DESIGN.md#constraints). Gap scoring as in Smith-Waterman would add nothing to marking
+checks (DESIGN.md#alignment). Gap scoring as in Smith-Waterman would add nothing to marking
 shared blocks (DESIGN.md#alternatives-considered).
 """
 
 import re
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from difflib import SequenceMatcher
 from typing import Literal
 
+import numpy as np
+from numpy.typing import NDArray
+
 from lineage.sections import normalize
+from lineage.semantic import THRESHOLD
 
 MIN_COPIED = 5  # words; the shingle length, below which shared wording is a coincidence
 
 Kind = Literal["copied", "paraphrased", "unmatched"]
+Embedder = Callable[[Sequence[str]], NDArray[np.float32]]  # unit-length rows
 _WORD = re.compile(r"\S+")
+_SENTENCE_END = re.compile(r"[.;:?!][\"')\]]*$")
 
 
 @dataclass(frozen=True, slots=True)
@@ -67,7 +78,33 @@ def _chars(words: _Words, lo: int, hi: int) -> tuple[int, int] | None:
     return (words.offsets[lo][0], words.offsets[hi - 1][1]) if hi > lo else None
 
 
-def align(a: str, b: str, *, meaning_match: bool = False) -> Alignment:
+def _sentences(text: str, words: _Words, lo: int, hi: int) -> list[tuple[int, int]]:
+    """Words lo..hi-1 cut after each word that ends a sentence or clause, as word ranges."""
+    out: list[tuple[int, int]] = []
+    start = lo
+    for i in range(lo, hi):
+        s, e = words.offsets[i]
+        if _SENTENCE_END.search(text[s:e]) or i == hi - 1:
+            out.append((start, i + 1))
+            start = i + 1
+    return out
+
+
+def pair_sentences(similarity: NDArray[np.float32], threshold: float) -> list[tuple[int, int]]:
+    """Pairs (row, column) at or above the threshold, best first, each row and column used
+    once, and no pair crossing another, so both sides keep their order."""
+    rows, cols = np.nonzero(similarity >= threshold)
+    order = np.argsort(-similarity[rows, cols], kind="stable")
+    kept: list[tuple[int, int]] = []
+    for r, c in zip(rows[order].tolist(), cols[order].tolist(), strict=True):
+        if all((r - kr) * (c - kc) > 0 for kr, kc in kept):
+            kept.append((r, c))
+    return sorted(kept)
+
+
+def align(
+    a: str, b: str, *, embed: Embedder | None = None, threshold: float = THRESHOLD
+) -> Alignment:
     wa, wb = _words(a), _words(b)
     # Junk detection would treat frequent words such as "the" as unmatchable in long sections.
     blocks = [
@@ -76,30 +113,45 @@ def align(a: str, b: str, *, meaning_match: bool = False) -> Alignment:
         if block.size >= MIN_COPIED
     ]
     spans: list[tuple[Kind, tuple[int, int] | None, tuple[int, int] | None]] = []
-    copied_a = copied_b = 0
+    copied = 0
 
-    def gap(a_lo: int, a_hi: int, b_lo: int, b_hi: int, *, anchored: bool) -> None:
-        sa, sb = _chars(wa, a_lo, a_hi), _chars(wb, b_lo, b_hi)
-        if sa is not None and sb is not None and (anchored or meaning_match):
-            spans.append(("paraphrased", sa, sb))
-            return
-        if sa is not None:
-            spans.append(("unmatched", sa, None))
-        if sb is not None:
-            spans.append(("unmatched", None, sb))
+    def stretch(a_lo: int, a_hi: int, b_lo: int, b_hi: int) -> None:
+        """An unmatched stretch: paraphrased sentence pairs, and the rest unmatched."""
+        sa = _sentences(a, wa, a_lo, a_hi)
+        sb = _sentences(b, wb, b_lo, b_hi)
+        pairs: list[tuple[int, int]] = []
+        if embed is not None and sa and sb:
+            texts_a = [a[wa.offsets[lo][0] : wa.offsets[hi - 1][1]] for lo, hi in sa]
+            texts_b = [b[wb.offsets[lo][0] : wb.offsets[hi - 1][1]] for lo, hi in sb]
+            vectors = embed([*texts_a, *texts_b])
+            pairs = pair_sentences(vectors[: len(sa)] @ vectors[len(sa) :].T, threshold)
+        ia = ib = 0
+
+        def unmatched(upto_a: int, upto_b: int) -> None:
+            nonlocal ia, ib
+            if upto_a > ia:
+                spans.append(("unmatched", _chars(wa, sa[ia][0], sa[upto_a - 1][1]), None))
+            if upto_b > ib:
+                spans.append(("unmatched", None, _chars(wb, sb[ib][0], sb[upto_b - 1][1])))
+            ia, ib = upto_a, upto_b
+
+        for ra, rb in pairs:
+            unmatched(ra, rb)
+            spans.append(("paraphrased", _chars(wa, *sa[ra]), _chars(wb, *sb[rb])))
+            ia, ib = ra + 1, rb + 1
+        unmatched(len(sa), len(sb))
 
     pa = pb = 0
     for block in blocks:
         a_lo, b_lo = wa.at[block.a], wb.at[block.b]
         a_hi, b_hi = wa.at[block.a + block.size - 1] + 1, wb.at[block.b + block.size - 1] + 1
-        gap(pa, a_lo, pb, b_lo, anchored=True)
+        stretch(pa, a_lo, pb, b_lo)
         spans.append(("copied", _chars(wa, a_lo, a_hi), _chars(wb, b_lo, b_hi)))
-        copied_a += block.size
-        copied_b += block.size
+        copied += block.size
         pa, pb = a_hi, b_hi
-    gap(pa, len(wa.offsets), pb, len(wb.offsets), anchored=bool(blocks))
+    stretch(pa, len(wa.offsets), pb, len(wb.offsets))
     return Alignment(
         [Span(f"s{i}", kind, sa, sb) for i, (kind, sa, sb) in enumerate(spans)],
-        copied_a / len(wa.keys) if wa.keys else 0.0,
-        copied_b / len(wb.keys) if wb.keys else 0.0,
+        copied / len(wa.keys) if wa.keys else 0.0,
+        copied / len(wb.keys) if wb.keys else 0.0,
     )
