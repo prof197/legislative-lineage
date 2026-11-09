@@ -255,6 +255,19 @@ What the measurements show:
 
 **Decided, 2026-11-09.** The unit is the 94-word window without overlap, with each distinct text embedded once. The development set cannot separate the units: each finds 35 or 36 of the 36 enactments, and every miss is Maine's, which no unit can find. The choice therefore rests on cost, and the stage ablation and the held-out evaluation are its real checks. The build's nearest-neighbor index is IVF-PQ, with each candidate re-scored against its float16 vectors, unless a comparison against HNSW over float16 vectors and exact search on a sample overturns it. Single queries use exact search over the memory-mapped vectors. The corpus is embedded in one resumable run of up to three nights, which the measured 11.8 to 25.2 hours fit within.
 
+**Index comparison.** The build's index was compared on a seeded sample of 1,000,000 embedded vectors, drawn from the 63 of 448 shards embedded at the time, with 2,000 further vectors as queries and exact search as the truth (`uv run python -m benchmarks.ann` → `reports/ann_benchmark.json`). What matters is the share of each query's true neighbors at a cosine of 0.8905 or more that an index finds, since those are the only ones the stage keeps; the sample held 7,028.
+
+| Index | True neighbors above the threshold found | Of the exact 20 nearest | Queries a second | Index bytes, projected to the corpus |
+|---|---|---|---|---|
+| HNSW32 over float16 vectors, efSearch 128 | 0.9989 | 0.9798 | 16,745 | 7.62 GB |
+| HNSW32 over float16 vectors, efSearch 64 | 0.9976 | 0.9617 | 31,020 | 7.62 GB |
+| IVF-PQ, 4,096 lists, 48-byte codes, 32 probed, 100 re-scored | 0.9721 | 0.8459 | 10,364 | 0.46 GB |
+| IVF-PQ, the same, 64 probed | 0.9745 | 0.8687 | 8,042 | 0.46 GB |
+
+IVF-PQ's recall stops rising as more lists are probed: its 48-byte codes rank some true neighbors outside the 100 candidates re-scored, so no amount of probing recovers them. HNSW over float16 vectors loses about a tenth as many and searches faster. IVF-PQ was preferred for memory, when an HNSW graph was estimated at 10.6 GB over float16 vectors; measured, it projects to 7.62 GB, within the 16 GiB bound. The projection scales the sample linearly, and the corpus is about seven times denser in neighbors than the sample, so `lineage neighbors` searches 2,000 seeded texts exactly once the build is done and reports the build's recall over the whole corpus (`reports/neighbors.json`, `exact_check`).
+
+**Index decided, 2026-11-09.** The comparison overturned IVF-PQ. The build's index is HNSW32 over float16 vectors at efSearch 128, the widest setting measured, since its search over the corpus is projected at minutes. Its scores are cosines over the float16 vectors already, so nothing is re-scored.
+
 ## Commission recall
 
 The external ground truth is the Uniform Law Commission's list of enactments. Starting from a uniform act's text, the eval asks what share of the bills that enacted it the pipeline finds.

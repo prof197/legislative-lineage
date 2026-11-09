@@ -22,7 +22,7 @@ uv run lineage stats         # coverage, sections, types, status per state/sessi
 uv run lineage stats --samples  # also: sample titles per document-type rule -> data/reports/ (local; names private people, never committed)
 uv run lineage index         # signatures, LSH bands, verified pairs, families -> data/tables/{signatures,bands,pairs,families}/, reports/index.json
 uv run lineage embed         # every distinct 94-word window embedded once, float16, resumable -> data/tables/semantic/, reports/embedding.json
-uv run lineage neighbors     # each distinct window's 20 nearest by meaning, IVF-PQ re-scored -> data/tables/semantic/<model>/neighbors/, reports/neighbors.json
+uv run lineage neighbors     # each distinct window's 20 nearest by meaning, HNSW over float16, recall checked exactly -> data/tables/semantic/<model>/neighbors/, reports/neighbors.json
 uv run lineage query FILE     # a bill's relatives by both stages, offline, from the built index and vectors (--no-semantic: near-duplicates only)
 uv run lineage eval commission  # commission recall, act texts from data/acts/ -> reports/results.json (--results reports/results_exported_only.json after an --exported-only merge); with the stage ablation unless --no-semantic
 uv run lineage eval answer-key  # each commission list row and the bills it resolved to -> reports/answer_key.csv
@@ -78,7 +78,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   pair_data.py    the labeled pair dataset (Kim et al., EMNLP 2021): pinned files, fetch, load; no license, so local only
   pair_eval.py    `lineage eval pair-data`: the stages scored on labeled pairs, metrics only
   semantic.py     the semantic stage: its model and threshold, as the pair evaluation chose them, and a query's search by meaning
-  neighbors.py    `lineage neighbors`: every distinct window's nearest neighbors for the build, IVF-PQ re-scored against the vectors
+  neighbors.py    `lineage neighbors`: every distinct window's nearest neighbors for the build, HNSW over the float16 vectors
   stoplist.py     document-frequency stoplist and its report
   stats.py        coverage report: the measurements that replace the design's estimates
   versions.py     which bill version the text layer fetches (pure functions)

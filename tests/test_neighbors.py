@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import numpy as np
+import pytest
 
 from lineage import queries
 from lineage.ann import Neighbors
@@ -22,8 +23,9 @@ def test_a_text_is_not_its_own_neighbor_and_weak_neighbors_are_dropped() -> None
     assert np.allclose(got.scores, [[0.95, 0.0], [0.99, 0.97]])
 
 
+@pytest.mark.parametrize("candidates", [None, 30])  # the index's own scores, or re-scored
 def test_every_text_gets_its_nearest_texts_above_the_threshold(
-    corpus: Path, tmp_path: Path
+    corpus: Path, tmp_path: Path, candidates: int | None
 ) -> None:
     tables = tmp_path / "tables"
     tables.mkdir()
@@ -39,7 +41,9 @@ def test_every_text_gets_its_nearest_texts_above_the_threshold(
             )
             np.save(out / f"{shard_name(s)}.npy", bag_of_words(texts).astype(np.float16))
 
-    doc = build_neighbors(tables, model="fake", spec="Flat", nprobe=None, floor_bytes=0)
+    doc = build_neighbors(
+        tables, model="fake", spec="Flat", ef_search=None, candidates=candidates, floor_bytes=0
+    )
 
     ids = np.load(out / "neighbors" / "ids.npy")
     scores = np.load(out / "neighbors" / "scores.npy")
@@ -48,3 +52,5 @@ def test_every_text_gets_its_nearest_texts_above_the_threshold(
     kept = ids >= 0
     assert (scores[kept] >= 0.89).all()
     assert doc["neighbors_kept"] == int(kept.sum())
+    assert doc["exact_check"]["texts"] == plan.distinct  # the fixture is smaller than CHECKED
+    assert doc["exact_check"]["recall"] == 1.0  # a flat index is exact

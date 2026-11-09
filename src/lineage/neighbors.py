@@ -1,9 +1,12 @@
 """`lineage neighbors`: every distinct window's nearest neighbors by meaning, for the build.
 
 Each embedded text (`lineage embed`) is searched against all the others with an approximate
-index, IVF-PQ by default (reports/ann_benchmark.json). The index's CANDIDATES best for each text
-are re-scored against the stored float16 vectors, the text itself is dropped, and the K best at
-or above the stage's threshold are kept. The result is two arrays beside the vectors, one row
+index: HNSW over the float16 vectors, which on a sample of the corpus kept 99.9% of the exact
+neighbors at or above the threshold, where IVF-PQ re-scored kept 97.2%, and searched faster
+(reports/ann_benchmark.json). HNSW's scores are cosines over the float16 vectors already; an
+index of compressed codes, such as IVF-PQ, has its `candidates` best re-scored against the
+vectors instead. The text itself is dropped, and the K best at or above the stage's threshold
+are kept. The result is two arrays beside the vectors, one row
 per text id: `neighbors/ids.npy` (int32, -1 where fewer than K pass) and
 `neighbors/scores.npy` (float16 cosines). A single query never needs them: it searches the
 vectors exactly (lineage.semantic). See DESIGN.md#semantic-stage.
@@ -20,7 +23,9 @@ from numpy.typing import NDArray
 from lineage.ann import (
     Neighbors,
     add,
+    exact_search,
     index_bytes,
+    recall_at,
     rescore,
     search,
     set_search,
@@ -33,11 +38,14 @@ from lineage.semantic import MODEL, THRESHOLD, K
 from lineage.vectors import EmbedError, load_plan, load_vectors, rows_of, vectors_dir
 
 SEED = 20261111
-SPEC = "IVF16384,PQ48"
-NPROBE = 32
-CANDIDATES = 100
-# faiss's k-means wants at least 39 training points per list; 40 per list of SPEC's 16,384.
+SPEC = "HNSW32,SQfp16"
+EF_SEARCH = 128  # the widest benchmarked; its search over the corpus is projected at minutes
+# For an index that needs training (IVF): faiss's k-means wants at least 39 points per list,
+# and this allows 40 per list for up to 16,384 lists. HNSW over float16 needs none.
 TRAIN_ROWS = 40 * 16384
+# Texts searched exactly once the build is done, to measure its recall over the whole corpus,
+# where neighbors are denser than in the benchmark's sample.
+CHECKED = 2000
 THREADS = 10
 _ADD_CHUNK = 1 << 17
 _QUERY_CHUNK = 1 << 12  # queries per pass: their candidates' vectors are gathered at once
@@ -62,7 +70,9 @@ def build_neighbors(
     *,
     model: str = MODEL,
     spec: str = SPEC,
-    nprobe: int | None = NPROBE,  # None for an index without lists
+    ef_search: int | None = EF_SEARCH,  # for HNSW
+    nprobe: int | None = None,  # for IVF
+    candidates: int | None = None,  # re-scored per text, for an index of compressed codes
     floor_bytes: int,
     progress: Any = print,
 ) -> dict[str, Any]:
@@ -79,13 +89,12 @@ def build_neighbors(
 
     rng = np.random.default_rng(SEED)
     train = rows_of(shards, np.sort(rng.choice(n, size=min(TRAIN_ROWS, n), replace=False)))
-    index = train_index(spec, train.shape[1], train)
+    index = train_index(spec, train.shape[1], train)  # a no-op for an index needing no training
     del train
     for block in shards:
         for i in range(0, block.shape[0], _ADD_CHUNK):
             add(index, block[i : i + _ADD_CHUNK])
-    if nprobe is not None:
-        set_search(index, nprobe=nprobe)
+    set_search(index, nprobe=nprobe, ef_search=ef_search)
     built = time.time() - started
     progress(f"{spec}: {n:,} vectors indexed in {built:.0f}s")
 
@@ -98,13 +107,12 @@ def build_neighbors(
         for i in range(0, block.shape[0], _QUERY_CHUNK):
             queries = block[i : i + _QUERY_CHUNK]
             own = np.arange(at, at + queries.shape[0], dtype=np.int64)
-            approx = search(index, queries, CANDIDATES)
-            kept = keep_neighbors(
-                rescore(approx.ids, queries, lambda r: rows_of(shards, r), CANDIDATES),
-                own,
-                K,
-                THRESHOLD,
-            )
+            if candidates is None:  # one more than K, for the text itself
+                found = search(index, queries, K + 1)
+            else:
+                approx = search(index, queries, candidates)
+                found = rescore(approx.ids, queries, lambda r: rows_of(shards, r), candidates)
+            kept = keep_neighbors(found, own, K, THRESHOLD)
             ids[at : at + queries.shape[0]] = kept.ids
             scores[at : at + queries.shape[0]] = kept.scores
             at += queries.shape[0]
@@ -112,17 +120,28 @@ def build_neighbors(
     ids.flush()
     scores.flush()
     found = int((np.asarray(ids) >= 0).sum())
+    progress(f"checking {min(CHECKED, n):,} texts against exact search")
+    checked = np.sort(rng.choice(n, size=min(CHECKED, n), replace=False)).astype(np.int64)
+    truth = keep_neighbors(
+        exact_search(shards, rows_of(shards, checked), K + 1), checked, K, THRESHOLD
+    )
     return {
         "command": COMMAND,
         "model": model,
         "index": spec,
+        "ef_search": ef_search,
         "nprobe": nprobe,
-        "candidates_rescored": CANDIDATES,
+        "candidates_rescored": candidates,
         "k": K,
         "threshold": THRESHOLD,
         "texts": n,
         "neighbors_kept": found,
         "texts_with_a_neighbor": int((np.asarray(ids)[:, 0] >= 0).sum()),
+        "exact_check": {
+            "texts": int(checked.shape[0]),
+            "true_neighbors": int((truth.ids >= 0).sum()),
+            "recall": round(recall_at(np.asarray(ids)[checked].astype(np.int64), truth.ids), 4),
+        },
         "index_bytes": index_bytes(index),
         "build_seconds": round(built),
         "seconds": round(time.time() - started),
