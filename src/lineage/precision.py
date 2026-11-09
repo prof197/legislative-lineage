@@ -38,7 +38,8 @@ STRATA: dict[str, tuple[str, ...]] = {
     "both": ("near_duplicate", "semantic"),
 }
 STAGES = ("near_duplicate", "semantic")
-# At a precision near 0.9, 100 labels give a Wilson interval about 0.12 wide per stratum.
+# Provisional: at a precision near 0.9, 100 labels give a Wilson interval about 0.12 wide per
+# stratum. The final size is decided after release (DESIGN.md#precision-sample).
 PER_STRATUM = 100
 SEED = 20261112
 
