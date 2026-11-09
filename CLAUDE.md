@@ -143,6 +143,7 @@ data/             local snapshots and derived tables; gitignored, never committe
 - Write tests first wherever DESIGN.md or the build plan specifies the behavior.
 - Never weaken a test, threshold or eval to get to green.
 - Every number in README.md or DESIGN.md comes from a committed eval or benchmark output, with the command that reproduces it. Never hard-code a result.
+- Docs drafted ahead of a measurement mark each number still to come with the one placeholder token `tests/test_placeholders.py` defines; that test fails while any remain, so a draft number cannot be committed or ship.
 - Fix random seeds. The snapshot is pinned by `snapshot/manifest.json`; an archive's as-of date is its README's Generated At.
 - Before a large write, call `disk.require_free_space` with an upper bound on the bytes written. The default floor is 20 GiB free.
 - Every run that touches the network goes through the `lineage` CLI, never a one-off script or `python -c`: archives, robots.txt and bill text alike. If no command does what is needed, add one to the CLI first. The CLI's spawned extraction workers never re-run a fetch, and `fetch_all` refuses to run inside one.
