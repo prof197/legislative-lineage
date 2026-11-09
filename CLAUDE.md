@@ -3,7 +3,7 @@
 ## Commands
 
 ```sh
-uv sync                      # install the locked environment
+uv sync --extra build        # install the locked environment, with faiss for the index build
 uv run ruff check            # lint
 uv run ruff format --check   # formatting (drop --check to apply)
 uv run pyright               # type check, strict
@@ -38,6 +38,7 @@ uv run python -m benchmarks.minhash  # NumPy vs datasketch: signing and LSH inde
 uv run lineage model fetch   # the pinned embedding models' files, hash-checked -> data/models/<name>/
 uv run python -m benchmarks.semantic_units  # semantic stage sizing per window scheme: units, tokens, rate, bytes, dev recall -> reports/semantic_sizing.json, dev only
 uv run python -m benchmarks.embed_throughput  # embedding rate per batch order, thread count and worker processes -> reports/embed_throughput.json, dev only
+uv run python -m benchmarks.ann  # IVF-PQ and HNSW against exact search on a sample of the embedded corpus -> reports/ann_benchmark.json, dev only
 LEAK_CHECK_TERMS=... uv run python -m tools.leak_check --history  # no local path or deny-listed term (any case) in any file or commit; CI runs it
 ```
 
@@ -96,6 +97,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   models.py       the embedding models: pinned repository revision and file hashes; fetched through fetch.download
   embed.py        unit-length vectors from a pinned model, offline (fastembed, ONNX), batched by token count
   vectors.py      `lineage embed`: plan the distinct windows, embed them in shards by worker processes, resume where it stopped
+  ann.py          nearest neighbors over unit vectors: exact search, and faiss indexes (build extra), typed
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
 tools/            dev and CI checks
   leak_check.py   local paths and deny-listed terms in tracked files and every commit
@@ -132,7 +134,7 @@ data/             local snapshots and derived tables; gitignored, never committe
 
 ## Conventions
 
-- Python 3.13, pyright strict, ruff. Dependencies are pinned in `uv.lock`. Add a dependency with `uv add`, and only after it is agreed.
+- Python 3.13, pyright strict, ruff. Dependencies are pinned in `uv.lock`. Add a dependency with `uv add`, and only after it is agreed. faiss-cpu is the `build` extra: the index build needs it, a query does not.
 - Small modules with explicit interfaces. Use plain functions, dataclasses and Pydantic models, not class hierarchies or metaprogramming.
 - A module that implements a decision record links to it in its docstring, e.g. `See DESIGN.md#dr-3`.
 - Comments explain why, not what.

@@ -36,8 +36,9 @@ jobs:
           version: "0.13.7"
           enable-cache: true
 
-      # --locked fails if uv.lock is stale, so CI tests exactly what was committed.
-      - run: uv sync --locked
+      # --locked fails if uv.lock is stale, so CI tests exactly what was committed. The build
+      # extra brings faiss, which the semantic stage's index build and its tests need.
+      - run: uv sync --locked --extra build
 
       - run: uv run ruff check --output-format=github
       - run: uv run ruff format --check

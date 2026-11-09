@@ -385,6 +385,14 @@ def load_vectors(tables_dir: Path, model: str, plan: Plan) -> list[NDArray[np.fl
     return [np.load(out / f"{shard_name(s)}.npy", mmap_mode="r") for s in range(plan.shards)]
 
 
+def embedded_shards(tables_dir: Path, model: str, plan: Plan) -> list[NDArray[np.float16]]:
+    """The shards embedded so far, memory-mapped, in shard order; text ids are not kept, so for
+    sampling an unfinished run, not for looking texts up."""
+    out = vectors_dir(tables_dir, model)
+    done = [s for s in range(plan.shards) if (out / f"{shard_name(s)}.npy").exists()]
+    return [np.load(out / f"{shard_name(s)}.npy", mmap_mode="r") for s in done]
+
+
 def rows_of(blocks: Sequence[NDArray[Any]], ids: NDArray[np.int64]) -> NDArray[np.float32]:
     """The rows of the given global ids, in the order given, from blocks numbered on from
     one to the next (memory-mapped shards, say)."""
