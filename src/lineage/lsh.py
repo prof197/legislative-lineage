@@ -7,7 +7,7 @@ memory is known in advance. A bucket larger than the cap is boilerplate the stop
 it yields no pairs, and the counters record what was skipped. See DESIGN.md#dr-3.
 """
 
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 
 import numpy as np
@@ -31,8 +31,6 @@ _M2 = np.uint64(0x94D049BB133111EB)
 _LOW32 = np.uint64(0xFFFF_FFFF)
 # Pairs gathered per pass when comparing band keys row by row.
 _CHUNK = 1 << 20
-# Candidate codes held before duplicates across bands are dropped: 2 GiB of uint64.
-_MERGE_AT = 1 << 28
 
 
 @dataclass(frozen=True, slots=True)
@@ -81,17 +79,29 @@ def band_keys(values: NDArray[np.uint32]) -> NDArray[np.uint64]:
 
 
 def build_band_index(values: NDArray[np.uint32]) -> BandIndex:
+    """The band index of signatures held in memory."""
     n = values.shape[0]
-    keys = np.empty((BANDS, n), dtype=np.uint64)
-    rows = np.empty((BANDS, n), dtype=np.uint32)
+    index = BandIndex(np.empty((BANDS, n), dtype=np.uint64), np.empty((BANDS, n), dtype=np.uint32))
+    fill_band_index(index, [values])
+    return index
+
+
+def fill_band_index(index: BandIndex, chunks: Iterable[NDArray[np.uint32]]) -> None:
+    """Fill `index`, whose arrays may be memory-mapped files, from the signatures in row order,
+    given in chunks, so the signatures never need to be in memory at once."""
+    at = 0
+    for chunk in chunks:
+        index.keys[:, at : at + chunk.shape[0]] = band_keys(chunk).T
+        at += chunk.shape[0]
+    if at != index.keys.shape[1]:
+        raise ValueError(f"{at} signature rows for an index of {index.keys.shape[1]}")
     for b in range(BANDS):
-        k = _band_key(values, b)
+        k = np.array(index.keys[b])
         # A stable sort keeps rows with equal keys in row order, so the stored index is
         # reproducible byte for byte.
         order = np.argsort(k, kind="stable")
-        keys[b] = k[order]
-        rows[b] = order
-    return BandIndex(keys, rows)
+        index.keys[b] = k[order]
+        index.rows[b] = order
 
 
 def candidate_probability(s: float, bands: int = BANDS, rows: int = ROWS) -> float:
@@ -128,33 +138,73 @@ def _distinct(codes: NDArray[np.uint64]) -> NDArray[np.uint64]:
     return codes[np.r_[True, codes[1:] != codes[:-1]]] if codes.size else codes
 
 
+@dataclass(frozen=True, slots=True)
+class BandPairs:
+    codes: NDArray[np.uint64]  # (left << 32) | right, left < right, sorted and distinct
+    buckets_over_cap: int
+    rows_in_capped_buckets: int
+    pairs_in_capped_buckets: int
+    largest_bucket: int
+
+
+def band_pairs(index: BandIndex, band: int, *, cap: int = BUCKET_CAP) -> BandPairs:
+    """Every pair that shares band `band`'s key in a bucket of at most `cap` rows."""
+    keys = np.asarray(index.keys[band], dtype=np.uint64)
+    rows = np.asarray(index.rows[band], dtype=np.uint32)
+    starts, sizes = _buckets(keys)
+    capped = sizes[sizes > cap]
+    kept = (sizes >= 2) & (sizes <= cap)
+    # Buckets of one size form one matrix, so pairs come from a few array operations per
+    # distinct size rather than a loop per bucket.
+    parts = [
+        _codes(*_pairs_of_size(rows, starts[sizes == size], size))
+        for size in np.unique(sizes[kept]).tolist()
+    ]
+    # A pair falls in one bucket of a band at most, so a band's pairs are already distinct.
+    codes = np.concatenate(parts) if parts else np.empty(0, dtype=np.uint64)
+    codes.sort()
+    return BandPairs(
+        codes,
+        int(capped.size),
+        int(capped.sum()),
+        int((capped * (capped - 1) // 2).sum()),
+        int(sizes.max()) if sizes.size else 0,
+    )
+
+
+def unseen(codes: NDArray[np.uint64], seen: NDArray[np.uint64]) -> NDArray[np.bool_]:
+    """Which of the sorted `codes` are absent from the sorted `seen`."""
+    if not seen.size:
+        return np.ones(codes.size, dtype=bool)
+    at = np.minimum(np.searchsorted(seen, codes), seen.size - 1)
+    return seen[at] != codes
+
+
+def merge_sorted(a: NDArray[np.uint64], b: NDArray[np.uint64]) -> NDArray[np.uint64]:
+    """The sorted union of two sorted arrays with nothing in common."""
+    out = np.concatenate([a, b])
+    # Timsort finds the two runs and merges them in linear time.
+    out.sort(kind="stable")
+    return out
+
+
 def candidate_pairs(index: BandIndex, *, cap: int = BUCKET_CAP) -> Candidates:
-    """Every pair that shares a band key in a bucket of at most `cap` rows."""
-    # A pair of identical windows shares all 32 bands, so the pairs formed band by band are
-    # mostly repeats. They are dropped whenever the held pairs pass `_MERGE_AT`, which bounds
-    # memory by the distinct pairs, not by 32 times them.
-    held: list[NDArray[np.uint64]] = []
-    count = over = rows = skipped = largest = 0
+    """Every pair that shares a band key in a bucket of at most `cap` rows, all in memory.
+
+    The build forms the same pairs band by band (lineage.pairs), verifying each band's new
+    ones before the next; this is the reference it is tested against.
+    """
+    seen = np.empty(0, dtype=np.uint64)
+    over = rows = skipped = largest = 0
     for b in range(BANDS):
-        starts, sizes = _buckets(index.keys[b])
-        capped = sizes[sizes > cap]
-        over += capped.size
-        rows += int(capped.sum())
-        skipped += int((capped * (capped - 1) // 2).sum())
-        largest = max(largest, int(sizes.max()) if sizes.size else 0)
-        kept = (sizes >= 2) & (sizes <= cap)
-        # Buckets of one size form one matrix, so pairs come from a few array operations
-        # per distinct size rather than a loop per bucket.
-        for size in np.unique(sizes[kept]).tolist():
-            part = _codes(*_pairs_of_size(index.rows[b], starts[sizes == size], size))
-            held.append(part)
-            count += part.size
-        if count > _MERGE_AT:
-            held = [_distinct(np.concatenate(held))]
-            count = held[0].size
-    codes = _distinct(np.concatenate(held)) if held else np.empty(0, dtype=np.uint64)
-    left = (codes >> _U32).astype(np.uint32)
-    right = (codes & _LOW32).astype(np.uint32)
+        found = band_pairs(index, b, cap=cap)
+        seen = merge_sorted(seen, found.codes[unseen(found.codes, seen)])
+        over += found.buckets_over_cap
+        rows += found.rows_in_capped_buckets
+        skipped += found.pairs_in_capped_buckets
+        largest = max(largest, found.largest_bucket)
+    left = (seen >> _U32).astype(np.uint32)
+    right = (seen & _LOW32).astype(np.uint32)
     return Candidates(left, right, over, rows, skipped, largest)
 
 
@@ -169,35 +219,51 @@ def cap_sweep(
     """
     lowest = min(caps)
     n = index.keys.shape[1]
-    key_of = np.empty((n, BANDS), dtype=np.uint64)
-    size_of = np.empty((n, BANDS), dtype=np.int32)
     over = dict.fromkeys(caps, 0)
     multi = dict.fromkeys(caps, 0)
     most = dict.fromkeys(caps, 0)
     parts: list[NDArray[np.uint64]] = []
     for b in range(BANDS):
-        starts, sizes = _buckets(index.keys[b])
-        key_of[index.rows[b], b] = index.keys[b]
-        size_of[index.rows[b], b] = np.repeat(sizes, sizes)
+        keys = np.asarray(index.keys[b], dtype=np.uint64)
+        rows = np.asarray(index.rows[b], dtype=np.uint32)
+        starts, sizes = _buckets(keys)
         for start, size in zip(
             starts[sizes > lowest].tolist(), sizes[sizes > lowest].tolist(), strict=True
         ):
-            labels = np.unique(groups[index.rows[b][start : start + size]]).size
+            labels = np.unique(groups[rows[start : start + size]]).size
             for cap in caps:
                 if size > cap:
                     over[cap] += 1
                     multi[cap] += labels > 1
                     most[cap] = max(most[cap], labels)
             if labels > 1:
-                left, right = _pairs_of_size(index.rows[b], np.array([start]), size)
+                left, right = _pairs_of_size(rows, np.array([start]), size)
                 cross = groups[left] != groups[right]
                 parts.append(_codes(left[cross], right[cross]))
     codes = _distinct(np.concatenate(parts) if parts else np.empty(0, dtype=np.uint64))
+    del parts
+    # Only the rows of these pairs need their key and bucket size in every band. Gathering
+    # them band by band keeps 12 bytes per band for those rows alone, where a table for every
+    # row would be 12 bytes per band for all of them, or a file written at random.
+    involved = np.unique(np.concatenate([codes >> _U32, codes & _LOW32])).astype(np.intp)
+    key_of = np.empty((involved.size, BANDS), dtype=np.uint64)
+    size_of = np.empty((involved.size, BANDS), dtype=np.int32)
+    for b in range(BANDS):
+        keys = np.asarray(index.keys[b], dtype=np.uint64)
+        rows = np.asarray(index.rows[b], dtype=np.uint32)
+        starts, sizes = _buckets(keys)
+        position = np.empty(n, dtype=np.intp)
+        position[rows] = np.arange(n, dtype=np.intp)
+        at = position[involved]
+        del position
+        key_of[:, b] = keys[at]
+        size_of[:, b] = sizes[np.searchsorted(starts, at, side="right") - 1]
     # The smallest bucket each pair shares in any band decides whether a cap keeps it.
     smallest = np.empty(codes.size, dtype=np.int32)
     for i in range(0, codes.size, _CHUNK):
         chunk = codes[i : i + _CHUNK]
-        left, right = (chunk >> _U32).astype(np.intp), (chunk & _LOW32).astype(np.intp)
+        left = np.searchsorted(involved, (chunk >> _U32).astype(np.intp))
+        right = np.searchsorted(involved, (chunk & _LOW32).astype(np.intp))
         shared = key_of[left] == key_of[right]
         smallest[i : i + _CHUNK] = np.where(shared, size_of[left], np.iinfo(np.int32).max).min(1)
     return {

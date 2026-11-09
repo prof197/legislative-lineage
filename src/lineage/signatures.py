@@ -15,7 +15,7 @@ import shutil
 import tempfile
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
-from itertools import repeat
+from itertools import pairwise, repeat
 from pathlib import Path
 from typing import Any, cast
 
@@ -259,6 +259,40 @@ def open_signatures(tables_dir: Path) -> SignatureFiles:
     return SignatureFiles(matrices, [p.with_suffix(".parquet") for p in files], starts)
 
 
+@dataclass(frozen=True, slots=True)
+class RowLabels:
+    """What each signature row belongs to, without a string per row."""
+
+    section: NDArray[np.int64]  # each row's section, numbered from 0 in row order
+    section_bills: list[str]  # each section's bill id
+
+
+def row_labels(files: SignatureFiles) -> RowLabels:
+    """Each row's section, numbered as `SignatureTable.sections` numbers them, read file by file."""
+    parts: list[NDArray[np.int64]] = []
+    bills: list[str] = []
+    previous: tuple[str, int] | None = None
+    following = 0
+    with queries.connect_quiet() as con:
+        for path in files.keys:
+            ids, ords, _ = queries.read_signature_keys(con, parquet_path=path)
+            if not ids:
+                continue
+            ordinals = np.array(ords, dtype=np.int64)
+            numbers = section_numbers(ids, ordinals)
+            # A file continues the previous file's last section only if it starts with it.
+            numbers += following - (1 if previous == (ids[0], ords[0]) else 0)
+            first = np.flatnonzero(np.r_[True, numbers[1:] != numbers[:-1]])
+            if previous == (ids[0], ords[0]):
+                first = first[1:]
+            bills += [ids[i] for i in first.tolist()]
+            parts.append(numbers)
+            following = int(numbers[-1]) + 1
+            previous = (ids[-1], ords[-1])
+    section = np.concatenate(parts) if parts else np.empty(0, dtype=np.int64)
+    return RowLabels(section, bills)
+
+
 def _by_file(files: SignatureFiles, rows: NDArray[np.int64]) -> NDArray[np.int64]:
     return np.searchsorted(files.starts, rows, side="right") - 1
 
@@ -266,11 +300,15 @@ def _by_file(files: SignatureFiles, rows: NDArray[np.int64]) -> NDArray[np.int64
 def signature_values(files: SignatureFiles, rows: NDArray[np.int64]) -> NDArray[np.uint32]:
     """The signatures of the given rows, in the order given."""
     out = np.empty((rows.size, NUM_PERM), dtype=np.uint32)
-    which = _by_file(files, rows)
-    used: list[int] = np.unique(which).tolist()
-    for f in used:
-        here = which == f
-        out[here] = files.matrices[f][rows[here] - files.starts[f]]
+    # Sorting once and slicing per file costs one pass, where a mask per file would cost one
+    # pass per file; sorted rows also read each file's pages in order.
+    order = np.argsort(rows, kind="stable")
+    ordered = rows[order]
+    ends = np.concatenate([files.starts, np.array([np.iinfo(np.int64).max], dtype=np.int64)])
+    bounds: list[int] = np.searchsorted(ordered, ends).tolist()
+    for f, (lo, hi) in enumerate(pairwise(bounds)):
+        if lo < hi:
+            out[order[lo:hi]] = files.matrices[f][ordered[lo:hi] - files.starts[f]]
     return out
 
 

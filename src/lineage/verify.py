@@ -6,6 +6,8 @@ threshold are dropped. The estimate is kept as a count of agreeing positions, so
 and takes one byte. See DESIGN.md#near-duplicate-stage.
 """
 
+from collections.abc import Callable
+
 import numpy as np
 from numpy.typing import NDArray
 
@@ -26,11 +28,22 @@ def agreements(
     """For each pair of rows, the number of signature positions at which the two agree."""
     if values.shape[1] != NUM_PERM:
         raise ValueError(f"signatures must have {NUM_PERM} columns, not {values.shape[1]}")
+    return agreements_by(lambda rows: values[rows], left, right)
+
+
+def agreements_by(
+    gather: Callable[[NDArray[np.int64]], NDArray[np.uint32]],
+    left: NDArray[np.uint32],
+    right: NDArray[np.uint32],
+) -> NDArray[np.uint8]:
+    """`agreements`, reading the signatures of each chunk of rows through `gather`, so they can
+    come from memory-mapped files rather than memory."""
     out = np.empty(left.size, dtype=np.uint8)
     for start in range(0, left.size, _CHUNK):
         stop = start + _CHUNK
-        same = values[left[start:stop]] == values[right[start:stop]]
-        out[start:stop] = np.count_nonzero(same, axis=1)
+        a = gather(left[start:stop].astype(np.int64))
+        b = gather(right[start:stop].astype(np.int64))
+        out[start:stop] = np.count_nonzero(a == b, axis=1)
     return out
 
 

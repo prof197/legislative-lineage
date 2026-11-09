@@ -2,7 +2,6 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
-from lineage import lsh
 from lineage.lsh import (
     BANDS,
     ROWS,
@@ -120,23 +119,24 @@ def test_candidates_come_back_sorted_and_distinct() -> None:
     assert np.all(codes[1:] > codes[:-1])
 
 
-def test_dropping_repeats_as_pairs_pile_up_changes_no_candidate(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
+def test_a_pair_shared_by_many_bands_is_one_candidate() -> None:
     values = _random_signatures(30, seed=8)
     for i in range(0, 30, 3):  # ten triples identical in every band: 3 pairs each, 32 times over
         for band in range(BANDS):
             _share_band(values, i, i + 1, band)
             _share_band(values, i, i + 2, band)
+    # Row 4 takes the first triple's band 7, so it pairs with all three of them in that band.
+    _share_band(values, 1, 4, band=7)
     index = build_band_index(values)
-    expected = candidate_pairs(index, cap=100)
+    keys = band_keys(values)
+    expected = sorted(
+        (a, b) for a in range(30) for b in range(a + 1, 30) if np.any(keys[a] == keys[b])
+    )
 
-    monkeypatch.setattr(lsh, "_MERGE_AT", 4)
-    merged = candidate_pairs(index, cap=100)
+    found = candidate_pairs(index, cap=100)
 
-    assert np.array_equal(merged.left, expected.left)
-    assert np.array_equal(merged.right, expected.right)
-    assert merged.left.size == 30
+    assert list(zip(found.left.tolist(), found.right.tolist(), strict=True)) == expected
+    assert len(expected) == 33
 
 
 def test_a_bucket_over_the_cap_is_skipped_and_counted() -> None:
