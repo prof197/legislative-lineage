@@ -462,7 +462,7 @@ The build plan is the plan. Ideas that arise along the way are recorded here wit
 | The remaining moved links: Montana, Kansas, West Virginia's old host and Massachusetts's docket PDFs | Each needs its own scheme rewrite, checked on a sample, as Ohio's was (`reports/text_fetch.json`, `http_error` per state) | A featured story or the site's state needs a bill in one of them, or before the index release (M8), when coverage is frozen |
 | A license for the labeled pair dataset | Its repository publishes no license, so the dataset is used locally for evaluation only: never committed, redistributed or downloaded in CI, with only its metrics committed ([Pair dataset](#pair-dataset)) | The authors grant a license, which would let CI run the pair evaluation on a committed slice |
 | A per-state stoplist, and the ablation of state boilerplate | The corpus-wide stoplist and the bucket cap hold the measured false matches down, and query-side scoring ranks whole-bill relatives first ([Known failure modes](#known-failure-modes)) | The precision sample (step 25) finds a state's own boilerplate among its false matches |
-| Bracketed placeholders in the act texts | The act parser keeps an act's optional bracketed text, which a state may fill in or drop | After the final evaluation, a miss traces to a placeholder the state filled in |
+| Bracketed placeholders in the act texts | The act parser keeps an act's placeholders and optional bracketed text as written, which a state may fill in or drop; a test pins what reaches the query (`tests/test_acts.py`) | After the final evaluation, a miss traces to a placeholder the state filled in |
 
 ## Decision records
 

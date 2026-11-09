@@ -11,6 +11,7 @@ from pathlib import Path
 import pytest
 
 from lineage.acts import ACTS, ActTextError, enacted_text, load_act
+from lineage.sections import normalize
 
 ACT = """\
 Uniform Widget Registration Act
@@ -157,3 +158,32 @@ def test_loads_a_named_act_from_the_local_directory(tmp_path: Path) -> None:
     assert load_act(ACTS[0], tmp_path).startswith("Section 1. Short Title")
     with pytest.raises(ActTextError, match=ACTS[1]):
         load_act(ACTS[1], tmp_path)
+
+
+# The commission marks text a state adapts in brackets: a placeholder such as "[act]" or
+# "[name of state]", or an optional clause. The parser keeps them as written, and what they
+# cost in matching is parked until a miss traces to one (DESIGN.md#parked); these tests pin
+# what reaches the query meanwhile.
+PLACEHOLDERS = """\
+Section 1. Short Title
+This [act] may be cited as the Uniform Widget Registration Act.
+
+Section 2. Registry
+The [name of state agency] shall keep a registry of widgets[, and may charge a fee].
+"""
+
+
+def test_bracketed_placeholders_and_optional_text_are_kept_as_written() -> None:
+    text = enacted_text(PLACEHOLDERS)
+
+    assert "This [act] may be cited" in text
+    assert "The [name of state agency] shall keep" in text
+    assert "widgets[, and may charge a fee]." in text
+
+
+def test_a_generic_placeholder_normalizes_like_its_word_and_a_filled_one_does_not() -> None:
+    act_line = normalize("This [act] may be cited as the Uniform Widget Registration Act.")
+    agency_line = normalize("The [name of state agency] shall keep a registry of widgets.")
+
+    assert act_line == normalize("This act may be cited as the Uniform Widget Registration Act.")
+    assert agency_line != normalize("The Department of Revenue shall keep a registry of widgets.")
