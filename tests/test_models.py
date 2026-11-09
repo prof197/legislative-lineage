@@ -99,8 +99,15 @@ def test_the_cli_refuses_an_unknown_model(tmp_path: Path) -> None:
 
 
 class _Model:
+    def __init__(self) -> None:
+        self.batches: list[list[str]] = []
+
+    def token_count(self, text: str) -> int:
+        return len(text.split())
+
     def embed(self, texts: list[str], batch_size: int) -> list[list[float]]:
-        return [[3.0, 4.0] if t else [0.0, 0.0] for t in texts]
+        self.batches += [texts[i : i + batch_size] for i in range(0, len(texts), batch_size)]
+        return [[3.0, 4.0 * len(t.split())] if t else [0.0, 0.0] for t in texts]
 
 
 def test_vectors_come_back_unit_length_so_a_dot_product_is_the_cosine() -> None:
@@ -108,3 +115,15 @@ def test_vectors_come_back_unit_length_so_a_dot_product_is_the_cosine() -> None:
 
     assert got.dtype == np.float32
     assert got.tolist() == [[0.6000000238418579, 0.800000011920929], [0.0, 0.0]]
+
+
+def test_texts_are_batched_by_token_count_and_returned_in_the_order_given() -> None:
+    model = _Model()
+    texts = ["a b c d", "a", "a b c", "a b"]
+
+    got = embed(cast(TextEmbedding, model), texts, batch_size=2)
+
+    # Batches pad to their longest text, so like lengths go together.
+    assert model.batches == [["a", "a b"], ["a b c", "a b c d"]]
+    want = np.array([[3.0, 4.0 * n] for n in (4, 1, 3, 2)])
+    assert np.allclose(got, want / np.linalg.norm(want, axis=1, keepdims=True))
