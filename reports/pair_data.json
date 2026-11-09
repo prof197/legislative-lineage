@@ -38,5 +38,154 @@
    }
   },
   "unsigned_pairs": 0
+ },
+ "semantic": {
+  "threshold_set_on": [
+   "train",
+   "val"
+  ],
+  "target_precision": 0.9,
+  "models": {
+   "bge-small-en-v1.5": {
+    "unit": "94-word windows, stride 94",
+    "dev_roc_auc": 0.9872,
+    "test_roc_auc": 0.986,
+    "at_precision": {
+     "0.8": {
+      "threshold": 0.8432,
+      "test_precision": 0.804,
+      "test_recall": 0.9925
+     },
+     "0.9": {
+      "threshold": 0.8905,
+      "test_precision": 0.8886,
+      "test_recall": 0.9551,
+      "by_label": {
+       "unrelated": {
+        "pairs": 483,
+        "found": 13
+       },
+       "partially_related": {
+        "pairs": 60,
+        "found": 35
+       },
+       "related": {
+        "pairs": 136,
+        "found": 122
+       },
+       "almost_identical": {
+        "pairs": 105,
+        "found": 101
+       },
+       "identical": {
+        "pairs": 160,
+        "found": 160
+       }
+      },
+      "with_near_duplicate": {
+       "test_precision": 0.8886,
+       "test_recall": 0.9551,
+       "by_label": {
+        "unrelated": {
+         "pairs": 483,
+         "found": 13
+        },
+        "partially_related": {
+         "pairs": 60,
+         "found": 35
+        },
+        "related": {
+         "pairs": 136,
+         "found": 122
+        },
+        "almost_identical": {
+         "pairs": 105,
+         "found": 101
+        },
+        "identical": {
+         "pairs": 160,
+         "found": 160
+        }
+       }
+      }
+     },
+     "0.95": {
+      "threshold": 0.9223,
+      "test_precision": 0.9433,
+      "test_recall": 0.9127
+     }
+    }
+   },
+   "all-MiniLM-L6-v2": {
+    "unit": "94-word windows, stride 94",
+    "dev_roc_auc": 0.9824,
+    "test_roc_auc": 0.9798,
+    "at_precision": {
+     "0.8": {
+      "threshold": 0.7744,
+      "test_precision": 0.7939,
+      "test_recall": 0.9701
+     },
+     "0.9": {
+      "threshold": 0.84,
+      "test_precision": 0.8779,
+      "test_recall": 0.9327,
+      "by_label": {
+       "unrelated": {
+        "pairs": 483,
+        "found": 18
+       },
+       "partially_related": {
+        "pairs": 60,
+        "found": 34
+       },
+       "related": {
+        "pairs": 136,
+        "found": 114
+       },
+       "almost_identical": {
+        "pairs": 105,
+        "found": 100
+       },
+       "identical": {
+        "pairs": 160,
+        "found": 160
+       }
+      },
+      "with_near_duplicate": {
+       "test_precision": 0.8791,
+       "test_recall": 0.9426,
+       "by_label": {
+        "unrelated": {
+         "pairs": 483,
+         "found": 18
+        },
+        "partially_related": {
+         "pairs": 60,
+         "found": 34
+        },
+        "related": {
+         "pairs": 136,
+         "found": 117
+        },
+        "almost_identical": {
+         "pairs": 105,
+         "found": 101
+        },
+        "identical": {
+         "pairs": 160,
+         "found": 160
+        }
+       }
+      }
+     },
+     "0.95": {
+      "threshold": 0.8926,
+      "test_precision": 0.9291,
+      "test_recall": 0.8828
+     }
+    }
+   }
+  }
  }
 }

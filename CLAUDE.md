@@ -28,7 +28,7 @@ uv run lineage eval answer-key --held-out  # the held-out lists resolved, develo
 uv run lineage eval commission --held-out --final  # held-out recall: run once, at the end of M5, never before
 uv run lineage eval readme   # regenerate README.md's results table from reports/results.json and results_exported_only.json
 uv run lineage pair-data fetch  # the labeled pair dataset at its pinned commit -> data/pair_data/ (local, evaluation only, never committed)
-uv run lineage eval pair-data  # the near-duplicate stage scored on the pair dataset's test split -> reports/pair_data.json
+uv run lineage eval pair-data  # both stages scored on the pair dataset; each model's threshold set on train+val, measured on test -> reports/pair_data.json
 uv run lineage text inventory  # version to fetch per record, by host, robots.txt read -> data/text/plan.parquet, reports/text_inventory.json
 uv run lineage text sample   # quality test: fetch a seeded sample per state and format -> data/text/sample/, reports/text_quality.json
 uv run lineage text fetch    # fetch every planned record as rules/text_layer.toml says, California from its bulk download; resumable -> data/text/full/, reports/text_fetch.json
@@ -74,6 +74,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   results_table.py  the README results table, rendered from reports/results.json
   pair_data.py    the labeled pair dataset (Kim et al., EMNLP 2021): pinned files, fetch, load; no license, so local only
   pair_eval.py    `lineage eval pair-data`: the stages scored on labeled pairs, metrics only
+  semantic.py     the semantic stage's model and cosine threshold, as the pair evaluation chose them
   stoplist.py     document-frequency stoplist and its report
   stats.py        coverage report: the measurements that replace the design's estimates
   versions.py     which bill version the text layer fetches (pure functions)

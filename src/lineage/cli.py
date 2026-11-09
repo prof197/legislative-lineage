@@ -17,7 +17,7 @@ from lineage.doctypes import RULES, DocTypesError, build_eligibility, rule_sampl
 from lineage.fetch import SOURCE, FetchError, fetch_raw
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
-from lineage.models import MODELS, MODELS_DIR, fetch_model
+from lineage.models import MODELS, MODELS_DIR, ModelError, fetch_model
 from lineage.pair_data import PAIR_DATA_DIR, PairDataError, fetch_pair_data
 from lineage.pair_eval import REPORT as PAIR_REPORT
 from lineage.pair_eval import evaluate as evaluate_pairs
@@ -665,22 +665,44 @@ def pair_data_fetch(
 
 @eval_app.command("pair-data")
 def eval_pair_data(
+    model: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--model", help=f"Embedding models to score; all when none: {', '.join(MODELS)}."
+        ),
+    ] = None,
     tables: TablesOption = Path("data/tables"),
     directory: Annotated[
         Path, typer.Option("--dir", help="Directory of the dataset's files (local).")
     ] = PAIR_DATA_DIR,
+    models_dir: Annotated[
+        Path, typer.Option("--models", help="Directory of model files (local).")
+    ] = MODELS_DIR,
     report: Annotated[
         Path, typer.Option("--report", help="Metrics JSON (committed).")
     ] = PAIR_REPORT,
 ) -> None:
-    """Score the near-duplicate stage on the labeled pair dataset -> reports/pair_data.json."""
+    """Score both matching stages on the labeled pair dataset -> reports/pair_data.json."""
+    names = model or list(MODELS)
+    unknown = [n for n in names if n not in MODELS]
+    if unknown:
+        typer.echo(f"error: unknown model {', '.join(unknown)}", err=True)
+        raise typer.Exit(1)
     try:
-        doc = evaluate_pairs(tables, data_dir=directory)
-    except (PairDataError, StoplistError) as e:
+        doc = evaluate_pairs(tables, names, data_dir=directory, models_dir=models_dir)
+    except (PairDataError, ModelError, StoplistError) as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
     write_pair_report(doc, report)
     near = doc["near_duplicate"]
-    typer.echo(
-        f"near-duplicate: precision {near['precision']}, recall {near['recall']} (test) -> {report}"
-    )
+    typer.echo(f"near-duplicate: precision {near['precision']}, recall {near['recall']} (test)")
+    semantic = doc["semantic"]
+    target = str(semantic["target_precision"])
+    for name, entry in semantic["models"].items():
+        at = entry["at_precision"][target]
+        typer.echo(
+            f"{name}: ROC AUC {entry['test_roc_auc']}; threshold {at['threshold']} at precision "
+            f"{target} on train and val gives test precision {at.get('test_precision')}, "
+            f"recall {at.get('test_recall')}"
+        )
+    typer.echo(f"-> {report}")
