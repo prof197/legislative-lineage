@@ -2,7 +2,7 @@
 
 Give it one state bill, and it finds bills in other states with similar provisions, matched section by section. It runs on a laptop with no API key.
 
-Status: early development. The near-duplicate stage and the commission recall eval work end to end; the semantic stage, the other evals and the site are not built yet.
+Status: early development. The near-duplicate stage and the commission recall eval work end to end. The semantic stage is built and its first corpus run is under way; the other evals and the site are not built yet.
 
 ## Data
 
@@ -59,11 +59,14 @@ These are the near-duplicate stage's numbers alone: an enactment is found only w
 
 ## Finding a bill's relatives
 
-Build the tables and the index once, then query with any bill's text saved as a plain-text file:
+Build the tables and the index once, embed the corpus once, then query with any bill's text saved as a plain-text file:
 
 ```sh
 uv run lineage split && uv run lineage eligible && uv run lineage boilerplate && uv run lineage index
+uv run lineage model fetch && uv run lineage embed
 uv run lineage query bill.txt
 ```
 
-A query runs offline against the index in `data/tables/`. It lists the families of bills that share near-identical sections with the query. A family is one state's near-identical bills, such as companion bills in each chamber, counted once. For each family it shows the share of the query's sections with a match and the highest estimated similarity of a matched section. Bills that share a provision in different words are not found yet: that is the semantic stage's job.
+Embedding every distinct window takes about 25 hours on the reference laptop ([DESIGN.md](DESIGN.md#semantic-stage)); `lineage embed` resumes where it stopped. Until it has finished, `uv run lineage query bill.txt --no-semantic` searches the near-duplicate stage alone.
+
+A query runs offline against the index and the vectors in `data/tables/`. It lists the families of bills that share sections with the query, found by near-identical text, by similar meaning, or both, and says which. A family is one state's near-identical bills, such as companion bills in each chamber, counted once. For each family it shows the share of the query's sections with a match, the highest estimated similarity of a near-identical section, and the best cosine of a match by meaning.
