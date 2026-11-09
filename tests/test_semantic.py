@@ -2,8 +2,8 @@ import json
 from pathlib import Path
 
 from lineage.models import MODELS
-from lineage.pair_eval import REPORT
-from lineage.semantic import MODEL, TARGET_PRECISION, THRESHOLD
+from lineage.pair_eval import REPORT, TARGET_PRECISION
+from lineage.semantic import MODEL, THRESHOLD
 
 
 def test_the_model_and_threshold_are_the_ones_the_pair_evaluation_chose() -> None:

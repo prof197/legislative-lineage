@@ -14,18 +14,24 @@ from lineage.answer_key import ANSWER_KEY, HELD_OUT_KEY, build_answer_key, rende
 from lineage.commission import RESULTS, CommissionError, commission_recall, write_results
 from lineage.disk import GiB, InsufficientDiskSpaceError
 from lineage.doctypes import RULES, DocTypesError, build_eligibility, rule_samples
+from lineage.embed import embed as embed_texts
+from lineage.embed import load_model
 from lineage.fetch import SOURCE, FetchError, fetch_raw
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
 from lineage.models import MODELS, MODELS_DIR, ModelError, fetch_model
+from lineage.neighbors import REPORT as NEIGHBORS_REPORT
+from lineage.neighbors import build_neighbors
+from lineage.neighbors import write_report as write_neighbors_report
 from lineage.pair_data import PAIR_DATA_DIR, PairDataError, fetch_pair_data
 from lineage.pair_eval import REPORT as PAIR_REPORT
 from lineage.pair_eval import evaluate as evaluate_pairs
 from lineage.pair_eval import write_report as write_pair_report
-from lineage.query import IndexMissingError, query_text
+from lineage.query import IndexMissingError, query_text, require_index
 from lineage.results_table import EXPORTED_ONLY, README, ResultsTableError, rendered_readme
 from lineage.sectioning import SectioningError, build_sections
 from lineage.semantic import MODEL as SEMANTIC_MODEL
+from lineage.semantic import SemanticSearch, open_search
 from lineage.sessions import (
     CARRYOVER,
     SCRAPERS_REPO,
@@ -74,6 +80,18 @@ RulesOption = Annotated[Path, typer.Option("--rules", help="Document-type rules 
 MinFreeOption = Annotated[
     float, typer.Option("--min-free-gib", help="Refuse to run if disk would drop below this.")
 ]
+SemanticOption = Annotated[
+    bool,
+    typer.Option(
+        "--semantic/--no-semantic",
+        help="Search by meaning too, over the embedded corpus (`lineage embed`).",
+    ),
+]
+
+
+def _semantic_search(tables: Path, models_dir: Path = MODELS_DIR) -> SemanticSearch:
+    model = load_model(SEMANTIC_MODEL, models_dir)
+    return open_search(tables, lambda texts: embed_texts(model, texts))
 
 
 def _print_version(value: bool) -> None:
@@ -327,6 +345,28 @@ def embed_command(
     )
 
 
+@app.command("neighbors")
+def neighbors_command(
+    tables: TablesOption = Path("data/tables"),
+    min_free_gib: MinFreeOption = 20.0,
+    report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = (
+        NEIGHBORS_REPORT
+    ),
+) -> None:
+    """Every distinct window's nearest neighbors by meaning -> <tables>/semantic/<model>/."""
+    try:
+        doc = build_neighbors(tables, floor_bytes=int(min_free_gib * GiB), progress=typer.echo)
+    except (EmbedError, InsufficientDiskSpaceError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    write_neighbors_report(doc, report)
+    typer.echo(
+        f"{doc['texts_with_a_neighbor']:,} of {doc['texts']:,} texts have a neighbor at a cosine "
+        f"of {doc['threshold']} or more; {doc['neighbors_kept']:,} kept; {doc['seconds']}s "
+        f"-> {report}"
+    )
+
+
 @app.command()
 def index(
     tables: TablesOption = Path("data/tables"),
@@ -375,36 +415,46 @@ def query(
     ],
     tables: TablesOption = Path("data/tables"),
     limit: Annotated[int, typer.Option("--limit", help="Families to show.")] = 20,
+    semantic: SemanticOption = True,
 ) -> None:
     """Find a bill's relatives in the index, offline: bills that share its text, by section."""
     started = time.monotonic()
     try:
-        result = query_text(file.read_text(), tables)
-    except (IndexMissingError, StoplistError) as e:
+        require_index(tables)
+        search = _semantic_search(tables) if semantic else None
+        result = query_text(file.read_text(), tables, semantic=search)
+    except (IndexMissingError, StoplistError, EmbedError, ModelError) as e:
         typer.echo(str(e), err=True)
         raise typer.Exit(1) from None
-    typer.echo(f"{file}: {result.sections} sections, {result.signed} signed")
+    typer.echo(f"{file}: {result.sections} sections, {result.searched} searched")
     if not result.matches:
-        typer.echo("No near-duplicates found in the index.")
+        typer.echo("No relatives found in the index.")
         return
     typer.echo(
-        f"{'share':>5}  {'best':>4}  {'state':<5}  {'session':<10}  {'bill':<12}  "
-        f"{'family':>6}  {'status':<10}  title"
+        f"{'share':>5}  {'best':>4}  {'cos':>4}  {'by':<4}  {'state':<5}  {'session':<10}  "
+        f"{'bill':<12}  {'family':>6}  {'status':<10}  title"
     )
     for m in result.matches[:limit]:
+        by = "".join(_STAGE_MARKS[s] for s in sorted(m.sections_by_stage))
+        cos = f"{m.best_cosine:.2f}" if m.best_cosine is not None else ""
         typer.echo(
-            f"{m.share:>5.0%}  {m.best_estimate:>4.2f}  {m.state:<5}  {m.session:<10}  "
-            f"{m.identifier:<12}  {m.family_bills:>6}  {m.status or '':<10}  {m.title[:70]}"
+            f"{m.share:>5.0%}  {m.best_estimate:>4.2f}  {cos:>4}  {by:<4}  {m.state:<5}  "
+            f"{m.session:<10}  {m.identifier:<12}  {m.family_bills:>6}  {m.status or '':<10}  "
+            f"{m.title[:70]}"
         )
     hidden = len(result.matches) - limit
     more = f"; {hidden:,} more not shown (--limit)" if hidden > 0 else ""
     noun = "family matches" if len(result.matches) == 1 else "families match"
     typer.echo(
-        f"{len(result.matches):,} {noun}{more}. Share: of the query's signed sections, "
+        f"{len(result.matches):,} {noun}{more}. Share: of the query's searched sections, "
         f"the share with a match in the family. Best: the highest estimated similarity of a "
-        f"matched section. Family: the state's near-identical bills, counted once. "
-        f"{time.monotonic() - started:.1f}s"
+        f"matched section. Cos: the semantic stage's best cosine. By: n, the near-duplicate "
+        f"stage; s, the semantic stage. Family: the state's near-identical bills, counted "
+        f"once. {time.monotonic() - started:.1f}s"
     )
+
+
+_STAGE_MARKS = {"near_duplicate": "n", "semantic": "s"}
 
 
 @app.command()
@@ -477,6 +527,7 @@ def eval_commission(
     final: Annotated[
         bool, typer.Option("--final", help="The one final evaluation of the held-out acts.")
     ] = False,
+    semantic: SemanticOption = True,
 ) -> None:
     """Commission recall: what share of each uniform act's enactments its text finds."""
     if held_out and not final:
@@ -490,6 +541,7 @@ def eval_commission(
         typer.echo("--final applies only with --held-out.", err=True)
         raise typer.Exit(1)
     try:
+        search = _semantic_search(tables) if semantic else None
         section = commission_recall(
             tables,
             acts_dir=acts or (HELD_OUT_DIR if held_out else ACTS_DIR),
@@ -497,8 +549,16 @@ def eval_commission(
             sessions_path=sessions,
             act_ids=HELD_OUT_ACTS if held_out else ACTS,
             development_path=ENACTMENTS if held_out else None,
+            semantic=search,
         )
-    except (CommissionError, IndexMissingError, StoplistError, UlcError) as e:
+    except (
+        CommissionError,
+        IndexMissingError,
+        StoplistError,
+        UlcError,
+        EmbedError,
+        ModelError,
+    ) as e:
         typer.echo(str(e), err=True)
         raise typer.Exit(1) from None
     write_results(results, "commission_held_out" if held_out else "commission", section)
@@ -507,6 +567,9 @@ def eval_commission(
         r = pooled[key]
         share = r["found"] / r["enactments"] if r["enactments"] else 0.0
         typer.echo(f"recall, {label}: {r['found']}/{r['enactments']} = {share:.1%}")
+    if section["stage_ablation"]:
+        for stage, r in section["stage_ablation"].items():
+            typer.echo(f"  {stage}: {r['all']['found']}/{r['all']['enactments']}")
     misses = ", ".join(f"{k} {v}" for k, v in section["miss_reasons"].items())
     typer.echo(f"misses: {misses or 'none'} -> {results}")
 

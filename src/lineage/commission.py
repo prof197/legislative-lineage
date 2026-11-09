@@ -29,7 +29,14 @@ from lineage.acts import ACTS, ACTS_DIR, enacted_text
 from lineage.bands import load_band_index
 from lineage.lsh import BUCKET_CAP, band_keys
 from lineage.minhash import NUM_PERM
-from lineage.query import bucket_sizes, query_text, require_index, sign_query
+from lineage.query import (
+    bucket_sizes,
+    matchable_sections,
+    query_text,
+    require_index,
+    sign_query,
+)
+from lineage.semantic import SemanticSearch, best_cosines_to_bills
 from lineage.sessions import Session, load_sessions
 from lineage.signatures import open_signatures
 from lineage.stats import AMENDMENT_CHARS, AMENDMENT_OPENING, AMENDMENT_SUBSTITUTE
@@ -132,6 +139,7 @@ class Relative:
     rank: int
     share: float
     shown: str  # the identifier the family is shown through
+    stages: frozenset[str] = frozenset()  # the stages that matched the family
 
 
 def target_reason(
@@ -214,9 +222,14 @@ def evaluate(
     min_share: float = MIN_SHARE,
     development: frozenset[tuple[str, int, str]] = frozenset(),
     acts: frozenset[str] | None = None,
+    semantic: SemanticSearch | None = None,
 ) -> dict[str, Any]:
-    """Recall of each act's enactments from its query text, with a reason for every miss."""
+    """Recall of each act's enactments from its query text, with a reason for every miss.
+
+    With `semantic`, both stages search, each enactment records which stages found it, and
+    the stage ablation reports recall for each stage alone and for both together."""
     require_index(tables_dir)
+    stages = ("near_duplicate", "semantic") if semantic is not None else ("near_duplicate",)
     rows = [r for r in snapshot.rows if r.stratum is not None]
     excluded = [
         (r, why)
@@ -263,11 +276,23 @@ def evaluate(
     records: list[dict[str, Any]] = []
     query_stats: dict[str, dict[str, Any]] = {}
     for act in sorted(query_texts):
-        result = query_text(query_texts[act], tables_dir)
+        result = query_text(query_texts[act], tables_dir, semantic=semantic)
         relatives = {
-            m.family: Relative(rank, round(m.share, 4), m.identifier)
+            m.family: Relative(
+                rank, round(m.share, 4), m.identifier, frozenset(m.sections_by_stage)
+            )
             for rank, m in enumerate(result.matches, start=1)
         }
+        cosines: dict[str, float] = {}
+        if semantic is not None:
+            act_bills = [
+                b.id
+                for row, match in zip(counted, found, strict=True)
+                if row.act == act
+                for b in match.bills
+            ]
+            _, matchable = matchable_sections(query_texts[act])
+            cosines = best_cosines_to_bills([t for t, _ in matchable], act_bills, semantic)
         signed = sign_query(query_texts[act], tables_dir).values
         sizes = bucket_sizes(band_keys(signed), index) if signed.shape[0] else None
         targets_by_family = {
@@ -280,13 +305,18 @@ def evaluate(
         query_stats[act] = {
             "sections": result.sections,
             "signed": result.signed,
+            "searched": result.searched,
             "families": len(result.matches),
+            "families_by_stage": {
+                stage: sum(stage in m.sections_by_stage for m in result.matches) for stage in stages
+            },
             # Every relative, so the threshold's premise can be checked by reading them.
             "relatives": [
                 {
                     "rank": rank,
                     "share": round(m.share, 4),
                     "sections_matched": m.sections_matched,
+                    "sections_by_stage": m.sections_by_stage,
                     "state": m.state,
                     "session": m.session,
                     "identifier": m.identifier,
@@ -327,6 +357,8 @@ def evaluate(
                         "signed_sections": len(sections_of.get(bill.id, ())),
                         "stage": probed.stage if probed else None,
                         "best_estimate": round(probed.best_estimate, 4) if probed else None,
+                        "best_cosine": (round(cosines[bill.id], 4) if bill.id in cosines else None),
+                        "stages": sorted(relative.stages) if relative else [],
                         "rank": relative.rank if relative else None,
                         "share": relative.share if relative else None,
                         "found": relative is not None and relative.share > min_share,
@@ -348,6 +380,10 @@ def evaluate(
                     "match_rule": match.rule if match.bills else None,
                     "with_text": any(t["text_chars"] > 0 for t in targets),
                     "found": best is not None,
+                    "found_by_stage": {
+                        stage: any(t["found"] and stage in t["stages"] for t in targets)
+                        for stage in stages
+                    },
                     "found_by": best["identifier"] if best else None,
                     "rank": best["rank"] if best else None,
                     "share": best["share"] if best else None,
@@ -357,7 +393,13 @@ def evaluate(
             )
 
     strata = ("enacted", "substantially_similar")
+    ablation = {
+        stage: _both([r | {"found": r["found_by_stage"][stage]} for r in records])
+        for stage in stages
+    } | {"both": _both(records)}
     return {
+        "stages": list(stages),
+        "stage_ablation": ablation if semantic is not None else None,
         "threshold": {
             "score": "share of the query's signed sections that the family matches",
             "min_share": min_share,
@@ -411,6 +453,7 @@ def commission_recall(
     sessions_path: Path,
     act_ids: tuple[str, ...] = ACTS,
     development_path: Path | None = None,
+    semantic: SemanticSearch | None = None,
 ) -> dict[str, Any]:
     """The headline eval: each act's own text as the query.
 
@@ -444,6 +487,7 @@ def commission_recall(
         development=development,
         # The held-out lists carry reserve acts; the development lists hold only the acts run.
         acts=frozenset(act_ids) if development_path else None,
+        semantic=semantic,
     )
     for act, stats in acts.items():
         result["queries"][act] = stats | result["queries"][act]

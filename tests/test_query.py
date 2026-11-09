@@ -65,7 +65,7 @@ def test_the_command_prints_the_relatives(corpus: Path, tmp_path: Path) -> None:
     bill = tmp_path / "bill.txt"
     bill.write_text(_raw_text(corpus, "SB 238"))
 
-    output = _run("query", str(bill), "--tables", str(corpus))
+    output = _run("query", str(bill), "--no-semantic", "--tables", str(corpus))
 
     assert "SB 238" in output
     assert "100%" in output
@@ -75,9 +75,9 @@ def test_the_command_says_when_nothing_matches(corpus: Path, tmp_path: Path) -> 
     bill = tmp_path / "bill.txt"
     bill.write_text("Section 1. " + " ".join(f"word{i}" for i in range(300)))
 
-    output = _run("query", str(bill), "--tables", str(corpus))
+    output = _run("query", str(bill), "--no-semantic", "--tables", str(corpus))
 
-    assert "No near-duplicates" in output
+    assert "No relatives found" in output
 
 
 def test_the_command_fails_cleanly_without_an_index(tmp_path: Path) -> None:

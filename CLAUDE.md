@@ -22,8 +22,9 @@ uv run lineage stats         # coverage, sections, types, status per state/sessi
 uv run lineage stats --samples  # also: sample titles per document-type rule -> data/reports/ (local; names private people, never committed)
 uv run lineage index         # signatures, LSH bands, verified pairs, families -> data/tables/{signatures,bands,pairs,families}/, reports/index.json
 uv run lineage embed         # every distinct 94-word window embedded once, float16, resumable -> data/tables/semantic/, reports/embedding.json
-uv run lineage query FILE     # a bill's near-duplicate families, offline, from the built index
-uv run lineage eval commission  # commission recall, act texts from data/acts/ -> reports/results.json (--results reports/results_exported_only.json after an --exported-only merge)
+uv run lineage neighbors     # each distinct window's 20 nearest by meaning, IVF-PQ re-scored -> data/tables/semantic/<model>/neighbors/, reports/neighbors.json
+uv run lineage query FILE     # a bill's relatives by both stages, offline, from the built index and vectors (--no-semantic: near-duplicates only)
+uv run lineage eval commission  # commission recall, act texts from data/acts/ -> reports/results.json (--results reports/results_exported_only.json after an --exported-only merge); with the stage ablation unless --no-semantic
 uv run lineage eval answer-key  # each commission list row and the bills it resolved to -> reports/answer_key.csv
 uv run lineage eval answer-key --held-out  # the held-out lists resolved, development-set bills skipped -> reports/answer_key_heldout.csv
 uv run lineage eval commission --held-out --final  # held-out recall: run once, at the end of M5, never before
@@ -76,7 +77,8 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   results_table.py  the README results table, rendered from reports/results.json
   pair_data.py    the labeled pair dataset (Kim et al., EMNLP 2021): pinned files, fetch, load; no license, so local only
   pair_eval.py    `lineage eval pair-data`: the stages scored on labeled pairs, metrics only
-  semantic.py     the semantic stage's model and cosine threshold, as the pair evaluation chose them
+  semantic.py     the semantic stage: its model and threshold, as the pair evaluation chose them, and a query's search by meaning
+  neighbors.py    `lineage neighbors`: every distinct window's nearest neighbors for the build, IVF-PQ re-scored against the vectors
   stoplist.py     document-frequency stoplist and its report
   stats.py        coverage report: the measurements that replace the design's estimates
   versions.py     which bill version the text layer fetches (pure functions)

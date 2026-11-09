@@ -21,9 +21,11 @@ from lineage.commission import MISS_REASONS, Probe, Relative, evaluate, probe, t
 from lineage.lsh import BANDS, BUCKET_CAP, ROWS
 from lineage.minhash import NUM_PERM
 from lineage.queries import EnactmentBill
+from lineage.semantic import THRESHOLD
 from lineage.sessions import load_sessions
 from lineage.ulc import ENACTMENTS, load_enactments
 from tests.conftest import COMMISSION
+from tests.fakes import bag_of_words_search
 from tests.test_acts import ACT
 
 RNG = np.random.default_rng(7)
@@ -173,6 +175,31 @@ def test_pipeline_regression_the_enacting_bills_are_found_among_distractors(
             assert e["miss_reason"] == "no_text_in_source", e
 
 
+def test_the_stage_ablation_counts_each_stage_alone_and_both(commission_corpus: Path) -> None:
+    build = json.loads((COMMISSION / "build.json").read_text())
+    act_texts = {act: _raw_text(commission_corpus, bill) for act, bill in build["queries"].items()}
+    snapshot = load_enactments(ENACTMENTS)
+    sessions = load_sessions(COMMISSION / "sessions.csv")
+
+    near = evaluate(act_texts, snapshot, commission_corpus, sessions)
+    both = evaluate(
+        act_texts, snapshot, commission_corpus, sessions,
+        semantic=bag_of_words_search(commission_corpus),
+    )  # fmt: skip
+
+    assert near["stage_ablation"] is None
+    ablation = both["stage_ablation"]
+    found = {s: ablation[s]["all"]["found"] for s in ("near_duplicate", "semantic", "both")}
+    assert found["near_duplicate"] == near["recall"]["pooled"]["all"]["found"]
+    assert found["both"] == both["recall"]["pooled"]["all"]["found"]
+    assert found["both"] >= max(found["near_duplicate"], found["semantic"])
+    for e in both["enactments"]:
+        assert e["found"] == any(e["found_by_stage"].values())
+        for bill in e["bills"]:
+            if "semantic" in bill["stages"]:
+                assert bill["best_cosine"] >= THRESHOLD - 1e-4
+
+
 def test_the_command_writes_its_section_of_the_results(
     commission_corpus: Path, tmp_path: Path
 ) -> None:
@@ -186,7 +213,8 @@ def test_the_command_writes_its_section_of_the_results(
     out = CliRunner().invoke(
         app,
         [
-            "eval", "commission", "--tables", str(commission_corpus), "--acts", str(acts),
+            "eval", "commission", "--no-semantic", "--tables", str(commission_corpus),
+            "--acts", str(acts),
             "--sessions", str(COMMISSION / "sessions.csv"), "--results", str(results),
         ],
     )  # fmt: skip
@@ -210,7 +238,16 @@ def test_the_command_says_which_act_text_is_missing(
     commission_corpus: Path, tmp_path: Path
 ) -> None:
     out = CliRunner().invoke(
-        app, ["eval", "commission", "--tables", str(commission_corpus), "--acts", str(tmp_path)]
+        app,
+        [
+            "eval",
+            "commission",
+            "--no-semantic",
+            "--tables",
+            str(commission_corpus),
+            "--acts",
+            str(tmp_path),
+        ],
     )
 
     assert out.exit_code == 1
@@ -248,7 +285,8 @@ def test_the_final_run_reads_the_held_out_acts(commission_corpus: Path, tmp_path
     out = CliRunner().invoke(
         app,
         [
-            "eval", "commission", "--held-out", "--final", "--tables", str(commission_corpus),
+            "eval", "commission", "--held-out", "--final", "--no-semantic",
+            "--tables", str(commission_corpus),
             "--acts", str(tmp_path),
         ],
     )  # fmt: skip

@@ -433,6 +433,37 @@ def read_semantic_texts(con: duckdb.DuckDBPyConnection, *, parquet_path: Path) -
     return [t for (t,) in rows]
 
 
+def semantic_units_of(
+    con: duckdb.DuckDBPyConnection, *, units_glob: str, text_ids: list[int]
+) -> list[tuple[int, str, int]]:
+    """(text id, bill id, section ordinal) of every window whose text is one of `text_ids`,
+    each section once per text."""
+    rows: list[tuple[int, str, int]] = con.execute(
+        """
+        SELECT DISTINCT text_id, bill_id, ordinal FROM read_parquet($units)
+        WHERE text_id IN (SELECT unnest($ids))
+        ORDER BY text_id, bill_id, ordinal
+        """,
+        {"units": units_glob, "ids": text_ids},
+    ).fetchall()
+    return rows
+
+
+def semantic_text_ids_of(
+    con: duckdb.DuckDBPyConnection, *, units_glob: str, bill_ids: list[str]
+) -> list[tuple[str, int]]:
+    """(bill id, text id) of every window of the given bills, each text once per bill."""
+    rows: list[tuple[str, int]] = con.execute(
+        """
+        SELECT DISTINCT bill_id, text_id FROM read_parquet($units)
+        WHERE bill_id IN (SELECT unnest($ids))
+        ORDER BY bill_id, text_id
+        """,
+        {"units": units_glob, "ids": bill_ids},
+    ).fetchall()
+    return rows
+
+
 def signature_bill_ids_at(
     con: duckdb.DuckDBPyConnection, *, parquet_path: Path, rows: list[int]
 ) -> dict[int, str]:
