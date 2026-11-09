@@ -387,6 +387,52 @@ def read_signature_keys(
     return [b for b, _, _ in rows], [o for _, o, _ in rows], [w for _, _, w in rows]
 
 
+def write_semantic_units(
+    con: duckdb.DuckDBPyConnection,
+    *,
+    parquet_path: Path,
+    bill_ids: list[str],
+    ordinals: list[int],
+    windows: list[int],
+    text_ids: list[int],
+) -> None:
+    """The semantic stage's windows, one row each: bill id, section ordinal, window number, and
+    the id of its text, shared by every window with the same text."""
+    query = f"""
+        COPY (
+            SELECT
+                CAST(unnest($bill_ids) AS VARCHAR) AS bill_id,
+                CAST(unnest($ordinals) AS INTEGER) AS ordinal,
+                CAST(unnest($windows) AS INTEGER) AS window_number,
+                CAST(unnest($text_ids) AS BIGINT) AS text_id
+        ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
+    """
+    con.execute(
+        query,
+        {"bill_ids": bill_ids, "ordinals": ordinals, "windows": windows, "text_ids": text_ids},
+    )
+
+
+def write_semantic_texts(
+    con: duckdb.DuckDBPyConnection, *, parquet_path: Path, first_id: int, texts: list[str]
+) -> None:
+    """A shard of distinct window texts, ids counting up from `first_id`."""
+    query = f"""
+        COPY (
+            SELECT CAST(unnest($ids) AS BIGINT) AS text_id, CAST(unnest($texts) AS VARCHAR) AS text
+        ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
+    """
+    con.execute(query, {"ids": list(range(first_id, first_id + len(texts))), "texts": texts})
+
+
+def read_semantic_texts(con: duckdb.DuckDBPyConnection, *, parquet_path: Path) -> list[str]:
+    """A shard's texts, in id order."""
+    rows: list[tuple[str]] = con.execute(
+        "SELECT text FROM read_parquet($p) ORDER BY text_id", {"p": str(parquet_path)}
+    ).fetchall()
+    return [t for (t,) in rows]
+
+
 def signature_bill_ids_at(
     con: duckdb.DuckDBPyConnection, *, parquet_path: Path, rows: list[int]
 ) -> dict[int, str]:

@@ -25,6 +25,7 @@ from lineage.pair_eval import write_report as write_pair_report
 from lineage.query import IndexMissingError, query_text
 from lineage.results_table import EXPORTED_ONLY, README, ResultsTableError, rendered_readme
 from lineage.sectioning import SectioningError, build_sections
+from lineage.semantic import MODEL as SEMANTIC_MODEL
 from lineage.sessions import (
     CARRYOVER,
     SCRAPERS_REPO,
@@ -43,6 +44,11 @@ from lineage.text_quality import STORE, run_sample
 from lineage.text_run import REPORT as FETCH_REPORT
 from lineage.text_run import run_fetch
 from lineage.ulc import ENACTMENTS, HELD_OUT_ENACTMENTS, UlcError
+from lineage.vectors import PROCESSES as EMBED_PROCESSES
+from lineage.vectors import REPORT as EMBED_REPORT
+from lineage.vectors import THREADS as EMBED_THREADS
+from lineage.vectors import EmbedError, embed_corpus, vectors_dir
+from lineage.vectors import write_report as write_embed_report
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
 eval_app = typer.Typer(no_args_is_help=True, help="Run an eval and write its results.")
@@ -276,6 +282,48 @@ def boilerplate(
         f"{result.occurrences_removed / max(result.occurrences, 1):.1%} of occurrences across "
         f"{result.sections:,} sections ({result.seconds:.0f}s) -> {tables / 'stoplist.parquet'}, "
         f"{report}"
+    )
+
+
+@app.command("embed")
+def embed_command(
+    tables: TablesOption = Path("data/tables"),
+    model: Annotated[
+        str, typer.Option("--model", help=f"Embedding model: {', '.join(MODELS)}.")
+    ] = SEMANTIC_MODEL,
+    models_dir: Annotated[
+        Path, typer.Option("--models", help="Directory of model files (local).")
+    ] = MODELS_DIR,
+    processes: Annotated[int, typer.Option("--processes", help="Worker processes.")] = (
+        EMBED_PROCESSES
+    ),
+    threads: Annotated[int, typer.Option("--threads", help="Threads per worker.")] = (
+        EMBED_THREADS
+    ),
+    min_free_gib: MinFreeOption = 20.0,
+    report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = (
+        EMBED_REPORT
+    ),
+) -> None:
+    """Embed every distinct semantic window, float16, resumable -> <tables>/semantic/."""
+    try:
+        doc = embed_corpus(
+            tables,
+            model,
+            models_dir=models_dir,
+            processes=processes,
+            threads=threads,
+            floor_bytes=int(min_free_gib * GiB),
+            progress=typer.echo,
+        )
+    except (EmbedError, ModelError, InsufficientDiskSpaceError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    write_embed_report(doc, report)
+    typer.echo(
+        f"{doc['distinct_texts']:,} distinct texts of {doc['windows']:,} windows, "
+        f"{doc['shards'] - doc['shards_left']} of {doc['shards']} shards embedded "
+        f"({doc['vector_bytes'] / GiB:.2f} GiB) -> {vectors_dir(tables, model)}; {report}"
     )
 
 

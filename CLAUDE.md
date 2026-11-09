@@ -21,6 +21,7 @@ uv run lineage boilerplate   # shingle stoplist -> data/tables/stoplist.parquet,
 uv run lineage stats         # coverage, sections, types, status per state/session -> reports/coverage.json
 uv run lineage stats --samples  # also: sample titles per document-type rule -> data/reports/ (local; names private people, never committed)
 uv run lineage index         # signatures, LSH bands, verified pairs, families -> data/tables/{signatures,bands,pairs,families}/, reports/index.json
+uv run lineage embed         # every distinct 94-word window embedded once, float16, resumable -> data/tables/semantic/, reports/embedding.json
 uv run lineage query FILE     # a bill's near-duplicate families, offline, from the built index
 uv run lineage eval commission  # commission recall, act texts from data/acts/ -> reports/results.json (--results reports/results_exported_only.json after an --exported-only merge)
 uv run lineage eval answer-key  # each commission list row and the bills it resolved to -> reports/answer_key.csv
@@ -94,6 +95,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   memory.py       current and peak memory as the OS charges it (macOS physical footprint)
   models.py       the embedding models: pinned repository revision and file hashes; fetched through fetch.download
   embed.py        unit-length vectors from a pinned model, offline (fastembed, ONNX), batched by token count
+  vectors.py      `lineage embed`: plan the distinct windows, embed them in shards by worker processes, resume where it stopped
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
 tools/            dev and CI checks
   leak_check.py   local paths and deny-listed terms in tracked files and every commit
@@ -123,6 +125,7 @@ data/             local snapshots and derived tables; gitignored, never committe
   acts/held-out/<act>.txt  the held-out acts' texts, read only by the parser check and the final run
   tables/         Parquet tables written by the pipeline; bills/ holds the source's records under the project's names, texts/ each record's chosen text; signatures/, bands/ and pairs/ hold .npy arrays
   text/           the text layer's fetch plan and fetched text (JSON lines per host)
+  tables/semantic/  the semantic stage's windows (units/), distinct texts (texts/), and each model's float16 vector shards
   pair_data/      the labeled pair dataset's split files, from `lineage pair-data fetch`; never committed
   models/<name>/  embedding model files at their pinned revision, from `lineage model fetch`
 ```
