@@ -392,9 +392,15 @@ Every span has an id in reading order and its character offsets in both texts, s
 
 ## Precision sample
 
-Recall has an answer key; precision needs labels. A seeded sample of matches, drawn per stage, is labeled on the labeled pair dataset's scale, unrelated (0) to identical (4), so a match counts as correct when it is related or closer, the same bar the semantic stage's threshold was set to ([Pair dataset](#pair-dataset)).
+Recall has an answer key; precision needs labels. A seeded sample of matches, drawn per stage, is labeled on the labeled pair dataset's scale: 0 unrelated, 1 partially related, 2 related, 3 almost identical, 4 identical.
 
-`uv run lineage label SAMPLE` shows each pair's two sections aligned ([Alignment](#alignment)) and asks for a label. Each label is appended to `evals/precision_labels.jsonl` with its labeler and date as soon as it is given, so labeling stops and resumes at will. The file holds pair ids and labels, never text. Provisional labels from a model, written before the hand labels are done, carry their own labeler and never stand in for a person's.
+**What counts as correct.** A match is correct when it is labeled 2, 3 or 4, and wrong when it is labeled 0 or 1. That is the bar the semantic stage's threshold was set to on the pair dataset ([Pair dataset](#pair-dataset)), so precision in the corpus and on the dataset measure the same thing. This is fixed before any label is counted.
+
+**Labeling.** `uv run lineage label SAMPLE --labeler HANDLE` shows each pair's two sections aligned ([Alignment](#alignment)) and asks for a label. Each label is appended to `evals/precision_labels.jsonl` as soon as it is given, so labeling stops and resumes at will.
+
+**What a label records.** Each side's Open States bill id and the SHA-256 of its section's normalized text, which survive a re-split of the corpus. The section's heading and ordinal are kept for reading only, since a re-split renumbers sections. When labels are loaded, any whose text no longer matches a section of its bill is dropped and counted. The file holds no bill text.
+
+**Who labeled.** A person is recorded by GitHub handle, and the tool refuses anything that is not one. A provisional label from a model is recorded by model id and prompt version. Only a person's label takes a pair off the list.
 
 ## Alternatives considered
 

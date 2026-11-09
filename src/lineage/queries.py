@@ -1145,13 +1145,14 @@ def matchable_bill_ids(
     return [bill for (bill,) in rows]
 
 
-def section_texts_at(
+def sections_at(
     con: duckdb.DuckDBPyConnection, *, sections_glob: str, keys: list[tuple[str, int]]
-) -> dict[tuple[str, int], str]:
-    """The display text of each wanted (bill id, ordinal) section."""
-    rows: list[tuple[str, int, str]] = con.execute(
+) -> dict[tuple[str, int], tuple[str | None, str, str]]:
+    """The heading, display text and normalized text of each wanted (bill id, ordinal) section."""
+    rows: list[tuple[str, int, str | None, str, str]] = con.execute(
         """
-        SELECT s.bill_id, s.ordinal, s.text FROM read_parquet($sections) s
+        SELECT s.bill_id, s.ordinal, s.heading, s.text, s.normalized
+        FROM read_parquet($sections) s
         JOIN (SELECT unnest($ids) AS bill_id, unnest($ordinals) AS ordinal) k
             ON s.bill_id = k.bill_id AND s.ordinal = k.ordinal
         """,
@@ -1161,7 +1162,21 @@ def section_texts_at(
             "ordinals": [o for _, o in keys],
         },
     ).fetchall()
-    return {(b, o): t for b, o, t in rows}
+    return {(b, o): (h, t, n) for b, o, h, t, n in rows}
+
+
+def normalized_texts_of(
+    con: duckdb.DuckDBPyConnection, *, sections_glob: str, bill_ids: list[str]
+) -> list[tuple[str, str]]:
+    """(bill id, normalized text) of every section of the given bills."""
+    rows: list[tuple[str, str]] = con.execute(
+        """
+        SELECT bill_id, normalized FROM read_parquet($sections)
+        WHERE bill_id IN (SELECT unnest($ids))
+        """,
+        {"sections": sections_glob, "ids": bill_ids},
+    ).fetchall()
+    return rows
 
 
 def matchable_section_texts(
