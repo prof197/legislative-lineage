@@ -1,0 +1,24 @@
+{
+ "command": "uv run lineage embed",
+ "model": "bge-small-en-v1.5",
+ "unit": "94-word windows, stride 94",
+ "windows": 10341843,
+ "distinct_texts": 7326503,
+ "shards": 448,
+ "shards_left": 0,
+ "vector_bytes": 5626811648,
+ "runs": 2,
+ "seconds": 86875,
+ "texts_per_second": 82.8,
+ "texts_embedded_in_runs": 7195431,
+ "processes_threads": [
+  [
+   4,
+   2
+  ]
+ ],
+ "peak_memory_bytes": {
+  "worker_peak_bytes": 1902958464,
+  "main_peak_bytes": 145737600
+ }
+}
