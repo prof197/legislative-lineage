@@ -62,10 +62,14 @@ class MemoryBoundError(Exception):
 
 
 def require_within(bound: int, what: str) -> None:
-    """Stop when the process's footprint has crossed `bound`, before it pushes into swap."""
-    now = current_bytes()
+    """Stop when the process's footprint is over `bound`, or has been at any time since it
+    started. A spike inside one library call is over by the time the caller checks, and only
+    the lifetime maximum still shows it."""
+    now, peak = current_bytes(), peak_bytes()
     if now > bound:
-        raise MemoryBoundError(
-            f"{what}: the process holds {now / 1024**3:.2f} GiB, over the "
-            f"{bound / 1024**3:.0f} GiB bound; stopped"
-        )
+        held = f"the process holds {now / 1024**3:.2f} GiB"
+    elif peak > bound:
+        held = f"the process peaked at {peak / 1024**3:.2f} GiB"
+    else:
+        return
+    raise MemoryBoundError(f"{what}: {held}, over the {bound / 1024**3:.0f} GiB bound; stopped")

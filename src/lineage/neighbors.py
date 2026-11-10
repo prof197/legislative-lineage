@@ -13,9 +13,9 @@ neither it nor these arrays, since it searches the vectors exactly (lineage.sema
 
 The build holds to DR-3's memory bound. It refuses to start when its projected peak, the index
 at its measured bytes per vector plus its buffers, is over the bound, and stops at the first
-batch after which the process holds more. It searches CHECKED seeded texts exactly at the end
-and reports the share of their true neighbors it found, and the command stops below
-RECALL_FLOOR. See DESIGN.md#semantic-stage.
+batch after which the process holds more, or has peaked higher inside a call. It searches
+CHECKED seeded texts exactly at the end and reports the share of their true neighbors it
+found, and the command stops below RECALL_FLOOR. See DESIGN.md#semantic-stage.
 """
 
 import json
@@ -122,6 +122,7 @@ def build_neighbors(
     train = rows_of(shards, np.sort(rng.choice(n, size=min(TRAIN_ROWS, n), replace=False)))
     index = train_index(spec, train.shape[1], train)  # a no-op for an index needing no training
     del train
+    require_within(bound_bytes, f"training {spec}")
     for block in shards:
         for i in range(0, block.shape[0], _ADD_CHUNK):
             add(index, block[i : i + _ADD_CHUNK])
