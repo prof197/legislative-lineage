@@ -187,3 +187,78 @@ def test_a_generic_placeholder_normalizes_like_its_word_and_a_filled_one_does_no
 
     assert act_line == normalize("This act may be cited as the Uniform Widget Registration Act.")
     assert agency_line != normalize("The Department of Revenue shall keep a registry of widgets.")
+
+
+# An invented section as the commission drafts one, with its placeholders about as dense as the
+# densest sections of the development acts, and two ways a state might enact it.
+DRAFTED = """\
+Section 4. Registration of Widgets
+(a) A person that sells widgets in [this state] shall register with the [name of state agency]
+before the first sale. The registration must state the person's name, its principal office and
+each place in [this state] where it keeps widgets for sale.
+(b) The [name of state agency] [shall][may] issue a certificate of registration within 30 days
+after receiving a complete application[, and may charge a reasonable fee].
+(c) A person that fails to register is subject to a civil penalty under [insert citation].
+"""
+# Every placeholder filled in, one alternative chosen and the optional clause dropped.
+FILLED = """\
+Section 4. Registration of Widgets
+(a) A person that sells widgets in this Commonwealth shall register with the Department of
+Revenue before the first sale. The registration must state the person's name, its principal
+office and each place in this Commonwealth where it keeps widgets for sale.
+(b) The Department of Revenue shall issue a certificate of registration within 30 days after
+receiving a complete application.
+(c) A person that fails to register is subject to a civil penalty under section 12-401 of the
+Revised Statutes.
+"""
+# The generic placeholders kept as their words, the agency named, the optional clause kept.
+LIGHTLY_FILLED = """\
+Section 4. Registration of Widgets
+(a) A person that sells widgets in this state shall register with the Department of Revenue
+before the first sale. The registration must state the person's name, its principal office and
+each place in this state where it keeps widgets for sale.
+(b) The Department of Revenue shall issue a certificate of registration within 30 days after
+receiving a complete application, and may charge a reasonable fee.
+(c) A person that fails to register is subject to a civil penalty under section 12-401.
+"""
+
+
+def _proposed_and_estimate(act: str, bill: str) -> tuple[bool, float]:
+    """The near-duplicate stage on one section pair, as the index treats one window."""
+    from lineage.lsh import band_keys
+    from lineage.minhash import permutations, signatures, similarity
+    from lineage.shingles import section_shingles
+
+    texts = [normalize(act), normalize(bill)]
+    assert all(len(t.split()) <= 94 for t in texts)  # one window each
+    signed = signatures(section_shingles(texts), permutations())
+    keys = band_keys(signed)
+    return bool((keys[0] == keys[1]).any()), similarity(signed[0], signed[1])
+
+
+def test_the_query_keeps_the_placeholders_alternatives_and_optional_clause() -> None:
+    drafted = enacted_text(DRAFTED)
+
+    for kept in ("[this state]", "[insert citation]", "[shall][may]", "[, and may charge"):
+        assert kept in drafted
+
+
+def test_a_lightly_filled_enactment_is_proposed_and_verified() -> None:
+    from lineage.verify import THRESHOLD
+
+    proposed, estimate = _proposed_and_estimate(enacted_text(DRAFTED), LIGHTLY_FILLED)
+
+    assert proposed
+    assert estimate >= THRESHOLD
+
+
+def test_a_fully_filled_enactment_is_proposed_but_lost_at_verification() -> None:
+    # Each filled placeholder changes the shingles around it, and at this density they add up:
+    # the section is the semantic stage's to find (DESIGN.md#commission-recall). Pinned so that a
+    # change to matching that recovers it is seen, not assumed.
+    from lineage.verify import THRESHOLD
+
+    proposed, estimate = _proposed_and_estimate(enacted_text(DRAFTED), FILLED)
+
+    assert proposed
+    assert estimate < THRESHOLD
