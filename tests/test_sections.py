@@ -372,3 +372,105 @@ def test_a_citation_after_a_statute_abbreviation_is_a_cross_reference() -> None:
     for before in ("RSA", "Public Law", "consumer protection law"):
         text = f"SECTION 1. Adds a chapter. It applies {before}\n4-1-201. And goes on."
         assert [s.heading for s in split_sections(text).sections] == ["SECTION 1."], before
+
+
+def _headings(text: str, state: str | None) -> list[str | None]:
+    return [s.heading for s in split_sections(text, state=state).sections]
+
+
+NORTH_DAKOTA = """\
+SECTION 1. Chapter 59-22 of the North Dakota Century Code is created and enacted as follows:
+59 - 22 - 01. (102) Definitions.
+As used in this chapter, a record is retained under section
+59 - 22 - 11. A copy may be certified.
+"Record" means information that is inscribed on a tangible medium.
+59 - 22 - 02. (103) Construction.
+This chapter must be construed to facilitate electronic documents
+and to be consistent with reasonable practices concerning them.
+"""
+
+
+def test_north_dakota_code_sections_are_headings_with_their_hyphens_spaced() -> None:
+    # Century Code sections are title-chapter-section; the legislature's PDFs space the hyphens.
+    # The citation after "section" wraps a cross-reference and stays in its section.
+    assert _headings(NORTH_DAKOTA, "ND") == ["SECTION 1.", "59 - 22 - 01.", "59 - 22 - 02."]
+    assert _headings(NORTH_DAKOTA, "SD") == ["SECTION 1."]
+
+
+NORTH_CAROLINA = """\
+PART IV. UNIFORM CHILD ABDUCTION PREVENTION ACT
+SECTION 45.(a) The title of Chapter 50A of the General Statutes reads as rewritten:
+SECTION 45.(b) Chapter 50A of the General Statutes is amended by adding a new Article to read:
+"Article 4.
+"§ 50A-411. Short title.
+This Article may be cited as the Uniform Child Abduction Prevention Act.
+"§ 50A-412. Definitions.
+The following definitions apply in this Article.
+SECTION 46. This act is effective when it becomes law.
+"""
+
+
+def test_north_carolina_lettered_bill_sections_and_quoted_statutes_are_headings() -> None:
+    assert _headings(NORTH_CAROLINA, "NC") == [
+        None, "SECTION 45.(a)", "SECTION 45.(b)", "§ 50A-411.", "§ 50A-412.", "SECTION 46."
+    ]  # fmt: skip
+    assert _headings(NORTH_CAROLINA, None) == [None, "SECTION 46."]
+
+
+NEW_HAMPSHIRE = """\
+Be it Enacted by the Senate and House of Representatives in General Court convened:
+228:1 New Chapter; Uniform Special Deposits Act. Amend RSA by inserting the following:
+CHAPTER 384-H
+384-H:1 Short Title. This chapter may be known as the "Uniform Special Deposits Act".
+384-H:2 Definitions. In this chapter a deposit satisfies RSA
+384-H:5. A notice described in
+15 U.S.C. Section 7003(b) is not affected.
+228:2 Effective Date. This act shall take effect 60 days after its passage.
+"""
+
+
+def test_new_hampshire_bill_sections_and_rsa_sections_are_headings() -> None:
+    # Bill sections are a number and a caption ("228:1" once chaptered); RSA sections are
+    # chapter:section. A wrapped RSA reference and a wrapped "15 U.S.C." stay in their section.
+    assert _headings(NEW_HAMPSHIRE, "NH") == [None, "228:1", "384-H:1", "384-H:2", "228:2"]
+    assert _headings(NEW_HAMPSHIRE, "VT") == [None]
+
+
+MISSOURI = """\
+Be it enacted by the General Assembly of the State of Missouri, as follows:
+Section A. Sections 474.540 to
+474.564, RSMo, are enacted, to read as follows:
+474.540. The provisions of sections 474.540 to 474.564 may be cited as the act.
+SB 289 2
+474.542. As used in sections 474.540 to 474.564, as provided in section
+472.490. the following terms mean:
+"""
+
+
+def test_missouri_lettered_bill_sections_and_rsmo_sections_are_headings() -> None:
+    # RSMo sections are chapter.section. "SB 289 2" is the page header: the bill and a page.
+    split = split_sections(MISSOURI, state="MO")
+
+    assert [s.heading for s in split.sections] == [None, "Section A.", "474.540.", "474.542."]
+    assert not any("SB 289" in s.text for s in split.sections)
+    assert _headings(MISSOURI, "KS") == [None]
+
+
+def test_a_public_law_number_or_a_reference_before_a_line_number_is_not_a_heading() -> None:
+    # A federal public law ("Pub. L. 109-248.") wraps like any reference, and a PDF can leave
+    # its line number after the word that introduces the reference ("under section 3").
+    text = (
+        "Section A. Section 188.060, RSMo, is enacted to read as follows:\n"
+        "188.050. Records shall be kept as the Adam Walsh Child Protection Act, Pub. L.\n"
+        "109-248. requires, and shall be maintained under section 3\n"
+        "188.060. for seven years.\n"
+        "188.070. Each record is confidential.\n"
+    )
+
+    assert _headings(text, "MO") == ["Section A.", "188.050.", "188.070."]
+
+
+def test_a_heading_after_a_page_footer_or_a_numbered_title_still_splits() -> None:
+    for before in ("LC005913 - Page 2 of 3", "Page 4 of 31", "ARTICLE 3"):
+        text = f"SECTION 1. Adds a chapter.\n{before}\n42-169-3. Detainers."
+        assert [s.heading for s in split_sections(text).sections] == ["SECTION 1.", "42-169-3."]

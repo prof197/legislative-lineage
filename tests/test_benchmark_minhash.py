@@ -3,9 +3,8 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from benchmarks import memory
 from benchmarks.minhash import ENGINES, run_engine, run_lsh
-from lineage import queries
+from lineage import memory, queries
 from lineage.minhash import NUM_PERM
 from lineage.signatures import build_signatures
 

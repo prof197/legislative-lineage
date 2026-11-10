@@ -140,6 +140,33 @@ def test_illinois_beta_links_are_fetched_from_the_main_site() -> None:
     assert moved(url) == "https://ilga.gov/Legislation/BillStatus/FullText?LegDocId=1&Print=1"
 
 
+@pytest.mark.parametrize(
+    ("old", "new"),
+    [
+        (
+            "https://search-prod.lis.state.oh.us/solarapi/v1/general_assembly_135/bills/sb237/EN/05/"
+            "sb237_05_EN?format=pdf",
+            "https://search-prod.lis.state.oh.us/api/v2/general_assembly_135/legislation/sb237/"
+            "05_EN/pdf/",
+        ),
+        (
+            "https://search-prod.lis.state.oh.us/solarapi/v1/general_assembly_135_special_1/bills/"
+            "hb2/EN/04/hb2_04_EN?format=pdf",
+            "https://search-prod.lis.state.oh.us/api/v2/general_assembly_135_special_1/legislation/"
+            "hb2/04_EN/pdf/",
+        ),
+    ],
+)
+def test_ohio_links_in_its_retired_scheme_are_fetched_from_the_current_one(
+    old: str, new: str
+) -> None:
+    assert moved(old) == new
+    # The current scheme, and anything the rule doesn't describe, is left as it is.
+    assert moved(new) == new
+    html = old.replace("format=pdf", "format=html")
+    assert moved(html) == html
+
+
 def test_spaces_in_a_link_are_escaped_and_existing_escapes_kept() -> None:
     url = "https://www.oklegislature.gov/cf_pdf/2025-26 ENR/SB/SB1232 ENR.PDF?a=1&b=%20"
 

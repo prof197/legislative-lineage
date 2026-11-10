@@ -32,8 +32,10 @@ GEORGIA_ENACTING = r"(?i)be\s+it\s+enacted\s+by\s+the\s+general\s+assembly"
 # itself or the bill it changes, in each chamber's own form: "AMENDMENT NO. 1 On page 1" (LA),
 # "AMENDMENT TO SENATE BILL" (IL), "Amend Bill, page 2" (PA), "AMEND House Bill No. 117" (DE),
 # "Floor Amend 2" (GA), "FLOOR AMENDMENT No." (OK), "Strike the original sections" (NE), "as
-# inserted by section 1 of the bill" (NH). Only the opening is read, since bills quote these
-# phrases in their bodies, and a bill's own title ("A bill to amend ...") never matches.
+# inserted by section 1 of the bill" (NH), or an amendment's synopsis stored without the
+# amendment, "SYNOPSIS This Amendment" (DE). Only the opening is read, since bills quote these
+# phrases in their bodies, and a bill's own title ("A bill to amend ...") never matches; nor
+# does Alabama's bill synopsis, which describes the bill.
 AMENDMENT_CHARS = 400
 AMENDMENT_OPENING = (
     r"(?i)\bamendment\s+(?:no\.?|number)\s*[\d_]+\.?\s+"
@@ -48,6 +50,7 @@ AMENDMENT_OPENING = (
     r"|\bas\s+inserted\s+by\s+section\s+\d+\s+of\s+the\s+bill\b"
     r"|\bstrike\s+(?:the\s+original\s+sections|amendment\s+\d+)"
     r"|\bon\s+page\s+\d+,?\s+(?:line|at|after|delete|strike|by)"
+    r"|^\s*synopsis\s+this\s+amendment\b"
 )
 # An amendment that replaces the whole bill still carries a full text to match.
 AMENDMENT_SUBSTITUTE = (

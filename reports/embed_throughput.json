@@ -1,0 +1,237 @@
+{
+ "command": "uv run python -m benchmarks.embed_throughput",
+ "seed": 20261109,
+ "sample": {
+  "bills": 4000,
+  "windows": 3000
+ },
+ "unit": "94-word windows, stride 94",
+ "distinct_windows": 7305861,
+ "machine": {
+  "cpu": "Apple M1 Max",
+  "cores": 10,
+  "memory_bytes": 34359738368,
+  "platform": "macOS-15.7.3-arm64-arm-64bit-Mach-O",
+  "python": "3.13.2",
+  "numpy": "2.5.4",
+  "datasketch": "2.0.0"
+ },
+ "models": {
+  "bge-small-en-v1.5": {
+   "runs": [
+    {
+     "order": "drawn",
+     "processes": 1,
+     "threads": 8,
+     "batch": 64,
+     "windows_per_second": 28.2,
+     "corpus_hours": 71.9,
+     "load_average_before": [
+      4.86,
+      12.37,
+      15.25
+     ]
+    },
+    {
+     "order": "tokens",
+     "processes": 1,
+     "threads": 4,
+     "batch": 32,
+     "windows_per_second": 48.1,
+     "corpus_hours": 42.2,
+     "load_average_before": [
+      20.5,
+      15.08,
+      15.91
+     ]
+    },
+    {
+     "order": "tokens",
+     "processes": 1,
+     "threads": 8,
+     "batch": 32,
+     "windows_per_second": 62.9,
+     "corpus_hours": 32.3,
+     "load_average_before": [
+      13.36,
+      13.93,
+      15.42
+     ]
+    },
+    {
+     "order": "tokens",
+     "processes": 1,
+     "threads": 10,
+     "batch": 32,
+     "windows_per_second": 42.0,
+     "corpus_hours": 48.3,
+     "load_average_before": [
+      13.08,
+      13.73,
+      15.26
+     ]
+    },
+    {
+     "order": "tokens",
+     "processes": 2,
+     "threads": 4,
+     "batch": 32,
+     "windows_per_second": 71.8,
+     "corpus_hours": 28.3,
+     "load_average_before": [
+      99.87,
+      38.47,
+      24.39
+     ]
+    },
+    {
+     "order": "tokens",
+     "processes": 4,
+     "threads": 2,
+     "batch": 32,
+     "windows_per_second": 80.6,
+     "corpus_hours": 25.2,
+     "load_average_before": [
+      61.26,
+      36.95,
+      24.56
+     ]
+    },
+    {
+     "order": "tokens",
+     "processes": 8,
+     "threads": 1,
+     "batch": 32,
+     "windows_per_second": 71.8,
+     "corpus_hours": 28.2,
+     "load_average_before": [
+      37.57,
+      33.98,
+      24.09
+     ]
+    }
+   ],
+   "fastest": {
+    "order": "tokens",
+    "processes": 4,
+    "threads": 2,
+    "batch": 32,
+    "windows_per_second": 80.6,
+    "corpus_hours": 25.2,
+    "load_average_before": [
+     61.26,
+     36.95,
+     24.56
+    ]
+   }
+  },
+  "all-MiniLM-L6-v2": {
+   "runs": [
+    {
+     "order": "drawn",
+     "processes": 1,
+     "threads": 8,
+     "batch": 64,
+     "windows_per_second": 74.6,
+     "corpus_hours": 27.2,
+     "load_average_before": [
+      23.58,
+      30.71,
+      23.5
+     ]
+    },
+    {
+     "order": "tokens",
+     "processes": 1,
+     "threads": 4,
+     "batch": 32,
+     "windows_per_second": 103.8,
+     "corpus_hours": 19.6,
+     "load_average_before": [
+      17.44,
+      28.23,
+      22.92
+     ]
+    },
+    {
+     "order": "tokens",
+     "processes": 1,
+     "threads": 8,
+     "batch": 32,
+     "windows_per_second": 135.7,
+     "corpus_hours": 15.0,
+     "load_average_before": [
+      13.71,
+      26.28,
+      22.39
+     ]
+    },
+    {
+     "order": "tokens",
+     "processes": 1,
+     "threads": 10,
+     "batch": 32,
+     "windows_per_second": 94.7,
+     "corpus_hours": 21.4,
+     "load_average_before": [
+      13.28,
+      25.38,
+      22.16
+     ]
+    },
+    {
+     "order": "tokens",
+     "processes": 2,
+     "threads": 4,
+     "batch": 32,
+     "windows_per_second": 166.1,
+     "corpus_hours": 12.2,
+     "load_average_before": [
+      59.86,
+      35.28,
+      25.88
+     ]
+    },
+    {
+     "order": "tokens",
+     "processes": 4,
+     "threads": 2,
+     "batch": 32,
+     "windows_per_second": 172.2,
+     "corpus_hours": 11.8,
+     "load_average_before": [
+      46.29,
+      33.78,
+      25.55
+     ]
+    },
+    {
+     "order": "tokens",
+     "processes": 8,
+     "threads": 1,
+     "batch": 32,
+     "windows_per_second": 159.0,
+     "corpus_hours": 12.8,
+     "load_average_before": [
+      36.76,
+      32.4,
+      25.25
+     ]
+    }
+   ],
+   "fastest": {
+    "order": "tokens",
+    "processes": 4,
+    "threads": 2,
+    "batch": 32,
+    "windows_per_second": 172.2,
+    "corpus_hours": 11.8,
+    "load_average_before": [
+     46.29,
+     33.78,
+     25.55
+    ]
+   }
+  }
+ }
+}

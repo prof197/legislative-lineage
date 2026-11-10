@@ -6,6 +6,7 @@ DESIGN.md#data-snapshot.
 """
 
 import hashlib
+import re
 import ssl
 import time
 import urllib.error
@@ -58,10 +59,24 @@ class FetchResult:
 
 # Illinois retired beta.ilga.gov; the same paths are served from ilga.gov.
 HOST_MOVES = {"beta.ilga.gov": "ilga.gov"}
+# Link schemes a legislature has retired, rewritten to the scheme that serves the same document.
+# Ohio's export names its 135th General Assembly's PDFs by the retired solarapi/v1 path, which
+# answers 404 for every one; api/v2 serves each version as <number>_<code>/pdf/ (or html/).
+SCHEME_MOVES = (
+    (
+        re.compile(
+            r"^https://search-prod\.lis\.state\.oh\.us/solarapi/v1/([^/]+)/bills/([a-z]+\d+)/"
+            r"([A-Z]+)/(\d+)/\2_\4_\3\?format=pdf$"
+        ),
+        r"https://search-prod.lis.state.oh.us/api/v2/\1/legislation/\2/\4_\3/pdf/",
+    ),
+)
 
 
 def moved(url: str) -> str:
-    """`url` on the host that now serves it, for hosts a legislature has retired."""
+    """`url` where the legislature now serves it, for retired hosts and link schemes."""
+    for pattern, replacement in SCHEME_MOVES:
+        url = pattern.sub(replacement, url)
     parts = urllib.parse.urlsplit(url)
     host = (parts.hostname or "").lower()
     if host not in HOST_MOVES:
@@ -107,7 +122,10 @@ def open_url(url: str, pause: float, *, interval: float = MIN_INTERVAL_SECONDS) 
             # Only overload and server faults are worth repeating; a 404 will not change.
             if e.code not in {429, 500, 502, 503, 504} or attempt == _ATTEMPTS - 1:
                 raise
-            time.sleep(_retry_after(e, pause * 2 ** (attempt + 1)))
+            # An HTTPError holds the response open; close it before the next attempt.
+            wait = _retry_after(e, pause * 2 ** (attempt + 1))
+            e.close()
+            time.sleep(wait)
         except urllib.error.URLError:
             if attempt == _ATTEMPTS - 1:
                 raise
@@ -213,6 +231,8 @@ def fetch_raw(
                     archive, raw_dir, source=source, floor=floor_bytes, repin=repin, pause=pause
                 )
             except (FetchError, SnapshotError, urllib.error.URLError) as e:
+                if isinstance(e, urllib.error.HTTPError):
+                    e.close()
                 result.problems.append(f"{archive.path}: {e}")
                 continue
             result.fetched += 1

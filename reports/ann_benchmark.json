@@ -1,0 +1,115 @@
+{
+ "command": "uv run python -m benchmarks.ann",
+ "seed": 20261110,
+ "model": "bge-small-en-v1.5",
+ "corpus_vectors": 7326503,
+ "embedded_when_run": {
+  "shards": 63,
+  "of": 448,
+  "vectors": 1032192
+ },
+ "sample": 1000000,
+ "queries": 2000,
+ "k": 20,
+ "threshold": 0.8905,
+ "threads": 10,
+ "train_rows": 200000,
+ "exact_queries_per_second": 108.8,
+ "true_neighbors_above_threshold": 7028,
+ "indexes": {
+  "HNSW32,SQfp16 efSearch=32": {
+   "recall_at_k": 0.9252,
+   "recall_above_threshold": 0.9898,
+   "queries_per_second": 48046.5,
+   "build_seconds": 30.5,
+   "index_bytes": 1040129542,
+   "corpus_projection": {
+    "index_bytes": 7620512210,
+    "build_hours": 0.06,
+    "query_hours": 0.04
+   }
+  },
+  "HNSW32,SQfp16 efSearch=64": {
+   "recall_at_k": 0.9617,
+   "recall_above_threshold": 0.9976,
+   "queries_per_second": 31020.3,
+   "build_seconds": 30.5,
+   "index_bytes": 1040129542,
+   "corpus_projection": {
+    "index_bytes": 7620512210,
+    "build_hours": 0.06,
+    "query_hours": 0.07
+   }
+  },
+  "HNSW32,SQfp16 efSearch=128": {
+   "recall_at_k": 0.9798,
+   "recall_above_threshold": 0.9989,
+   "queries_per_second": 16745.3,
+   "build_seconds": 30.5,
+   "index_bytes": 1040129542,
+   "corpus_projection": {
+    "index_bytes": 7620512210,
+    "build_hours": 0.06,
+    "query_hours": 0.12
+   }
+  },
+  "IVF4096,PQ48 nprobe=8, 100 re-scored": {
+   "recall_at_k": 0.7544,
+   "recall_above_threshold": 0.9511,
+   "queries_per_second": 12283.5,
+   "build_seconds": 50.4,
+   "index_bytes": 62717620,
+   "corpus_projection": {
+    "index_bytes": 459500831,
+    "build_hours": 0.1,
+    "query_hours": 0.17
+   }
+  },
+  "IVF4096,PQ48 nprobe=16, 100 re-scored": {
+   "recall_at_k": 0.8094,
+   "recall_above_threshold": 0.9673,
+   "queries_per_second": 11828.4,
+   "build_seconds": 50.4,
+   "index_bytes": 62717620,
+   "corpus_projection": {
+    "index_bytes": 459500831,
+    "build_hours": 0.1,
+    "query_hours": 0.17
+   }
+  },
+  "IVF4096,PQ48 nprobe=32, 100 re-scored": {
+   "recall_at_k": 0.8459,
+   "recall_above_threshold": 0.9721,
+   "queries_per_second": 10363.6,
+   "build_seconds": 50.4,
+   "index_bytes": 62717620,
+   "corpus_projection": {
+    "index_bytes": 459500831,
+    "build_hours": 0.1,
+    "query_hours": 0.2
+   }
+  },
+  "IVF4096,PQ48 nprobe=64, 100 re-scored": {
+   "recall_at_k": 0.8687,
+   "recall_above_threshold": 0.9745,
+   "queries_per_second": 8041.8,
+   "build_seconds": 50.4,
+   "index_bytes": 62717620,
+   "corpus_projection": {
+    "index_bytes": 459500831,
+    "build_hours": 0.1,
+    "query_hours": 0.25
+   }
+  }
+ },
+ "peak_memory_bytes": 4176280384,
+ "machine": {
+  "cpu": "Apple M1 Max",
+  "cores": 10,
+  "memory_bytes": 34359738368,
+  "platform": "macOS-15.7.3-arm64-arm-64bit-Mach-O",
+  "python": "3.13.2",
+  "numpy": "2.5.4",
+  "datasketch": "2.0.0"
+ }
+}

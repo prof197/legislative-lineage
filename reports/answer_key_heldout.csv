@@ -1,0 +1,66 @@
+# uv run lineage eval answer-key; ULC Bill List, read 2026-11-07
+act,jurisdiction,year,listed,listed_status,counted,rule,matched_number,bill_id,session,identifier,title,status,chambers_passed,last_passage_on
+assignment-for-benefit-of-creditors,Alabama,2026,SB 15,Enacted,yes,in_year,SB 15,ocd-bill/d56fd42c-c1d6-4d76-a9f0-eeb0cc123f31,2026rs,SB 15,Uniform Assignment for Benefit of Creditors Act; creates a voluntary state law process for distressed organizations to liquidate assets and distribute proceeds to creditors,passed,2,2026-04-07
+assignment-for-benefit-of-creditors,Arizona,2026,SB 1252,Enacted,yes,in_year,SB 1252,ocd-bill/6a187ab7-1011-451b-a54a-b9268f1d9668,57th-2nd-regular,SB 1252,uniform assignment; benefit of creditors,passed,2,2026-04-02
+assignment-for-benefit-of-creditors,Colorado,2026,SB 26-079,Introduced,no: listed as introduced,,,,,,,,,
+assignment-for-benefit-of-creditors,Delaware,2026,SB 267,Enacted,yes,in_year,SB 267,ocd-bill/9ea2f016-2a27-45bc-a51c-d4d14c24d951,153,SB 267,AN ACT TO AMEND TITLE 10 AND TITLE 30 OF THE DELAWARE CODE RELATING TO THE UNIFORM ASSIGNMENT FOR BENEFIT OF CREDITORS ACT.,passed,2,2026-05-19
+assignment-for-benefit-of-creditors,Iowa,2026,SF 2497,Enacted,yes,in_year,SF 2497,ocd-bill/315e546a-f419-46f8-b541-52e0989abb38,2025-2026,SF 2497,"A bill for an act providing for an assignment of assets for the benefit of creditors, exempting the related tax on the transfer of real estate, and including effective date provisions.",passed,2,2026-05-03
+assignment-for-benefit-of-creditors,Nebraska,2026,LB 783,Enacted,yes,in_year,LB 783,ocd-bill/01dd3cc3-3af2-4963-9970-fb1c82c655c2,109,LB 783,Adopt the Uniform Assignment for Benefit of Creditors Act and provide an exemption to the documentary stamp tax,passed,1,2026-02-27
+assignment-for-benefit-of-creditors,Oklahoma,2026,HB 3588,Introduced,no: listed as introduced,,,,,,,,,
+assignment-for-benefit-of-creditors,Utah,2026,HB 382,Enacted,yes,in_year,HB 382,ocd-bill/66018717-08d9-4c8b-827e-98661c3a98b0,2026,HB 382,Uniform Assignment for Benefit of Creditors Amendments,passed,2,2026-02-27
+assignment-for-benefit-of-creditors,West Virginia,2026,SB 949,Introduced,no: listed as introduced,,,,,,,,,
+easement-relocation,Virginia,2026,HB 252,Enacted - Substantially Similiar,yes,in_year,HB 252,ocd-bill/3e325b4f-e332-425e-8f0a-8327738d8544,2026,HB 252,Servient estate; establishes relocation or modification of easement by owner.,passed,2,2026-03-31
+easement-relocation,Nevada,2025,AB 192,Enacted,yes,in_year,AB 192,ocd-bill/7a3f76bd-979e-49d3-8f74-ad9c7b98aba7,83,AB 192,Makes various changes relating to real property. (BDR 10-971),passed,2,2025-05-26
+easement-relocation,Oklahoma,2025,HB 1060/HB 2119,Enacted,yes,in_year,HB 2119,ocd-bill/498bff4c-ee76-4ac0-bb0e-57ee960c740d,2025,HB 2119,Easements; the Oklahoma Uniform Easement Relocation Act of 2025; easement relocation; court orders; effective date.,introduced,0,
+easement-relocation,Oklahoma,2025,HB 1060/HB 2119,Enacted,yes,in_year,HB 1060,ocd-bill/8bd69b45-1904-4387-b4f5-68215d5399a2,2025,HB 1060,Easements; the Oklahoma Uniform Easement Relocation Act of 2025; easement relocation; court orders; effective date.,passed,2,2025-05-07
+easement-relocation,Arkansas,2023,HB 1408,Enacted,yes,in_year,HB 1408,ocd-bill/a5575133-1b36-4125-8b8d-239f5e5fa0a9,2023,HB 1408,TO CREATE THE UNIFORM EASEMENT RELOCATION ACT.,passed,2,2023-04-04
+easement-relocation,Washington,2023,SB 5005,Enacted,yes,in_year,SB 5005,ocd-bill/fe9a38e0-5fe9-4b49-9271-b641c88f8c8b,2023-2024,SB 5005,Concerning real property.,passed,2,2023-03-22
+easement-relocation,Utah,2022,HB 132,Enacted,no: listed year 2022 is before the corpus (2023-2026),,,,,,,,,
+easement-relocation,Nebraska,2021,LB 501,Enacted,no: listed year 2021 is before the corpus (2023-2026),,,,,,,,,
+mortgage-modification,Colorado,2026,HB 26-1089,Enacted,yes,in_year,HB 26-1089,ocd-bill/0769a612-51fc-4ed4-8d38-92faecb7abe1,2026A,HB 1089,Uniform Mortgage Modification Act,passed,2,2026-04-16
+mortgage-modification,District of Columbia,2026,26-0448,Introduced,no: listed as introduced,,,,,,,,,
+mortgage-modification,Missouri,2026,HB 2636/SB 834,Enacted,yes,in_year,SB 834,ocd-bill/6d7af944-1fbd-45e3-9a5a-9ab186a99271,2026,SB 834,Creates new provisions relating to mortgage modifications,passed,2,2026-04-29
+mortgage-modification,Missouri,2026,HB 2636/SB 834,Enacted,yes,in_year,HB 2636,ocd-bill/d2a4351c-e574-4442-ae19-ecb61744a51c,2026,HB 2636,"Establishes the ""Uniform Mortgage Modification Act""",passed,2,2026-05-15
+mortgage-modification,Oklahoma,2026,HB 4352/SB 161,Introduced,no: listed as introduced,,,,,,,,,
+mortgage-modification,Washington,2026,SB 5831,Introduced,no: listed as introduced,,,,,,,,,
+mortgage-modification,West Virginia,2026,SB 161,Introduced,no: listed as introduced,,,,,,,,,
+mortgage-modification,Wyoming,2026,SF 31,Enacted,yes,in_year,SF 31,ocd-bill/196c9c66-69ff-4502-9613-63a4aee17f74,2026,SF 31,Uniform mortgage modification act.,passed,2,2026-02-25
+mortgage-modification,Nevada,2025,AB 192,Enacted,yes,in_year,AB 192,ocd-bill/7a3f76bd-979e-49d3-8f74-ad9c7b98aba7,83,AB 192,Makes various changes relating to real property. (BDR 10-971),passed,2,2025-05-26
+mortgage-modification,Utah,2025,HB 440/SB 294,Enacted,no: names a bill of the development set,,,,,,,,,
+directed-trust,Kentucky,2026,SB 50,Enacted,no: names a bill of the development set,,,,,,,,,
+directed-trust,District of Columbia,2025,25-225,Enacted,no: District of Columbia: the corpus is the 50 states,,,,,,,,,
+directed-trust,California,2024,SB 801,Enacted,yes,in_year,SB 801,ocd-bill/25f6ce26-e9b6-4720-8058-0007a62361e4,20232024,SB 801,California Uniform Directed Trust Act.,passed,2,2023-08-28
+directed-trust,California,2024,SB 801,Enacted,yes,in_year,SB 801,ocd-bill/eb9dea8b-b6f3-4230-8a53-219319532a4d,20252026,SB 801,"Agricultural workers: wages, hours, and working conditions: definitions.",died,0,
+directed-trust,Oklahoma,2024,HB 2978/HB 3962,Enacted,yes,in_year,HB 2978,ocd-bill/08ee6ffd-f572-4a2e-a353-1db3d37b2e85,2024,HB 2978,Trusts; Oklahoma Uniform Directed Trust Act of 2024; effective date.,died,0,
+directed-trust,Oklahoma,2024,HB 2978/HB 3962,Enacted,yes,in_year,HB 3962,ocd-bill/c8e28bad-3818-4f32-a10f-2b8bba334a85,2024,HB 3962,Trust; Oklahoma Trust Reform Act of 2024; directed trust; qualified dispositions; duration of trust; effective date.,passed,2,2024-05-29
+directed-trust,Pennsylvania,2024,SB 1231,Enacted,yes,in_year,SB 1231,ocd-bill/9ed813cc-57c7-4753-9f80-ac022232a799,2023-2024,SB 1231,"An Act amending Title 20 (Decedents, Estates and Fiduciaries) of the Pennsylvania Consolidated Statutes, in trusts, further providing for definitions - UTC 103, for trust instrument controls and mandatory rules - UTC 105, for governing law - UTC 107, for situs of trust, for nonjudicial settlement agreements - UTC 111, for charitable purposes; enforcement - UTC 405, for trust for care of animal - UTC 408, for noncharitable trust without ascertainable beneficiary - UTC 409, for reformation to correct mistakes - UTC 415, for modification to achieve settlor's tax objectives - UTC 416, for spendthrift provision - UTC 502, for creditor's claim against settlor - UTC 505(a), for overdue distribution - UTC 506, for revocation or amendment of revocable trust - UTC 602, for trustee's duties and powers of withdrawal - UTC 603, for accepting or declining trusteeship - UTC 701, for trustee's bond - UTC 702, for cotrustees - UTC 703, for vacancy in trusteeship and appointment of successor - UTC 704, for resignation of trustee and filing resignation, for compensation of trustee - UTC 708, for duty to administer trust - UTC 801, for duty of loyalty - UTC 802, for powers to direct - UTC 808, for duty to inform and report, for discretionary powers and for powers of trustees - UTC 815, providing for directed trusts, further providing for remedies for breach of trust--UTC 1001, providing for nonjudicial account settlement and further providing for reliance on trust instrument - UTC 1006, for exculpation of trustee - UTC 1008, for certification of trust - UTC 1013 and for title of purchaser.",passed,2,2024-07-03
+directed-trust,Vermont,2024,H 350,Enacted,yes,in_year,H 350,ocd-bill/c8ddb361-4aa3-4764-b2de-0ae27686fc34,2023-2024,H 350,An act relating to the Uniform Directed Trust Act,passed,1,2024-05-07
+directed-trust,Kansas,2022,SB 141,Enacted,no: listed year 2022 is before the corpus (2023-2026),,,,,,,,,
+directed-trust,Florida,2021,SB 1070,Enacted,no: listed year 2021 is before the corpus (2023-2026),,,,,,,,,
+directed-trust,Montana,2021,SB 239,Enacted,no: listed year 2021 is before the corpus (2023-2026),,,,,,,,,
+directed-trust,Virginia,2020,HB 1380,Enacted,no: listed year 2020 is before the corpus (2023-2026),,,,,,,,,
+directed-trust,Washington,2020,SB 6029,Enacted,no: listed year 2020 is before the corpus (2023-2026),,,,,,,,,
+directed-trust,West Virginia,2020,SB 213,Enacted,no: listed year 2020 is before the corpus (2023-2026),,,,,,,,,
+directed-trust,Arkansas,2019,HB 1765,Enacted,no: listed year 2019 is before the corpus (2023-2026),,,,,,,,,
+directed-trust,Colorado,2019,SB 105,Enacted,no: listed year 2019 is before the corpus (2023-2026),,,,,,,,,
+directed-trust,Connecticut,2019,HB 7104,Enacted,no: listed year 2019 is before the corpus (2023-2026),,,,,,,,,
+directed-trust,Indiana,2019,SB 265,Enacted,no: listed year 2019 is before the corpus (2023-2026),,,,,,,,,
+directed-trust,Maine,2019,LD 1468,Enacted,no: listed year 2019 is before the corpus (2023-2026),,,,,,,,,
+directed-trust,Michigan,2019,HB 6130,Enacted,no: listed year 2019 is before the corpus (2023-2026),,,,,,,,,
+directed-trust,Nebraska,2019,LB 536,Enacted,no: listed year 2019 is before the corpus (2023-2026),,,,,,,,,
+directed-trust,Utah,2019,HB 314,Enacted,no: listed year 2019 is before the corpus (2023-2026),,,,,,,,,
+directed-trust,Georgia,2018,HB 121,Enacted,no: listed year 2018 is before the corpus (2023-2026),,,,,,,,,
+directed-trust,New Mexico,2018,SB 101,Enacted,no: listed year 2018 is before the corpus (2023-2026),,,,,,,,,
+health-care-decisions,Hawaii,2026,HB 1004/SB 1323,Introduced,no: listed as introduced,,,,,,,,,
+health-care-decisions,Nebraska,2026,LB 66,Introduced,no: listed as introduced,,,,,,,,,
+health-care-decisions,Oklahoma,2026,HB 1687/SB 937,Enacted,"no: a reserve act, not selected",,,,,,,,,
+health-care-decisions,Virginia,2026,HB 548,Introduced,no: listed as introduced,,,,,,,,,
+health-care-decisions,Utah,2025,SB 134,Enacted,"no: a reserve act, not selected",,,,,,,,,
+health-care-decisions,Delaware,2024,SB 309,Enacted,"no: a reserve act, not selected",,,,,,,,,
+antitrust-pre-merger-notification,California,2026,SB 25,Enacted,"no: a reserve act, not selected",,,,,,,,,
+antitrust-pre-merger-notification,District of Columbia,2026,26-0030,Introduced,no: listed as introduced,,,,,,,,,
+antitrust-pre-merger-notification,Hawaii,2026,SB 348,Introduced,no: listed as introduced,,,,,,,,,
+antitrust-pre-merger-notification,Indiana,2026,SB 219,Introduced,no: listed as introduced,,,,,,,,,
+antitrust-pre-merger-notification,West Virginia,2026,SB 147,Introduced,no: listed as introduced,,,,,,,,,
+antitrust-pre-merger-notification,Colorado,2025,SB 126,Enacted,"no: a reserve act, not selected",,,,,,,,,
+antitrust-pre-merger-notification,Washington,2025,SB 5122,Enacted,"no: a reserve act, not selected",,,,,,,,,

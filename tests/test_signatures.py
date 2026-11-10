@@ -7,8 +7,15 @@ from lineage import queries
 from lineage.disk import InsufficientDiskSpaceError
 from lineage.minhash import NUM_PERM, permutations, signatures
 from lineage.shingles import section_shingles
-from lineage.signatures import build_signatures, load_signatures
+from lineage.signatures import (
+    build_signatures,
+    load_signatures,
+    open_signatures,
+    row_labels,
+    signature_values,
+)
 from lineage.stoplist import StoplistError, apply_stoplist
+from lineage.windows import WINDOW_WORDS, normalized_windows, window_starts
 
 STOPLISTED = "is hereby amended to read as follows"
 TEXTS = {
@@ -144,3 +151,70 @@ def test_refuses_to_fill_the_disk_and_leaves_no_partial_output(
         "sections",
         "stoplist.parquet",
     ]
+
+
+def test_a_long_section_is_signed_window_by_window(tables: Path) -> None:
+    words = [f"w{i}" for i in range(WINDOW_WORDS + 1)]
+    text = " ".join(words)
+    (tables / "sections" / "b.parquet").unlink()
+    with queries.connect_quiet() as con:
+        columns = queries.SectionColumns(["b9"], [4], [None], [text], [text], [True], [None])
+        queries.write_sections(con, parquet_path=tables / "sections" / "b.parquet", columns=columns)
+        queries.write_eligibility(
+            con,
+            parquet_path=tables / "eligible.parquet",
+            ids=["b1", "b9"],
+            eligible=[True, True],
+            rules=[1, 1],
+        )
+
+    doc = build_signatures(tables, workers=1, floor_bytes=0)
+
+    table = load_signatures(tables)
+    windows = normalized_windows(text, text)
+    assert len(windows) == len(window_starts(len(words))) > 1
+    assert table.bill_ids[2:] == ["b9"] * len(windows)
+    assert table.ordinals[2:].tolist() == [4] * len(windows)
+    assert table.windows.tolist() == [0, 0, *range(len(windows))]
+    # b1's two sections, then b9's one section through all of its windows.
+    assert table.sections().tolist() == [0, 1, *[2] * len(windows)]
+    expected = signatures(section_shingles(windows), permutations())
+    assert np.array_equal(table.values[2:], expected)
+    assert doc["sections"]["signed"] == 3
+    assert doc["section_words"]["split_at_headings"] == {
+        "median": 10,
+        "p90": WINDOW_WORDS + 1,
+        "p99": WINDOW_WORDS + 1,
+    }
+    assert doc["windows"] == {
+        "words": WINDOW_WORDS,
+        "stride": WINDOW_WORDS // 2,
+        "windowed_sections": 1,
+        "signed": 2 + len(windows),
+        "all_stoplisted": 0,
+    }
+
+
+def test_the_mapped_files_give_what_the_table_in_memory_gives(tables: Path) -> None:
+    words = [f"w{i}" for i in range(3 * WINDOW_WORDS)]
+    text = " ".join(words)
+    (tables / "sections" / "b.parquet").unlink()
+    with queries.connect_quiet() as con:
+        columns = queries.SectionColumns(["b9"], [4], [None], [text], [text], [True], [None])
+        queries.write_sections(con, parquet_path=tables / "sections" / "b.parquet", columns=columns)
+        queries.write_eligibility(
+            con, parquet_path=tables / "eligible.parquet", ids=["b1", "b9"],
+            eligible=[True, True], rules=[1, 1],
+        )  # fmt: skip
+    build_signatures(tables, workers=1, floor_bytes=0)
+    table = load_signatures(tables)
+    files = open_signatures(tables)
+    assert len(files.matrices) == 2
+
+    labels = row_labels(files)
+    rows = np.array([5, 0, 2, 1, 5, 3], dtype=np.int64)
+
+    assert labels.section.tolist() == table.sections().tolist()
+    starts = np.flatnonzero(np.r_[True, np.diff(labels.section) != 0])
+    assert labels.section_bills == [table.bill_ids[i] for i in starts.tolist()]
+    assert np.array_equal(signature_values(files, rows), table.values[rows])

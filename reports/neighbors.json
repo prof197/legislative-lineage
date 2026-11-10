@@ -1,0 +1,25 @@
+{
+ "command": "uv run lineage neighbors",
+ "model": "bge-small-en-v1.5",
+ "index": "HNSW32,SQfp16",
+ "ef_search": 256,
+ "nprobe": null,
+ "candidates_rescored": null,
+ "k": 20,
+ "threshold": 0.8905,
+ "texts": 7326503,
+ "neighbors_kept": 51588148,
+ "texts_with_a_neighbor": 6249724,
+ "exact_check": {
+  "texts": 2000,
+  "true_neighbors": 13937,
+  "recall": 0.9938
+ },
+ "index_bytes": 7620533082,
+ "build_seconds": 350,
+ "seconds": 4456,
+ "peak_memory_bytes": 8456993728,
+ "memory_bound_bytes": 17179869184,
+ "projected_memory_bytes": 9935804823,
+ "within_memory_bound": true
+}

@@ -163,7 +163,7 @@ def test_reports_georgia_local_notices_per_session(tables: tuple[Path, Path]) ->
     assert "enacting clause" in doc["definitions"]["georgia_local_notices"]
 
 
-# Openings in each state's own format; only the first five are amendments.
+# Openings in each state's own format; only the first six are amendments.
 AMENDMENTS = [
     ("LA", 'AMENDMENT NO. 1\nOn page 1, line 8, after "sewerage" delete the remainder of the line'),
     (
@@ -178,6 +178,10 @@ AMENDMENTS = [
         "Amend RSA 359-S:1, II as inserted by section 1 of the bill by replacing it with the "
         "following:",
     ),
+    # Delaware's amendment synopsis, stored without the amendment it explains.
+    ("DE", "\n      \n        SYNOPSIS\n      \n        This Amendment clarifies that the Act"),
+    # Alabama's bills open with their own synopsis.
+    ("AL", "SYNOPSIS:\nThis bill would provide that an amendment to a county plan"),
     ("MI", 'HOUSE BILL NO. 4748\nA bill to amend 1974 PA 258, entitled "Mental health code,"'),
     ("CA", "california legislature\nAssembly Constitutional Amendment No. 2\nIntroduced by"),
     ("UT", "State Weed Committee Amendments\nGENERAL SESSION\nLONG TITLE"),
@@ -200,7 +204,7 @@ def test_counts_records_whose_stored_text_is_an_amendment(tmp_path: Path) -> Non
     found = amendment_only(str(bills))
 
     assert found == {
-        ("DE", "2025"): (1, 0),
+        ("DE", "2025"): (2, 0),
         ("IL", "2025"): (1, 1),  # replaces everything after the enacting clause: a substitute
         ("LA", "2025"): (1, 0),
         ("NH", "2025"): (1, 0),

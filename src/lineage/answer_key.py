@@ -19,14 +19,17 @@ from lineage.commission import FIRST_YEAR, excluded_reason, session_years
 from lineage.sessions import load_sessions
 from lineage.ulc import (
     ENACTMENTS,
+    NO_BILLS,
     BillRecord,
     Snapshot,
     canonical_number,
+    development_bills,
     find_bills,
     load_enactments,
 )
 
 ANSWER_KEY = Path("reports/answer_key.csv")
+HELD_OUT_KEY = Path("reports/answer_key_heldout.csv")
 COMMAND = "uv run lineage eval answer-key"
 COLUMNS: tuple[str, ...] = (
     "act",
@@ -60,6 +63,8 @@ def answer_key_rows(
     session_years: dict[tuple[str, str], tuple[int, int]],
     *,
     first_year: int = FIRST_YEAR,
+    development: frozenset[tuple[str, int, str]] = frozenset(),
+    acts: frozenset[str] | None = None,
 ) -> list[dict[str, str]]:
     """One row per named bill of each list row; one row with no bill when none resolved."""
     out: list[dict[str, str]] = []
@@ -71,7 +76,11 @@ def answer_key_rows(
             "listed": row.bill_cell,
             "listed_status": row.status,
         }
-        why = "listed as introduced" if row.stratum is None else excluded_reason(row, first_year)
+        why = (
+            "listed as introduced"
+            if row.stratum is None
+            else excluded_reason(row, first_year, development, acts)
+        )
         if why is not None:
             out.append(_row(base, counted=f"no: {why}"))
             continue
@@ -107,10 +116,21 @@ def _row(base: dict[str, str], **fields: str) -> dict[str, str]:
 
 
 def build_answer_key(
-    tables_dir: Path, *, enactments_path: Path = ENACTMENTS, sessions_path: Path
+    tables_dir: Path,
+    *,
+    enactments_path: Path = ENACTMENTS,
+    sessions_path: Path,
+    development_path: Path | None = None,
+    acts: frozenset[str] | None = None,
 ) -> tuple[str, list[dict[str, str]]]:
-    """The answer key from the bills table: needs ingest only, not the index."""
+    """The answer key from the bills table: needs ingest only, not the index.
+
+    For the held-out key, `development_path` names the development lists, whose bills it skips.
+    """
     snapshot = load_enactments(enactments_path)
+    development = (
+        development_bills(load_enactments(development_path)) if development_path else NO_BILLS
+    )
     states = sorted({r.state for r in snapshot.rows if r.state is not None})
     with queries.connect_quiet() as con:
         found = queries.listed_bills(
@@ -118,7 +138,8 @@ def build_answer_key(
         )
     bills = [BillRecord(*row[:7]) for row in found]
     details = {row[0]: KeyBill(row[7], row[8]) for row in found}
-    rows = answer_key_rows(snapshot, bills, details, session_years(load_sessions(sessions_path)))
+    years = session_years(load_sessions(sessions_path))
+    rows = answer_key_rows(snapshot, bills, details, years, development=development, acts=acts)
     return f"{COMMAND}; {snapshot.read_note}", rows
 
 

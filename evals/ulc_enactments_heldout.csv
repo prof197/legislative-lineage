@@ -1,0 +1,62 @@
+# ULC Bill List, read 2026-11-07
+act,jurisdiction,year,bill_number,status
+assignment-for-benefit-of-creditors,Alabama,2026,SB 15,Enacted
+assignment-for-benefit-of-creditors,Arizona,2026,SB 1252,Enacted
+assignment-for-benefit-of-creditors,Colorado,2026,SB 26-079,Introduced
+assignment-for-benefit-of-creditors,Delaware,2026,SB 267,Enacted
+assignment-for-benefit-of-creditors,Iowa,2026,SF 2497,Enacted
+assignment-for-benefit-of-creditors,Nebraska,2026,LB 783,Enacted
+assignment-for-benefit-of-creditors,Oklahoma,2026,HB 3588,Introduced
+assignment-for-benefit-of-creditors,Utah,2026,HB 382,Enacted
+assignment-for-benefit-of-creditors,West Virginia,2026,SB 949,Introduced
+easement-relocation,Virginia,2026,HB 252,Enacted - Substantially Similiar
+easement-relocation,Nevada,2025,AB 192,Enacted
+easement-relocation,Oklahoma,2025,HB 1060/HB 2119,Enacted
+easement-relocation,Arkansas,2023,HB 1408,Enacted
+easement-relocation,Washington,2023,SB 5005,Enacted
+easement-relocation,Utah,2022,HB 132,Enacted
+easement-relocation,Nebraska,2021,LB 501,Enacted
+mortgage-modification,Colorado,2026,HB 26-1089,Enacted
+mortgage-modification,District of Columbia,2026,26-0448,Introduced
+mortgage-modification,Missouri,2026,HB 2636/SB 834,Enacted
+mortgage-modification,Oklahoma,2026,HB 4352/SB 161,Introduced
+mortgage-modification,Washington,2026,SB 5831,Introduced
+mortgage-modification,West Virginia,2026,SB 161,Introduced
+mortgage-modification,Wyoming,2026,SF 31,Enacted
+mortgage-modification,Nevada,2025,AB 192,Enacted
+mortgage-modification,Utah,2025,HB 440/SB 294,Enacted
+directed-trust,Kentucky,2026,SB 50,Enacted
+directed-trust,District of Columbia,2025,25-225,Enacted
+directed-trust,California,2024,SB 801,Enacted
+directed-trust,Oklahoma,2024,HB 2978/HB 3962,Enacted
+directed-trust,Pennsylvania,2024,SB 1231,Enacted
+directed-trust,Vermont,2024,H 350,Enacted
+directed-trust,Kansas,2022,SB 141,Enacted
+directed-trust,Florida,2021,SB 1070,Enacted
+directed-trust,Montana,2021,SB 239,Enacted
+directed-trust,Virginia,2020,HB 1380,Enacted
+directed-trust,Washington,2020,SB 6029,Enacted
+directed-trust,West Virginia,2020,SB 213,Enacted
+directed-trust,Arkansas,2019,HB 1765,Enacted
+directed-trust,Colorado,2019,SB 105,Enacted
+directed-trust,Connecticut,2019,HB 7104,Enacted
+directed-trust,Indiana,2019,SB 265,Enacted
+directed-trust,Maine,2019,LD 1468,Enacted
+directed-trust,Michigan,2019,HB 6130,Enacted
+directed-trust,Nebraska,2019,LB 536,Enacted
+directed-trust,Utah,2019,HB 314,Enacted
+directed-trust,Georgia,2018,HB 121,Enacted
+directed-trust,New Mexico,2018,SB 101,Enacted
+health-care-decisions,Hawaii,2026,HB 1004/SB 1323,Introduced
+health-care-decisions,Nebraska,2026,LB 66,Introduced
+health-care-decisions,Oklahoma,2026,HB 1687/SB 937,Enacted
+health-care-decisions,Virginia,2026,HB 548,Introduced
+health-care-decisions,Utah,2025,SB 134,Enacted
+health-care-decisions,Delaware,2024,SB 309,Enacted
+antitrust-pre-merger-notification,California,2026,SB 25,Enacted
+antitrust-pre-merger-notification,District of Columbia,2026,26-0030,Introduced
+antitrust-pre-merger-notification,Hawaii,2026,SB 348,Introduced
+antitrust-pre-merger-notification,Indiana,2026,SB 219,Introduced
+antitrust-pre-merger-notification,West Virginia,2026,SB 147,Introduced
+antitrust-pre-merger-notification,Colorado,2025,SB 126,Enacted
+antitrust-pre-merger-notification,Washington,2025,SB 5122,Enacted

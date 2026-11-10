@@ -57,7 +57,7 @@ def _empty() -> queries.SectionColumns:
     return queries.SectionColumns([], [], [], [], [], [], [])
 
 
-def _split_file(texts_file: Path, dest: Path) -> FileCounts:
+def _split_file(texts_file: Path, dest: Path, state: str | None) -> FileCounts:
     """Split one texts file into `dest/<stem>-<n>.parquet` parts. Runs in a worker process."""
     bills = with_text = by_heading = sections = 0
     columns = _empty()
@@ -78,7 +78,7 @@ def _split_file(texts_file: Path, dest: Path) -> FileCounts:
         while batch := scan.fetchmany(_FETCH_BILLS):
             for bill_id, text in batch:
                 bills += 1
-                split = split_sections(text)
+                split = split_sections(text, state)
                 if not split.sections:
                     continue
                 with_text += 1
@@ -113,6 +113,14 @@ def build_sections(tables_dir: Path, *, workers: int, floor_bytes: int) -> Secti
         raise SectioningError(f"no texts table in {tables_dir}; run `lineage text merge` first")
     with queries.connect_quiet() as con:
         text = queries.text_bytes(con, bills_glob=str(tables_dir / "texts" / "*.parquet"))
+        # A texts file and the bills file it came from share a name, and each holds one archive,
+        # so one state: its heading rules apply to the whole file.
+        states = [
+            queries.file_state(con, bills_path=tables_dir / "bills" / f.name)
+            if (tables_dir / "bills" / f.name).exists()
+            else None
+            for f in files
+        ]
     # Each section is stored twice, as display text and as normalized text, and neither copy is
     # longer than the input; compressed Parquet stays under that bound.
     require_free_space(tables_dir, needed=2 * text, floor=floor_bytes)
@@ -121,7 +129,7 @@ def build_sections(tables_dir: Path, *, workers: int, floor_bytes: int) -> Secti
     building = Path(tempfile.mkdtemp(prefix="sections.", dir=tables_dir))
     try:
         with ProcessPoolExecutor(max_workers=workers, mp_context=_SPAWN) as pool:
-            counts = list(pool.map(_split_file, files, repeat(building)))
+            counts = list(pool.map(_split_file, files, repeat(building), states))
         if final.exists():
             shutil.rmtree(final)
         building.rename(final)

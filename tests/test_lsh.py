@@ -10,6 +10,7 @@ from lineage.lsh import (
     candidate_pairs,
     candidate_probability,
     cap_sweep,
+    threshold,
 )
 from lineage.minhash import NUM_PERM, permutations, signatures
 
@@ -119,6 +120,26 @@ def test_candidates_come_back_sorted_and_distinct() -> None:
     assert np.all(codes[1:] > codes[:-1])
 
 
+def test_a_pair_shared_by_many_bands_is_one_candidate() -> None:
+    values = _random_signatures(30, seed=8)
+    for i in range(0, 30, 3):  # ten triples identical in every band: 3 pairs each, 32 times over
+        for band in range(BANDS):
+            _share_band(values, i, i + 1, band)
+            _share_band(values, i, i + 2, band)
+    # Row 4 takes the first triple's band 7, so it pairs with all three of them in that band.
+    _share_band(values, 1, 4, band=7)
+    index = build_band_index(values)
+    keys = band_keys(values)
+    expected = sorted(
+        (a, b) for a in range(30) for b in range(a + 1, 30) if np.any(keys[a] == keys[b])
+    )
+
+    found = candidate_pairs(index, cap=100)
+
+    assert list(zip(found.left.tolist(), found.right.tolist(), strict=True)) == expected
+    assert len(expected) == 33
+
+
 def test_a_bucket_over_the_cap_is_skipped_and_counted() -> None:
     values = _random_signatures(12, seed=6)
     for j in range(1, 5):  # a bucket of 5 in band 0
@@ -132,7 +153,7 @@ def test_a_bucket_over_the_cap_is_skipped_and_counted() -> None:
         (a, b) for a in range(5, 9) for b in range(5, 9) if a < b
     }
     assert found.buckets_over_cap == 1
-    assert found.sections_in_capped_buckets == 5
+    assert found.rows_in_capped_buckets == 5
     assert found.pairs_in_capped_buckets == 10
     assert found.largest_bucket == 5
 
@@ -211,3 +232,16 @@ def test_the_candidate_rate_follows_the_s_curve(s: float) -> None:
     p = candidate_probability(s)
     sd = np.sqrt(p * (1 - p) / pairs)
     assert abs(found.left.size / pairs - p) < 4 * sd
+
+
+# For the same 128 values, more bands lower the threshold and more rows raise it, and a pair at
+# a setting's threshold is proposed with about the same chance, 1 - (1 - 1/b)^b, near 1 - 1/e.
+@pytest.mark.parametrize(
+    ("bands", "rows", "expected"), [(16, 8, 0.7071), (32, 4, 0.4204), (64, 2, 0.125)]
+)
+def test_bands_and_rows_move_the_threshold(bands: int, rows: int, expected: float) -> None:
+    t = threshold(bands, rows)
+
+    assert t == pytest.approx(expected, abs=1e-4)
+    assert candidate_probability(t, bands, rows) == pytest.approx(1 - (1 - 1 / bands) ** bands)
+    assert 0.63 < candidate_probability(t, bands, rows) < 0.65

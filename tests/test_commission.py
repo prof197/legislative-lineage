@@ -15,15 +15,17 @@ import pytest
 from typer.testing import CliRunner
 
 from lineage import queries
-from lineage.acts import ACTS
+from lineage.acts import ACTS, HELD_OUT_ACTS
 from lineage.cli import app
 from lineage.commission import MISS_REASONS, Probe, Relative, evaluate, probe, target_reason
 from lineage.lsh import BANDS, BUCKET_CAP, ROWS
 from lineage.minhash import NUM_PERM
 from lineage.queries import EnactmentBill
+from lineage.semantic import THRESHOLD
 from lineage.sessions import load_sessions
 from lineage.ulc import ENACTMENTS, load_enactments
 from tests.conftest import COMMISSION
+from tests.fakes import bag_of_words_search
 from tests.test_acts import ACT
 
 RNG = np.random.default_rng(7)
@@ -87,7 +89,7 @@ def test_reasons_follow_the_pipeline_from_source_text_to_the_threshold() -> None
     proposed = Probe("verification", 0.4)
 
     def reason(bill: EnactmentBill, rows: int = 3, probed: Probe | None = proposed) -> str | None:
-        return target_reason(bill, signed_rows=rows, probed=probed, relative=None)
+        return target_reason(bill, signed_sections=rows, probed=probed, relative=None)
 
     assert reason(replace(BILL, text_chars=0, amendment_only=True)) == "no_text_in_source"
     assert reason(replace(BILL, amendment_only=True, eligible=False)) == "amendment_only"
@@ -96,7 +98,7 @@ def test_reasons_follow_the_pipeline_from_source_text_to_the_threshold() -> None
     assert reason(BILL) == "verification"
     assert reason(BILL, probed=Probe("not_proposed", 0.1)) == "not_proposed"
     low = Relative(3, 0.1, "HB 12")
-    assert target_reason(BILL, signed_rows=3, probed=None, relative=low, min_share=0.2) == (
+    assert target_reason(BILL, signed_sections=3, probed=None, relative=low, min_share=0.2) == (
         "below_threshold"
     )
     assert list(MISS_REASONS)[-1] == "below_threshold"
@@ -107,8 +109,8 @@ def test_found_is_a_score_above_the_threshold_whatever_the_rank() -> None:
     # failed and enacted versions count, so rank is reported but does not decide.
     far = Relative(400, 0.25, "HB 12")
 
-    assert target_reason(BILL, signed_rows=3, probed=None, relative=far, min_share=0.2) is None
-    assert target_reason(BILL, signed_rows=3, probed=None, relative=far) is None
+    assert target_reason(BILL, signed_sections=3, probed=None, relative=far, min_share=0.2) is None
+    assert target_reason(BILL, signed_sections=3, probed=None, relative=far) is None
 
 
 def _raw_text(tables: Path, bill_id: str) -> str:
@@ -173,6 +175,37 @@ def test_pipeline_regression_the_enacting_bills_are_found_among_distractors(
             assert e["miss_reason"] == "no_text_in_source", e
 
 
+def test_the_stage_ablation_counts_each_stage_alone_and_both(commission_corpus: Path) -> None:
+    build = json.loads((COMMISSION / "build.json").read_text())
+    act_texts = {act: _raw_text(commission_corpus, bill) for act, bill in build["queries"].items()}
+    snapshot = load_enactments(ENACTMENTS)
+    sessions = load_sessions(COMMISSION / "sessions.csv")
+
+    near = evaluate(act_texts, snapshot, commission_corpus, sessions)
+    both = evaluate(
+        act_texts, snapshot, commission_corpus, sessions,
+        semantic=bag_of_words_search(commission_corpus),
+    )  # fmt: skip
+
+    assert near["stage_ablation"] is None
+    ablation = both["stage_ablation"]
+    found = {
+        s: ablation[s]["pooled"]["all"]["found"] for s in ("near_duplicate", "semantic", "both")
+    }
+    assert found["near_duplicate"] == near["recall"]["pooled"]["all"]["found"]
+    assert found["both"] == both["recall"]["pooled"]["all"]["found"]
+    # each stage broken down as recall is, so a table can set a stage beside another run's
+    assert ablation["near_duplicate"]["by_act"] == near["recall"]["by_act"]
+    assert ablation["near_duplicate"]["by_stratum"] == near["recall"]["by_stratum"]
+    assert ablation["both"] == both["recall"]
+    assert found["both"] >= max(found["near_duplicate"], found["semantic"])
+    for e in both["enactments"]:
+        assert e["found"] == any(e["found_by_stage"].values())
+        for bill in e["bills"]:
+            if "semantic" in bill["stages"]:
+                assert bill["best_cosine"] >= THRESHOLD - 1e-4
+
+
 def test_the_command_writes_its_section_of_the_results(
     commission_corpus: Path, tmp_path: Path
 ) -> None:
@@ -186,7 +219,8 @@ def test_the_command_writes_its_section_of_the_results(
     out = CliRunner().invoke(
         app,
         [
-            "eval", "commission", "--tables", str(commission_corpus), "--acts", str(acts),
+            "eval", "commission", "--no-semantic", "--tables", str(commission_corpus),
+            "--acts", str(acts),
             "--sessions", str(COMMISSION / "sessions.csv"), "--results", str(results),
         ],
     )  # fmt: skip
@@ -210,11 +244,61 @@ def test_the_command_says_which_act_text_is_missing(
     commission_corpus: Path, tmp_path: Path
 ) -> None:
     out = CliRunner().invoke(
-        app, ["eval", "commission", "--tables", str(commission_corpus), "--acts", str(tmp_path)]
+        app,
+        [
+            "eval",
+            "commission",
+            "--no-semantic",
+            "--tables",
+            str(commission_corpus),
+            "--acts",
+            str(tmp_path),
+        ],
     )
 
     assert out.exit_code == 1
     assert ACTS[0] in out.output
+
+
+def test_the_held_out_key_is_not_evaluated_without_final(
+    commission_corpus: Path, tmp_path: Path
+) -> None:
+    results = tmp_path / "results.json"
+
+    out = CliRunner().invoke(
+        app,
+        [
+            "eval", "commission", "--held-out", "--tables", str(commission_corpus),
+            "--results", str(results),
+        ],
+    )  # fmt: skip
+
+    assert out.exit_code == 1
+    assert "--final" in out.output
+    assert not results.exists()
+
+
+def test_final_applies_only_to_the_held_out_key(commission_corpus: Path, tmp_path: Path) -> None:
+    out = CliRunner().invoke(
+        app, ["eval", "commission", "--final", "--tables", str(commission_corpus)]
+    )
+
+    assert out.exit_code == 1
+    assert "--held-out" in out.output
+
+
+def test_the_final_run_reads_the_held_out_acts(commission_corpus: Path, tmp_path: Path) -> None:
+    out = CliRunner().invoke(
+        app,
+        [
+            "eval", "commission", "--held-out", "--final", "--no-semantic",
+            "--tables", str(commission_corpus),
+            "--acts", str(tmp_path),
+        ],
+    )  # fmt: skip
+
+    assert out.exit_code == 1
+    assert HELD_OUT_ACTS[0] in out.output
 
 
 @pytest.mark.parametrize("reason", MISS_REASONS)

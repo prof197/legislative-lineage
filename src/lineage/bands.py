@@ -1,14 +1,16 @@
 """Build the LSH band index from the signatures table, and measure what the bucket cap skips.
 
 The index is two (BANDS, n) matrices in `<tables>/bands/`: each band's sorted keys
-(`keys.npy`) and the signature row behind each key (`rows.npy`). Rows number the signatures
-in the order `load_signatures` reads them. The report counts the candidate pairs and what the
-bucket cap skipped, including the cross-state candidates it drops for good. For a range of
-caps, it also counts the cross-state candidates each would lose. See DESIGN.md#dr-3.
+(`keys.npy`) and the signature row behind each key (`rows.npy`). Rows number the signatures,
+one per window, in the order `load_signatures` reads them. The report counts the candidate
+pairs and what the bucket cap skipped, including the cross-state candidates it drops for good.
+For a range of caps, it also counts the cross-state candidates each would lose. See
+DESIGN.md#dr-3.
 """
 
 import shutil
 import tempfile
+from collections.abc import Iterator
 from pathlib import Path
 from typing import Any, cast
 
@@ -22,38 +24,71 @@ from lineage.lsh import (
     BUCKET_CAP,
     ROWS,
     BandIndex,
-    build_band_index,
-    candidate_pairs,
     cap_sweep,
+    fill_band_index,
     threshold,
 )
-from lineage.signatures import SignatureTable, load_signatures
+from lineage.signatures import RowLabels, SignatureFiles
 
-# Each row costs a uint64 key and a uint32 row number in every band.
+# Each row (a window) costs a uint64 key and a uint32 row number in every band.
 INDEX_ROW_BYTES = BANDS * (8 + 4)
-SWEEP_CAPS = (100, 200, 500, 1000, 2000)
+SWEEP_CAPS = (100, 200, 500, 1000, 2000, 5000)
+# Signature rows read per step while the band keys are computed: 512 MiB.
+_CHUNK_ROWS = 1 << 20
 
 
-def row_states(tables_dir: Path, table: SignatureTable) -> NDArray[np.int32]:
+def row_states(tables_dir: Path, labels: RowLabels) -> NDArray[np.int32]:
     """Each signature row's state, as a code that is equal exactly when the states are."""
     with queries.connect_quiet() as con:
         by_bill = queries.bill_states(con, bills_glob=str(tables_dir / "bills" / "*.parquet"))
-    _, codes = np.unique(np.array([by_bill[b] for b in table.bill_ids]), return_inverse=True)
-    return codes.astype(np.int32)
+    code = {state: i for i, state in enumerate(sorted(set(by_bill.values())))}
+    per_section = np.fromiter(
+        (code[by_bill[b]] for b in labels.section_bills),
+        dtype=np.int32,
+        count=len(labels.section_bills),
+    )
+    return per_section[labels.section]
 
 
-def build_bands(tables_dir: Path, *, floor_bytes: int) -> dict[str, Any]:
-    """Rebuild `<tables>/bands/` from the signatures table and return its report section."""
-    table = load_signatures(tables_dir)
-    n = len(table.bill_ids)
-    require_free_space(tables_dir, needed=n * INDEX_ROW_BYTES + (1 << 20), floor=floor_bytes)
-    index = build_band_index(table.values)
+def _chunks(files: SignatureFiles) -> Iterator[NDArray[np.uint32]]:
+    for matrix in files.matrices:
+        for start in range(0, matrix.shape[0], _CHUNK_ROWS):
+            yield np.asarray(matrix[start : start + _CHUNK_ROWS])
+
+
+def build_bands(
+    tables_dir: Path, files: SignatureFiles, states: NDArray[np.int32], *, floor_bytes: int
+) -> dict[str, Any]:
+    """Rebuild `<tables>/bands/` from the memory-mapped signatures; return its report section.
+
+    The index is written straight into memory-mapped files, and the cap sweep's per-row tables
+    live in files beside it, so the operating system pages them rather than the process
+    holding them (DESIGN.md#dr-3). Candidate pairs and what the cap skips are counted when the
+    pairs are formed and verified (lineage.pairs).
+    """
+    n = int(sum(m.shape[0] for m in files.matrices))
+    # The index, and the cap sweep's tables of the same size while it runs.
+    require_free_space(tables_dir, needed=2 * n * INDEX_ROW_BYTES + (1 << 20), floor=floor_bytes)
+
+    def write(directory: Path) -> None:
+        if n == 0:  # a file of no bytes cannot be memory-mapped
+            np.save(directory / "keys.npy", np.empty((BANDS, 0), dtype=np.uint64))
+            np.save(directory / "rows.npy", np.empty((BANDS, 0), dtype=np.uint32))
+            return
+        keys = np.lib.format.open_memmap(
+            directory / "keys.npy", mode="w+", dtype=np.uint64, shape=(BANDS, n)
+        )
+        rows = np.lib.format.open_memmap(
+            directory / "rows.npy", mode="w+", dtype=np.uint32, shape=(BANDS, n)
+        )
+        fill_band_index(BandIndex(keys, rows), _chunks(files))
+        keys.flush()
+        rows.flush()
 
     final = tables_dir / "bands"
     building = Path(tempfile.mkdtemp(prefix="bands.", dir=tables_dir))
     try:
-        np.save(building / "keys.npy", index.keys)
-        np.save(building / "rows.npy", index.rows)
+        write(building)
         if final.exists():
             shutil.rmtree(final)
         building.rename(final)
@@ -61,30 +96,17 @@ def build_bands(tables_dir: Path, *, floor_bytes: int) -> dict[str, Any]:
         shutil.rmtree(building, ignore_errors=True)
         raise
 
-    states = row_states(tables_dir, table)
-    found = candidate_pairs(index, cap=BUCKET_CAP)
-    cross = int(np.count_nonzero(states[found.left] != states[found.right]))
+    index = load_band_index(tables_dir)
+    caps = sorted({*SWEEP_CAPS, BUCKET_CAP})
     # The build's own cap joins the sweep, so its losses are counted whatever the sweep lists.
-    effects = cap_sweep(index, states, sorted({*SWEEP_CAPS, BUCKET_CAP}))
+    effects = cap_sweep(index, states, caps)
     return {
         "bands": BANDS,
         "rows": ROWS,
         "threshold": round(threshold(), 3),
         "index_bytes": n * INDEX_ROW_BYTES,
         "bucket_cap": BUCKET_CAP,
-        "largest_bucket": found.largest_bucket,
-        # Summed over bands: a section in capped buckets of three bands counts three times.
-        "capped": {
-            "buckets": found.buckets_over_cap,
-            "section_memberships": found.sections_in_capped_buckets,
-            "pairs": found.pairs_in_capped_buckets,
-            "cross_state_pairs_lost": effects[BUCKET_CAP].cross_group_pairs_lost,
-        },
-        "candidate_pairs": {
-            "all": int(found.left.size),
-            "cross_state": cross,
-            "same_state": int(found.left.size) - cross,
-        },
+        "cross_state_pairs_lost": effects[BUCKET_CAP].cross_group_pairs_lost,
         "cap_sweep": [
             {
                 "cap": cap,
@@ -96,6 +118,27 @@ def build_bands(tables_dir: Path, *, floor_bytes: int) -> dict[str, Any]:
             for cap, effect in effects.items()
             if cap in SWEEP_CAPS
         ],
+    }
+
+
+def lsh_report(bands: dict[str, Any], found: dict[str, Any]) -> dict[str, Any]:
+    """The report's `lsh` section, from the index build and the band-by-band pair formation."""
+    return {
+        "bands": bands["bands"],
+        "rows": bands["rows"],
+        "threshold": bands["threshold"],
+        "index_bytes": bands["index_bytes"],
+        "bucket_cap": bands["bucket_cap"],
+        "largest_bucket": found["largest_bucket"],
+        # Summed over bands: a window in capped buckets of three bands counts three times.
+        "capped": {
+            "buckets": found["capped"]["buckets"],
+            "window_memberships": found["capped"]["window_memberships"],
+            "pairs": found["capped"]["pairs"],
+            "cross_state_pairs_lost": bands["cross_state_pairs_lost"],
+        },
+        "candidate_pairs": found["candidate_pairs"],
+        "cap_sweep": bands["cap_sweep"],
     }
 
 

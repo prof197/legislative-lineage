@@ -1,10 +1,12 @@
-"""Build the signatures table: one MinHash signature for every matchable section.
+"""Build the signatures table: one MinHash signature for every window of a matchable section.
 
-Sections files are signed in parallel, one per worker process. Each writes a dense uint32
-matrix with one row per section (`<stem>.npy`, which memory-maps without conversion) and the
-keys of those rows (`<stem>.parquet`: bill id and ordinal). Shingles are stoplisted before
-signing. A section left with no shingle has no signature, and the report counts why: too short
-to form a shingle, or every shingle stoplisted. See DESIGN.md#dr-3.
+A section of up to `WINDOW_WORDS` words is one window; a longer one is cut into overlapping
+windows (lineage.windows). Sections files are signed in parallel, one per worker process. Each
+writes a dense uint32 matrix with one row per window (`<stem>.npy`, which memory-maps without
+conversion) and the keys of those rows (`<stem>.parquet`: bill id, section ordinal, window).
+Shingles are stoplisted before signing. A window left with no shingle has no signature. A
+section with no signed window is not signed, and the report counts why: too short to form a
+shingle, or every shingle stoplisted. See DESIGN.md#dr-3 and DESIGN.md#windows.
 """
 
 import hashlib
@@ -13,7 +15,7 @@ import shutil
 import tempfile
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
-from itertools import repeat
+from itertools import pairwise, repeat
 from pathlib import Path
 from typing import Any, cast
 
@@ -25,6 +27,7 @@ from lineage.disk import require_free_space
 from lineage.minhash import NUM_PERM, SEED, Permutations, permutations, signatures
 from lineage.shingles import section_shingles
 from lineage.stoplist import apply_stoplist, load_stoplist
+from lineage.windows import WINDOW_STRIDE, WINDOW_WORDS, normalized_windows
 
 # Fork after DuckDB has started threads can deadlock the child; spawn starts each worker clean.
 _SPAWN = multiprocessing.get_context("spawn")
@@ -39,43 +42,79 @@ _FILE_BYTES = 64 << 10
 @dataclass(frozen=True, slots=True)
 class PartCounts:
     matchable: int
+    signed: int
     too_short: int
     all_stoplisted: int
-    set_sizes: NDArray[np.int64]  # shingles per signed section, after the stoplist
+    windowed: int  # sections cut into more than one window
+    windows_stoplisted: int  # windows of a signed section left with no shingle
+    set_sizes: NDArray[np.int64]  # shingles per signed window, after the stoplist
 
 
 @dataclass(frozen=True, slots=True)
 class SignatureTable:
     bill_ids: list[str]
     ordinals: NDArray[np.int64]
-    values: NDArray[np.uint32]  # one row per section, NUM_PERM columns
+    windows: NDArray[np.int64]
+    values: NDArray[np.uint32]  # one row per window, NUM_PERM columns
+
+    def sections(self) -> NDArray[np.int64]:
+        """Each row's section, numbered from 0 in row order; a section's windows are adjacent."""
+        return section_numbers(self.bill_ids, self.ordinals)
+
+
+def section_numbers(bill_ids: list[str], ordinals: NDArray[np.int64]) -> NDArray[np.int64]:
+    """Number the sections of signature rows in order: a new number wherever the key changes."""
+    if not bill_ids:
+        return np.empty(0, dtype=np.int64)
+    bills = np.fromiter(
+        (a != b for a, b in zip(bill_ids[1:], bill_ids[:-1], strict=True)),
+        dtype=bool,
+        count=len(bill_ids) - 1,
+    )
+    new = np.concatenate([[True], bills | (ordinals[1:] != ordinals[:-1])])
+    return np.cumsum(new) - 1
 
 
 def _sign_part(
     part: Path, eligible: Path, stoplist: NDArray[np.uint32], perms: Permutations, dest: Path
 ) -> PartCounts:
     """Sign one sections file into `dest/<stem>.npy` and its keys. Runs in a worker process."""
-    matchable = too_short = all_stoplisted = 0
+    matchable = signed = too_short = all_stoplisted = windowed = windows_stoplisted = 0
     bill_ids: list[str] = []
     ordinals: list[int] = []
+    windows: list[int] = []
     rows: list[NDArray[np.uint32]] = []
     sizes: list[int] = []
     with queries.connect_quiet() as con:
-        scan = queries.matchable_sections(con, sections_path=part, eligible_path=eligible)
+        scan = queries.matchable_sections(
+            con, sections_path=part, eligible_path=eligible, display=True
+        )
         while batch := scan.fetchmany(_FETCH_SECTIONS):
-            shingled = section_shingles([text for *_, text in batch])
+            cut = [normalized_windows(text, normalized) for *_, text, normalized in batch]
+            shingled = section_shingles([w for section in cut for w in section])
             kept = apply_stoplist(shingled, stoplist)
             signable: list[NDArray[np.uint32]] = []
-            for (bill_id, ordinal, _), before, after in zip(batch, shingled, kept, strict=True):
-                if after.size:
-                    bill_ids.append(bill_id)
-                    ordinals.append(ordinal)
-                    signable.append(after)
-                    sizes.append(after.size)
-                elif before.size:
-                    all_stoplisted += 1
-                else:
-                    too_short += 1
+            at = 0
+            for (bill_id, ordinal, *_), section in zip(batch, cut, strict=True):
+                befores, afters = shingled[at : at + len(section)], kept[at : at + len(section)]
+                at += len(section)
+                windowed += len(section) > 1
+                if not any(a.size for a in afters):
+                    if any(b.size for b in befores):
+                        all_stoplisted += 1
+                    else:
+                        too_short += 1
+                    continue
+                signed += 1
+                for window, (before, after) in enumerate(zip(befores, afters, strict=True)):
+                    if after.size:
+                        bill_ids.append(bill_id)
+                        ordinals.append(ordinal)
+                        windows.append(window)
+                        signable.append(after)
+                        sizes.append(after.size)
+                    elif before.size:
+                        windows_stoplisted += 1
             matchable += len(batch)
             if signable:
                 rows.append(signatures(signable, perms))
@@ -86,8 +125,17 @@ def _sign_part(
                 parquet_path=dest / f"{part.stem}.parquet",
                 bill_ids=bill_ids,
                 ordinals=ordinals,
+                windows=windows,
             )
-    return PartCounts(matchable, too_short, all_stoplisted, np.array(sizes, dtype=np.int64))
+    return PartCounts(
+        matchable,
+        signed,
+        too_short,
+        all_stoplisted,
+        windowed,
+        windows_stoplisted,
+        np.array(sizes, dtype=np.int64),
+    )
 
 
 def _quantile(values: NDArray[np.int64], q: float) -> int:
@@ -104,12 +152,17 @@ def build_signatures(tables_dir: Path, *, workers: int, floor_bytes: int) -> dic
     eligible = tables_dir / "eligible.parquet"
     stoplist = load_stoplist(tables_dir)
     with queries.connect_quiet() as con:
-        sections = queries.count_sections(
-            con, sections_glob=str(tables_dir / "sections" / "*.parquet")
+        # Windows overlap by half, so a section yields at most one per stride of its words,
+        # plus the last.
+        windows = queries.window_bound(
+            con, sections_glob=str(tables_dir / "sections" / "*.parquet"), stride=WINDOW_STRIDE
+        )
+        words = queries.section_word_quantiles(
+            con, sections_glob=str(tables_dir / "sections" / "*.parquet"), eligible_path=eligible
         )
     require_free_space(
         tables_dir,
-        needed=sections * (_ROW_BYTES + _KEY_ROW_BYTES) + 2 * len(parts) * _FILE_BYTES,
+        needed=windows * (_ROW_BYTES + _KEY_ROW_BYTES) + 2 * len(parts) * _FILE_BYTES,
         floor=floor_bytes,
     )
 
@@ -142,10 +195,20 @@ def build_signatures(tables_dir: Path, *, workers: int, floor_bytes: int) -> dic
         "minhash": {"num_perm": NUM_PERM, "seed": SEED, "prime": "2^61 - 1"},
         "sections": {
             "matchable": sum(c.matchable for c in counts),
-            "signed": int(sizes.size),
+            "signed": sum(c.signed for c in counts),
             "too_short": sum(c.too_short for c in counts),
             "all_stoplisted": sum(c.all_stoplisted for c in counts),
         },
+        # Display words per matchable section, which the window size is set from.
+        "section_words": words,
+        "windows": {
+            "words": WINDOW_WORDS,
+            "stride": WINDOW_STRIDE,
+            "windowed_sections": sum(c.windowed for c in counts),
+            "signed": int(sizes.size),
+            "all_stoplisted": sum(c.windows_stoplisted for c in counts),
+        },
+        # Per signed window.
         "shingle_set_size": {
             "median": _quantile(sizes, 0.5),
             "p90": _quantile(sizes, 0.9),
@@ -161,15 +224,21 @@ def load_signatures(tables_dir: Path) -> SignatureTable:
     files = sorted((tables_dir / "signatures").glob("*.npy"))
     bill_ids: list[str] = []
     ordinals: list[int] = []
+    windows: list[int] = []
     matrices: list[NDArray[np.uint32]] = []
     with queries.connect_quiet() as con:
         for path in files:
-            ids, ords = queries.read_signature_keys(con, parquet_path=path.with_suffix(".parquet"))
+            ids, ords, wins = queries.read_signature_keys(
+                con, parquet_path=path.with_suffix(".parquet")
+            )
             bill_ids += ids
             ordinals += ords
+            windows += wins
             matrices.append(cast("NDArray[np.uint32]", np.load(path)))
     values = np.concatenate(matrices) if matrices else np.empty((0, NUM_PERM), dtype=np.uint32)
-    return SignatureTable(bill_ids, np.array(ordinals, dtype=np.int64), values)
+    return SignatureTable(
+        bill_ids, np.array(ordinals, dtype=np.int64), np.array(windows, dtype=np.int64), values
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -190,6 +259,40 @@ def open_signatures(tables_dir: Path) -> SignatureFiles:
     return SignatureFiles(matrices, [p.with_suffix(".parquet") for p in files], starts)
 
 
+@dataclass(frozen=True, slots=True)
+class RowLabels:
+    """What each signature row belongs to, without a string per row."""
+
+    section: NDArray[np.int64]  # each row's section, numbered from 0 in row order
+    section_bills: list[str]  # each section's bill id
+
+
+def row_labels(files: SignatureFiles) -> RowLabels:
+    """Each row's section, numbered as `SignatureTable.sections` numbers them, read file by file."""
+    parts: list[NDArray[np.int64]] = []
+    bills: list[str] = []
+    previous: tuple[str, int] | None = None
+    following = 0
+    with queries.connect_quiet() as con:
+        for path in files.keys:
+            ids, ords, _ = queries.read_signature_keys(con, parquet_path=path)
+            if not ids:
+                continue
+            ordinals = np.array(ords, dtype=np.int64)
+            numbers = section_numbers(ids, ordinals)
+            # A file continues the previous file's last section only if it starts with it.
+            numbers += following - (1 if previous == (ids[0], ords[0]) else 0)
+            first = np.flatnonzero(np.r_[True, numbers[1:] != numbers[:-1]])
+            if previous == (ids[0], ords[0]):
+                first = first[1:]
+            bills += [ids[i] for i in first.tolist()]
+            parts.append(numbers)
+            following = int(numbers[-1]) + 1
+            previous = (ids[-1], ords[-1])
+    section = np.concatenate(parts) if parts else np.empty(0, dtype=np.int64)
+    return RowLabels(section, bills)
+
+
 def _by_file(files: SignatureFiles, rows: NDArray[np.int64]) -> NDArray[np.int64]:
     return np.searchsorted(files.starts, rows, side="right") - 1
 
@@ -197,11 +300,15 @@ def _by_file(files: SignatureFiles, rows: NDArray[np.int64]) -> NDArray[np.int64
 def signature_values(files: SignatureFiles, rows: NDArray[np.int64]) -> NDArray[np.uint32]:
     """The signatures of the given rows, in the order given."""
     out = np.empty((rows.size, NUM_PERM), dtype=np.uint32)
-    which = _by_file(files, rows)
-    used: list[int] = np.unique(which).tolist()
-    for f in used:
-        here = which == f
-        out[here] = files.matrices[f][rows[here] - files.starts[f]]
+    # Sorting once and slicing per file costs one pass, where a mask per file would cost one
+    # pass per file; sorted rows also read each file's pages in order.
+    order = np.argsort(rows, kind="stable")
+    ordered = rows[order]
+    ends = np.concatenate([files.starts, np.array([np.iinfo(np.int64).max], dtype=np.int64)])
+    bounds: list[int] = np.searchsorted(ordered, ends).tolist()
+    for f, (lo, hi) in enumerate(pairwise(bounds)):
+        if lo < hi:
+            out[order[lo:hi]] = files.matrices[f][ordered[lo:hi] - files.starts[f]]
     return out
 
 

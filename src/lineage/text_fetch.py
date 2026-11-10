@@ -147,6 +147,7 @@ def fetch_one(
             status = response.status
             content_type = response.headers.get("Content-Type", "")
     except urllib.error.HTTPError as e:
+        e.close()
         kind = "server_error" if e.code >= 500 or e.code == 429 else "http_error"
         return result(kind, status=e.code, error=str(e.reason))
     except (urllib.error.URLError, TimeoutError, ConnectionError, HTTPException) as e:
@@ -173,14 +174,17 @@ def fetch_one(
 
 
 def stored(path: Path) -> set[tuple[str, str, str]]:
-    """(id, format, url) already in a host's store and not worth retrying."""
+    """(id, format, address requested) already in a host's store and not worth retrying.
+
+    The address is the one the request went to, so a link that has since moved (lineage.fetch,
+    moved) is fetched again from where it now leads."""
     done: set[tuple[str, str, str]] = set()
     if path.exists():
         with path.open() as f:
             for line in f:
                 row = json.loads(line)
                 if row["outcome"] not in _RETRIED:
-                    done.add((row["id"], row["format"], row["url"]))
+                    done.add((row["id"], row["format"], row["fetched_url"]))
     return done
 
 
@@ -203,7 +207,7 @@ def run_host(
     path = store_dir / f"{host}.jsonl"
     done = stored(path)
     # A changed plan (another version, another link) is fetched again.
-    todo = [j for j in jobs if (j.id, j.format, j.url) not in done]
+    todo = [j for j in jobs if (j.id, j.format, moved(j.url)) not in done]
     outcomes: Counter[str] = Counter(skipped=len(jobs) - len(todo))
     if not todo:
         return outcomes

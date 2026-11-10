@@ -6,14 +6,14 @@
   "OR",
   "WA"
  ],
- "jobs": 151425,
+ "jobs": 151426,
  "outcomes": {
   "extract_error": 575,
-  "http_error": 3646,
+  "http_error": 2589,
   "network_error": 1,
   "not_in_bulk": 6,
   "not_usable": 376,
-  "ok": 146816,
+  "ok": 147874,
   "robots": 5
  },
  "left_out": {
@@ -89,11 +89,11 @@
    }
   },
   "DE": {
-   "jobs": 1292,
+   "jobs": 1293,
    "outcomes": {
     "http_error": 41,
     "not_usable": 1,
-    "ok": 1250
+    "ok": 1251
    },
    "left_out": {}
   },
@@ -325,9 +325,9 @@
   "OH": {
    "jobs": 2579,
    "outcomes": {
-    "http_error": 1060,
+    "http_error": 3,
     "not_usable": 2,
-    "ok": 1517
+    "ok": 2574
    },
    "left_out": {}
   },

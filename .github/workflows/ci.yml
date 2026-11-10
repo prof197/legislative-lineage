@@ -15,6 +15,15 @@ jobs:
   check:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        # requires-python is ">=3.13". Every dependency ships wheels for 3.13 and 3.14, and so do
+        # the two the semantic stage will add (fastembed and onnxruntime, faiss-cpu).
+        python: ["3.13", "3.14"]
+    env:
+      # Overrides .python-version, which pins local development to 3.13.
+      UV_PYTHON: ${{ matrix.python }}
     steps:
       # Actions are pinned to commit SHAs: a tag can be moved, a SHA cannot.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -27,8 +36,9 @@ jobs:
           version: "0.13.7"
           enable-cache: true
 
-      # --locked fails if uv.lock is stale, so CI tests exactly what was committed.
-      - run: uv sync --locked
+      # --locked fails if uv.lock is stale, so CI tests exactly what was committed. The build
+      # extra brings faiss, which the semantic stage's index build and its tests need.
+      - run: uv sync --locked --extra build
 
       - run: uv run ruff check --output-format=github
       - run: uv run ruff format --check
@@ -39,7 +49,9 @@ jobs:
       # secrets to a run in a fork or to a pull request from one, so there the check is skipped
       # with a notice; it runs when the change reaches this repository. Here a missing secret
       # fails the step rather than passing on local paths alone.
+      # The check reads the repository, not the interpreter, so one run is enough.
       - name: Leak check
+        if: matrix.python == '3.13'
         env:
           LEAK_CHECK_TERMS: ${{ secrets.LEAK_CHECK_TERMS }}
           # A push in a fork, or a pull request whose head is in another repository.

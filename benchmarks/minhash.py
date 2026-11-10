@@ -19,7 +19,7 @@ against the memory bound as it grows, and the build stops if it crosses the boun
 disk falls to the floor, so that a run that does not fit is measured stopping there, not
 extrapolated, and never pushes the machine into swap.
 
-Peak memory is the process's physical footprint (see benchmarks/memory.py). Both engines run
+Peak memory is the process's physical footprint (see lineage.memory). Both engines run
 on one core. The comparison is per process, and both parallelize the same way.
 """
 
@@ -44,8 +44,7 @@ from typing import Any, cast
 import numpy as np
 from numpy.typing import NDArray
 
-from benchmarks import memory
-from lineage import queries
+from lineage import memory, queries
 from lineage.disk import DEFAULT_FLOOR_BYTES, GiB
 from lineage.lsh import BANDS, ROWS, build_band_index
 from lineage.minhash import NUM_PERM, permutations, signatures

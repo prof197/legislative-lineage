@@ -215,6 +215,16 @@ def text_bytes(con: duckdb.DuckDBPyConnection, *, bills_glob: str) -> int:
     return int(row[0]) if row else 0
 
 
+def file_state(con: duckdb.DuckDBPyConnection, *, bills_path: Path) -> str | None:
+    """The one state of a bills file, which holds one archive; None if it holds no rows."""
+    states: list[tuple[str]] = con.execute(
+        "SELECT DISTINCT state FROM read_parquet($path)", {"path": str(bills_path)}
+    ).fetchall()
+    if len(states) > 1:
+        raise ValueError(f"{bills_path} holds {len(states)} states")
+    return states[0][0] if states else None
+
+
 def open_bill_texts(
     con: duckdb.DuckDBPyConnection, *, parquet_path: Path
 ) -> duckdb.DuckDBPyConnection:
@@ -283,17 +293,23 @@ def write_stoplist(
 
 
 def matchable_sections(
-    con: duckdb.DuckDBPyConnection, *, sections_path: Path, eligible_path: Path
+    con: duckdb.DuckDBPyConnection,
+    *,
+    sections_path: Path,
+    eligible_path: Path,
+    display: bool = False,
 ) -> duckdb.DuckDBPyConnection:
-    """Start a scan of one sections file's matchable sections: (bill id, ordinal, normalized).
+    """Start a scan of one sections file's matchable sections: (bill id, ordinal, normalized),
+    or (bill id, ordinal, display text, normalized) with `display`.
 
     Matchable means the bill's document type is eligible (DR-5) and the section is not flagged
     as boilerplate. Rows come in key order, so anything built from them is reproducible. Read
     it with `fetchmany`.
     """
+    text = "s.text, " if display else ""
     return con.execute(
-        """
-        SELECT s.bill_id, s.ordinal, s.normalized
+        f"""
+        SELECT s.bill_id, s.ordinal, {text}s.normalized
         FROM read_parquet($sections) s
         SEMI JOIN (SELECT id FROM read_parquet($eligible) WHERE eligible) e ON s.bill_id = e.id
         WHERE s.boilerplate IS NULL
@@ -303,34 +319,149 @@ def matchable_sections(
     )
 
 
-def count_sections(con: duckdb.DuckDBPyConnection, *, sections_glob: str) -> int:
-    row: tuple[int] | None = con.execute(
-        "SELECT count(*) FROM read_parquet($glob)", {"glob": sections_glob}
+def window_bound(con: duckdb.DuckDBPyConnection, *, sections_glob: str, stride: int) -> int:
+    """At most how many windows the sections yield: one per `stride` of a section's display
+    words, plus one."""
+    row: tuple[int | None] | None = con.execute(
+        "SELECT sum(1 + len(string_split_regex(trim(text), '\\s+')) // $stride) "
+        "FROM read_parquet($glob)",
+        {"glob": sections_glob, "stride": stride},
     ).fetchone()
-    return row[0] if row else 0
+    return int(row[0] or 0) if row else 0
+
+
+def section_word_quantiles(
+    con: duckdb.DuckDBPyConnection, *, sections_glob: str, eligible_path: Path
+) -> dict[str, dict[str, int]]:
+    """Display words per matchable section, over all of them and over those split at headings:
+    the median, 90th and 99th percentiles."""
+    rows: list[tuple[str, int | None, int | None, int | None]] = con.execute(
+        """
+        WITH w AS (
+            SELECT s.by_heading, len(string_split_regex(trim(s.text), '\\s+')) AS words
+            FROM read_parquet($sections) s
+            SEMI JOIN (SELECT id FROM read_parquet($eligible) WHERE eligible) e ON s.bill_id = e.id
+            WHERE s.boilerplate IS NULL
+        )
+        SELECT 'all', quantile_disc(words, 0.5), quantile_disc(words, 0.9),
+            quantile_disc(words, 0.99) FROM w
+        UNION ALL
+        SELECT 'split_at_headings', quantile_disc(words, 0.5), quantile_disc(words, 0.9),
+            quantile_disc(words, 0.99) FROM w WHERE by_heading
+        """,
+        {"sections": sections_glob, "eligible": str(eligible_path)},
+    ).fetchall()
+    return {
+        name: {"median": median, "p90": p90 or 0, "p99": p99 or 0}
+        for name, median, p90, p99 in sorted(rows)
+        if median is not None
+    }
 
 
 def write_signature_keys(
-    con: duckdb.DuckDBPyConnection, *, parquet_path: Path, bill_ids: list[str], ordinals: list[int]
+    con: duckdb.DuckDBPyConnection,
+    *,
+    parquet_path: Path,
+    bill_ids: list[str],
+    ordinals: list[int],
+    windows: list[int],
 ) -> None:
-    """The keys of a signature matrix, row for row."""
+    """The keys of a signature matrix, row for row: bill id, section ordinal, window number."""
     query = f"""
         COPY (
             SELECT
                 CAST(unnest($bill_ids) AS VARCHAR) AS bill_id,
-                CAST(unnest($ordinals) AS INTEGER) AS ordinal
+                CAST(unnest($ordinals) AS INTEGER) AS ordinal,
+                CAST(unnest($windows) AS INTEGER) AS window_number
         ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
     """
-    con.execute(query, {"bill_ids": bill_ids, "ordinals": ordinals})
+    con.execute(query, {"bill_ids": bill_ids, "ordinals": ordinals, "windows": windows})
 
 
 def read_signature_keys(
     con: duckdb.DuckDBPyConnection, *, parquet_path: Path
-) -> tuple[list[str], list[int]]:
-    rows: list[tuple[str, int]] = con.execute(
-        "SELECT bill_id, ordinal FROM read_parquet($p)", {"p": str(parquet_path)}
+) -> tuple[list[str], list[int], list[int]]:
+    rows: list[tuple[str, int, int]] = con.execute(
+        "SELECT bill_id, ordinal, window_number FROM read_parquet($p)", {"p": str(parquet_path)}
     ).fetchall()
-    return [b for b, _ in rows], [o for _, o in rows]
+    return [b for b, _, _ in rows], [o for _, o, _ in rows], [w for _, _, w in rows]
+
+
+def write_semantic_units(
+    con: duckdb.DuckDBPyConnection,
+    *,
+    parquet_path: Path,
+    bill_ids: list[str],
+    ordinals: list[int],
+    windows: list[int],
+    text_ids: list[int],
+) -> None:
+    """The semantic stage's windows, one row each: bill id, section ordinal, window number, and
+    the id of its text, shared by every window with the same text."""
+    query = f"""
+        COPY (
+            SELECT
+                CAST(unnest($bill_ids) AS VARCHAR) AS bill_id,
+                CAST(unnest($ordinals) AS INTEGER) AS ordinal,
+                CAST(unnest($windows) AS INTEGER) AS window_number,
+                CAST(unnest($text_ids) AS BIGINT) AS text_id
+        ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
+    """
+    con.execute(
+        query,
+        {"bill_ids": bill_ids, "ordinals": ordinals, "windows": windows, "text_ids": text_ids},
+    )
+
+
+def write_semantic_texts(
+    con: duckdb.DuckDBPyConnection, *, parquet_path: Path, first_id: int, texts: list[str]
+) -> None:
+    """A shard of distinct window texts, ids counting up from `first_id`."""
+    query = f"""
+        COPY (
+            SELECT CAST(unnest($ids) AS BIGINT) AS text_id, CAST(unnest($texts) AS VARCHAR) AS text
+        ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
+    """
+    con.execute(query, {"ids": list(range(first_id, first_id + len(texts))), "texts": texts})
+
+
+def read_semantic_texts(con: duckdb.DuckDBPyConnection, *, parquet_path: Path) -> list[str]:
+    """A shard's texts, in id order."""
+    rows: list[tuple[str]] = con.execute(
+        "SELECT text FROM read_parquet($p) ORDER BY text_id", {"p": str(parquet_path)}
+    ).fetchall()
+    return [t for (t,) in rows]
+
+
+def semantic_units_of(
+    con: duckdb.DuckDBPyConnection, *, units_glob: str, text_ids: list[int]
+) -> list[tuple[int, str, int]]:
+    """(text id, bill id, section ordinal) of every window whose text is one of `text_ids`,
+    each section once per text."""
+    rows: list[tuple[int, str, int]] = con.execute(
+        """
+        SELECT DISTINCT text_id, bill_id, ordinal FROM read_parquet($units)
+        WHERE text_id IN (SELECT unnest($ids))
+        ORDER BY text_id, bill_id, ordinal
+        """,
+        {"units": units_glob, "ids": text_ids},
+    ).fetchall()
+    return rows
+
+
+def semantic_text_ids_of(
+    con: duckdb.DuckDBPyConnection, *, units_glob: str, bill_ids: list[str]
+) -> list[tuple[str, int]]:
+    """(bill id, text id) of every window of the given bills, each text once per bill."""
+    rows: list[tuple[str, int]] = con.execute(
+        """
+        SELECT DISTINCT bill_id, text_id FROM read_parquet($units)
+        WHERE bill_id IN (SELECT unnest($ids))
+        ORDER BY bill_id, text_id
+        """,
+        {"units": units_glob, "ids": bill_ids},
+    ).fetchall()
+    return rows
 
 
 def signature_bill_ids_at(
@@ -466,13 +597,14 @@ def listed_bills(
 
 def signature_rows_of(
     con: duckdb.DuckDBPyConnection, *, keys_paths: list[Path], bill_ids: list[str]
-) -> list[tuple[int, int, str]]:
-    """(file index, row within the file, bill id) of every signature row of the wanted bills."""
+) -> list[tuple[int, int, str, int]]:
+    """(file index, row within the file, bill id, section ordinal) of every signature row of the
+    wanted bills."""
     if not keys_paths or not bill_ids:
         return []
-    found: list[tuple[str, int, str]] = con.execute(
+    found: list[tuple[str, int, str, int]] = con.execute(
         """
-        SELECT filename, file_row_number, bill_id
+        SELECT filename, file_row_number, bill_id, ordinal
         FROM read_parquet($paths, filename = true, file_row_number = true)
         WHERE bill_id IN (SELECT unnest($ids))
         ORDER BY filename, file_row_number
@@ -480,7 +612,7 @@ def signature_rows_of(
         {"paths": [str(p) for p in keys_paths], "ids": bill_ids},
     ).fetchall()
     index = {str(p): i for i, p in enumerate(keys_paths)}
-    return [(index[name], row, bill_id) for name, row, bill_id in found]
+    return [(index[name], row, bill_id, ordinal) for name, row, bill_id, ordinal in found]
 
 
 def bill_states(con: duckdb.DuckDBPyConnection, *, bills_glob: str) -> dict[str, str]:
@@ -981,3 +1113,85 @@ def stored_text(
         {"bills": bills_glob, "ids": ids},
     ).fetchall()
     return {r[0]: (r[1], r[2], r[3]) for r in rows}
+
+
+_MATCHABLE = """
+    FROM read_parquet($sections) s
+    SEMI JOIN (SELECT id FROM read_parquet($eligible) WHERE eligible) e ON s.bill_id = e.id
+    WHERE s.boilerplate IS NULL
+"""
+
+
+def section_word_counts(
+    con: duckdb.DuckDBPyConnection, *, sections_glob: str, eligible_path: Path
+) -> list[int]:
+    """Display words of every matchable section, in key order."""
+    rows: list[tuple[int]] = con.execute(
+        f"SELECT len(string_split_regex(trim(s.text), '\\s+')) {_MATCHABLE} "
+        "ORDER BY s.bill_id, s.ordinal",
+        {"sections": sections_glob, "eligible": str(eligible_path)},
+    ).fetchall()
+    return [n for (n,) in rows]
+
+
+def matchable_bill_ids(
+    con: duckdb.DuckDBPyConnection, *, sections_glob: str, eligible_path: Path
+) -> list[str]:
+    """Every bill with at least one matchable section, sorted."""
+    rows: list[tuple[str]] = con.execute(
+        f"SELECT DISTINCT s.bill_id {_MATCHABLE} ORDER BY 1",
+        {"sections": sections_glob, "eligible": str(eligible_path)},
+    ).fetchall()
+    return [bill for (bill,) in rows]
+
+
+def matchable_section_texts(
+    con: duckdb.DuckDBPyConnection, *, sections_glob: str, eligible_path: Path, ids: list[str]
+) -> list[tuple[str, int, str]]:
+    """(bill id, ordinal, display text) of the wanted bills' matchable sections, in key order."""
+    rows: list[tuple[str, int, str]] = con.execute(
+        f"SELECT s.bill_id, s.ordinal, s.text {_MATCHABLE} "
+        "AND s.bill_id IN (SELECT unnest($ids)) ORDER BY s.bill_id, s.ordinal",
+        {"sections": sections_glob, "eligible": str(eligible_path), "ids": ids},
+    ).fetchall()
+    return rows
+
+
+def related_bill_ids(
+    con: duckdb.DuckDBPyConnection,
+    *,
+    bills_glob: str,
+    families_path: Path,
+    listed: list[tuple[str, str, str]],
+    title_regex: str,
+) -> list[str]:
+    """Bills named by (state, session, identifier) or whose title matches `title_regex`, ignoring
+    case, with every bill in the same family as one of them, sorted."""
+    rows: list[tuple[str]] = con.execute(
+        """
+        WITH listed AS (
+            SELECT unnest($states) AS state, unnest($sessions) AS session,
+                unnest($identifiers) AS identifier
+        ),
+        named AS (
+            SELECT b.id FROM read_parquet($bills) b
+            LEFT JOIN listed l USING (state, session, identifier)
+            WHERE l.state IS NOT NULL OR regexp_matches(coalesce(b.title, ''), $regex, 'i')
+        ),
+        families AS (SELECT bill_id, family FROM read_parquet($families))
+        SELECT id FROM named
+        UNION
+        SELECT f.bill_id FROM families f
+        WHERE f.family IN (SELECT family FROM families WHERE bill_id IN (SELECT id FROM named))
+        ORDER BY 1
+        """,
+        {
+            "bills": bills_glob,
+            "families": str(families_path),
+            "states": [s for s, _, _ in listed],
+            "sessions": [s for _, s, _ in listed],
+            "identifiers": [i for _, _, i in listed],
+            "regex": title_regex,
+        },
+    ).fetchall()
+    return [bill for (bill,) in rows]
