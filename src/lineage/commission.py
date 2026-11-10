@@ -393,10 +393,18 @@ def evaluate(
             )
 
     strata = ("enacted", "substantially_similar")
+
+    def breakdown(rs: list[dict[str, Any]]) -> dict[str, Any]:
+        return {
+            "pooled": _both(rs),
+            "by_act": {a: _both([r for r in rs if r["act"] == a]) for a in sorted(query_texts)},
+            "by_stratum": {s: _both([r for r in rs if r["stratum"] == s]) for s in strata},
+        }
+
     ablation = {
-        stage: _both([r | {"found": r["found_by_stage"][stage]} for r in records])
+        stage: breakdown([r | {"found": r["found_by_stage"][stage]} for r in records])
         for stage in stages
-    } | {"both": _both(records)}
+    } | {"both": breakdown(records)}
     return {
         "stages": list(stages),
         "stage_ablation": ablation if semantic is not None else None,
@@ -410,13 +418,7 @@ def evaluate(
         "bucket_cap": BUCKET_CAP,
         "first_year": first_year,
         "queries": query_stats,
-        "recall": {
-            "pooled": _both(records),
-            "by_act": {
-                a: _both([r for r in records if r["act"] == a]) for a in sorted(query_texts)
-            },
-            "by_stratum": {s: _both([r for r in records if r["stratum"] == s]) for s in strata},
-        },
+        "recall": breakdown(records),
         "recall_by_min_share": [
             {
                 "min_share": s,

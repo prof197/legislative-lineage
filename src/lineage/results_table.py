@@ -2,9 +2,11 @@
 
 `lineage eval readme` rewrites the text between the README's results markers, and a test fails
 when the committed README and results files disagree, so the numbers shown are the numbers
-measured. The first column is recall with the text layer (`reports/results.json`); the second
-is the same eval on Open States' text alone (`reports/results_exported_only.json`), so the
-table shows what the text layer added. See DESIGN.md#dr-6.
+measured. Recall with the text layer comes from `reports/results.json`: both stages, and the
+near-duplicate stage alone from its stage ablation. The last column is the near-duplicate stage
+on Open States' text alone (`reports/results_exported_only.json`), so the table shows what the
+text layer added, stage for stage. The export's text has no semantic run, since the corpus's
+vectors are embedded from the fetched text. See DESIGN.md#dr-6.
 """
 
 from pathlib import Path
@@ -49,30 +51,53 @@ def render_commission(section: dict[str, Any], exported: dict[str, Any]) -> str:
     for key in ("threshold", "enactments_file"):
         if section[key] != exported[key]:
             raise ResultsTableError(f"the two results files differ in {key}; rerun both evals")
-    recall, alone = section["recall"], exported["recall"]
+    if exported.get("stage_ablation") is not None:
+        raise ResultsTableError(
+            "the export-only results searched by meaning too, over vectors of other text; "
+            "rerun them with --no-semantic"
+        )
+    ablation = section.get("stage_ablation")
+    alone = exported["recall"]
+    if ablation is None:
+        heads = ["With the text layer", "Open States' text alone"]
+        columns = [section["recall"], alone]
+        matched = "sharing at least one verified section with it"
+        misses = "Misses with the text layer"
+    else:
+        heads = [
+            "Both stages",
+            "Near-duplicate stage",
+            "Near-duplicate stage, Open States' text alone",
+        ]
+        columns = [section["recall"], ablation["near_duplicate"], alone]
+        matched = "matching at least one of its sections by wording or by meaning"
+        misses = "Misses by both stages, at the step where the near-duplicate stage lost them"
     min_share = section["threshold"]["min_share"]
     found_when = (
-        "at least one verified section"
-        if min_share == 0
-        else f"more than {min_share:.0%} of its sections"
+        matched if min_share == 0 else f"sharing more than {min_share:.0%} of its sections with it"
     )
     read = section["enactments_file"]["read"].removeprefix("ULC Bill List, ")
-    rows = [("Pooled, three acts", recall["pooled"], alone["pooled"])]
-    rows += [(ACT_NAMES[a], r, alone["by_act"][a]) for a, r in recall["by_act"].items()]
-    rows += [(_STRATA[s], r, alone["by_stratum"][s]) for s, r in recall["by_stratum"].items()]
+    rows = [("Pooled, three acts", [c["pooled"] for c in columns])]
+    rows += [(ACT_NAMES[a], [c["by_act"][a] for c in columns]) for a in section["recall"]["by_act"]]
+    rows += [
+        (_STRATA[s], [c["by_stratum"][s] for c in columns]) for s in section["recall"]["by_stratum"]
+    ]
     lines = [
         "Commission recall: of the bills that enacted three uniform acts, the share that the "
-        f"act's own text finds, sharing {found_when} with it, not counting the commission's "
+        f"act's own text finds, {found_when}, not counting the commission's "
         f"standard closing sections. The lists were {read}. "
-        f"Reproduce with `{section['command']}` → `reports/results.json`. The second column "
+        f"Reproduce with `{section['command']}` → `reports/results.json`. The last column "
         "counts the same enactments with Open States' exported text alone, before the project "
         f"fetched any: {EXPORTED_ONLY_STEPS}.",
         "",
-        "| | With the text layer | Open States' text alone |",
-        "|---|---|---|",
-        *(f"| {label} | {_cell(r['all'])} | {_cell(a['all'])} |" for label, r, a in rows),
+        "| | " + " | ".join(heads) + " |",
+        "|---" * (len(heads) + 1) + "|",
+        *(
+            f"| {label} | " + " | ".join(_cell(c["all"]) for c in cells) + " |"
+            for label, cells in rows
+        ),
         "",
-        "Misses with the text layer: "
+        f"{misses}: "
         + ", ".join(f"{_REASONS[k]} {v}" for k, v in section["miss_reasons"].items())
         + ". The reasons are defined in DESIGN.md, "
         "[Commission recall](DESIGN.md#commission-recall).",

@@ -41,21 +41,21 @@ Their enactments are in `evals/ulc_enactments_heldout.csv`.
 ## Results
 
 <!-- results:commission -->
-Commission recall: of the bills that enacted three uniform acts, the share that the act's own text finds, sharing at least one verified section with it, not counting the commission's standard closing sections. The lists were read 2026-11-06. Reproduce with `uv run lineage eval commission` → `reports/results.json`. The second column counts the same enactments with Open States' exported text alone, before the project fetched any: `uv run lineage text merge --exported-only`, the pipeline, then `uv run lineage eval commission --results reports/results_exported_only.json`.
+Commission recall: of the bills that enacted three uniform acts, the share that the act's own text finds, matching at least one of its sections by wording or by meaning, not counting the commission's standard closing sections. The lists were read 2026-11-06. Reproduce with `uv run lineage eval commission` → `reports/results.json`. The last column counts the same enactments with Open States' exported text alone, before the project fetched any: `uv run lineage text merge --exported-only`, the pipeline, then `uv run lineage eval commission --results reports/results_exported_only.json`.
 
-| | With the text layer | Open States' text alone |
-|---|---|---|
-| Pooled, three acts | 31 / 36 (86.1%) | 22 / 36 (61.1%) |
-| Electronic Estate Planning Documents | 8 / 9 (88.9%) | 7 / 9 (77.8%) |
-| Public Expression Protection | 10 / 14 (71.4%) | 5 / 14 (35.7%) |
-| Special Deposits | 13 / 13 (100.0%) | 10 / 13 (76.9%) |
-| Enacted | 31 / 35 (88.6%) | 22 / 35 (62.9%) |
-| Substantially similar | 0 / 1 (0.0%) | 0 / 1 (0.0%) |
+| | Both stages | Near-duplicate stage | Near-duplicate stage, Open States' text alone |
+|---|---|---|---|
+| Pooled, three acts | 33 / 36 (91.7%) | 31 / 36 (86.1%) | 22 / 36 (61.1%) |
+| Electronic Estate Planning Documents | 9 / 9 (100.0%) | 8 / 9 (88.9%) | 7 / 9 (77.8%) |
+| Public Expression Protection | 11 / 14 (78.6%) | 10 / 14 (71.4%) | 5 / 14 (35.7%) |
+| Special Deposits | 13 / 13 (100.0%) | 13 / 13 (100.0%) | 10 / 13 (76.9%) |
+| Enacted | 33 / 35 (94.3%) | 31 / 35 (88.6%) | 22 / 35 (62.9%) |
+| Substantially similar | 0 / 1 (0.0%) | 0 / 1 (0.0%) | 0 / 1 (0.0%) |
 
-Misses with the text layer: never proposed 2, verification 3. The reasons are defined in DESIGN.md, [Commission recall](DESIGN.md#commission-recall).
+Misses by both stages, at the step where the near-duplicate stage lost them: never proposed 2, verification 1. The reasons are defined in DESIGN.md, [Commission recall](DESIGN.md#commission-recall).
 <!-- /results:commission -->
 
-These are the near-duplicate stage's numbers alone: an enactment is found only where a state kept the act's wording closely enough, section by section. The results file lists every enactment's bills, with each bill's signed sections and the stage that lost it. The commission lists no failed bills, so this measures recall only.
+The near-duplicate stage finds an enactment only where a state kept the act's wording closely enough, section by section. The semantic stage adds enactments that put the act in other words. The results file lists every enactment's bills, with each bill's signed sections, the stages that found it, its best similarity to the act by each, and the step that lost it. The commission lists no failed bills, so this measures recall only. The precision of what each stage finds is not yet measured ([DESIGN.md](DESIGN.md#stage-ablation)).
 
 ## Finding a bill's relatives
 

@@ -25,7 +25,16 @@ def _section(found: int, enactments: int) -> dict[str, object]:
             "by_stratum": {"enacted": both, "substantially_similar": both},
         },
         "miss_reasons": {"not_proposed": 2},
+        "stage_ablation": None,
     }
+
+
+def _merged(found: int, near: int, enactments: int) -> dict[str, object]:
+    """Both stages' results, with the near-duplicate stage alone in the ablation."""
+    section = _section(found, enactments)
+    near_alone = _section(near, enactments)["recall"]
+    section["stage_ablation"] = {"near_duplicate": near_alone, "both": section["recall"]}
+    return section
 
 
 def test_the_committed_readme_shows_the_committed_results() -> None:
@@ -49,6 +58,28 @@ def test_renders_counts_and_shares_from_the_results() -> None:
     assert "never proposed 2" in out
     assert "at least one verified section" in out
     assert out.endswith(f"{END}\n\nMore.\n")
+
+
+def test_both_stages_are_shown_beside_the_near_duplicate_stage_on_either_text() -> None:
+    readme = f"{START}\n{END}\n"
+
+    out = rendered_readme(readme, {"commission": _merged(3, 2, 4)}, {"commission": _section(1, 4)})
+
+    assert (
+        "| | Both stages | Near-duplicate stage | Near-duplicate stage, Open States' text alone |"
+        in out
+    )
+    assert "| Pooled, three acts | 3 / 4 (75.0%) | 2 / 4 (50.0%) | 1 / 4 (25.0%) |" in out
+    assert "by wording or by meaning" in out
+    assert "Misses by both stages" in out
+
+
+def test_export_only_results_must_be_the_near_duplicate_stage_alone() -> None:
+    # the vectors are embedded from the fetched text, so the export's text has no semantic run
+    readme = f"{START}\n{END}\n"
+
+    with pytest.raises(ResultsTableError, match="--no-semantic"):
+        rendered_readme(readme, {"commission": _merged(3, 2, 4)}, {"commission": _merged(2, 1, 4)})
 
 
 def test_a_readme_without_the_markers_is_refused() -> None:

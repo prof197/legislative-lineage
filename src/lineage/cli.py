@@ -590,7 +590,9 @@ def eval_commission(
         typer.echo(f"recall, {label}: {r['found']}/{r['enactments']} = {share:.1%}")
     if section["stage_ablation"]:
         for stage, r in section["stage_ablation"].items():
-            typer.echo(f"  {stage}: {r['all']['found']}/{r['all']['enactments']}")
+            typer.echo(
+                f"  {stage}: {r['pooled']['all']['found']}/{r['pooled']['all']['enactments']}"
+            )
     misses = ", ".join(f"{k} {v}" for k, v in section["miss_reasons"].items())
     typer.echo(f"misses: {misses or 'none'} -> {results}")
 

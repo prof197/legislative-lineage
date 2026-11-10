@@ -189,9 +189,15 @@ def test_the_stage_ablation_counts_each_stage_alone_and_both(commission_corpus: 
 
     assert near["stage_ablation"] is None
     ablation = both["stage_ablation"]
-    found = {s: ablation[s]["all"]["found"] for s in ("near_duplicate", "semantic", "both")}
+    found = {
+        s: ablation[s]["pooled"]["all"]["found"] for s in ("near_duplicate", "semantic", "both")
+    }
     assert found["near_duplicate"] == near["recall"]["pooled"]["all"]["found"]
     assert found["both"] == both["recall"]["pooled"]["all"]["found"]
+    # each stage broken down as recall is, so a table can set a stage beside another run's
+    assert ablation["near_duplicate"]["by_act"] == near["recall"]["by_act"]
+    assert ablation["near_duplicate"]["by_stratum"] == near["recall"]["by_stratum"]
+    assert ablation["both"] == both["recall"]
     assert found["both"] >= max(found["near_duplicate"], found["semantic"])
     for e in both["enactments"]:
         assert e["found"] == any(e["found_by_stage"].values())
