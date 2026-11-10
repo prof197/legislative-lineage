@@ -4,6 +4,7 @@ from numpy.typing import NDArray
 from lineage.ann import (
     add,
     exact_search,
+    index_bytes,
     recall_at,
     rescore,
     search,
@@ -80,3 +81,14 @@ def test_approximate_indexes_find_near_copies() -> None:
     assert recall_at(search(hnsw, queries, 1).ids, truth) == 1.0
     approx = search(ivf, queries, 10).ids
     assert recall_at(rescore(approx, queries, lambda ids: corpus[ids], 1).ids, truth) == 1.0
+
+
+def test_an_index_is_measured_at_its_serialized_size() -> None:
+    import faiss  # pyright: ignore[reportMissingTypeStubs]
+
+    rng = np.random.default_rng(SEED)
+    index = train_index("HNSW16,SQfp16", 32, np.empty((0, 32), dtype=np.float32))
+    add(index, _unit(3000, 32, rng))
+
+    serialized: NDArray[np.uint8] = faiss.serialize_index(index.handle)  # pyright: ignore[reportUnknownMemberType]
+    assert index_bytes(index) == serialized.size

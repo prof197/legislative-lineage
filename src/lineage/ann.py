@@ -117,8 +117,17 @@ def search(index: Index, queries: NDArray[Any], k: int) -> Neighbors:
 
 
 def index_bytes(index: Index) -> int:
+    """The index's size as faiss writes it, counted as it streams out. Serializing it into
+    memory instead held a second, growing copy: 1.97 times the index on top of the index."""
     faiss = _faiss()
-    return int(cast(NDArray[np.uint8], faiss.serialize_index(index.handle)).size)
+    written = 0
+
+    def count(chunk: bytes) -> None:
+        nonlocal written
+        written += len(chunk)
+
+    faiss.write_index(index.handle, faiss.PyCallbackIOWriter(count))
+    return written
 
 
 def set_threads(threads: int) -> None:
