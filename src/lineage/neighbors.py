@@ -45,7 +45,9 @@ from lineage.vectors import EmbedError, load_plan, load_vectors, rows_of, vector
 
 SEED = 20261111
 SPEC = "HNSW32,SQfp16"
-EF_SEARCH = 128  # the widest benchmarked; its search over the corpus is projected at minutes
+# 128, the widest benchmarked, fell under RECALL_FLOOR over the whole corpus, where each text
+# has about twice the sample's true neighbors above the threshold.
+EF_SEARCH = 256
 # For an index that needs training (IVF): faiss's k-means wants at least 39 points per list,
 # and this allows 40 per list for up to 16,384 lists. HNSW over float16 needs none.
 TRAIN_ROWS = 40 * 16384

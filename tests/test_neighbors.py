@@ -121,7 +121,7 @@ def _report(recall: float, within: bool) -> dict[str, object]:
 @pytest.mark.parametrize(
     ("recall", "within", "said"),
     [
-        (0.985, True, "below 0.99; rerun with a larger --ef-search than 128"),
+        (0.985, True, "below 0.99; rerun with a larger --ef-search than 256"),
         (0.999, False, "peak memory crossed the bound"),
     ],
 )
