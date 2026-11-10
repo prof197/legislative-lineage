@@ -10,6 +10,7 @@ from lineage.lsh import (
     candidate_pairs,
     candidate_probability,
     cap_sweep,
+    threshold,
 )
 from lineage.minhash import NUM_PERM, permutations, signatures
 
@@ -231,3 +232,16 @@ def test_the_candidate_rate_follows_the_s_curve(s: float) -> None:
     p = candidate_probability(s)
     sd = np.sqrt(p * (1 - p) / pairs)
     assert abs(found.left.size / pairs - p) < 4 * sd
+
+
+# For the same 128 values, more bands lower the threshold and more rows raise it, and a pair at
+# a setting's threshold is proposed with about the same chance, 1 - (1 - 1/b)^b, near 1 - 1/e.
+@pytest.mark.parametrize(
+    ("bands", "rows", "expected"), [(16, 8, 0.7071), (32, 4, 0.4204), (64, 2, 0.125)]
+)
+def test_bands_and_rows_move_the_threshold(bands: int, rows: int, expected: float) -> None:
+    t = threshold(bands, rows)
+
+    assert t == pytest.approx(expected, abs=1e-4)
+    assert candidate_probability(t, bands, rows) == pytest.approx(1 - (1 - 1 / bands) ** bands)
+    assert 0.63 < candidate_probability(t, bands, rows) < 0.65
