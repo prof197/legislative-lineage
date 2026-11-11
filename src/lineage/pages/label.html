@@ -83,19 +83,37 @@ details.scale summary { cursor: pointer; font-weight: 600; }
 .sw.paraphrased { background: var(--para-bg); }
 .sw.unmatched { border: 1px dashed var(--unmatched); }
 .pair-meta { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+.pair-meta .legend { flex-basis: 100%; }
 .pair-meta h1 { font-size: 17px; margin: 0; text-wrap: balance; }
 .pair-meta .mono { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-.sections { display: grid; gap: 14px; }
-@media (min-width: 900px) { .sections { grid-template-columns: 1fr 1fr; align-items: start; } }
-.section { background: var(--card); border: 1px solid var(--rule); border-radius: 10px; min-width: 0; }
+/* Both panes the same height, each scrolling on its own: stacked halves of what the header
+   and the label bar leave on a phone, one row of full-height panes on a wide screen. */
+.sections {
+  display: grid; gap: 14px;
+  --chrome: calc(300px + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));
+  --pane-h: max(220px, calc((100vh - var(--chrome)) / 2));
+}
+@supports (height: 100dvh) { .sections { --pane-h: max(220px, calc((100dvh - var(--chrome)) / 2)); } }
+@media (min-width: 900px) {
+  .sections { grid-template-columns: 1fr 1fr; --chrome: calc(260px + env(safe-area-inset-bottom, 0px)); --pane-h: max(360px, calc(100vh - var(--chrome))); }
+  @supports (height: 100dvh) { .sections { --pane-h: max(360px, calc(100dvh - var(--chrome))); } }
+}
+.section {
+  background: var(--card); border: 1px solid var(--rule); border-radius: 10px; min-width: 0;
+  display: flex; flex-direction: column; height: var(--pane-h); overflow: hidden;
+}
 .section-head { padding: 10px 14px; border-bottom: 1px solid var(--rule); display: grid; gap: 2px; }
 .section-head .role { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
 .section-head .where { font-size: 14px; }
 .section-head .bill { font-family: var(--mono); font-size: 11.5px; color: var(--muted); overflow-wrap: anywhere; }
 .section-text {
   font-family: var(--text); font-size: 16.5px; line-height: 1.6; padding: 12px 14px 16px;
-  white-space: pre-wrap; overflow-wrap: anywhere; max-width: 68ch;
+  white-space: pre-wrap; overflow-wrap: anywhere;
+  flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
 }
+[data-span] { cursor: pointer; }
+.flash { outline: 2px solid var(--accent); outline-offset: 1px; }
+.hint { font-size: 13px; color: var(--muted); }
 .k-copied { background: var(--copied-bg); color: var(--copied-ink); border-radius: 2px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
 .k-paraphrased { background: var(--para-bg); color: var(--para-ink); border-radius: 2px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
 .k-unmatched { color: var(--unmatched); }
@@ -141,22 +159,27 @@ dialog::backdrop { background: rgb(0 0 0 / .35); }
 
 <main class="gutter">
   <p class="status" id="store-status">Connecting to the label store…</p>
-  <details class="scale" id="scale">
-    <summary>The 0–4 scale</summary>
-    <ol id="scale-list"></ol>
-  </details>
-  <div class="legend" id="legend">
-    <span><i class="sw copied"></i>copied, five words or more</span>
-    <span id="legend-para"><i class="sw paraphrased"></i>paraphrased sentence</span>
-    <span><i class="sw unmatched"></i><span class="k-unmatched">unmatched</span></span>
-  </div>
   <section id="pair" aria-live="polite">
     <div class="done-panel">
       <h2>Two sections will appear here</h2>
       <p>Each pair shows a section from one state's bill and the section another state's bill matched to it. Read both, then pick how closely they are related on the scale at the bottom.</p>
     </div>
   </section>
+  <details class="scale" id="scale">
+    <summary>The 0–4 scale</summary>
+    <ol id="scale-list"></ol>
+  </details>
+  <p class="status">Each label is saved as you tap it. Stop whenever you like and pick up on any device.</p>
 </main>
+
+<template id="legend-tpl">
+  <div class="legend">
+    <span><i class="sw copied"></i>copied, five words or more</span>
+    <span class="legend-para"><i class="sw paraphrased"></i>paraphrased sentence</span>
+    <span><i class="sw unmatched"></i><span class="k-unmatched">unmatched</span></span>
+    <span class="hint">Tap a highlighted passage to line up its match.</span>
+  </div>
+</template>
 
 <nav class="bar gutter" aria-label="Label this pair">
   <div class="bar-inner">
@@ -192,7 +215,8 @@ dialog::backdrop { background: rgb(0 0 0 / .35); }
 
   function marked(text, spans, side) {
     const frag = document.createDocumentFragment();
-    const pieces = spans.filter((s) => s[side]).map((s) => ({ kind: s.kind, start: s[side][0], end: s[side][1] }))
+    const pieces = spans.map((s, i) => ({ s, i })).filter(({ s }) => s[side])
+      .map(({ s, i }) => ({ kind: s.kind, start: s[side][0], end: s[side][1], twin: s.kind !== "unmatched" && s.a && s.b ? i : null }))
       .sort((x, y) => x.start - y.start);
     let pos = 0;
     for (const p of pieces) {
@@ -200,6 +224,7 @@ dialog::backdrop { background: rgb(0 0 0 / .35); }
       const el = document.createElement("span");
       el.className = "k-" + p.kind;
       el.textContent = text.slice(p.start, p.end);
+      if (p.twin !== null) el.dataset.span = String(p.twin);
       frag.append(el);
       pos = Math.max(pos, p.end);
     }
@@ -272,7 +297,9 @@ dialog::backdrop { background: rgb(0 0 0 / .35); }
     meta.className = "pair-meta";
     const h1 = document.createElement("h1"); h1.textContent = "How closely are these related?";
     const id = document.createElement("span"); id.className = "mono"; id.textContent = p.pair;
-    meta.append(h1, id);
+    const legend = $("legend-tpl").content.firstElementChild.cloneNode(true);
+    if (!state.data.paraphrase_marked) legend.querySelector(".legend-para").hidden = true;
+    meta.append(h1, id, legend);
     const grid = document.createElement("div");
     grid.className = "sections";
     grid.append(sectionCard("First section", p.query, p.spans, "a"), sectionCard("Second section", p.match, p.spans, "b"));
@@ -379,7 +406,6 @@ dialog::backdrop { background: rgb(0 0 0 / .35); }
       btn.addEventListener("click", () => save(s.label));
       bar.append(btn);
     }
-    if (!state.data.paraphrase_marked) $("legend-para").hidden = true;
   }
 
   async function connect() {
@@ -401,8 +427,7 @@ dialog::backdrop { background: rgb(0 0 0 / .35); }
       state.labels = seen;
       const first = !state.storeOk;
       state.storeOk = true;
-      $("store-status").textContent = "Each label is saved as you tap it. Stop whenever you like and pick up on any device.";
-      $("store-status").classList.remove("error");
+      $("store-status").hidden = true;
       if (first) {
         const saved = recall();
         const open = Number.isInteger(saved) && saved >= 0 && saved < pairs().length ? saved : 0;
@@ -412,6 +437,7 @@ dialog::backdrop { background: rgb(0 0 0 / .35); }
         render();
       }
     }, (e) => {
+      $("store-status").hidden = false;
       $("store-status").textContent = `The label store stopped answering (${e.code}). Reload the page; saved labels are kept.`;
       $("store-status").classList.add("error");
       state.storeOk = false;
@@ -434,6 +460,27 @@ dialog::backdrop { background: rgb(0 0 0 / .35); }
     render();
     connect();
   }
+
+  const wide = window.matchMedia("(min-width: 900px)");
+  function lineUp(el) {
+    const pane = el.closest(".section-text");
+    const other = [...document.querySelectorAll("#pair .section-text")].find((p) => p !== pane);
+    const twin = other && other.querySelector(`[data-span="${el.dataset.span}"]`);
+    if (!twin) return;
+    const top = (node) => node.getBoundingClientRect().top;
+    const want = () => (wide.matches ? top(el) : top(el) - top(pane) + top(other));
+    other.scrollTop += top(twin) - want();
+    pane.scrollTop -= top(twin) - want();
+    for (const node of [el, twin]) {
+      node.classList.add("flash");
+      setTimeout(() => node.classList.remove("flash"), 1200);
+    }
+  }
+  $("pair").addEventListener("click", (e) => {
+    const el = e.target instanceof Element ? e.target.closest("[data-span]") : null;
+    const picked = window.getSelection && String(window.getSelection()).length > 0;
+    if (el && !picked) lineUp(el);
+  });
 
   $("prev").addEventListener("click", () => go(state.at - 1));
   $("next").addEventListener("click", () => go(state.at + 1));
