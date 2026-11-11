@@ -34,6 +34,8 @@ uv run lineage eval answer-key --held-out  # the held-out lists resolved, develo
 uv run lineage eval commission --held-out --final  # held-out recall: run once, at the end of M5, never before
 uv run lineage eval readme   # regenerate README.md's results table from reports/results.json and results_exported_only.json
 uv run lineage label SAMPLE --labeler HANDLE  # label sampled matches by hand, 0 unrelated to 4 identical, blind to the stage, resumable -> evals/precision_labels.jsonl
+uv run lineage label-page SAMPLE --labeler HANDLE  # the same labeling as a phone page: pending pairs, aligned, blind -> data/label_page/ (local), published as a private artifact
+uv run lineage label-import SAVED --sample SAMPLE --labeler HANDLE  # the page's saved labels, checked against the sample -> evals/precision_labels.jsonl
 uv run lineage pair-data fetch  # the labeled pair dataset at its pinned commit -> data/pair_data/ (local, evaluation only, never committed)
 uv run lineage eval pair-data  # both stages scored on the pair dataset; each model's threshold set on train+val, measured on test -> reports/pair_data.json
 uv run lineage eval cost  # cost and runtime per stage: the build's from its reports, each development act's query timed by stage -> reports/cost.json
@@ -97,6 +99,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   semantic_pairs.py  `lineage semantic-pairs`: the semantic stage's matches as cross-state section pairs, fingerprinted by model, K and threshold
   align.py        word-level alignment of a section pair: copied, paraphrased and unmatched spans, with ids and offsets (pure functions)
   labels.py       `lineage label`: a person labels the precision sample's pairs, aligned; labels keyed to survive a re-split
+  label_page.py   `lineage label-page` and `label-import`: the labeling session as a phone page (pages/label.html), and its saved labels checked back in
   agreement.py    the subsample a person labels to check the model's labels, and the agreement: weighted kappa, cutoff agreement, the bars
   relatives_sample.py  the precision of what a page lists: random bills' listed relatives, the pair each rests on, its aligned passages
   model_labels.py  provisional precision labels from a model, under its id and prompt version; each batch's spend against the budget

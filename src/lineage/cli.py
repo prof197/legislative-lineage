@@ -39,6 +39,13 @@ from lineage.embed import load_model
 from lineage.fetch import SOURCE, FetchError, fetch_raw
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
+from lineage.label_page import DATA as LABEL_PAGE_DATA
+from lineage.label_page import OUT as LABEL_PAGE_OUT
+from lineage.label_page import append_rows as append_label_rows
+from lineage.label_page import imported_rows as imported_label_rows
+from lineage.label_page import load_saved as load_saved_labels
+from lineage.label_page import page_data as label_page_data
+from lineage.label_page import write_page as write_label_page
 from lineage.labels import (
     LABELS_PATH,
     Item,
@@ -675,6 +682,79 @@ def label(
         color=color,
     )
     typer.echo(f"{done} labeled, {len(todo) - done} left -> {labels}")
+
+
+@app.command("label-page")
+def label_page(
+    sample: Annotated[
+        Path,
+        typer.Argument(
+            help="The precision sample, one pair per line.", exists=True, dir_okay=False
+        ),
+    ],
+    labeler: Annotated[
+        str, typer.Option("--labeler", help="Your GitHub handle; labels are never kept by name.")
+    ],
+    tables: TablesOption = Path("data/tables"),
+    labels: Annotated[
+        Path, typer.Option("--labels", help="Labels file; pairs a person labeled are left out.")
+    ] = LABELS_PATH,
+    out: Annotated[
+        Path, typer.Option("--out", help="Directory for the page and its data (local).")
+    ] = LABEL_PAGE_OUT,
+    paraphrase: Annotated[
+        bool,
+        typer.Option(
+            "--paraphrase/--no-paraphrase",
+            help="Mark paraphrased sentences, with the semantic stage's model (local).",
+        ),
+    ] = True,
+    models_dir: Annotated[
+        Path, typer.Option("--models", help="Directory of model files (local).")
+    ] = MODELS_DIR,
+) -> None:
+    """Write a labeling page for a phone: the pending pairs, blind to stages, for an artifact."""
+    try:
+        embedder = _model_embedder(models_dir) if paraphrase else None
+        items, kept = _current_items(sample, tables, labels)
+        data = label_page_data(pending(items, kept), handle=labeler, sample=sample, embed=embedder)
+    except (LabelError, ModelError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    page = write_label_page(data, out)
+    typer.echo(f"{len(data['pairs'])} pending pairs -> {page} and {out / LABEL_PAGE_DATA}")
+
+
+@app.command("label-import")
+def label_import(
+    saved: Annotated[
+        Path,
+        typer.Argument(
+            help="The page's saved labels, one JSON object per line.", exists=True, dir_okay=False
+        ),
+    ],
+    sample: Annotated[
+        Path,
+        typer.Option("--sample", help="The sample the page was written for.", exists=True),
+    ],
+    labeler: Annotated[
+        str, typer.Option("--labeler", help="The GitHub handle the page was written for.")
+    ],
+    tables: TablesOption = Path("data/tables"),
+    labels: Annotated[
+        Path, typer.Option("--labels", help="Labels file, appended to (committed).")
+    ] = LABELS_PATH,
+) -> None:
+    """Append a labeling page's saved labels to the labels file, each checked against the sample."""
+    try:
+        items, kept = _current_items(sample, tables, labels)
+        rows = imported_label_rows(load_saved_labels(saved), items, kept, handle=labeler)
+    except LabelError as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    append_label_rows(labels, rows)
+    left = len(pending(items, [*kept, *rows]))
+    typer.echo(f"{len(rows)} labels imported, {left} pairs of {sample} left -> {labels}")
 
 
 def _current_items(
