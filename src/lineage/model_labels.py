@@ -26,6 +26,15 @@ from lineage.labels import MODEL, Item, model_labeler, scale_lines
 MODEL_ID = "claude-opus-5-5"
 PROMPT_VERSION = "v1"
 _MAX_TOKENS = 4000
+# Standard prices in dollars per million tokens, input and output, from the platform's model
+# list as of November 2026; the Batches API charges half. A model not listed is not projected.
+PRICES: dict[str, tuple[float, float]] = {
+    "claude-opus-5-5": (4.0, 20.0),
+    "claude-sonnet-5-5": (2.0, 10.0),
+}
+# Fewer characters a token than English prose usually takes, so the projection errs high.
+CHARS_PER_TOKEN = 3.5
+MAX_COST = 10.0  # dollars a run may be projected to cost before it is refused
 # Declines are rerun on the fallback model the API picks for the refusal's category; the label
 # records which model served it.
 _FALLBACK_BETA = "server-side-fallback-2026-07-01"
@@ -58,6 +67,23 @@ def user_message(item: Item) -> str:
     return json.dumps(
         {"first": item.query.text, "second": item.match.text}, ensure_ascii=False, indent=1
     )
+
+
+def projected_cost(
+    items: Sequence[Item],
+    *,
+    model: str = MODEL_ID,
+    max_tokens: int = _MAX_TOKENS,
+    batch: bool = False,
+) -> float:
+    """An upper estimate, in dollars, of asking every pair: each prompt's tokens from its
+    characters, and each reply, thinking included, at its token limit."""
+    if model not in PRICES:
+        raise ValueError(f"no price for {model}; add it to PRICES before asking it")
+    input_price, output_price = PRICES[model]
+    chars = sum(len(SYSTEM) + len(user_message(i)) for i in items)
+    cost = (chars / CHARS_PER_TOKEN * input_price + len(items) * max_tokens * output_price) / 1e6
+    return cost / 2 if batch else cost
 
 
 def model_pending(items: Sequence[Item], labels: Sequence[Mapping[str, Any]]) -> list[Item]:

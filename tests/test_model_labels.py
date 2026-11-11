@@ -10,12 +10,15 @@ from typer.testing import CliRunner
 from lineage.cli import app
 from lineage.labels import Item, Pair, Section, SectionKey, SectionRef, pending, text_sha256
 from lineage.model_labels import (
+    CHARS_PER_TOKEN,
+    PRICES,
     PROMPT_VERSION,
     SYSTEM,
     ModelLabel,
     UnusableReplyError,
     label_with_model,
     model_pending,
+    projected_cost,
     user_message,
 )
 
@@ -84,9 +87,7 @@ def test_a_label_under_an_older_prompt_is_asked_again() -> None:
     assert model_pending([item], [row]) == [item]
 
 
-def test_without_live_the_command_says_what_it_would_ask_and_asks_nothing(
-    corpus: Path, tmp_path: Path
-) -> None:
+def _one_pair_sample(corpus: Path, tmp_path: Path) -> Path:
     from lineage import queries
 
     with queries.connect_quiet() as con:
@@ -103,6 +104,13 @@ def test_without_live_the_command_says_what_it_would_ask_and_asks_nothing(
         "match": {"bill_id": mb, "ordinal": mo},
     }
     sample.write_text(json.dumps(row) + "\n")
+    return sample
+
+
+def test_without_live_the_command_says_what_it_would_ask_and_asks_nothing(
+    corpus: Path, tmp_path: Path
+) -> None:
+    sample = _one_pair_sample(corpus, tmp_path)
     labels = tmp_path / "labels.jsonl"
 
     result = CliRunner().invoke(
@@ -112,4 +120,47 @@ def test_without_live_the_command_says_what_it_would_ask_and_asks_nothing(
     assert result.exit_code == 0, result.output
     assert "1 pair would be asked" in result.output
     assert "--live" in result.output
+    assert not labels.exists()
+    assert "projected" in result.output
+
+
+def test_the_projection_bounds_every_reply_at_its_token_limit() -> None:
+    items = [_item(i) for i in range(3)]
+    input_price, output_price = PRICES["claude-opus-5-5"]
+
+    cost = projected_cost(items, model="claude-opus-5-5", max_tokens=1000)
+
+    chars = sum(len(SYSTEM) + len(user_message(i)) for i in items)
+    expected = (chars / CHARS_PER_TOKEN * input_price + 3 * 1000 * output_price) / 1e6
+    assert cost == pytest.approx(expected)
+    assert projected_cost(items, model="claude-opus-5-5", max_tokens=1000, batch=True) == (
+        pytest.approx(expected / 2)
+    )
+
+
+def test_a_model_without_a_known_price_is_not_projected() -> None:
+    with pytest.raises(ValueError, match="no price"):
+        projected_cost([_item(0)], model="claude-unknown")
+
+
+def test_live_over_the_cost_cap_asks_nothing(
+    corpus: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from lineage import cli
+
+    def no_calls(*args: object, **kwargs: object) -> object:
+        raise AssertionError("a model was asked")
+
+    monkeypatch.setattr(cli, "anthropic_label_ask", no_calls)
+    sample = _one_pair_sample(corpus, tmp_path)
+    labels = tmp_path / "labels.jsonl"
+
+    result = CliRunner().invoke(
+        app,
+        ["label-model", str(sample), "--tables", str(corpus), "--labels", str(labels), "--live",
+         "--max-cost", "0.000001"],
+    )  # fmt: skip
+
+    assert result.exit_code == 1
+    assert "over the" in result.output
     assert not labels.exists()

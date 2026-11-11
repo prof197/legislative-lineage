@@ -38,9 +38,10 @@ from lineage.labels import (
     session,
 )
 from lineage.memory import MemoryBoundError
+from lineage.model_labels import MAX_COST as LABEL_MAX_COST
 from lineage.model_labels import MODEL_ID as LABEL_MODEL
 from lineage.model_labels import anthropic_ask as anthropic_label_ask
-from lineage.model_labels import label_with_model, model_pending
+from lineage.model_labels import label_with_model, model_pending, projected_cost
 from lineage.models import MODELS, MODELS_DIR, ModelError, fetch_model
 from lineage.neighbors import EF_SEARCH, RECALL_FLOOR, build_neighbors
 from lineage.neighbors import REPORT as NEIGHBORS_REPORT
@@ -644,6 +645,9 @@ def label_model(
     live: Annotated[
         bool, typer.Option("--live", help="Ask the model; without it nothing is sent.")
     ] = False,
+    max_cost: Annotated[
+        float, typer.Option("--max-cost", help="Dollars the run may be projected to cost.")
+    ] = LABEL_MAX_COST,
 ) -> None:
     """Provisional labels from a model, kept apart from people's; asks only with --live."""
     try:
@@ -653,9 +657,23 @@ def label_model(
         raise typer.Exit(1) from e
     todo = model_pending(items, kept)
     noun = "pair" if len(todo) == 1 else "pairs"
+    try:
+        cost = projected_cost(todo, model=model)
+    except ValueError as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    projected = f"projected at most ${cost:,.2f}"
     if not live:
-        typer.echo(f"{len(todo)} {noun} would be asked of {model}; run with --live to ask.")
+        typer.echo(
+            f"{len(todo)} {noun} would be asked of {model}, {projected}; run with --live to ask."
+        )
         return
+    if cost > max_cost:
+        typer.echo(
+            f"error: {len(todo)} {noun} {projected}, over the ${max_cost:,.2f} cap; nothing asked",
+            err=True,
+        )
+        raise typer.Exit(1)
     labels.parent.mkdir(parents=True, exist_ok=True)
     done, unusable = label_with_model(
         todo,
