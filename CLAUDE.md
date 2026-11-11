@@ -23,6 +23,7 @@ uv run lineage stats --samples  # also: sample titles per document-type rule -> 
 uv run lineage index         # signatures, LSH bands, verified pairs, families -> data/tables/{signatures,bands,pairs,families}/, reports/index.json
 uv run lineage embed         # every distinct 94-word window embedded once, float16, resumable -> data/tables/semantic/, reports/embedding.json
 uv run lineage neighbors     # each distinct window's 20 nearest by meaning, HNSW over float16, recall checked exactly -> data/tables/semantic/<model>/neighbors/, reports/neighbors.json
+uv run lineage semantic-pairs  # the neighbors as cross-state section pairs, best cosine and window pair each -> data/tables/semantic/<model>/pairs/, reports/semantic_pairs.json
 uv run lineage query FILE     # a bill's relatives by both stages, offline, from the built index and vectors (--no-semantic: near-duplicates only)
 uv run lineage eval commission  # commission recall, act texts from data/acts/ -> reports/results.json (--results reports/results_exported_only.json after an --exported-only merge); with the stage ablation unless --no-semantic
 uv run lineage eval answer-key  # each commission list row and the bills it resolved to -> reports/answer_key.csv
@@ -82,6 +83,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   pair_eval.py    `lineage eval pair-data`: the stages scored on labeled pairs, metrics only
   semantic.py     the semantic stage: its model and threshold, as the pair evaluation chose them, and a query's search by meaning
   neighbors.py    `lineage neighbors`: every distinct window's nearest neighbors for the build, HNSW over the float16 vectors
+  semantic_pairs.py  `lineage semantic-pairs`: the semantic stage's matches as cross-state section pairs, fingerprinted by model, K and threshold
   align.py        word-level alignment of a section pair: copied, paraphrased and unmatched spans, with ids and offsets (pure functions)
   labels.py       `lineage label`: a person labels the precision sample's pairs, aligned; labels keyed to survive a re-split
   model_labels.py  provisional precision labels from a model, under its id and prompt version

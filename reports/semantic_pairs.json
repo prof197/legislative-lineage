@@ -1,0 +1,42 @@
+{
+ "command": "uv run lineage semantic-pairs",
+ "model": "bge-small-en-v1.5",
+ "k": 20,
+ "threshold": 0.8905,
+ "neighbors_read": 51588148,
+ "pairs": 3903851,
+ "pairs_at_cosine_1": 51840,
+ "cosine_histogram": {
+  "edges": [
+   0.8905,
+   0.9014,
+   0.9124,
+   0.9234,
+   0.9343,
+   0.9452,
+   0.9562,
+   0.9671,
+   0.9781,
+   0.989,
+   1.0
+  ],
+  "counts": [
+   1077516,
+   655452,
+   460088,
+   327503,
+   267706,
+   252755,
+   223637,
+   226680,
+   200380,
+   212134
+  ]
+ },
+ "windows_left_out": 25066,
+ "sections_left_out": 25066,
+ "bytes": 78077020,
+ "seconds": 13,
+ "peak_memory_bytes": 4033884224,
+ "memory_bound_bytes": 17179869184
+}

@@ -265,12 +265,14 @@ class RowLabels:
 
     section: NDArray[np.int64]  # each row's section, numbered from 0 in row order
     section_bills: list[str]  # each section's bill id
+    section_ordinals: NDArray[np.int64]  # each section's ordinal in its bill
 
 
 def row_labels(files: SignatureFiles) -> RowLabels:
     """Each row's section, numbered as `SignatureTable.sections` numbers them, read file by file."""
     parts: list[NDArray[np.int64]] = []
     bills: list[str] = []
+    ordinals_of: list[int] = []
     previous: tuple[str, int] | None = None
     following = 0
     with queries.connect_quiet() as con:
@@ -286,11 +288,12 @@ def row_labels(files: SignatureFiles) -> RowLabels:
             if previous == (ids[0], ords[0]):
                 first = first[1:]
             bills += [ids[i] for i in first.tolist()]
+            ordinals_of += [ords[i] for i in first.tolist()]
             parts.append(numbers)
             following = int(numbers[-1]) + 1
             previous = (ids[-1], ords[-1])
     section = np.concatenate(parts) if parts else np.empty(0, dtype=np.int64)
-    return RowLabels(section, bills)
+    return RowLabels(section, bills, np.array(ordinals_of, dtype=np.int64))
 
 
 def _by_file(files: SignatureFiles, rows: NDArray[np.int64]) -> NDArray[np.int64]:

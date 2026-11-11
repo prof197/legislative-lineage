@@ -57,6 +57,9 @@ from lineage.results_table import EXPORTED_ONLY, README, ResultsTableError, rend
 from lineage.sectioning import SectioningError, build_sections
 from lineage.semantic import MODEL as SEMANTIC_MODEL
 from lineage.semantic import SemanticSearch, open_search
+from lineage.semantic_pairs import REPORT as SEMANTIC_PAIRS_REPORT
+from lineage.semantic_pairs import SemanticPairsError, build_semantic_pairs
+from lineage.semantic_pairs import write_report as write_semantic_pairs_report
 from lineage.sessions import (
     CARRYOVER,
     SCRAPERS_REPO,
@@ -419,6 +422,29 @@ def neighbors_command(
             err=True,
         )
         raise typer.Exit(1)
+
+
+@app.command("semantic-pairs")
+def semantic_pairs_command(
+    tables: TablesOption = Path("data/tables"),
+    min_free_gib: MinFreeOption = 20.0,
+    report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = (
+        SEMANTIC_PAIRS_REPORT
+    ),
+) -> None:
+    """The neighbors as cross-state section pairs, best cosine and window pair each ->
+    <tables>/semantic/<model>/pairs/."""
+    try:
+        doc = build_semantic_pairs(tables, floor_bytes=int(min_free_gib * GiB))
+    except (SemanticPairsError, InsufficientDiskSpaceError, MemoryBoundError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    write_semantic_pairs_report(doc, report)
+    typer.echo(
+        f"{doc['pairs']:,} cross-state section pairs from {doc['neighbors_read']:,} neighbors; "
+        f"{doc['windows_left_out']:,} windows of unsigned sections left out; peak "
+        f"{doc['peak_memory_bytes'] / GiB:.2f} GiB; {doc['seconds']}s -> {report}"
+    )
 
 
 @app.command()
