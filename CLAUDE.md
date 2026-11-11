@@ -37,6 +37,8 @@ uv run lineage label SAMPLE --labeler HANDLE  # label sampled matches by hand, 0
 uv run lineage pair-data fetch  # the labeled pair dataset at its pinned commit -> data/pair_data/ (local, evaluation only, never committed)
 uv run lineage eval pair-data  # both stages scored on the pair dataset; each model's threshold set on train+val, measured on test -> reports/pair_data.json
 uv run lineage eval cost  # cost and runtime per stage: the build's from its reports, each development act's query timed by stage -> reports/cost.json
+uv run lineage agreement-sample  # 50 of the precision sample's pairs, stratified by stage, for a person to label -> evals/agreement_sample.jsonl
+uv run lineage eval agreement  # a person's labels against the model's on that subsample: weighted kappa, cutoff agreement -> reports/results.json
 uv run lineage label-model SAMPLE  # provisional labels from a model, kept apart from people's; asks nothing without --live
 uv run lineage eval precision  # precision per stratum, stage and overall, people's and the model's apart -> reports/results.json
 uv run lineage text inventory  # version to fetch per record, by host, robots.txt read -> data/text/plan.parquet, reports/text_inventory.json
@@ -92,6 +94,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   semantic_pairs.py  `lineage semantic-pairs`: the semantic stage's matches as cross-state section pairs, fingerprinted by model, K and threshold
   align.py        word-level alignment of a section pair: copied, paraphrased and unmatched spans, with ids and offsets (pure functions)
   labels.py       `lineage label`: a person labels the precision sample's pairs, aligned; labels keyed to survive a re-split
+  agreement.py    the subsample a person labels to check the model's labels, and the agreement: weighted kappa, cutoff agreement, the bars
   model_labels.py  provisional precision labels from a model, under its id and prompt version
   precision.py    the precision sample's strata and seeded draw, and the estimate weighted by stratum size
   intervals.py    the Wilson interval

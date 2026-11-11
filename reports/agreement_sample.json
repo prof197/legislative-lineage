@@ -1,0 +1,14 @@
+{
+ "command": "uv run lineage agreement-sample",
+ "source": "evals/precision_sample.jsonl",
+ "seed": 20261114,
+ "pairs": 50,
+ "strata": {
+  "near_duplicate_only": 17,
+  "semantic_only": 17,
+  "both": 16
+ },
+ "kappa_from": 0.6,
+ "cutoff_agreement_from": 0.85,
+ "weights": "linear"
+}

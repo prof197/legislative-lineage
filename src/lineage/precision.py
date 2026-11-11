@@ -135,14 +135,16 @@ def stratified(parts: Sequence[tuple[int, int, int]]) -> dict[str, Any] | None:
     return {"precision": round(point, 4), "interval_95": interval}
 
 
-def _latest(
-    items: Sequence[Item], labels: Sequence[Mapping[str, Any]], prefix: str
+def latest_labels(
+    items: Sequence[Item], labels: Sequence[Mapping[str, Any]], labeler: str, *, exact: bool = False
 ) -> dict[str, int]:
-    """Each pair's latest label among labelers named with `prefix`, by pair id."""
+    """Each pair's latest label among labelers named with the prefix `labeler`, or with
+    `exact`, by that labeler alone; by pair id."""
     by_sides = {(i.query.ref.key, i.match.ref.key): i.pair.pair for i in items}
     latest: dict[str, tuple[str, int]] = {}
     for row in labels:
-        if not str(row["labeler"]).startswith(prefix):
+        name = str(row["labeler"])
+        if (name != labeler) if exact else not name.startswith(labeler):
             continue
         sides = (
             (row["query"]["bill_id"], row["query"]["text_sha256"]),
@@ -192,7 +194,7 @@ def estimate(
             raise PrecisionError(f"labeler {row['labeler']!r} is neither a person nor a model")
     for item in items:
         stratum_of(item.pair.stages)
-    people, model = _latest(items, labels, PERSON), _latest(items, labels, MODEL)
+    people, model = latest_labels(items, labels, PERSON), latest_labels(items, labels, MODEL)
     both = [p for p in people if p in model]
     return {
         "correct_from": CORRECT_FROM,

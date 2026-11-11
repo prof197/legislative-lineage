@@ -14,6 +14,18 @@ from numpy.typing import NDArray
 
 from lineage import __version__
 from lineage.acts import ACTS, ACTS_DIR, HELD_OUT_ACTS, HELD_OUT_DIR, ActTextError
+from lineage.agreement import PAIRS as AGREEMENT_PAIRS
+from lineage.agreement import SAMPLE as AGREEMENT_SAMPLE
+from lineage.agreement import SAMPLE_REPORT as AGREEMENT_SAMPLE_REPORT
+from lineage.agreement import SEED as AGREEMENT_SEED
+from lineage.agreement import (
+    AgreementError,
+    agreement,
+    draw_subsample,
+    subsample_report,
+    subsample_rows,
+    write_subsample,
+)
 from lineage.align import Embedder
 from lineage.answer_key import ANSWER_KEY, HELD_OUT_KEY, build_answer_key, render_answer_key
 from lineage.commission import RESULTS, CommissionError, commission_recall, write_results
@@ -40,9 +52,11 @@ from lineage.labels import (
     section_hashes,
     session,
 )
+from lineage.labels import model_labeler as model_labeler_name
 from lineage.memory import MemoryBoundError
 from lineage.model_labels import MAX_COST as LABEL_MAX_COST
 from lineage.model_labels import MODEL_ID as LABEL_MODEL
+from lineage.model_labels import PROMPT_VERSION as LABEL_PROMPT_VERSION
 from lineage.model_labels import anthropic_ask as anthropic_label_ask
 from lineage.model_labels import (
     anthropic_batches,
@@ -690,6 +704,33 @@ def precision_sample(
     typer.echo(f"{len(rows)} pairs drawn: {sizes} -> {sample}, {report}")
 
 
+@app.command("agreement-sample")
+def agreement_sample(
+    source: Annotated[
+        Path,
+        typer.Argument(
+            help="The precision sample, one pair per line.", exists=True, dir_okay=False
+        ),
+    ] = PRECISION_SAMPLE,
+    sample: Annotated[
+        Path, typer.Option("--sample", help="The subsample file, one pair per line (committed).")
+    ] = AGREEMENT_SAMPLE,
+    report: Annotated[
+        Path, typer.Option("--report", help="The draw's report JSON (committed).")
+    ] = AGREEMENT_SAMPLE_REPORT,
+) -> None:
+    """Draw the pairs a person labels to check the model's labels, stratified by stage."""
+    try:
+        drawn = draw_subsample(load_sample(source))
+    except (LabelError, PrecisionError, AgreementError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    doc = subsample_report(drawn, source=source, size=AGREEMENT_PAIRS, seed=AGREEMENT_SEED)
+    write_subsample(subsample_rows(drawn), doc, sample_path=sample, report_path=report)
+    counts = ", ".join(f"{name} {n}" for name, n in doc["strata"].items())
+    typer.echo(f"{len(drawn)} pairs drawn: {counts} -> {sample}, {report}")
+
+
 @app.command("label-model")
 def label_model(
     sample: Annotated[
@@ -1079,6 +1120,53 @@ def pair_data_fetch(
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
     typer.echo(f"{fetched} fetched, {present} already present -> {directory}")
+
+
+@eval_app.command("agreement")
+def eval_agreement(
+    sample: Annotated[
+        Path,
+        typer.Argument(
+            help="The agreement subsample, one pair per line.", exists=True, dir_okay=False
+        ),
+    ] = AGREEMENT_SAMPLE,
+    tables: TablesOption = Path("data/tables"),
+    labels: Annotated[
+        Path, typer.Option("--labels", help="Labels file (committed).")
+    ] = LABELS_PATH,
+    model_labeler: Annotated[
+        str, typer.Option("--model-labeler", help="The model labeler compared, model id@prompt.")
+    ] = model_labeler_name(LABEL_MODEL, LABEL_PROMPT_VERSION),
+    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+) -> None:
+    """A person's labels against a model's on the subsample: weighted kappa, cutoff agreement."""
+    try:
+        items, kept = _current_items(sample, tables, labels)
+        doc = agreement(items, kept, model_labeler=model_labeler)
+    except (LabelError, PrecisionError, AgreementError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    # One comparison per model labeler, so a re-label at another effort keeps the first.
+    previous: dict[str, Any] = (
+        json.loads(results.read_text()).get("label_agreement", {}) if results.exists() else {}
+    )
+    by_labeler = {k: v for k, v in previous.items() if k != "command"}
+    by_labeler[model_labeler] = doc
+    write_results(
+        results,
+        "label_agreement",
+        {"command": "uv run lineage eval agreement", **dict(sorted(by_labeler.items()))},
+    )
+    kappa = doc["weighted_kappa"]
+    share = doc["cutoff_agreement"]
+    verdict = "passes" if doc["passes"] else "does not pass"
+    typer.echo(
+        f"{doc['pairs_labeled_by_both']} of {doc['pairs_in_subsample']} pairs labeled by both; "
+        f"weighted kappa {'-' if kappa is None else f'{kappa:.3f}'} (bar {doc['kappa_from']}), "
+        f"cutoff agreement {'-' if share is None else f'{share:.1%}'} "
+        f"(bar {doc['cutoff_agreement_from']:.0%}): {verdict}"
+    )
+    typer.echo(f"-> {results}")
 
 
 @eval_app.command("precision")
