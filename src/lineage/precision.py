@@ -30,6 +30,9 @@ from numpy.typing import NDArray
 
 from lineage.intervals import Z_95, wilson
 from lineage.labels import CORRECT_FROM, MODEL, PERSON, Item, SectionKey
+from lineage.pairs import load_cross_state_pairs
+from lineage.semantic import MODEL as MODEL_NAME
+from lineage.semantic_pairs import load_semantic_pairs, section_keys
 
 # Each stratum's name and the stages that found its pairs, in report order.
 STRATA: dict[str, tuple[str, ...]] = {
@@ -213,3 +216,49 @@ def load_sizes(path: Path = SAMPLE_REPORT) -> dict[str, int]:
         return {name: int(doc["strata"][name]["size"]) for name in STRATA}
     except (KeyError, TypeError, ValueError) as e:
         raise PrecisionError(f"{path}: no size for every stratum ({e})") from e
+
+
+def build_sample(
+    tables_dir: Path,
+    *,
+    model: str = MODEL_NAME,
+    per_stratum: int = PER_STRATUM,
+    seed: int = SEED,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """The sample's rows, drawn from both stages' stored cross-state pairs, and the draw's
+    report: the seed and each stratum's size in the build, which the estimate weights by."""
+    near = load_cross_state_pairs(tables_dir)
+    meaning = load_semantic_pairs(tables_dir, model)
+    population = strata(
+        pair_keys(np.asarray(near.left), np.asarray(near.right)),
+        pair_keys(np.asarray(meaning.left), np.asarray(meaning.right)),
+    )
+    drawn = draw(population, per_stratum=per_stratum, seed=seed)
+    bills, ordinals = section_keys(tables_dir)
+    rows = sample_rows(drawn, lambda s: SectionKey(bills[s], int(ordinals[s])))
+    report = {
+        "command": "uv run lineage precision-sample",
+        "seed": seed,
+        "per_stratum": per_stratum,
+        "model": model,
+        "strata": {
+            name: {
+                "stages": list(STRATA[name]),
+                "size": int(population[name].size),
+                "drawn": sum(1 for n, _ in drawn if n == name),
+            }
+            for name in STRATA
+        },
+    }
+    return rows, report
+
+
+def write_sample(
+    rows: Sequence[Mapping[str, Any]],
+    report: Mapping[str, Any],
+    *,
+    sample_path: Path = SAMPLE,
+    report_path: Path = SAMPLE_REPORT,
+) -> None:
+    sample_path.write_text("".join(json.dumps(r) + "\n" for r in rows))
+    report_path.write_text(json.dumps(report, indent=1) + "\n")

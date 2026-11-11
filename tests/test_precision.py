@@ -234,3 +234,39 @@ def test_the_command_writes_the_estimate_into_the_results(corpus: Path, tmp_path
     assert section["person"]["overall"]["precision"] == 1.0
     assert section["provisional_model"]["overall"] is None
     assert "not every stratum labeled" in result.output
+
+
+def test_the_sample_is_drawn_from_both_stages_stored_pairs(embedded_commission: Path) -> None:
+    from lineage.pairs import load_cross_state_pairs
+    from lineage.precision import build_sample
+    from lineage.semantic_pairs import build_semantic_pairs, load_semantic_pairs, section_keys
+    from tests.conftest import FAKE_MODEL
+
+    tables = embedded_commission
+    build_semantic_pairs(tables, model=FAKE_MODEL, floor_bytes=0)
+
+    rows, report = build_sample(tables, model=FAKE_MODEL, per_stratum=5)
+
+    near = load_cross_state_pairs(tables)
+    meaning = load_semantic_pairs(tables, FAKE_MODEL)
+    bills, ordinals = section_keys(tables)
+    key = {(bills[s], int(ordinals[s])): s for s in range(len(bills))}
+
+    def pairs_of(left: np.ndarray, right: np.ndarray) -> set[tuple[int, int]]:
+        return set(zip(left.tolist(), right.tolist(), strict=True))
+
+    by_stage = {
+        "near_duplicate": pairs_of(np.asarray(near.left), np.asarray(near.right)),
+        "semantic": pairs_of(np.asarray(meaning.left), np.asarray(meaning.right)),
+    }
+    sizes = {name: report["strata"][name]["size"] for name in STRATA}
+    assert sizes["both"] == len(by_stage["near_duplicate"] & by_stage["semantic"])
+    assert sizes["semantic_only"] == len(by_stage["semantic"] - by_stage["near_duplicate"])
+    assert sizes["near_duplicate_only"] == len(by_stage["near_duplicate"] - by_stage["semantic"])
+    assert len(rows) == sum(min(5, n) for n in sizes.values())
+    for row in rows:
+        a = key[(row["query"]["bill_id"], row["query"]["ordinal"])]
+        b = key[(row["match"]["bill_id"], row["match"]["ordinal"])]
+        found = {stage for stage, pairs in by_stage.items() if (a, b) in pairs}
+        assert set(row["stages"]) == found
+    assert build_sample(tables, model=FAKE_MODEL, per_stratum=5)[0] == rows  # seeded

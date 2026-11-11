@@ -1,0 +1,30 @@
+{
+ "command": "uv run lineage precision-sample",
+ "seed": 20261112,
+ "per_stratum": 100,
+ "model": "bge-small-en-v1.5",
+ "strata": {
+  "near_duplicate_only": {
+   "stages": [
+    "near_duplicate"
+   ],
+   "size": 1392446,
+   "drawn": 100
+  },
+  "semantic_only": {
+   "stages": [
+    "semantic"
+   ],
+   "size": 2855089,
+   "drawn": 100
+  },
+  "both": {
+   "stages": [
+    "near_duplicate",
+    "semantic"
+   ],
+   "size": 1048762,
+   "drawn": 100
+  }
+ }
+}

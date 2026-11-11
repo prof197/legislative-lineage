@@ -51,7 +51,7 @@ from lineage.pair_eval import evaluate as evaluate_pairs
 from lineage.pair_eval import write_report as write_pair_report
 from lineage.precision import SAMPLE as PRECISION_SAMPLE
 from lineage.precision import SAMPLE_REPORT as PRECISION_SAMPLE_REPORT
-from lineage.precision import PrecisionError, estimate, load_sizes
+from lineage.precision import PrecisionError, build_sample, estimate, load_sizes, write_sample
 from lineage.query import IndexMissingError, query_text, require_index
 from lineage.results_table import EXPORTED_ONLY, README, ResultsTableError, rendered_readme
 from lineage.sectioning import SectioningError, build_sections
@@ -605,6 +605,27 @@ def _current_items(
         noun = "label no longer matches" if dropped == 1 else "labels no longer match"
         typer.echo(f"{dropped} {noun} its section's text and is not counted.")
     return items, kept
+
+
+@app.command("precision-sample")
+def precision_sample(
+    tables: TablesOption = Path("data/tables"),
+    sample: Annotated[
+        Path, typer.Option("--sample", help="The sample file, one pair per line (committed).")
+    ] = PRECISION_SAMPLE,
+    report: Annotated[
+        Path, typer.Option("--report", help="The draw's report JSON (committed).")
+    ] = PRECISION_SAMPLE_REPORT,
+) -> None:
+    """Draw the precision sample from both stages' cross-state pairs, stratified by stage."""
+    try:
+        rows, doc = build_sample(tables)
+    except (PrecisionError, SemanticPairsError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    write_sample(rows, doc, sample_path=sample, report_path=report)
+    sizes = ", ".join(f"{name} {s['drawn']} of {s['size']:,}" for name, s in doc["strata"].items())
+    typer.echo(f"{len(rows)} pairs drawn: {sizes} -> {sample}, {report}")
 
 
 @app.command("label-model")

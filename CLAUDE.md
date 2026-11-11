@@ -24,6 +24,7 @@ uv run lineage index         # signatures, LSH bands, verified pairs, families -
 uv run lineage embed         # every distinct 94-word window embedded once, float16, resumable -> data/tables/semantic/, reports/embedding.json
 uv run lineage neighbors     # each distinct window's 20 nearest by meaning, HNSW over float16, recall checked exactly -> data/tables/semantic/<model>/neighbors/, reports/neighbors.json
 uv run lineage semantic-pairs  # the neighbors as cross-state section pairs, best cosine and window pair each -> data/tables/semantic/<model>/pairs/, reports/semantic_pairs.json
+uv run lineage precision-sample  # the precision sample, stratified by stage, from both stages' pairs -> evals/precision_sample.jsonl, reports/precision_sample.json
 uv run lineage query FILE     # a bill's relatives by both stages, offline, from the built index and vectors (--no-semantic: near-duplicates only)
 uv run lineage eval commission  # commission recall, act texts from data/acts/ -> reports/results.json (--results reports/results_exported_only.json after an --exported-only merge); with the stage ablation unless --no-semantic
 uv run lineage eval answer-key  # each commission list row and the bills it resolved to -> reports/answer_key.csv
