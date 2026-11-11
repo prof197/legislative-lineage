@@ -526,10 +526,11 @@ def query(
     more = f"; {hidden:,} more not shown (--limit)" if hidden > 0 else ""
     noun = "family matches" if len(result.matches) == 1 else "families match"
     typer.echo(
-        f"{len(result.matches):,} {noun}{more}. Share: of the query's searched sections, "
-        f"the share with a match in the family. Best: the highest estimated similarity of a "
-        f"matched section. Cos: the semantic stage's best cosine. By: n, the near-duplicate "
-        f"stage; s, the semantic stage. Family: the state's near-identical bills, counted "
+        f"{len(result.matches):,} {noun}{more}. Share: of the words in the query's searched "
+        f"sections, the share in sections the family matches. Best: the highest estimated "
+        f"similarity of a matched section. Cos: the semantic stage's best cosine. By: n, the "
+        f"near-duplicate stage; s, the semantic stage. Family: the state's near-identical "
+        f"bills, counted "
         f"once. {time.monotonic() - started:.1f}s"
     )
 

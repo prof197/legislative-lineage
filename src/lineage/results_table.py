@@ -48,9 +48,16 @@ def _cell(r: dict[str, Any]) -> str:
 
 
 def render_commission(section: dict[str, Any], exported: dict[str, Any]) -> str:
-    for key in ("threshold", "enactments_file"):
-        if section[key] != exported[key]:
-            raise ResultsTableError(f"the two results files differ in {key}; rerun both evals")
+    if section["enactments_file"] != exported["enactments_file"]:
+        raise ResultsTableError("the two results files differ in enactments_file; rerun both evals")
+    # At a threshold of 0, any matched section is found, so how the score weighs sections does
+    # not change what either column counts.
+    mine, theirs = section["threshold"], exported["threshold"]
+    if mine["min_share"] == 0:
+        compared = ("min_share", "found_when")
+        mine, theirs = {k: mine.get(k) for k in compared}, {k: theirs.get(k) for k in compared}
+    if mine != theirs:
+        raise ResultsTableError("the two results files differ in threshold; rerun both evals")
     if exported.get("stage_ablation") is not None:
         raise ResultsTableError(
             "the export-only results searched by meaning too, over vectors of other text; "

@@ -2,8 +2,9 @@
 
 Each act's text is the query. An enactment is found when a bill its list row names (see
 `lineage.ulc`) belongs to a family among the query's relatives with a score above the threshold.
-The score is the share of the query's signed sections the family matches, and the commission's
-standard closing sections are boilerplate, so they never count. Rank is reported, not used: an
+The score is the share of the query's words in the sections the family matches
+(DESIGN.md#bill-scoring), and the commission's standard closing sections are boilerplate, so
+they never count. Rank is reported, not used: an
 act's relatives can outnumber any fixed rank once every state's versions count. Every enactment
 that is not found gets one miss reason, taken from the bill that got furthest through the
 pipeline: no stored text, an amendment stored instead of the bill, an excluded document type,
@@ -409,7 +410,7 @@ def evaluate(
         "stages": list(stages),
         "stage_ablation": ablation if semantic is not None else None,
         "threshold": {
-            "score": "share of the query's signed sections that the family matches",
+            "score": "share of the query's words in the sections the family matches",
             "min_share": min_share,
             "found_when": "score above min_share",
             "status": "approved",

@@ -7,10 +7,15 @@ from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
+import numpy as np
 import pytest
 from typer.testing import CliRunner
 
+from lineage import queries
 from lineage.cli import app
+from lineage.neighbors import build_neighbors
+from lineage.vectors import build_plan, semantic_dir, shard_name, vectors_dir
+from tests.fakes import bag_of_words
 
 FIXTURES = Path(__file__).parent / "fixtures" / "openstates"
 # Real session dates for the fixture archives, copied from snapshot/sessions.csv.
@@ -127,3 +132,27 @@ def commission_corpus(tmp_path_factory: pytest.TempPathFactory) -> Path:
     """The commission enactments among distractors (built by `evals/fixture.py`), indexed."""
     root = tmp_path_factory.mktemp("commission")
     return build_tables(root, COMMISSION, COMMISSION / "sessions.csv")
+
+
+FAKE_MODEL = "fake"
+
+
+@pytest.fixture
+def embedded_commission(commission_corpus: Path, tmp_path: Path) -> Path:
+    """The commission fixture's tables, its windows embedded by the stand-in, neighbors built."""
+    out = tmp_path / "tables"
+    out.mkdir()
+    for table in commission_corpus.iterdir():
+        if table.name != "semantic":  # the stand-in's windows and vectors are built here
+            (out / table.name).symlink_to(table)
+    plan = build_plan(out, floor_bytes=0)
+    vectors = vectors_dir(out, FAKE_MODEL)
+    vectors.mkdir(parents=True)
+    with queries.connect_quiet() as con:
+        for s in range(plan.shards):
+            texts = queries.read_semantic_texts(
+                con, parquet_path=semantic_dir(out) / "texts" / f"{shard_name(s)}.parquet"
+            )
+            np.save(vectors / f"{shard_name(s)}.npy", bag_of_words(texts).astype(np.float16))
+    build_neighbors(out, model=FAKE_MODEL, spec="Flat", ef_search=None, floor_bytes=0)
+    return out

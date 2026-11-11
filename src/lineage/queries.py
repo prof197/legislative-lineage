@@ -1274,6 +1274,18 @@ def matchable_section_texts(
     return rows
 
 
+def matchable_section_normalized(
+    con: duckdb.DuckDBPyConnection, *, sections_glob: str, eligible_path: Path, ids: list[str]
+) -> list[tuple[str, int, str]]:
+    """(bill id, ordinal, normalized text) of the wanted bills' matchable sections."""
+    rows: list[tuple[str, int, str]] = con.execute(
+        f"SELECT s.bill_id, s.ordinal, s.normalized {_MATCHABLE} "
+        "AND s.bill_id IN (SELECT unnest($ids)) ORDER BY s.bill_id, s.ordinal",
+        {"sections": sections_glob, "eligible": str(eligible_path), "ids": ids},
+    ).fetchall()
+    return rows
+
+
 def related_bill_ids(
     con: duckdb.DuckDBPyConnection,
     *,

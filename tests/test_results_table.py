@@ -95,6 +95,24 @@ def test_results_from_different_thresholds_are_not_set_side_by_side() -> None:
         rendered_readme(readme, {"commission": _section(1, 3)}, {"commission": other})
 
 
+def test_at_a_threshold_of_zero_a_changed_score_still_compares() -> None:
+    # At 0, an enactment is found by any matched section, however the score weighs them.
+    readme = f"{START}\n{END}\n"
+    scored = _section(2, 3) | {"threshold": {"min_share": 0.0, "score": "by words"}}
+    other = _section(1, 3) | {"threshold": {"min_share": 0.0, "score": "by sections"}}
+
+    assert "2 / 3" in rendered_readme(readme, {"commission": scored}, {"commission": other})
+
+
+def test_above_zero_a_changed_score_does_not_compare() -> None:
+    readme = f"{START}\n{END}\n"
+    scored = _section(2, 3) | {"threshold": {"min_share": 0.5, "score": "by words"}}
+    other = _section(1, 3) | {"threshold": {"min_share": 0.5, "score": "by sections"}}
+
+    with pytest.raises(ResultsTableError, match="threshold"):
+        rendered_readme(readme, {"commission": scored}, {"commission": other})
+
+
 def test_the_command_rewrites_only_the_results_section(tmp_path: Path) -> None:
     readme, results = tmp_path / "README.md", tmp_path / "results.json"
     exported = tmp_path / "exported.json"

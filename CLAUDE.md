@@ -73,7 +73,8 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   families.py     same-state families: bill match shares, connected components (pure functions)
   pairs.py        verify window candidates, store cross-state section pairs, write families
   index.py        `lineage index`: signatures, bands, pairs and families, then reports/index.json
-  query.py        `lineage query`: sign a bill's text, look up its bands, verify, group by family
+  query.py        `lineage query`: sign a bill's text, look up its bands, verify, group by family, score by the share of its words matched
+  relatives.py    a corpus bill's relatives from both stages' stored pairs, scored as a query is, the 50 best kept
   acts.py         uniform act texts as eval queries: keep the sections, drop comments and notes
   ulc.py          the commission's enactment lists, and the bills each enactment names
   answer_key.py   `lineage eval answer-key`: the resolved list rows, for checking by eye

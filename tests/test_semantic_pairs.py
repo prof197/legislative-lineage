@@ -7,7 +7,6 @@ import numpy as np
 import pytest
 
 from lineage import queries
-from lineage.neighbors import build_neighbors
 from lineage.semantic import THRESHOLD, K
 from lineage.semantic_pairs import (
     SemanticPairsError,
@@ -16,30 +15,13 @@ from lineage.semantic_pairs import (
     pairs_dir,
     section_keys,
 )
-from lineage.vectors import build_plan, semantic_dir, shard_name, vectors_dir
-from tests.fakes import bag_of_words
-
-MODEL = "fake"
+from lineage.vectors import semantic_dir, vectors_dir
+from tests.conftest import FAKE_MODEL as MODEL
 
 
 @pytest.fixture
-def tables(commission_corpus: Path, tmp_path: Path) -> Path:
-    """The commission fixture's tables, its windows embedded by the stand-in, neighbors built."""
-    out = tmp_path / "tables"
-    out.mkdir()
-    for name in ("sections", "eligible.parquet", "signatures", "bills"):
-        (out / name).symlink_to(commission_corpus / name)
-    plan = build_plan(out, floor_bytes=0)
-    vectors = vectors_dir(out, MODEL)
-    vectors.mkdir(parents=True)
-    with queries.connect_quiet() as con:
-        for s in range(plan.shards):
-            texts = queries.read_semantic_texts(
-                con, parquet_path=semantic_dir(out) / "texts" / f"{shard_name(s)}.parquet"
-            )
-            np.save(vectors / f"{shard_name(s)}.npy", bag_of_words(texts).astype(np.float16))
-    build_neighbors(out, model=MODEL, spec="Flat", ef_search=None, floor_bytes=0)
-    return out
+def tables(embedded_commission: Path) -> Path:
+    return embedded_commission
 
 
 def _expected(tables: Path) -> dict[tuple[tuple[str, int], tuple[str, int]], float]:

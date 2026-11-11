@@ -6,8 +6,9 @@ query section matches a bill when any of its windows matches any of the bill's. 
 keys are looked up in the memory-mapped band index by binary search, and a bucket over the
 build's cap yields nothing here either. Every candidate is verified against its stored signature
 at the build's threshold. Matches are grouped by family, so a state's copies of a bill count
-once, and a family is scored from the query's side: the share of the query's signed sections it
-matches, so a provision carried inside a larger bill still scores high.
+once, and a family is scored from the query's side: the share of the query's words that fall in
+the sections it matches, of the words of every section searched, so a provision carried inside
+a larger bill still scores high, and a long matched section counts for more than a short one.
 
 With the semantic stage's search (lineage.semantic), each matchable section's windows are also
 embedded and searched by meaning, and a bill matches a query section when either stage finds
@@ -17,6 +18,7 @@ DESIGN.md#near-duplicate-stage and DESIGN.md#semantic-stage.
 """
 
 from collections import defaultdict
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -54,7 +56,7 @@ class Match:
     title: str
     status: str | None
     sections_matched: int  # of the query's sections either stage could match
-    share: float
+    share: float  # of the searched sections' words, the share in sections the family matches
     best_estimate: float  # the highest estimated similarity of any matched section pair, or 0
     # Query sections each stage matched, by stage: "near_duplicate", "semantic".
     sections_by_stage: dict[str, int] = field(default_factory=dict[str, int])
@@ -66,9 +68,10 @@ class QueryResult:
     sections: int
     signed: int  # sections with at least one signed window
     matches: list[Match]
-    # Sections either stage could match, the share's denominator: the signed ones, and with
-    # the semantic stage every matchable section with a window.
+    # Sections either stage could match: the signed ones, and with the semantic stage every
+    # matchable section with a window. Their words are the share's denominator.
     searched: int = 0
+    words_searched: int = 0
 
 
 @dataclass(frozen=True, slots=True)
@@ -159,26 +162,19 @@ def _near_duplicate_hits(query: SignedQuery, tables_dir: Path) -> list[tuple[int
     return list(zip(query_rows.tolist(), bill_ids, counts.tolist(), strict=True))
 
 
-def query_text(
-    raw: str, tables_dir: Path, *, semantic: SemanticSearch | None = None
-) -> QueryResult:
-    """Every family that shares text with `raw`, best first: verified near-duplicates, and with
-    `semantic`, the semantic stage's matches too."""
-    require_index(tables_dir)
-    query = sign_query(raw, tables_dir)
-    near = _near_duplicate_hits(query, tables_dir)
-    searched = set(query.section.tolist())
-    by_meaning: list[tuple[int, str, float]] = []
-    if semantic is not None:
-        _, matchable = matchable_sections(raw)
-        texts = [text for text, _ in matchable]
-        searched |= {i for i, text in enumerate(texts) if text.split()}
-        by_meaning = [
-            (h.query_section, h.bill_id, h.cosine) for h in search_sections(texts, semantic)
-        ]
-    if not searched:
-        return QueryResult(query.sections, query.signed, [], 0)
+def group_matches(
+    near: Sequence[tuple[int, str, int]],
+    by_meaning: Sequence[tuple[int, str, float]],
+    words: Mapping[int, int],
+    words_searched: int,
+    tables_dir: Path,
+) -> list[Match]:
+    """Matches grouped by family, best first, scored from the query's side.
 
+    `near` holds (query section, bill id, agreements) and `by_meaning` (query section, bill id,
+    cosine); `words` gives each query section's words, and `words_searched` the share's
+    denominator. A corpus bill's relatives are scored by the same function (lineage.relatives),
+    so a bill and a query scored alike agree."""
     with queries.connect_quiet() as con:
         summaries = queries.bill_summaries(
             con,
@@ -210,6 +206,7 @@ def query_text(
         shown = by_id[min(bills, key=lambda b: (-len(covered(b)), -best[b], b))]
         stages = {stage for b in bills for stage in matched[b]}
         cosines = [cosine[b] for b in bills if b in cosine]
+        family_covers = set[int]().union(*(covered(b) for b in bills))
         results.append(
             Match(
                 family=family,
@@ -220,8 +217,8 @@ def query_text(
                 identifier=shown.identifier,
                 title=shown.title,
                 status=shown.status,
-                sections_matched=len(set[int]().union(*(covered(b) for b in bills))),
-                share=len(set[int]().union(*(covered(b) for b in bills))) / len(searched),
+                sections_matched=len(family_covers),
+                share=sum(words[q] for q in family_covers) / max(words_searched, 1),
                 best_estimate=max(best[b] for b in bills) / NUM_PERM,
                 sections_by_stage={
                     stage: len(set[int]().union(*(matched[b][stage] for b in bills)))
@@ -231,4 +228,30 @@ def query_text(
             )
         )
     results.sort(key=lambda m: (-m.share, -m.best_estimate, m.state, m.identifier, m.bill_id))
-    return QueryResult(query.sections, query.signed, results, len(searched))
+    return results
+
+
+def query_text(
+    raw: str, tables_dir: Path, *, semantic: SemanticSearch | None = None
+) -> QueryResult:
+    """Every family that shares text with `raw`, best first: verified near-duplicates, and with
+    `semantic`, the semantic stage's matches too."""
+    require_index(tables_dir)
+    query = sign_query(raw, tables_dir)
+    near = _near_duplicate_hits(query, tables_dir)
+    searched: set[int] = set(query.section.tolist())
+    _, matchable = matchable_sections(raw)
+    words = [len(normalized.split()) for _, normalized in matchable]
+    by_meaning: list[tuple[int, str, float]] = []
+    if semantic is not None:
+        texts = [text for text, _ in matchable]
+        searched |= {i for i, text in enumerate(texts) if text.split()}
+        by_meaning = [
+            (h.query_section, h.bill_id, h.cosine) for h in search_sections(texts, semantic)
+        ]
+    if not searched:
+        return QueryResult(query.sections, query.signed, [], 0)
+
+    words_searched = sum(words[q] for q in searched)
+    results = group_matches(near, by_meaning, dict(enumerate(words)), words_searched, tables_dir)
+    return QueryResult(query.sections, query.signed, results, len(searched), words_searched)

@@ -6,7 +6,7 @@ from typer.testing import CliRunner
 
 from lineage import queries
 from lineage.cli import app
-from lineage.query import query_text
+from lineage.query import matchable_sections, query_text
 
 runner = CliRunner()
 
@@ -50,6 +50,23 @@ def test_an_edited_copy_still_finds_its_source(corpus: Path) -> None:
     assert (top.state, top.identifier) == ("GA", "SB 238")
     assert top.share >= 0.5
     assert top.best_estimate < 1.0
+
+
+def test_the_share_is_of_the_query_words_in_matched_sections(corpus: Path) -> None:
+    # A short unrelated section added to a bill lowers its copy's share by its words, not by
+    # one section's worth: a provision inside a larger bill is scored by how much of it matched.
+    unrelated = "Section 99. " + " ".join(f"word{i}" for i in range(40))
+    query = _raw_text(corpus, "SB 238") + "\n\n" + unrelated
+
+    result = query_text(query, corpus)
+
+    _, matchable = matchable_sections(query)
+    words = [len(normalized.split()) for _, normalized in matchable]
+    top = result.matches[0]
+    assert (top.state, top.identifier) == ("GA", "SB 238")
+    assert top.sections_matched == len(words) - 1
+    assert top.share == (sum(words) - words[-1]) / sum(words)
+    assert top.share != (len(words) - 1) / len(words)
 
 
 def test_unrelated_text_finds_nothing(corpus: Path) -> None:

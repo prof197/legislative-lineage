@@ -247,7 +247,7 @@
    }
   },
   "threshold": {
-   "score": "share of the query's signed sections that the family matches",
+   "score": "share of the query's words in the sections the family matches",
    "min_share": 0.0,
    "found_when": "score above min_share",
    "status": "approved"
@@ -272,7 +272,7 @@
     "relatives": [
      {
       "rank": 1,
-      "share": 0.9333,
+      "share": 0.9969,
       "sections_matched": 14,
       "sections_by_stage": {
        "near_duplicate": 10,
@@ -285,20 +285,7 @@
      },
      {
       "rank": 2,
-      "share": 0.8667,
-      "sections_matched": 13,
-      "sections_by_stage": {
-       "near_duplicate": 5,
-       "semantic": 13
-      },
-      "state": "WA",
-      "session": "2023-2024",
-      "identifier": "SB 5787",
-      "enactment": true
-     },
-     {
-      "rank": 3,
-      "share": 0.8667,
+      "share": 0.9886,
       "sections_matched": 13,
       "sections_by_stage": {
        "near_duplicate": 5,
@@ -310,21 +297,8 @@
       "enactment": false
      },
      {
-      "rank": 4,
-      "share": 0.8,
-      "sections_matched": 12,
-      "sections_by_stage": {
-       "near_duplicate": 9,
-       "semantic": 12
-      },
-      "state": "IL",
-      "session": "103rd",
-      "identifier": "SB 1930",
-      "enactment": true
-     },
-     {
-      "rank": 5,
-      "share": 0.8,
+      "rank": 3,
+      "share": 0.9632,
       "sections_matched": 12,
       "sections_by_stage": {
        "near_duplicate": 8,
@@ -336,8 +310,34 @@
       "enactment": true
      },
      {
+      "rank": 4,
+      "share": 0.945,
+      "sections_matched": 13,
+      "sections_by_stage": {
+       "near_duplicate": 5,
+       "semantic": 13
+      },
+      "state": "WA",
+      "session": "2023-2024",
+      "identifier": "SB 5787",
+      "enactment": true
+     },
+     {
+      "rank": 5,
+      "share": 0.9367,
+      "sections_matched": 12,
+      "sections_by_stage": {
+       "near_duplicate": 9,
+       "semantic": 12
+      },
+      "state": "IL",
+      "session": "103rd",
+      "identifier": "SB 1930",
+      "enactment": true
+     },
+     {
       "rank": 6,
-      "share": 0.8,
+      "share": 0.9367,
       "sections_matched": 12,
       "sections_by_stage": {
        "near_duplicate": 8,
@@ -350,7 +350,7 @@
      },
      {
       "rank": 7,
-      "share": 0.8,
+      "share": 0.9367,
       "sections_matched": 12,
       "sections_by_stage": {
        "near_duplicate": 5,
@@ -363,7 +363,7 @@
      },
      {
       "rank": 8,
-      "share": 0.8,
+      "share": 0.9367,
       "sections_matched": 12,
       "sections_by_stage": {
        "near_duplicate": 2,
@@ -376,7 +376,7 @@
      },
      {
       "rank": 9,
-      "share": 0.7333,
+      "share": 0.9009,
       "sections_matched": 11,
       "sections_by_stage": {
        "near_duplicate": 4,
@@ -389,7 +389,7 @@
      },
      {
       "rank": 10,
-      "share": 0.7333,
+      "share": 0.9009,
       "sections_matched": 11,
       "sections_by_stage": {
        "near_duplicate": 5,
@@ -402,7 +402,7 @@
      },
      {
       "rank": 11,
-      "share": 0.6,
+      "share": 0.8672,
       "sections_matched": 9,
       "sections_by_stage": {
        "near_duplicate": 7,
@@ -415,7 +415,439 @@
      },
      {
       "rank": 12,
-      "share": 0.4,
+      "share": 0.4621,
+      "sections_matched": 3,
+      "sections_by_stage": {
+       "semantic": 3
+      },
+      "state": "MO",
+      "session": "2024",
+      "identifier": "HB 1886",
+      "enactment": false
+     },
+     {
+      "rank": 13,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "AR",
+      "session": "2023",
+      "identifier": "HB 1409",
+      "enactment": false
+     },
+     {
+      "rank": 14,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "AR",
+      "session": "2025",
+      "identifier": "HB 1746",
+      "enactment": false
+     },
+     {
+      "rank": 15,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "AR",
+      "session": "2025",
+      "identifier": "HB 1749",
+      "enactment": false
+     },
+     {
+      "rank": 16,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "FL",
+      "session": "2024",
+      "identifier": "SB 1316",
+      "enactment": false
+     },
+     {
+      "rank": 17,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "IA",
+      "session": "2023-2024",
+      "identifier": "SSB 1095",
+      "enactment": false
+     },
+     {
+      "rank": 18,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "IL",
+      "session": "104th",
+      "identifier": "HB 4436",
+      "enactment": false
+     },
+     {
+      "rank": 19,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "IL",
+      "session": "103rd",
+      "identifier": "SB 3583",
+      "enactment": false
+     },
+     {
+      "rank": 20,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "KS",
+      "session": "2025-2026",
+      "identifier": "HB 2181",
+      "enactment": false
+     },
+     {
+      "rank": 21,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "KS",
+      "session": "2025-2026",
+      "identifier": "HB 2359",
+      "enactment": false
+     },
+     {
+      "rank": 22,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "KY",
+      "session": "2023RS",
+      "identifier": "HB 128",
+      "enactment": false
+     },
+     {
+      "rank": 23,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "MA",
+      "session": "193rd",
+      "identifier": "H 1405",
+      "enactment": false
+     },
+     {
+      "rank": 24,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "MA",
+      "session": "194th",
+      "identifier": "H 4330",
+      "enactment": false
+     },
+     {
+      "rank": 25,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "MA",
+      "session": "193rd",
+      "identifier": "S 23",
+      "enactment": false
+     },
+     {
+      "rank": 26,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "MI",
+      "session": "2025-2026",
+      "identifier": "HB 6347",
+      "enactment": false
+     },
+     {
+      "rank": 27,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "MO",
+      "session": "2023",
+      "identifier": "HB 968",
+      "enactment": false
+     },
+     {
+      "rank": 28,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "MS",
+      "session": "2026",
+      "identifier": "SB 2119",
+      "enactment": false
+     },
+     {
+      "rank": 29,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "NE",
+      "session": "109",
+      "identifier": "LB 1160",
+      "enactment": false
+     },
+     {
+      "rank": 30,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "NJ",
+      "session": "220",
+      "identifier": "A 4492",
+      "enactment": false
+     },
+     {
+      "rank": 31,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "NM",
+      "session": "2023",
+      "identifier": "HB 90",
+      "enactment": false
+     },
+     {
+      "rank": 32,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "NY",
+      "session": "2025-2026",
+      "identifier": "A 9232",
+      "enactment": false
+     },
+     {
+      "rank": 33,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "OH",
+      "session": "136",
+      "identifier": "HB 199",
+      "enactment": false
+     },
+     {
+      "rank": 34,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "OH",
+      "session": "136",
+      "identifier": "HB 389",
+      "enactment": false
+     },
+     {
+      "rank": 35,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "OH",
+      "session": "136",
+      "identifier": "HB 70",
+      "enactment": false
+     },
+     {
+      "rank": 36,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "OK",
+      "session": "2025",
+      "identifier": "HB 1850",
+      "enactment": false
+     },
+     {
+      "rank": 37,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "OK",
+      "session": "2026",
+      "identifier": "HB 3588",
+      "enactment": false
+     },
+     {
+      "rank": 38,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "OK",
+      "session": "2024",
+      "identifier": "HB 3778",
+      "enactment": false
+     },
+     {
+      "rank": 39,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "OK",
+      "session": "2024",
+      "identifier": "HB 3962",
+      "enactment": false
+     },
+     {
+      "rank": 40,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "UT",
+      "session": "2025",
+      "identifier": "SB 100",
+      "enactment": false
+     },
+     {
+      "rank": 41,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "UT",
+      "session": "2025S1",
+      "identifier": "SB 1006",
+      "enactment": false
+     },
+     {
+      "rank": 42,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "UT",
+      "session": "2026",
+      "identifier": "SB 155",
+      "enactment": false
+     },
+     {
+      "rank": 43,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "UT",
+      "session": "2025",
+      "identifier": "SB 206",
+      "enactment": false
+     },
+     {
+      "rank": 44,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "VA",
+      "session": "2026",
+      "identifier": "HB 548",
+      "enactment": false
+     },
+     {
+      "rank": 45,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "WA",
+      "session": "2025-2026",
+      "identifier": "SB 5037",
+      "enactment": false
+     },
+     {
+      "rank": 46,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "WI",
+      "session": "2023",
+      "identifier": "SB 759",
+      "enactment": false
+     },
+     {
+      "rank": 47,
+      "share": 0.3802,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "WV",
+      "session": "2024",
+      "identifier": "HB 5561",
+      "enactment": false
+     },
+     {
+      "rank": 48,
+      "share": 0.3423,
       "sections_matched": 6,
       "sections_by_stage": {
        "near_duplicate": 3,
@@ -427,20 +859,8 @@
       "enactment": true
      },
      {
-      "rank": 13,
-      "share": 0.2,
-      "sections_matched": 3,
-      "sections_by_stage": {
-       "semantic": 3
-      },
-      "state": "MO",
-      "session": "2024",
-      "identifier": "HB 1886",
-      "enactment": false
-     },
-     {
-      "rank": 14,
-      "share": 0.1333,
+      "rank": 49,
+      "share": 0.082,
       "sections_matched": 2,
       "sections_by_stage": {
        "semantic": 2
@@ -451,128 +871,8 @@
       "enactment": true
      },
      {
-      "rank": 15,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "AR",
-      "session": "2023",
-      "identifier": "HB 1409",
-      "enactment": false
-     },
-     {
-      "rank": 16,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "AR",
-      "session": "2025",
-      "identifier": "HB 1746",
-      "enactment": false
-     },
-     {
-      "rank": 17,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "AR",
-      "session": "2025",
-      "identifier": "HB 1749",
-      "enactment": false
-     },
-     {
-      "rank": 18,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "FL",
-      "session": "2024",
-      "identifier": "SB 1316",
-      "enactment": false
-     },
-     {
-      "rank": 19,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "HI",
-      "session": "2023 Regular Session",
-      "identifier": "HB 133",
-      "enactment": false
-     },
-     {
-      "rank": 20,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "HI",
-      "session": "2023 Regular Session",
-      "identifier": "HB 382",
-      "enactment": false
-     },
-     {
-      "rank": 21,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "HI",
-      "session": "2023 Regular Session",
-      "identifier": "SB 1537",
-      "enactment": false
-     },
-     {
-      "rank": 22,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "HI",
-      "session": "2023 Regular Session",
-      "identifier": "SB 1538",
-      "enactment": false
-     },
-     {
-      "rank": 23,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "HI",
-      "session": "2023 Regular Session",
-      "identifier": "SB 303",
-      "enactment": false
-     },
-     {
-      "rank": 24,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "IA",
-      "session": "2023-2024",
-      "identifier": "SSB 1095",
-      "enactment": false
-     },
-     {
-      "rank": 25,
-      "share": 0.0667,
+      "rank": 50,
+      "share": 0.0643,
       "sections_matched": 1,
       "sections_by_stage": {
        "semantic": 1
@@ -583,152 +883,8 @@
       "enactment": false
      },
      {
-      "rank": 26,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "IL",
-      "session": "104th",
-      "identifier": "HB 4436",
-      "enactment": false
-     },
-     {
-      "rank": 27,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "IL",
-      "session": "103rd",
-      "identifier": "SB 3583",
-      "enactment": false
-     },
-     {
-      "rank": 28,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "KS",
-      "session": "2025-2026",
-      "identifier": "HB 2181",
-      "enactment": false
-     },
-     {
-      "rank": 29,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "KS",
-      "session": "2025-2026",
-      "identifier": "HB 2359",
-      "enactment": false
-     },
-     {
-      "rank": 30,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "KY",
-      "session": "2023RS",
-      "identifier": "HB 128",
-      "enactment": false
-     },
-     {
-      "rank": 31,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "MA",
-      "session": "193rd",
-      "identifier": "H 1405",
-      "enactment": false
-     },
-     {
-      "rank": 32,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "MA",
-      "session": "194th",
-      "identifier": "H 4330",
-      "enactment": false
-     },
-     {
-      "rank": 33,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "MA",
-      "session": "193rd",
-      "identifier": "S 23",
-      "enactment": false
-     },
-     {
-      "rank": 34,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "MI",
-      "session": "2025-2026",
-      "identifier": "HB 6347",
-      "enactment": false
-     },
-     {
-      "rank": 35,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "MO",
-      "session": "2025",
-      "identifier": "HB 1259",
-      "enactment": false
-     },
-     {
-      "rank": 36,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "MO",
-      "session": "2025",
-      "identifier": "HB 176",
-      "enactment": true
-     },
-     {
-      "rank": 37,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "MO",
-      "session": "2024",
-      "identifier": "HB 2064",
-      "enactment": false
-     },
-     {
-      "rank": 38,
-      "share": 0.0667,
+      "rank": 51,
+      "share": 0.0607,
       "sections_matched": 1,
       "sections_by_stage": {
        "semantic": 1
@@ -739,20 +895,8 @@
       "enactment": false
      },
      {
-      "rank": 39,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "MO",
-      "session": "2025",
-      "identifier": "HB 754",
-      "enactment": true
-     },
-     {
-      "rank": 40,
-      "share": 0.0667,
+      "rank": 52,
+      "share": 0.0607,
       "sections_matched": 1,
       "sections_by_stage": {
        "semantic": 1
@@ -763,248 +907,8 @@
       "enactment": true
      },
      {
-      "rank": 41,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "MO",
-      "session": "2023",
-      "identifier": "HB 968",
-      "enactment": false
-     },
-     {
-      "rank": 42,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "MO",
-      "session": "2024",
-      "identifier": "SB 1221",
-      "enactment": true
-     },
-     {
-      "rank": 43,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "MO",
-      "session": "2025",
-      "identifier": "SB 289",
-      "enactment": true
-     },
-     {
-      "rank": 44,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "MS",
-      "session": "2026",
-      "identifier": "SB 2119",
-      "enactment": false
-     },
-     {
-      "rank": 45,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "NE",
-      "session": "109",
-      "identifier": "LB 1160",
-      "enactment": false
-     },
-     {
-      "rank": 46,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "NJ",
-      "session": "220",
-      "identifier": "A 4492",
-      "enactment": false
-     },
-     {
-      "rank": 47,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "NM",
-      "session": "2023",
-      "identifier": "HB 90",
-      "enactment": false
-     },
-     {
-      "rank": 48,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "NY",
-      "session": "2025-2026",
-      "identifier": "A 9232",
-      "enactment": false
-     },
-     {
-      "rank": 49,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "OH",
-      "session": "136",
-      "identifier": "HB 199",
-      "enactment": false
-     },
-     {
-      "rank": 50,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "OH",
-      "session": "136",
-      "identifier": "HB 389",
-      "enactment": false
-     },
-     {
-      "rank": 51,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "OH",
-      "session": "136",
-      "identifier": "HB 70",
-      "enactment": false
-     },
-     {
-      "rank": 52,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "OK",
-      "session": "2025",
-      "identifier": "HB 1850",
-      "enactment": false
-     },
-     {
       "rank": 53,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "OK",
-      "session": "2026",
-      "identifier": "HB 3588",
-      "enactment": false
-     },
-     {
-      "rank": 54,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "OK",
-      "session": "2024",
-      "identifier": "HB 3778",
-      "enactment": false
-     },
-     {
-      "rank": 55,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "OK",
-      "session": "2024",
-      "identifier": "HB 3962",
-      "enactment": false
-     },
-     {
-      "rank": 56,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "UT",
-      "session": "2025",
-      "identifier": "SB 100",
-      "enactment": false
-     },
-     {
-      "rank": 57,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "UT",
-      "session": "2025S1",
-      "identifier": "SB 1006",
-      "enactment": false
-     },
-     {
-      "rank": 58,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "UT",
-      "session": "2026",
-      "identifier": "SB 155",
-      "enactment": false
-     },
-     {
-      "rank": 59,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "UT",
-      "session": "2025",
-      "identifier": "SB 206",
-      "enactment": false
-     },
-     {
-      "rank": 60,
-      "share": 0.0667,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "VA",
-      "session": "2026",
-      "identifier": "HB 548",
-      "enactment": false
-     },
-     {
-      "rank": 61,
-      "share": 0.0667,
+      "share": 0.0394,
       "sections_matched": 1,
       "sections_by_stage": {
        "semantic": 1
@@ -1015,39 +919,135 @@
       "enactment": false
      },
      {
-      "rank": 62,
-      "share": 0.0667,
+      "rank": 54,
+      "share": 0.0213,
       "sections_matched": 1,
       "sections_by_stage": {
        "semantic": 1
       },
-      "state": "WA",
-      "session": "2025-2026",
-      "identifier": "SB 5037",
+      "state": "MO",
+      "session": "2025",
+      "identifier": "HB 1259",
+      "enactment": false
+     },
+     {
+      "rank": 55,
+      "share": 0.0213,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "MO",
+      "session": "2025",
+      "identifier": "HB 176",
+      "enactment": true
+     },
+     {
+      "rank": 56,
+      "share": 0.0213,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "MO",
+      "session": "2024",
+      "identifier": "HB 2064",
+      "enactment": false
+     },
+     {
+      "rank": 57,
+      "share": 0.0213,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "MO",
+      "session": "2025",
+      "identifier": "HB 754",
+      "enactment": true
+     },
+     {
+      "rank": 58,
+      "share": 0.0213,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "MO",
+      "session": "2024",
+      "identifier": "SB 1221",
+      "enactment": true
+     },
+     {
+      "rank": 59,
+      "share": 0.0213,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "MO",
+      "session": "2025",
+      "identifier": "SB 289",
+      "enactment": true
+     },
+     {
+      "rank": 60,
+      "share": 0.0031,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "HI",
+      "session": "2023 Regular Session",
+      "identifier": "HB 133",
+      "enactment": false
+     },
+     {
+      "rank": 61,
+      "share": 0.0031,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "HI",
+      "session": "2023 Regular Session",
+      "identifier": "HB 382",
+      "enactment": false
+     },
+     {
+      "rank": 62,
+      "share": 0.0031,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "HI",
+      "session": "2023 Regular Session",
+      "identifier": "SB 1537",
       "enactment": false
      },
      {
       "rank": 63,
-      "share": 0.0667,
+      "share": 0.0031,
       "sections_matched": 1,
       "sections_by_stage": {
        "semantic": 1
       },
-      "state": "WI",
-      "session": "2023",
-      "identifier": "SB 759",
+      "state": "HI",
+      "session": "2023 Regular Session",
+      "identifier": "SB 1538",
       "enactment": false
      },
      {
       "rank": 64,
-      "share": 0.0667,
+      "share": 0.0031,
       "sections_matched": 1,
       "sections_by_stage": {
        "semantic": 1
       },
-      "state": "WV",
-      "session": "2024",
-      "identifier": "HB 5561",
+      "state": "HI",
+      "session": "2023 Regular Session",
+      "identifier": "SB 303",
       "enactment": false
      }
     ]
@@ -1068,7 +1068,7 @@
     "relatives": [
      {
       "rank": 1,
-      "share": 0.9167,
+      "share": 0.9056,
       "sections_matched": 11,
       "sections_by_stage": {
        "near_duplicate": 7,
@@ -1081,7 +1081,7 @@
      },
      {
       "rank": 2,
-      "share": 0.9167,
+      "share": 0.9056,
       "sections_matched": 11,
       "sections_by_stage": {
        "near_duplicate": 7,
@@ -1094,7 +1094,7 @@
      },
      {
       "rank": 3,
-      "share": 0.9167,
+      "share": 0.9056,
       "sections_matched": 11,
       "sections_by_stage": {
        "near_duplicate": 5,
@@ -1107,7 +1107,7 @@
      },
      {
       "rank": 4,
-      "share": 0.9167,
+      "share": 0.9056,
       "sections_matched": 11,
       "sections_by_stage": {
        "near_duplicate": 8,
@@ -1120,7 +1120,7 @@
      },
      {
       "rank": 5,
-      "share": 0.9167,
+      "share": 0.9056,
       "sections_matched": 11,
       "sections_by_stage": {
        "near_duplicate": 3,
@@ -1133,7 +1133,7 @@
      },
      {
       "rank": 6,
-      "share": 0.8333,
+      "share": 0.9014,
       "sections_matched": 10,
       "sections_by_stage": {
        "near_duplicate": 6,
@@ -1146,20 +1146,20 @@
      },
      {
       "rank": 7,
-      "share": 0.8333,
+      "share": 0.8944,
       "sections_matched": 10,
       "sections_by_stage": {
        "near_duplicate": 7,
        "semantic": 10
       },
-      "state": "IL",
-      "session": "104th",
-      "identifier": "HB 1077",
+      "state": "MS",
+      "session": "2025",
+      "identifier": "HB 1504",
       "enactment": false
      },
      {
       "rank": 8,
-      "share": 0.8333,
+      "share": 0.8762,
       "sections_matched": 10,
       "sections_by_stage": {
        "near_duplicate": 8,
@@ -1172,20 +1172,20 @@
      },
      {
       "rank": 9,
-      "share": 0.8333,
+      "share": 0.8441,
       "sections_matched": 10,
       "sections_by_stage": {
        "near_duplicate": 7,
        "semantic": 10
       },
-      "state": "MS",
-      "session": "2025",
-      "identifier": "HB 1504",
+      "state": "IL",
+      "session": "104th",
+      "identifier": "HB 1077",
       "enactment": false
      },
      {
       "rank": 10,
-      "share": 0.75,
+      "share": 0.842,
       "sections_matched": 9,
       "sections_by_stage": {
        "near_duplicate": 5,
@@ -1198,20 +1198,7 @@
      },
      {
       "rank": 11,
-      "share": 0.75,
-      "sections_matched": 9,
-      "sections_by_stage": {
-       "near_duplicate": 4,
-       "semantic": 7
-      },
-      "state": "NM",
-      "session": "2025",
-      "identifier": "HB 169",
-      "enactment": false
-     },
-     {
-      "rank": 12,
-      "share": 0.75,
+      "share": 0.835,
       "sections_matched": 9,
       "sections_by_stage": {
        "near_duplicate": 4,
@@ -1223,8 +1210,8 @@
       "enactment": false
      },
      {
-      "rank": 13,
-      "share": 0.75,
+      "rank": 12,
+      "share": 0.8273,
       "sections_matched": 9,
       "sections_by_stage": {
        "near_duplicate": 5,
@@ -1236,8 +1223,8 @@
       "enactment": false
      },
      {
-      "rank": 14,
-      "share": 0.6667,
+      "rank": 13,
+      "share": 0.8224,
       "sections_matched": 8,
       "sections_by_stage": {
        "near_duplicate": 6,
@@ -1249,34 +1236,8 @@
       "enactment": false
      },
      {
-      "rank": 15,
-      "share": 0.6667,
-      "sections_matched": 8,
-      "sections_by_stage": {
-       "near_duplicate": 4,
-       "semantic": 7
-      },
-      "state": "UT",
-      "session": "2023",
-      "identifier": "SB 18",
-      "enactment": true
-     },
-     {
-      "rank": 16,
-      "share": 0.6667,
-      "sections_matched": 8,
-      "sections_by_stage": {
-       "near_duplicate": 3,
-       "semantic": 8
-      },
-      "state": "IA",
-      "session": "2023-2024",
-      "identifier": "SF 2178",
-      "enactment": false
-     },
-     {
-      "rank": 17,
-      "share": 0.5833,
+      "rank": 14,
+      "share": 0.8217,
       "sections_matched": 7,
       "sections_by_stage": {
        "near_duplicate": 2,
@@ -1288,34 +1249,34 @@
       "enactment": true
      },
      {
-      "rank": 18,
-      "share": 0.5833,
-      "sections_matched": 7,
+      "rank": 15,
+      "share": 0.7902,
+      "sections_matched": 9,
       "sections_by_stage": {
        "near_duplicate": 4,
-       "semantic": 6
+       "semantic": 7
       },
-      "state": "ID",
-      "session": "2024",
-      "identifier": "S 1325",
-      "enactment": true
-     },
-     {
-      "rank": 19,
-      "share": 0.4167,
-      "sections_matched": 5,
-      "sections_by_stage": {
-       "near_duplicate": 2,
-       "semantic": 4
-      },
-      "state": "SC",
-      "session": "2025-2026",
-      "identifier": "S 43",
+      "state": "NM",
+      "session": "2025",
+      "identifier": "HB 169",
       "enactment": false
      },
      {
-      "rank": 20,
-      "share": 0.4167,
+      "rank": 16,
+      "share": 0.7902,
+      "sections_matched": 8,
+      "sections_by_stage": {
+       "near_duplicate": 4,
+       "semantic": 7
+      },
+      "state": "UT",
+      "session": "2023",
+      "identifier": "SB 18",
+      "enactment": true
+     },
+     {
+      "rank": 17,
+      "share": 0.707,
       "sections_matched": 5,
       "sections_by_stage": {
        "near_duplicate": 1,
@@ -1327,21 +1288,8 @@
       "enactment": false
      },
      {
-      "rank": 21,
-      "share": 0.4167,
-      "sections_matched": 5,
-      "sections_by_stage": {
-       "near_duplicate": 1,
-       "semantic": 4
-      },
-      "state": "SD",
-      "session": "2026",
-      "identifier": "SB 137",
-      "enactment": true
-     },
-     {
-      "rank": 22,
-      "share": 0.4167,
+      "rank": 18,
+      "share": 0.6993,
       "sections_matched": 5,
       "sections_by_stage": {
        "near_duplicate": 3,
@@ -1353,8 +1301,60 @@
       "enactment": true
      },
      {
+      "rank": 19,
+      "share": 0.6699,
+      "sections_matched": 4,
+      "sections_by_stage": {
+       "near_duplicate": 2,
+       "semantic": 4
+      },
+      "state": "MO",
+      "session": "2023",
+      "identifier": "SB 432",
+      "enactment": true
+     },
+     {
+      "rank": 20,
+      "share": 0.6699,
+      "sections_matched": 4,
+      "sections_by_stage": {
+       "near_duplicate": 2,
+       "semantic": 3
+      },
+      "state": "MO",
+      "session": "2025",
+      "identifier": "SB 352",
+      "enactment": false
+     },
+     {
+      "rank": 21,
+      "share": 0.6699,
+      "sections_matched": 4,
+      "sections_by_stage": {
+       "near_duplicate": 1,
+       "semantic": 3
+      },
+      "state": "MO",
+      "session": "2024",
+      "identifier": "SB 1293",
+      "enactment": false
+     },
+     {
+      "rank": 22,
+      "share": 0.6643,
+      "sections_matched": 8,
+      "sections_by_stage": {
+       "near_duplicate": 3,
+       "semantic": 8
+      },
+      "state": "IA",
+      "session": "2023-2024",
+      "identifier": "SF 2178",
+      "enactment": false
+     },
+     {
       "rank": 23,
-      "share": 0.3333,
+      "share": 0.6434,
       "sections_matched": 4,
       "sections_by_stage": {
        "near_duplicate": 2,
@@ -1367,46 +1367,7 @@
      },
      {
       "rank": 24,
-      "share": 0.3333,
-      "sections_matched": 4,
-      "sections_by_stage": {
-       "near_duplicate": 2,
-       "semantic": 4
-      },
-      "state": "MO",
-      "session": "2023",
-      "identifier": "SB 432",
-      "enactment": true
-     },
-     {
-      "rank": 25,
-      "share": 0.3333,
-      "sections_matched": 4,
-      "sections_by_stage": {
-       "near_duplicate": 2,
-       "semantic": 3
-      },
-      "state": "MO",
-      "session": "2025",
-      "identifier": "SB 352",
-      "enactment": false
-     },
-     {
-      "rank": 26,
-      "share": 0.3333,
-      "sections_matched": 4,
-      "sections_by_stage": {
-       "near_duplicate": 1,
-       "semantic": 3
-      },
-      "state": "MO",
-      "session": "2024",
-      "identifier": "SB 1293",
-      "enactment": false
-     },
-     {
-      "rank": 27,
-      "share": 0.3333,
+      "share": 0.6434,
       "sections_matched": 4,
       "sections_by_stage": {
        "near_duplicate": 2,
@@ -1418,8 +1379,8 @@
       "enactment": true
      },
      {
-      "rank": 28,
-      "share": 0.25,
+      "rank": 25,
+      "share": 0.6084,
       "sections_matched": 3,
       "sections_by_stage": {
        "near_duplicate": 1,
@@ -1431,34 +1392,8 @@
       "enactment": false
      },
      {
-      "rank": 29,
-      "share": 0.25,
-      "sections_matched": 3,
-      "sections_by_stage": {
-       "near_duplicate": 2,
-       "semantic": 2
-      },
-      "state": "MO",
-      "session": "2026",
-      "identifier": "SB 1468",
-      "enactment": false
-     },
-     {
-      "rank": 30,
-      "share": 0.25,
-      "sections_matched": 3,
-      "sections_by_stage": {
-       "near_duplicate": 2,
-       "semantic": 2
-      },
-      "state": "WI",
-      "session": "2025",
-      "identifier": "SB 666",
-      "enactment": false
-     },
-     {
-      "rank": 31,
-      "share": 0.25,
+      "rank": 26,
+      "share": 0.6084,
       "sections_matched": 3,
       "sections_by_stage": {
        "near_duplicate": 1,
@@ -1470,8 +1405,8 @@
       "enactment": true
      },
      {
-      "rank": 32,
-      "share": 0.25,
+      "rank": 27,
+      "share": 0.6084,
       "sections_matched": 3,
       "sections_by_stage": {
        "near_duplicate": 1,
@@ -1483,8 +1418,60 @@
       "enactment": true
      },
      {
-      "rank": 33,
-      "share": 0.25,
+      "rank": 28,
+      "share": 0.5678,
+      "sections_matched": 5,
+      "sections_by_stage": {
+       "near_duplicate": 2,
+       "semantic": 4
+      },
+      "state": "SC",
+      "session": "2025-2026",
+      "identifier": "S 43",
+      "enactment": false
+     },
+     {
+      "rank": 29,
+      "share": 0.5664,
+      "sections_matched": 7,
+      "sections_by_stage": {
+       "near_duplicate": 4,
+       "semantic": 6
+      },
+      "state": "ID",
+      "session": "2024",
+      "identifier": "S 1325",
+      "enactment": true
+     },
+     {
+      "rank": 30,
+      "share": 0.4972,
+      "sections_matched": 5,
+      "sections_by_stage": {
+       "near_duplicate": 1,
+       "semantic": 4
+      },
+      "state": "SD",
+      "session": "2026",
+      "identifier": "SB 137",
+      "enactment": true
+     },
+     {
+      "rank": 31,
+      "share": 0.4385,
+      "sections_matched": 3,
+      "sections_by_stage": {
+       "near_duplicate": 2,
+       "semantic": 2
+      },
+      "state": "MO",
+      "session": "2026",
+      "identifier": "SB 1468",
+      "enactment": false
+     },
+     {
+      "rank": 32,
+      "share": 0.4308,
       "sections_matched": 3,
       "sections_by_stage": {
        "near_duplicate": 3,
@@ -1496,8 +1483,8 @@
       "enactment": false
      },
      {
-      "rank": 34,
-      "share": 0.1667,
+      "rank": 33,
+      "share": 0.4266,
       "sections_matched": 2,
       "sections_by_stage": {
        "near_duplicate": 1,
@@ -1509,8 +1496,8 @@
       "enactment": false
      },
      {
-      "rank": 35,
-      "share": 0.1667,
+      "rank": 34,
+      "share": 0.4266,
       "sections_matched": 2,
       "sections_by_stage": {
        "near_duplicate": 1,
@@ -1522,21 +1509,8 @@
       "enactment": false
      },
      {
-      "rank": 36,
-      "share": 0.1667,
-      "sections_matched": 2,
-      "sections_by_stage": {
-       "near_duplicate": 2,
-       "semantic": 1
-      },
-      "state": "WV",
-      "session": "2025",
-      "identifier": "HB 2756",
-      "enactment": false
-     },
-     {
-      "rank": 37,
-      "share": 0.1667,
+      "rank": 35,
+      "share": 0.4266,
       "sections_matched": 2,
       "sections_by_stage": {
        "near_duplicate": 1,
@@ -1548,8 +1522,8 @@
       "enactment": false
      },
      {
-      "rank": 38,
-      "share": 0.1667,
+      "rank": 36,
+      "share": 0.4133,
       "sections_matched": 2,
       "sections_by_stage": {
        "semantic": 2
@@ -1560,8 +1534,34 @@
       "enactment": false
      },
      {
+      "rank": 37,
+      "share": 0.4119,
+      "sections_matched": 3,
+      "sections_by_stage": {
+       "near_duplicate": 2,
+       "semantic": 2
+      },
+      "state": "WI",
+      "session": "2025",
+      "identifier": "SB 666",
+      "enactment": false
+     },
+     {
+      "rank": 38,
+      "share": 0.3769,
+      "sections_matched": 2,
+      "sections_by_stage": {
+       "near_duplicate": 2,
+       "semantic": 1
+      },
+      "state": "WV",
+      "session": "2025",
+      "identifier": "HB 2756",
+      "enactment": false
+     },
+     {
       "rank": 39,
-      "share": 0.1667,
+      "share": 0.3769,
       "sections_matched": 2,
       "sections_by_stage": {
        "semantic": 2
@@ -1573,7 +1573,7 @@
      },
      {
       "rank": 40,
-      "share": 0.0833,
+      "share": 0.2315,
       "sections_matched": 1,
       "sections_by_stage": {
        "near_duplicate": 1,
@@ -1586,127 +1586,7 @@
      },
      {
       "rank": 41,
-      "share": 0.0833,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "near_duplicate": 1
-      },
-      "state": "SC",
-      "session": "2023-2024",
-      "identifier": "H 4274",
-      "enactment": false
-     },
-     {
-      "rank": 42,
-      "share": 0.0833,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "DE",
-      "session": "152",
-      "identifier": "HB 168",
-      "enactment": false
-     },
-     {
-      "rank": 43,
-      "share": 0.0833,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "DE",
-      "session": "153",
-      "identifier": "HB 444",
-      "enactment": false
-     },
-     {
-      "rank": 44,
-      "share": 0.0833,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "DE",
-      "session": "153",
-      "identifier": "HB 453",
-      "enactment": false
-     },
-     {
-      "rank": 45,
-      "share": 0.0833,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "HI",
-      "session": "2026",
-      "identifier": "HB 1682",
-      "enactment": false
-     },
-     {
-      "rank": 46,
-      "share": 0.0833,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "HI",
-      "session": "2026",
-      "identifier": "HB 2354",
-      "enactment": false
-     },
-     {
-      "rank": 47,
-      "share": 0.0833,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "HI",
-      "session": "2023 Regular Session",
-      "identifier": "SB 1179",
-      "enactment": false
-     },
-     {
-      "rank": 48,
-      "share": 0.0833,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "HI",
-      "session": "2026",
-      "identifier": "SB 2996",
-      "enactment": false
-     },
-     {
-      "rank": 49,
-      "share": 0.0833,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "IL",
-      "session": "104th",
-      "identifier": "HB 2610",
-      "enactment": false
-     },
-     {
-      "rank": 50,
-      "share": 0.0833,
-      "sections_matched": 1,
-      "sections_by_stage": {
-       "semantic": 1
-      },
-      "state": "MA",
-      "session": "194th",
-      "identifier": "HD 4236",
-      "enactment": false
-     },
-     {
-      "rank": 51,
-      "share": 0.0833,
+      "share": 0.2315,
       "sections_matched": 1,
       "sections_by_stage": {
        "semantic": 1
@@ -1717,8 +1597,8 @@
       "enactment": false
      },
      {
-      "rank": 52,
-      "share": 0.0833,
+      "rank": 42,
+      "share": 0.2315,
       "sections_matched": 1,
       "sections_by_stage": {
        "semantic": 1
@@ -1729,8 +1609,116 @@
       "enactment": true
      },
      {
-      "rank": 53,
-      "share": 0.0833,
+      "rank": 43,
+      "share": 0.1951,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "SC",
+      "session": "2023-2024",
+      "identifier": "H 4274",
+      "enactment": false
+     },
+     {
+      "rank": 44,
+      "share": 0.0944,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "DE",
+      "session": "152",
+      "identifier": "HB 168",
+      "enactment": false
+     },
+     {
+      "rank": 45,
+      "share": 0.0944,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "DE",
+      "session": "153",
+      "identifier": "HB 444",
+      "enactment": false
+     },
+     {
+      "rank": 46,
+      "share": 0.0944,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "DE",
+      "session": "153",
+      "identifier": "HB 453",
+      "enactment": false
+     },
+     {
+      "rank": 47,
+      "share": 0.0944,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "HI",
+      "session": "2026",
+      "identifier": "HB 1682",
+      "enactment": false
+     },
+     {
+      "rank": 48,
+      "share": 0.0944,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "HI",
+      "session": "2026",
+      "identifier": "HB 2354",
+      "enactment": false
+     },
+     {
+      "rank": 49,
+      "share": 0.0944,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "HI",
+      "session": "2023 Regular Session",
+      "identifier": "SB 1179",
+      "enactment": false
+     },
+     {
+      "rank": 50,
+      "share": 0.0944,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "HI",
+      "session": "2026",
+      "identifier": "SB 2996",
+      "enactment": false
+     },
+     {
+      "rank": 51,
+      "share": 0.0944,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "MA",
+      "session": "194th",
+      "identifier": "HD 4236",
+      "enactment": false
+     },
+     {
+      "rank": 52,
+      "share": 0.0944,
       "sections_matched": 1,
       "sections_by_stage": {
        "semantic": 1
@@ -1738,6 +1726,18 @@
       "state": "TN",
       "session": "113",
       "identifier": "HB 1569",
+      "enactment": false
+     },
+     {
+      "rank": 53,
+      "share": 0.0112,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "IL",
+      "session": "104th",
+      "identifier": "HB 2610",
       "enactment": false
      }
     ]
@@ -1810,7 +1810,7 @@
      },
      {
       "rank": 5,
-      "share": 0.9333,
+      "share": 0.9947,
       "sections_matched": 14,
       "sections_by_stage": {
        "near_duplicate": 14,
@@ -1823,7 +1823,7 @@
      },
      {
       "rank": 6,
-      "share": 0.9333,
+      "share": 0.9947,
       "sections_matched": 14,
       "sections_by_stage": {
        "near_duplicate": 14,
@@ -1836,33 +1836,7 @@
      },
      {
       "rank": 7,
-      "share": 0.9333,
-      "sections_matched": 14,
-      "sections_by_stage": {
-       "near_duplicate": 11,
-       "semantic": 14
-      },
-      "state": "NC",
-      "session": "2025",
-      "identifier": "HB 40",
-      "enactment": true
-     },
-     {
-      "rank": 8,
-      "share": 0.9333,
-      "sections_matched": 14,
-      "sections_by_stage": {
-       "near_duplicate": 13,
-       "semantic": 14
-      },
-      "state": "WV",
-      "session": "2025",
-      "identifier": "SB 561",
-      "enactment": true
-     },
-     {
-      "rank": 9,
-      "share": 0.9333,
+      "share": 0.9947,
       "sections_matched": 14,
       "sections_by_stage": {
        "near_duplicate": 9,
@@ -1874,21 +1848,8 @@
       "enactment": true
      },
      {
-      "rank": 10,
-      "share": 0.8667,
-      "sections_matched": 13,
-      "sections_by_stage": {
-       "near_duplicate": 11,
-       "semantic": 13
-      },
-      "state": "CO",
-      "session": "2024A",
-      "identifier": "HB 24-1232",
-      "enactment": true
-     },
-     {
-      "rank": 11,
-      "share": 0.8667,
+      "rank": 8,
+      "share": 0.9697,
       "sections_matched": 13,
       "sections_by_stage": {
        "near_duplicate": 12,
@@ -1900,8 +1861,47 @@
       "enactment": true
      },
      {
+      "rank": 9,
+      "share": 0.9565,
+      "sections_matched": 14,
+      "sections_by_stage": {
+       "near_duplicate": 11,
+       "semantic": 14
+      },
+      "state": "NC",
+      "session": "2025",
+      "identifier": "HB 40",
+      "enactment": true
+     },
+     {
+      "rank": 10,
+      "share": 0.9565,
+      "sections_matched": 14,
+      "sections_by_stage": {
+       "near_duplicate": 13,
+       "semantic": 14
+      },
+      "state": "WV",
+      "session": "2025",
+      "identifier": "SB 561",
+      "enactment": true
+     },
+     {
+      "rank": 11,
+      "share": 0.9512,
+      "sections_matched": 13,
+      "sections_by_stage": {
+       "near_duplicate": 11,
+       "semantic": 13
+      },
+      "state": "CO",
+      "session": "2024A",
+      "identifier": "HB 24-1232",
+      "enactment": true
+     },
+     {
       "rank": 12,
-      "share": 0.8667,
+      "share": 0.9512,
       "sections_matched": 13,
       "sections_by_stage": {
        "near_duplicate": 10,
@@ -1914,7 +1914,7 @@
      },
      {
       "rank": 13,
-      "share": 0.8667,
+      "share": 0.9512,
       "sections_matched": 13,
       "sections_by_stage": {
        "near_duplicate": 8,
@@ -1927,7 +1927,7 @@
      },
      {
       "rank": 14,
-      "share": 0.8667,
+      "share": 0.9512,
       "sections_matched": 13,
       "sections_by_stage": {
        "near_duplicate": 11,
@@ -1940,7 +1940,7 @@
      },
      {
       "rank": 15,
-      "share": 0.8,
+      "share": 0.9262,
       "sections_matched": 12,
       "sections_by_stage": {
        "near_duplicate": 11,
@@ -1953,7 +1953,7 @@
      },
      {
       "rank": 16,
-      "share": 0.7333,
+      "share": 0.8959,
       "sections_matched": 11,
       "sections_by_stage": {
        "near_duplicate": 10,
@@ -1966,7 +1966,7 @@
      },
      {
       "rank": 17,
-      "share": 0.7333,
+      "share": 0.8959,
       "sections_matched": 11,
       "sections_by_stage": {
        "near_duplicate": 10,
@@ -1979,7 +1979,7 @@
      },
      {
       "rank": 18,
-      "share": 0.0667,
+      "share": 0.2881,
       "sections_matched": 1,
       "sections_by_stage": {
        "near_duplicate": 1
@@ -1991,7 +1991,7 @@
      },
      {
       "rank": 19,
-      "share": 0.0667,
+      "share": 0.2881,
       "sections_matched": 1,
       "sections_by_stage": {
        "near_duplicate": 1
@@ -2003,7 +2003,7 @@
      },
      {
       "rank": 20,
-      "share": 0.0667,
+      "share": 0.2881,
       "sections_matched": 1,
       "sections_by_stage": {
        "near_duplicate": 1
@@ -2015,7 +2015,7 @@
      },
      {
       "rank": 21,
-      "share": 0.0667,
+      "share": 0.2881,
       "sections_matched": 1,
       "sections_by_stage": {
        "near_duplicate": 1
@@ -2027,7 +2027,7 @@
      },
      {
       "rank": 22,
-      "share": 0.0667,
+      "share": 0.2881,
       "sections_matched": 1,
       "sections_by_stage": {
        "near_duplicate": 1
@@ -2039,7 +2039,7 @@
      },
      {
       "rank": 23,
-      "share": 0.0667,
+      "share": 0.2881,
       "sections_matched": 1,
       "sections_by_stage": {
        "near_duplicate": 1
@@ -2051,7 +2051,7 @@
      },
      {
       "rank": 24,
-      "share": 0.0667,
+      "share": 0.2881,
       "sections_matched": 1,
       "sections_by_stage": {
        "near_duplicate": 1
@@ -2063,7 +2063,7 @@
      },
      {
       "rank": 25,
-      "share": 0.0667,
+      "share": 0.2881,
       "sections_matched": 1,
       "sections_by_stage": {
        "near_duplicate": 1
@@ -2075,7 +2075,7 @@
      },
      {
       "rank": 26,
-      "share": 0.0667,
+      "share": 0.2881,
       "sections_matched": 1,
       "sections_by_stage": {
        "semantic": 1
@@ -2087,7 +2087,7 @@
      },
      {
       "rank": 27,
-      "share": 0.0667,
+      "share": 0.2881,
       "sections_matched": 1,
       "sections_by_stage": {
        "semantic": 1
@@ -2099,7 +2099,7 @@
      },
      {
       "rank": 28,
-      "share": 0.0667,
+      "share": 0.2881,
       "sections_matched": 1,
       "sections_by_stage": {
        "semantic": 1
@@ -2111,7 +2111,7 @@
      },
      {
       "rank": 29,
-      "share": 0.0667,
+      "share": 0.2881,
       "sections_matched": 1,
       "sections_by_stage": {
        "semantic": 1
@@ -2123,7 +2123,7 @@
      },
      {
       "rank": 30,
-      "share": 0.0667,
+      "share": 0.2881,
       "sections_matched": 1,
       "sections_by_stage": {
        "semantic": 1
@@ -2232,8 +2232,8 @@
    },
    {
     "min_share": 0.5,
-    "found": 27,
-    "found_with_text": 27
+    "found": 29,
+    "found_with_text": 29
    }
   ],
   "miss_reasons": {
@@ -2282,7 +2282,7 @@
     },
     "found_by": "SB 50",
     "rank": 10,
-    "share": 0.7333,
+    "share": 0.9009,
     "miss_reason": null,
     "bills": [
      {
@@ -2300,7 +2300,7 @@
        "semantic"
       ],
       "rank": 10,
-      "share": 0.7333,
+      "share": 0.9009,
       "found": true,
       "reason": null
      }
@@ -2320,8 +2320,8 @@
      "semantic": true
     },
     "found_by": "HF 3560",
-    "rank": 12,
-    "share": 0.4,
+    "rank": 48,
+    "share": 0.3423,
     "miss_reason": null,
     "bills": [
      {
@@ -2338,8 +2338,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 12,
-      "share": 0.4,
+      "rank": 48,
+      "share": 0.3423,
       "found": true,
       "reason": null
      },
@@ -2357,8 +2357,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 12,
-      "share": 0.4,
+      "rank": 48,
+      "share": 0.3423,
       "found": true,
       "reason": null
      }
@@ -2379,7 +2379,7 @@
     },
     "found_by": "HB 181",
     "rank": 6,
-    "share": 0.8,
+    "share": 0.9367,
     "miss_reason": null,
     "bills": [
      {
@@ -2397,7 +2397,7 @@
        "semantic"
       ],
       "rank": 6,
-      "share": 0.8,
+      "share": 0.9367,
       "found": true,
       "reason": null
      }
@@ -2417,8 +2417,8 @@
      "semantic": true
     },
     "found_by": "HB 180",
-    "rank": 14,
-    "share": 0.1333,
+    "rank": 49,
+    "share": 0.082,
     "miss_reason": null,
     "bills": [
      {
@@ -2434,8 +2434,8 @@
       "stages": [
        "semantic"
       ],
-      "rank": 43,
-      "share": 0.0667,
+      "rank": 59,
+      "share": 0.0213,
       "found": true,
       "reason": null
      },
@@ -2452,8 +2452,8 @@
       "stages": [
        "semantic"
       ],
-      "rank": 39,
-      "share": 0.0667,
+      "rank": 57,
+      "share": 0.0213,
       "found": true,
       "reason": null
      },
@@ -2470,8 +2470,8 @@
       "stages": [
        "semantic"
       ],
-      "rank": 14,
-      "share": 0.1333,
+      "rank": 49,
+      "share": 0.082,
       "found": true,
       "reason": null
      },
@@ -2488,8 +2488,8 @@
       "stages": [
        "semantic"
       ],
-      "rank": 36,
-      "share": 0.0667,
+      "rank": 55,
+      "share": 0.0213,
       "found": true,
       "reason": null
      },
@@ -2506,8 +2506,8 @@
       "stages": [
        "semantic"
       ],
-      "rank": 42,
-      "share": 0.0667,
+      "rank": 58,
+      "share": 0.0213,
       "found": true,
       "reason": null
      },
@@ -2524,8 +2524,8 @@
       "stages": [
        "semantic"
       ],
-      "rank": 40,
-      "share": 0.0667,
+      "rank": 52,
+      "share": 0.0607,
       "found": true,
       "reason": null
      }
@@ -2546,7 +2546,7 @@
     },
     "found_by": "SB 2127",
     "rank": 7,
-    "share": 0.8,
+    "share": 0.9367,
     "miss_reason": null,
     "bills": [
      {
@@ -2564,7 +2564,7 @@
        "semantic"
       ],
       "rank": 7,
-      "share": 0.8,
+      "share": 0.9367,
       "found": true,
       "reason": null
      }
@@ -2584,8 +2584,8 @@
      "semantic": true
     },
     "found_by": "HB 24-1248",
-    "rank": 5,
-    "share": 0.8,
+    "rank": 3,
+    "share": 0.9632,
     "miss_reason": null,
     "bills": [
      {
@@ -2602,8 +2602,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 5,
-      "share": 0.8,
+      "rank": 3,
+      "share": 0.9632,
       "found": true,
       "reason": null
      }
@@ -2624,7 +2624,7 @@
     },
     "found_by": "SB 468",
     "rank": 11,
-    "share": 0.6,
+    "share": 0.8672,
     "miss_reason": null,
     "bills": [
      {
@@ -2642,7 +2642,7 @@
        "semantic"
       ],
       "rank": 11,
-      "share": 0.6,
+      "share": 0.8672,
       "found": true,
       "reason": null
      }
@@ -2662,8 +2662,8 @@
      "semantic": true
     },
     "found_by": "SB 5787",
-    "rank": 2,
-    "share": 0.8667,
+    "rank": 4,
+    "share": 0.945,
     "miss_reason": null,
     "bills": [
      {
@@ -2680,8 +2680,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 2,
-      "share": 0.8667,
+      "rank": 4,
+      "share": 0.945,
       "found": true,
       "reason": null
      }
@@ -2701,8 +2701,8 @@
      "semantic": true
     },
     "found_by": "SB 1930",
-    "rank": 4,
-    "share": 0.8,
+    "rank": 5,
+    "share": 0.9367,
     "miss_reason": null,
     "bills": [
      {
@@ -2719,8 +2719,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 4,
-      "share": 0.8,
+      "rank": 5,
+      "share": 0.9367,
       "found": true,
       "reason": null
      },
@@ -2738,8 +2738,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 4,
-      "share": 0.8,
+      "rank": 5,
+      "share": 0.9367,
       "found": true,
       "reason": null
      }
@@ -2760,7 +2760,7 @@
     },
     "found_by": "HB 4045",
     "rank": 10,
-    "share": 0.75,
+    "share": 0.842,
     "miss_reason": null,
     "bills": [
      {
@@ -2778,7 +2778,7 @@
        "semantic"
       ],
       "rank": 10,
-      "share": 0.75,
+      "share": 0.842,
       "found": true,
       "reason": null
      }
@@ -2798,8 +2798,8 @@
      "semantic": true
     },
     "found_by": "HB 2666",
-    "rank": 22,
-    "share": 0.4167,
+    "rank": 18,
+    "share": 0.6993,
     "miss_reason": null,
     "bills": [
      {
@@ -2816,8 +2816,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 22,
-      "share": 0.4167,
+      "rank": 18,
+      "share": 0.6993,
       "found": true,
       "reason": null
      },
@@ -2851,8 +2851,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 24,
-      "share": 0.3333,
+      "rank": 19,
+      "share": 0.6699,
       "found": true,
       "reason": null
      }
@@ -2872,8 +2872,8 @@
      "semantic": true
     },
     "found_by": "SB 137",
-    "rank": 21,
-    "share": 0.4167,
+    "rank": 30,
+    "share": 0.4972,
     "miss_reason": null,
     "bills": [
      {
@@ -2890,8 +2890,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 21,
-      "share": 0.4167,
+      "rank": 30,
+      "share": 0.4972,
       "found": true,
       "reason": null
      }
@@ -2912,7 +2912,7 @@
     },
     "found_by": "SB 80",
     "rank": 6,
-    "share": 0.8333,
+    "share": 0.9014,
     "miss_reason": null,
     "bills": [
      {
@@ -2930,7 +2930,7 @@
        "semantic"
       ],
       "rank": 6,
-      "share": 0.8333,
+      "share": 0.9014,
       "found": true,
       "reason": null
      }
@@ -2950,8 +2950,8 @@
      "semantic": true
     },
     "found_by": "S 1001",
-    "rank": 18,
-    "share": 0.5833,
+    "rank": 29,
+    "share": 0.5664,
     "miss_reason": null,
     "bills": [
      {
@@ -2968,8 +2968,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 18,
-      "share": 0.5833,
+      "rank": 29,
+      "share": 0.5664,
       "found": true,
       "reason": null
      }
@@ -2990,7 +2990,7 @@
     },
     "found_by": "SF 47",
     "rank": 5,
-    "share": 0.9167,
+    "share": 0.9056,
     "miss_reason": null,
     "bills": [
      {
@@ -3024,7 +3024,7 @@
        "semantic"
       ],
       "rank": 5,
-      "share": 0.9167,
+      "share": 0.9056,
       "found": true,
       "reason": null
      }
@@ -3045,7 +3045,7 @@
     },
     "found_by": "HB 292",
     "rank": 2,
-    "share": 0.9167,
+    "share": 0.9056,
     "miss_reason": null,
     "bills": [
      {
@@ -3063,7 +3063,7 @@
        "semantic"
       ],
       "rank": 2,
-      "share": 0.9167,
+      "share": 0.9056,
       "found": true,
       "reason": null
      }
@@ -3083,8 +3083,8 @@
      "semantic": true
     },
     "found_by": "SB 237",
-    "rank": 52,
-    "share": 0.0833,
+    "rank": 42,
+    "share": 0.2315,
     "miss_reason": null,
     "bills": [
      {
@@ -3100,8 +3100,8 @@
       "stages": [
        "semantic"
       ],
-      "rank": 52,
-      "share": 0.0833,
+      "rank": 42,
+      "share": 0.2315,
       "found": true,
       "reason": null
      }
@@ -3157,8 +3157,8 @@
      "semantic": true
     },
     "found_by": "SF 4271",
-    "rank": 27,
-    "share": 0.3333,
+    "rank": 24,
+    "share": 0.6434,
     "miss_reason": null,
     "bills": [
      {
@@ -3175,8 +3175,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 32,
-      "share": 0.25,
+      "rank": 27,
+      "share": 0.6084,
       "found": true,
       "reason": null
      },
@@ -3194,8 +3194,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 31,
-      "share": 0.25,
+      "rank": 26,
+      "share": 0.6084,
       "found": true,
       "reason": null
      },
@@ -3213,8 +3213,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 32,
-      "share": 0.25,
+      "rank": 27,
+      "share": 0.6084,
       "found": true,
       "reason": null
      },
@@ -3232,8 +3232,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 27,
-      "share": 0.3333,
+      "rank": 24,
+      "share": 0.6434,
       "found": true,
       "reason": null
      }
@@ -3305,8 +3305,8 @@
      "semantic": true
     },
     "found_by": "A 4393",
-    "rank": 17,
-    "share": 0.5833,
+    "rank": 14,
+    "share": 0.8217,
     "miss_reason": null,
     "bills": [
      {
@@ -3323,8 +3323,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 17,
-      "share": 0.5833,
+      "rank": 14,
+      "share": 0.8217,
       "found": true,
       "reason": null
      },
@@ -3342,8 +3342,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 17,
-      "share": 0.5833,
+      "rank": 14,
+      "share": 0.8217,
       "found": true,
       "reason": null
      }
@@ -3399,8 +3399,8 @@
      "semantic": true
     },
     "found_by": "SB 18",
-    "rank": 15,
-    "share": 0.6667,
+    "rank": 16,
+    "share": 0.7902,
     "miss_reason": null,
     "bills": [
      {
@@ -3417,8 +3417,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 15,
-      "share": 0.6667,
+      "rank": 16,
+      "share": 0.7902,
       "found": true,
       "reason": null
      }
@@ -3439,7 +3439,7 @@
     },
     "found_by": "HB 1502",
     "rank": 12,
-    "share": 0.8667,
+    "share": 0.9512,
     "miss_reason": null,
     "bills": [
      {
@@ -3457,7 +3457,7 @@
        "semantic"
       ],
       "rank": 12,
-      "share": 0.8667,
+      "share": 0.9512,
       "found": true,
       "reason": null
      }
@@ -3477,8 +3477,8 @@
      "semantic": true
     },
     "found_by": "A 5345",
-    "rank": 9,
-    "share": 0.9333,
+    "rank": 7,
+    "share": 0.9947,
     "miss_reason": null,
     "bills": [
      {
@@ -3495,8 +3495,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 9,
-      "share": 0.9333,
+      "rank": 7,
+      "share": 0.9947,
       "found": true,
       "reason": null
      }
@@ -3516,8 +3516,8 @@
      "semantic": true
     },
     "found_by": "HB 7265",
-    "rank": 11,
-    "share": 0.8667,
+    "rank": 8,
+    "share": 0.9697,
     "miss_reason": null,
     "bills": [
      {
@@ -3534,8 +3534,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 11,
-      "share": 0.8667,
+      "rank": 8,
+      "share": 0.9697,
       "found": true,
       "reason": null
      },
@@ -3553,8 +3553,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 11,
-      "share": 0.8667,
+      "rank": 8,
+      "share": 0.9697,
       "found": true,
       "reason": null
      }
@@ -3575,7 +3575,7 @@
     },
     "found_by": "SB 1206",
     "rank": 5,
-    "share": 0.9333,
+    "share": 0.9947,
     "miss_reason": null,
     "bills": [
      {
@@ -3593,7 +3593,7 @@
        "semantic"
       ],
       "rank": 5,
-      "share": 0.9333,
+      "share": 0.9947,
       "found": true,
       "reason": null
      }
@@ -3652,8 +3652,8 @@
      "semantic": true
     },
     "found_by": "HB 40",
-    "rank": 7,
-    "share": 0.9333,
+    "rank": 9,
+    "share": 0.9565,
     "miss_reason": null,
     "bills": [
      {
@@ -3670,8 +3670,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 7,
-      "share": 0.9333,
+      "rank": 9,
+      "share": 0.9565,
       "found": true,
       "reason": null
      }
@@ -3692,7 +3692,7 @@
     },
     "found_by": "SB 2123",
     "rank": 13,
-    "share": 0.8667,
+    "share": 0.9512,
     "miss_reason": null,
     "bills": [
      {
@@ -3710,7 +3710,7 @@
        "semantic"
       ],
       "rank": 13,
-      "share": 0.8667,
+      "share": 0.9512,
       "found": true,
       "reason": null
      }
@@ -3731,7 +3731,7 @@
     },
     "found_by": "SB 294",
     "rank": 14,
-    "share": 0.8667,
+    "share": 0.9512,
     "miss_reason": null,
     "bills": [
      {
@@ -3749,7 +3749,7 @@
        "semantic"
       ],
       "rank": 14,
-      "share": 0.8667,
+      "share": 0.9512,
       "found": true,
       "reason": null
      }
@@ -3769,8 +3769,8 @@
      "semantic": true
     },
     "found_by": "SB 561",
-    "rank": 8,
-    "share": 0.9333,
+    "rank": 10,
+    "share": 0.9565,
     "miss_reason": null,
     "bills": [
      {
@@ -3787,8 +3787,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 8,
-      "share": 0.9333,
+      "rank": 10,
+      "share": 0.9565,
       "found": true,
       "reason": null
      },
@@ -3806,8 +3806,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 8,
-      "share": 0.9333,
+      "rank": 10,
+      "share": 0.9565,
       "found": true,
       "reason": null
      },
@@ -3825,8 +3825,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 8,
-      "share": 0.9333,
+      "rank": 10,
+      "share": 0.9565,
       "found": true,
       "reason": null
      }
@@ -3846,8 +3846,8 @@
      "semantic": true
     },
     "found_by": "HB 24-1232",
-    "rank": 10,
-    "share": 0.8667,
+    "rank": 11,
+    "share": 0.9512,
     "miss_reason": null,
     "bills": [
      {
@@ -3864,8 +3864,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "rank": 10,
-      "share": 0.8667,
+      "rank": 11,
+      "share": 0.9512,
       "found": true,
       "reason": null
      }
@@ -3925,7 +3925,7 @@
     },
     "found_by": "SB 1819",
     "rank": 15,
-    "share": 0.8,
+    "share": 0.9262,
     "miss_reason": null,
     "bills": [
      {
@@ -3943,7 +3943,7 @@
        "semantic"
       ],
       "rank": 15,
-      "share": 0.8,
+      "share": 0.9262,
       "found": true,
       "reason": null
      }
