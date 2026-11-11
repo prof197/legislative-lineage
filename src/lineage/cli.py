@@ -13,10 +13,13 @@ import typer
 from numpy.typing import NDArray
 
 from lineage import __version__
-from lineage.acts import ACTS, ACTS_DIR, HELD_OUT_ACTS, HELD_OUT_DIR
+from lineage.acts import ACTS, ACTS_DIR, HELD_OUT_ACTS, HELD_OUT_DIR, ActTextError
 from lineage.align import Embedder
 from lineage.answer_key import ANSWER_KEY, HELD_OUT_KEY, build_answer_key, render_answer_key
 from lineage.commission import RESULTS, CommissionError, commission_recall, write_results
+from lineage.cost import REPORT as COST_REPORT
+from lineage.cost import cost_report
+from lineage.cost import write_report as write_cost_report
 from lineage.disk import GiB, InsufficientDiskSpaceError
 from lineage.doctypes import RULES, DocTypesError, build_eligibility, rule_samples
 from lineage.embed import embed as embed_texts
@@ -1064,6 +1067,35 @@ def eval_precision(
         )
         typer.echo(f"{who.replace('_', ' ')}: {shown}")
     typer.echo(f"-> {results}")
+
+
+@eval_app.command("cost")
+def eval_cost(
+    tables: TablesOption = Path("data/tables"),
+    acts: Annotated[
+        Path, typer.Option("--acts", help="Directory of the development act texts (local).")
+    ] = ACTS_DIR,
+    reports: Annotated[
+        Path, typer.Option("--reports", help="The committed reports the build wrote.")
+    ] = Path("reports"),
+    report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = (
+        COST_REPORT
+    ),
+    semantic: SemanticOption = True,
+) -> None:
+    """Cost and runtime per stage: the build's from its reports, each query's timed here."""
+    try:
+        require_index(tables)
+        search = _semantic_search(tables) if semantic else None
+        doc = cost_report(tables, acts, reports, search)
+    except (IndexMissingError, EmbedError, ModelError, ActTextError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    write_cost_report(doc, report)
+    for act, timed in doc["query"].items():
+        warm = ", ".join(f"{k} {v:.2f}s" for k, v in timed["warm"].items())
+        typer.echo(f"{act}: {warm} warm")
+    typer.echo(f"-> {report}")
 
 
 @eval_app.command("pair-data")

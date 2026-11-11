@@ -23,6 +23,7 @@ Sections marked **To be measured** fill in as the build reaches them. Every numb
 - [Bill scoring](#bill-scoring)
 - [Alignment](#alignment)
 - [Precision sample](#precision-sample)
+- [Cost and runtime](#cost-and-runtime)
 - [Alternatives considered](#alternatives-considered)
 - [Scaling limits](#scaling-limits)
 - [Known failure modes](#known-failure-modes)
@@ -423,6 +424,21 @@ Recall has an answer key; precision needs labels. A seeded sample of matches, dr
 
 **The estimate.** `uv run lineage eval precision` reports, from people's labels and apart from the model's, each stratum's precision with its Wilson 95% interval, and each stage's and the overall precision with the strata weighted by their sizes in the build, since the sample draws as many pairs from a small stratum as from a large one. The weighted interval adds two successes and two failures to each stratum before summing the variances by weight (Agresti and Coull), so a stratum labeled all correct still has an interval of some width. A weighted estimate is left out until every stratum it covers has a label. Where a person and the model both labeled a pair, the report counts how often they gave the same label and how often they agreed on whether the match is correct.
 
+## Cost and runtime
+
+`uv run lineage eval cost` → `reports/cost.json`. Each build stage is timed by its own command, so its numbers are read from that command's committed report, which `source` names, and not measured again. Every stage ran on the reference laptop (Apple M1 Max, 10 cores, 32 GiB). No stage makes a model call, so retrieval costs no dollars.
+
+| Build stage | Time | Peak memory | Stored |
+|---|---|---|---|
+| Near-duplicate index: signatures, bands, pairs, families | 36 min, 10 workers | 7.98 GiB | 14.96 GB |
+| Embedding every distinct window | 24.1 h, 4 workers | 7.22 GiB, summed over the processes | 5.63 GB |
+| Nearest neighbors, HNSW | 74 min | 7.88 GiB | 0.88 GB |
+| Semantic section pairs | 13 s | 3.76 GiB | 0.08 GB |
+
+The embedding's time covers the 7,195,431 texts its two logged runs embedded, not the 131,072 embedded before runs were logged (`texts_timed`). Its peak adds each process's own peak, a bound, since the peaks need not coincide. The neighbors' 74 minutes include the eight minutes the laptop slept ([Semantic stage](#semantic-stage)).
+
+**A query.** Each development act's text was queried twice in one run, the first time just after the model loaded (`query`). Warm, the near-duplicate stage took 0.15 to 1.47 s an act, the semantic stage, which embeds the act's windows and scans the 5.63 GB of vectors exactly, 2.33 to 3.66 s, and scoring 0.07 to 0.08 s. The first semantic query took 13.65 s. The vectors may have been in the page cache from earlier runs, so that first query is not a measured cold start; a cold scan reads the whole vector file from disk.
+
 ## Alternatives considered
 
 | Alternative | Reason rejected | Evidence |
@@ -533,7 +549,6 @@ Each entry names the command that produces it and the committed file it reads fr
 - Commission recall, pooled and by act (`lineage eval commission`, M3).
 - Held-out commission recall, on the second answer key, measured once (end of M5).
 - Precision for each stage alone and both together, on the labeled precision sample (M5).
-- Cost and runtime per stage (M5).
 
 ## Future work
 

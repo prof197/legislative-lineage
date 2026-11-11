@@ -17,6 +17,7 @@ alone and together. Nothing here needs a network connection or an API key. See
 DESIGN.md#near-duplicate-stage and DESIGN.md#semantic-stage.
 """
 
+import time
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
@@ -72,6 +73,9 @@ class QueryResult:
     # matchable section with a window. Their words are the share's denominator.
     searched: int = 0
     words_searched: int = 0
+    # Seconds each step took: "near_duplicate" (signing, lookup and verification), "semantic"
+    # (embedding and exact search), "scoring" (grouping by family and ranking).
+    seconds: dict[str, float] = field(default_factory=dict[str, float])
 
 
 @dataclass(frozen=True, slots=True)
@@ -237,8 +241,11 @@ def query_text(
     """Every family that shares text with `raw`, best first: verified near-duplicates, and with
     `semantic`, the semantic stage's matches too."""
     require_index(tables_dir)
+    seconds: dict[str, float] = {}
+    started = time.perf_counter()
     query = sign_query(raw, tables_dir)
     near = _near_duplicate_hits(query, tables_dir)
+    seconds["near_duplicate"] = time.perf_counter() - started
     searched: set[int] = set(query.section.tolist())
     _, matchable = matchable_sections(raw)
     words = [len(normalized.split()) for _, normalized in matchable]
@@ -246,12 +253,18 @@ def query_text(
     if semantic is not None:
         texts = [text for text, _ in matchable]
         searched |= {i for i, text in enumerate(texts) if text.split()}
+        started = time.perf_counter()
         by_meaning = [
             (h.query_section, h.bill_id, h.cosine) for h in search_sections(texts, semantic)
         ]
+        seconds["semantic"] = time.perf_counter() - started
     if not searched:
-        return QueryResult(query.sections, query.signed, [], 0)
+        return QueryResult(query.sections, query.signed, [], 0, seconds=seconds | {"scoring": 0.0})
 
+    started = time.perf_counter()
     words_searched = sum(words[q] for q in searched)
     results = group_matches(near, by_meaning, dict(enumerate(words)), words_searched, tables_dir)
-    return QueryResult(query.sections, query.signed, results, len(searched), words_searched)
+    seconds["scoring"] = time.perf_counter() - started
+    return QueryResult(
+        query.sections, query.signed, results, len(searched), words_searched, seconds
+    )

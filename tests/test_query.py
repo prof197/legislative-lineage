@@ -105,3 +105,10 @@ def test_the_command_fails_cleanly_without_an_index(tmp_path: Path) -> None:
 
     assert result.exit_code == 1
     assert "lineage index" in result.output
+
+
+def test_a_query_times_each_stage(corpus: Path) -> None:
+    result = query_text(_raw_text(corpus, "SB 238"), corpus)
+
+    assert set(result.seconds) == {"near_duplicate", "scoring"}
+    assert all(s >= 0 for s in result.seconds.values())

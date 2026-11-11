@@ -34,6 +34,7 @@ uv run lineage eval readme   # regenerate README.md's results table from reports
 uv run lineage label SAMPLE --labeler HANDLE  # label sampled matches by hand, 0 unrelated to 4 identical, blind to the stage, resumable -> evals/precision_labels.jsonl
 uv run lineage pair-data fetch  # the labeled pair dataset at its pinned commit -> data/pair_data/ (local, evaluation only, never committed)
 uv run lineage eval pair-data  # both stages scored on the pair dataset; each model's threshold set on train+val, measured on test -> reports/pair_data.json
+uv run lineage eval cost  # cost and runtime per stage: the build's from its reports, each development act's query timed by stage -> reports/cost.json
 uv run lineage label-model SAMPLE  # provisional labels from a model, kept apart from people's; asks nothing without --live
 uv run lineage eval precision  # precision per stratum, stage and overall, people's and the model's apart -> reports/results.json
 uv run lineage text inventory  # version to fetch per record, by host, robots.txt read -> data/text/plan.parquet, reports/text_inventory.json
@@ -75,6 +76,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   pairs.py        verify window candidates, store cross-state section pairs, write families
   index.py        `lineage index`: signatures, bands, pairs and families, then reports/index.json
   query.py        `lineage query`: sign a bill's text, look up its bands, verify, group by family, score by the share of its words matched
+  cost.py         `lineage eval cost`: each stage's build time, memory and size from its report, and a query's seconds by stage
   relatives.py    a corpus bill's relatives from both stages' stored pairs, scored as a query is, the 50 best kept
   acts.py         uniform act texts as eval queries: keep the sections, drop comments and notes
   ulc.py          the commission's enactment lists, and the bills each enactment names
