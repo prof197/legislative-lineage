@@ -132,6 +132,8 @@ class Item:
     pair: Pair
     query: Section
     match: Section
+    # The aligned passages (query side, match side) a relative is judged on; none for a pair.
+    passages: tuple[tuple[str, str], ...] = ()
 
 
 def load_sample(path: Path) -> list[Pair]:

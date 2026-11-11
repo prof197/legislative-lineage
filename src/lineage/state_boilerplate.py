@@ -276,6 +276,7 @@ def with_flag(
     min_families: int = MIN_FAMILIES,
     dropped_items: Sequence[Item] | None = None,
     dropped_report: Path = FLAGGED_SAMPLE_REPORT,
+    model_labeler: str | None = None,
 ) -> dict[str, Any] | None:
     """Precision with the flag on: the sample's pairs with neither side flagged, weighted by
     the strata's sizes without the flagged sections' pairs. With `dropped_items`, the sample of
@@ -318,7 +319,9 @@ def with_flag(
                 f"{dropped_report} was drawn from other dropped strata than {report_path} "
                 "counts; run `uv run lineage precision-sample --flagged`"
             )
-        dropped_estimate = estimate(dropped_items, labels, sizes_dropped)
+        dropped_estimate = estimate(
+            dropped_items, labels, sizes_dropped, model_labeler=model_labeler
+        )
     return {
         "min_families": min_families,
         "dropped_pairs": dropped_estimate,
@@ -330,7 +333,9 @@ def with_flag(
             )
             for name in STRATA
         },
-        "flag_on": estimate(kept, labels, doc["precision_strata"]["flag_on"]),
+        "flag_on": estimate(
+            kept, labels, doc["precision_strata"]["flag_on"], model_labeler=model_labeler
+        ),
     }
 
 

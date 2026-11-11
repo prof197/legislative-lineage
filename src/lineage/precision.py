@@ -184,20 +184,32 @@ def _estimate(
 
 
 def estimate(
-    items: Sequence[Item], labels: Sequence[Mapping[str, Any]], sizes: Mapping[str, int]
+    items: Sequence[Item],
+    labels: Sequence[Mapping[str, Any]],
+    sizes: Mapping[str, int],
+    *,
+    model_labeler: str | None = None,
 ) -> dict[str, Any]:
     """Precision from people's labels and, apart, from the model's provisional ones, with how
     often the two agree. `labels` are the current ones (lineage.labels.current_labels);
-    `sizes` is each stratum's pair count in the build the sample was drawn from."""
+    `sizes` is each stratum's pair count in the build the sample was drawn from. With
+    `model_labeler`, only that model labeler's labels count as the model's, so labels asked
+    under another prompt or effort are not mixed in."""
     for row in labels:
         if not str(row["labeler"]).startswith((PERSON, MODEL)):
             raise PrecisionError(f"labeler {row['labeler']!r} is neither a person nor a model")
     for item in items:
         stratum_of(item.pair.stages)
-    people, model = latest_labels(items, labels, PERSON), latest_labels(items, labels, MODEL)
+    people = latest_labels(items, labels, PERSON)
+    model = (
+        latest_labels(items, labels, MODEL)
+        if model_labeler is None
+        else latest_labels(items, labels, model_labeler, exact=True)
+    )
     both = [p for p in people if p in model]
     return {
         "correct_from": CORRECT_FROM,
+        "model_labeler": model_labeler or MODEL,
         "person": _estimate(items, people, sizes),
         "provisional_model": _estimate(items, model, sizes),
         "agreement": {

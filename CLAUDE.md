@@ -37,6 +37,9 @@ uv run lineage label SAMPLE --labeler HANDLE  # label sampled matches by hand, 0
 uv run lineage pair-data fetch  # the labeled pair dataset at its pinned commit -> data/pair_data/ (local, evaluation only, never committed)
 uv run lineage eval pair-data  # both stages scored on the pair dataset; each model's threshold set on train+val, measured on test -> reports/pair_data.json
 uv run lineage eval cost  # cost and runtime per stage: the build's from its reports, each development act's query timed by stage -> reports/cost.json
+uv run lineage relatives-sample  # 100 Georgia bills at random, one listed relative each, for the precision of what a page lists -> evals/relatives_sample.jsonl
+uv run lineage eval relatives  # that precision, from the relatives' labels -> reports/results.json
+uv run lineage label-spend --batch-id ID  # record an ended label batch's tokens and cost -> reports/label_spend.json
 uv run lineage agreement-sample  # 50 of the precision sample's pairs, stratified by stage, for a person to label -> evals/agreement_sample.jsonl
 uv run lineage eval agreement  # a person's labels against the model's on that subsample: weighted kappa, cutoff agreement -> reports/results.json
 uv run lineage label-model SAMPLE  # provisional labels from a model, kept apart from people's; asks nothing without --live
@@ -95,7 +98,8 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   align.py        word-level alignment of a section pair: copied, paraphrased and unmatched spans, with ids and offsets (pure functions)
   labels.py       `lineage label`: a person labels the precision sample's pairs, aligned; labels keyed to survive a re-split
   agreement.py    the subsample a person labels to check the model's labels, and the agreement: weighted kappa, cutoff agreement, the bars
-  model_labels.py  provisional precision labels from a model, under its id and prompt version
+  relatives_sample.py  the precision of what a page lists: random bills' listed relatives, the pair each rests on, its aligned passages
+  model_labels.py  provisional precision labels from a model, under its id and prompt version; each batch's spend against the budget
   precision.py    the precision sample's strata and seeded draw, and the estimate weighted by stratum size
   intervals.py    the Wilson interval
   stoplist.py     document-frequency stoplist and its report

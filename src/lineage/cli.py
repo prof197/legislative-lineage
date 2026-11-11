@@ -52,19 +52,26 @@ from lineage.labels import (
     section_hashes,
     session,
 )
+from lineage.labels import PERSON as PERSON_PREFIX
 from lineage.labels import model_labeler as model_labeler_name
 from lineage.memory import MemoryBoundError
+from lineage.model_labels import BUDGET as LABEL_BUDGET
 from lineage.model_labels import MAX_COST as LABEL_MAX_COST
 from lineage.model_labels import MODEL_ID as LABEL_MODEL
 from lineage.model_labels import PROMPT_VERSION as LABEL_PROMPT_VERSION
+from lineage.model_labels import PROMPTS as LABEL_PROMPTS
+from lineage.model_labels import SPEND as LABEL_SPEND
 from lineage.model_labels import anthropic_ask as anthropic_label_ask
 from lineage.model_labels import (
     anthropic_batches,
+    batch_usage,
     label_in_batch,
     label_with_model,
     model_pending,
     projected_cost,
 )
+from lineage.model_labels import record_spend as record_label_spend
+from lineage.model_labels import spent as label_spent
 from lineage.models import MODELS, MODELS_DIR, ModelError, fetch_model
 from lineage.neighbors import EF_SEARCH, RECALL_FLOOR, build_neighbors
 from lineage.neighbors import REPORT as NEIGHBORS_REPORT
@@ -77,6 +84,17 @@ from lineage.precision import SAMPLE as PRECISION_SAMPLE
 from lineage.precision import SAMPLE_REPORT as PRECISION_SAMPLE_REPORT
 from lineage.precision import PrecisionError, build_sample, estimate, load_sizes, write_sample
 from lineage.query import IndexMissingError, query_text, require_index
+from lineage.relatives_sample import LABELS as RELATIVES_LABELS
+from lineage.relatives_sample import SAMPLE as RELATIVES_SAMPLE
+from lineage.relatives_sample import SAMPLE_REPORT as RELATIVES_SAMPLE_REPORT
+from lineage.relatives_sample import (
+    RelativesSampleError,
+    build_relatives_sample,
+    load_pages,
+    with_passages,
+)
+from lineage.relatives_sample import estimate as relatives_estimate
+from lineage.relatives_sample import write_sample as write_relatives_sample
 from lineage.results_table import EXPORTED_ONLY, README, ResultsTableError, rendered_readme
 from lineage.sectioning import SectioningError, build_sections
 from lineage.semantic import MODEL as SEMANTIC_MODEL
@@ -731,6 +749,29 @@ def agreement_sample(
     typer.echo(f"{len(drawn)} pairs drawn: {counts} -> {sample}, {report}")
 
 
+@app.command("relatives-sample")
+def relatives_sample(
+    tables: TablesOption = Path("data/tables"),
+    sample: Annotated[
+        Path, typer.Option("--sample", help="The sample file, one relative per line (committed).")
+    ] = RELATIVES_SAMPLE,
+    report: Annotated[
+        Path, typer.Option("--report", help="The draw's report JSON (committed).")
+    ] = RELATIVES_SAMPLE_REPORT,
+) -> None:
+    """Draw listed relatives of random bills of one state, to measure what a page lists."""
+    try:
+        rows, doc = build_relatives_sample(tables)
+    except (RelativesSampleError, SemanticPairsError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    write_relatives_sample(rows, doc, sample_path=sample, report_path=report)
+    typer.echo(
+        f"{len(rows)} relatives drawn from {doc['state_bills_with_a_relative']:,} "
+        f"{doc['state']} bills with a relative -> {sample}, {report}"
+    )
+
+
 @app.command("label-model")
 def label_model(
     sample: Annotated[
@@ -744,36 +785,65 @@ def label_model(
         Path, typer.Option("--labels", help="Labels file, appended to (committed).")
     ] = LABELS_PATH,
     model: Annotated[str, typer.Option("--model", help="The model asked.")] = LABEL_MODEL,
+    prompt_version: Annotated[
+        str,
+        typer.Option("--prompt", help=f"The prompt and effort asked: {', '.join(LABEL_PROMPTS)}."),
+    ] = LABEL_PROMPT_VERSION,
     live: Annotated[
         bool, typer.Option("--live", help="Ask the model; without it nothing is sent.")
     ] = False,
     max_cost: Annotated[
         float, typer.Option("--max-cost", help="Dollars the run may be projected to cost.")
     ] = LABEL_MAX_COST,
+    budget: Annotated[
+        float,
+        typer.Option("--budget", help="Dollars every batch may cost, spent and projected."),
+    ] = LABEL_BUDGET,
+    spend: Annotated[
+        Path, typer.Option("--spend", help="The batches' spend ledger (committed).")
+    ] = LABEL_SPEND,
     batch: Annotated[
         bool, typer.Option("--batch", help="Ask through the Batches API, at half price.")
     ] = False,
     batch_id: Annotated[
         str | None, typer.Option("--batch-id", help="Collect a batch already sent.")
     ] = None,
+    models_dir: Annotated[
+        Path, typer.Option("--models", help="Directory of model files (local), for alignment.")
+    ] = MODELS_DIR,
 ) -> None:
     """Provisional labels from a model, kept apart from people's; asks only with --live."""
+    if prompt_version not in LABEL_PROMPTS:
+        typer.echo(
+            f"error: no prompt {prompt_version!r}; one of {', '.join(LABEL_PROMPTS)}", err=True
+        )
+        raise typer.Exit(1)
+    prompt = LABEL_PROMPTS[prompt_version]
     try:
         items, kept = _current_items(sample, tables, labels)
     except LabelError as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
-    todo = model_pending(items, kept)
+    todo = model_pending(items, kept, prompt)
+    if prompt.passages:
+        try:
+            todo = with_passages(todo, _model_embedder(models_dir))
+        except ModelError as e:
+            typer.echo(f"error: {e}", err=True)
+            raise typer.Exit(1) from e
     noun = "pair" if len(todo) == 1 else "pairs"
+    batched = batch or batch_id is not None
     try:
-        cost = projected_cost(todo, model=model, batch=batch or batch_id is not None)
+        cost = projected_cost(todo, model=model, batch=batched, prompt=prompt)
     except ValueError as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
     projected = f"projected at most ${cost:,.2f}"
+    already = label_spent(spend)
     if not live:
         typer.echo(
-            f"{len(todo)} {noun} would be asked of {model}, {projected}; run with --live to ask."
+            f"{len(todo)} {noun} would be asked of {model} under {prompt.version}, {projected}; "
+            f"${already:,.2f} of the ${budget:,.2f} budget spent; run with --live to ask."
         )
         return
     if cost > max_cost:
@@ -782,25 +852,66 @@ def label_model(
             err=True,
         )
         raise typer.Exit(1)
+    if batch_id is None and already + cost > budget:
+        typer.echo(
+            f"error: {len(todo)} {noun} {projected}, with ${already:,.2f} spent, over the "
+            f"${budget:,.2f} budget; nothing asked",
+            err=True,
+        )
+        raise typer.Exit(1)
     labels.parent.mkdir(parents=True, exist_ok=True)
     today = datetime.date.today().isoformat()
-    if batch or batch_id is not None:
+    if batched:
+        batches = anthropic_batches()
         done, unusable, sent = label_in_batch(
             todo,
-            batches=anthropic_batches(),
+            batches=batches,
             model=model,
             labels_path=labels,
             today=today,
             wait=lambda: time.sleep(60),
             batch_id=batch_id,
             submitted=lambda b: typer.echo(f"sent as batch {b}; collect with --batch-id {b}"),
+            prompt=prompt,
         )
+        ledger = record_label_spend(
+            spend, batch_id=sent, model=model, prompt=prompt.version,
+            usage=batch_usage(batches, sent), today=today,
+        )  # fmt: skip
         typer.echo(f"{done} labeled from batch {sent}, {unusable} unusable replies -> {labels}")
+        typer.echo(f"${ledger['spent']:,.2f} of the ${budget:,.2f} budget spent -> {spend}")
         return
     done, unusable = label_with_model(
-        todo, ask=anthropic_label_ask(model), labels_path=labels, today=today
-    )
+        todo, ask=anthropic_label_ask(model, prompt), labels_path=labels, today=today,
+        prompt=prompt,
+    )  # fmt: skip
     typer.echo(f"{done} labeled by {model}, {unusable} unusable replies -> {labels}")
+
+
+@app.command("label-spend")
+def label_spend(
+    batch_id: Annotated[str, typer.Option("--batch-id", help="An ended batch to record.")],
+    prompt_version: Annotated[
+        str, typer.Option("--prompt", help="The prompt the batch was asked under.")
+    ] = LABEL_PROMPT_VERSION,
+    model: Annotated[str, typer.Option("--model", help="The model asked.")] = LABEL_MODEL,
+    spend: Annotated[
+        Path, typer.Option("--spend", help="The batches' spend ledger (committed).")
+    ] = LABEL_SPEND,
+) -> None:
+    """Record what an ended batch cost, from its results' token counts; labels nothing."""
+    batches = anthropic_batches()
+    usage = batch_usage(batches, batch_id)
+    ledger = record_label_spend(
+        spend, batch_id=batch_id, model=model, prompt=prompt_version, usage=usage,
+        today=datetime.date.today().isoformat(),
+    )  # fmt: skip
+    replies, input_tokens, output_tokens = usage
+    typer.echo(
+        f"batch {batch_id}: {replies} replies, {input_tokens:,} input and {output_tokens:,} "
+        f"output tokens; ${ledger['spent']:,.2f} of the ${ledger['budget']:,.2f} budget spent "
+        f"-> {spend}"
+    )
 
 
 @app.command()
@@ -1169,6 +1280,50 @@ def eval_agreement(
     typer.echo(f"-> {results}")
 
 
+@eval_app.command("relatives")
+def eval_relatives(
+    sample: Annotated[
+        Path,
+        typer.Argument(help="The relatives sample, one per line.", exists=True, dir_okay=False),
+    ] = RELATIVES_SAMPLE,
+    tables: TablesOption = Path("data/tables"),
+    labels: Annotated[
+        Path, typer.Option("--labels", help="Labels file (committed).")
+    ] = RELATIVES_LABELS,
+    model_labeler: Annotated[
+        str, typer.Option("--model-labeler", help="The model labeler counted, model id@prompt.")
+    ] = model_labeler_name(LABEL_MODEL, "relatives-v1"),
+    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+) -> None:
+    """The precision of what a page lists, from the sampled relatives' labels."""
+    try:
+        items, kept = _current_items(sample, tables, labels)
+        pages = load_pages(sample)
+    except LabelError as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    section: dict[str, Any] = {
+        "command": "uv run lineage eval relatives",
+        "person": relatives_estimate(items, kept, pages, labeler=PERSON_PREFIX),
+        "provisional_model": relatives_estimate(
+            items, kept, pages, labeler=model_labeler, exact=True
+        ),
+    }
+    write_results(results, "relatives_precision", section)
+    for who in ("person", "provisional_model"):
+        overall = section[who]["overall"]
+        shown = (
+            "no labels"
+            if overall["precision"] is None
+            else (
+                f"{overall['correct']}/{overall['labeled']} = {overall['precision']:.3f} "
+                f"(95% {overall['interval_95'][0]:.3f}-{overall['interval_95'][1]:.3f})"
+            )
+        )
+        typer.echo(f"{who.replace('_', ' ')}: {shown}")
+    typer.echo(f"-> {results}")
+
+
 @eval_app.command("precision")
 def eval_precision(
     sample: Annotated[
@@ -1193,6 +1348,9 @@ def eval_precision(
     flagged_report: Annotated[
         Path, typer.Option("--flagged-report", help="That sample's draw report.")
     ] = FLAGGED_SAMPLE_REPORT,
+    model_labeler: Annotated[
+        str, typer.Option("--model-labeler", help="The model labeler counted, model id@prompt.")
+    ] = model_labeler_name(LABEL_MODEL, LABEL_PROMPT_VERSION),
     results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
 ) -> None:
     """Precision per stratum, stage and overall, from people's labels and, apart, a model's,
@@ -1200,7 +1358,7 @@ def eval_precision(
     try:
         items, kept = _current_items(sample, tables, labels)
         sizes = load_sizes(strata)
-        measured = estimate(items, kept, sizes)
+        measured = estimate(items, kept, sizes, model_labeler=model_labeler)
         dropped = (
             read_items(tables, load_sample(flagged))
             if flagged.exists() and has_counts(tables)
@@ -1214,6 +1372,7 @@ def eval_precision(
             report_path=flag_report,
             dropped_items=dropped,
             dropped_report=flagged_report,
+            model_labeler=model_labeler,
         )
     except (LabelError, PrecisionError, StateBoilerplateError) as e:
         typer.echo(f"error: {e}", err=True)
