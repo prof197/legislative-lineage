@@ -3990,6 +3990,167 @@
    }
   ]
  },
+ "label_agreement": {
+  "command": "uv run lineage eval agreement",
+  "model:claude-opus-5-5@v1": {
+   "model_labeler": "model:claude-opus-5-5@v1",
+   "pairs_in_subsample": 50,
+   "pairs_labeled_by_both": 50,
+   "weights": "linear",
+   "weighted_kappa": 0.4144,
+   "same_label": 23,
+   "same_side_of_cutoff": 38,
+   "cutoff_agreement": 0.76,
+   "cutoff_agreement_interval_95": [
+    0.6259,
+    0.857
+   ],
+   "mean_model_minus_person": -0.62,
+   "confusion_person_by_model": [
+    [
+     0,
+     3,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     5,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     3,
+     8,
+     0,
+     0
+    ],
+    [
+     0,
+     7,
+     7,
+     5,
+     1
+    ],
+    [
+     0,
+     2,
+     1,
+     3,
+     5
+    ]
+   ],
+   "strata": {
+    "near_duplicate_only": {
+     "pairs": 17,
+     "same_label": 5,
+     "same_side_of_cutoff": 11,
+     "person_correct": 17,
+     "model_correct": 11
+    },
+    "semantic_only": {
+     "pairs": 17,
+     "same_label": 10,
+     "same_side_of_cutoff": 14,
+     "person_correct": 9,
+     "model_correct": 6
+    },
+    "both": {
+     "pairs": 16,
+     "same_label": 8,
+     "same_side_of_cutoff": 13,
+     "person_correct": 16,
+     "model_correct": 13
+    }
+   },
+   "kappa_from": 0.6,
+   "cutoff_agreement_from": 0.85,
+   "complete": true,
+   "passes": false
+  },
+  "model:claude-opus-5-5@v1-high": {
+   "model_labeler": "model:claude-opus-5-5@v1-high",
+   "pairs_in_subsample": 50,
+   "pairs_labeled_by_both": 50,
+   "weights": "linear",
+   "weighted_kappa": 0.4973,
+   "same_label": 22,
+   "same_side_of_cutoff": 47,
+   "cutoff_agreement": 0.94,
+   "cutoff_agreement_interval_95": [
+    0.8378,
+    0.9794
+   ],
+   "mean_model_minus_person": -0.44,
+   "confusion_person_by_model": [
+    [
+     0,
+     3,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     5,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     3,
+     8,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     14,
+     5,
+     1
+    ],
+    [
+     0,
+     0,
+     2,
+     5,
+     4
+    ]
+   ],
+   "strata": {
+    "near_duplicate_only": {
+     "pairs": 17,
+     "same_label": 5,
+     "same_side_of_cutoff": 17,
+     "person_correct": 17,
+     "model_correct": 17
+    },
+    "semantic_only": {
+     "pairs": 17,
+     "same_label": 10,
+     "same_side_of_cutoff": 14,
+     "person_correct": 9,
+     "model_correct": 6
+    },
+    "both": {
+     "pairs": 16,
+     "same_label": 7,
+     "same_side_of_cutoff": 16,
+     "person_correct": 16,
+     "model_correct": 16
+    }
+   },
+   "kappa_from": 0.6,
+   "cutoff_agreement_from": 0.85,
+   "complete": true,
+   "passes": false
+  }
+ },
  "precision": {
   "command": "uv run lineage eval precision",
   "correct_from": 2,
