@@ -15,9 +15,10 @@ or malformed reply is counted and left for the next run. Nothing is asked withou
 """
 
 import json
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Callable, Iterable, Mapping, Sequence
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, Protocol, cast
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
@@ -25,7 +26,10 @@ from lineage.labels import MODEL, Item, model_labeler, scale_lines
 
 MODEL_ID = "claude-opus-5-5"
 PROMPT_VERSION = "v1"
-_MAX_TOKENS = 4000
+# A 0-4 label needs little thought: at low effort, 1,024 tokens holds the thinking and the reply,
+# and keeps the run inside its cost cap. A reply cut off at the limit is unusable, not guessed.
+MAX_TOKENS = 1024
+EFFORT = "low"
 # Standard prices in dollars per million tokens, input and output, from the platform's model
 # list as of November 2026; the Batches API charges half. A model not listed is not projected.
 PRICES: dict[str, tuple[float, float]] = {
@@ -73,7 +77,7 @@ def projected_cost(
     items: Sequence[Item],
     *,
     model: str = MODEL_ID,
-    max_tokens: int = _MAX_TOKENS,
+    max_tokens: int = MAX_TOKENS,
     batch: bool = False,
 ) -> float:
     """An upper estimate, in dollars, of asking every pair: each prompt's tokens from its
@@ -136,11 +140,11 @@ def anthropic_ask(model: str = MODEL_ID) -> Ask:
         try:
             response = client.beta.messages.parse(
                 model=model,
-                max_tokens=_MAX_TOKENS,
+                max_tokens=MAX_TOKENS,
                 system=system,
                 messages=[{"role": "user", "content": user}],
                 output_format=ModelLabel,
-                output_config={"effort": "medium"},
+                output_config={"effort": EFFORT},
                 betas=[_FALLBACK_BETA],
                 fallbacks="default",
             )
@@ -151,3 +155,112 @@ def anthropic_ask(model: str = MODEL_ID) -> Ask:
         return response.parsed_output.label, response.model
 
     return ask
+
+
+@dataclass(frozen=True, slots=True)
+class BatchReply:
+    custom_id: str  # the pair's id
+    label: int | None  # None when the reply is unusable
+    served_by: str | None
+    why: str | None = None  # why it is unusable
+
+
+class Batches(Protocol):
+    """The Batches API as the labeling needs it: half price, results within a day."""
+
+    def submit(self, requests: list[tuple[str, dict[str, Any]]]) -> str: ...
+    def ended(self, batch_id: str) -> bool: ...
+    def results(self, batch_id: str) -> Iterable[BatchReply]: ...
+
+
+def request_params(item: Item, model: str) -> dict[str, Any]:
+    """One pair's request: the scale, the two texts, and a reply that must fit ModelLabel."""
+    return {
+        "model": model,
+        "max_tokens": MAX_TOKENS,
+        "system": SYSTEM,
+        "messages": [{"role": "user", "content": user_message(item)}],
+        "output_config": {
+            "effort": EFFORT,
+            "format": {"type": "json_schema", "schema": ModelLabel.model_json_schema()},
+        },
+    }
+
+
+def label_in_batch(
+    items: Sequence[Item],
+    *,
+    batches: Batches,
+    model: str,
+    labels_path: Path,
+    today: str,
+    wait: Callable[[], None],
+    batch_id: str | None = None,
+    submitted: Callable[[str], None] = lambda _: None,
+) -> tuple[int, int, str]:
+    """Send every pair in one batch, or collect `batch_id` if it was sent already; wait until it
+    ends, then append each usable label. Returns how many were labeled, how many replies were
+    unusable, and the batch id. A batch is not resumed part way: its results are read whole."""
+    if batch_id is None:
+        batch_id = batches.submit([(i.pair.pair, request_params(i, model)) for i in items])
+        submitted(batch_id)
+    while not batches.ended(batch_id):
+        wait()
+    by_id = {i.pair.pair: i for i in items}
+    labeled = unusable = 0
+    with labels_path.open("a") as f:
+        for reply in batches.results(batch_id):
+            item = by_id.get(reply.custom_id)
+            if item is None:
+                raise UnusableReplyError(f"batch {batch_id} answered {reply.custom_id}, not asked")
+            if reply.label is None or reply.served_by is None:
+                unusable += 1
+                continue
+            row = {
+                "query": item.query.ref.as_dict(),
+                "match": item.match.ref.as_dict(),
+                "label": reply.label,
+                "labeler": model_labeler(reply.served_by, PROMPT_VERSION),
+                "at": today,
+            }
+            f.write(json.dumps(row) + "\n")
+            labeled += 1
+    return labeled, unusable, batch_id
+
+
+def anthropic_batches() -> Batches:
+    """The Batches API through the Anthropic SDK; the key comes from the environment. Batches
+    take no server-side fallback, so a declined pair is unusable, counted and left."""
+    import anthropic
+
+    client = anthropic.Anthropic()
+
+    class _Batches:
+        def submit(self, requests: list[tuple[str, dict[str, Any]]]) -> str:
+            batch = client.messages.batches.create(
+                requests=cast(Any, [{"custom_id": c, "params": p} for c, p in requests])
+            )
+            return batch.id
+
+        def ended(self, batch_id: str) -> bool:
+            return client.messages.batches.retrieve(batch_id).processing_status == "ended"
+
+        def results(self, batch_id: str) -> Iterable[BatchReply]:
+            for entry in client.messages.batches.results(batch_id):
+                result = entry.result
+                if result.type != "succeeded":
+                    yield BatchReply(entry.custom_id, None, None, result.type)
+                    continue
+                message = result.message
+                if message.stop_reason != "end_turn":
+                    yield BatchReply(entry.custom_id, None, None, f"stop {message.stop_reason}")
+                    continue
+                text = next((b.text for b in message.content if b.type == "text"), "")
+                try:
+                    label = ModelLabel.model_validate_json(text).label
+                except ValidationError:
+                    yield BatchReply(entry.custom_id, None, None, "not the schema")
+                    continue
+                yield BatchReply(entry.custom_id, label, message.model)
+
+    return _Batches()

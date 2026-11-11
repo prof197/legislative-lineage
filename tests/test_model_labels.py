@@ -11,11 +11,14 @@ from lineage.cli import app
 from lineage.labels import Item, Pair, Section, SectionKey, SectionRef, pending, text_sha256
 from lineage.model_labels import (
     CHARS_PER_TOKEN,
+    MAX_TOKENS,
     PRICES,
     PROMPT_VERSION,
     SYSTEM,
+    BatchReply,
     ModelLabel,
     UnusableReplyError,
+    label_in_batch,
     label_with_model,
     model_pending,
     projected_cost,
@@ -164,3 +167,77 @@ def test_live_over_the_cost_cap_asks_nothing(
     assert result.exit_code == 1
     assert "over the" in result.output
     assert not labels.exists()
+
+
+class _FakeBatches:
+    """A stand-in for the Batches API: records what was sent, ends after two polls."""
+
+    def __init__(self, replies: dict[str, tuple[int | None, str | None]]) -> None:
+        self.replies = replies
+        self.sent: list[tuple[str, dict[str, object]]] = []
+        self.polls = 0
+
+    def submit(self, requests: list[tuple[str, dict[str, object]]]) -> str:
+        self.sent = requests
+        return "batch-1"
+
+    def ended(self, batch_id: str) -> bool:
+        assert batch_id == "batch-1"
+        self.polls += 1
+        return self.polls >= 2
+
+    def results(self, batch_id: str) -> list[BatchReply]:
+        return [
+            BatchReply(custom_id, label, served_by, None if label is not None else "errored")
+            for custom_id, (label, served_by) in self.replies.items()
+        ]
+
+
+def test_a_batch_sends_each_pair_once_and_appends_what_comes_back(tmp_path: Path) -> None:
+    items = [_item(i) for i in range(3)]
+    batches = _FakeBatches(
+        {"p0": (3, "claude-opus-5-5"), "p1": (None, None), "p2": (0, "claude-opus-5-5")}
+    )
+    labels = tmp_path / "labels.jsonl"
+
+    labeled, unusable, batch_id = label_in_batch(
+        items, batches=batches, model="claude-opus-5-5", labels_path=labels, today="2099-01-02",
+        wait=lambda: None,
+    )  # fmt: skip
+
+    assert (labeled, unusable, batch_id) == (2, 1, "batch-1")
+    assert [custom_id for custom_id, _ in batches.sent] == ["p0", "p1", "p2"]
+    for (_, params), item in zip(batches.sent, items, strict=True):
+        assert params["system"] == SYSTEM
+        assert params["messages"] == [{"role": "user", "content": user_message(item)}]
+        assert params["max_tokens"] == MAX_TOKENS
+        config = params["output_config"]
+        assert isinstance(config, dict)
+        assert config["effort"] == "low"
+        assert config["format"] == {"type": "json_schema", "schema": ModelLabel.model_json_schema()}
+    rows = [json.loads(line) for line in labels.read_text().splitlines()]
+    assert [r["label"] for r in rows] == [3, 0]
+    assert all(r["labeler"] == f"model:claude-opus-5-5@{PROMPT_VERSION}" for r in rows)
+
+
+def test_collecting_a_submitted_batch_sends_nothing(tmp_path: Path) -> None:
+    items = [_item(0)]
+    batches = _FakeBatches({"p0": (2, "claude-opus-5-5")})
+
+    labeled, _, _ = label_in_batch(
+        items, batches=batches, model="claude-opus-5-5", labels_path=tmp_path / "l.jsonl",
+        today="2099-01-02", wait=lambda: None, batch_id="batch-1",
+    )  # fmt: skip
+
+    assert labeled == 1
+    assert batches.sent == []
+
+
+def test_a_reply_for_a_pair_not_asked_is_refused(tmp_path: Path) -> None:
+    batches = _FakeBatches({"p9": (2, "claude-opus-5-5")})
+
+    with pytest.raises(UnusableReplyError, match="p9"):
+        label_in_batch(
+            [_item(0)], batches=batches, model="claude-opus-5-5",
+            labels_path=tmp_path / "l.jsonl", today="2099-01-02", wait=lambda: None,
+        )  # fmt: skip
