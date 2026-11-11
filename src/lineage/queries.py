@@ -4,6 +4,7 @@ pyright cannot see inside SQL strings, so each query here is exercised against c
 fixtures in the tests. See DESIGN.md#dr-4.
 """
 
+import re
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -1282,6 +1283,18 @@ def matchable_section_normalized(
         f"SELECT s.bill_id, s.ordinal, s.normalized {_MATCHABLE} "
         "AND s.bill_id IN (SELECT unnest($ids)) ORDER BY s.bill_id, s.ordinal",
         {"sections": sections_glob, "eligible": str(eligible_path), "ids": ids},
+    ).fetchall()
+    return rows
+
+
+def sections_naming(
+    con: duckdb.DuckDBPyConnection, *, sections_glob: str, phrases: list[str]
+) -> list[tuple[str, int]]:
+    """(bill id, ordinal) of every section whose normalized text holds one of `phrases`."""
+    rows: list[tuple[str, int]] = con.execute(
+        "SELECT bill_id, ordinal FROM read_parquet($sections) "
+        "WHERE regexp_matches(normalized, $pattern) ORDER BY bill_id, ordinal",
+        {"sections": sections_glob, "pattern": "|".join(re.escape(p) for p in phrases)},
     ).fetchall()
     return rows
 

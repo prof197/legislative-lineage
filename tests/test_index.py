@@ -9,7 +9,12 @@ from lineage.bands import SWEEP_CAPS, load_band_index
 from lineage.disk import InsufficientDiskSpaceError
 from lineage.index import build_index
 from lineage.lsh import BANDS, BUCKET_CAP, build_band_index
-from lineage.pairs import load_cross_state_pairs, load_families, section_pairs
+from lineage.pairs import (
+    load_cross_state_pairs,
+    load_families,
+    load_same_state_pairs,
+    section_pairs,
+)
 from lineage.signatures import load_signatures
 
 COPIED = "a person who knowingly sells a catalytic converter without a receipt commits a felony"
@@ -138,6 +143,15 @@ def test_verifies_candidates_and_stores_the_cross_state_pairs(tables: Path, tmp_
     stored = load_cross_state_pairs(tables)
     assert list(zip(stored.left.tolist(), stored.right.tolist(), strict=True)) == [(0, 1), (1, 2)]
     assert stored.agreements.tolist() == [128, 128]
+
+
+def test_stores_the_same_state_pairs_apart(tables: Path, tmp_path: Path) -> None:
+    build_index(tables, workers=1, floor_bytes=0, report_path=tmp_path / "index.json")
+
+    # b1 and b3, rows 0 and 2, are Alabama's two copies.
+    same = load_same_state_pairs(tables)
+    assert list(zip(same.left.tolist(), same.right.tolist(), strict=True)) == [(0, 2)]
+    assert same.agreements.tolist() == [128]
 
 
 def test_groups_same_state_copies_into_one_family(tables: Path, tmp_path: Path) -> None:

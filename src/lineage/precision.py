@@ -21,7 +21,7 @@ DESIGN.md#precision-sample.
 
 import json
 import math
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Callable, Collection, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -93,7 +93,7 @@ def draw(
 
 
 def sample_rows(
-    drawn: Sequence[tuple[str, int]], section: Callable[[int], SectionKey]
+    drawn: Sequence[tuple[str, int]], section: Callable[[int], SectionKey], *, prefix: str = "p"
 ) -> list[dict[str, Any]]:
     """The sample file's rows (lineage.labels.load_sample), each section named by bill id and
     ordinal through `section`, which maps a section number to where it sits in the build."""
@@ -102,7 +102,8 @@ def sample_rows(
         query, match = section(key >> 32), section(key & 0xFFFFFFFF)
         rows.append(
             {
-                "pair": f"p{n:04d}",  # numbered in labeling order, so it tells nothing of the stage
+                # Numbered in labeling order, so the id tells nothing of the stage.
+                "pair": f"{prefix}{n:04d}",
                 "stages": list(STRATA[name]),
                 "query": {"bill_id": query.bill_id, "ordinal": query.ordinal},
                 "match": {"bill_id": match.bill_id, "ordinal": match.ordinal},
@@ -218,6 +219,29 @@ def load_sizes(path: Path = SAMPLE_REPORT) -> dict[str, int]:
         raise PrecisionError(f"{path}: no size for every stratum ({e})") from e
 
 
+def stored_strata(
+    tables_dir: Path, *, model: str = MODEL_NAME, dropped: NDArray[np.bool_] | None = None
+) -> dict[str, PairKeys]:
+    """Both stages' stored cross-state pairs by stratum; with `dropped`, a mask over section
+    numbers, without the pairs either side of which it drops."""
+    near = load_cross_state_pairs(tables_dir)
+    meaning = load_semantic_pairs(tables_dir, model)
+
+    def keys(left: NDArray[np.uint32], right: NDArray[np.uint32]) -> PairKeys:
+        left, right = np.asarray(left), np.asarray(right)
+        if dropped is not None:
+            kept = ~(dropped[left] | dropped[right])
+            left, right = left[kept], right[kept]
+        return pair_keys(left, right)
+
+    return strata(keys(near.left, near.right), keys(meaning.left, meaning.right))
+
+
+def without_sections(items: Sequence[Item], dropped: Collection[SectionKey]) -> list[Item]:
+    """The sample's pairs neither side of which is among `dropped`."""
+    return [i for i in items if i.pair.query not in dropped and i.pair.match not in dropped]
+
+
 def build_sample(
     tables_dir: Path,
     *,
@@ -227,12 +251,7 @@ def build_sample(
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """The sample's rows, drawn from both stages' stored cross-state pairs, and the draw's
     report: the seed and each stratum's size in the build, which the estimate weights by."""
-    near = load_cross_state_pairs(tables_dir)
-    meaning = load_semantic_pairs(tables_dir, model)
-    population = strata(
-        pair_keys(np.asarray(near.left), np.asarray(near.right)),
-        pair_keys(np.asarray(meaning.left), np.asarray(meaning.right)),
-    )
+    population = stored_strata(tables_dir, model=model)
     drawn = draw(population, per_stratum=per_stratum, seed=seed)
     bills, ordinals = section_keys(tables_dir)
     rows = sample_rows(drawn, lambda s: SectionKey(bills[s], int(ordinals[s])))

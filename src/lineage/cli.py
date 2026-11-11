@@ -79,6 +79,18 @@ from lineage.sessions import (
     write_sessions,
 )
 from lineage.snapshot import SnapshotError, load_manifest, scan, write_manifest
+from lineage.state_boilerplate import (
+    FLAGGED_SAMPLE,
+    FLAGGED_SAMPLE_REPORT,
+    MIN_FAMILIES,
+    StateBoilerplateError,
+    build_flagged_sample,
+    build_state_boilerplate,
+    has_counts,
+    with_flag,
+)
+from lineage.state_boilerplate import REPORT as STATE_BOILERPLATE_REPORT
+from lineage.state_boilerplate import write_report as write_state_boilerplate_report
 from lineage.stats import write_coverage
 from lineage.stoplist import StoplistError, build_stoplist, file_sha256
 from lineage.text_inventory import PLAN, REPORT, StalePlanError, build_inventory
@@ -457,6 +469,36 @@ def semantic_pairs_command(
     )
 
 
+@app.command("state-boilerplate")
+def state_boilerplate_command(
+    tables: TablesOption = Path("data/tables"),
+    min_free_gib: MinFreeOption = 20.0,
+    report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = (
+        STATE_BOILERPLATE_REPORT
+    ),
+) -> None:
+    """Count the families of its own state each section's near-duplicates reach ->
+    <tables>/state_boilerplate/; flagged at MIN_FAMILIES or more."""
+    try:
+        doc = build_state_boilerplate(tables, floor_bytes=int(min_free_gib * GiB))
+    except (
+        StateBoilerplateError,
+        SemanticPairsError,
+        FileNotFoundError,
+        InsufficientDiskSpaceError,
+        MemoryBoundError,
+    ) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    write_state_boilerplate_report(doc, report)
+    at = next(r for r in doc["sweep"] if r["min_families"] == MIN_FAMILIES)
+    typer.echo(
+        f"{at['sections']:,} sections flagged at {MIN_FAMILIES} families or more, of "
+        f"{doc['sections']:,}; peak {doc['peak_memory_bytes'] / GiB:.2f} GiB; "
+        f"{doc['seconds']}s -> {report}"
+    )
+
+
 @app.command()
 def index(
     tables: TablesOption = Path("data/tables"),
@@ -468,7 +510,7 @@ def index(
         "reports/index.json"
     ),
 ) -> None:
-    """Build the search index: signatures, LSH bands, verified cross-state pairs, families."""
+    """Build the search index: signatures, LSH bands, verified pairs, families."""
     started = time.monotonic()
     try:
         doc = build_index(
@@ -624,13 +666,23 @@ def precision_sample(
         Path, typer.Option("--sample", help="The sample file, one pair per line (committed).")
     ] = PRECISION_SAMPLE,
     report: Annotated[
-        Path, typer.Option("--report", help="The draw's report JSON (committed).")
-    ] = PRECISION_SAMPLE_REPORT,
+        Path | None, typer.Option("--report", help="The draw's report JSON (committed).")
+    ] = None,
+    flagged: Annotated[
+        bool,
+        typer.Option(
+            "--flagged", help="Draw from the pairs the state boilerplate flag drops instead."
+        ),
+    ] = False,
 ) -> None:
     """Draw the precision sample from both stages' cross-state pairs, stratified by stage."""
+    if flagged:
+        sample = FLAGGED_SAMPLE if sample == PRECISION_SAMPLE else sample
+        report = report or FLAGGED_SAMPLE_REPORT
+    report = report or PRECISION_SAMPLE_REPORT
     try:
-        rows, doc = build_sample(tables)
-    except (PrecisionError, SemanticPairsError) as e:
+        rows, doc = build_flagged_sample(tables) if flagged else build_sample(tables)
+    except (PrecisionError, SemanticPairsError, StateBoilerplateError) as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
     write_sample(rows, doc, sample_path=sample, report_path=report)
@@ -1044,13 +1096,38 @@ def eval_precision(
     strata: Annotated[
         Path, typer.Option("--strata", help="The draw's report, with each stratum's size.")
     ] = PRECISION_SAMPLE_REPORT,
+    flag_report: Annotated[
+        Path, typer.Option("--flag-report", help="The state boilerplate flag's report.")
+    ] = STATE_BOILERPLATE_REPORT,
+    flagged: Annotated[
+        Path, typer.Option("--flagged", help="The sample of the pairs the flag drops.")
+    ] = FLAGGED_SAMPLE,
+    flagged_report: Annotated[
+        Path, typer.Option("--flagged-report", help="That sample's draw report.")
+    ] = FLAGGED_SAMPLE_REPORT,
     results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
 ) -> None:
-    """Precision per stratum, stage and overall, from people's labels and, apart, a model's."""
+    """Precision per stratum, stage and overall, from people's labels and, apart, a model's,
+    with the state boilerplate flag off and on."""
     try:
         items, kept = _current_items(sample, tables, labels)
-        measured = estimate(items, kept, load_sizes(strata))
-    except (LabelError, PrecisionError) as e:
+        sizes = load_sizes(strata)
+        measured = estimate(items, kept, sizes)
+        dropped = (
+            read_items(tables, load_sample(flagged))
+            if flagged.exists() and has_counts(tables)
+            else None
+        )
+        measured["state_boilerplate_flag"] = with_flag(
+            tables,
+            items,
+            kept,
+            sizes,
+            report_path=flag_report,
+            dropped_items=dropped,
+            dropped_report=flagged_report,
+        )
+    except (LabelError, PrecisionError, StateBoilerplateError) as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
     section: dict[str, Any] = {"command": "uv run lineage eval precision", **measured}
@@ -1066,6 +1143,13 @@ def eval_precision(
             )
         )
         typer.echo(f"{who.replace('_', ' ')}: {shown}")
+        flag = section["state_boilerplate_flag"]
+        if flag is not None and flag["flag_on"][who]["overall"] is not None:
+            on = flag["flag_on"][who]["overall"]
+            typer.echo(
+                f"  with the state boilerplate flag: {on['precision']:.3f} "
+                f"(95% {on['interval_95'][0]:.3f}-{on['interval_95'][1]:.3f})"
+            )
     typer.echo(f"-> {results}")
 
 

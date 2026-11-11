@@ -14,7 +14,13 @@ ROOT = Path(__file__).parents[1]
 def test_every_build_stage_is_read_from_its_committed_report() -> None:
     stages = build_costs(ROOT / "reports")
 
-    assert list(stages) == ["near_duplicate_index", "embedding", "neighbors", "semantic_pairs"]
+    assert list(stages) == [
+        "near_duplicate_index",
+        "embedding",
+        "neighbors",
+        "semantic_pairs",
+        "state_boilerplate",
+    ]
     index = json.loads((ROOT / "reports" / "index.json").read_text())
     assert stages["near_duplicate_index"]["seconds"] == index["build"]["seconds"]
     for stage in stages.values():

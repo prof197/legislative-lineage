@@ -32,6 +32,7 @@ def build_costs(reports: Path) -> dict[str, dict[str, Any]]:
     embedding = _read(reports, "embedding.json")
     neighbors = _read(reports, "neighbors.json")
     pairs = _read(reports, "semantic_pairs.json")
+    flag = _read(reports, "state_boilerplate.json")
     workers = max(p for p, _ in embedding["processes_threads"])
     peaks = embedding["peak_memory_bytes"]
     return {
@@ -72,6 +73,14 @@ def build_costs(reports: Path) -> dict[str, dict[str, Any]]:
             "workers": None,
             "peak_memory_bytes": pairs["peak_memory_bytes"],
             "stored_bytes": pairs["bytes"],
+            "dollars": 0,
+        },
+        "state_boilerplate": {
+            "source": "reports/state_boilerplate.json (seconds, peak_memory_bytes, bytes)",
+            "seconds": flag["seconds"],
+            "workers": None,
+            "peak_memory_bytes": flag["peak_memory_bytes"],
+            "stored_bytes": flag["bytes"],
             "dollars": 0,
         },
     }

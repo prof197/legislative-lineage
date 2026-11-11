@@ -20,11 +20,13 @@ uv run lineage eligible      # document-type rules -> data/tables/eligible.parqu
 uv run lineage boilerplate   # shingle stoplist -> data/tables/stoplist.parquet, reports/boilerplate.json
 uv run lineage stats         # coverage, sections, types, status per state/session -> reports/coverage.json
 uv run lineage stats --samples  # also: sample titles per document-type rule -> data/reports/ (local; names private people, never committed)
-uv run lineage index         # signatures, LSH bands, verified pairs, families -> data/tables/{signatures,bands,pairs,families}/, reports/index.json
+uv run lineage index         # signatures, LSH bands, verified pairs, families -> data/tables/{signatures,bands,pairs,same_state_pairs,families}/, reports/index.json
 uv run lineage embed         # every distinct 94-word window embedded once, float16, resumable -> data/tables/semantic/, reports/embedding.json
 uv run lineage neighbors     # each distinct window's 20 nearest by meaning, HNSW over float16, recall checked exactly -> data/tables/semantic/<model>/neighbors/, reports/neighbors.json
 uv run lineage semantic-pairs  # the neighbors as cross-state section pairs, best cosine and window pair each -> data/tables/semantic/<model>/pairs/, reports/semantic_pairs.json
 uv run lineage precision-sample  # the precision sample, stratified by stage, from both stages' pairs -> evals/precision_sample.jsonl, reports/precision_sample.json
+uv run lineage precision-sample --flagged  # a seeded sample of the pairs the state boilerplate flag drops -> evals/precision_sample_flagged.jsonl, reports/precision_sample_flagged.json
+uv run lineage state-boilerplate  # each section's count of other same-state families its near-duplicates reach; flagged at 50 -> data/tables/state_boilerplate/, reports/state_boilerplate.json
 uv run lineage query FILE     # a bill's relatives by both stages, offline, from the built index and vectors (--no-semantic: near-duplicates only)
 uv run lineage eval commission  # commission recall, act texts from data/acts/ -> reports/results.json (--results reports/results_exported_only.json after an --exported-only merge); with the stage ablation unless --no-semantic
 uv run lineage eval answer-key  # each commission list row and the bills it resolved to -> reports/answer_key.csv
@@ -73,7 +75,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   bands.py        build the band index from the signatures; cap counter and cap sweep
   verify.py       re-estimate candidates from full signatures; the verification threshold
   families.py     same-state families: bill match shares, connected components (pure functions)
-  pairs.py        verify window candidates, store cross-state section pairs, write families
+  pairs.py        verify window candidates, store cross-state and same-state section pairs, write families
   index.py        `lineage index`: signatures, bands, pairs and families, then reports/index.json
   query.py        `lineage query`: sign a bill's text, look up its bands, verify, group by family, score by the share of its words matched
   cost.py         `lineage eval cost`: each stage's build time, memory and size from its report, and a query's seconds by stage
@@ -94,6 +96,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   precision.py    the precision sample's strata and seeded draw, and the estimate weighted by stratum size
   intervals.py    the Wilson interval
   stoplist.py     document-frequency stoplist and its report
+  state_boilerplate.py  `lineage state-boilerplate`: a section flagged as its state's boilerplate by the other families it reaches; precision with the flag on, and the dropped pairs' sample
   stats.py        coverage report: the measurements that replace the design's estimates
   versions.py     which bill version the text layer fetches (pure functions)
   robots.py       robots.txt rules for this project's User-Agent; temporary refusals asked again
@@ -141,7 +144,7 @@ data/             local snapshots and derived tables; gitignored, never committe
   raw/<ST>/*.zip  Open States session archives, never edited
   acts/<act>.txt  uniform act texts, downloaded from the ULC under its terms; never committed
   acts/held-out/<act>.txt  the held-out acts' texts, read only by the parser check and the final run
-  tables/         Parquet tables written by the pipeline; bills/ holds the source's records under the project's names, texts/ each record's chosen text; signatures/, bands/ and pairs/ hold .npy arrays
+  tables/         Parquet tables written by the pipeline; bills/ holds the source's records under the project's names, texts/ each record's chosen text; signatures/, bands/, pairs/ and same_state_pairs/ hold .npy arrays
   text/           the text layer's fetch plan and fetched text (JSON lines per host)
   tables/semantic/  the semantic stage's windows (units/), distinct texts (texts/), and each model's float16 vector shards
   pair_data/      the labeled pair dataset's split files, from `lineage pair-data fetch`; never committed

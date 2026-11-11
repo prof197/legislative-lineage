@@ -1,0 +1,204 @@
+{
+ "command": "uv run lineage state-boilerplate",
+ "min_families": 50,
+ "sections": 2873256,
+ "sections_reaching_another_family": 1421447,
+ "histogram": [
+  {
+   "families": "0",
+   "sections": 1451809
+  },
+  {
+   "families": "1",
+   "sections": 486265
+  },
+  {
+   "families": "2",
+   "sections": 244615
+  },
+  {
+   "families": "3",
+   "sections": 137754
+  },
+  {
+   "families": "4",
+   "sections": 96516
+  },
+  {
+   "families": "5-9",
+   "sections": 204283
+  },
+  {
+   "families": "10-19",
+   "sections": 98255
+  },
+  {
+   "families": "20-49",
+   "sections": 57420
+  },
+  {
+   "families": "50-99",
+   "sections": 21499
+  },
+  {
+   "families": "100-199",
+   "sections": 18666
+  },
+  {
+   "families": "200-499",
+   "sections": 27319
+  },
+  {
+   "families": "500-999",
+   "sections": 15325
+  },
+  {
+   "families": "1000+",
+   "sections": 13530
+  }
+ ],
+ "quantiles_of_sections_reaching_another_family": {
+  "0.5": 2,
+  "0.9": 22,
+  "0.99": 910,
+  "0.999": 2000
+ },
+ "sweep": [
+  {
+   "min_families": 3,
+   "sections": 690567,
+   "cross_state_pairs_dropped": {
+    "near_duplicate": 2005262,
+    "semantic": 2410075
+   }
+  },
+  {
+   "min_families": 5,
+   "sections": 456297,
+   "cross_state_pairs_dropped": {
+    "near_duplicate": 1860410,
+    "semantic": 1899078
+   }
+  },
+  {
+   "min_families": 10,
+   "sections": 252014,
+   "cross_state_pairs_dropped": {
+    "near_duplicate": 1438842,
+    "semantic": 1199035
+   }
+  },
+  {
+   "min_families": 20,
+   "sections": 153759,
+   "cross_state_pairs_dropped": {
+    "near_duplicate": 227755,
+    "semantic": 437730
+   }
+  },
+  {
+   "min_families": 50,
+   "sections": 96339,
+   "cross_state_pairs_dropped": {
+    "near_duplicate": 37130,
+    "semantic": 161779
+   }
+  },
+  {
+   "min_families": 100,
+   "sections": 74840,
+   "cross_state_pairs_dropped": {
+    "near_duplicate": 18768,
+    "semantic": 87943
+   }
+  },
+  {
+   "min_families": 200,
+   "sections": 56174,
+   "cross_state_pairs_dropped": {
+    "near_duplicate": 13303,
+    "semantic": 65885
+   }
+  }
+ ],
+ "compact_sections": {
+  "phrases": [
+   "licensure compact",
+   "interstate compact"
+  ],
+  "sections": 6542,
+  "quantiles": {
+   "0.5": 1,
+   "0.9": 15,
+   "0.99": 97
+  },
+  "flagged": {
+   "3": 2649,
+   "5": 1991,
+   "10": 1242,
+   "20": 371,
+   "50": 98,
+   "100": 65,
+   "200": 34
+  }
+ },
+ "precision_strata": {
+  "flag_off": {
+   "near_duplicate_only": 1392446,
+   "semantic_only": 2855089,
+   "both": 1048762
+  },
+  "flag_on": {
+   "near_duplicate_only": 1368498,
+   "semantic_only": 2706492,
+   "both": 1035580
+  }
+ },
+ "flagged_by_state": [
+  {
+   "state": "HI",
+   "sections": 14245
+  },
+  {
+   "state": "MD",
+   "sections": 7579
+  },
+  {
+   "state": "TX",
+   "sections": 7244
+  },
+  {
+   "state": "MS",
+   "sections": 7019
+  },
+  {
+   "state": "NY",
+   "sections": 5659
+  },
+  {
+   "state": "OR",
+   "sections": 5654
+  },
+  {
+   "state": "CA",
+   "sections": 3580
+  },
+  {
+   "state": "PA",
+   "sections": 3530
+  },
+  {
+   "state": "AR",
+   "sections": 3236
+  },
+  {
+   "state": "IL",
+   "sections": 3121
+  }
+ ],
+ "states_with_a_flagged_section": 45,
+ "bytes": 22986048,
+ "seconds": 53,
+ "peak_memory_bytes": 6522421632,
+ "memory_bound_bytes": 17179869184
+}
