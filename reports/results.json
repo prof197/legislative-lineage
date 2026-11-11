@@ -3989,5 +3989,326 @@
     ]
    }
   ]
+ },
+ "precision": {
+  "command": "uv run lineage eval precision",
+  "correct_from": 2,
+  "person": {
+   "strata": {
+    "near_duplicate_only": {
+     "size": 1392446,
+     "sampled": 100,
+     "labeled": 0,
+     "correct": 0,
+     "precision": null,
+     "interval_95": [
+      0.0,
+      1.0
+     ]
+    },
+    "semantic_only": {
+     "size": 2855089,
+     "sampled": 100,
+     "labeled": 0,
+     "correct": 0,
+     "precision": null,
+     "interval_95": [
+      0.0,
+      1.0
+     ]
+    },
+    "both": {
+     "size": 1048762,
+     "sampled": 100,
+     "labeled": 0,
+     "correct": 0,
+     "precision": null,
+     "interval_95": [
+      0.0,
+      1.0
+     ]
+    }
+   },
+   "stages": {
+    "near_duplicate": null,
+    "semantic": null
+   },
+   "overall": null
+  },
+  "provisional_model": {
+   "strata": {
+    "near_duplicate_only": {
+     "size": 1392446,
+     "sampled": 100,
+     "labeled": 100,
+     "correct": 51,
+     "precision": 0.51,
+     "interval_95": [
+      0.4135,
+      0.6058
+     ]
+    },
+    "semantic_only": {
+     "size": 2855089,
+     "sampled": 100,
+     "labeled": 100,
+     "correct": 42,
+     "precision": 0.42,
+     "interval_95": [
+      0.328,
+      0.5179
+     ]
+    },
+    "both": {
+     "size": 1048762,
+     "sampled": 100,
+     "labeled": 100,
+     "correct": 74,
+     "precision": 0.74,
+     "interval_95": [
+      0.6463,
+      0.816
+     ]
+    }
+   },
+   "stages": {
+    "near_duplicate": {
+     "precision": 0.6088,
+     "interval_95": [
+      0.5388,
+      0.6707
+     ]
+    },
+    "semantic": {
+     "precision": 0.506,
+     "interval_95": [
+      0.4326,
+      0.5789
+     ]
+    }
+   },
+   "overall": {
+    "precision": 0.507,
+    "interval_95": [
+     0.4472,
+     0.5663
+    ]
+   }
+  },
+  "agreement": {
+   "pairs": 0,
+   "same_label": 0,
+   "same_correctness": 0
+  },
+  "state_boilerplate_flag": {
+   "min_families": 50,
+   "dropped_pairs": {
+    "correct_from": 2,
+    "person": {
+     "strata": {
+      "near_duplicate_only": {
+       "size": 23948,
+       "sampled": 34,
+       "labeled": 0,
+       "correct": 0,
+       "precision": null,
+       "interval_95": [
+        0.0,
+        1.0
+       ]
+      },
+      "semantic_only": {
+       "size": 148597,
+       "sampled": 34,
+       "labeled": 0,
+       "correct": 0,
+       "precision": null,
+       "interval_95": [
+        0.0,
+        1.0
+       ]
+      },
+      "both": {
+       "size": 13182,
+       "sampled": 34,
+       "labeled": 0,
+       "correct": 0,
+       "precision": null,
+       "interval_95": [
+        0.0,
+        1.0
+       ]
+      }
+     },
+     "stages": {
+      "near_duplicate": null,
+      "semantic": null
+     },
+     "overall": null
+    },
+    "provisional_model": {
+     "strata": {
+      "near_duplicate_only": {
+       "size": 23948,
+       "sampled": 34,
+       "labeled": 0,
+       "correct": 0,
+       "precision": null,
+       "interval_95": [
+        0.0,
+        1.0
+       ]
+      },
+      "semantic_only": {
+       "size": 148597,
+       "sampled": 34,
+       "labeled": 0,
+       "correct": 0,
+       "precision": null,
+       "interval_95": [
+        0.0,
+        1.0
+       ]
+      },
+      "both": {
+       "size": 13182,
+       "sampled": 34,
+       "labeled": 0,
+       "correct": 0,
+       "precision": null,
+       "interval_95": [
+        0.0,
+        1.0
+       ]
+      }
+     },
+     "stages": {
+      "near_duplicate": null,
+      "semantic": null
+     },
+     "overall": null
+    },
+    "agreement": {
+     "pairs": 0,
+     "same_label": 0,
+     "same_correctness": 0
+    }
+   },
+   "sample_pairs_dropped": {
+    "near_duplicate_only": 1,
+    "semantic_only": 7,
+    "both": 2
+   },
+   "flag_on": {
+    "correct_from": 2,
+    "person": {
+     "strata": {
+      "near_duplicate_only": {
+       "size": 1368498,
+       "sampled": 99,
+       "labeled": 0,
+       "correct": 0,
+       "precision": null,
+       "interval_95": [
+        0.0,
+        1.0
+       ]
+      },
+      "semantic_only": {
+       "size": 2706492,
+       "sampled": 93,
+       "labeled": 0,
+       "correct": 0,
+       "precision": null,
+       "interval_95": [
+        0.0,
+        1.0
+       ]
+      },
+      "both": {
+       "size": 1035580,
+       "sampled": 98,
+       "labeled": 0,
+       "correct": 0,
+       "precision": null,
+       "interval_95": [
+        0.0,
+        1.0
+       ]
+      }
+     },
+     "stages": {
+      "near_duplicate": null,
+      "semantic": null
+     },
+     "overall": null
+    },
+    "provisional_model": {
+     "strata": {
+      "near_duplicate_only": {
+       "size": 1368498,
+       "sampled": 99,
+       "labeled": 99,
+       "correct": 50,
+       "precision": 0.5051,
+       "interval_95": [
+        0.4082,
+        0.6015
+       ]
+      },
+      "semantic_only": {
+       "size": 2706492,
+       "sampled": 93,
+       "labeled": 93,
+       "correct": 40,
+       "precision": 0.4301,
+       "interval_95": [
+        0.3342,
+        0.5315
+       ]
+      },
+      "both": {
+       "size": 1035580,
+       "sampled": 98,
+       "labeled": 98,
+       "correct": 73,
+       "precision": 0.7449,
+       "interval_95": [
+        0.6505,
+        0.8208
+       ]
+      }
+     },
+     "stages": {
+      "near_duplicate": {
+       "precision": 0.6084,
+       "interval_95": [
+        0.538,
+        0.6705
+       ]
+      },
+      "semantic": {
+       "precision": 0.5172,
+       "interval_95": [
+        0.4415,
+        0.5919
+       ]
+      }
+     },
+     "overall": {
+      "precision": 0.514,
+      "interval_95": [
+       0.4527,
+       0.5744
+      ]
+     }
+    },
+    "agreement": {
+     "pairs": 0,
+     "same_label": 0,
+     "same_correctness": 0
+    }
+   }
+  }
  }
 }
