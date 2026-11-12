@@ -1,7 +1,7 @@
 {
  "command": "uv run lineage label-model --batch",
  "budget": 30.0,
- "spent": 18.0665,
+ "spent": 20.1868,
  "batches": [
   {
    "batch_id": "msgbatch_01XHTJn1BppCTng9r9m7Hq9w",
@@ -41,6 +41,16 @@
    "input_tokens": 529020,
    "output_tokens": 7561,
    "dollars": 1.1337,
+   "at": "2026-11-12"
+  },
+  {
+   "batch_id": "msgbatch_0188P2w8f4YfDYmgPA15nnnF",
+   "model": "claude-opus-5-5",
+   "prompt": "passages-v1-high",
+   "replies": 100,
+   "input_tokens": 1018082,
+   "output_tokens": 8411,
+   "dollars": 2.1203,
    "at": "2026-11-12"
   }
  ]
