@@ -33,7 +33,7 @@ uv run lineage eval commission  # commission recall, act texts from data/acts/ -
 uv run lineage eval threshold  # each semantic threshold option's page precision on the tuning sample of relatives, beside development recall -> reports/threshold_proposal.json
 uv run lineage eval answer-key  # each commission list row and the bills it resolved to -> reports/answer_key.csv
 uv run lineage eval answer-key --held-out  # the held-out lists resolved, development-set bills skipped -> reports/answer_key_heldout.csv
-uv run lineage eval commission --held-out --final  # held-out recall: run once, at the end of M5, never before
+uv run lineage eval commission --held-out --final  # held-out recall: run once, at the end of M5 (2026-11-12); never again
 uv run lineage eval readme   # regenerate README.md's results table from reports/results.json and results_exported_only.json
 uv run lineage label SAMPLE --labeler HANDLE  # label sampled matches by hand, 0 unrelated to 4 identical, blind to the stage, resumable -> evals/precision_labels.jsonl
 uv run lineage label-page SAMPLE --labeler HANDLE  # the same labeling as a phone page: pending pairs, aligned, blind -> data/label_page/ (local), published as a private artifact

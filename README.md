@@ -57,6 +57,22 @@ Misses by both stages, at the step where the near-duplicate stage lost them: nev
 
 The near-duplicate stage finds an enactment only where a state kept the act's wording closely enough, section by section. The semantic stage adds enactments that put the act in other words. The results file lists every enactment's bills, with each bill's signed sections, the stages that found it, its best similarity to the act by each, and the step that lost it. The commission lists no failed bills, so this measures recall only. The precision of what each stage finds is not yet measured ([DESIGN.md](DESIGN.md#stage-ablation)).
 
+<!-- results:held-out -->
+Held-out recall: the same measure on four uniform acts never examined while matching was tuned, run once, at the end of M5, with the semantic stage's threshold at 0.93 and with the state boilerplate flag. The lists were read 2026-11-07. Reproduce with `uv run lineage eval commission --held-out --final` → `reports/results.json`, `commission_held_out`.
+
+| | Both stages | Near-duplicate stage | Semantic stage |
+|---|---|---|---|
+| Pooled, four acts | 17 / 19 (89.5%) | 15 / 19 (78.9%) | 17 / 19 (89.5%) |
+| Assignment for Benefit of Creditors | 5 / 6 (83.3%) | 5 / 6 (83.3%) | 5 / 6 (83.3%) |
+| Directed Trust | 4 / 4 (100.0%) | 3 / 4 (75.0%) | 4 / 4 (100.0%) |
+| Easement Relocation | 4 / 5 (80.0%) | 4 / 5 (80.0%) | 4 / 5 (80.0%) |
+| Mortgage Modification | 4 / 4 (100.0%) | 3 / 4 (75.0%) | 4 / 4 (100.0%) |
+| Enacted | 17 / 18 (94.4%) | 15 / 18 (83.3%) | 17 / 18 (94.4%) |
+| Substantially similar | 0 / 1 (0.0%) | 0 / 1 (0.0%) | 0 / 1 (0.0%) |
+
+Misses by both stages, at the step where the near-duplicate stage lost them: never proposed 2.
+<!-- /results:held-out -->
+
 ## Finding a bill's relatives
 
 Build the tables and the index once, embed the corpus once, then query with any bill's text saved as a plain-text file:

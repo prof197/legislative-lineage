@@ -3719,6 +3719,2568 @@
    }
   ]
  },
+ "commission_held_out": {
+  "command": "uv run lineage eval commission",
+  "enactments_file": {
+   "path": "../legislative-lineage-m5/evals/ulc_enactments_heldout.csv",
+   "read": "ULC Bill List, read 2026-11-07",
+   "sha256": "b59275c14843bc7e51f122b56141e8c598f70acdfca86cdd585ebd7929712a99"
+  },
+  "stages": [
+   "near_duplicate",
+   "semantic"
+  ],
+  "stage_ablation": {
+   "near_duplicate": {
+    "pooled": {
+     "all": {
+      "enactments": 19,
+      "found": 15,
+      "recall": 0.7895
+     },
+     "with_text": {
+      "enactments": 19,
+      "found": 15,
+      "recall": 0.7895
+     }
+    },
+    "by_act": {
+     "assignment-for-benefit-of-creditors": {
+      "all": {
+       "enactments": 6,
+       "found": 5,
+       "recall": 0.8333
+      },
+      "with_text": {
+       "enactments": 6,
+       "found": 5,
+       "recall": 0.8333
+      }
+     },
+     "directed-trust": {
+      "all": {
+       "enactments": 4,
+       "found": 3,
+       "recall": 0.75
+      },
+      "with_text": {
+       "enactments": 4,
+       "found": 3,
+       "recall": 0.75
+      }
+     },
+     "easement-relocation": {
+      "all": {
+       "enactments": 5,
+       "found": 4,
+       "recall": 0.8
+      },
+      "with_text": {
+       "enactments": 5,
+       "found": 4,
+       "recall": 0.8
+      }
+     },
+     "mortgage-modification": {
+      "all": {
+       "enactments": 4,
+       "found": 3,
+       "recall": 0.75
+      },
+      "with_text": {
+       "enactments": 4,
+       "found": 3,
+       "recall": 0.75
+      }
+     }
+    },
+    "by_stratum": {
+     "enacted": {
+      "all": {
+       "enactments": 18,
+       "found": 15,
+       "recall": 0.8333
+      },
+      "with_text": {
+       "enactments": 18,
+       "found": 15,
+       "recall": 0.8333
+      }
+     },
+     "substantially_similar": {
+      "all": {
+       "enactments": 1,
+       "found": 0,
+       "recall": 0.0
+      },
+      "with_text": {
+       "enactments": 1,
+       "found": 0,
+       "recall": 0.0
+      }
+     }
+    }
+   },
+   "semantic": {
+    "pooled": {
+     "all": {
+      "enactments": 19,
+      "found": 17,
+      "recall": 0.8947
+     },
+     "with_text": {
+      "enactments": 19,
+      "found": 17,
+      "recall": 0.8947
+     }
+    },
+    "by_act": {
+     "assignment-for-benefit-of-creditors": {
+      "all": {
+       "enactments": 6,
+       "found": 5,
+       "recall": 0.8333
+      },
+      "with_text": {
+       "enactments": 6,
+       "found": 5,
+       "recall": 0.8333
+      }
+     },
+     "directed-trust": {
+      "all": {
+       "enactments": 4,
+       "found": 4,
+       "recall": 1.0
+      },
+      "with_text": {
+       "enactments": 4,
+       "found": 4,
+       "recall": 1.0
+      }
+     },
+     "easement-relocation": {
+      "all": {
+       "enactments": 5,
+       "found": 4,
+       "recall": 0.8
+      },
+      "with_text": {
+       "enactments": 5,
+       "found": 4,
+       "recall": 0.8
+      }
+     },
+     "mortgage-modification": {
+      "all": {
+       "enactments": 4,
+       "found": 4,
+       "recall": 1.0
+      },
+      "with_text": {
+       "enactments": 4,
+       "found": 4,
+       "recall": 1.0
+      }
+     }
+    },
+    "by_stratum": {
+     "enacted": {
+      "all": {
+       "enactments": 18,
+       "found": 17,
+       "recall": 0.9444
+      },
+      "with_text": {
+       "enactments": 18,
+       "found": 17,
+       "recall": 0.9444
+      }
+     },
+     "substantially_similar": {
+      "all": {
+       "enactments": 1,
+       "found": 0,
+       "recall": 0.0
+      },
+      "with_text": {
+       "enactments": 1,
+       "found": 0,
+       "recall": 0.0
+      }
+     }
+    }
+   },
+   "both": {
+    "pooled": {
+     "all": {
+      "enactments": 19,
+      "found": 17,
+      "recall": 0.8947
+     },
+     "with_text": {
+      "enactments": 19,
+      "found": 17,
+      "recall": 0.8947
+     }
+    },
+    "by_act": {
+     "assignment-for-benefit-of-creditors": {
+      "all": {
+       "enactments": 6,
+       "found": 5,
+       "recall": 0.8333
+      },
+      "with_text": {
+       "enactments": 6,
+       "found": 5,
+       "recall": 0.8333
+      }
+     },
+     "directed-trust": {
+      "all": {
+       "enactments": 4,
+       "found": 4,
+       "recall": 1.0
+      },
+      "with_text": {
+       "enactments": 4,
+       "found": 4,
+       "recall": 1.0
+      }
+     },
+     "easement-relocation": {
+      "all": {
+       "enactments": 5,
+       "found": 4,
+       "recall": 0.8
+      },
+      "with_text": {
+       "enactments": 5,
+       "found": 4,
+       "recall": 0.8
+      }
+     },
+     "mortgage-modification": {
+      "all": {
+       "enactments": 4,
+       "found": 4,
+       "recall": 1.0
+      },
+      "with_text": {
+       "enactments": 4,
+       "found": 4,
+       "recall": 1.0
+      }
+     }
+    },
+    "by_stratum": {
+     "enacted": {
+      "all": {
+       "enactments": 18,
+       "found": 17,
+       "recall": 0.9444
+      },
+      "with_text": {
+       "enactments": 18,
+       "found": 17,
+       "recall": 0.9444
+      }
+     },
+     "substantially_similar": {
+      "all": {
+       "enactments": 1,
+       "found": 0,
+       "recall": 0.0
+      },
+      "with_text": {
+       "enactments": 1,
+       "found": 0,
+       "recall": 0.0
+      }
+     }
+    }
+   }
+  },
+  "threshold": {
+   "score": "share of the query's words in the sections the family matches",
+   "min_share": 0.0,
+   "found_when": "score above min_share",
+   "status": "approved"
+  },
+  "verification_threshold": 0.5,
+  "semantic_threshold": 0.93,
+  "state_boilerplate_flag": {
+   "sections": 96339,
+   "both_stages_exempt": true
+  },
+  "bucket_cap": 2000,
+  "first_year": 2023,
+  "queries": {
+   "assignment-for-benefit-of-creditors": {
+    "file_sha256": "f3328f73bc617df3b2614dab5615adae8fda7e63a359b22007da1f5dc676125b",
+    "query_sha256": "a10a825ebfe853a4273f6baab37ddbec95ce92b9913553a7f880822be35e8f31",
+    "words_in_file": 7764,
+    "words_kept": 7215,
+    "sections": 27,
+    "signed": 24,
+    "searched": 24,
+    "families": 51,
+    "families_by_stage": {
+     "near_duplicate": 44,
+     "semantic": 18
+    },
+    "relatives": [
+     {
+      "rank": 1,
+      "share": 0.991,
+      "sections_matched": 23,
+      "sections_by_stage": {
+       "near_duplicate": 23,
+       "semantic": 23
+      },
+      "state": "AL",
+      "session": "2026rs",
+      "identifier": "SB 15",
+      "enactment": true
+     },
+     {
+      "rank": 2,
+      "share": 0.991,
+      "sections_matched": 23,
+      "sections_by_stage": {
+       "near_duplicate": 21,
+       "semantic": 23
+      },
+      "state": "NE",
+      "session": "109",
+      "identifier": "LB 783",
+      "enactment": true
+     },
+     {
+      "rank": 3,
+      "share": 0.9887,
+      "sections_matched": 22,
+      "sections_by_stage": {
+       "near_duplicate": 21,
+       "semantic": 22
+      },
+      "state": "AZ",
+      "session": "57th-2nd-regular",
+      "identifier": "SB 1252",
+      "enactment": true
+     },
+     {
+      "rank": 4,
+      "share": 0.9887,
+      "sections_matched": 22,
+      "sections_by_stage": {
+       "near_duplicate": 22,
+       "semantic": 22
+      },
+      "state": "CO",
+      "session": "2026A",
+      "identifier": "SB 79",
+      "enactment": false
+     },
+     {
+      "rank": 5,
+      "share": 0.9887,
+      "sections_matched": 22,
+      "sections_by_stage": {
+       "near_duplicate": 17,
+       "semantic": 22
+      },
+      "state": "IA",
+      "session": "2025-2026",
+      "identifier": "SF 2213",
+      "enactment": false
+     },
+     {
+      "rank": 6,
+      "share": 0.9887,
+      "sections_matched": 22,
+      "sections_by_stage": {
+       "near_duplicate": 21,
+       "semantic": 22
+      },
+      "state": "OK",
+      "session": "2026",
+      "identifier": "HB 3588",
+      "enactment": false
+     },
+     {
+      "rank": 7,
+      "share": 0.9887,
+      "sections_matched": 22,
+      "sections_by_stage": {
+       "near_duplicate": 21,
+       "semantic": 22
+      },
+      "state": "WV",
+      "session": "2026",
+      "identifier": "SB 949",
+      "enactment": false
+     },
+     {
+      "rank": 8,
+      "share": 0.9887,
+      "sections_matched": 22,
+      "sections_by_stage": {
+       "near_duplicate": 19,
+       "semantic": 22
+      },
+      "state": "UT",
+      "session": "2026",
+      "identifier": "HB 382",
+      "enactment": true
+     },
+     {
+      "rank": 9,
+      "share": 0.947,
+      "sections_matched": 20,
+      "sections_by_stage": {
+       "near_duplicate": 20,
+       "semantic": 19
+      },
+      "state": "DE",
+      "session": "153",
+      "identifier": "SB 267",
+      "enactment": true
+     },
+     {
+      "rank": 10,
+      "share": 0.1518,
+      "sections_matched": 2,
+      "sections_by_stage": {
+       "near_duplicate": 2
+      },
+      "state": "MA",
+      "session": "194th",
+      "identifier": "HD 3436",
+      "enactment": false
+     },
+     {
+      "rank": 11,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "NE",
+      "session": "109",
+      "identifier": "LB 231",
+      "enactment": false
+     },
+     {
+      "rank": 12,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "NH",
+      "session": "2026",
+      "identifier": "HB 1502",
+      "enactment": false
+     },
+     {
+      "rank": 13,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "RI",
+      "session": "2026",
+      "identifier": "HB 7265",
+      "enactment": false
+     },
+     {
+      "rank": 14,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "WV",
+      "session": "2025",
+      "identifier": "HB 2745",
+      "enactment": false
+     },
+     {
+      "rank": 15,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "ND",
+      "session": "69",
+      "identifier": "SB 2123",
+      "enactment": false
+     },
+     {
+      "rank": 16,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1,
+       "semantic": 1
+      },
+      "state": "SD",
+      "session": "2023",
+      "identifier": "HB 1193",
+      "enactment": false
+     },
+     {
+      "rank": 17,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "MN",
+      "session": "2025-2026",
+      "identifier": "HF 2233",
+      "enactment": false
+     },
+     {
+      "rank": 18,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "MN",
+      "session": "2025-2026",
+      "identifier": "HF 2300",
+      "enactment": false
+     },
+     {
+      "rank": 19,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1,
+       "semantic": 1
+      },
+      "state": "SD",
+      "session": "2024",
+      "identifier": "HB 1163",
+      "enactment": false
+     },
+     {
+      "rank": 20,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "MS",
+      "session": "2026",
+      "identifier": "SB 2119",
+      "enactment": false
+     },
+     {
+      "rank": 21,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "AZ",
+      "session": "57th-1st-regular",
+      "identifier": "SB 1206",
+      "enactment": false
+     },
+     {
+      "rank": 22,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "MA",
+      "session": "193rd",
+      "identifier": "H 1112",
+      "enactment": false
+     },
+     {
+      "rank": 23,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "MA",
+      "session": "194th",
+      "identifier": "SD 744",
+      "enactment": false
+     },
+     {
+      "rank": 24,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "CO",
+      "session": "2024A",
+      "identifier": "HB 24-1232",
+      "enactment": false
+     },
+     {
+      "rank": 25,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "IL",
+      "session": "104th",
+      "identifier": "HB 29",
+      "enactment": false
+     },
+     {
+      "rank": 26,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "NC",
+      "session": "2025",
+      "identifier": "HB 40",
+      "enactment": false
+     },
+     {
+      "rank": 27,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "OK",
+      "session": "2024",
+      "identifier": "SB 1819",
+      "enactment": false
+     },
+     {
+      "rank": 28,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "WA",
+      "session": "2023-2024",
+      "identifier": "SB 5077",
+      "enactment": false
+     },
+     {
+      "rank": 29,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "TN",
+      "session": "113",
+      "identifier": "HB 640",
+      "enactment": false
+     },
+     {
+      "rank": 30,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "UT",
+      "session": "2025",
+      "identifier": "SB 294",
+      "enactment": false
+     },
+     {
+      "rank": 31,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "MO",
+      "session": "2024",
+      "identifier": "HB 1551",
+      "enactment": false
+     },
+     {
+      "rank": 32,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "DE",
+      "session": "152",
+      "identifier": "SB 157",
+      "enactment": false
+     },
+     {
+      "rank": 33,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "NM",
+      "session": "2023",
+      "identifier": "HB 90",
+      "enactment": false
+     },
+     {
+      "rank": 34,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "NY",
+      "session": "2025-2026",
+      "identifier": "A 5345",
+      "enactment": false
+     },
+     {
+      "rank": 35,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "CA",
+      "session": "20232024",
+      "identifier": "SB 95",
+      "enactment": false
+     },
+     {
+      "rank": 36,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "MO",
+      "session": "2024",
+      "identifier": "HB 2788",
+      "enactment": false
+     },
+     {
+      "rank": 37,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "UT",
+      "session": "2026",
+      "identifier": "HB 474",
+      "enactment": false
+     },
+     {
+      "rank": 38,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "DE",
+      "session": "152",
+      "identifier": "SB 308",
+      "enactment": false
+     },
+     {
+      "rank": 39,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "WA",
+      "session": "2023-2024",
+      "identifier": "SB 5801",
+      "enactment": false
+     },
+     {
+      "rank": 40,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "WV",
+      "session": "2023",
+      "identifier": "HB 3212",
+      "enactment": false
+     },
+     {
+      "rank": 41,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "GA",
+      "session": "2023_24",
+      "identifier": "HB 1240",
+      "enactment": false
+     },
+     {
+      "rank": 42,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "CO",
+      "session": "2025A",
+      "identifier": "SB 25-133",
+      "enactment": false
+     },
+     {
+      "rank": 43,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "IA",
+      "session": "2023-2024",
+      "identifier": "HSB 207",
+      "enactment": false
+     },
+     {
+      "rank": 44,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "IL",
+      "session": "104th",
+      "identifier": "HB 30",
+      "enactment": false
+     },
+     {
+      "rank": 45,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "NH",
+      "session": "2026",
+      "identifier": "HB 1127",
+      "enactment": false
+     },
+     {
+      "rank": 46,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "RI",
+      "session": "2023",
+      "identifier": "HB 6050",
+      "enactment": false
+     },
+     {
+      "rank": 47,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "SC",
+      "session": "2023-2024",
+      "identifier": "H 3128",
+      "enactment": false
+     },
+     {
+      "rank": 48,
+      "share": 0.1428,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "UT",
+      "session": "2026",
+      "identifier": "SB 40",
+      "enactment": false
+     },
+     {
+      "rank": 49,
+      "share": 0.009,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "IL",
+      "session": "104th",
+      "identifier": "HB 3368",
+      "enactment": false
+     },
+     {
+      "rank": 50,
+      "share": 0.009,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "IL",
+      "session": "104th",
+      "identifier": "HB 2755",
+      "enactment": false
+     },
+     {
+      "rank": 51,
+      "share": 0.009,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "NC",
+      "session": "2025",
+      "identifier": "HB 334",
+      "enactment": false
+     }
+    ]
+   },
+   "directed-trust": {
+    "file_sha256": "cb529358e8630f6033c5229863198776e9f0ad9c6d779af09552f948223d4e30",
+    "query_sha256": "703c0e9b8b83110aae912cc73b8539010983595932110317eb0d65b4d30c8319",
+    "words_in_file": 3158,
+    "words_kept": 2385,
+    "sections": 20,
+    "signed": 17,
+    "searched": 17,
+    "families": 18,
+    "families_by_stage": {
+     "near_duplicate": 11,
+     "semantic": 15
+    },
+    "relatives": [
+     {
+      "rank": 1,
+      "share": 0.9965,
+      "sections_matched": 16,
+      "sections_by_stage": {
+       "near_duplicate": 13,
+       "semantic": 16
+      },
+      "state": "VT",
+      "session": "2023-2024",
+      "identifier": "H 350",
+      "enactment": true
+     },
+     {
+      "rank": 2,
+      "share": 0.9361,
+      "sections_matched": 13,
+      "sections_by_stage": {
+       "near_duplicate": 13,
+       "semantic": 7
+      },
+      "state": "OK",
+      "session": "2024",
+      "identifier": "HB 3962",
+      "enactment": true
+     },
+     {
+      "rank": 3,
+      "share": 0.9067,
+      "sections_matched": 12,
+      "sections_by_stage": {
+       "near_duplicate": 12,
+       "semantic": 8
+      },
+      "state": "OK",
+      "session": "2024",
+      "identifier": "HB 2978",
+      "enactment": true
+     },
+     {
+      "rank": 4,
+      "share": 0.863,
+      "sections_matched": 11,
+      "sections_by_stage": {
+       "near_duplicate": 7,
+       "semantic": 9
+      },
+      "state": "KY",
+      "session": "2025RS",
+      "identifier": "HB 720",
+      "enactment": false
+     },
+     {
+      "rank": 5,
+      "share": 0.863,
+      "sections_matched": 11,
+      "sections_by_stage": {
+       "near_duplicate": 7,
+       "semantic": 9
+      },
+      "state": "KY",
+      "session": "2026RS",
+      "identifier": "SB 50",
+      "enactment": false
+     },
+     {
+      "rank": 6,
+      "share": 0.8564,
+      "sections_matched": 10,
+      "sections_by_stage": {
+       "near_duplicate": 6,
+       "semantic": 9
+      },
+      "state": "UT",
+      "session": "2025",
+      "identifier": "SB 100",
+      "enactment": false
+     },
+     {
+      "rank": 7,
+      "share": 0.7018,
+      "sections_matched": 8,
+      "sections_by_stage": {
+       "near_duplicate": 6,
+       "semantic": 6
+      },
+      "state": "CA",
+      "session": "20232024",
+      "identifier": "SB 801",
+      "enactment": true
+     },
+     {
+      "rank": 8,
+      "share": 0.2163,
+      "sections_matched": 4,
+      "sections_by_stage": {
+       "semantic": 4
+      },
+      "state": "PA",
+      "session": "2023-2024",
+      "identifier": "SB 1231",
+      "enactment": true
+     },
+     {
+      "rank": 9,
+      "share": 0.1909,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1,
+       "semantic": 1
+      },
+      "state": "VA",
+      "session": "2025",
+      "identifier": "SB 949",
+      "enactment": false
+     },
+     {
+      "rank": 10,
+      "share": 0.1909,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "OK",
+      "session": "2026",
+      "identifier": "HB 4196",
+      "enactment": false
+     },
+     {
+      "rank": 11,
+      "share": 0.1909,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "VA",
+      "session": "2025",
+      "identifier": "HB 1770",
+      "enactment": false
+     },
+     {
+      "rank": 12,
+      "share": 0.1909,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "VA",
+      "session": "2024",
+      "identifier": "HB 210",
+      "enactment": false
+     },
+     {
+      "rank": 13,
+      "share": 0.1077,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "FL",
+      "session": "2024",
+      "identifier": "SB 1316",
+      "enactment": false
+     },
+     {
+      "rank": 14,
+      "share": 0.1077,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "MO",
+      "session": "2025",
+      "identifier": "HB 608",
+      "enactment": false
+     },
+     {
+      "rank": 15,
+      "share": 0.0871,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "WV",
+      "session": "2026",
+      "identifier": "SB 186",
+      "enactment": false
+     },
+     {
+      "rank": 16,
+      "share": 0.0468,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "UT",
+      "session": "2026",
+      "identifier": "HB 176",
+      "enactment": false
+     },
+     {
+      "rank": 17,
+      "share": 0.0385,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "VT",
+      "session": "2025-2026",
+      "identifier": "S 109",
+      "enactment": false
+     },
+     {
+      "rank": 18,
+      "share": 0.0263,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "GA",
+      "session": "2025_26",
+      "identifier": "HB 327",
+      "enactment": false
+     }
+    ]
+   },
+   "easement-relocation": {
+    "file_sha256": "557ef5b0b82475dd0bffb2f8eb5580c7280f1587a00e1ec6a8e846381d3372df",
+    "query_sha256": "0c4469ada391ac28d35323cb083a5cb57e2577e8f286cff74142c3d0856f7fd8",
+    "words_in_file": 2933,
+    "words_kept": 2697,
+    "sections": 15,
+    "signed": 12,
+    "searched": 12,
+    "families": 9,
+    "families_by_stage": {
+     "near_duplicate": 9,
+     "semantic": 7
+    },
+    "relatives": [
+     {
+      "rank": 1,
+      "share": 0.9624,
+      "sections_matched": 10,
+      "sections_by_stage": {
+       "near_duplicate": 10,
+       "semantic": 9
+      },
+      "state": "AR",
+      "session": "2023",
+      "identifier": "HB 1408",
+      "enactment": true
+     },
+     {
+      "rank": 2,
+      "share": 0.9624,
+      "sections_matched": 10,
+      "sections_by_stage": {
+       "near_duplicate": 10,
+       "semantic": 9
+      },
+      "state": "OK",
+      "session": "2025",
+      "identifier": "HB 2119",
+      "enactment": true
+     },
+     {
+      "rank": 3,
+      "share": 0.9624,
+      "sections_matched": 10,
+      "sections_by_stage": {
+       "near_duplicate": 10,
+       "semantic": 10
+      },
+      "state": "WA",
+      "session": "2023-2024",
+      "identifier": "SB 5005",
+      "enactment": true
+     },
+     {
+      "rank": 4,
+      "share": 0.9413,
+      "sections_matched": 9,
+      "sections_by_stage": {
+       "near_duplicate": 8,
+       "semantic": 8
+      },
+      "state": "MO",
+      "session": "2024",
+      "identifier": "HB 2862",
+      "enactment": false
+     },
+     {
+      "rank": 5,
+      "share": 0.9213,
+      "sections_matched": 9,
+      "sections_by_stage": {
+       "near_duplicate": 9,
+       "semantic": 9
+      },
+      "state": "TX",
+      "session": "89R",
+      "identifier": "SB 1009",
+      "enactment": false
+     },
+     {
+      "rank": 6,
+      "share": 0.9213,
+      "sections_matched": 9,
+      "sections_by_stage": {
+       "near_duplicate": 9,
+       "semantic": 8
+      },
+      "state": "VA",
+      "session": "2025",
+      "identifier": "HB 1721",
+      "enactment": false
+     },
+     {
+      "rank": 7,
+      "share": 0.7992,
+      "sections_matched": 8,
+      "sections_by_stage": {
+       "near_duplicate": 6,
+       "semantic": 7
+      },
+      "state": "NV",
+      "session": "83",
+      "identifier": "AB 192",
+      "enactment": true
+     },
+     {
+      "rank": 8,
+      "share": 0.0319,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "OK",
+      "session": "2024",
+      "identifier": "HB 3778",
+      "enactment": false
+     },
+     {
+      "rank": 9,
+      "share": 0.0319,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "near_duplicate": 1
+      },
+      "state": "SD",
+      "session": "2024",
+      "identifier": "SB 58",
+      "enactment": false
+     }
+    ]
+   },
+   "mortgage-modification": {
+    "file_sha256": "91e621acc61d42663c82ae0d3f566d4be85e40080a379345bd9f1e2a791f0954",
+    "query_sha256": "2357259d0b30eec1bd82d795c12bb57089b508ec78074f6d7967ae86dfae7abd",
+    "words_in_file": 1178,
+    "words_kept": 1025,
+    "sections": 8,
+    "signed": 5,
+    "searched": 5,
+    "families": 10,
+    "families_by_stage": {
+     "near_duplicate": 9,
+     "semantic": 10
+    },
+    "relatives": [
+     {
+      "rank": 1,
+      "share": 0.9105,
+      "sections_matched": 3,
+      "sections_by_stage": {
+       "near_duplicate": 3,
+       "semantic": 2
+      },
+      "state": "MO",
+      "session": "2026",
+      "identifier": "SB 834",
+      "enactment": true
+     },
+     {
+      "rank": 2,
+      "share": 0.9105,
+      "sections_matched": 3,
+      "sections_by_stage": {
+       "near_duplicate": 3,
+       "semantic": 2
+      },
+      "state": "MO",
+      "session": "2026",
+      "identifier": "SS SB 834",
+      "enactment": false
+     },
+     {
+      "rank": 3,
+      "share": 0.9105,
+      "sections_matched": 3,
+      "sections_by_stage": {
+       "near_duplicate": 2,
+       "semantic": 3
+      },
+      "state": "OK",
+      "session": "2026",
+      "identifier": "HB 4352",
+      "enactment": false
+     },
+     {
+      "rank": 4,
+      "share": 0.9105,
+      "sections_matched": 3,
+      "sections_by_stage": {
+       "near_duplicate": 2,
+       "semantic": 3
+      },
+      "state": "WA",
+      "session": "2025-2026",
+      "identifier": "SB 5831",
+      "enactment": false
+     },
+     {
+      "rank": 5,
+      "share": 0.9105,
+      "sections_matched": 3,
+      "sections_by_stage": {
+       "near_duplicate": 3,
+       "semantic": 3
+      },
+      "state": "WV",
+      "session": "2026",
+      "identifier": "SB 161",
+      "enactment": false
+     },
+     {
+      "rank": 6,
+      "share": 0.9105,
+      "sections_matched": 3,
+      "sections_by_stage": {
+       "near_duplicate": 2,
+       "semantic": 3
+      },
+      "state": "WY",
+      "session": "2026",
+      "identifier": "SF 31",
+      "enactment": true
+     },
+     {
+      "rank": 7,
+      "share": 0.9105,
+      "sections_matched": 3,
+      "sections_by_stage": {
+       "near_duplicate": 3,
+       "semantic": 3
+      },
+      "state": "CO",
+      "session": "2026A",
+      "identifier": "HB 1089",
+      "enactment": true
+     },
+     {
+      "rank": 8,
+      "share": 0.7411,
+      "sections_matched": 2,
+      "sections_by_stage": {
+       "near_duplicate": 2,
+       "semantic": 1
+      },
+      "state": "MO",
+      "session": "2026",
+      "identifier": "HB 2636",
+      "enactment": true
+     },
+     {
+      "rank": 9,
+      "share": 0.7411,
+      "sections_matched": 2,
+      "sections_by_stage": {
+       "near_duplicate": 1,
+       "semantic": 2
+      },
+      "state": "UT",
+      "session": "2025",
+      "identifier": "SB 294",
+      "enactment": false
+     },
+     {
+      "rank": 10,
+      "share": 0.3366,
+      "sections_matched": 1,
+      "sections_by_stage": {
+       "semantic": 1
+      },
+      "state": "NV",
+      "session": "83",
+      "identifier": "AB 192",
+      "enactment": true
+     }
+    ]
+   }
+  },
+  "recall": {
+   "pooled": {
+    "all": {
+     "enactments": 19,
+     "found": 17,
+     "recall": 0.8947
+    },
+    "with_text": {
+     "enactments": 19,
+     "found": 17,
+     "recall": 0.8947
+    }
+   },
+   "by_act": {
+    "assignment-for-benefit-of-creditors": {
+     "all": {
+      "enactments": 6,
+      "found": 5,
+      "recall": 0.8333
+     },
+     "with_text": {
+      "enactments": 6,
+      "found": 5,
+      "recall": 0.8333
+     }
+    },
+    "directed-trust": {
+     "all": {
+      "enactments": 4,
+      "found": 4,
+      "recall": 1.0
+     },
+     "with_text": {
+      "enactments": 4,
+      "found": 4,
+      "recall": 1.0
+     }
+    },
+    "easement-relocation": {
+     "all": {
+      "enactments": 5,
+      "found": 4,
+      "recall": 0.8
+     },
+     "with_text": {
+      "enactments": 5,
+      "found": 4,
+      "recall": 0.8
+     }
+    },
+    "mortgage-modification": {
+     "all": {
+      "enactments": 4,
+      "found": 4,
+      "recall": 1.0
+     },
+     "with_text": {
+      "enactments": 4,
+      "found": 4,
+      "recall": 1.0
+     }
+    }
+   },
+   "by_stratum": {
+    "enacted": {
+     "all": {
+      "enactments": 18,
+      "found": 17,
+      "recall": 0.9444
+     },
+     "with_text": {
+      "enactments": 18,
+      "found": 17,
+      "recall": 0.9444
+     }
+    },
+    "substantially_similar": {
+     "all": {
+      "enactments": 1,
+      "found": 0,
+      "recall": 0.0
+     },
+     "with_text": {
+      "enactments": 1,
+      "found": 0,
+      "recall": 0.0
+     }
+    }
+   }
+  },
+  "recall_by_semantic_threshold": [],
+  "recall_by_min_share": [
+   {
+    "min_share": 0.0,
+    "found": 17,
+    "found_with_text": 17
+   },
+   {
+    "min_share": 0.1,
+    "found": 17,
+    "found_with_text": 17
+   },
+   {
+    "min_share": 0.25,
+    "found": 16,
+    "found_with_text": 16
+   },
+   {
+    "min_share": 0.5,
+    "found": 15,
+    "found_with_text": 15
+   }
+  ],
+  "miss_reasons": {
+   "not_proposed": 2
+  },
+  "excluded": [
+   {
+    "act": "easement-relocation",
+    "jurisdiction": "Utah",
+    "year": 2022,
+    "why": "listed year 2022 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "easement-relocation",
+    "jurisdiction": "Nebraska",
+    "year": 2021,
+    "why": "listed year 2021 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "mortgage-modification",
+    "jurisdiction": "Utah",
+    "year": 2025,
+    "why": "names a bill of the development set"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Kentucky",
+    "year": 2026,
+    "why": "names a bill of the development set"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "District of Columbia",
+    "year": 2025,
+    "why": "District of Columbia: the corpus is the 50 states"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Kansas",
+    "year": 2022,
+    "why": "listed year 2022 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Florida",
+    "year": 2021,
+    "why": "listed year 2021 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Montana",
+    "year": 2021,
+    "why": "listed year 2021 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Virginia",
+    "year": 2020,
+    "why": "listed year 2020 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Washington",
+    "year": 2020,
+    "why": "listed year 2020 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "West Virginia",
+    "year": 2020,
+    "why": "listed year 2020 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Arkansas",
+    "year": 2019,
+    "why": "listed year 2019 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Colorado",
+    "year": 2019,
+    "why": "listed year 2019 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Connecticut",
+    "year": 2019,
+    "why": "listed year 2019 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Indiana",
+    "year": 2019,
+    "why": "listed year 2019 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Maine",
+    "year": 2019,
+    "why": "listed year 2019 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Michigan",
+    "year": 2019,
+    "why": "listed year 2019 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Nebraska",
+    "year": 2019,
+    "why": "listed year 2019 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Utah",
+    "year": 2019,
+    "why": "listed year 2019 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Georgia",
+    "year": 2018,
+    "why": "listed year 2018 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "New Mexico",
+    "year": 2018,
+    "why": "listed year 2018 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "health-care-decisions",
+    "jurisdiction": "Oklahoma",
+    "year": 2026,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "health-care-decisions",
+    "jurisdiction": "Utah",
+    "year": 2025,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "health-care-decisions",
+    "jurisdiction": "Delaware",
+    "year": 2024,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "antitrust-pre-merger-notification",
+    "jurisdiction": "California",
+    "year": 2026,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "antitrust-pre-merger-notification",
+    "jurisdiction": "Colorado",
+    "year": 2025,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "antitrust-pre-merger-notification",
+    "jurisdiction": "Washington",
+    "year": 2025,
+    "why": "a reserve act, not selected"
+   }
+  ],
+  "enactments": [
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "state": "AL",
+    "year": 2026,
+    "bill_cell": "SB 15",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "with_text": true,
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "SB 15",
+    "found_at_semantic_threshold": {},
+    "rank": 1,
+    "share": 0.991,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/d56fd42c-c1d6-4d76-a9f0-eeb0cc123f31",
+      "session": "2026rs",
+      "identifier": "SB 15",
+      "status": "passed",
+      "text_chars": 44832,
+      "signed_sections": 28,
+      "stage": "verified",
+      "best_estimate": 1.0,
+      "best_cosine": 1.0,
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "rank": 1,
+      "share": 0.991,
+      "found": true,
+      "reason": null
+     }
+    ]
+   },
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "state": "AZ",
+    "year": 2026,
+    "bill_cell": "SB 1252",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "with_text": true,
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "SB 1252",
+    "found_at_semantic_threshold": {},
+    "rank": 3,
+    "share": 0.9887,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/6a187ab7-1011-451b-a54a-b9268f1d9668",
+      "session": "57th-2nd-regular",
+      "identifier": "SB 1252",
+      "status": "passed",
+      "text_chars": 45732,
+      "signed_sections": 25,
+      "stage": "verified",
+      "best_estimate": 1.0,
+      "best_cosine": 0.9998,
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "rank": 3,
+      "share": 0.9887,
+      "found": true,
+      "reason": null
+     }
+    ]
+   },
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "state": "DE",
+    "year": 2026,
+    "bill_cell": "SB 267",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "with_text": true,
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "SB 267",
+    "found_at_semantic_threshold": {},
+    "rank": 9,
+    "share": 0.947,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/9ea2f016-2a27-45bc-a51c-d4d14c24d951",
+      "session": "153",
+      "identifier": "SB 267",
+      "status": "passed",
+      "text_chars": 59314,
+      "signed_sections": 42,
+      "stage": "verified",
+      "best_estimate": 1.0,
+      "best_cosine": 1.0,
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "rank": 9,
+      "share": 0.947,
+      "found": true,
+      "reason": null
+     }
+    ]
+   },
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "state": "IA",
+    "year": 2026,
+    "bill_cell": "SF 2497",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "with_text": true,
+    "found": false,
+    "found_by_stage": {
+     "near_duplicate": false,
+     "semantic": false
+    },
+    "found_by": null,
+    "found_at_semantic_threshold": {},
+    "rank": null,
+    "share": null,
+    "miss_reason": "not_proposed",
+    "bills": [
+     {
+      "id": "ocd-bill/315e546a-f419-46f8-b541-52e0989abb38",
+      "session": "2025-2026",
+      "identifier": "SF 2497",
+      "status": "passed",
+      "text_chars": 59,
+      "signed_sections": 1,
+      "stage": "not_proposed",
+      "best_estimate": 0.0,
+      "best_cosine": 0.6804,
+      "stages": [],
+      "rank": null,
+      "share": null,
+      "found": false,
+      "reason": "not_proposed"
+     }
+    ]
+   },
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "state": "NE",
+    "year": 2026,
+    "bill_cell": "LB 783",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "with_text": true,
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "LB 783",
+    "found_at_semantic_threshold": {},
+    "rank": 2,
+    "share": 0.991,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/01dd3cc3-3af2-4963-9970-fb1c82c655c2",
+      "session": "109",
+      "identifier": "LB 783",
+      "status": "passed",
+      "text_chars": 51659,
+      "signed_sections": 29,
+      "stage": "verified",
+      "best_estimate": 1.0,
+      "best_cosine": 0.9999,
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "rank": 2,
+      "share": 0.991,
+      "found": true,
+      "reason": null
+     }
+    ]
+   },
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "state": "UT",
+    "year": 2026,
+    "bill_cell": "HB 382",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "with_text": true,
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "HB 382",
+    "found_at_semantic_threshold": {},
+    "rank": 8,
+    "share": 0.9887,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/66018717-08d9-4c8b-827e-98661c3a98b0",
+      "session": "2026",
+      "identifier": "HB 382",
+      "status": "passed",
+      "text_chars": 49513,
+      "signed_sections": 28,
+      "stage": "verified",
+      "best_estimate": 0.9062,
+      "best_cosine": 0.9982,
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "rank": 8,
+      "share": 0.9887,
+      "found": true,
+      "reason": null
+     }
+    ]
+   },
+   {
+    "act": "directed-trust",
+    "state": "CA",
+    "year": 2024,
+    "bill_cell": "SB 801",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "with_text": true,
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "SB 801",
+    "found_at_semantic_threshold": {},
+    "rank": 7,
+    "share": 0.7018,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/25f6ce26-e9b6-4720-8058-0007a62361e4",
+      "session": "20232024",
+      "identifier": "SB 801",
+      "status": "passed",
+      "text_chars": 18684,
+      "signed_sections": 4,
+      "stage": "verified",
+      "best_estimate": 0.8516,
+      "best_cosine": 0.9941,
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "rank": 7,
+      "share": 0.7018,
+      "found": true,
+      "reason": null
+     },
+     {
+      "id": "ocd-bill/eb9dea8b-b6f3-4230-8a53-219319532a4d",
+      "session": "20252026",
+      "identifier": "SB 801",
+      "status": "died",
+      "text_chars": 5028,
+      "signed_sections": 3,
+      "stage": "not_proposed",
+      "best_estimate": 0.0,
+      "best_cosine": 0.6454,
+      "stages": [],
+      "rank": null,
+      "share": null,
+      "found": false,
+      "reason": "not_proposed"
+     }
+    ]
+   },
+   {
+    "act": "directed-trust",
+    "state": "OK",
+    "year": 2024,
+    "bill_cell": "HB 2978/HB 3962",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "with_text": true,
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "HB 3962",
+    "found_at_semantic_threshold": {},
+    "rank": 2,
+    "share": 0.9361,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/08ee6ffd-f572-4a2e-a353-1db3d37b2e85",
+      "session": "2024",
+      "identifier": "HB 2978",
+      "status": "died",
+      "text_chars": 17389,
+      "signed_sections": 19,
+      "stage": "verified",
+      "best_estimate": 1.0,
+      "best_cosine": 0.9966,
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "rank": 3,
+      "share": 0.9067,
+      "found": true,
+      "reason": null
+     },
+     {
+      "id": "ocd-bill/c8e28bad-3818-4f32-a10f-2b8bba334a85",
+      "session": "2024",
+      "identifier": "HB 3962",
+      "status": "passed",
+      "text_chars": 72269,
+      "signed_sections": 46,
+      "stage": "verified",
+      "best_estimate": 1.0,
+      "best_cosine": 0.9965,
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "rank": 2,
+      "share": 0.9361,
+      "found": true,
+      "reason": null
+     }
+    ]
+   },
+   {
+    "act": "directed-trust",
+    "state": "PA",
+    "year": 2024,
+    "bill_cell": "SB 1231",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "with_text": true,
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": false,
+     "semantic": true
+    },
+    "found_by": "SB 1231",
+    "found_at_semantic_threshold": {},
+    "rank": 8,
+    "share": 0.2163,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/9ed813cc-57c7-4753-9f80-ac022232a799",
+      "session": "2023-2024",
+      "identifier": "SB 1231",
+      "status": "passed",
+      "text_chars": 52330,
+      "signed_sections": 62,
+      "stage": "verification",
+      "best_estimate": 0.5,
+      "best_cosine": 0.9735,
+      "stages": [
+       "semantic"
+      ],
+      "rank": 8,
+      "share": 0.2163,
+      "found": true,
+      "reason": null
+     }
+    ]
+   },
+   {
+    "act": "directed-trust",
+    "state": "VT",
+    "year": 2024,
+    "bill_cell": "H 350",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "with_text": true,
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "H 350",
+    "found_at_semantic_threshold": {},
+    "rank": 1,
+    "share": 0.9965,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/c8ddb361-4aa3-4764-b2de-0ae27686fc34",
+      "session": "2023-2024",
+      "identifier": "H 350",
+      "status": "passed",
+      "text_chars": 14178,
+      "signed_sections": 18,
+      "stage": "verified",
+      "best_estimate": 0.9688,
+      "best_cosine": 0.9928,
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "rank": 1,
+      "share": 0.9965,
+      "found": true,
+      "reason": null
+     }
+    ]
+   },
+   {
+    "act": "easement-relocation",
+    "state": "VA",
+    "year": 2026,
+    "bill_cell": "HB 252",
+    "stratum": "substantially_similar",
+    "match_rule": "in_year",
+    "with_text": true,
+    "found": false,
+    "found_by_stage": {
+     "near_duplicate": false,
+     "semantic": false
+    },
+    "found_by": null,
+    "found_at_semantic_threshold": {},
+    "rank": null,
+    "share": null,
+    "miss_reason": "not_proposed",
+    "bills": [
+     {
+      "id": "ocd-bill/3e325b4f-e332-425e-8f0a-8327738d8544",
+      "session": "2026",
+      "identifier": "HB 252",
+      "status": "passed",
+      "text_chars": 3615,
+      "signed_sections": 2,
+      "stage": "not_proposed",
+      "best_estimate": 0.3125,
+      "best_cosine": 0.8901,
+      "stages": [],
+      "rank": null,
+      "share": null,
+      "found": false,
+      "reason": "not_proposed"
+     }
+    ]
+   },
+   {
+    "act": "easement-relocation",
+    "state": "NV",
+    "year": 2025,
+    "bill_cell": "AB 192",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "with_text": true,
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "AB 192",
+    "found_at_semantic_threshold": {},
+    "rank": 7,
+    "share": 0.7992,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/7a3f76bd-979e-49d3-8f74-ad9c7b98aba7",
+      "session": "83",
+      "identifier": "AB 192",
+      "status": "passed",
+      "text_chars": 33675,
+      "signed_sections": 51,
+      "stage": "verified",
+      "best_estimate": 0.9844,
+      "best_cosine": 0.9827,
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "rank": 7,
+      "share": 0.7992,
+      "found": true,
+      "reason": null
+     }
+    ]
+   },
+   {
+    "act": "easement-relocation",
+    "state": "OK",
+    "year": 2025,
+    "bill_cell": "HB 1060/HB 2119",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "with_text": true,
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "HB 2119",
+    "found_at_semantic_threshold": {},
+    "rank": 2,
+    "share": 0.9624,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/498bff4c-ee76-4ac0-bb0e-57ee960c740d",
+      "session": "2025",
+      "identifier": "HB 2119",
+      "status": "introduced",
+      "text_chars": 19876,
+      "signed_sections": 15,
+      "stage": "verified",
+      "best_estimate": 1.0,
+      "best_cosine": 0.9855,
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "rank": 2,
+      "share": 0.9624,
+      "found": true,
+      "reason": null
+     },
+     {
+      "id": "ocd-bill/8bd69b45-1904-4387-b4f5-68215d5399a2",
+      "session": "2025",
+      "identifier": "HB 1060",
+      "status": "passed",
+      "text_chars": 22229,
+      "signed_sections": 16,
+      "stage": "verified",
+      "best_estimate": 1.0,
+      "best_cosine": 0.9869,
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "rank": 2,
+      "share": 0.9624,
+      "found": true,
+      "reason": null
+     }
+    ]
+   },
+   {
+    "act": "easement-relocation",
+    "state": "AR",
+    "year": 2023,
+    "bill_cell": "HB 1408",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "with_text": true,
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "HB 1408",
+    "found_at_semantic_threshold": {},
+    "rank": 1,
+    "share": 0.9624,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/a5575133-1b36-4125-8b8d-239f5e5fa0a9",
+      "session": "2023",
+      "identifier": "HB 1408",
+      "status": "passed",
+      "text_chars": 19887,
+      "signed_sections": 15,
+      "stage": "verified",
+      "best_estimate": 1.0,
+      "best_cosine": 1.0,
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "rank": 1,
+      "share": 0.9624,
+      "found": true,
+      "reason": null
+     }
+    ]
+   },
+   {
+    "act": "easement-relocation",
+    "state": "WA",
+    "year": 2023,
+    "bill_cell": "SB 5005",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "with_text": true,
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "SB 5005",
+    "found_at_semantic_threshold": {},
+    "rank": 3,
+    "share": 0.9624,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/fe9a38e0-5fe9-4b49-9271-b641c88f8c8b",
+      "session": "2023-2024",
+      "identifier": "SB 5005",
+      "status": "passed",
+      "text_chars": 37267,
+      "signed_sections": 26,
+      "stage": "verified",
+      "best_estimate": 0.9688,
+      "best_cosine": 0.987,
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "rank": 3,
+      "share": 0.9624,
+      "found": true,
+      "reason": null
+     }
+    ]
+   },
+   {
+    "act": "mortgage-modification",
+    "state": "CO",
+    "year": 2026,
+    "bill_cell": "HB 26-1089",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "with_text": true,
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "HB 1089",
+    "found_at_semantic_threshold": {},
+    "rank": 7,
+    "share": 0.9105,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/0769a612-51fc-4ed4-8d38-92faecb7abe1",
+      "session": "2026A",
+      "identifier": "HB 1089",
+      "status": "passed",
+      "text_chars": 8931,
+      "signed_sections": 8,
+      "stage": "verified",
+      "best_estimate": 0.7188,
+      "best_cosine": 0.9617,
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "rank": 7,
+      "share": 0.9105,
+      "found": true,
+      "reason": null
+     }
+    ]
+   },
+   {
+    "act": "mortgage-modification",
+    "state": "MO",
+    "year": 2026,
+    "bill_cell": "HB 2636/SB 834",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "with_text": true,
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "SB 834",
+    "found_at_semantic_threshold": {},
+    "rank": 1,
+    "share": 0.9105,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/6d7af944-1fbd-45e3-9a5a-9ab186a99271",
+      "session": "2026",
+      "identifier": "SB 834",
+      "status": "passed",
+      "text_chars": 11658,
+      "signed_sections": 9,
+      "stage": "verified",
+      "best_estimate": 1.0,
+      "best_cosine": 0.9962,
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "rank": 1,
+      "share": 0.9105,
+      "found": true,
+      "reason": null
+     },
+     {
+      "id": "ocd-bill/d2a4351c-e574-4442-ae19-ecb61744a51c",
+      "session": "2026",
+      "identifier": "HB 2636",
+      "status": "passed",
+      "text_chars": 15193,
+      "signed_sections": 12,
+      "stage": "verified",
+      "best_estimate": 0.9688,
+      "best_cosine": 0.9405,
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "rank": 8,
+      "share": 0.7411,
+      "found": true,
+      "reason": null
+     }
+    ]
+   },
+   {
+    "act": "mortgage-modification",
+    "state": "WY",
+    "year": 2026,
+    "bill_cell": "SF 31",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "with_text": true,
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "SF 31",
+    "found_at_semantic_threshold": {},
+    "rank": 6,
+    "share": 0.9105,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/196c9c66-69ff-4502-9613-63a4aee17f74",
+      "session": "2026",
+      "identifier": "SF 31",
+      "status": "passed",
+      "text_chars": 8754,
+      "signed_sections": 8,
+      "stage": "verified",
+      "best_estimate": 0.8516,
+      "best_cosine": 0.9932,
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "rank": 6,
+      "share": 0.9105,
+      "found": true,
+      "reason": null
+     }
+    ]
+   },
+   {
+    "act": "mortgage-modification",
+    "state": "NV",
+    "year": 2025,
+    "bill_cell": "AB 192",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "with_text": true,
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": false,
+     "semantic": true
+    },
+    "found_by": "AB 192",
+    "found_at_semantic_threshold": {},
+    "rank": 10,
+    "share": 0.3366,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/7a3f76bd-979e-49d3-8f74-ad9c7b98aba7",
+      "session": "83",
+      "identifier": "AB 192",
+      "status": "passed",
+      "text_chars": 33675,
+      "signed_sections": 51,
+      "stage": "verification",
+      "best_estimate": 0.4531,
+      "best_cosine": 0.9623,
+      "stages": [
+       "semantic"
+      ],
+      "rank": 10,
+      "share": 0.3366,
+      "found": true,
+      "reason": null
+     }
+    ]
+   }
+  ]
+ },
  "label_agreement": {
   "command": "uv run lineage eval agreement",
   "model:claude-opus-5-5@v1": {
