@@ -72,6 +72,9 @@ from lineage.faithfulness import (
 )
 from lineage.faithfulness import pending as pending_claims
 from lineage.faithfulness import projected_cost as projected_judge_cost
+from lineage.featured import PAIRS as FEATURED_PAIRS
+from lineage.featured import REPORT as FEATURED_REPORT
+from lineage.featured import FeaturedError, build_featured, write_featured
 from lineage.fetch import SOURCE, FetchError, fetch_raw
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
@@ -1140,6 +1143,34 @@ def label_spend(
         f"output tokens; ${ledger['spent']:,.2f} of the ${ledger['budget']:,.2f} budget spent "
         f"-> {spend}"
     )
+
+
+@app.command("featured")
+def featured_command(
+    tables: TablesOption = Path("data/tables"),
+    answer_key: Annotated[
+        Path, typer.Option("--answer-key", help="The commission's lists resolved (committed).")
+    ] = ANSWER_KEY,
+    out: Annotated[
+        Path, typer.Option("--out", help="The featured pairs, one per line (committed).")
+    ] = FEATURED_PAIRS,
+    report: Annotated[
+        Path, typer.Option("--report", help="Each story's relatives (committed).")
+    ] = FEATURED_REPORT,
+) -> None:
+    """The featured stories' section pairs: each anchor against its listed relatives."""
+    try:
+        rows, doc = build_featured(tables, answer_key=answer_key)
+    except (FeaturedError, SemanticPairsError, StateBoilerplateError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    write_featured(rows, doc, pairs_path=out, report_path=report)
+    for name, story in doc["stories"].items():
+        typer.echo(
+            f"{name}: {story['section_pairs']} section pairs with {len(story['relatives'])} "
+            f"relatives, {story['relatives_without_a_pair']} without a pair"
+        )
+    typer.echo(f"{len(rows)} pairs -> {out}, {report}")
 
 
 def _pair_prompts(

@@ -38,6 +38,7 @@ uv run lineage eval readme   # regenerate README.md's results table from reports
 uv run lineage label SAMPLE --labeler HANDLE  # label sampled matches by hand, 0 unrelated to 4 identical, blind to the stage, resumable -> evals/precision_labels.jsonl
 uv run lineage label-page SAMPLE --labeler HANDLE  # the same labeling as a phone page: pending pairs, aligned, blind -> data/label_page/ (local), published as a private artifact
 uv run lineage label-import SAVED --sample SAMPLE --labeler HANDLE  # the page's saved labels, checked against the sample -> evals/precision_labels.jsonl
+uv run lineage featured     # the featured stories' section pairs: each anchor against its listed relatives -> evals/featured_pairs.jsonl, reports/featured_pairs.json
 uv run lineage explain PAIRS  # grounded explanations from the cache -> explanations/cache/ (--live asks the model for uncached pairs within the budget; ANTHROPIC_API_KEY)
 uv run lineage eval faithfulness PAIRS  # model-judged: do the kept claims describe their cited spans correctly? with the hard check's result -> reports/results.json (--live asks the judge for unjudged claims within the budget -> evals/faithfulness_judgments.jsonl)
 uv run lineage pair-data fetch  # the labeled pair dataset at its pinned commit -> data/pair_data/ (local, evaluation only, never committed)
@@ -111,6 +112,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   model_labels.py  provisional precision labels from a model, under its id and prompt version; each batch's spend against the budget
   precision.py    the precision sample's strata and seeded draw, and the estimate weighted by stratum size
   intervals.py    the Wilson interval
+  featured.py     `lineage featured`: the three featured stories, their anchors and relatives rules, and the section pairs they explain
   explanations.py the model's reply schema (Pydantic) and the span-grounding check that drops unbacked claims
   explanations.py the model's reply schema (Pydantic) and the span-grounding check, on spans hashed so CI can run it
   explain.py      `lineage explain`: the prompt from aligned spans, the SDK call, retry and withholding, the cache, and the cache's check

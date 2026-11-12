@@ -1187,6 +1187,31 @@ def identifiers(
     return rows
 
 
+def bill_id_of(
+    con: duckdb.DuckDBPyConnection, *, bills_glob: str, state: str, session: str, identifier: str
+) -> str | None:
+    """The id of the bill a state, session and identifier name, if the table holds it."""
+    row: tuple[str] | None = con.execute(
+        "SELECT id FROM read_parquet($bills) "
+        "WHERE state = $state AND session = $session AND identifier = $identifier",
+        {"bills": bills_glob, "state": state, "session": session, "identifier": identifier},
+    ).fetchone()
+    return None if row is None else row[0]
+
+
+def bill_details(
+    con: duckdb.DuckDBPyConnection, *, bills_glob: str, ids: list[str]
+) -> dict[str, tuple[str, str, str, str, str | None, str | None]]:
+    """(state, session, identifier, title, status, first action's day) for each id."""
+    rows: list[tuple[str, str, str, str, str, str | None, str | None]] = con.execute(
+        "SELECT id, state, session, identifier, title, status, "
+        "list_min(list_transform(actions, lambda a: left(a.date, 10))) "
+        "FROM read_parquet($bills) WHERE list_contains($ids, id)",
+        {"bills": bills_glob, "ids": ids},
+    ).fetchall()
+    return {r[0]: (r[1], r[2], r[3], r[4], r[5], r[6]) for r in rows}
+
+
 def stored_text(
     con: duckdb.DuckDBPyConnection, *, bills_glob: str, ids: list[str]
 ) -> dict[str, tuple[str | None, str | None, list[dict[str, Any]]]]:

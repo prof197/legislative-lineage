@@ -1,0 +1,934 @@
+{
+ "command": "uv run lineage featured",
+ "stories": {
+  "anti-slapp": {
+   "anchor": {
+    "bill_id": "ocd-bill/7968b9d9-25ee-4684-a92e-c76167d6f917",
+    "state": "UT",
+    "session": "2023",
+    "identifier": "SB 18",
+    "title": "Public Expression Protection Act",
+    "status": "passed",
+    "first_action": "2022-12-19"
+   },
+   "relatives_rule": "the bills the commission's lists name as enacting its act",
+   "relatives": [
+    {
+     "bill_id": "ocd-bill/466153a5-6ac0-4a17-b061-aecda47f1135",
+     "state": "MI",
+     "session": "2025-2026",
+     "identifier": "HB 4045",
+     "title": "Civil procedure: civil actions; lawsuits for exercising rights to free expression; provide protections against. Creates new act.",
+     "status": "passed",
+     "first_action": "2025-01-30",
+     "section_pairs": 3
+    },
+    {
+     "bill_id": "ocd-bill/46682e76-7ccf-4157-962d-63fff9eecebe",
+     "state": "MO",
+     "session": "2026",
+     "identifier": "HB 2666",
+     "title": "Establishes the \"Uniform Public Expression Protection Act\"",
+     "status": "died",
+     "first_action": "2026-01-05",
+     "section_pairs": 3
+    },
+    {
+     "bill_id": "ocd-bill/844e1d51-48ed-4db2-95c3-82255c3c677f",
+     "state": "MO",
+     "session": "2026",
+     "identifier": "SB 835",
+     "title": "Modifies provisions relating to court procedures",
+     "status": "passed",
+     "first_action": "2025-12-01",
+     "section_pairs": 0
+    },
+    {
+     "bill_id": "ocd-bill/e07348b0-513f-4fda-9f17-57bcc5fb3b76",
+     "state": "MO",
+     "session": "2026",
+     "identifier": "SB 1067",
+     "title": "Establishes the Uniform Public Expression Protection Act, which provides procedures for dismissal of actions based on public expression",
+     "status": "passed",
+     "first_action": "2025-12-01",
+     "section_pairs": 3
+    },
+    {
+     "bill_id": "ocd-bill/26a84ccf-f59b-4813-9757-8e12e1bf471b",
+     "state": "SD",
+     "session": "2026",
+     "identifier": "SB 137",
+     "title": "establish procedures for anti-SLAPP actions to protect the exercise of a person's constitutional rights, including freedom of speech.",
+     "status": "passed",
+     "first_action": "2026-01-27",
+     "section_pairs": 2
+    },
+    {
+     "bill_id": "ocd-bill/75aaddc4-4261-47f5-977b-fc6618d7df33",
+     "state": "DE",
+     "session": "153",
+     "identifier": "SB 80",
+     "title": "AN ACT TO AMEND TITLE 10 OF THE DELAWARE CODE RELATING TO THE UNIFORM PUBLIC EXPRESSION PROTECTION ACT.",
+     "status": "passed",
+     "first_action": "2025-03-25",
+     "section_pairs": 9
+    },
+    {
+     "bill_id": "ocd-bill/8bd05268-df20-4e80-8ea6-fee765d633f9",
+     "state": "ID",
+     "session": "2025",
+     "identifier": "S 1001",
+     "title": "UNIFORM PUBLIC EXPRESSION PROTECTION ACT – Adds to existing law to establish the Uniform Public Expression Protection Act.",
+     "status": "passed",
+     "first_action": "2025-01-14",
+     "section_pairs": 7
+    },
+    {
+     "bill_id": "ocd-bill/4420bcca-8120-49af-bb03-17de3cc1da1f",
+     "state": "IA",
+     "session": "2025-2026",
+     "identifier": "HF 472",
+     "title": "A bill for an act creating a special motion for expedited relief in actions involving the exercise of the right of freedom of speech and of the press, the right to assemble and petition, and the right of association, and including applicability provisions.",
+     "status": "passed",
+     "first_action": "2025-02-19",
+     "section_pairs": 0
+    },
+    {
+     "bill_id": "ocd-bill/a61fad3c-ce0d-44b6-b046-0fab3413357b",
+     "state": "IA",
+     "session": "2025-2026",
+     "identifier": "SF 47",
+     "title": "A bill for an act creating a special motion for expedited relief in actions involving the exercise of the right of freedom of speech and of the press, the right to assemble and petition, and the right of association, and including applicability provisions.",
+     "status": "died",
+     "first_action": "2025-01-15",
+     "section_pairs": 6
+    },
+    {
+     "bill_id": "ocd-bill/6f42fae2-b316-4da2-b4c8-c8ee43443091",
+     "state": "MT",
+     "session": "2025",
+     "identifier": "HB 292",
+     "title": "Establish the uniform public expression protection act",
+     "status": "passed",
+     "first_action": "2024-12-06",
+     "section_pairs": 6
+    },
+    {
+     "bill_id": "ocd-bill/ac8be703-90ff-46ce-a145-1871e12e3c89",
+     "state": "OH",
+     "session": "135",
+     "identifier": "SB 237",
+     "title": "Enacts the Uniform Public Expression Protection Act",
+     "status": "passed_legislature",
+     "first_action": "2024-03-26",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/2d79a7ee-4ea4-41db-9049-ab45b0f27bfd",
+     "state": "ME",
+     "session": "131",
+     "identifier": "LD 870",
+     "title": "An Act To Strengthen Freedom Of Speech Protections By Extending Laws Against Strategic Lawsuits Against Public Participation",
+     "status": "passed_legislature",
+     "first_action": "2023-02-28",
+     "section_pairs": 0
+    },
+    {
+     "bill_id": "ocd-bill/2a51f739-82fd-4614-8ded-9eaca8a19b9a",
+     "state": "MN",
+     "session": "2023-2024",
+     "identifier": "SF 3317",
+     "title": "Uniform Public Expression Protection Act",
+     "status": "died",
+     "first_action": "2023-05-02",
+     "section_pairs": 3
+    },
+    {
+     "bill_id": "ocd-bill/904a6e6b-5831-4983-acee-72147889a52a",
+     "state": "MN",
+     "session": "2023-2024",
+     "identifier": "HF 5216",
+     "title": "Judiciary, public safety, and corrections supplemental budget bill.",
+     "status": "passed",
+     "first_action": "2024-04-02",
+     "section_pairs": 3
+    },
+    {
+     "bill_id": "ocd-bill/e6bd0d36-1585-4734-a53c-36b895270fc6",
+     "state": "MN",
+     "session": "2023-2024",
+     "identifier": "HF 3309",
+     "title": "Uniform Public Expression Protection Act proposed for adoption by the National Conference of Commissioners on Uniform State Laws enacted.",
+     "status": "died",
+     "first_action": "2023-05-08",
+     "section_pairs": 3
+    },
+    {
+     "bill_id": "ocd-bill/f9e78d0c-7e60-46db-acf1-fd75a1fcf5c5",
+     "state": "MN",
+     "session": "2023-2024",
+     "identifier": "SF 4271",
+     "title": "Omnibus Judiciary and Public Safety policy bill",
+     "status": "died",
+     "first_action": "2024-02-26",
+     "section_pairs": 4
+    },
+    {
+     "bill_id": "ocd-bill/10a37090-8929-4998-98bd-8825b751aee2",
+     "state": "PA",
+     "session": "2023-2024",
+     "identifier": "HB 1466",
+     "title": "An Act amending Title 42 (Judiciary and Judicial Procedure) of the Pennsylvania Consolidated Statutes, in particular rights and immunities, providing for a cause of action on protected public expression and for immunity for protected public expression; and imposing a duty upon the Administrative Office of Pennsylvania Courts and the Legislative Reference Bureau.",
+     "status": "passed",
+     "first_action": "2023-06-21",
+     "section_pairs": 0
+    },
+    {
+     "bill_id": "ocd-bill/6a995153-2637-4501-b3f6-8b5046e6f974",
+     "state": "PA",
+     "session": "2023-2024",
+     "identifier": "SB 972",
+     "title": "An Act amending Title 42 (Judiciary and Judicial Procedure) of the Pennsylvania Consolidated Statutes, in particular rights and immunities, providing for immunity for protected public expression.",
+     "status": "died",
+     "first_action": "2023-10-31",
+     "section_pairs": 0
+    },
+    {
+     "bill_id": "ocd-bill/115d9931-94b4-40d4-b822-9eda98f1ae4e",
+     "state": "NJ",
+     "session": "220",
+     "identifier": "A 4393",
+     "title": "\"Uniform Public Expression Protection Act\"; provides for expedited process for dismissal of \"Strategic Lawsuit Against Public Participation\" (\"SLAPP\").*",
+     "status": "died",
+     "first_action": "2022-06-27",
+     "section_pairs": 2
+    },
+    {
+     "bill_id": "ocd-bill/a12b77a8-9804-4cf9-9b98-6d510f466d34",
+     "state": "NJ",
+     "session": "220",
+     "identifier": "S 2802",
+     "title": "\"Uniform Public Expression Protection Act\"; provides for expedited process for dismissal of \"Strategic Lawsuit Against Public Participation\" (SLAPP).*",
+     "status": "passed",
+     "first_action": "2022-06-06",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/a12c65b0-db31-4d30-8a3c-8ff188086e20",
+     "state": "OR",
+     "session": "2023R1",
+     "identifier": "SB 305",
+     "title": "Relating to special motions to strike.",
+     "status": "passed",
+     "first_action": "2023-01-09",
+     "section_pairs": 0
+    }
+   ],
+   "relatives_without_a_pair": 6,
+   "section_pairs": 56
+  },
+  "deepfakes": {
+   "anchor": {
+    "bill_id": "ocd-bill/34663de4-4cfe-41e9-8d4a-87e69e8b00af",
+    "state": "WA",
+    "session": "2023-2024",
+    "identifier": "SB 5152",
+    "title": "Defining synthetic media in campaigns for elective office, and providing relief for candidates and campaigns.",
+    "status": "passed",
+    "first_action": "2023-01-04"
+   },
+   "relatives_rule": "the relatives its page lists that were introduced after it",
+   "relatives": [
+    {
+     "bill_id": "ocd-bill/da3cdce9-ef5d-43b2-9ed4-b5eb87ab650c",
+     "state": "ID",
+     "session": "2024",
+     "identifier": "H 407",
+     "title": "FREEDOM FROM AI-RIGGED (FAIR) ELECTIONS ACT – Adds to existing law to provide for relief and prohibiting the publication of synthetic media in electioneering communications, to establish provisions regarding an action prohibiting the publication of synthetic media in electioneering communications, and to provide exceptions.",
+     "status": "died",
+     "first_action": "2024-01-18",
+     "section_pairs": 2
+    },
+    {
+     "bill_id": "ocd-bill/52bf27a8-7055-4f4f-8dc6-b910dbb5314e",
+     "state": "KY",
+     "session": "2024RS",
+     "identifier": "SB 131",
+     "title": "AN ACT relating to elections and declaring an emergency.",
+     "status": "died",
+     "first_action": "2024-01-25",
+     "section_pairs": 2
+    },
+    {
+     "bill_id": "ocd-bill/2fe1d907-39ca-4abf-8518-4636f4bad2bc",
+     "state": "KY",
+     "session": "2025RS",
+     "identifier": "HB 672",
+     "title": "AN ACT relating to protection of information and declaring an emergency.",
+     "status": "died",
+     "first_action": "2025-02-18",
+     "section_pairs": 2
+    },
+    {
+     "bill_id": "ocd-bill/07fc7443-194e-4bd7-8ccc-59e24dd36d93",
+     "state": "TN",
+     "session": "113",
+     "identifier": "SB 2460",
+     "title": "Consumer Protection - As introduced, creates a violation under the Tennessee Consumer Protection Act of 1977 for a person or entity that alters the appearance, action, or speech of an individual through the use of synthetic media in a communication that is knowingly distributed publicly with the intent to malign, slander, defame, or otherwise intentionally mislead the public and damage the reputation of the individual. - Amends TCA Title 2; Title 4; Title 8; Title 38; Title 39 and Title 47, Chapter 18.",
+     "status": "died",
+     "first_action": "2024-01-30",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/08313391-4c5d-4821-a0a7-5640c77691e9",
+     "state": "NY",
+     "session": "2023-2024",
+     "identifier": "A 9816",
+     "title": "Enacts the \"New York false AI representations \"New York FAIR\" act; to provide relief against the use of materially deceptive media in political communications",
+     "status": "died",
+     "first_action": "2024-04-09",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/0f429223-7646-4873-aa7c-b5eb1127a0e6",
+     "state": "CA",
+     "session": "20252026",
+     "identifier": "AB 1170",
+     "title": "Maintenance of the codes.",
+     "status": "passed",
+     "first_action": "2025-02-21",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/0560d36a-6c9a-4ebb-821b-0bb26a0faac7",
+     "state": "IA",
+     "session": "2023-2024",
+     "identifier": "SF 2318",
+     "title": "A bill for an act relating to the publication of synthetic media concerning an election, and providing penalties.",
+     "status": "died",
+     "first_action": "2024-02-13",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/463c5bdb-7fb9-4120-b8a1-e7e9ba3fdb63",
+     "state": "AZ",
+     "session": "56th-2nd-regular",
+     "identifier": "SB 1515",
+     "title": "election communications; prohibition; deep fakes",
+     "status": "died",
+     "first_action": "2024-02-05",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/917fedef-e671-42a6-b8d0-1cfb699983b7",
+     "state": "CA",
+     "session": "20232024",
+     "identifier": "AB 2839",
+     "title": "Elections: deceptive media in advertisements.",
+     "status": "passed",
+     "first_action": "2024-02-15",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/630fe794-7e8a-4c43-9684-2c36d2e4afa6",
+     "state": "MA",
+     "session": "193rd",
+     "identifier": "H 5100",
+     "title": "An Act relative to strengthening Massachusetts’ economic leadership",
+     "status": "passed",
+     "first_action": "2024-11-13",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/c6750c83-27ba-403d-a64a-38b46e568621",
+     "state": "MA",
+     "session": "193rd",
+     "identifier": "S 2831",
+     "title": "An Act relative to disinformation in elections",
+     "status": "died",
+     "first_action": "2024-06-21",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/76c80fd0-9c1e-419c-b0ce-067c03ca3a89",
+     "state": "MA",
+     "session": "193rd",
+     "identifier": "S 2869",
+     "title": "Amendment S.2869",
+     "status": "died",
+     "first_action": "2024-07-11",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/0190222f-a3fd-4970-b2d4-3fc71aa6e1f3",
+     "state": "MD",
+     "session": "2024",
+     "identifier": "SB 978",
+     "title": "Election Law - Synthetic Media - Disclosure and Regulation",
+     "status": "died",
+     "first_action": "2024-02-02",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/b877f650-9b59-404d-b85b-daa81543fe69",
+     "state": "MO",
+     "session": "2024",
+     "identifier": "SB 1444",
+     "title": "Creates provisions relating to digitally altered media",
+     "status": "died",
+     "first_action": "2024-02-22",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/e8b4ec27-7259-4bdc-a914-f69c6ed725b5",
+     "state": "MS",
+     "session": "2024",
+     "identifier": "HB 1689",
+     "title": "Election crime; create for dissemination of a deep fake within 90 days of an election.",
+     "status": "died",
+     "first_action": "2024-02-19",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/5d77337f-7581-40cc-9567-44060938c2c1",
+     "state": "NC",
+     "session": "2023",
+     "identifier": "SB 880",
+     "title": "No Deepfakes in Election Communication.",
+     "status": "died",
+     "first_action": "2024-05-02",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/3cdc7229-40ad-44ac-86a7-47ae6ebc25b4",
+     "state": "NE",
+     "session": "109",
+     "identifier": "LB 615",
+     "title": "Prohibit distributing deepfakes under the Nebraska Political Accountability and Disclosure Act",
+     "status": "died",
+     "first_action": "2025-01-22",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/7b86dc49-4b2a-4bd4-86f8-82938da090ec",
+     "state": "NH",
+     "session": "2024",
+     "identifier": "HB 1596",
+     "title": "requiring a disclosure of deceptive artificial intelligence usage in political advertising.",
+     "status": "passed",
+     "first_action": "2023-12-15",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/d9331967-d98c-4635-9f2c-251b5e6ec3d7",
+     "state": "OH",
+     "session": "136",
+     "identifier": "HB 362",
+     "title": "Regulate fraudulent synthetic media for influencing elections",
+     "status": "introduced",
+     "first_action": "2025-06-12",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/8efcd3a7-ce69-4d06-8799-dcbaba7ab6a3",
+     "state": "OK",
+     "session": "2024",
+     "identifier": "HB 3825",
+     "title": "Elections; prohibiting deceptive and fraudulent deepfakes of candidates for elective office; providing for penalties; codification; effective date.",
+     "status": "died",
+     "first_action": "2024-02-05",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/fdcb7de9-9c41-444d-b8d5-84f721a09865",
+     "state": "OK",
+     "session": "2024",
+     "identifier": "SB 1655",
+     "title": "Elections; prohibiting distribution of certain media within certain time period; establishing requirements for certain disclosures. Effective date.",
+     "status": "died",
+     "first_action": "2024-02-05",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/0040f16e-d348-4d21-8fc9-5a51e068455d",
+     "state": "OK",
+     "session": "2025",
+     "identifier": "SB 746",
+     "title": "Artificial intelligence; requiring certain disclosure for certain media. Effective date.",
+     "status": "introduced",
+     "first_action": "2025-02-03",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/23499316-ba93-4e65-b400-1a820ba3e990",
+     "state": "RI",
+     "session": "2025",
+     "identifier": "HB 5872",
+     "title": "AN ACT RELATING TO ELECTIONS -- DECEPTIVE AND FRAUDULENT SYNTHETIC MEDIA IN ELECTION COMMUNICATIONS",
+     "status": "passed",
+     "first_action": "2025-02-28",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/91ad1edd-97e3-4af8-9f84-abcccab69b7c",
+     "state": "RI",
+     "session": "2024",
+     "identifier": "HB 7387",
+     "title": "AN ACT RELATING TO ELECTIONS -- DECEPTIVE AND FRAUDULENT SYNTHETIC MEDIA IN ELECTION COMMUNICATIONS",
+     "status": "died",
+     "first_action": "2024-01-31",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/208677dc-96cb-4b87-810d-8f670036b398",
+     "state": "SC",
+     "session": "2025-2026",
+     "identifier": "H 3517",
+     "title": "Deceptive and fraudulent deepfake media in elections",
+     "status": "introduced",
+     "first_action": "2024-12-05",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/faaa1523-d998-49db-8b30-ff5b01a08494",
+     "state": "SC",
+     "session": "2023-2024",
+     "identifier": "H 4660",
+     "title": "Deceptive and fraudulent deepfake media in elections",
+     "status": "died",
+     "first_action": "2023-12-14",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/014d70f8-ad1c-4cc6-a155-7675bf8e4c96",
+     "state": "VA",
+     "session": "2023",
+     "identifier": "HB 2208",
+     "title": "Jewish faith or ethnicity; addressing discrimination against persons.",
+     "status": "died",
+     "first_action": "2023-01-11",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/63fe5f62-4309-4579-a64b-c75ba9cfb692",
+     "state": "VA",
+     "session": "2024",
+     "identifier": "SB 7",
+     "title": "Hate crimes and discrimination; ethnic animosity, penalties.",
+     "status": "passed",
+     "first_action": "2023-11-20",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/260ba277-8629-4669-ab17-1433925c5359",
+     "state": "LA",
+     "session": "2026",
+     "identifier": "HB 157",
+     "title": "TRADEMARKS/TRADE NAMES: Establishes a cause of action for misuse of artificial intelligence",
+     "status": "died",
+     "first_action": "2026-02-13",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/2d188201-7add-410c-b719-d87478ad24bb",
+     "state": "MO",
+     "session": "2026",
+     "identifier": "HB 1887",
+     "title": "Creates the offense of and civil penalties for disclosure of intimate digital depictions",
+     "status": "died",
+     "first_action": "2025-12-01",
+     "section_pairs": 2
+    },
+    {
+     "bill_id": "ocd-bill/1ca6c1e4-0aac-491c-919d-4eceac4cfaa7",
+     "state": "MO",
+     "session": "2026",
+     "identifier": "SB 1117",
+     "title": "Establishes provisions relating to the civil and criminal liability of disclosure of digital depictions",
+     "status": "died",
+     "first_action": "2025-12-01",
+     "section_pairs": 2
+    },
+    {
+     "bill_id": "ocd-bill/e951e6c7-2a0b-4a3c-9b54-9acc3597d2e3",
+     "state": "MO",
+     "session": "2025",
+     "identifier": "SB 411",
+     "title": "Establishes provisions relating to the civil and criminal liability of disclosure of intimate digital depictions",
+     "status": "died",
+     "first_action": "2024-12-01",
+     "section_pairs": 2
+    },
+    {
+     "bill_id": "ocd-bill/e1944f25-1fd6-4af8-b54d-85b781b47bb3",
+     "state": "SC",
+     "session": "2025-2026",
+     "identifier": "H 3406",
+     "title": "Online technological exploitation",
+     "status": "introduced",
+     "first_action": "2024-12-05",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/88b9258a-ab87-4136-b837-6efe8c138a5e",
+     "state": "AZ",
+     "session": "56th-2nd-regular",
+     "identifier": "HB 2394",
+     "title": "candidates; digital impersonation; injunctive relief",
+     "status": "passed",
+     "first_action": "2024-01-22",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/96f48848-7c1a-4861-800d-db529fd324f4",
+     "state": "IA",
+     "session": "2023-2024",
+     "identifier": "HF 510",
+     "title": "A bill for an act relating to the Iowa human life protection Act, providing for civil actions and civil penalties, and including effective date provisions.",
+     "status": "died",
+     "first_action": "2023-02-28",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/a605fc20-6ea1-4b37-94b5-929e8443cd34",
+     "state": "AZ",
+     "session": "56th-2nd-regular",
+     "identifier": "HB 2889",
+     "title": "pornography; publication; consent; verification; violation",
+     "status": "died",
+     "first_action": "2024-02-06",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/77edbdda-cdb0-4162-9c3a-a2588b28a995",
+     "state": "KY",
+     "session": "2026RS",
+     "identifier": "HB 63",
+     "title": "AN ACT relating to privacy protection.",
+     "status": "died",
+     "first_action": "2026-01-07",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/e18c2123-2e16-4541-921d-fc1abf43e0dc",
+     "state": "ID",
+     "session": "2024",
+     "identifier": "H 565",
+     "title": "ELECTIONEERING COMMUNICATIONS – Amends and adds to existing law to revise the definition of “electioneering,” to provide for relief prohibiting the publication of synthetic media in electioneering communications, to provide for an action prohibiting the publication of synthetic media in electioneering communications, and to provide exceptions.",
+     "status": "died",
+     "first_action": "2024-02-14",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/12385623-a7f3-4df3-a9d8-61ad14c5f6c5",
+     "state": "ID",
+     "session": "2026",
+     "identifier": "S 1341",
+     "title": "CAMPAIGN FINANCE – Amends, repeals, and adds to existing law to provide for campaign finance transparency.",
+     "status": "died",
+     "first_action": "2026-02-25",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/0e288039-0816-4448-b94e-81259c77865d",
+     "state": "NJ",
+     "session": "222",
+     "identifier": "A 3228",
+     "title": "Requires entities to verify age of persons accessing certain online material and prohibits minors from accessing certain online material.",
+     "status": "introduced",
+     "first_action": "2026-01-13",
+     "section_pairs": 1
+    }
+   ],
+   "relatives_without_a_pair": 0,
+   "section_pairs": 46
+  },
+  "georgia-social-media": {
+   "anchor": {
+    "bill_id": "ocd-bill/9ad3e2e2-3877-4677-9e4c-a010940dc6ba",
+    "state": "GA",
+    "session": "2023_24",
+    "identifier": "SB 351",
+    "title": "\"Protecting Georgia's Children on Social Media Act of 2024\"; enact",
+    "status": "passed",
+    "first_action": "2024-01-10"
+   },
+   "relatives_rule": "every relative its page lists",
+   "relatives": [
+    {
+     "bill_id": "ocd-bill/2e509d7e-2ee7-489e-a02c-1614f0e24cee",
+     "state": "OK",
+     "session": "2026",
+     "identifier": "HB 1388",
+     "title": "Schools; creating the Protecting Oklahoma's Children on Social Media Act of 2025; directing adoption of acceptable-use and social media policies; effective date; emergency.",
+     "status": "died",
+     "first_action": "2025-02-03",
+     "section_pairs": 6
+    },
+    {
+     "bill_id": "ocd-bill/c4dfd716-5a88-446b-ad0b-04b3474134c5",
+     "state": "SC",
+     "session": "2025-2026",
+     "identifier": "H 5209",
+     "title": "South Carolina Social Media Regulation Act",
+     "status": "introduced",
+     "first_action": "2026-02-18",
+     "section_pairs": 3
+    },
+    {
+     "bill_id": "ocd-bill/c1f6d27a-bc58-49fe-87d2-84b27b5ee093",
+     "state": "SC",
+     "session": "2023-2024",
+     "identifier": "H 4700",
+     "title": "South Carolina Social Media Regulation Act",
+     "status": "died",
+     "first_action": "2023-12-14",
+     "section_pairs": 2
+    },
+    {
+     "bill_id": "ocd-bill/e9b98a07-3eec-4d34-bb57-96f52fbfed8a",
+     "state": "WV",
+     "session": "2024",
+     "identifier": "HB 5226",
+     "title": "Child Social Media Protection Bill",
+     "status": "died",
+     "first_action": "2024-01-26",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/d8c1de9b-ef5b-4be9-8aee-b040e3448309",
+     "state": "FL",
+     "session": "2024",
+     "identifier": "SB 1788",
+     "title": "Social Media Use for Minors",
+     "status": "died",
+     "first_action": "2024-01-08",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/6e7e69c5-9a19-4e75-b503-0ddaea2c4393",
+     "state": "UT",
+     "session": "2023",
+     "identifier": "HB 311",
+     "title": "H.B. 311 Social Media Usage Amendments",
+     "status": "passed",
+     "first_action": "2023-01-27",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/73a7f4ba-2aa7-443e-a123-b98552b09dfa",
+     "state": "UT",
+     "session": "2023",
+     "identifier": "SB 152",
+     "title": "S.B. 152 Social Media Regulation Amendments",
+     "status": "passed",
+     "first_action": "2023-01-27",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/5671cdfd-d44b-423f-93fe-495e9c150aeb",
+     "state": "LA",
+     "session": "2023",
+     "identifier": "SB 162",
+     "title": "COMMERCIAL REGULATIONS: Creates the Secure Online Child Interaction and Age Limitation Act. (8/1/23) (EN INCREASE GF EX See Note)",
+     "status": "passed",
+     "first_action": "2023-03-31",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/4094c778-3cf8-4db1-8998-db676d99392c",
+     "state": "MO",
+     "session": "2024",
+     "identifier": "HB 2157",
+     "title": "Establishes standards to promote the safety of minors using the internet and social media",
+     "status": "died",
+     "first_action": "2024-01-02",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/7d5f7c90-3122-409e-a3a3-2a9155bc9a14",
+     "state": "NY",
+     "session": "2023-2024",
+     "identifier": "S 6418",
+     "title": "Relates to the regulation of social media companies and social media platforms",
+     "status": "died",
+     "first_action": "2023-04-19",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/ddd79cc5-ee07-480b-b00c-dc2ec415d8ee",
+     "state": "AR",
+     "session": "2023",
+     "identifier": "SB 66",
+     "title": "TO CREATE THE PROTECTION OF MINORS FROM DISTRIBUTION OF HARMFUL MATERIAL ACT; TO ESTABLISH LIABILITY FOR THE PUBLICATION OR DISTRIBUTION OF MATERIAL HARMFUL TO MINORS ON THE INTERNET; AND TO REQUIRE REASONABLE AGE VERIFICATION.",
+     "status": "passed",
+     "first_action": "2023-01-17",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/574bc840-1846-4650-ae08-e4278c4ddf67",
+     "state": "AR",
+     "session": "2023",
+     "identifier": "SB 396",
+     "title": "TO CREATE THE SOCIAL MEDIA SAFETY ACT; TO REQUIRE AGE VERIFICATION FOR USE OF SOCIAL MEDIA; AND TO CLARIFY LIABILITY FOR FAILURE TO PERFORM AGE VERIFICATION FOR USE OF SOCIAL MEDIA AND ILLEGAL RETENTION OF DATA.",
+     "status": "passed",
+     "first_action": "2023-03-09",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/fb6c5ece-04f5-469c-87b1-91e049ac64d9",
+     "state": "FL",
+     "session": "2024",
+     "identifier": "SB 1792",
+     "title": "Online Access to Materials Harmful to Minors",
+     "status": "died",
+     "first_action": "2024-01-08",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/fa376f65-97d7-47ff-a990-cd6baccf963f",
+     "state": "IL",
+     "session": "104th",
+     "identifier": "SB 2082",
+     "title": "ADULT CONTENT AGE VERIFICATION",
+     "status": "introduced",
+     "first_action": "2025-02-06",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/b4f0464a-78a0-4291-80a6-fc79634f06aa",
+     "state": "IL",
+     "session": "103rd",
+     "identifier": "SB 2590",
+     "title": "ADULT CONTENT AGE VERIFICATION",
+     "status": "died",
+     "first_action": "2023-10-18",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/60315338-07fc-4989-8070-963cc705fc05",
+     "state": "KY",
+     "session": "2023RS",
+     "identifier": "HB 476",
+     "title": "AN ACT relating to the protection of minors.",
+     "status": "died",
+     "first_action": "2023-02-21",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/eb1f3277-d8f1-4c4c-a063-d2ff80fc3692",
+     "state": "LA",
+     "session": "2023",
+     "identifier": "HB 77",
+     "title": "ATTORNEY GENERAL: Provides for attorney general investigation for publishers and distributors of material harmful to minors (EN SEE FISC NOTE GF EX See Note)",
+     "status": "passed",
+     "first_action": "2023-03-08",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/100fa4e5-8003-4188-81cf-379a78871c1b",
+     "state": "MO",
+     "session": "2025",
+     "identifier": "HB 691",
+     "title": "Creates a requirement that users must provide government-issued identification prior to viewing pornographic materials provided by commercial entities on the internet",
+     "status": "died",
+     "first_action": "2024-12-27",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/5349472b-f831-48d3-ad16-f2316dd6da5e",
+     "state": "MS",
+     "session": "2023",
+     "identifier": "HB 1091",
+     "title": "Minors; hold entities that publish harmful material on the internet civilly liable if age verification is not performed.",
+     "status": "died",
+     "first_action": "2023-01-16",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/7c79e36b-57ec-49bf-a9cf-f58eb834d15c",
+     "state": "MS",
+     "session": "2026",
+     "identifier": "SB 2719",
+     "title": "Adult performances; prohibit in a location where minors could view, create cause of action.",
+     "status": "died",
+     "first_action": "2026-01-19",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/63e8a5dc-3b2f-4fc4-ae05-3e2f9e5d7fe3",
+     "state": "OK",
+     "session": "2024",
+     "identifier": "HB 3008",
+     "title": "Crimes and punishments; making commercial entities liable for publishing or distributing material harmful to minors under certain circumstances; codification; effective date.",
+     "status": "died",
+     "first_action": "2024-02-05",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/8c5fe27a-6a79-499f-a8b8-51fea9f238e2",
+     "state": "UT",
+     "session": "2023",
+     "identifier": "SB 287",
+     "title": "Online Pornography Viewing Age Requirements",
+     "status": "passed",
+     "first_action": "2023-02-23",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/62d5fe56-d6ef-4a95-9b73-33d4516b1aa6",
+     "state": "MS",
+     "session": "2024",
+     "identifier": "HB 610",
+     "title": "Libraries; regulate the material that is curated for children and younger teens.",
+     "status": "died",
+     "first_action": "2024-01-24",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/6068a424-793e-44f1-b8b6-8f18e0e3c204",
+     "state": "MS",
+     "session": "2024",
+     "identifier": "HB 1126",
+     "title": "\"Walker Montgomery Protecting Children Online Act\"; establish to protect minors from harmful content.",
+     "status": "passed",
+     "first_action": "2024-02-14",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/0f7d891f-8a5b-4548-bf51-a211ccdbbbf6",
+     "state": "MS",
+     "session": "2026",
+     "identifier": "HB 1576",
+     "title": "Interactive computer service providers; require parental consent and access to minor user's account history.",
+     "status": "died",
+     "first_action": "2026-01-19",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/30621afb-c72a-4501-9470-585f4d791a01",
+     "state": "MS",
+     "session": "2026",
+     "identifier": "HB 1619",
+     "title": "Walker Montgomery Protecting Children Online Act; bring forward code sections related to.",
+     "status": "died",
+     "first_action": "2026-01-19",
+     "section_pairs": 1
+    },
+    {
+     "bill_id": "ocd-bill/6a722b0e-a0f9-4c26-9e26-c6ef6c894734",
+     "state": "MS",
+     "session": "2026",
+     "identifier": "HB 708",
+     "title": "App store providers and developers; require to obtain age verification and parental consent for minor's activity.",
+     "status": "died",
+     "first_action": "2026-01-14",
+     "section_pairs": 1
+    }
+   ],
+   "relatives_without_a_pair": 0,
+   "section_pairs": 35
+  }
+ },
+ "section_pairs": 137
+}
