@@ -119,12 +119,17 @@ def test_the_passages_are_the_aligned_text_unmarked() -> None:
 
 def test_the_estimate_is_the_share_correct_by_relative_stage_and_rank() -> None:
     items = [_item(n, f"a {n}", f"b {n}") for n in range(4)]
+    # Each page's list: how many it shows, and the cosines of those found by meaning alone.
     pages = {
-        "r0000": {"rank": 1, "relative_stages": ["semantic"]},
-        "r0001": {"rank": TOP + 1, "relative_stages": ["semantic"]},
-        "r0002": {"rank": 2, "relative_stages": ["near_duplicate", "semantic"]},
-        "r0003": {"rank": 3, "relative_stages": ["near_duplicate"]},
-    }
+        "r0000": {"rank": 1, "relative_stages": ["semantic"], "listed": 4,
+                  "shown_semantic_only": [0.95]},
+        "r0001": {"rank": TOP + 1, "relative_stages": ["semantic"], "listed": 8,
+                  "shown_semantic_only": [0.94, 0.95, 0.96, 0.97]},
+        "r0002": {"rank": 2, "relative_stages": ["near_duplicate", "semantic"], "listed": 2,
+                  "shown_semantic_only": []},
+        "r0003": {"rank": 3, "relative_stages": ["near_duplicate"], "listed": 3,
+                  "shown_semantic_only": [0.95]},
+    }  # fmt: skip
     labels = [
         {
             "query": i.query.ref.as_dict(),
@@ -146,6 +151,13 @@ def test_the_estimate_is_the_share_correct_by_relative_stage_and_rank() -> None:
     assert got["rank"][f"first_{TOP}"]["labeled"] == 3
     assert got["rank"][f"after_{TOP}"]["correct"] == 0
     assert np.isclose(got["overall"]["precision"], 0.5)
+    by_meaning, wording = got["lists"]["by_meaning_alone"], got["lists"]["sharing_wording"]
+    assert (by_meaning["labeled"], by_meaning["correct"]) == (2, 1)
+    assert (wording["labeled"], wording["correct"]) == (2, 1)
+    # Weighted by list over that list's length: 4 / 1 for r0000, right; 8 / 4 for r0001, wrong.
+    assert np.isclose(by_meaning["page_weighted"]["precision"], 4 / 6, atol=1e-4)
+    # 2 / 2 for r0002, right; 3 / 2 for r0003, wrong: 1 / (1 + 1.5).
+    assert np.isclose(wording["page_weighted"]["precision"], 1 / 2.5, atol=1e-4)
 
 
 def test_a_part_draws_its_own_bills_from_pages_as_listed_and_records_what_a_threshold_needs(

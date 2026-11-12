@@ -144,7 +144,9 @@ from lineage.text_run import run_fetch
 from lineage.threshold import CANDIDATES as THRESHOLD_CANDIDATES
 from lineage.threshold import REPORT as THRESHOLD_REPORT
 from lineage.threshold import ThresholdError, flag_at_threshold, pair_level_at
+from lineage.threshold import by_band as threshold_by_band
 from lineage.threshold import proposal as threshold_proposal
+from lineage.threshold import sample_inputs as threshold_sample_inputs
 from lineage.ulc import ENACTMENTS, HELD_OUT_ENACTMENTS, UlcError
 from lineage.vectors import PROCESSES as EMBED_PROCESSES
 from lineage.vectors import REPORT as EMBED_REPORT
@@ -1469,30 +1471,46 @@ def eval_relatives(
     sample: Annotated[
         Path,
         typer.Argument(help="The relatives sample, one per line.", exists=True, dir_okay=False),
-    ] = RELATIVES_SAMPLE,
+    ] = RELATIVES_PARTS["reporting"].sample,
     tables: TablesOption = Path("data/tables"),
     labels: Annotated[
         Path, typer.Option("--labels", help="Labels file (committed).")
     ] = RELATIVES_LABELS,
+    draw: Annotated[
+        Path, typer.Option("--draw", help="The sample's draw report, recorded beside it.")
+    ] = RELATIVES_PARTS["reporting"].report,
     model_labeler: Annotated[
         str, typer.Option("--model-labeler", help="The model labeler counted, model id@prompt.")
-    ] = model_labeler_name(LABEL_MODEL, "relatives-v1"),
+    ] = model_labeler_name(LABEL_MODEL, "passages-v1-high"),
+    models_dir: Annotated[
+        Path, typer.Option("--models", help="Directory of model files (local), for alignment.")
+    ] = MODELS_DIR,
     results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
 ) -> None:
-    """The precision of what a page lists, from the sampled relatives' labels."""
+    """The precision of what a page lists, from the reporting sample's labels."""
     try:
         items, kept = _current_items(sample, tables, labels)
+        # The passages the labels were asked on, so the shares with and without them are real.
+        items = with_passages(items, _model_embedder(models_dir))
         pages = load_pages(sample)
-    except LabelError as e:
+        drawn = json.loads(draw.read_text())
+    except (LabelError, ModelError) as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
     section: dict[str, Any] = {
         "command": "uv run lineage eval relatives",
+        "sample": str(sample),
+        "threshold": drawn.get("threshold"),
+        "state_boilerplate_flag": drawn.get("state_boilerplate_flag"),
         "person": relatives_estimate(items, kept, pages, labeler=PERSON_PREFIX),
         "provisional_model": relatives_estimate(
             items, kept, pages, labeler=model_labeler, exact=True
         ),
     }
+    # Where along the cosine the model's labels change, as the threshold proposal counted it:
+    # a description of the reporting sample, which tunes nothing.
+    listed, correct = threshold_sample_inputs(items, kept, pages, model_labeler)
+    section["provisional_model"]["by_band"] = threshold_by_band(listed, correct)
     write_results(results, "relatives_precision", section)
     for who in ("person", "provisional_model"):
         overall = section[who]["overall"]

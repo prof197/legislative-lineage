@@ -7107,5 +7107,341 @@
     "sampled_pairs_no_longer_found": 84
    }
   }
+ },
+ "relatives_precision": {
+  "command": "uv run lineage eval relatives",
+  "sample": "../legislative-lineage-m5/evals/relatives_reporting.jsonl",
+  "threshold": 0.93,
+  "state_boilerplate_flag": true,
+  "person": {
+   "labeler": "github:",
+   "sampled": 100,
+   "overall": {
+    "labeled": 0,
+    "correct": 0,
+    "precision": null,
+    "interval_95": [
+     0.0,
+     1.0
+    ]
+   },
+   "relative_strata": {
+    "near_duplicate_only": {
+     "labeled": 0,
+     "correct": 0,
+     "precision": null,
+     "interval_95": [
+      0.0,
+      1.0
+     ]
+    },
+    "semantic_only": {
+     "labeled": 0,
+     "correct": 0,
+     "precision": null,
+     "interval_95": [
+      0.0,
+      1.0
+     ]
+    },
+    "both": {
+     "labeled": 0,
+     "correct": 0,
+     "precision": null,
+     "interval_95": [
+      0.0,
+      1.0
+     ]
+    }
+   },
+   "rank": {
+    "first_5": {
+     "labeled": 0,
+     "correct": 0,
+     "precision": null,
+     "interval_95": [
+      0.0,
+      1.0
+     ]
+    },
+    "after_5": {
+     "labeled": 0,
+     "correct": 0,
+     "precision": null,
+     "interval_95": [
+      0.0,
+      1.0
+     ]
+    }
+   },
+   "lists": {
+    "sharing_wording": {
+     "labeled": 0,
+     "correct": 0,
+     "precision": null,
+     "interval_95": [
+      0.0,
+      1.0
+     ],
+     "page_weighted": {
+      "precision": null,
+      "interval_95": [
+       0.0,
+       1.0
+      ]
+     }
+    },
+    "by_meaning_alone": {
+     "labeled": 0,
+     "correct": 0,
+     "precision": null,
+     "interval_95": [
+      0.0,
+      1.0
+     ],
+     "page_weighted": {
+      "precision": null,
+      "interval_95": [
+       0.0,
+       1.0
+      ]
+     }
+    }
+   },
+   "with_passages": {
+    "labeled": 0,
+    "correct": 0,
+    "precision": null,
+    "interval_95": [
+     0.0,
+     1.0
+    ]
+   },
+   "without_passages": {
+    "labeled": 0,
+    "correct": 0,
+    "precision": null,
+    "interval_95": [
+     0.0,
+     1.0
+    ]
+   }
+  },
+  "provisional_model": {
+   "labeler": "model:claude-opus-5-5@passages-v1-high",
+   "sampled": 100,
+   "overall": {
+    "labeled": 100,
+    "correct": 69,
+    "precision": 0.69,
+    "interval_95": [
+     0.5937,
+     0.7722
+    ]
+   },
+   "relative_strata": {
+    "near_duplicate_only": {
+     "labeled": 16,
+     "correct": 12,
+     "precision": 0.75,
+     "interval_95": [
+      0.505,
+      0.8982
+     ]
+    },
+    "semantic_only": {
+     "labeled": 58,
+     "correct": 33,
+     "precision": 0.569,
+     "interval_95": [
+      0.4412,
+      0.6882
+     ]
+    },
+    "both": {
+     "labeled": 26,
+     "correct": 24,
+     "precision": 0.9231,
+     "interval_95": [
+      0.7586,
+      0.9786
+     ]
+    }
+   },
+   "rank": {
+    "first_5": {
+     "labeled": 87,
+     "correct": 61,
+     "precision": 0.7011,
+     "interval_95": [
+      0.5981,
+      0.7872
+     ]
+    },
+    "after_5": {
+     "labeled": 13,
+     "correct": 8,
+     "precision": 0.6154,
+     "interval_95": [
+      0.3552,
+      0.8229
+     ]
+    }
+   },
+   "lists": {
+    "sharing_wording": {
+     "labeled": 42,
+     "correct": 36,
+     "precision": 0.8571,
+     "interval_95": [
+      0.7216,
+      0.9328
+     ],
+     "page_weighted": {
+      "precision": 0.7888,
+      "interval_95": [
+       0.6291,
+       0.9341
+      ]
+     }
+    },
+    "by_meaning_alone": {
+     "labeled": 58,
+     "correct": 33,
+     "precision": 0.569,
+     "interval_95": [
+      0.4412,
+      0.6882
+     ],
+     "page_weighted": {
+      "precision": 0.5832,
+      "interval_95": [
+       0.4175,
+       0.7325
+      ]
+     }
+    }
+   },
+   "with_passages": {
+    "labeled": 99,
+    "correct": 69,
+    "precision": 0.697,
+    "interval_95": [
+     0.6005,
+     0.7787
+    ]
+   },
+   "without_passages": {
+    "labeled": 1,
+    "correct": 0,
+    "precision": 0.0,
+    "interval_95": [
+     0.0,
+     0.7935
+    ]
+   },
+   "by_band": [
+    {
+     "band": "by meaning, 0.8905 to 0.9",
+     "labeled": 0,
+     "correct": 0,
+     "precision": null,
+     "interval_95": [
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "band": "by meaning, 0.9 to 0.91",
+     "labeled": 0,
+     "correct": 0,
+     "precision": null,
+     "interval_95": [
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "band": "by meaning, 0.91 to 0.92",
+     "labeled": 0,
+     "correct": 0,
+     "precision": null,
+     "interval_95": [
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "band": "by meaning, 0.92 to 0.93",
+     "labeled": 0,
+     "correct": 0,
+     "precision": null,
+     "interval_95": [
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "band": "by meaning, 0.93 to 0.94",
+     "labeled": 38,
+     "correct": 16,
+     "precision": 0.4211,
+     "interval_95": [
+      0.2785,
+      0.5781
+     ]
+    },
+    {
+     "band": "by meaning, 0.94 to 0.95",
+     "labeled": 8,
+     "correct": 6,
+     "precision": 0.75,
+     "interval_95": [
+      0.4093,
+      0.9285
+     ]
+    },
+    {
+     "band": "by meaning, 0.95 to 0.96",
+     "labeled": 5,
+     "correct": 5,
+     "precision": 1.0,
+     "interval_95": [
+      0.5655,
+      1.0
+     ]
+    },
+    {
+     "band": "by meaning, 0.96 to 0.97",
+     "labeled": 6,
+     "correct": 6,
+     "precision": 1.0,
+     "interval_95": [
+      0.6097,
+      1.0
+     ]
+    },
+    {
+     "band": "by meaning, 0.97 to 1.0",
+     "labeled": 1,
+     "correct": 0,
+     "precision": 0.0,
+     "interval_95": [
+      0.0,
+      0.7935
+     ]
+    },
+    {
+     "band": "by wording",
+     "labeled": 42,
+     "correct": 36,
+     "precision": 0.8571,
+     "interval_95": [
+      0.7216,
+      0.9328
+     ]
+    }
+   ]
+  }
  }
 }

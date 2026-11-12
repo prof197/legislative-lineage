@@ -39,7 +39,7 @@ from numpy.typing import NDArray
 
 from lineage import queries
 from lineage.align import Embedder, align
-from lineage.intervals import wilson
+from lineage.intervals import weighted_share, wilson
 from lineage.labels import Item
 from lineage.listing import listed_pairs
 from lineage.precision import SEED as PRECISION_SEED
@@ -336,9 +336,32 @@ def estimate(
     exact: bool = False,
 ) -> dict[str, Any]:
     """The share of sampled relatives labeled correct, overall with its Wilson interval, by the
-    stages that found the relative, and for a page's first TOP relatives against the rest."""
+    stages that found the relative, for a page's first TOP relatives against the rest, and for
+    each of the two lists a page shows apart: the relatives sharing wording and those found by
+    meaning alone. A list's relatives were drawn from the whole page, so beside the share each
+    is also weighted by its page's list over that list's length, which estimates the list's own
+    precision averaged over the pages that show it."""
     got = latest_correct(items, labels, labeler, exact=exact)
     ids = [i.pair.pair for i in items if i.pair.pair in got]
+
+    def in_list(p: str, meaning: bool) -> bool:
+        return ("near_duplicate" not in pages[p]["relative_stages"]) == meaning
+
+    def listed_apart(meaning: bool) -> dict[str, Any]:
+        mine = [p for p in ids if in_list(p, meaning)]
+        weights: list[float] = []
+        for p in mine:
+            alone = len(pages[p]["shown_semantic_only"])
+            size = alone if meaning else int(pages[p]["listed"]) - alone
+            weights.append(int(pages[p]["listed"]) / max(size, 1))
+        share, interval = weighted_share(weights, [got[p] for p in mine])
+        return _share([got[p] for p in mine]) | {
+            "page_weighted": {
+                "precision": None if share is None else round(share, 4),
+                "interval_95": [round(v, 4) for v in interval],
+            }
+        }
+
     by_stage = {
         name: _share([got[p] for p in ids if _stratum(pages[p]["relative_stages"]) == name])
         for name in STRATA
@@ -352,6 +375,7 @@ def estimate(
             f"first_{TOP}": _share([got[p] for p in ids if int(pages[p]["rank"]) <= TOP]),
             f"after_{TOP}": _share([got[p] for p in ids if int(pages[p]["rank"]) > TOP]),
         },
+        "lists": {"sharing_wording": listed_apart(False), "by_meaning_alone": listed_apart(True)},
         "with_passages": _share([got[p] for p in ids if _passages_of(items, p)]),
         "without_passages": _share([got[p] for p in ids if not _passages_of(items, p)]),
     }
