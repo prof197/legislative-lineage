@@ -45,6 +45,8 @@ from lineage.doctypes import RULES, DocTypesError, build_eligibility, rule_sampl
 from lineage.embed import embed as embed_texts
 from lineage.embed import load_model
 from lineage.explain import CACHE_DIR as EXPLAIN_CACHE
+from lineage.explain import MODEL as EXPLAIN_MODEL
+from lineage.explain import PROMPT_VERSION as EXPLAIN_PROMPT
 from lineage.explain import (
     NotCachedError,
     anthropic_ask,
@@ -53,6 +55,8 @@ from lineage.explain import (
     pair_texts,
     prompt_spans,
 )
+from lineage.explain import cache_path as explanation_cache_path
+from lineage.explain import projected_cost as projected_explain_cost
 from lineage.fetch import SOURCE, FetchError, fetch_raw
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
@@ -138,6 +142,10 @@ from lineage.sessions import (
     write_sessions,
 )
 from lineage.snapshot import SnapshotError, load_manifest, scan, write_manifest
+from lineage.spend import BUDGET as CALL_BUDGET
+from lineage.spend import SPEND as CALL_SPEND
+from lineage.spend import BudgetError, Meter, check_projection
+from lineage.spend import spent as spent_on_calls
 from lineage.state_boilerplate import (
     FLAGGED_SAMPLE,
     FLAGGED_SAMPLE_REPORT,
@@ -1146,22 +1154,36 @@ def explain_command(
     models_dir: Annotated[
         Path, typer.Option("--models", help="Directory of model files (local).")
     ] = MODELS_DIR,
+    spend: Annotated[
+        Path, typer.Option("--spend", help="M6's model-call ledger (committed).")
+    ] = CALL_SPEND,
 ) -> None:
     """Explain what each descendant changed, grounded in aligned spans; cached, or --live."""
     try:
         todo = load_pairs(pairs)
         texts = pair_texts(tables, todo)
         embedder = _model_embedder(models_dir) if paraphrase else None
-        ask = anthropic_ask() if live else None
-        for pair, (origin, descendant) in zip(todo, texts, strict=True):
-            spans = align(origin, descendant, embed=embedder).spans
-            outcome = explain(
-                prompt_spans(spans, origin, descendant, origin_side="a"),
-                spans,
-                origin_side="a",
-                ask=ask,
-                cache=cache,
+        prompts = [
+            prompt_spans(align(o, d, embed=embedder).spans, o, d, origin_side="a") for o, d in texts
+        ]
+        uncached = [p for p in prompts if not explanation_cache_path(p, cache).exists()]
+        projected = projected_explain_cost(uncached)
+        typer.echo(
+            f"{len(prompts)} pairs, {len(uncached)} not cached, projected at most "
+            f"${projected:.2f}; ${spent_on_calls(spend):.2f} of ${CALL_BUDGET:.2f} spent"
+        )
+        if uncached and not live:
+            raise NotCachedError(f"{len(uncached)} pairs not cached; run with --live to ask")
+        meter = None
+        ask = None
+        if uncached:
+            check_projection(projected, spend)
+            meter = Meter(
+                spend, "explain", EXPLAIN_MODEL, EXPLAIN_PROMPT, datetime.date.today().isoformat()
             )
+            ask = anthropic_ask()
+        for pair, for_prompt in zip(todo, prompts, strict=True):
+            outcome = explain(for_prompt, ask=ask, cache=cache, meter=meter)
             (ob, oo), (db, do) = pair.origin, pair.descendant
             typer.echo(f"\n{ob} section {oo} -> {db} section {do}")
             if outcome.withheld:
@@ -1171,7 +1193,7 @@ def explain_command(
                 typer.echo(f"  {claim.kind}: {claim.summary} [{cited}]")
             for claim, why in outcome.dropped:
                 typer.echo(f"  dropped ({why}): {claim.summary}")
-    except (ValueError, NotCachedError, ModelError) as e:
+    except (ValueError, NotCachedError, ModelError, BudgetError) as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
 

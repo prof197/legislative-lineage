@@ -8,10 +8,13 @@ grounded, is asked again once; if the retry is unusable too, the explanation is 
 reply of no claims says nothing of substance changed, and is kept as such.
 
 Every outcome, withheld ones included, is cached in one file named by the SHA-256 of the model
-id, the prompt version and the spans, so a rerun pays only for pairs it has not seen, CI and
-keyless users replay the cache, and a changed prompt or alignment can never be served a stale
-answer. A cached reply is re-grounded each time it is read. Without --live, a pair with no
-cached outcome is an error, never a call. See DESIGN.md#explanations.
+id, the prompt version and the spans, so a rerun pays only for pairs it has not seen, keyless
+users replay the cache, and a changed prompt or alignment can never be served a stale answer.
+A cached reply is re-grounded each time it is read. Without --live, a pair with no cached
+outcome is an error, never a call. A cache file holds no bill text: beside the reply it keeps
+each span's grounding form (lineage.explanations.GroundingSpan) and what grounding kept and
+dropped, so CI grounds every committed reply again with no corpus (check_cache). Every call is
+metered against M6's budget (lineage.spend). See DESIGN.md#explanations.
 """
 
 import hashlib
@@ -25,13 +28,24 @@ from pydantic import ValidationError
 
 from lineage import queries
 from lineage.align import Span
-from lineage.explanations import ChangeExplanation, Claim, Side, ground
+from lineage.explanations import (
+    ChangeExplanation,
+    Claim,
+    GroundingSpan,
+    Side,
+    ground,
+    grounding_spans,
+    reasons,
+)
+from lineage.spend import Meter, upper_bound
 
 MODEL = "claude-opus-5-5"
 PROMPT_VERSION = "v1"
 CACHE_DIR = Path("explanations/cache")
 ATTEMPTS = 2  # the first ask and one retry
-_MAX_TOKENS = 16000
+# Four claims of at most 200 characters, and the thinking medium effort spends on them; a reply
+# cut off at the limit is unusable and asked again.
+MAX_TOKENS = 4096
 # Declines are rerun on the fallback model the API picks for the refusal's category; the cache
 # records which model served the reply.
 _FALLBACK_BETA = "server-side-fallback-2026-07-01"
@@ -55,13 +69,27 @@ class NotCachedError(Exception):
 
 
 class UnusableReplyError(Exception):
-    """The model declined, or its reply did not fit the schema."""
+    """The model declined, or its reply did not fit the schema; with what the call cost."""
+
+    def __init__(
+        self,
+        why: str,
+        input_tokens: int = 0,
+        output_tokens: int = 0,
+        served_by: str | None = None,
+    ) -> None:
+        super().__init__(why)
+        self.input_tokens = input_tokens
+        self.output_tokens = output_tokens
+        self.served_by = served_by
 
 
 @dataclass(frozen=True, slots=True)
 class Reply:
     explanation: ChangeExplanation
     served_by: str  # the model that produced it, which a fallback can change
+    input_tokens: int = 0
+    output_tokens: int = 0
 
 
 Ask = Callable[[str, str], Reply]  # (system, user) -> reply; raises UnusableReplyError
@@ -96,45 +124,125 @@ def cache_key(model: str, prompt_version: str, spans: Sequence[dict[str, Any]]) 
     return hashlib.sha256(json.dumps(doc, sort_keys=True).encode()).hexdigest()
 
 
-def _outcome(entry: dict[str, Any], spans: Sequence[Span], origin_side: Side) -> Outcome:
+def explanation_key(spans_for_prompt: Sequence[dict[str, Any]], model: str = MODEL) -> str:
+    """The cache key of a pair's explanation under the current prompt."""
+    return cache_key(model, PROMPT_VERSION, spans_for_prompt)
+
+
+def user_message(spans_for_prompt: Sequence[dict[str, Any]]) -> str:
+    return json.dumps({"spans": list(spans_for_prompt)}, ensure_ascii=False, indent=1)
+
+
+def prompt_chars(spans_for_prompt: Sequence[dict[str, Any]]) -> int:
+    return len(SYSTEM) + len(user_message(spans_for_prompt))
+
+
+def _grounded_record(
+    reply: ChangeExplanation | None, spans: Sequence[GroundingSpan]
+) -> dict[str, Any] | None:
+    if reply is None:
+        return None
+    why = reasons(reply, spans)
+    return {
+        "kept": [i for i, w in enumerate(why) if w is None],
+        "dropped": [[i, w] for i, w in enumerate(why) if w is not None],
+    }
+
+
+def _outcome(entry: dict[str, Any], spans: Sequence[GroundingSpan]) -> Outcome:
     if entry["explanation"] is None:
         return Outcome([], [], True, entry["served_by"])
     reply = ChangeExplanation.model_validate(entry["explanation"])
-    grounded = ground(reply, spans, origin_side=origin_side)
+    grounded = ground(reply, spans)
     withheld = bool(reply.claims) and not grounded.claims
     return Outcome(grounded.claims, grounded.dropped, withheld, entry["served_by"])
 
 
+def cache_path(spans_for_prompt: Sequence[dict[str, Any]], cache: Path, model: str = MODEL) -> Path:
+    return cache / f"{explanation_key(spans_for_prompt, model)}.json"
+
+
 def explain(
     spans_for_prompt: Sequence[dict[str, Any]],
-    spans: Sequence[Span],
     *,
-    origin_side: Side,
     ask: Ask | None,
     cache: Path = CACHE_DIR,
     model: str = MODEL,
+    meter: Meter | None = None,
 ) -> Outcome:
-    """The cached outcome for these spans, or, with `ask`, a new one from the model."""
-    path = cache / f"{cache_key(model, PROMPT_VERSION, spans_for_prompt)}.json"
+    """The cached outcome for these spans, or, with `ask`, a new one from the model, each call
+    metered by `meter`."""
+    spans = grounding_spans(spans_for_prompt)
+    path = cache_path(spans_for_prompt, cache, model)
     if path.exists():
-        return _outcome(json.loads(path.read_text()), spans, origin_side)
+        return _outcome(json.loads(path.read_text()), spans)
     if ask is None:
         raise NotCachedError("no cached explanation for this pair; run with --live to ask")
-    user = json.dumps({"spans": list(spans_for_prompt)}, ensure_ascii=False, indent=1)
+    user = user_message(spans_for_prompt)
     entry: dict[str, Any] = {"explanation": None, "served_by": None}
     for _ in range(ATTEMPTS):
+        if meter is not None:
+            meter.before_call(len(SYSTEM) + len(user), MAX_TOKENS)
         try:
             reply = ask(SYSTEM, user)
-        except UnusableReplyError:
+        except UnusableReplyError as e:
+            if meter is not None:
+                meter.add(e.input_tokens, e.output_tokens, e.served_by)
             continue
+        if meter is not None:
+            meter.add(reply.input_tokens, reply.output_tokens, reply.served_by)
         claims = reply.explanation.claims
-        if not claims or ground(reply.explanation, spans, origin_side=origin_side).claims:
+        if not claims or ground(reply.explanation, spans).claims:
             entry = {"explanation": reply.explanation.model_dump(), "served_by": reply.served_by}
             break
     cache.mkdir(parents=True, exist_ok=True)
-    record = {"model": model, "prompt_version": PROMPT_VERSION} | entry
+    explanation = (
+        None
+        if entry["explanation"] is None
+        else ChangeExplanation.model_validate(entry["explanation"])
+    )
+    record = {
+        "model": model,
+        "prompt_version": PROMPT_VERSION,
+        "spans": [g.as_json() for g in spans],
+        **entry,
+        "grounded": _grounded_record(explanation, spans),
+    }
     path.write_text(json.dumps(record, indent=1, ensure_ascii=False) + "\n")
-    return _outcome(entry, spans, origin_side)
+    return _outcome(entry, spans)
+
+
+def check_cache(cache: Path = CACHE_DIR) -> list[str]:
+    """Every problem with the committed explanations, grounded again from what each file
+    records, with no corpus: a reply that no longer fits the schema, a kept claim that does not
+    cite spans that exist and differ, a record of what was kept that grounding no longer gives,
+    or a reply kept although none of its claims is grounded."""
+    problems: list[str] = []
+    for path in sorted(cache.glob("*.json")) if cache.exists() else []:
+        name = path.name
+        try:
+            entry = json.loads(path.read_text())
+            spans = [GroundingSpan.from_json(r) for r in entry["spans"]]
+            if entry["explanation"] is None:
+                if entry["grounded"] is not None:
+                    problems.append(f"{name}: withheld, but records grounded claims")
+                continue
+            reply = ChangeExplanation.model_validate(entry["explanation"])
+        except (json.JSONDecodeError, KeyError, TypeError, ValidationError) as e:
+            problems.append(f"{name}: not a cached explanation ({e})")
+            continue
+        if _grounded_record(reply, spans) != entry["grounded"]:
+            problems.append(f"{name}: grounding now keeps a different set of claims")
+        if reply.claims and not ground(reply, spans).claims:
+            problems.append(f"{name}: kept, though none of its claims is grounded")
+    return problems
+
+
+def projected_cost(
+    spans_for_prompts: Sequence[Sequence[dict[str, Any]]], model: str = MODEL
+) -> float:
+    """At most what explaining these pairs costs, each asked as often as it may be retried."""
+    return upper_bound(model, [prompt_chars(s) for s in spans_for_prompts], MAX_TOKENS, ATTEMPTS)
 
 
 def anthropic_ask(model: str = MODEL) -> Ask:
@@ -148,7 +256,7 @@ def anthropic_ask(model: str = MODEL) -> Ask:
         try:
             response = client.beta.messages.parse(
                 model=model,
-                max_tokens=_MAX_TOKENS,
+                max_tokens=MAX_TOKENS,
                 system=system,
                 messages=[{"role": "user", "content": user}],
                 output_format=ChangeExplanation,
@@ -158,9 +266,12 @@ def anthropic_ask(model: str = MODEL) -> Ask:
             )
         except ValidationError as e:
             raise UnusableReplyError(f"the reply does not fit the schema: {e}") from e
+        tokens = (response.usage.input_tokens, response.usage.output_tokens)
         if response.stop_reason == "refusal" or response.parsed_output is None:
-            raise UnusableReplyError(f"no usable reply (stop reason {response.stop_reason})")
-        return Reply(response.parsed_output, response.model)
+            raise UnusableReplyError(
+                f"no usable reply (stop reason {response.stop_reason})", *tokens, response.model
+            )
+        return Reply(response.parsed_output, response.model, *tokens)
 
     return ask
 

@@ -22,12 +22,15 @@ from lineage.explain import (
     Reply,
     UnusableReplyError,
     cache_key,
+    check_cache,
     explain,
     load_pairs,
     pair_texts,
+    projected_cost,
     prompt_spans,
 )
 from lineage.explanations import ChangeExplanation, Claim
+from lineage.spend import BudgetError, Meter, load_runs
 
 ORIGIN = "The fee is set for each fiscal year. Records are kept."
 DESCENDANT = "The fee is set every biennium. Records are kept. Appeals go to the board."
@@ -68,18 +71,17 @@ def _scripted(*replies: ChangeExplanation | Exception) -> tuple[list[tuple[str, 
         nxt = next(queue)
         if isinstance(nxt, Exception):
             raise nxt
-        return Reply(nxt, "claude-opus-5-5")
+        return Reply(nxt, "claude-opus-5-5", 1000, 100)
 
     return calls, ask
 
 
-def _explain(ask: Ask | None, cache: Path) -> Outcome:
+def _explain(ask: Ask | None, cache: Path, meter: Meter | None = None) -> Outcome:
     return explain(
         prompt_spans(SPANS, ORIGIN, DESCENDANT, origin_side="a"),
-        SPANS,
-        origin_side="a",
         ask=ask,
         cache=cache,
+        meter=meter,
     )
 
 
@@ -205,7 +207,7 @@ def test_the_command_replays_the_cache_and_asks_only_with_live(
         "--no-paraphrase",
     ]
 
-    uncached = CliRunner().invoke(app, args)
+    uncached = CliRunner().invoke(app, [*args, "--spend", str(tmp_path / "spend.json")])
 
     assert uncached.exit_code == 1
     assert "--live" in uncached.output
@@ -214,15 +216,67 @@ def test_the_command_replays_the_cache_and_asks_only_with_live(
     changed = next(s for s in spans if s.kind != "copied" and s.b is not None)
     claim = _claim(changed.id)
     _, ask = _scripted(ChangeExplanation(claims=[claim]))
-    explain(
-        prompt_spans(spans, origin, descendant, origin_side="a"),
-        spans,
-        origin_side="a",
-        ask=ask,
-        cache=cache,
-    )
+    explain(prompt_spans(spans, origin, descendant, origin_side="a"), ask=ask, cache=cache)
 
-    cached = CliRunner().invoke(app, args)
+    cached = CliRunner().invoke(app, [*args, "--spend", str(tmp_path / "spend.json")])
 
     assert cached.exit_code == 0, cached.output
     assert f"added: {claim.summary} [{changed.id}]" in cached.output
+
+
+def test_a_cache_file_holds_no_text_and_ci_grounds_it_again_from_what_it_records(
+    tmp_path: Path,
+) -> None:
+    _, ask = _scripted(ChangeExplanation(claims=[_claim("s2"), _claim("s1", "changed")]))
+    _explain(ask, tmp_path)
+    [path] = tmp_path.glob("*.json")
+    entry = json.loads(path.read_text())
+
+    assert "Appeals" not in path.read_text()
+    assert [s["id"] for s in entry["spans"]] == ["s0", "s1", "s2"]
+    assert entry["grounded"] == {"kept": [0], "dropped": [[1, "s1 is an exact copy"]]}
+    assert check_cache(tmp_path) == []
+
+    # A claim edited to cite a copied span, or a record of what was kept that no longer holds.
+    entry["explanation"]["claims"] = [_claim("s1", "changed").model_dump()]
+    path.write_text(json.dumps(entry))
+    problems = check_cache(tmp_path)
+    assert any("different set of claims" in p for p in problems)
+    assert any("none of its claims is grounded" in p for p in problems)
+
+
+def test_a_withheld_explanation_passes_the_check_and_an_unreadable_file_does_not(
+    tmp_path: Path,
+) -> None:
+    _, ask = _scripted(UnusableReplyError("refused"), UnusableReplyError("refused"))
+    _explain(ask, tmp_path)
+    assert check_cache(tmp_path) == []
+
+    (tmp_path / "bad.json").write_text("{}")
+    assert check_cache(tmp_path) == ["bad.json: not a cached explanation ('spans')"]
+
+
+def test_every_call_is_metered_and_a_call_past_the_budget_is_refused(tmp_path: Path) -> None:
+    spend = tmp_path / "spend.json"
+    meter = Meter(spend, "explain", MODEL, PROMPT_VERSION, "2026-11-12")
+    _, ask = _scripted(
+        UnusableReplyError("refused", 500, 20, "claude-opus-5-5"),
+        ChangeExplanation(claims=[_claim("s2")]),
+    )
+    _explain(ask, tmp_path / "cache", meter)
+
+    [run] = load_runs(spend)
+    assert (run["calls"], run["input_tokens"], run["output_tokens"]) == (2, 1500, 120)
+    assert run["dollars"] == round((1500 * 4 + 120 * 20) / 1e6, 4)
+
+    spend.write_text(json.dumps({"runs": [{**run, "run": "earlier", "dollars": 29.99}]}))
+    broke = Meter(spend, "explain", MODEL, PROMPT_VERSION, "2026-11-12")
+    with pytest.raises(BudgetError, match="passes the"):
+        _explain(_scripted(ChangeExplanation(claims=[]))[1], tmp_path / "other", broke)
+
+
+def test_the_projection_counts_every_retry_at_the_reply_limit() -> None:
+    spans = prompt_spans(SPANS, ORIGIN, DESCENDANT, origin_side="a")
+
+    assert projected_cost([spans, spans]) == pytest.approx(2 * projected_cost([spans]))
+    assert projected_cost([spans]) > 2 * 4096 * 20 / 1e6

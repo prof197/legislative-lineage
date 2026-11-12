@@ -4,16 +4,31 @@ spans that exist and differ (DESIGN.md#explanations)."""
 import pytest
 from pydantic import ValidationError
 
-from lineage.align import Span
-from lineage.explanations import ChangeExplanation, Claim, ground
+from lineage.explanations import (
+    ChangeExplanation,
+    Claim,
+    GroundingSpan,
+    ground,
+    grounding_spans,
+    reasons,
+)
 
-# origin is side a, descendant side b
-SPANS = [
-    Span("s0", "copied", (0, 10), (0, 10)),
-    Span("s1", "paraphrased", (11, 20), (11, 25)),
-    Span("s2", "unmatched", (21, 30), None),  # removed from the origin
-    Span("s3", "unmatched", None, (26, 40)),  # added in the descendant
-]
+SPANS = grounding_spans(
+    [
+        {"id": "s0", "kind": "copied", "origin": "The fund is", "descendant": "The fund is"},
+        {
+            "id": "s1",
+            "kind": "paraphrased",
+            "origin": "each fiscal year",
+            "descendant": "every two years",
+        },
+        # removed from the origin, and added in the descendant
+        {"id": "s2", "kind": "unmatched", "origin": "and audited", "descendant": None},
+        {"id": "s3", "kind": "unmatched", "origin": None, "descendant": "by the treasurer"},
+        # paired by meaning, but only punctuation and case tell its sides apart
+        {"id": "s4", "kind": "paraphrased", "origin": "The Board;", "descendant": "the board"},
+    ]
+)
 
 
 def _claim(
@@ -67,10 +82,11 @@ def test_claims_citing_differences_that_exist_are_kept() -> None:
         ]
     )
 
-    grounded = ground(reply, SPANS, origin_side="a")
+    grounded = ground(reply, SPANS)
 
     assert grounded.claims == reply.claims
     assert grounded.dropped == []
+    assert reasons(reply, SPANS) == [None, None, None]
 
 
 @pytest.mark.parametrize(
@@ -81,18 +97,22 @@ def test_claims_citing_differences_that_exist_are_kept() -> None:
         (_claim(origin=["s0"], descendant=["s0"]), "s0 is an exact copy"),
         (_claim("added", origin=["s3"]), "s3 has no origin text"),
         (_claim("removed", descendant=["s2"]), "s2 has no descendant text"),
+        (_claim(origin=["s4"], descendant=["s4"]), "s4 reads the same on both sides"),
     ],
 )
 def test_a_claim_without_a_real_difference_behind_it_is_dropped(claim: Claim, reason: str) -> None:
-    grounded = ground(
-        ChangeExplanation(claims=[claim, _claim(origin=["s1"])]), SPANS, origin_side="a"
-    )
+    grounded = ground(ChangeExplanation(claims=[claim, _claim(origin=["s1"])]), SPANS)
 
     assert grounded.claims == [_claim(origin=["s1"])]
     assert [why for _, why in grounded.dropped] == [reason]
 
 
-def test_the_origin_may_be_either_side() -> None:
-    reply = ChangeExplanation(claims=[_claim("added", descendant=["s2"])])
+def test_the_check_keeps_no_text_only_each_sides_normalized_hash() -> None:
+    by_id = {g.id: g for g in SPANS}
+    stored = [GroundingSpan.from_json(g.as_json()) for g in SPANS]
 
-    assert ground(reply, SPANS, origin_side="b").claims == reply.claims
+    assert by_id["s2"].descendant is None
+    assert by_id["s1"].origin is not None
+    assert len(by_id["s1"].origin) == 64
+    assert "fiscal" not in str([g.as_json() for g in SPANS])
+    assert stored == SPANS
