@@ -433,7 +433,7 @@ Recall has an answer key; precision needs labels. A seeded sample of matches, dr
 **What the check found, and what was decided.** A person labeled the 50 pairs blind, with copied and paraphrased text highlighted (`uv run lineage eval agreement` → `reports/results.json`, `label_agreement`). At low effort (`v1`) the model reached a weighted kappa of 0.41 and cutoff agreement of 76.0% [62.6, 85.7]. Each of its 12 disagreements across the cutoff was a pair the person called related or closer and the model called a shared subject with different provisions. At high effort (`v1-high`) it reached a kappa of 0.50 and cutoff agreement of 94.0% [83.8, 97.9]. Kappa fell short of its bar at both efforts, so by the rule set beforehand the model's labels do not stand. At review the decision was to use them anyway, for four reasons:
 
 - Kappa failed on how similar a related pair is, which precision does not use: on 14 pairs the person said almost identical and the model related.
-- Every one of the three disagreements left across the cutoff had the model lower than the person, so a precision from its labels reads as a floor.
+- Every one of the three disagreements left across the cutoff had the model lower than the person, so a precision from its labels reads as a floor. On the same 50 pairs, weighted by the build's strata as the precision sample is, the person's labels give 0.75 [0.58, 0.82], the model's at high effort 0.65 [0.50, 0.74], and at low effort 0.52 [0.39, 0.65] (`precision_on_these_pairs`).
 - The person's labels are a non-expert's, given with copied text highlighted, which the model never saw.
 - Labels that settle the question would need legal expertise, which is beyond this project's scope.
 

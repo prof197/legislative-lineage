@@ -1428,12 +1428,16 @@ def eval_agreement(
     model_labeler: Annotated[
         str, typer.Option("--model-labeler", help="The model labeler compared, model id@prompt.")
     ] = model_labeler_name(LABEL_MODEL, LABEL_PROMPT_VERSION),
+    strata: Annotated[
+        Path, typer.Option("--strata", help="The precision sample's draw report, its strata.")
+    ] = PRECISION_SAMPLE_REPORT,
     results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
 ) -> None:
-    """A person's labels against a model's on the subsample: weighted kappa, cutoff agreement."""
+    """A person's labels against a model's on the subsample: weighted kappa, cutoff agreement,
+    and the precision each gives on the same pairs."""
     try:
         items, kept = _current_items(sample, tables, labels)
-        doc = agreement(items, kept, model_labeler=model_labeler)
+        doc = agreement(items, kept, model_labeler=model_labeler, sizes=load_sizes(strata))
     except (LabelError, PrecisionError, AgreementError) as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e

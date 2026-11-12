@@ -28,7 +28,7 @@ from lineage.intervals import wilson
 from lineage.labels import CORRECT_FROM, PERSON, Item, Pair
 from lineage.pair_data import LABELS
 from lineage.precision import SEED as PRECISION_SEED
-from lineage.precision import STRATA, latest_labels, stratum_of
+from lineage.precision import STRATA, latest_labels, stratified, stratum_of
 
 PAIRS = 50
 SEED = PRECISION_SEED + 2  # the flagged sample took + 1
@@ -126,10 +126,16 @@ def weighted_kappa(first: Sequence[int], second: Sequence[int], categories: int)
 
 
 def agreement(
-    items: Sequence[Item], labels: Sequence[Mapping[str, Any]], *, model_labeler: str
+    items: Sequence[Item],
+    labels: Sequence[Mapping[str, Any]],
+    *,
+    model_labeler: str,
+    sizes: Mapping[str, int] | None = None,
 ) -> dict[str, Any]:
     """The person's labels against `model_labeler`'s on the pairs both labeled, and whether the
-    model's labels pass the bars."""
+    model's labels pass the bars. With `sizes`, each stratum's size in the build, also the
+    precision each labeler's labels give on those same pairs, weighted as the precision sample
+    is, so the two are compared on the same pairs."""
     people = latest_labels(items, labels, PERSON)
     model = latest_labels(items, labels, model_labeler, exact=True)
     both = [i.pair.pair for i in items if i.pair.pair in people and i.pair.pair in model]
@@ -157,6 +163,21 @@ def agreement(
             "model_correct": sum(model[p] >= CORRECT_FROM for p in mine),
         }
     share = same_side / len(both) if both else None
+    same_pairs: dict[str, Any] | None = None
+    if sizes is not None:
+        same_pairs = {
+            who: stratified(
+                [
+                    (
+                        int(sizes.get(name, 0)),
+                        by_stratum[name]["pairs"],
+                        by_stratum[name][f"{who}_correct"],
+                    )
+                    for name in STRATA
+                ]
+            )
+            for who in ("person", "model")
+        }
     return {
         "model_labeler": model_labeler,
         "pairs_in_subsample": len(items),
@@ -172,6 +193,7 @@ def agreement(
         ),
         "confusion_person_by_model": confusion,
         "strata": by_stratum,
+        "precision_on_these_pairs": same_pairs,
         "kappa_from": KAPPA_FROM,
         "cutoff_agreement_from": CUTOFF_AGREEMENT_FROM,
         "complete": len(both) == len(items),

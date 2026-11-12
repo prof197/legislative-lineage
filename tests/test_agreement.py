@@ -26,7 +26,7 @@ from lineage.labels import (
     model_labeler,
     text_sha256,
 )
-from lineage.precision import STRATA, stratum_of
+from lineage.precision import STRATA, stratified, stratum_of
 
 MODEL = model_labeler("claude-opus-5-5", "v1")
 
@@ -137,3 +137,21 @@ def test_agreement_passes_only_when_every_pair_is_labeled_and_both_bars_are_met(
     partial = agreement(items, labels[:4] + labels[5:], model_labeler=MODEL)
     assert partial["complete"] is False
     assert partial["passes"] is False
+
+
+def test_each_labelers_precision_is_weighted_on_the_same_pairs() -> None:
+    items = [_item(_pair(n, stages)) for n, stages in enumerate(STRATA.values())]
+    person = "github:someone"
+    labels = [
+        _label(items[0], 4, person), _label(items[0], 3, MODEL),
+        _label(items[1], 2, person), _label(items[1], 1, MODEL),
+        _label(items[2], 2, person), _label(items[2], 2, MODEL),
+    ]  # fmt: skip
+    sizes = {"near_duplicate_only": 10, "semantic_only": 30, "both": 10}
+
+    got = agreement(items, labels, model_labeler=MODEL, sizes=sizes)["precision_on_these_pairs"]
+
+    # Each stratum holds one pair; the model calls the semantic-only one wrong.
+    assert got["person"] == stratified([(10, 1, 1), (30, 1, 1), (10, 1, 1)])
+    assert got["model"] == stratified([(10, 1, 1), (30, 1, 0), (10, 1, 1)])
+    assert agreement(items, labels, model_labeler=MODEL)["precision_on_these_pairs"] is None
