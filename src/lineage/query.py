@@ -33,8 +33,8 @@ from lineage.listing import MeaningHit, NearHit, SectionKey, listed_hits
 from lineage.lsh import BANDS, BUCKET_CAP, BandIndex, band_keys
 from lineage.minhash import NUM_PERM, permutations, signatures
 from lineage.sections import normalize, split_sections
+from lineage.semantic import CORROBORATING, SemanticSearch, search_sections
 from lineage.semantic import THRESHOLD as SEMANTIC_THRESHOLD
-from lineage.semantic import SemanticSearch, search_sections
 from lineage.shingles import section_shingles
 from lineage.signatures import open_signatures, signature_sections, signature_values
 from lineage.stoplist import apply_stoplist, load_stoplist
@@ -76,7 +76,9 @@ class Match:
 @dataclass(frozen=True, slots=True)
 class Hits:
     """A query's hits before grouping, so its matches can be grouped again under a stricter
-    semantic threshold (`regrouped`) without searching again."""
+    semantic threshold (`regrouped`) without searching again. The hits by meaning go down to
+    the lower of the search's threshold and the cosine that corroborates a match, which the
+    state boilerplate flag's exemption reads (lineage.listing)."""
 
     near: Sequence[NearHit]  # (query section, bill id, ordinal, agreements)
     by_meaning: Sequence[MeaningHit]  # (query section, bill id, ordinal, cosine)
@@ -271,7 +273,9 @@ def query_text(
 ) -> QueryResult:
     """Every family that shares text with `raw`, best first: verified near-duplicates, and with
     `semantic`, the semantic stage's matches at `semantic_threshold` too, as a page lists them
-    (lineage.listing): without hits on the `flagged` sections that one stage alone found."""
+    (lineage.listing): without hits on the `flagged` sections that one stage alone found. It
+    searches down to the cosine that corroborates a match, so the flag's exemption sees the
+    hits under `semantic_threshold`, and lists only those at or above it."""
     require_index(tables_dir)
     seconds: dict[str, float] = {}
     started = time.perf_counter()
@@ -288,7 +292,9 @@ def query_text(
         started = time.perf_counter()
         by_meaning = [
             (h.query_section, h.bill_id, h.ordinal, h.cosine)
-            for h in search_sections(texts, semantic, threshold=semantic_threshold)
+            for h in search_sections(
+                texts, semantic, threshold=min(semantic_threshold, CORROBORATING)
+            )
         ]
         seconds["semantic"] = time.perf_counter() - started
     if not searched:

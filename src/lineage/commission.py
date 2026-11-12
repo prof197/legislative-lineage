@@ -39,7 +39,7 @@ from lineage.query import (
     require_index,
     sign_query,
 )
-from lineage.semantic import BUILD_THRESHOLD, SemanticSearch, best_cosines_to_bills
+from lineage.semantic import BUILD_THRESHOLD, CORROBORATING, SemanticSearch, best_cosines_to_bills
 from lineage.semantic import THRESHOLD as THRESHOLD_SEMANTIC
 from lineage.sessions import Session, load_sessions
 from lineage.signatures import open_signatures
@@ -454,7 +454,9 @@ def evaluate(
         "verification_threshold": THRESHOLD,
         "semantic_threshold": THRESHOLD_SEMANTIC if semantic is not None else None,
         "state_boilerplate_flag": (
-            {"sections": len(flagged), "both_stages_exempt": True} if flagged else None
+            {"sections": len(flagged), "both_stages_exempt_from": CORROBORATING}
+            if flagged
+            else None
         ),
         "bucket_cap": BUCKET_CAP,
         "first_year": first_year,

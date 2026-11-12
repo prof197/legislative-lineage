@@ -4,9 +4,10 @@ Both paths that list relatives read their matches through here: a corpus bill's 
 (lineage.relatives) from the stored pairs, and a query of new text (lineage.query) from its own
 hits, so the two list alike. A match by meaning counts at or above the stage's threshold
 (lineage.semantic.THRESHOLD). A cross-state match one section of which is its state's
-boilerplate (lineage.state_boilerplate) is dropped from both stages unless both stages found it:
-of the dropped pairs the model judged, 30 of the 34 found by both stated the same provision,
-against 8 and 10 of the 34 found by one stage (reports/results.json,
+boilerplate (lineage.state_boilerplate) is dropped from both stages unless both stages found it,
+the semantic stage at the cosine that corroborates a match (lineage.semantic.CORROBORATING), not
+the one that lists it alone: of the dropped pairs the model judged, 30 of the 34 found by both
+stated the same provision, against 8 and 10 of the 34 found by one stage (reports/results.json,
 `precision.state_boilerplate_flag.dropped_pairs`). See DESIGN.md#boilerplate.
 """
 
@@ -18,7 +19,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lineage.pairs import SectionPairs, load_cross_state_pairs
-from lineage.semantic import MODEL, THRESHOLD
+from lineage.semantic import CORROBORATING, MODEL, THRESHOLD
 from lineage.semantic_pairs import SemanticPairs, load_semantic_pairs, section_keys
 from lineage.state_boilerplate import MIN_FAMILIES, flagged, has_counts, load_families_reached
 
@@ -62,11 +63,11 @@ def _kept(
     right: NDArray[np.uint32],
     other: NDArray[np.uint64],
     flag: NDArray[np.bool_],
-    exempt_both: bool,
+    exempt: bool,
 ) -> tuple[NDArray[np.bool_], int]:
     """Which pairs stand, and how many of them stand only because the other stage found them."""
     touched = flag[np.asarray(left)] | flag[np.asarray(right)]
-    if not exempt_both:
+    if not exempt:
         return ~touched, 0
     both = np.zeros(touched.shape, dtype=bool)
     at = np.flatnonzero(touched)
@@ -80,21 +81,23 @@ def listed_pairs(
     model: str = MODEL,
     threshold: float = THRESHOLD,
     flag: NDArray[np.bool_] | None,
-    exempt_both: bool = True,
+    exempt_at: float | None = CORROBORATING,
 ) -> ListedPairs:
     """Both stages' stored cross-state pairs that a page lists: by meaning at or above
     `threshold`, and without the pairs of a section `flag` marks, but for those both stages
-    found when `exempt_both`."""
+    found, the semantic stage at or above `exempt_at`; None exempts none."""
     near = load_cross_state_pairs(tables_dir)
-    meaning = load_semantic_pairs(tables_dir, model, threshold=threshold)
+    lowest = threshold if exempt_at is None or flag is None else min(threshold, exempt_at)
+    found = load_semantic_pairs(tables_dir, model, threshold=lowest)
+    meaning = _at_least(found, threshold)
     if flag is None:
         return ListedPairs(near, meaning, {"near_duplicate": 0, "semantic": 0})
+    exempt = exempt_at is not None
+    corroborating = _at_least(found, exempt_at) if exempt_at is not None else meaning
     near_keys = np.unique(_keys(near.left, near.right))
-    meaning_keys = np.unique(_keys(meaning.left, meaning.right))
-    keep_near, near_exempted = _kept(near.left, near.right, meaning_keys, flag, exempt_both)
-    keep_meaning, meaning_exempted = _kept(
-        meaning.left, meaning.right, near_keys, flag, exempt_both
-    )
+    meaning_keys = np.unique(_keys(corroborating.left, corroborating.right))
+    keep_near, near_exempted = _kept(near.left, near.right, meaning_keys, flag, exempt)
+    keep_meaning, meaning_exempted = _kept(meaning.left, meaning.right, near_keys, flag, exempt)
     return ListedPairs(
         SectionPairs(
             np.asarray(near.left)[keep_near],
@@ -112,23 +115,39 @@ def listed_pairs(
     )
 
 
+def _at_least(pairs: SemanticPairs, threshold: float) -> SemanticPairs:
+    keep = np.asarray(pairs.cosine) >= threshold
+    if keep.all():
+        return pairs
+    return SemanticPairs(
+        np.asarray(pairs.left)[keep],
+        np.asarray(pairs.right)[keep],
+        np.asarray(pairs.cosine)[keep],
+        np.asarray(pairs.left_window)[keep],
+        np.asarray(pairs.right_window)[keep],
+    )
+
+
 def listed_hits(
     near: Sequence[NearHit],
     by_meaning: Sequence[MeaningHit],
     *,
     threshold: float,
     flagged: Collection[SectionKey] = frozenset(),
-    exempt_both: bool = True,
+    exempt_at: float | None = CORROBORATING,
 ) -> tuple[list[tuple[int, str, int]], list[tuple[int, str, float]]]:
     """A query's hits a page lists, as (query section, bill id, score) for each stage: by
     meaning at or above `threshold`, and without a hit on a flagged section unless both stages
-    hit that section from the same query section."""
+    hit that section from the same query section, the semantic stage at or above `exempt_at`;
+    None exempts none. `by_meaning` must hold every hit down to the lower of the two."""
     meaning = [h for h in by_meaning if h[3] >= threshold]
     near_at = {(q, b, o) for q, b, o, _ in near}
-    meaning_at = {(q, b, o) for q, b, o, _ in meaning}
+    meaning_at = {
+        (q, b, o) for q, b, o, c in by_meaning if exempt_at is not None and c >= exempt_at
+    }
 
     def stands(q: int, b: str, o: int, other: set[tuple[int, str, int]]) -> bool:
-        return (b, o) not in flagged or (exempt_both and (q, b, o) in other)
+        return (b, o) not in flagged or (exempt_at is not None and (q, b, o) in other)
 
     return (
         [(q, b, a) for q, b, o, a in near if stands(q, b, o, meaning_at)],

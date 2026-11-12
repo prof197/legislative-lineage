@@ -41,8 +41,8 @@ uv run lineage label-import SAVED --sample SAMPLE --labeler HANDLE  # the page's
 uv run lineage pair-data fetch  # the labeled pair dataset at its pinned commit -> data/pair_data/ (local, evaluation only, never committed)
 uv run lineage eval pair-data  # both stages scored on the pair dataset; each model's threshold set on train+val, measured on test -> reports/pair_data.json
 uv run lineage eval cost  # cost and runtime per stage: the build's from its reports, each development act's query timed by stage -> reports/cost.json
-uv run lineage relatives-sample [--part reporting]  # 100 Georgia bills at random, one listed relative each: the threshold's tuning sample at 0.8905 (or the reporting sample, drawn afresh at 0.93 with the flag) -> evals/relatives_{tuning,reporting}.jsonl, reports/relatives_{tuning,reporting}.json
-uv run lineage eval relatives  # product precision, from the reporting sample's labels -> reports/results.json
+uv run lineage relatives-sample [--part tuning_093|reporting]  # 100 Georgia bills at random, one listed relative each: the threshold's first tuning sample at 0.8905 (tuning_093: the second, read at 0.93 with the flag; reporting: drawn once at the final threshold, from bills no earlier sample drew) -> evals/relatives_<part>.jsonl, reports/relatives_<part>.json
+uv run lineage eval relatives [--part tuning_093]  # product precision, from the reporting sample's labels (or a tuning part's, recorded apart) -> reports/results.json
 uv run lineage label-spend --batch-id ID  # record an ended label batch's tokens and cost -> reports/label_spend.json
 uv run lineage agreement-sample  # 50 of the precision sample's pairs, stratified by stage, for a person to label -> evals/agreement_sample.jsonl
 uv run lineage eval agreement  # a person's labels against the model's on that subsample: weighted kappa, cutoff agreement -> reports/results.json

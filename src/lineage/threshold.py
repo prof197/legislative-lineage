@@ -39,13 +39,16 @@ from lineage.labels import Item
 from lineage.listing import ListedPairs, listed_pairs, shipped_flag
 from lineage.precision import STRATA, latest_correct, pair_keys, restratified, stored_strata, strata
 from lineage.relatives import bill_relatives
-from lineage.semantic import BUILD_THRESHOLD, MODEL, THRESHOLD
+from lineage.semantic import BUILD_THRESHOLD, CORROBORATING, MODEL, THRESHOLD
 from lineage.semantic_pairs import section_keys
 from lineage.state_boilerplate import dropped_strata
 
 # Up to 0.97, the first step at which development recall falls: the two enactments found by
 # meaning alone reach 0.9677 and 0.9632 (reports/results.json, each bill's best_cosine).
 CANDIDATES = (BUILD_THRESHOLD, 0.90, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97)
+# The first review's choice, which the second moved to THRESHOLD; the tuning pages are listed
+# again at both, so the record of each decision reproduces.
+FIRST_CHOICE = 0.93
 REPORT = Path("reports/threshold_proposal.json")
 COMMAND = "uv run lineage eval threshold"
 
@@ -245,12 +248,19 @@ def proposal(
     }
 
 
-# The flag's variants measured at the stage's threshold: (name, flag on, both stages exempt).
-FLAG_VARIANTS = (
-    ("flag_off", False, False),
-    ("flag", True, True),
-    ("flag_without_exemption", True, False),
+# The flag's variants measured at the stage's threshold: (name, flag on, the cosine from which
+# a pair both stages found is exempt: the one that corroborates a match, the stage's own as the
+# flag first shipped, or none).
+FLAG_VARIANTS: tuple[tuple[str, bool, str | None], ...] = (
+    ("flag_off", False, None),
+    ("flag", True, "corroborating"),
+    ("flag_exempt_at_threshold", True, "threshold"),
+    ("flag_without_exemption", True, None),
 )
+
+
+def _exempt_at(rule: str | None, threshold: float) -> float | None:
+    return {"corroborating": CORROBORATING, "threshold": threshold}.get(rule or "")
 
 
 def _pair_key(a: int, b: int) -> int:
@@ -268,12 +278,12 @@ def flag_at_threshold(
     threshold: float = THRESHOLD,
     model: str = MODEL,
 ) -> dict[str, Any]:
-    """The tuning sample's pages listed again at `threshold` with the flag off, on, and on
-    without the exemption for pairs both stages found. A drawn relative keeps its label when
-    its page still lists its family and the pair it was judged on still stands; a family listed
-    on other pairs only is counted apart, unlabeled. Each kept relative is weighted by its page's
-    list as drawn over its list now, so the self-normalized share estimates the precision of
-    what a page lists."""
+    """The tuning sample's pages listed again at `threshold` with the flag off, on, on with the
+    exemption for pairs both stages found only at `threshold`, and on without it. A drawn
+    relative keeps its label when its page still lists its family and the pair it was judged on
+    still stands; a family listed on other pairs only is counted apart, unlabeled. Each kept
+    relative is weighted by its page's list as drawn over its list now, so the self-normalized
+    share estimates the precision of what a page lists."""
     flag = shipped_flag(tables_dir)
     if flag is None:
         raise ThresholdError("no state boilerplate counts; run `uv run lineage state-boilerplate`")
@@ -290,10 +300,10 @@ def flag_at_threshold(
     }
     page_bills = sorted({str(pages[p]["bill_id"]) for p in ids})
     variants: dict[str, Any] = {}
-    for name, on, exempt in FLAG_VARIANTS:
+    for name, on, rule in FLAG_VARIANTS:
         listed = listed_pairs(
             tables_dir, model=model, threshold=threshold, flag=flag if on else None,
-            exempt_both=exempt,
+            exempt_at=_exempt_at(rule, threshold),
         )  # fmt: skip
         standing = np.unique(
             np.concatenate(
@@ -382,7 +392,9 @@ def pair_level_at(
     """The pair-level diagnostic at the stage's threshold: the precision sample, drawn from
     every pair the build stores, re-weighted to the pairs found at `threshold` with the flag off
     and as shipped (lineage.precision.restratified); and the sample of the pairs the flag drops,
-    re-weighted to the pairs it drops at `threshold`, both stages' pairs exempt."""
+    re-weighted to the pairs it drops at `threshold` and to the pairs its exemption keeps: all of
+    them, and apart those it keeps only because the semantic stage found them at the cosine that
+    corroborates a match, not at `threshold`."""
     flag = shipped_flag(tables_dir)
     if flag is None:
         raise ThresholdError("no state boilerplate counts; run `uv run lineage state-boilerplate`")
@@ -404,7 +416,12 @@ def pair_level_at(
     }
     if dropped_items is not None:
         strict = _strata_of(
-            listed_pairs(tables_dir, model=model, threshold=threshold, flag=flag, exempt_both=False)
+            listed_pairs(tables_dir, model=model, threshold=threshold, flag=flag, exempt_at=None)
+        )
+        at_stage = _strata_of(
+            listed_pairs(
+                tables_dir, model=model, threshold=threshold, flag=flag, exempt_at=threshold
+            )
         )
         who = dropped_labeler or labeler
         dropped_correct = latest_correct(dropped_items, labels, who, exact=True)
@@ -425,5 +442,9 @@ def pair_level_at(
         # The pairs the exemption keeps: a flagged section's pairs both stages found.
         out["exempted_pairs"] = among(
             {n: np.setdiff1d(kept[n], strict[n], assume_unique=True) for n in STRATA}
+        )
+        # Of those, the ones the semantic stage found under `threshold`.
+        out["exempted_by_corroboration"] = among(
+            {n: np.setdiff1d(kept[n], at_stage[n], assume_unique=True) for n in STRATA}
         )
     return out

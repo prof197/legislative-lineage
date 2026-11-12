@@ -24,7 +24,7 @@ from numpy.typing import NDArray
 from lineage import queries
 from lineage.listing import ListedPairs, listed_pairs
 from lineage.query import Match, group_matches
-from lineage.semantic import MODEL, THRESHOLD
+from lineage.semantic import CORROBORATING, MODEL, THRESHOLD
 from lineage.semantic_pairs import section_keys
 
 RELATIVES_SHOWN = 50  # a bill page's relatives; DESIGN.md#bill-scoring
@@ -70,12 +70,13 @@ def bill_relatives(
     shown: int = RELATIVES_SHOWN,
     threshold: float = THRESHOLD,
     flag: NDArray[np.bool_] | None = None,
-    exempt_both: bool = True,
+    exempt_at: float | None = CORROBORATING,
     listed: ListedPairs | None = None,
 ) -> dict[str, BillRelatives]:
     """Each wanted bill's relatives in other states, best first, the best `shown` kept, as a
     page lists them (lineage.listing): by meaning at or above `threshold`, and without the pairs
-    of a section `flag` marks that one stage alone found. `listed` passes pairs already read."""
+    of a section `flag` marks that one stage alone found, the semantic stage under `exempt_at`.
+    `listed` passes pairs already read."""
     wanted = sorted(set(bill_ids))
     bills, ordinals = section_keys(tables_dir)
     wanted_set = set(wanted)
@@ -96,7 +97,7 @@ def bill_relatives(
 
     if listed is None:
         listed = listed_pairs(
-            tables_dir, model=model, threshold=threshold, flag=flag, exempt_both=exempt_both
+            tables_dir, model=model, threshold=threshold, flag=flag, exempt_at=exempt_at
         )
     near: dict[str, list[Hit]] = {}
     if "near_duplicate" in stages:

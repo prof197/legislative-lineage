@@ -142,6 +142,7 @@ from lineage.text_quality import STORE, run_sample
 from lineage.text_run import REPORT as FETCH_REPORT
 from lineage.text_run import run_fetch
 from lineage.threshold import CANDIDATES as THRESHOLD_CANDIDATES
+from lineage.threshold import FIRST_CHOICE as THRESHOLD_FIRST_CHOICE
 from lineage.threshold import REPORT as THRESHOLD_REPORT
 from lineage.threshold import (
     ThresholdError,
@@ -921,6 +922,7 @@ def relatives_sample(
             flag=flag,
             excluded=excluded,
             first=chosen.first,
+            exempt_at=chosen.exempt_at,
         )
     except (RelativesSampleError, SemanticPairsError, StateBoilerplateError) as e:
         typer.echo(f"error: {e}", err=True)
@@ -1583,6 +1585,9 @@ def eval_threshold(
         doc = threshold_proposal(items, kept, pages, commission, labeler=model_labeler)
         doc["state_boilerplate_flag"] = flag_at_threshold(
             tables, items, kept, pages, labeler=model_labeler
+        )
+        doc["state_boilerplate_flag_at_first_choice"] = flag_at_threshold(
+            tables, items, kept, pages, labeler=model_labeler, threshold=THRESHOLD_FIRST_CHOICE
         )
     except (LabelError, ThresholdError, KeyError) as e:
         typer.echo(f"error: {e}", err=True)

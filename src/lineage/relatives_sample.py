@@ -48,7 +48,7 @@ from lineage.listing import listed_pairs
 from lineage.precision import SEED as PRECISION_SEED
 from lineage.precision import STRATA, latest_correct, stratum_of
 from lineage.relatives import RELATIVES_SHOWN, bill_relatives
-from lineage.semantic import BUILD_THRESHOLD, MODEL, THRESHOLD
+from lineage.semantic import BUILD_THRESHOLD, CORROBORATING, MODEL, THRESHOLD
 from lineage.semantic_pairs import section_keys
 
 STATE = "GA"
@@ -64,7 +64,8 @@ DISCARDED = Path("evals/relatives_discarded.jsonl")
 @dataclass(frozen=True, slots=True)
 class Part:
     """One sample's draw: its seed, the threshold and flag its pages were listed under, its
-    first pair id's number, its files, and the samples whose bills it never draws."""
+    first pair id's number, its files, the samples whose bills it never draws, and the cosine
+    at which the flag's exemption took a pair the semantic stage found too."""
 
     seed: int
     threshold: float
@@ -73,6 +74,7 @@ class Part:
     sample: Path
     report: Path
     excludes: tuple[Path, ...] = ()
+    exempt_at: float | None = CORROBORATING
 
 
 _TUNING = Part(
@@ -91,6 +93,7 @@ _TUNING_093 = Part(
     Path("evals/relatives_tuning_093.jsonl"),
     Path("reports/relatives_tuning_093.json"),
     excludes=(_TUNING.sample,),
+    exempt_at=0.93,  # drawn before the exemption reached the build's threshold
 )
 PARTS: dict[str, Part] = {
     # Drawn at the build's threshold without the flag: what the threshold proposal chose from.
@@ -158,17 +161,21 @@ def build_relatives_sample(
     flag: NDArray[np.bool_] | None = None,
     excluded: Collection[str] = frozenset(),
     first: int = 1,
+    exempt_at: float | None = CORROBORATING,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """The sample's rows, in the precision sample's format with the page each relative is
     listed on, and the draw's report: `bills` bills of `state` not in `excluded`, their pages
-    listed at `threshold` with `flag` (lineage.listing), pair ids numbered from `first`."""
+    listed at `threshold` with `flag` and its exemption at `exempt_at` (lineage.listing), pair
+    ids numbered from `first`."""
     section_bills, ordinals = section_keys(tables_dir)
     with queries.connect_quiet() as con:
         states = queries.bill_states(con, bills_glob=str(tables_dir / "bills" / "*.parquet"))
     in_state = np.fromiter(
         (states.get(b) == state for b in section_bills), dtype=bool, count=len(section_bills)
     )
-    pairs = listed_pairs(tables_dir, model=model, threshold=threshold, flag=flag)
+    pairs = listed_pairs(
+        tables_dir, model=model, threshold=threshold, flag=flag, exempt_at=exempt_at
+    )
     near, meaning = pairs.near, pairs.meaning
     paired = np.zeros(len(section_bills), dtype=bool)
     for left, right in ((near.left, near.right), (meaning.left, meaning.right)):
@@ -252,6 +259,7 @@ def build_relatives_sample(
         "seed": seed,
         "threshold": threshold,
         "state_boilerplate_flag": flag is not None,
+        "flag_exempts_both_stages_from": exempt_at if flag is not None else None,
         "bills_excluded": len(set(listing) & set(excluded)),
         "bills": bills,
         "model": model,
