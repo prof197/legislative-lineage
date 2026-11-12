@@ -1521,6 +1521,12 @@ def eval_precision(
     model_labeler: Annotated[
         str, typer.Option("--model-labeler", help="The model labeler counted, model id@prompt.")
     ] = model_labeler_name(LABEL_MODEL, LABEL_PROMPT_VERSION),
+    flagged_labeler: Annotated[
+        str,
+        typer.Option(
+            "--flagged-labeler", help="The model labeler counted on the flag's dropped pairs."
+        ),
+    ] = model_labeler_name(LABEL_MODEL, "passages-v1-high"),
     results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
 ) -> None:
     """Precision per stratum, stage and overall, from people's labels and, apart, a model's,
@@ -1543,6 +1549,7 @@ def eval_precision(
             dropped_items=dropped,
             dropped_report=flagged_report,
             model_labeler=model_labeler,
+            dropped_labeler=flagged_labeler,
         )
     except (LabelError, PrecisionError, StateBoilerplateError) as e:
         typer.echo(f"error: {e}", err=True)

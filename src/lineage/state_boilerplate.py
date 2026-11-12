@@ -277,12 +277,14 @@ def with_flag(
     dropped_items: Sequence[Item] | None = None,
     dropped_report: Path = FLAGGED_SAMPLE_REPORT,
     model_labeler: str | None = None,
+    dropped_labeler: str | None = None,
 ) -> dict[str, Any] | None:
     """Precision with the flag on: the sample's pairs with neither side flagged, weighted by
     the strata's sizes without the flagged sections' pairs. With `dropped_items`, the sample of
     the pairs the flag drops (build_flagged_sample), also their own precision, weighted by the
-    dropped pairs' strata. None before the counts are built; refused when they were built from
-    another build than the sample's, or at another threshold."""
+    dropped pairs' strata, by `dropped_labeler` when they were asked another question than the
+    sample (by default `model_labeler`). None before the counts are built; refused when they
+    were built from another build than the sample's, or at another threshold."""
     if not has_counts(tables_dir):
         return None
     if not report_path.exists():
@@ -320,7 +322,7 @@ def with_flag(
                 "counts; run `uv run lineage precision-sample --flagged`"
             )
         dropped_estimate = estimate(
-            dropped_items, labels, sizes_dropped, model_labeler=model_labeler
+            dropped_items, labels, sizes_dropped, model_labeler=dropped_labeler or model_labeler
         )
     return {
         "min_families": min_families,

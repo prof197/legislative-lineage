@@ -1,75 +1,72 @@
-"""The threshold proposal: a page's precision under each option, from one drawn relative a page."""
+"""The threshold proposal: the share correct of the sampled relatives each option keeps."""
 
 from typing import Any
 
 import pytest
 
+from lineage.intervals import wilson
 from lineage.semantic import THRESHOLD
 from lineage.threshold import (
     CANDIDATES,
     Listed,
     ThresholdError,
     at_threshold,
+    by_band,
     by_meaning_only,
     near_duplicate_only,
     page_precision,
     proposal,
 )
 
-# One page's whole list: (found by the near-duplicate stage, best cosine by meaning, correct).
-PAGE = [
-    (True, None, True),
-    (True, 0.95, True),
-    (False, 0.89, False),
-    (False, 0.91, True),
-    (False, 0.93, False),
-    (False, 0.97, True),
+# Six sampled pages, each with its drawn relative: (found by the near-duplicate stage, its best
+# cosine by meaning, correct), and the best cosines of what each page lists by meaning alone.
+DRAWN = [
+    (True, None, True, (0.89,)),
+    (True, 0.95, True, ()),
+    (False, 0.8906, False, (0.8906, 0.95)),
+    (False, 0.912, True, (0.912,)),
+    (False, 0.931, False, (0.931, 0.89)),
+    (False, 0.97, True, (0.97, 0.90)),
 ]
+PAGES = [Listed(len(m) + n, n, c, m) for n, c, _, m in DRAWN]
+CORRECT: list[bool | None] = [r for _, _, r, _ in DRAWN]
 
 
-def _drawn(i: int) -> Listed:
-    near, cosine, _ = PAGE[i]
-    by_meaning = tuple(sorted(c for n, c, _ in PAGE if not n and c is not None))
-    return Listed(len(PAGE), near, cosine, by_meaning)
+@pytest.mark.parametrize("t", CANDIDATES)
+def test_an_option_counts_the_sampled_relatives_that_clear_it(t: float) -> None:
+    kept = [n or (c is not None and c >= t) for n, c, _, _ in DRAWN]
+    right = [r for (_, _, r, _), k in zip(DRAWN, kept, strict=True) if k]
+
+    got = page_precision(PAGES, CORRECT, at_threshold(t))
+
+    assert (got["labeled"], got["correct"]) == (len(right), sum(right))
+    assert got["interval_95"] == [round(v, 4) for v in wilson(sum(right), len(right))]
+    emptied = sum(not n and all(m < t for m in ms) for n, _, _, ms in DRAWN)
+    assert got["pages_emptied"] == emptied
 
 
-@pytest.mark.parametrize("t", [THRESHOLD, 0.90, 0.92, 0.94, 0.96, 0.98])
-def test_the_weighted_draw_averages_to_the_pages_precision_under_each_option(t: float) -> None:
-    for keep, kept in (
-        (at_threshold(t), [n or (c is not None and c >= t) for n, c, _ in PAGE]),
-        (by_meaning_only(t), [not n and c is not None and c >= t for n, c, _ in PAGE]),
-        (near_duplicate_only, [n for n, _, _ in PAGE]),
-    ):
-        right = [r for (_, _, r), k in zip(PAGE, kept, strict=True) if k]
-        if not right:
-            assert page_precision([_drawn(0)], [True], keep)["pages_emptied"] == 1
-            continue
-        # Every relative the page could have drawn, equally likely.
-        values = [
-            page_precision([_drawn(i)], [PAGE[i][2]], keep)["precision"] for i in range(len(PAGE))
-        ]
-        assert sum(values) / len(values) == pytest.approx(sum(right) / len(right), abs=1e-3)
+def test_listing_apart_splits_the_sample_by_the_stage_that_found_each_relative() -> None:
+    wording = page_precision(PAGES, CORRECT, near_duplicate_only)
+    meaning = page_precision(PAGES, CORRECT, by_meaning_only(THRESHOLD))
+
+    assert (wording["labeled"], wording["correct"]) == (2, 2)
+    assert (meaning["labeled"], meaning["correct"]) == (4, 2)
+    # Pages listing only relatives found by meaning have no list found by wording.
+    assert wording["pages_emptied"] == 4
 
 
-def test_at_the_builds_threshold_the_estimate_is_the_share_labeled_correct() -> None:
-    pages = [_drawn(i) for i in range(len(PAGE))]
-    correct: list[bool | None] = [r for _, _, r in PAGE]
+def test_an_unlabeled_relative_is_counted_and_left_out() -> None:
+    got = page_precision(PAGES, [None, *CORRECT[1:]], at_threshold(THRESHOLD))
 
-    got = page_precision(pages, correct, at_threshold(0.89))
-
-    assert got["precision"] == pytest.approx(4 / 6, abs=1e-4)
-    low, high = got["interval_95"]
-    assert low <= got["precision"] <= high
-    assert got == page_precision(pages, correct, at_threshold(0.89))  # seeded
+    assert (got["labeled"], got["unlabeled"]) == (5, 1)
 
 
-def test_an_emptied_page_and_an_unlabeled_one_are_counted_apart() -> None:
-    only_meaning = Listed(2, False, 0.90, (0.90, 0.91))
+def test_the_bands_cover_every_labeled_relative_once() -> None:
+    bands = by_band(PAGES, CORRECT)
 
-    got = page_precision([only_meaning, _drawn(0)], [True, None], at_threshold(0.95))
-
-    assert (got["pages_emptied"], got["pages_unlabeled"], got["pages_listing"]) == (1, 1, 1)
-    assert got["precision"] is None
+    assert sum(b["labeled"] for b in bands) == len(DRAWN)
+    assert bands[-1] == {**bands[-1], "band": "by wording", "labeled": 2, "correct": 2}
+    assert [b["labeled"] for b in bands[:-1]] == [1, 0, 1, 0, 1, 0, 0, 0, 1]
 
 
 def _pooled(n: int) -> dict[str, Any]:
@@ -77,10 +74,9 @@ def _pooled(n: int) -> dict[str, Any]:
 
 
 def _commission(found: dict[float, int]) -> dict[str, Any]:
-    pooled = _pooled
     return {
         "recall_by_semantic_threshold": [{"threshold": t, "found": n} for t, n in found.items()],
-        "stage_ablation": {"near_duplicate": pooled(31), "both": pooled(33)},
+        "stage_ablation": {"near_duplicate": _pooled(31), "both": _pooled(33)},
     }
 
 

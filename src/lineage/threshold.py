@@ -8,15 +8,16 @@ each list has its own precision. A lower threshold would list relatives the samp
 whose precision nothing measures, so it is not offered until both samples are topped up from
 the new band.
 
-Precision is a page's, averaged over pages (lineage.relatives_sample). Each sampled page drew
-one relative uniformly from the L it lists now. Under an option that keeps S of them, the
-page's precision is the share correct of those S, and the drawn relative, counted when it is
-kept and correct and weighted L / S, estimates that share without bias. The estimate is the
-mean over the pages that would still list something, so at the build's threshold, where every
-weight is 1, it is the share of sampled relatives labeled correct. Its 95% interval is a seeded
-bootstrap over pages. A page longer than RELATIVES_SHOWN shows only its best, and a stricter
-option could bring a relative from beyond that cut onto the page; the sample never drew those,
-so the estimate counts only what the page shows now.
+Each sampled page drew one relative uniformly from what it lists now (lineage.relatives_
+sample). An option's precision is the share labeled correct of the sampled relatives it would
+still list, with its Wilson interval: at the build's threshold, the share over every page, and
+under a stricter option, over the relatives that clear it. A page then counts in proportion to
+how much of its list the option keeps. Weighting each kept relative by the page's list before
+over after (L / S) would undo that and estimate the mean page's precision without bias, but on
+the tuning sample, where a strict option keeps few drawn relatives, its variance put estimates
+above 1 (DESIGN.md#precision-sample), so it is not used. Each option also counts the pages that
+would list nothing. A page longer than RELATIVES_SHOWN shows only its best, and a stricter
+option could bring a relative from beyond that cut onto the page; the sample never drew those.
 
 Development recall for each option comes from the commission eval (`recall_by_semantic_
 threshold`, lineage.commission), counted on each query's own hits, so no option needs a search.
@@ -26,11 +27,11 @@ final.
 
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
+from itertools import pairwise
 from pathlib import Path
 from typing import Any
 
-import numpy as np
-
+from lineage.intervals import wilson
 from lineage.labels import Item
 from lineage.precision import latest_correct
 from lineage.semantic import THRESHOLD
@@ -38,8 +39,6 @@ from lineage.semantic import THRESHOLD
 # Up to 0.97, the first step at which development recall falls: the two enactments found by
 # meaning alone reach 0.9677 and 0.9632 (reports/results.json, each bill's best_cosine).
 CANDIDATES = (THRESHOLD, 0.90, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97)
-RESAMPLES = 2000
-BOOTSTRAP_SEED = 20261116
 REPORT = Path("reports/threshold_proposal.json")
 COMMAND = "uv run lineage eval threshold"
 
@@ -105,40 +104,58 @@ def by_meaning_only(t: float) -> Keep:
 
 
 def page_precision(
-    pages: Sequence[Listed],
-    correct: Sequence[bool | None],
-    keep: Keep,
-    *,
-    seed: int = BOOTSTRAP_SEED,
+    pages: Sequence[Listed], correct: Sequence[bool | None], keep: Keep
 ) -> dict[str, Any]:
-    """A page's precision under `keep`, averaged over the pages that would list something. A
-    page whose drawn relative has no label is left out and counted."""
-    values: list[float] = []
-    kept_labeled = unlabeled = emptied = 0
+    """The share correct of the sampled relatives `keep` would still list, and how many pages
+    would list nothing. A drawn relative with no label is left out and counted."""
+    kept_right: list[bool] = []
+    unlabeled = emptied = 0
     for page, right in zip(pages, correct, strict=True):
         kept, shown = keep(page)
-        if shown == 0:
-            emptied += 1
+        emptied += shown == 0
+        if not kept:
             continue
         if right is None:
             unlabeled += 1
             continue
-        kept_labeled += kept
-        values.append(page.listed / shown if kept and right else 0.0)
-    point: float | None = None
-    interval: list[float] | None = None
-    if values:
-        point = round(float(np.mean(values)), 4)
-        draws = np.random.default_rng(seed).integers(len(values), size=(RESAMPLES, len(values)))
-        means = np.asarray(values)[draws].mean(axis=1)
-        interval = [round(float(v), 4) for v in np.quantile(means, [0.025, 0.975])]
+        kept_right.append(right)
+    hits = sum(kept_right)
     return {
-        "precision": point,
-        "interval_95": interval,
+        "labeled": len(kept_right),
+        "correct": hits,
+        "precision": round(hits / len(kept_right), 4) if kept_right else None,
+        "interval_95": [round(v, 4) for v in wilson(hits, len(kept_right))],
         "pages_listing": len(pages) - emptied,
         "pages_emptied": emptied,
-        "pages_unlabeled": unlabeled,
-        "sampled_relatives_kept": kept_labeled,
+        "unlabeled": unlabeled,
+    }
+
+
+def by_band(pages: Sequence[Listed], correct: Sequence[bool | None]) -> list[dict[str, Any]]:
+    """The sampled relatives found by meaning alone, by their best cosine between options, and
+    those the near-duplicate stage found: where precision changes."""
+    edges = [*CANDIDATES, 1.0 + 1e-9]
+    rows: list[dict[str, Any]] = []
+    for lo, hi in pairwise(edges):
+        mine = [
+            r
+            for p, r in zip(pages, correct, strict=True)
+            if not p.near and p.cosine is not None and lo <= p.cosine < hi and r is not None
+        ]
+        rows.append(_band(f"by meaning, {lo} to {min(hi, 1.0)}", mine))
+    near = [r for p, r in zip(pages, correct, strict=True) if p.near and r is not None]
+    rows.append(_band("by wording", near))
+    return rows
+
+
+def _band(name: str, right: Sequence[bool]) -> dict[str, Any]:
+    hits = sum(right)
+    return {
+        "band": name,
+        "labeled": len(right),
+        "correct": hits,
+        "precision": round(hits / len(right), 4) if right else None,
+        "interval_95": [round(v, 4) for v in wilson(hits, len(right))],
     }
 
 
@@ -216,7 +233,6 @@ def proposal(
         "labeler": labeler,
         "sampled": len(items),
         "labeled": sum(c is not None for c in correct),
-        "resamples": RESAMPLES,
-        "bootstrap_seed": BOOTSTRAP_SEED,
+        "by_band": by_band(listed, correct),
         "options": options,
     }
