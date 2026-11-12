@@ -1,6 +1,6 @@
 {
- "budget": 30.0,
- "spent": 16.2153,
+ "budget": 40.0,
+ "spent": 20.2771,
  "runs": [
   {
    "run": "explain-2026-11-12-1",
@@ -53,6 +53,20 @@
    "input_tokens": 405770,
    "output_tokens": 51448,
    "dollars": 2.652,
+   "at": "2026-11-12"
+  },
+  {
+   "run": "explain-2026-11-12-5",
+   "purpose": "explain",
+   "model": "claude-opus-5-5",
+   "prompt": "v1",
+   "calls": 151,
+   "served_by": {
+    "claude-opus-5-5": 151
+   },
+   "input_tokens": 654880,
+   "output_tokens": 72116,
+   "dollars": 4.0618,
    "at": "2026-11-12"
   }
  ]

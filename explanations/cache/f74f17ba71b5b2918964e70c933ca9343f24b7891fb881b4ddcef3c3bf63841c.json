@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -63,9 +64,57 @@
    "descendant": "5ce1969b2ff891bda6985020e07b952f566aa914eca6a04d8fb10dc3fc25412b"
   }
  ],
- "explanation": null,
- "served_by": null,
- "grounded": null,
+ "explanation": {
+  "claims": [
+   {
+    "kind": "added",
+    "summary": "The descendant requires the appeal to be filed not later than 10 days after entry of the order.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s9"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin allows the appeal to be filed up to 21 days after the day on which the order is entered, a period absent from the descendant.",
+    "origin_span_ids": [
+     "s8"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant refers to the underlying motion as one under § 6003 of this title.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s6"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin refers to the underlying motion as one under Section 78B-25-103 and numbers its provisions (1) and (2); the descendant has neither.",
+    "origin_span_ids": [
+     "s5",
+     "s3"
+    ],
+    "descendant_span_ids": []
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "no claim cites spans that exist and differ (claim 1: s8 is on one side only, so it shows text one side lacks, not a change; claim 2: s5 is on one side only, so it shows text one side lacks, not a change)"
+ ],
  "earlier": [
   {
    "explanation": {
@@ -112,6 +161,11 @@
     ],
     "dropped": []
    }
+  },
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
   }
  ]
 }

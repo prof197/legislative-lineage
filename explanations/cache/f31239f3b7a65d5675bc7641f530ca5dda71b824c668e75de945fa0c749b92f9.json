@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -235,26 +236,16 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant opens the stay provision with an explicit clause making the stays apply on the filing of a motion, except as provided in subsections 4 through 7; the origin's text has no such lead-in.",
-    "origin_span_ids": [
-     "s0"
-    ],
+    "summary": "The descendant opens with a section heading and an introductory clause: a stay applies on the filing of a motion under section 652.3, except as subsections 4 through 7 provide.",
+    "origin_span_ids": [],
     "descendant_span_ids": [
      "s1"
     ]
    },
    {
-    "kind": "changed",
-    "summary": "Cross-references use different numbering: the descendant cites sections 652.3, 652.7, 652.9 and 652.10; the origin cites Sections 78B-25-103, 78B-25-107, 78B-25-109 and 78B-25-110.",
-    "origin_span_ids": [
-     "s5",
-     "s11",
-     "s14",
-     "s19",
-     "s27",
-     "s30",
-     "s35"
-    ],
+    "kind": "added",
+    "summary": "The descendant's cross-references point to sections 652.3, 652.7, 652.9 and 652.10, a numbering scheme absent from the origin.",
+    "origin_span_ids": [],
     "descendant_span_ids": [
      "s6",
      "s12",
@@ -264,19 +255,85 @@
      "s31",
      "s36"
     ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin's cross-references point to Sections 78B-25-103, 78B-25-107, 78B-25-109 and 78B-25-110, numbering absent from the descendant.",
+    "origin_span_ids": [
+     "s0",
+     "s5",
+     "s11",
+     "s14",
+     "s19",
+     "s27",
+     "s30",
+     "s35"
+    ],
+    "descendant_span_ids": []
    }
   ]
  },
  "served_by": "claude-opus-5-5",
  "grounded": {
   "kept": [
-   0
+   0,
+   1,
+   2
   ],
-  "dropped": [
-   [
-    1,
-    "s5 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant opens the stay provision with an explicit clause making the stays apply on the filing of a motion, except as provided in subsections 4 through 7; the origin's text has no such lead-in.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "Cross-references use different numbering: the descendant cites sections 652.3, 652.7, 652.9 and 652.10; the origin cites Sections 78B-25-103, 78B-25-107, 78B-25-109 and 78B-25-110.",
+      "origin_span_ids": [
+       "s5",
+       "s11",
+       "s14",
+       "s19",
+       "s27",
+       "s30",
+       "s35"
+      ],
+      "descendant_span_ids": [
+       "s6",
+       "s12",
+       "s15",
+       "s20",
+       "s28",
+       "s31",
+       "s36"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0
+    ],
+    "dropped": [
+     [
+      1,
+      "s5 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

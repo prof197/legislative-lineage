@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -636,18 +637,8 @@
  "explanation": {
   "claims": [
    {
-    "kind": "changed",
-    "summary": "The descendant defines a minor as anyone under 18 who is not emancipated or married; the origin defines a minor as a state resident known or reasonably believed to be under 16.",
-    "origin_span_ids": [
-     "s11"
-    ],
-    "descendant_span_ids": [
-     "s12"
-    ]
-   },
-   {
     "kind": "added",
-    "summary": "The descendant adds definitions for addiction, secretary, department, interactive computer service, reasonable age verification methods, and social media company (5,000,000+ account holders).",
+    "summary": "The descendant defines addiction, Secretary, Department, interactive computer service, reasonable age verification methods, and social media company (5,000,000+ account holders).",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s9",
@@ -656,43 +647,108 @@
    },
    {
     "kind": "removed",
-    "summary": "The origin defines 'educational entity' by listing public and private schools and Georgia university and college systems; the descendant has no such definition.",
+    "summary": "The origin defines 'educational entity' as a list of public and private schools, university and technical college system units, and private colleges; the descendant has no such definition.",
     "origin_span_ids": [
      "s8"
     ],
     "descendant_span_ids": []
    },
    {
-    "kind": "changed",
-    "summary": "The exclusion lists differ: the descendant excludes direct messaging and creative networks; the origin excludes age-restricted services, internet access, and peer-to-peer payments.",
+    "kind": "added",
+    "summary": "The descendant defines a minor as an individual under 18 who has not been emancipated or has not been married.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s12"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin also excludes from 'social media platform' services barring minors with age assurance, internet access and broadband, and peer-to-peer payment services.",
     "origin_span_ids": [
      "s26",
      "s94",
      "s100"
     ],
-    "descendant_span_ids": [
-     "s27",
-     "s61",
-     "s97"
-    ]
+    "descendant_span_ids": []
    }
   ]
  },
  "served_by": "claude-opus-5-5",
  "grounded": {
   "kept": [
+   0,
    1,
-   2
+   2,
+   3
   ],
-  "dropped": [
-   [
-    0,
-    "s11 is on one side only, so it shows text one side lacks, not a change"
-   ],
-   [
-    3,
-    "s26 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant defines a minor as anyone under 18 who is not emancipated or married; the origin defines a minor as a state resident known or reasonably believed to be under 16.",
+      "origin_span_ids": [
+       "s11"
+      ],
+      "descendant_span_ids": [
+       "s12"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant adds definitions for addiction, secretary, department, interactive computer service, reasonable age verification methods, and social media company (5,000,000+ account holders).",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s9",
+       "s15"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin defines 'educational entity' by listing public and private schools and Georgia university and college systems; the descendant has no such definition.",
+      "origin_span_ids": [
+       "s8"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "changed",
+      "summary": "The exclusion lists differ: the descendant excludes direct messaging and creative networks; the origin excludes age-restricted services, internet access, and peer-to-peer payments.",
+      "origin_span_ids": [
+       "s26",
+       "s94",
+       "s100"
+      ],
+      "descendant_span_ids": [
+       "s27",
+       "s61",
+       "s97"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     1,
+     2
+    ],
+    "dropped": [
+     [
+      0,
+      "s11 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      3,
+      "s26 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

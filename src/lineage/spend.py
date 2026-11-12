@@ -19,9 +19,10 @@ from typing import Any
 from lineage.model_labels import CHARS_PER_TOKEN, PRICES
 
 SPEND = Path("reports/explanation_spend.json")
-# Dollars every M6 model call may cost together, explanations and judge, spent and projected:
-# the cap the M5 review set, for the featured scope only.
-BUDGET = 30.0
+# Dollars every M6 model call may cost together, explanations and judge, spent and projected,
+# for the featured scope only: the M5 review set $30, and the M6 review raised it to $40 to ask
+# again for the withheld explanations and the changed claims the grounding rules now drop.
+BUDGET = 40.0
 
 
 class BudgetError(Exception):

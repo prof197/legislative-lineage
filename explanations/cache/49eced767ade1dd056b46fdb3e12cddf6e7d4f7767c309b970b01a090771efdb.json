@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -289,43 +290,28 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant opens the stay provision by making it subject to exceptions in subsections (4) through (7); the origin's subsection (1) states no such exception.",
-    "origin_span_ids": [
-     "s0"
-    ],
+    "summary": "The descendant opens subsection (1) by making its stays subject to subsections (4) through (7) and triggering them upon the filing of a motion under section 6-3903; the origin has no such lead-in.",
+    "origin_span_ids": [],
     "descendant_span_ids": [
      "s1"
     ]
    },
    {
-    "kind": "changed",
-    "summary": "The descendant measures the appeal period under section 6-3909 and applicable court rule; the origin measures it under Section 78B-25-109 alone.",
-    "origin_span_ids": [
-     "s12",
-     "s14"
-    ],
+    "kind": "added",
+    "summary": "The descendant sets the moving party's time to appeal by reference to section 6-3909 and also to applicable court rule.",
+    "origin_span_ids": [],
     "descendant_span_ids": [
      "s15"
     ]
    },
    {
     "kind": "changed",
-    "summary": "Cross-references point to Idaho Code sections 6-3903, 6-3907(1) and 6-3910 in the descendant; the origin cites Sections 78B-25-103, 78B-25-107(1) and 78B-25-110.",
+    "summary": "The origin splits subsection (3) into paragraphs (a) and (b); the descendant states the appeal stay and its duration in a single undivided subsection (3).",
     "origin_span_ids": [
-     "s6",
-     "s9",
-     "s20",
-     "s29",
-     "s32",
-     "s44"
+     "s16"
     ],
     "descendant_span_ids": [
-     "s7",
-     "s10",
-     "s21",
-     "s30",
-     "s33",
-     "s45"
+     "s16"
     ]
    }
   ]
@@ -333,17 +319,77 @@
  "served_by": "claude-opus-5-5",
  "grounded": {
   "kept": [
-   0
+   0,
+   1,
+   2
   ],
-  "dropped": [
-   [
-    1,
-    "s12 is on one side only, so it shows text one side lacks, not a change"
-   ],
-   [
-    2,
-    "s6 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant opens the stay provision by making it subject to exceptions in subsections (4) through (7); the origin's subsection (1) states no such exception.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant measures the appeal period under section 6-3909 and applicable court rule; the origin measures it under Section 78B-25-109 alone.",
+      "origin_span_ids": [
+       "s12",
+       "s14"
+      ],
+      "descendant_span_ids": [
+       "s15"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "Cross-references point to Idaho Code sections 6-3903, 6-3907(1) and 6-3910 in the descendant; the origin cites Sections 78B-25-103, 78B-25-107(1) and 78B-25-110.",
+      "origin_span_ids": [
+       "s6",
+       "s9",
+       "s20",
+       "s29",
+       "s32",
+       "s44"
+      ],
+      "descendant_span_ids": [
+       "s7",
+       "s10",
+       "s21",
+       "s30",
+       "s33",
+       "s45"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0
+    ],
+    "dropped": [
+     [
+      1,
+      "s12 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      2,
+      "s6 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

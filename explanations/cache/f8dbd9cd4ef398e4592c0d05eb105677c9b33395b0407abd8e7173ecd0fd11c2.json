@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -120,31 +121,27 @@
  "explanation": {
   "claims": [
    {
-    "kind": "changed",
-    "summary": "The descendant defines \"generative artificial intelligence\"; the origin defines \"synthetic media\" as intentionally manipulated realistic but false images, audio, or video of an individual.",
-    "origin_span_ids": [
-     "s0",
-     "s3"
-    ],
+    "kind": "added",
+    "summary": "The descendant requires covered political ads made with generative AI depicting a real person to carry a disclosure; it defines generative AI and lists covered sponsors.",
+    "origin_span_ids": [],
     "descendant_span_ids": [
      "s1",
-     "s4"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The descendant requires covered political ads by candidates, committees, or parties to include an AI disclosure; in the origin, a \"manipulated\" disclosure is only an affirmative defense to suit.",
-    "origin_span_ids": [
-     "s3"
-    ],
-    "descendant_span_ids": [
-     "s1",
-     "s4"
+     "s4",
+     "s12"
     ]
    },
    {
     "kind": "removed",
-    "summary": "The origin requires visual disclosure text no smaller than other text, audio disclosures repeated every two minutes, a clear and convincing evidence burden, and expedited court handling.",
+    "summary": "The origin defines synthetic media, gives candidates relief against sponsors, and makes a 'has been manipulated' disclosure an affirmative defense; the descendant lacks these provisions.",
+    "origin_span_ids": [
+     "s0",
+     "s3"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin sets a minimum font size for visual disclosures, requires audio disclosures every two minutes, and imposes a clear-and-convincing burden and expedited handling.",
     "origin_span_ids": [
      "s6",
      "s17"
@@ -153,7 +150,7 @@
    },
    {
     "kind": "added",
-    "summary": "The descendant exempts bona fide news broadcasts, paid broadcasters acting in good faith, news publications with clear statements, and satire or parody.",
+    "summary": "The descendant exempts certain news broadcasts, paid broadcasts made in good faith, news publications with disclaimers, and satire or parody.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s18"
@@ -164,18 +161,78 @@
  "served_by": "claude-opus-5-5",
  "grounded": {
   "kept": [
+   0,
+   1,
    2,
    3
   ],
-  "dropped": [
-   [
-    0,
-    "s0 is on one side only, so it shows text one side lacks, not a change"
-   ],
-   [
-    1,
-    "s3 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant defines \"generative artificial intelligence\"; the origin defines \"synthetic media\" as intentionally manipulated realistic but false images, audio, or video of an individual.",
+      "origin_span_ids": [
+       "s0",
+       "s3"
+      ],
+      "descendant_span_ids": [
+       "s1",
+       "s4"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant requires covered political ads by candidates, committees, or parties to include an AI disclosure; in the origin, a \"manipulated\" disclosure is only an affirmative defense to suit.",
+      "origin_span_ids": [
+       "s3"
+      ],
+      "descendant_span_ids": [
+       "s1",
+       "s4"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin requires visual disclosure text no smaller than other text, audio disclosures repeated every two minutes, a clear and convincing evidence burden, and expedited court handling.",
+      "origin_span_ids": [
+       "s6",
+       "s17"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant exempts bona fide news broadcasts, paid broadcasters acting in good faith, news publications with clear statements, and satire or parody.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s18"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     2,
+     3
+    ],
+    "dropped": [
+     [
+      0,
+      "s0 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      1,
+      "s3 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

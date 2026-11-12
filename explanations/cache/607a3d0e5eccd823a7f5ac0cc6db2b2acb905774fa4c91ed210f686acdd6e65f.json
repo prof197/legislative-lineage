@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -180,21 +181,27 @@
  "explanation": {
   "claims": [
    {
-    "kind": "changed",
-    "summary": "The descendant protects rights guaranteed by the U.S. Constitution or the Idaho constitution; the origin refers to the U.S. Constitution or Utah Constitution.",
-    "origin_span_ids": [
-     "s16"
-    ],
-    "descendant_span_ids": [
-     "s17"
-    ]
-   },
-   {
     "kind": "added",
-    "summary": "The descendant adds subsection (4) making a cause of action brought under the chapter subject to the rules of the Idaho supreme court; the origin has no such provision.",
+    "summary": "The descendant adds subsection (4), making a cause of action brought under the chapter subject to the rules of the Idaho supreme court; the origin has no such provision.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s28"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin protects rights guaranteed by the United States Constitution or the Utah Constitution; the descendant has no reference to the Utah Constitution.",
+    "origin_span_ids": [
+     "s16"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant protects rights guaranteed by the constitution of the United States or the constitution of the state of Idaho; the origin has no reference to the Idaho constitution.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s17"
     ]
    }
   ]
@@ -202,13 +209,50 @@
  "served_by": "claude-opus-5-5",
  "grounded": {
   "kept": [
-   1
+   0,
+   1,
+   2
   ],
-  "dropped": [
-   [
-    0,
-    "s16 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant protects rights guaranteed by the U.S. Constitution or the Idaho constitution; the origin refers to the U.S. Constitution or Utah Constitution.",
+      "origin_span_ids": [
+       "s16"
+      ],
+      "descendant_span_ids": [
+       "s17"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant adds subsection (4) making a cause of action brought under the chapter subject to the rules of the Idaho supreme court; the origin has no such provision.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s28"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     1
+    ],
+    "dropped": [
+     [
+      0,
+      "s16 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

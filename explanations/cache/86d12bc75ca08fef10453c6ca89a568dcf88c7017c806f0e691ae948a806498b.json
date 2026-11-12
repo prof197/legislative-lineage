@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -351,7 +352,61 @@
    "descendant": "afbf24c53e115283c5dc2f989dc6d4f28bf40463ee3aef67c3a9f42cc54cb9d1"
   }
  ],
- "explanation": null,
- "served_by": null,
- "grounded": null
+ "explanation": {
+  "claims": [
+   {
+    "kind": "added",
+    "summary": "The descendant gives the section a short title, the \"Freedom From AI-Rigged (FAIR) Elections Act\"; the origin has no short title.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant defines \"information content provider\" and \"interactive computer service\"; the origin defines only synthetic media.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s5"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant makes the sponsor, not the disseminating medium, liable, unless the medium removes the disclosure or alters content into synthetic media; broadcasters under 47 U.S.C. 315 are excepted.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s57"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant states interactive computer service providers or users are not treated as publishers of others' content, except under the medium-liability rule; the origin has no such provision.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s57"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "off the schema: claims.2.summary: String should have at most 200 characters"
+ ],
+ "earlier": [
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
 }

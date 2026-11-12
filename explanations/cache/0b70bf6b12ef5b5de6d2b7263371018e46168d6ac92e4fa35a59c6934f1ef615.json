@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -603,7 +604,65 @@
    "descendant": "4040e0e608e12fb537f91760fe595b6969843d457dc0b3e13b8a3c605824fb4e"
   }
  ],
- "explanation": null,
- "served_by": null,
- "grounded": null
+ "explanation": {
+  "claims": [
+   {
+    "kind": "changed",
+    "summary": "The descendant defines a minor as under eighteen, with no residency element; the origin defines a minor as a resident of the state under sixteen.",
+    "origin_span_ids": [
+     "s8"
+    ],
+    "descendant_span_ids": [
+     "s8"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant adds operative provisions: age verification, parental consent, minor account protections, supervision tools, Attorney General enforcement, private actions and education programs.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s99"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant defines social media company (five million account holders, interactive computer service) and gives a multi-part definition of social media platform.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s7",
+     "s13"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin defines educational entity and excludes peer-to-peer payment services from social media platforms; the descendant has neither.",
+    "origin_span_ids": [
+     "s6",
+     "s94"
+    ],
+    "descendant_span_ids": []
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "off the schema: claims.2.summary: String should have at most 200 characters"
+ ],
+ "earlier": [
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
 }

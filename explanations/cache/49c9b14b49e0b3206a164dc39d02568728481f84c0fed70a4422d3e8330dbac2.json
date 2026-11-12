@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -187,44 +188,35 @@
   "claims": [
    {
     "kind": "removed",
-    "summary": "The origin opens with definitions of \"goods or services\" (excluding creative and journalistic works), \"governmental unit,\" and \"person\"; the descendant has no definitions here.",
+    "summary": "The origin defines \"goods or services,\" \"governmental unit,\" and \"person\"; the descendant has no definitions in this section.",
     "origin_span_ids": [
      "s0"
     ],
     "descendant_span_ids": []
    },
    {
-    "kind": "changed",
-    "summary": "The descendant protects rights guaranteed by the United States Constitution or the New Jersey Constitution; the origin names the United States Constitution or the Utah Constitution.",
+    "kind": "removed",
+    "summary": "The origin protects rights guaranteed by the United States Constitution or Utah Constitution; the descendant's text lacks the reference to the Utah Constitution.",
     "origin_span_ids": [
      "s14"
     ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant protects rights guaranteed by the United State Constitution or the New Jersey Constitution, a state constitution the origin does not name.",
+    "origin_span_ids": [],
     "descendant_span_ids": [
      "s15"
     ]
    },
    {
     "kind": "removed",
-    "summary": "The origin's commercial-speech exclusion ends with \"goods or services\"; the descendant's text breaks off after \"sale or lease of the\" without naming its object.",
+    "summary": "The origin's commercial-speech exclusion ends with \"goods or services\"; the descendant's text stops at \"sale or lease of the\" without naming the object.",
     "origin_span_ids": [
      "s29"
     ],
     "descendant_span_ids": []
-   },
-   {
-    "kind": "changed",
-    "summary": "The descendant refers to \"this act\" with lettered and numbered subsections (c., (1)-(3)); the origin refers to \"this chapter\" with numbered subsections and lettered paragraphs.",
-    "origin_span_ids": [
-     "s17",
-     "s3",
-     "s20"
-    ],
-    "descendant_span_ids": [
-     "s1",
-     "s18",
-     "s4",
-     "s21"
-    ]
    }
   ]
  },
@@ -232,17 +224,78 @@
  "grounded": {
   "kept": [
    0,
-   2
+   1,
+   2,
+   3
   ],
-  "dropped": [
-   [
-    1,
-    "s14 is on one side only, so it shows text one side lacks, not a change"
-   ],
-   [
-    3,
-    "s17 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin opens with definitions of \"goods or services\" (excluding creative and journalistic works), \"governmental unit,\" and \"person\"; the descendant has no definitions here.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant protects rights guaranteed by the United States Constitution or the New Jersey Constitution; the origin names the United States Constitution or the Utah Constitution.",
+      "origin_span_ids": [
+       "s14"
+      ],
+      "descendant_span_ids": [
+       "s15"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin's commercial-speech exclusion ends with \"goods or services\"; the descendant's text breaks off after \"sale or lease of the\" without naming its object.",
+      "origin_span_ids": [
+       "s29"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant refers to \"this act\" with lettered and numbered subsections (c., (1)-(3)); the origin refers to \"this chapter\" with numbered subsections and lettered paragraphs.",
+      "origin_span_ids": [
+       "s17",
+       "s3",
+       "s20"
+      ],
+      "descendant_span_ids": [
+       "s1",
+       "s18",
+       "s4",
+       "s21"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     2
+    ],
+    "dropped": [
+     [
+      1,
+      "s14 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      3,
+      "s17 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

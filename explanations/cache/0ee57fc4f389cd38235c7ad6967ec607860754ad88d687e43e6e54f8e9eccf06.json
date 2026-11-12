@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -211,17 +212,15 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant itself creates the cause of action for altered officers or candidates, with injunctive relief, damages, attorney's fees, a disclosure defense, venue, and a clear-and-convincing burden.",
-    "origin_span_ids": [
-     "s0"
-    ],
+    "summary": "The descendant itself creates the cause of action: injunctive relief and damages against the sponsor, attorney's fees, a disclosure affirmative defense, venue, and a clear-and-convincing burden.",
+    "origin_span_ids": [],
     "descendant_span_ids": [
      "s1"
     ]
    },
    {
-    "kind": "changed",
-    "summary": "The descendant shields both the medium and its advertising sales representative from liability; the origin's exceptions apply only to the medium.",
+    "kind": "added",
+    "summary": "The descendant extends the medium's liability shield and exceptions to the medium's advertising sales representative.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s6",
@@ -229,11 +228,9 @@
     ]
    },
    {
-    "kind": "changed",
-    "summary": "The descendant imposes liability for removing a disclosure only if done intentionally and the communication is not removed or the disclosure not replaced when notified.",
-    "origin_span_ids": [
-     "s13"
-    ],
+    "kind": "added",
+    "summary": "The descendant makes liability for removing a disclosure require intentional removal plus failure to remove the communication or replace the disclosure when notified.",
+    "origin_span_ids": [],
     "descendant_span_ids": [
      "s14",
      "s19"
@@ -255,17 +252,77 @@
  "grounded": {
   "kept": [
    0,
+   1,
+   2,
    3
   ],
-  "dropped": [
-   [
-    1,
-    "s6 is on one side only, so it shows text one side lacks, not a change"
-   ],
-   [
-    2,
-    "s13 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant itself creates the cause of action for altered officers or candidates, with injunctive relief, damages, attorney's fees, a disclosure defense, venue, and a clear-and-convincing burden.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant shields both the medium and its advertising sales representative from liability; the origin's exceptions apply only to the medium.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s6",
+       "s11"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant imposes liability for removing a disclosure only if done intentionally and the communication is not removed or the disclosure not replaced when notified.",
+      "origin_span_ids": [
+       "s13"
+      ],
+      "descendant_span_ids": [
+       "s14",
+       "s19"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin defines \"interactive computer service\" and \"information content provider\"; the descendant lacks these definitions but encourages courts to decide matters expediently.",
+      "origin_span_ids": [
+       "s32"
+      ],
+      "descendant_span_ids": [
+       "s33"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     3
+    ],
+    "dropped": [
+     [
+      1,
+      "s6 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      2,
+      "s13 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

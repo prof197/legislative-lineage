@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -261,7 +262,63 @@
    "descendant": "4768d045c374ff9ba7e36ecb349356cbe3d3a6954c412094007af17f5a17ff8e"
   }
  ],
- "explanation": null,
- "served_by": null,
- "grounded": null
+ "explanation": {
+  "claims": [
+   {
+    "kind": "added",
+    "summary": "The descendant contains a full public expression protection act: definitions, scope, special motion to dismiss, hearing and ruling deadlines, appeal, fee awards, and repeal of a prior section.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1",
+     "s42"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant allows a stay of another party's hearing only if its ruling would decide an issue material to the motion, and a stay of discovery only if it relates to that issue.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s10",
+     "s13"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin makes its stay of all proceedings during an appeal subject to exceptions listed in Subsections (5), (6), and (7).",
+    "origin_span_ids": [
+     "s19"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin expressly names attorney fees, along with costs and expenses, in the motion that is not subject to a stay.",
+    "origin_span_ids": [
+     "s33"
+    ],
+    "descendant_span_ids": []
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "a claim fails grounding (claim 2: s9 is on one side only, so it shows text one side lacks, not a change; claim 3: s19 is on one side only, so it shows text one side lacks, not a change; claim 4: s33 is on one side only, so it shows text one side lacks, not a change)"
+ ],
+ "earlier": [
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
 }

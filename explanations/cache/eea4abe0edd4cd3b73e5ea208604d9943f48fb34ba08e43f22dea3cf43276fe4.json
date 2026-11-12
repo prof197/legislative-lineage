@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -45,9 +46,38 @@
    "descendant": "9d2eefaa81c34cef0bd48df9062da837b2996e6d5ff524de30dbe1d229ea7c21"
   }
  ],
- "explanation": null,
- "served_by": null,
- "grounded": null,
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin extends broad construction to rights guaranteed by the Utah Constitution; the descendant has no reference to the Utah Constitution.",
+    "origin_span_ids": [
+     "s5"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant extends broad construction to rights guaranteed by the Delaware Constitution, which the origin does not mention.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s6"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1
+  ],
+  "dropped": []
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "a claim fails grounding (claim 1: s5 is on one side only, so it shows text one side lacks, not a change)"
+ ],
  "earlier": [
   {
    "explanation": {
@@ -82,6 +112,11 @@
     ],
     "dropped": []
    }
+  },
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
   }
  ]
 }

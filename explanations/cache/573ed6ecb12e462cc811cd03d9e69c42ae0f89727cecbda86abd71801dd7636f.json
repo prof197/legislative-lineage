@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -564,71 +565,126 @@
  "explanation": {
   "claims": [
    {
-    "kind": "changed",
-    "summary": "The descendant defines a minor as under 18 and not emancipated or married; the origin defines a minor as a state resident known or reasonably believed by a platform to be under 16.",
-    "origin_span_ids": [
-     "s3"
-    ],
+    "kind": "added",
+    "summary": "The descendant defines a minor as an individual under 18 who has not been emancipated or married.",
+    "origin_span_ids": [],
     "descendant_span_ids": [
      "s4"
     ]
    },
    {
-    "kind": "added",
-    "summary": "The descendant defines 'social media company' as an interactive computer service whose platform has at least 5,000,000 account holders worldwide, and ties the platform definition to such companies.",
+    "kind": "removed",
+    "summary": "The origin defines a minor as a state resident known or reasonably believed by a platform to be under 16, and defines a minor account holder.",
     "origin_span_ids": [
-     "s9"
+     "s3"
     ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant defines a social media company as an interactive computer service whose platform has at least 5,000,000 account holders worldwide.",
+    "origin_span_ids": [],
     "descendant_span_ids": [
-     "s1",
      "s7",
-     "s10"
+     "s1"
     ]
    },
    {
-    "kind": "changed",
-    "summary": "The descendant's exclusions cover direct messaging and professional creative networks; the origin's cover adult-only services with age assurance, internet/broadband access, and peer-to-peer payments.",
+    "kind": "removed",
+    "summary": "The origin excludes from social media platforms adult-only services using age assurance, internet access and broadband, and peer-to-peer payment services.",
     "origin_span_ids": [
      "s16",
      "s81",
      "s87"
     ],
-    "descendant_span_ids": [
-     "s17",
-     "s47"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The descendant's educational-entity list and resident account-holder definitions are framed for Utah; the origin's are framed for Georgia institutions and state residents.",
-    "origin_span_ids": [
-     "s0"
-    ],
-    "descendant_span_ids": [
-     "s1",
-     "s92"
-    ]
+    "descendant_span_ids": []
    }
   ]
  },
  "served_by": "claude-opus-5-5",
  "grounded": {
   "kept": [
-   1
+   0,
+   1,
+   2,
+   3
   ],
-  "dropped": [
-   [
-    0,
-    "s3 is on one side only, so it shows text one side lacks, not a change"
-   ],
-   [
-    2,
-    "s16 is on one side only, so it shows text one side lacks, not a change"
-   ],
-   [
-    3,
-    "s0 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant defines a minor as under 18 and not emancipated or married; the origin defines a minor as a state resident known or reasonably believed by a platform to be under 16.",
+      "origin_span_ids": [
+       "s3"
+      ],
+      "descendant_span_ids": [
+       "s4"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant defines 'social media company' as an interactive computer service whose platform has at least 5,000,000 account holders worldwide, and ties the platform definition to such companies.",
+      "origin_span_ids": [
+       "s9"
+      ],
+      "descendant_span_ids": [
+       "s1",
+       "s7",
+       "s10"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant's exclusions cover direct messaging and professional creative networks; the origin's cover adult-only services with age assurance, internet/broadband access, and peer-to-peer payments.",
+      "origin_span_ids": [
+       "s16",
+       "s81",
+       "s87"
+      ],
+      "descendant_span_ids": [
+       "s17",
+       "s47"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant's educational-entity list and resident account-holder definitions are framed for Utah; the origin's are framed for Georgia institutions and state residents.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s1",
+       "s92"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     1
+    ],
+    "dropped": [
+     [
+      0,
+      "s3 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      2,
+      "s16 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      3,
+      "s0 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

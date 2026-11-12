@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -75,9 +76,16 @@
    "descendant": "a025940f2894eeb052f8d2c61b12e11508bea6aad307e78b11adba935e45adee"
   }
  ],
- "explanation": null,
- "served_by": null,
- "grounded": null,
+ "explanation": {
+  "claims": []
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [],
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
  "earlier": [
   {
    "explanation": {
@@ -101,6 +109,11 @@
     ],
     "dropped": []
    }
+  },
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
   }
  ]
 }

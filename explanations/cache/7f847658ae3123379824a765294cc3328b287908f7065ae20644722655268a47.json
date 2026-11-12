@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -43,7 +44,7 @@
   "claims": [
    {
     "kind": "removed",
-    "summary": "The origin assigns liability for electioneering communications to the sponsor rather than the disseminating medium, with exceptions; the descendant has no such liability provision.",
+    "summary": "The origin limits liability to the sponsor of an electioneering communication, making a medium liable only if it strips disclosures or alters content into synthetic media; the descendant lacks this.",
     "origin_span_ids": [
      "s0"
     ],
@@ -51,32 +52,27 @@
    },
    {
     "kind": "added",
-    "summary": "The descendant defines a school-employee term (excluding enrolled students), \"depicted individual,\" \"digital depiction,\" and \"intimate digital depiction\"; the origin has none of these.",
+    "summary": "The descendant defines school employee (excluding students), depicted individual, digital depiction, and information content providers; the origin has none of these terms.",
     "origin_span_ids": [],
-    "descendant_span_ids": [
-     "s1",
-     "s5"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "Both define \"information content provider\" in the same substance; the origin places it after the interactive computer service definition, the descendant before it, in plural form.",
-    "origin_span_ids": [
-     "s4"
-    ],
     "descendant_span_ids": [
      "s1"
     ]
    },
    {
-    "kind": "changed",
-    "summary": "The origin gives the interactive computer service definition as lettered item (b) using \"means\"; the descendant numbers it (4) without \"means.\"",
-    "origin_span_ids": [
-     "s2"
-    ],
+    "kind": "added",
+    "summary": "The descendant begins defining an intimate digital depiction as a digital depiction created or altered by digital means; the origin has no such definition.",
+    "origin_span_ids": [],
     "descendant_span_ids": [
-     "s2"
+     "s5"
     ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin carries a separately lettered definition of information content provider after the interactive computer service definition; the descendant has no matching definition at that point.",
+    "origin_span_ids": [
+     "s4"
+    ],
+    "descendant_span_ids": []
    }
   ]
  },
@@ -85,13 +81,70 @@
   "kept": [
    0,
    1,
+   2,
    3
   ],
-  "dropped": [
-   [
-    2,
-    "s4 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin assigns liability for electioneering communications to the sponsor rather than the disseminating medium, with exceptions; the descendant has no such liability provision.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant defines a school-employee term (excluding enrolled students), \"depicted individual,\" \"digital depiction,\" and \"intimate digital depiction\"; the origin has none of these.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s5"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "Both define \"information content provider\" in the same substance; the origin places it after the interactive computer service definition, the descendant before it, in plural form.",
+      "origin_span_ids": [
+       "s4"
+      ],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin gives the interactive computer service definition as lettered item (b) using \"means\"; the descendant numbers it (4) without \"means.\"",
+      "origin_span_ids": [
+       "s2"
+      ],
+      "descendant_span_ids": [
+       "s2"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     3
+    ],
+    "dropped": [
+     [
+      2,
+      "s4 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -229,39 +230,37 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant defines \"candidate\" to include incumbents and defines \"creator\" as the entity using AI to generate synthetic media, excluding AI providers or developers.",
+    "summary": "The descendant bars a creator from distributing deceptive synthetic media within 90 days of an election, and defines \"creator\" and includes incumbents as candidates.",
     "origin_span_ids": [],
     "descendant_span_ids": [
-     "s1"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The descendant bars creators from distributing deceptive synthetic media within 90 days of an election unless disclosed; the origin instead gives candidates a civil right to injunctions and damages.",
-    "origin_span_ids": [
-     "s12"
-    ],
-    "descendant_span_ids": [
-     "s13"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The origin makes a disclosure saying the media \"has been manipulated\" an affirmative defense; the descendant makes disclosure that it was manipulated or AI-generated an exception to the prohibition.",
-    "origin_span_ids": [
-     "s12"
-    ],
-    "descendant_span_ids": [
+     "s1",
      "s13"
     ]
    },
    {
     "kind": "removed",
-    "summary": "The origin places a clear-and-convincing burden of proof on plaintiffs and encourages expedient court decisions; the descendant has neither provision.",
+    "summary": "The origin lets a candidate depicted in synthetic media seek injunctive relief and damages against the sponsor, with attorneys' fees; the descendant has no such civil remedies.",
+    "origin_span_ids": [
+     "s12"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin places the burden on the plaintiff to prove synthetic media use by clear and convincing evidence and encourages courts to decide matters expediently; the descendant lacks this.",
     "origin_span_ids": [
      "s36"
     ],
     "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant applies the audio-only disclosure rule only when no visual disclosure is feasible and also requires a speed easily heard by the average listener.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s29",
+     "s31"
+    ]
    }
   ]
  },
@@ -269,17 +268,73 @@
  "grounded": {
   "kept": [
    0,
+   1,
+   2,
    3
   ],
-  "dropped": [
-   [
-    1,
-    "s12 is on one side only, so it shows text one side lacks, not a change"
-   ],
-   [
-    2,
-    "s12 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant defines \"candidate\" to include incumbents and defines \"creator\" as the entity using AI to generate synthetic media, excluding AI providers or developers.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant bars creators from distributing deceptive synthetic media within 90 days of an election unless disclosed; the origin instead gives candidates a civil right to injunctions and damages.",
+      "origin_span_ids": [
+       "s12"
+      ],
+      "descendant_span_ids": [
+       "s13"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin makes a disclosure saying the media \"has been manipulated\" an affirmative defense; the descendant makes disclosure that it was manipulated or AI-generated an exception to the prohibition.",
+      "origin_span_ids": [
+       "s12"
+      ],
+      "descendant_span_ids": [
+       "s13"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin places a clear-and-convincing burden of proof on plaintiffs and encourages expedient court decisions; the descendant has neither provision.",
+      "origin_span_ids": [
+       "s36"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     3
+    ],
+    "dropped": [
+     [
+      1,
+      "s12 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      2,
+      "s12 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

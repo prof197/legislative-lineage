@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -213,7 +214,75 @@
    "descendant": "a1eac86e07317c00b52776986f51076022bd89c92c28743a4ce42e7066563721"
   }
  ],
- "explanation": null,
- "served_by": null,
- "grounded": null
+ "explanation": {
+  "claims": [
+   {
+    "kind": "added",
+    "summary": "The descendant bars distributing materially deceptive media with actual malice within 90 days of an election, unless disclosed; the origin sets no such prohibition, only civil remedies.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s7"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant covers media fabricated or manipulated to appear authentic, including about election operations; the origin defines synthetic media made with generative adversarial network techniques.",
+    "origin_span_ids": [
+     "s0",
+     "s3"
+    ],
+    "descendant_span_ids": [
+     "s1",
+     "s4"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant exempts interactive service providers, broadcasters, news publications and satire or parody; the origin has no such exemptions.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s34"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant lets the attorney general also seek injunctions and allows damages against any distributor; the origin limits relief to candidates and damages to the sponsor.",
+    "origin_span_ids": [
+     "s6"
+    ],
+    "descendant_span_ids": [
+     "s31"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   2
+  ],
+  "dropped": [
+   [
+    1,
+    "s0 is on one side only, so it shows text one side lacks, not a change"
+   ],
+   [
+    3,
+    "s6 is on one side only, so it shows text one side lacks, not a change"
+   ]
+  ]
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "off the schema: claims.1.summary: String should have at most 200 characters",
+  "a claim fails grounding (claim 2: s0 is on one side only, so it shows text one side lacks, not a change; claim 4: s6 is on one side only, so it shows text one side lacks, not a change)"
+ ],
+ "earlier": [
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
 }

@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -241,7 +242,7 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant embeds the education provision in a broader social media regulation article with definitions, age verification, parental consent, minor account limits, and enforcement.",
+    "summary": "The descendant includes a full social media regulation article: definitions, age verification, parental consent, minor account protections, Attorney General enforcement and a private right of action.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s1",
@@ -249,29 +250,29 @@
     ]
    },
    {
-    "kind": "changed",
-    "summary": "The origin's required instruction covers social, emotional and physical effects and disinformation/misinformation; the descendant instead stresses negative mental health effects including addiction.",
+    "kind": "removed",
+    "summary": "The origin's curriculum covers social, emotional and physical effects of social media, effects particularly on teenagers, and disinformation and misinformation; the descendant lacks these topics.",
     "origin_span_ids": [
      "s14",
      "s17"
     ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant addresses social media's ability to manipulate and influence thoughts and behaviors; the origin covers how social media influences them.",
+    "origin_span_ids": [
+     "s19"
+    ],
     "descendant_span_ids": [
-     "s15",
-     "s18"
+     "s19"
     ]
    },
    {
     "kind": "removed",
-    "summary": "The origin lets the model programs include information on social media's benefits, such as career readiness and safely connecting with others; the descendant has no such provision.",
+    "summary": "The origin permits instruction on benefits of social media and requires the Department to give technical assistance to local boards; the descendant has neither.",
     "origin_span_ids": [
-     "s28"
-    ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "removed",
-    "summary": "The origin requires the Department to provide technical assistance to local boards adopting internet safety components; the descendant omits this.",
-    "origin_span_ids": [
+     "s28",
      "s34"
     ],
     "descendant_span_ids": []
@@ -282,14 +283,71 @@
  "grounded": {
   "kept": [
    0,
+   1,
    2,
    3
   ],
-  "dropped": [
-   [
-    1,
-    "s14 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant embeds the education provision in a broader social media regulation article with definitions, age verification, parental consent, minor account limits, and enforcement.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s38"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin's required instruction covers social, emotional and physical effects and disinformation/misinformation; the descendant instead stresses negative mental health effects including addiction.",
+      "origin_span_ids": [
+       "s14",
+       "s17"
+      ],
+      "descendant_span_ids": [
+       "s15",
+       "s18"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin lets the model programs include information on social media's benefits, such as career readiness and safely connecting with others; the descendant has no such provision.",
+      "origin_span_ids": [
+       "s28"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin requires the Department to provide technical assistance to local boards adopting internet safety components; the descendant omits this.",
+      "origin_span_ids": [
+       "s34"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     2,
+     3
+    ],
+    "dropped": [
+     [
+      1,
+      "s14 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

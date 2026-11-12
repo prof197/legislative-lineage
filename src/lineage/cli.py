@@ -1240,8 +1240,6 @@ def explain_command(
         typer.echo(f"{reground_cache(cache)} cache files regrounded under the current rules")
         return
     try:
-        if again and not live:
-            raise NotCachedError("--again asks the model; run with --live")
         todo = load_pairs(pairs)
         prompts = _pair_prompts(todo, tables, models_dir if paraphrase else None)
         uncached = [p for p in prompts if not explanation_cache_path(p, cache).exists()]
@@ -1255,6 +1253,8 @@ def explain_command(
         )
         if uncached and not live:
             raise NotCachedError(f"{len(uncached)} pairs not cached; run with --live to ask")
+        if again and not live:
+            raise NotCachedError("--again asks the model; run with --live")
         meter = None
         ask = None
         if due:

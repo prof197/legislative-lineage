@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -303,9 +304,84 @@
    "descendant": "c5cab9cb84ff241afefc58b04e05c3f3bae2a0dc79612f80903d56640705803a"
   }
  ],
- "explanation": null,
- "served_by": null,
- "grounded": null,
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin refers to a 'cause of action' throughout the dismissal provisions, including failure to state a 'cause of action' upon which relief can be granted.",
+    "origin_span_ids": [
+     "s8",
+     "s11",
+     "s20",
+     "s23",
+     "s26",
+     "s29",
+     "s32",
+     "s35"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant refers to a 'civil action' throughout and to failure to state a 'claim' upon which relief can be granted.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s9",
+     "s12",
+     "s21",
+     "s24",
+     "s27",
+     "s30",
+     "s33",
+     "s36"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin carries its code section number 78B-25-107 and cites codified sections (78B-25-102, -103, -110) and 'this chapter'.",
+    "origin_span_ids": [
+     "s0",
+     "s5",
+     "s14",
+     "s17",
+     "s38",
+     "s41",
+     "s44",
+     "s47"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant is headed 'NEW SECTION. Section 7.' and uses bracketed placeholder references such as [section 3], [section 10], 'the act' and [sections 1 through 12].",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1",
+     "s6",
+     "s15",
+     "s18",
+     "s39",
+     "s42",
+     "s45",
+     "s48"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "no claim cites spans that exist and differ (claim 1: s8 is on one side only, so it shows text one side lacks, not a change; claim 2: s23 is on one side only, so it shows text one side lacks, not a change; claim 3: s0 is on one side only, so it shows text one side lacks, not a change)"
+ ],
  "earlier": [
   {
    "explanation": {
@@ -377,6 +453,11 @@
     ],
     "dropped": []
    }
+  },
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
   }
  ]
 }

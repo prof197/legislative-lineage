@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -213,9 +214,57 @@
    "descendant": "2e345e8f12a4f9247dbc8edc4e99160cee17b77c8eb8becfa0664a9a85a43ab1"
   }
  ],
- "explanation": null,
- "served_by": null,
- "grounded": null,
+ "explanation": {
+  "claims": [
+   {
+    "kind": "added",
+    "summary": "The descendant keeps the stay until thirty days after the ruling on the motion or the end of any appeal, whichever is later.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s10"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin ends the stay when the order is entered and the appeal deadline expires, and has a separate stay during appeal that lasts until the appeal concludes.",
+    "origin_span_ids": [
+     "s9",
+     "s12"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin preserves a party's ability to voluntarily dismiss part of a cause of action during a stay; the descendant does not mention partial dismissal.",
+    "origin_span_ids": [
+     "s24"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant specifies that the preserved motion to sever a cause of action is one for a separate trial.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s27"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "off the schema: claims.0.summary: String should have at most 200 characters; claims.1.summary: String should have at most 200 characters"
+ ],
  "earlier": [
   {
    "explanation": {
@@ -275,6 +324,11 @@
     ],
     "dropped": []
    }
+  },
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
   }
  ]
 }

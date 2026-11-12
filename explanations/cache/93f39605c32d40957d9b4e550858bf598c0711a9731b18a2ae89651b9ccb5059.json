@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -229,10 +230,8 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant bars a digital service provider from creating an account for a person unless that person has registered their age with the provider; the origin has no such registration requirement.",
-    "origin_span_ids": [
-     "s0"
-    ],
+    "summary": "The descendant bars a digital service provider from creating an account unless the person has registered their age, and verifies the age of the person creating an account.",
+    "origin_span_ids": [],
     "descendant_span_ids": [
      "s1",
      "s4"
@@ -240,34 +239,29 @@
    },
    {
     "kind": "removed",
-    "summary": "The origin lets a provider skip age verification by applying minors' special conditions to all account holders, and treats anyone verified as under 16 as a minor; the descendant has neither provision.",
+    "summary": "The origin allows applying minor protections to all account holders instead of verifying age, and requires treating anyone verified as under 16 as a minor.",
     "origin_span_ids": [
      "s6"
     ],
-    "descendant_span_ids": [
-     "s7"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The descendant's consent rule covers only known minors and accepts ID-based verification only; the origin also accepts financial or payment card information and allows consent forms by email.",
-    "origin_span_ids": [
-     "s17",
-     "s26"
-    ],
-    "descendant_span_ids": [
-     "s18",
-     "s26",
-     "s20"
-    ]
+    "descendant_span_ids": []
    },
    {
     "kind": "removed",
-    "summary": "The origin bars accounts for minors ineligible under other state or federal law and requires providers to give parents, on request, a list of content moderation features; the descendant lacks both.",
+    "summary": "The origin bars accounts for minors ineligible under other state or federal law and requires a list of content moderation features on a parent's request.",
     "origin_span_ids": [
      "s36"
     ],
     "descendant_span_ids": []
+   },
+   {
+    "kind": "changed",
+    "summary": "The origin lets consent be verified with a parent's government ID or financial/payment card information; the descendant names only government-issued ID.",
+    "origin_span_ids": [
+     "s26"
+    ],
+    "descendant_span_ids": [
+     "s26"
+    ]
    }
   ]
  },
@@ -276,13 +270,75 @@
   "kept": [
    0,
    1,
+   2,
    3
   ],
-  "dropped": [
-   [
-    2,
-    "s17 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant bars a digital service provider from creating an account for a person unless that person has registered their age with the provider; the origin has no such registration requirement.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s1",
+       "s4"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin lets a provider skip age verification by applying minors' special conditions to all account holders, and treats anyone verified as under 16 as a minor; the descendant has neither provision.",
+      "origin_span_ids": [
+       "s6"
+      ],
+      "descendant_span_ids": [
+       "s7"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant's consent rule covers only known minors and accepts ID-based verification only; the origin also accepts financial or payment card information and allows consent forms by email.",
+      "origin_span_ids": [
+       "s17",
+       "s26"
+      ],
+      "descendant_span_ids": [
+       "s18",
+       "s26",
+       "s20"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin bars accounts for minors ineligible under other state or federal law and requires providers to give parents, on request, a list of content moderation features; the descendant lacks both.",
+      "origin_span_ids": [
+       "s36"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     3
+    ],
+    "dropped": [
+     [
+      2,
+      "s17 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

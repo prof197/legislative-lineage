@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -73,49 +74,95 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant requires the court to award punitive damages to a prevailing moving party if the action was brought or continued to harass, intimidate, punish, or maliciously inhibit speech rights.",
+    "summary": "The descendant adds a subsection (b) requiring the court to award punitive damages to a prevailing moving party if the action was brought or continued to harass or maliciously inhibit speech rights.",
     "origin_span_ids": [],
     "descendant_span_ids": [
-     "s10",
-     "s3"
+     "s10"
     ]
    },
    {
-    "kind": "changed",
-    "summary": "The descendant cites the motion provision as § 6003 of this title; the origin cites Section 78B-25-103.",
-    "origin_span_ids": [
-     "s5"
-    ],
+    "kind": "added",
+    "summary": "The descendant cross-references the motion provision as § 6003 of this title and numbers itself § 6010, with the fee rule designated as subsection (a).",
+    "origin_span_ids": [],
     "descendant_span_ids": [
+     "s1",
+     "s3",
      "s6"
     ]
    },
    {
-    "kind": "changed",
-    "summary": "The descendant is numbered § 6010; the origin is numbered 78B-25-110.",
+    "kind": "removed",
+    "summary": "The origin numbers the section 78B-25-110 and cross-references the motion provision as Section 78B-25-103; the descendant lacks these numbers.",
     "origin_span_ids": [
-     "s0"
+     "s0",
+     "s5"
     ],
-    "descendant_span_ids": [
-     "s1"
-    ]
+    "descendant_span_ids": []
    }
   ]
  },
  "served_by": "claude-opus-5-5",
  "grounded": {
   "kept": [
-   0
+   0,
+   1,
+   2
   ],
-  "dropped": [
-   [
-    1,
-    "s5 is on one side only, so it shows text one side lacks, not a change"
-   ],
-   [
-    2,
-    "s0 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant requires the court to award punitive damages to a prevailing moving party if the action was brought or continued to harass, intimidate, punish, or maliciously inhibit speech rights.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s10",
+       "s3"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant cites the motion provision as § 6003 of this title; the origin cites Section 78B-25-103.",
+      "origin_span_ids": [
+       "s5"
+      ],
+      "descendant_span_ids": [
+       "s6"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant is numbered § 6010; the origin is numbered 78B-25-110.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0
+    ],
+    "dropped": [
+     [
+      1,
+      "s5 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      2,
+      "s0 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -225,7 +226,70 @@
    "descendant": "4c29452401797674f6df607f99f739c817129d758e0a6e9770b528db51d598b4"
   }
  ],
- "explanation": null,
- "served_by": null,
- "grounded": null
+ "explanation": {
+  "claims": [
+   {
+    "kind": "added",
+    "summary": "The descendant excludes many more causes of action: crime-victim suits, real property, bodily injury, insurance, fraud, protection orders, employment, consumer protection, federal claims.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s36"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant restores coverage for certain excluded claims (sales communications, fraud, consumer protection) when they involve journalistic or artistic works or consumer reviews.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s36"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant protects rights guaranteed by the Minnesota Constitution; the origin refers to the Utah Constitution.",
+    "origin_span_ids": [
+     "s21"
+    ],
+    "descendant_span_ids": [
+     "s22"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant states that its defined terms apply for the purposes of sections 554.07 to 554.19; the origin's definitions apply only as used in its section.",
+    "origin_span_ids": [
+     "s0"
+    ],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   3
+  ],
+  "dropped": [
+   [
+    2,
+    "s21 is on one side only, so it shows text one side lacks, not a change"
+   ]
+  ]
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "off the schema: claims.0.summary: String should have at most 200 characters",
+  "a claim fails grounding (claim 3: s21 is on one side only, so it shows text one side lacks, not a change)"
+ ],
+ "earlier": [
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
 }

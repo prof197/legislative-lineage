@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -171,7 +172,61 @@
    "descendant": "fb3bcd9e3800853cec34ca7f483401adf82b8a1a9f199cf8057daac7f1b32388"
   }
  ],
- "explanation": null,
- "served_by": null,
- "grounded": null
+ "explanation": {
+  "claims": [
+   {
+    "kind": "added",
+    "summary": "The descendant titles itself the \"Freedom From AI-Rigged (FAIR) Elections Act\" and defines synthetic media; the origin's section has no title or synthetic media definition.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant lets a depicted candidate seek injunctive relief or general and special damages against the sponsor, with attorney's fees and costs to a prevailing party.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant makes a \"This (image/video/audio) has been manipulated\" disclosure an affirmative defense, with size and duration rules for visual media and timing rules for audio.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant requires the plaintiff to prove synthetic media use by clear and convincing evidence and encourages courts to decide these matters expediently.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "off the schema: claims.1.summary: String should have at most 200 characters"
+ ],
+ "earlier": [
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
 }

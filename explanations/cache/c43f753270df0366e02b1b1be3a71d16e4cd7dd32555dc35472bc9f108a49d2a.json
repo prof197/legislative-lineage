@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -54,33 +55,29 @@
  "explanation": {
   "claims": [
    {
-    "kind": "changed",
-    "summary": "The descendant lists a \"petition\" among the pleadings that start the filing deadline; the origin lists a \"complaint\" instead.",
+    "kind": "removed",
+    "summary": "The origin lists a complaint among the pleadings that trigger the motion deadline; the descendant does not list a complaint.",
     "origin_span_ids": [
      "s5"
     ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant lists a petition among the pleadings that trigger the motion deadline; the origin does not list a petition.",
+    "origin_span_ids": [],
     "descendant_span_ids": [
      "s6"
     ]
    },
    {
     "kind": "changed",
-    "summary": "The descendant's deadline runs \"sixty days after\" service; the origin's runs \"60 days after the day on which\" a party is served.",
+    "summary": "The origin counts 60 days after the day on which a party is served; the descendant counts sixty days after service, without the 'day on which' phrasing.",
     "origin_span_ids": [
      "s3"
     ],
     "descendant_span_ids": [
      "s3"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The descendant carries the heading \"Sec. 3. NEW SECTION. 652.3\"; the origin is numbered 78B-25-103.",
-    "origin_span_ids": [
-     "s0"
-    ],
-    "descendant_span_ids": [
-     "s1"
     ]
    }
   ]
@@ -88,17 +85,66 @@
  "served_by": "claude-opus-5-5",
  "grounded": {
   "kept": [
-   1
+   0,
+   1,
+   2
   ],
-  "dropped": [
-   [
-    0,
-    "s5 is on one side only, so it shows text one side lacks, not a change"
-   ],
-   [
-    2,
-    "s0 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant lists a \"petition\" among the pleadings that start the filing deadline; the origin lists a \"complaint\" instead.",
+      "origin_span_ids": [
+       "s5"
+      ],
+      "descendant_span_ids": [
+       "s6"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant's deadline runs \"sixty days after\" service; the origin's runs \"60 days after the day on which\" a party is served.",
+      "origin_span_ids": [
+       "s3"
+      ],
+      "descendant_span_ids": [
+       "s3"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant carries the heading \"Sec. 3. NEW SECTION. 652.3\"; the origin is numbered 78B-25-103.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     1
+    ],
+    "dropped": [
+     [
+      0,
+      "s5 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      2,
+      "s0 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

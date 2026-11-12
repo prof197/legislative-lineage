@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -159,7 +160,66 @@
    "descendant": "7123c382091b40b2afecb5eb99b99de6ae6775d79d1d8f7ec6024aba36bcb6b7"
   }
  ],
- "explanation": null,
- "served_by": null,
- "grounded": null
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin defines synthetic media as content manipulated with generative adversarial network or other digital techniques, and lets a candidate sue the sponsor of an electioneering communication.",
+    "origin_span_ids": [
+     "s0",
+     "s3",
+     "s6"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant covers AI-made deceptive media of a candidate used for campaign purposes, allows suits against knowing disseminators, punitive damages, a 3-year limit and expedited proceedings.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1",
+     "s4"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant requires the visual, video and audio disclosures to appear in the same language as the media itself.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s11",
+     "s19",
+     "s25"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant exempts broadcasters, news publications and websites that acknowledge the falsity, satire or parody, and preserves 47 U.S.C. § 230 protections.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s25"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "off the schema: claims.0.summary: String should have at most 200 characters; claims.1.summary: String should have at most 200 characters"
+ ],
+ "earlier": [
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
 }

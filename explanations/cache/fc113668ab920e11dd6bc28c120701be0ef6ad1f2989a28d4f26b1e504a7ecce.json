@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -109,17 +110,15 @@
   "claims": [
    {
     "kind": "removed",
-    "summary": "The origin defines \"governmental unit\" and \"person\" and states which communications and speech-related causes of action the chapter applies to; the descendant has none of this.",
+    "summary": "The origin defines \"governmental unit\" and \"person\" and states the chapter applies to claims based on communications in government proceedings or free speech, press, assembly or association rights.",
     "origin_span_ids": [
      "s0"
     ],
-    "descendant_span_ids": [
-     "s1"
-    ]
+    "descendant_span_ids": []
    },
    {
     "kind": "added",
-    "summary": "The descendant's exception for government enforcement actions covers enforcing a law, rule, regulation, or ordinance; the origin's covers only enforcing a law.",
+    "summary": "The descendant's government enforcement exception covers enforcing a law, rule, regulation, or ordinance; the origin's covers enforcing a law.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s9"
@@ -127,18 +126,16 @@
    },
    {
     "kind": "added",
-    "summary": "The descendant's commercial-seller exception reaches causes of action arising from a communication or lack of communication; the origin's reaches only those arising from a communication.",
+    "summary": "The descendant's commercial-speech exception reaches claims arising from a communication or lack of communication about a sale or lease; the origin's covers only a communication.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s14"
     ]
    },
    {
-    "kind": "changed",
-    "summary": "Both exclude artistic, dramatic, journalistic, literary, musical, or political works from \"goods or services\"; the origin defines this up front, the descendant at the end of the section.",
-    "origin_span_ids": [
-     "s0"
-    ],
+    "kind": "added",
+    "summary": "The descendant places its exclusion of artistic, dramatic, journalistic, literary, musical, or political works from \"goods or services\" at the end of the exceptions section.",
+    "origin_span_ids": [],
     "descendant_span_ids": [
      "s16"
     ]
@@ -150,13 +147,69 @@
   "kept": [
    0,
    1,
-   2
+   2,
+   3
   ],
-  "dropped": [
-   [
-    3,
-    "s0 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin defines \"governmental unit\" and \"person\" and states which communications and speech-related causes of action the chapter applies to; the descendant has none of this.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant's exception for government enforcement actions covers enforcing a law, rule, regulation, or ordinance; the origin's covers only enforcing a law.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s9"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant's commercial-seller exception reaches causes of action arising from a communication or lack of communication; the origin's reaches only those arising from a communication.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s14"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "Both exclude artistic, dramatic, journalistic, literary, musical, or political works from \"goods or services\"; the origin defines this up front, the descendant at the end of the section.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s16"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2
+    ],
+    "dropped": [
+     [
+      3,
+      "s0 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

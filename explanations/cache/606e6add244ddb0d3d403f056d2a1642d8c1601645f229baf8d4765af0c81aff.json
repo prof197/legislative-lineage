@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -79,15 +80,7 @@
   "claims": [
    {
     "kind": "removed",
-    "summary": "The origin limits liability for electioneering communications to the sponsor, not the disseminating medium, except where the medium strips disclosures or alters content into synthetic media.",
-    "origin_span_ids": [
-     "s5"
-    ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "removed",
-    "summary": "The origin shields interactive computer service providers and users from being treated as publisher or speaker of others' content; the descendant has no such immunity provision.",
+    "summary": "The origin limits liability for electioneering communications to the sponsor, with exceptions for media that remove disclosures or alter content into synthetic media; the descendant has no such text.",
     "origin_span_ids": [
      "s5"
     ],
@@ -95,24 +88,31 @@
    },
    {
     "kind": "added",
-    "summary": "The descendant is a definitions section for an abortion chapter, defining terms such as abortion fund, abortion-inducing drug, abortion provider, affiliate, elective abortion and medical emergency.",
+    "summary": "The descendant defines abortion-related terms such as abortion fund, abortion-inducing drug, abortion provider, elective abortion, attempt, and aiding or abetting; the origin has none.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s3",
+     "s6",
+     "s8"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant defines affiliate, governmental entity, taxpayer resource transaction, medical emergency, unborn child, woman, and related terms; the origin lacks these definitions.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
      "s6",
      "s8",
      "s11"
     ]
    },
    {
-    "kind": "changed",
-    "summary": "Both define \"information content provider\"; the origin covers \"any person or entity,\" while the descendant says \"a person\" and lists it as a numbered definition.",
+    "kind": "removed",
+    "summary": "The origin defines information content provider as any person or entity responsible for creating online content in a separate lettered subsection; the descendant has no such subsection.",
     "origin_span_ids": [
      "s10"
     ],
-    "descendant_span_ids": [
-     "s8"
-    ]
+    "descendant_span_ids": []
    }
   ]
  },
@@ -121,13 +121,70 @@
   "kept": [
    0,
    1,
-   2
+   2,
+   3
   ],
-  "dropped": [
-   [
-    3,
-    "s10 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin limits liability for electioneering communications to the sponsor, not the disseminating medium, except where the medium strips disclosures or alters content into synthetic media.",
+      "origin_span_ids": [
+       "s5"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin shields interactive computer service providers and users from being treated as publisher or speaker of others' content; the descendant has no such immunity provision.",
+      "origin_span_ids": [
+       "s5"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant is a definitions section for an abortion chapter, defining terms such as abortion fund, abortion-inducing drug, abortion provider, affiliate, elective abortion and medical emergency.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s3",
+       "s6",
+       "s8",
+       "s11"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "Both define \"information content provider\"; the origin covers \"any person or entity,\" while the descendant says \"a person\" and lists it as a numbered definition.",
+      "origin_span_ids": [
+       "s10"
+      ],
+      "descendant_span_ids": [
+       "s8"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2
+    ],
+    "dropped": [
+     [
+      3,
+      "s10 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -283,7 +284,7 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant is a full anti-SLAPP act: title, definitions, scope and exclusions, a 60-day special motion to dismiss, hearing and ruling deadlines, dismissal standards, appeal and fee rules.",
+    "summary": "The descendant contains a full anti-SLAPP framework: title, definitions, scope and exceptions, motion deadline, hearing, dismissal standard, appeal, fees, construction and a 2026 effective date.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s1",
@@ -291,37 +292,29 @@
     ]
    },
    {
-    "kind": "changed",
-    "summary": "The descendant lets the court stay another party's hearing or motion only if its ruling would decide an issue material to the motion; the origin allows that stay without such a condition.",
-    "origin_span_ids": [
-     "s9",
-     "s12"
-    ],
+    "kind": "added",
+    "summary": "The descendant specifies that the stay of proceedings between the moving and responding parties takes effect on the filing of the special motion to dismiss.",
+    "origin_span_ids": [],
     "descendant_span_ids": [
-     "s10",
-     "s13"
+     "s3",
+     "s5"
     ]
    },
    {
     "kind": "removed",
-    "summary": "The origin makes the appeal stay subject to exceptions in Subsections (5), (6) and (7); the descendant states the appeal stay without those cross-referenced exceptions.",
+    "summary": "The origin opens the appeal-stay provision by excepting Subsections (5), (6) and (7); the descendant's appeal stay has no such express exception clause.",
     "origin_span_ids": [
-     "s22",
-     "s28"
+     "s22"
     ],
-    "descendant_span_ids": [
-     "s29"
-    ]
+    "descendant_span_ids": []
    },
    {
-    "kind": "changed",
-    "summary": "The descendant exempts from the stay a motion for costs and expenses under subsection 12; the origin exempts a motion for costs, attorney fees and expenses under Section 78B-25-110.",
+    "kind": "removed",
+    "summary": "The origin expressly names attorney fees among the items in a motion that is not subject to the stay; the descendant's corresponding text names only costs and expenses.",
     "origin_span_ids": [
      "s36"
     ],
-    "descendant_span_ids": [
-     "s37"
-    ]
+    "descendant_span_ids": []
    }
   ]
  },
@@ -329,17 +322,79 @@
  "grounded": {
   "kept": [
    0,
-   2
+   1,
+   2,
+   3
   ],
-  "dropped": [
-   [
-    1,
-    "s9 is on one side only, so it shows text one side lacks, not a change"
-   ],
-   [
-    3,
-    "s36 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant is a full anti-SLAPP act: title, definitions, scope and exclusions, a 60-day special motion to dismiss, hearing and ruling deadlines, dismissal standards, appeal and fee rules.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s45"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant lets the court stay another party's hearing or motion only if its ruling would decide an issue material to the motion; the origin allows that stay without such a condition.",
+      "origin_span_ids": [
+       "s9",
+       "s12"
+      ],
+      "descendant_span_ids": [
+       "s10",
+       "s13"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin makes the appeal stay subject to exceptions in Subsections (5), (6) and (7); the descendant states the appeal stay without those cross-referenced exceptions.",
+      "origin_span_ids": [
+       "s22",
+       "s28"
+      ],
+      "descendant_span_ids": [
+       "s29"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant exempts from the stay a motion for costs and expenses under subsection 12; the origin exempts a motion for costs, attorney fees and expenses under Section 78B-25-110.",
+      "origin_span_ids": [
+       "s36"
+      ],
+      "descendant_span_ids": [
+       "s37"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     2
+    ],
+    "dropped": [
+     [
+      1,
+      "s9 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      3,
+      "s36 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

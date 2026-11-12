@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -199,35 +200,34 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant defines a \"deceptive and fraudulent deepfake\" and bars distributing one of a candidate or party within ninety days of an election unless a disclosure is included.",
+    "summary": "The descendant defines a \"deceptive and fraudulent deepfake\" and bars distributing one of a ballot candidate or party within ninety days of an election unless a disclosure is included.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s5",
-     "s11"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The origin gives candidates a civil damages action with attorney fees and treats disclosure as an affirmative defense; the descendant offers injunctive relief plus misdemeanor and felony penalties.",
-    "origin_span_ids": [
-     "s10"
-    ],
-    "descendant_span_ids": [
      "s11",
-     "s31"
+     "s14"
     ]
    },
    {
     "kind": "removed",
-    "summary": "The origin puts the burden on the plaintiff to prove synthetic media use by clear and convincing evidence and encourages courts to decide matters expediently; the descendant has neither.",
+    "summary": "The origin gives candidates a civil damages action against the sponsor with attorneys' fees, places a clear-and-convincing burden on the plaintiff, and urges courts to decide expediently.",
     "origin_span_ids": [
+     "s10",
      "s30"
     ],
     "descendant_span_ids": []
    },
    {
     "kind": "added",
-    "summary": "The descendant exempts certain news broadcasts, paid broadcasts made in good faith, news publications with disclaimers, and satire or parody.",
+    "summary": "The descendant makes violations a simple misdemeanor, a serious misdemeanor if intended to cause violence or bodily harm, and a class D felony for a repeat offense within five years.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s31"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant exempts bona fide news broadcasts, paid broadcasters acting in good faith, news publications that state the media is inaccurate, and satire or parody.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s31"
@@ -239,14 +239,70 @@
  "grounded": {
   "kept": [
    0,
+   1,
    2,
    3
   ],
-  "dropped": [
-   [
-    1,
-    "s10 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant defines a \"deceptive and fraudulent deepfake\" and bars distributing one of a candidate or party within ninety days of an election unless a disclosure is included.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s5",
+       "s11"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin gives candidates a civil damages action with attorney fees and treats disclosure as an affirmative defense; the descendant offers injunctive relief plus misdemeanor and felony penalties.",
+      "origin_span_ids": [
+       "s10"
+      ],
+      "descendant_span_ids": [
+       "s11",
+       "s31"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin puts the burden on the plaintiff to prove synthetic media use by clear and convincing evidence and encourages courts to decide matters expediently; the descendant has neither.",
+      "origin_span_ids": [
+       "s30"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant exempts certain news broadcasts, paid broadcasts made in good faith, news publications with disclaimers, and satire or parody.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s31"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     2,
+     3
+    ],
+    "dropped": [
+     [
+      1,
+      "s10 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

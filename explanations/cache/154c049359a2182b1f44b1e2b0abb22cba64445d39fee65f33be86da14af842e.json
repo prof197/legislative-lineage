@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -33,9 +34,56 @@
    "descendant": "734306a83ed7bb2e68bf375f9a67461d6d0ebdb69c037e4bf69f9d88e2176c49"
   }
  ],
- "explanation": null,
- "served_by": null,
- "grounded": null,
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin makes the chapter apply to actions filed or causes asserted on or after a fixed date, May 3, 2023; the descendant lacks that specific date.",
+    "origin_span_ids": [
+     "s3"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant ties applicability to a placeholder, \"[the effective date of this Act],\" instead of a fixed calendar date.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s4"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant numbers the section § 6013.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin numbers the section 78B-25-113; the descendant lacks that number.",
+    "origin_span_ids": [
+     "s0"
+    ],
+    "descendant_span_ids": []
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "no claim cites spans that exist and differ (claim 1: s3 is on one side only, so it shows text one side lacks, not a change)"
+ ],
  "earlier": [
   {
    "explanation": {
@@ -70,6 +118,11 @@
     ],
     "dropped": []
    }
+  },
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
   }
  ]
 }

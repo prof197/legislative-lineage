@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -69,7 +70,70 @@
    "descendant": "5fcaaaee927b547f23305ed0dc948250c826563a94c61023e84856525a1f1f0f"
   }
  ],
- "explanation": null,
- "served_by": null,
- "grounded": null
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin limits liability for electioneering communications to the sponsor, with exceptions where a medium strips disclosures or alters content into synthetic media; the descendant lacks this.",
+    "origin_span_ids": [
+     "s0",
+     "s6"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant creates a digital impersonation cause of action for candidates and citizens, with a two-year filing window and elements of nonconsensual, undisclosed publication.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant sets procedures for preliminary and permanent declaratory relief, limits on injunctions and damages, standards of proof, venue, jury trial, and definitions incl. public office.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s7",
+     "s10"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant bars digital impersonation actions against interactive computer services for third-party content; the origin's phrasing on treating them as publisher appears in a different form.",
+    "origin_span_ids": [
+     "s3"
+    ],
+    "descendant_span_ids": [
+     "s4"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2
+  ],
+  "dropped": [
+   [
+    3,
+    "s3 is on one side only, so it shows text one side lacks, not a change"
+   ]
+  ]
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "off the schema: claims.0.summary: String should have at most 200 characters; claims.1.summary: String should have at most 200 characters; claims.3.summary: String should have at most 200 characters",
+  "a claim fails grounding (claim 4: s3 is on one side only, so it shows text one side lacks, not a change)"
+ ],
+ "earlier": [
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
 }

@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -261,7 +262,64 @@
    "descendant": "f69a085c4496d2cfa8c30e820705982e24ef3d101e853c700aaaf4e8b77fa53f"
   }
  ],
- "explanation": null,
- "served_by": null,
- "grounded": null
+ "explanation": {
+  "claims": [
+   {
+    "kind": "added",
+    "summary": "The descendant applies its duties beginning March 1, 2027 and limits age verification and account restrictions to South Carolina account holders and residents.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1",
+     "s3",
+     "s8",
+     "s33"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin requires providers to treat as a minor anyone verified to be under 16; the descendant has no such provision.",
+    "origin_span_ids": [
+     "s7"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin requires providers, on a parent's or guardian's request, to list and describe content moderation features, including those an account holder can disable or modify.",
+    "origin_span_ids": [
+     "s41"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant limits information collected for compliance to compliance use only and requires the company to securely dispose of it once compliance is complete.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s42"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "a claim fails grounding (claim 3: s0 is on one side only, so it shows text one side lacks, not a change)"
+ ],
+ "earlier": [
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
 }

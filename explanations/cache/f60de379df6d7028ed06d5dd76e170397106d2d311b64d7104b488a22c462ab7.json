@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -597,7 +598,63 @@
    "descendant": "75cef8ec8ba0c4b49501d3e8a02140b8ab84e92cd0c8e38afa837df3005c0426"
   }
  ],
- "explanation": null,
- "served_by": null,
- "grounded": null
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin's account holder definition requires the person to be a resident of this state; the descendant's account holder definition has no residency requirement.",
+    "origin_span_ids": [
+     "s3"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant defines an interactive computer service and a social media company (a platform provider with at least five million account holders worldwide); the origin has neither definition.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s7",
+     "s13"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant defines South Carolina account holder, minor account holder and resident, plus the Office of Attorney General; the origin defines none of these terms.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s95",
+     "s10"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin excludes peer-to-peer payment services with limited user interaction from the social media platform definition; the descendant has no such exclusion.",
+    "origin_span_ids": [
+     "s94"
+    ],
+    "descendant_span_ids": []
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "a claim fails grounding (claim 1: s3 is on one side only, so it shows text one side lacks, not a change; claim 2: s12 is on one side only, so it shows text one side lacks, not a change)"
+ ],
+ "earlier": [
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
 }

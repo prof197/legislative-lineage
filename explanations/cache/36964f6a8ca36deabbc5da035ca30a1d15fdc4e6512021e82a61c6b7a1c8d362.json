@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -241,29 +242,16 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant defines a \"deceptive and fraudulent deepfake\" as synthetic media depicting a candidate or party with intent to injure or deceive, meeting either of two tests; the origin requires both.",
-    "origin_span_ids": [
-     "s5",
-     "s8"
-    ],
+    "summary": "The descendant bars distributing a known deceptive and fraudulent deepfake of a candidate or party within 90 days of an election unless a disclosure is included; the origin has no such ban.",
+    "origin_span_ids": [],
     "descendant_span_ids": [
      "s6",
-     "s9"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The descendant bars distributing a known deceptive deepfake within 90 days of an election unless disclosed; the origin makes the disclosure an affirmative defense to a candidate's civil action.",
-    "origin_span_ids": [
-     "s11"
-    ],
-    "descendant_span_ids": [
      "s12"
     ]
    },
    {
     "kind": "added",
-    "summary": "The descendant makes violations a misdemeanor, or a felony if repeated within five years, and exempts broadcasters, news publications, websites and satire or parody.",
+    "summary": "The descendant makes violations a misdemeanor, and a felony for a repeat within five years, and exempts broadcasters, news publications, and satire or parody; the origin has none of these.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s38"
@@ -271,11 +259,21 @@
    },
    {
     "kind": "removed",
-    "summary": "The origin requires plaintiffs to prove synthetic media use by clear and convincing evidence and encourages courts to decide such matters expediently; the descendant lacks both.",
+    "summary": "The origin makes disclosure an affirmative defense, requires clear and convincing evidence of synthetic media, and urges expedient court decisions; the descendant lacks these provisions.",
     "origin_span_ids": [
+     "s11",
      "s37"
     ],
     "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant's disclosure must state that the media was manipulated by technical means and depicts speech or conduct that did not occur, naming it as image, video, or audio.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s15",
+     "s17"
+    ]
    }
   ]
  },
@@ -283,14 +281,72 @@
  "grounded": {
   "kept": [
    0,
+   1,
    2,
    3
   ],
-  "dropped": [
-   [
-    1,
-    "s11 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant defines a \"deceptive and fraudulent deepfake\" as synthetic media depicting a candidate or party with intent to injure or deceive, meeting either of two tests; the origin requires both.",
+      "origin_span_ids": [
+       "s5",
+       "s8"
+      ],
+      "descendant_span_ids": [
+       "s6",
+       "s9"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant bars distributing a known deceptive deepfake within 90 days of an election unless disclosed; the origin makes the disclosure an affirmative defense to a candidate's civil action.",
+      "origin_span_ids": [
+       "s11"
+      ],
+      "descendant_span_ids": [
+       "s12"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant makes violations a misdemeanor, or a felony if repeated within five years, and exempts broadcasters, news publications, websites and satire or parody.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s38"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin requires plaintiffs to prove synthetic media use by clear and convincing evidence and encourages courts to decide such matters expediently; the descendant lacks both.",
+      "origin_span_ids": [
+       "s37"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     2,
+     3
+    ],
+    "dropped": [
+     [
+      1,
+      "s11 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -157,5 +158,78 @@
     "s8 is on one side only, so it shows text one side lacks, not a change"
    ]
   ]
- }
+ },
+ "attempts": 1,
+ "unusable_attempts": [
+  "off the schema: claims.0.summary: String should have at most 200 characters"
+ ],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin gives depicted candidates a right to injunctive relief and damages against the sponsor, with attorneys' fees; the descendant's text here has no such remedies.",
+      "origin_span_ids": [
+       "s13"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin treats a manipulation disclosure as an affirmative defense; the descendant excludes content with a disclosure under Section 5 from the definition of synthetic media.",
+      "origin_span_ids": [
+       "s13"
+      ],
+      "descendant_span_ids": [
+       "s14"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant limits synthetic media to depictions of an identifiable natural individual made without that individual's consent; the origin covers any real individual, with no consent element.",
+      "origin_span_ids": [
+       "s6",
+       "s8"
+      ],
+      "descendant_span_ids": [
+       "s6",
+       "s9",
+       "s11"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant places the definition in a full election definitions section, adding terms such as electioneering communication, sponsor, generative adversarial network and neural network.",
+      "origin_span_ids": [
+       "s0",
+       "s3"
+      ],
+      "descendant_span_ids": [
+       "s1",
+       "s4",
+       "s14"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     3
+    ],
+    "dropped": [
+     [
+      1,
+      "s13 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      2,
+      "s8 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

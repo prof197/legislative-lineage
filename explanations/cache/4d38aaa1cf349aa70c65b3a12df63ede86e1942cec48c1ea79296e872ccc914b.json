@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -157,7 +158,7 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant is a self-contained section titled the FAIR Elections Act that defines synthetic media and grants candidates injunctive relief and a damages action with attorney's fees.",
+    "summary": "The descendant contains a full standalone section: a short title (FAIR Elections Act), definitions of synthetic media, injunctive relief, damages and fees, a disclosure defense, and burden of proof.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s1"
@@ -165,31 +166,27 @@
    },
    {
     "kind": "added",
-    "summary": "The descendant includes an affirmative defense for a prescribed \"manipulated\" disclosure, a clear and convincing evidence burden on the plaintiff, and encouragement of expedient court rulings.",
+    "summary": "The descendant makes the information content provider the liable party; the origin's surviving text names the sponsor of the communication instead.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s1"
     ]
    },
    {
-    "kind": "changed",
-    "summary": "The origin makes the sponsor of the communication liable; the descendant makes the information content provider liable.",
+    "kind": "removed",
+    "summary": "The origin opens by naming the sponsor of the electioneering communication as the party liable in an action brought under section 2 of the act.",
     "origin_span_ids": [
      "s0"
     ],
-    "descendant_span_ids": [
-     "s1"
-    ]
+    "descendant_span_ids": []
    },
    {
-    "kind": "changed",
-    "summary": "The origin defines interactive computer service and information content provider at the end of its immunity provision; the descendant places these definitions in its opening definitions subsection.",
+    "kind": "removed",
+    "summary": "The origin defines \"interactive computer service\" and \"information content provider\" at the end of the liability section, after the publisher immunity clause.",
     "origin_span_ids": [
      "s23"
     ],
-    "descendant_span_ids": [
-     "s1"
-    ]
+    "descendant_span_ids": []
    }
   ]
  },
@@ -197,17 +194,73 @@
  "grounded": {
   "kept": [
    0,
-   1
+   1,
+   2,
+   3
   ],
-  "dropped": [
-   [
-    2,
-    "s0 is on one side only, so it shows text one side lacks, not a change"
-   ],
-   [
-    3,
-    "s23 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant is a self-contained section titled the FAIR Elections Act that defines synthetic media and grants candidates injunctive relief and a damages action with attorney's fees.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant includes an affirmative defense for a prescribed \"manipulated\" disclosure, a clear and convincing evidence burden on the plaintiff, and encouragement of expedient court rulings.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin makes the sponsor of the communication liable; the descendant makes the information content provider liable.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin defines interactive computer service and information content provider at the end of its immunity provision; the descendant places these definitions in its opening definitions subsection.",
+      "origin_span_ids": [
+       "s23"
+      ],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1
+    ],
+    "dropped": [
+     [
+      2,
+      "s0 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      3,
+      "s23 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

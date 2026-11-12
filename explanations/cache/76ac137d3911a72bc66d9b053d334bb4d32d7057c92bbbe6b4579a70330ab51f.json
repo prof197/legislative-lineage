@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -180,42 +181,34 @@
  "explanation": {
   "claims": [
    {
-    "kind": "changed",
-    "summary": "The origin states the chapter applies to listed causes of action; the descendant instead defines an \"eligible cause of action,\" limited to those asserted after the act's effective date.",
-    "origin_span_ids": [
-     "s6"
-    ],
-    "descendant_span_ids": [
-     "s7",
-     "s9"
-    ]
-   },
-   {
     "kind": "removed",
-    "summary": "The origin excludes causes of action against governmental units or their agents acting officially, and those by governmental units enforcing laws against imminent public health or safety threats.",
+    "summary": "The origin exempts causes of action against governmental units or their agents acting officially, and those by governmental units enforcing laws against imminent public health or safety threats.",
     "origin_span_ids": [
      "s25"
     ],
-    "descendant_span_ids": [
-     "s26"
-    ]
+    "descendant_span_ids": []
    },
    {
     "kind": "added",
-    "summary": "The descendant excludes claims by individuals under listed civil rights, whistleblower, disability, workers' compensation, FOIA, and federal employment and education statutes.",
+    "summary": "The descendant excludes claims by individuals under listed civil rights, employment, whistleblower, workers' compensation, and freedom of information statutes.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s28"
     ]
    },
    {
-    "kind": "changed",
-    "summary": "The descendant covers the right to petition the government for redress of grievances and cites the state constitution of 1963; the origin cites the Utah Constitution.",
-    "origin_span_ids": [
-     "s22"
-    ],
+    "kind": "added",
+    "summary": "The descendant covers only causes of action asserted after the act's effective date.",
+    "origin_span_ids": [],
     "descendant_span_ids": [
-     "s20",
+     "s9"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant refers to rights guaranteed by the state constitution of 1963.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
      "s23"
     ]
    }
@@ -224,18 +217,78 @@
  "served_by": "claude-opus-5-5",
  "grounded": {
   "kept": [
+   0,
    1,
-   2
+   2,
+   3
   ],
-  "dropped": [
-   [
-    0,
-    "s6 is on one side only, so it shows text one side lacks, not a change"
-   ],
-   [
-    3,
-    "s22 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The origin states the chapter applies to listed causes of action; the descendant instead defines an \"eligible cause of action,\" limited to those asserted after the act's effective date.",
+      "origin_span_ids": [
+       "s6"
+      ],
+      "descendant_span_ids": [
+       "s7",
+       "s9"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin excludes causes of action against governmental units or their agents acting officially, and those by governmental units enforcing laws against imminent public health or safety threats.",
+      "origin_span_ids": [
+       "s25"
+      ],
+      "descendant_span_ids": [
+       "s26"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant excludes claims by individuals under listed civil rights, whistleblower, disability, workers' compensation, FOIA, and federal employment and education statutes.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s28"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant covers the right to petition the government for redress of grievances and cites the state constitution of 1963; the origin cites the Utah Constitution.",
+      "origin_span_ids": [
+       "s22"
+      ],
+      "descendant_span_ids": [
+       "s20",
+       "s23"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     1,
+     2
+    ],
+    "dropped": [
+     [
+      0,
+      "s6 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      3,
+      "s22 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

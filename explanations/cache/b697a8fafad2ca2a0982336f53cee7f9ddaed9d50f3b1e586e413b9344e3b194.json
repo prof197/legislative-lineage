@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -109,20 +110,26 @@
   "claims": [
    {
     "kind": "changed",
-    "summary": "The descendant lets the party file an application for an order to show cause with the court to dismiss; the origin provides for a special motion for expedited relief.",
+    "summary": "The descendant titles the section an order to show cause, with the bracketed special-motion title; the origin titles it a special motion for expedited relief.",
     "origin_span_ids": [
-     "s2",
-     "s11"
+     "s2"
     ],
     "descendant_span_ids": [
-     "s2",
+     "s2"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant lets a party file an application for an order to show cause with the court to dismiss, alongside bracketed special-motion wording.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
      "s12",
      "s14"
     ]
    },
    {
     "kind": "added",
-    "summary": "The descendant also starts the 60-day filing period on service of a petition, not only a complaint or other pleading.",
+    "summary": "The descendant includes a petition among the served pleadings that start the 60-day period.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s6"
@@ -130,20 +137,10 @@
    },
    {
     "kind": "added",
-    "summary": "The descendant includes a stay provision: on filing the application, the court may stay other proceedings, discovery and actions involving other parties.",
+    "summary": "The descendant adds a stay provision under which filing an application lets the court stay other proceedings, discovery and related actions between the parties.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s16"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The origin refers to the cause of action to which this chapter applies; the descendant refers to this act.",
-    "origin_span_ids": [
-     "s8"
-    ],
-    "descendant_span_ids": [
-     "s9"
     ]
    }
   ]
@@ -151,18 +148,77 @@
  "served_by": "claude-opus-5-5",
  "grounded": {
   "kept": [
+   0,
    1,
-   2
+   2,
+   3
   ],
-  "dropped": [
-   [
-    0,
-    "s11 is on one side only, so it shows text one side lacks, not a change"
-   ],
-   [
-    3,
-    "s8 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant lets the party file an application for an order to show cause with the court to dismiss; the origin provides for a special motion for expedited relief.",
+      "origin_span_ids": [
+       "s2",
+       "s11"
+      ],
+      "descendant_span_ids": [
+       "s2",
+       "s12",
+       "s14"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant also starts the 60-day filing period on service of a petition, not only a complaint or other pleading.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s6"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant includes a stay provision: on filing the application, the court may stay other proceedings, discovery and actions involving other parties.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s16"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin refers to the cause of action to which this chapter applies; the descendant refers to this act.",
+      "origin_span_ids": [
+       "s8"
+      ],
+      "descendant_span_ids": [
+       "s9"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     1,
+     2
+    ],
+    "dropped": [
+     [
+      0,
+      "s11 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      3,
+      "s8 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

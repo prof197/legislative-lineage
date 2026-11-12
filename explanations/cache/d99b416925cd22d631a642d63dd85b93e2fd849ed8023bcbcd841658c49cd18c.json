@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -165,7 +166,81 @@
    "descendant": "b920ebce4cf30bea53f612435e781f3de24d9fbdeb4ec626bbb03a268226b09d"
   }
  ],
- "explanation": null,
- "served_by": null,
- "grounded": null
+ "explanation": {
+  "claims": [
+   {
+    "kind": "changed",
+    "summary": "The descendant bans malicious distribution of deceptive content about candidates, officials and voting equipment near elections; the origin only gives candidates remedies against synthetic media.",
+    "origin_span_ids": [
+     "s2"
+    ],
+    "descendant_span_ids": [
+     "s3",
+     "s23"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant adds legislative findings, a satire/parody disclosure, a bar on removing disclosures, time windows, and exemptions for broadcasters, newspapers and online services.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s3",
+     "s23",
+     "s26"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant lets recipients, candidates, committees and elections officials sue and mandates fees; the origin lets only the altered candidate sue the sponsor, with fees discretionary.",
+    "origin_span_ids": [
+     "s2"
+    ],
+    "descendant_span_ids": [
+     "s23"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The origin requires proof of synthetic media use by clear and convincing evidence and urges expedience; the descendant requires proof of the violation and adds broad definitions and severability.",
+    "origin_span_ids": [
+     "s25"
+    ],
+    "descendant_span_ids": [
+     "s26"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   1
+  ],
+  "dropped": [
+   [
+    0,
+    "s2 is on one side only, so it shows text one side lacks, not a change"
+   ],
+   [
+    2,
+    "s2 is on one side only, so it shows text one side lacks, not a change"
+   ],
+   [
+    3,
+    "s25 is on one side only, so it shows text one side lacks, not a change"
+   ]
+  ]
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "off the schema: claims.0.summary: String should have at most 200 characters",
+  "a claim fails grounding (claim 1: s2 is on one side only, so it shows text one side lacks, not a change; claim 3: s2 is on one side only, so it shows text one side lacks, not a change; claim 4: s25 is on one side only, so it shows text one side lacks, not a change)"
+ ],
+ "earlier": [
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
 }

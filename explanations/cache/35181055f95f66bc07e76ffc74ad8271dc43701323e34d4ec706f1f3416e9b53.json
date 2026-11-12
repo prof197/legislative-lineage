@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -189,7 +190,67 @@
    "descendant": "fb3bcd9e3800853cec34ca7f483401adf82b8a1a9f199cf8057daac7f1b32388"
   }
  ],
- "explanation": null,
- "served_by": null,
- "grounded": null
+ "explanation": {
+  "claims": [
+   {
+    "kind": "added",
+    "summary": "The descendant has its own short title, synthetic media definitions, injunctive relief and damages for candidates, a disclosure-based affirmative defense, and a clear-and-convincing burden.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant applies the medium-liability rules to expenditures by a candidate and independent expenditures, not only electioneering communications.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s3",
+     "s11",
+     "s19",
+     "s24"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin makes the sponsor of the electioneering communication the party who may be held liable; the descendant has no such sponsor language.",
+    "origin_span_ids": [
+     "s0"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin refers to a separate section 2 for the cause of action, disclosure requirements, affirmative defenses and the synthetic media definition; the descendant has no such references.",
+    "origin_span_ids": [
+     "s15",
+     "s18",
+     "s21",
+     "s26"
+    ],
+    "descendant_span_ids": []
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "a claim fails grounding (claim 3: s0 is on one side only, so it shows text one side lacks, not a change; claim 4: s18 is on one side only, so it shows text one side lacks, not a change)"
+ ],
+ "earlier": [
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
 }

@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -229,7 +230,7 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant prohibits candidates, committees and independent spenders from distributing known deceptive synthetic media within 90 days of an election; the origin has no such prohibition.",
+    "summary": "The descendant bars candidates, committees and independent spenders from distributing known deceptive synthetic media within 90 days of an election; the origin has no such prohibition.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s13"
@@ -237,29 +238,29 @@
    },
    {
     "kind": "removed",
-    "summary": "The origin lets a depicted candidate seek injunctive relief and damages against the sponsor, with attorneys' fees; the descendant provides no private remedies.",
+    "summary": "The origin lets a depicted candidate seek injunctive relief and damages against the sponsor, with attorneys' fees; the descendant provides no private cause of action.",
     "origin_span_ids": [
      "s12"
     ],
     "descendant_span_ids": []
    },
    {
-    "kind": "changed",
-    "summary": "The descendant makes a disclosure saying the media was manipulated or AI-generated an exception to its prohibition; the origin makes a \"has been manipulated\" disclosure an affirmative defense.",
-    "origin_span_ids": [
-     "s12"
-    ],
-    "descendant_span_ids": [
-     "s13"
-    ]
-   },
-   {
     "kind": "removed",
-    "summary": "The origin requires plaintiffs to prove use of synthetic media by clear and convincing evidence and encourages expedited court decisions; the descendant has neither.",
+    "summary": "The origin places the burden on the plaintiff to prove synthetic media use by clear and convincing evidence and urges courts to decide expediently; the descendant has neither provision.",
     "origin_span_ids": [
      "s36"
     ],
     "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant defines \"candidate\" to include incumbents and applies the audio-only disclosure rule only when no visual disclosure is feasible, also requiring suitable reading speed.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1",
+     "s29",
+     "s31"
+    ]
    }
   ]
  },
@@ -268,13 +269,67 @@
   "kept": [
    0,
    1,
+   2,
    3
   ],
-  "dropped": [
-   [
-    2,
-    "s12 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant prohibits candidates, committees and independent spenders from distributing known deceptive synthetic media within 90 days of an election; the origin has no such prohibition.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s13"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin lets a depicted candidate seek injunctive relief and damages against the sponsor, with attorneys' fees; the descendant provides no private remedies.",
+      "origin_span_ids": [
+       "s12"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant makes a disclosure saying the media was manipulated or AI-generated an exception to its prohibition; the origin makes a \"has been manipulated\" disclosure an affirmative defense.",
+      "origin_span_ids": [
+       "s12"
+      ],
+      "descendant_span_ids": [
+       "s13"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin requires plaintiffs to prove use of synthetic media by clear and convincing evidence and encourages expedited court decisions; the descendant has neither.",
+      "origin_span_ids": [
+       "s36"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     3
+    ],
+    "dropped": [
+     [
+      2,
+      "s12 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -129,7 +130,61 @@
    "descendant": "2cbb04833243156f73f134298e96464874ebb44e15dd09c6ae6ce3261a942d86"
   }
  ],
- "explanation": null,
- "served_by": null,
- "grounded": null
+ "explanation": {
+  "claims": [
+   {
+    "kind": "added",
+    "summary": "The descendant requires large online platforms to identify and remove reported materially deceptive content about candidates and election officials within 72 hours, and remove reposts.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s2"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin defines synthetic media and lets a depicted candidate seek injunctive relief, damages, and attorneys' fees against the sponsor of an electioneering communication.",
+    "origin_span_ids": [
+     "s4"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin places a clear and convincing evidence burden on the plaintiff and encourages courts to decide such matters expediently; the descendant has no such provisions.",
+    "origin_span_ids": [
+     "s19"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant limits duties to a window from 120 days before a California election through election day, extended to 60 days after for content about elections officials.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s20"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "off the schema: claims.0.summary: String should have at most 200 characters"
+ ],
+ "earlier": [
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
 }

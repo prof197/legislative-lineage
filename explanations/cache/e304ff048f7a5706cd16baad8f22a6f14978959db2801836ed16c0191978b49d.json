@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -517,40 +518,37 @@
   "claims": [
    {
     "kind": "removed",
-    "summary": "The origin authorizes the State Board of Education to take corrective action, including withholding state funding, and lets the local body sue in superior court; the descendant has neither.",
-    "origin_span_ids": [
-     "s84"
-    ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "removed",
-    "summary": "The origin defines 'Internet', 'local governing body' (excluding certain charter schools and academies) and 'social media platform'; the descendant contains no definitions.",
+    "summary": "The origin defines 'Internet', 'local governing body' (excluding certain charter schools and academies) and 'social media platform'; the descendant has no definitions.",
     "origin_span_ids": [
      "s0"
     ],
     "descendant_span_ids": []
    },
    {
-    "kind": "changed",
-    "summary": "The descendant requires electronic submission of the policy to the State Department of Education by April 15, 2026; the origin requires submission by April 1, 2026, with no electronic requirement.",
+    "kind": "removed",
+    "summary": "The origin lets the State Board of Education take corrective action, including withholding state funding, and lets the governing body sue in superior court; the descendant lacks both.",
     "origin_span_ids": [
-     "s38"
+     "s84"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "changed",
+    "summary": "The origin gives a paper copy of the policy on written request of a parent or guardian; the descendant gives it on request of a parent of an enrolled student.",
+    "origin_span_ids": [
+     "s34"
     ],
     "descendant_span_ids": [
-     "s39",
-     "s45"
+     "s34"
     ]
    },
    {
-    "kind": "removed",
-    "summary": "The origin extends parental procedures and paper-copy requests to legal guardians; the descendant refers only to parents.",
-    "origin_span_ids": [
-     "s21",
-     "s34"
-    ],
+    "kind": "added",
+    "summary": "The descendant requires the policy and its revisions to be submitted electronically to the State Department of Education, with the policy due by April 15, 2026.",
+    "origin_span_ids": [],
     "descendant_span_ids": [
-     "s34"
+     "s39",
+     "s45"
     ]
    }
   ]
@@ -560,13 +558,71 @@
   "kept": [
    0,
    1,
+   2,
    3
   ],
-  "dropped": [
-   [
-    2,
-    "s38 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin authorizes the State Board of Education to take corrective action, including withholding state funding, and lets the local body sue in superior court; the descendant has neither.",
+      "origin_span_ids": [
+       "s84"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin defines 'Internet', 'local governing body' (excluding certain charter schools and academies) and 'social media platform'; the descendant contains no definitions.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant requires electronic submission of the policy to the State Department of Education by April 15, 2026; the origin requires submission by April 1, 2026, with no electronic requirement.",
+      "origin_span_ids": [
+       "s38"
+      ],
+      "descendant_span_ids": [
+       "s39",
+       "s45"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin extends parental procedures and paper-copy requests to legal guardians; the descendant refers only to parents.",
+      "origin_span_ids": [
+       "s21",
+       "s34"
+      ],
+      "descendant_span_ids": [
+       "s34"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     3
+    ],
+    "dropped": [
+     [
+      2,
+      "s38 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }

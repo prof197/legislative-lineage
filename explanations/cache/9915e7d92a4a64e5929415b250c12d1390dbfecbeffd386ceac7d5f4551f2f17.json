@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -33,7 +34,62 @@
    "descendant": "2b577ca8309d143cfc636228565ccc5f84769f3251557b410fb0762eb1a3c0e7"
   }
  ],
- "explanation": null,
- "served_by": null,
- "grounded": null
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin limits liability for electioneering communications to the sponsor, with exceptions for media that strip disclosures or create synthetic media; the descendant has no such provision.",
+    "origin_span_ids": [
+     "s0"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant defines artificial intelligence, commercial purposes, digital replica, expressive work, identity, and individual (a person domiciled in the state); the origin lacks these definitions.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant defines internet, performance (digital replica substituting for a performer), and professional performer; the origin has no such definitions.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s4"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin places its information content provider definition within a liability section on interactive computer services, which also bars treating providers as publishers of others' content.",
+    "origin_span_ids": [
+     "s3",
+     "s0"
+    ],
+    "descendant_span_ids": []
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "off the schema: claims.0.summary: String should have at most 200 characters"
+ ],
+ "earlier": [
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
 }

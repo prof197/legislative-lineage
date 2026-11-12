@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 2,
  "spans": [
   {
    "id": "s0",
@@ -121,7 +122,7 @@
   "claims": [
    {
     "kind": "removed",
-    "summary": "The origin gives a depicted candidate a right to seek injunctive relief and damages against the sponsor, with attorneys' fees; the descendant has no such remedies.",
+    "summary": "The origin gives candidates altered by synthetic media a right to injunctive relief and damages against the sponsor, with attorneys' fees; the descendant has no such remedies.",
     "origin_span_ids": [
      "s17"
     ],
@@ -129,7 +130,7 @@
    },
    {
     "kind": "removed",
-    "summary": "The origin makes a labeled manipulation disclosure an affirmative defense, sets clear and convincing evidence as the burden, and urges expedient court handling; the descendant lacks these.",
+    "summary": "The origin sets an affirmative defense for a \"This (image/video/audio) has been manipulated\" disclosure, a clear and convincing evidence burden, and expedited handling; the descendant lacks these.",
     "origin_span_ids": [
      "s17"
     ],
@@ -137,11 +138,8 @@
    },
    {
     "kind": "added",
-    "summary": "The descendant places the synthetic media definition in a general election-law definitions list that also defines electioneering communication, sponsor, e-poll book and many other terms.",
-    "origin_span_ids": [
-     "s0",
-     "s3"
-    ],
+    "summary": "The descendant places the synthetic media definition within a full chapter definitions list, adding terms such as electioneering communication, sponsor, e-poll book, and voting system.",
+    "origin_span_ids": [],
     "descendant_span_ids": [
      "s1",
      "s4",
@@ -149,13 +147,10 @@
     ]
    },
    {
-    "kind": "changed",
-    "summary": "The origin's definition covers an individual's appearance, speech, or conduct; the descendant's covers appearance, action, or speech and excludes content bearing a required disclosure.",
-    "origin_span_ids": [
-     "s8"
-    ],
+    "kind": "added",
+    "summary": "The descendant excludes from synthetic media any content that contains a disclosure under subsection (2) of Section 2 of the Act; the origin has no such exclusion.",
+    "origin_span_ids": [],
     "descendant_span_ids": [
-     "s9",
      "s18"
     ]
    }
@@ -166,13 +161,73 @@
   "kept": [
    0,
    1,
-   2
+   2,
+   3
   ],
-  "dropped": [
-   [
-    3,
-    "s8 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
- }
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin gives a depicted candidate a right to seek injunctive relief and damages against the sponsor, with attorneys' fees; the descendant has no such remedies.",
+      "origin_span_ids": [
+       "s17"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin makes a labeled manipulation disclosure an affirmative defense, sets clear and convincing evidence as the burden, and urges expedient court handling; the descendant lacks these.",
+      "origin_span_ids": [
+       "s17"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant places the synthetic media definition in a general election-law definitions list that also defines electioneering communication, sponsor, e-poll book and many other terms.",
+      "origin_span_ids": [
+       "s0",
+       "s3"
+      ],
+      "descendant_span_ids": [
+       "s1",
+       "s4",
+       "s18"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin's definition covers an individual's appearance, speech, or conduct; the descendant's covers appearance, action, or speech and excludes content bearing a required disclosure.",
+      "origin_span_ids": [
+       "s8"
+      ],
+      "descendant_span_ids": [
+       "s9",
+       "s18"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2
+    ],
+    "dropped": [
+     [
+      3,
+      "s8 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
 }
