@@ -282,10 +282,14 @@
  "grounded": {
   "kept": [
    0,
-   1,
    2,
    3
   ],
-  "dropped": []
+  "dropped": [
+   [
+    1,
+    "s14 is on one side only, so it shows text one side lacks, not a change"
+   ]
+  ]
  }
 }

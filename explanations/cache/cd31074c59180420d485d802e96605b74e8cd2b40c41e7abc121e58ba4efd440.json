@@ -93,51 +93,58 @@
    "descendant": "178ce41ca92989c9d82418658de2a7f9ef0d58444efdd330ab9151a2caf3af91"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "changed",
-    "summary": "The descendant protects rights guaranteed by the Montana constitution; the origin refers to the Utah Constitution.",
-    "origin_span_ids": [
-     "s5"
-    ],
-    "descendant_span_ids": [
-     "s6"
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant protects rights guaranteed by the Montana constitution; the origin refers to the Utah Constitution.",
+      "origin_span_ids": [
+       "s5"
+      ],
+      "descendant_span_ids": [
+       "s6"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant refers to a \"claim for relief\" and to sections 1 through 12; the origin refers to a \"cause of action\" and to \"this chapter.\"",
+      "origin_span_ids": [
+       "s0",
+       "s8",
+       "s11"
+      ],
+      "descendant_span_ids": [
+       "s1",
+       "s9",
+       "s12"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant places the definitions of goods or services, governmental unit, and person in a final subsection (3); the origin places the same definitions in its opening subsection (1).",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s14"
+      ]
+     }
     ]
    },
-   {
-    "kind": "changed",
-    "summary": "The descendant refers to a \"claim for relief\" and to sections 1 through 12; the origin refers to a \"cause of action\" and to \"this chapter.\"",
-    "origin_span_ids": [
-     "s0",
-     "s8",
-     "s11"
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2
     ],
-    "descendant_span_ids": [
-     "s1",
-     "s9",
-     "s12"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The descendant places the definitions of goods or services, governmental unit, and person in a final subsection (3); the origin places the same definitions in its opening subsection (1).",
-    "origin_span_ids": [
-     "s0"
-    ],
-    "descendant_span_ids": [
-     "s14"
-    ]
+    "dropped": []
    }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1,
-   2
-  ],
-  "dropped": []
- }
+  }
+ ]
 }

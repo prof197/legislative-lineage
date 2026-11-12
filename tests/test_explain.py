@@ -14,6 +14,8 @@ from lineage import queries
 from lineage.align import Span, align
 from lineage.cli import app
 from lineage.explain import (
+    ATTEMPTS,
+    GROUNDING_RULES,
     MODEL,
     PROMPT_VERSION,
     Ask,
@@ -21,6 +23,7 @@ from lineage.explain import (
     Outcome,
     Reply,
     UnusableReplyError,
+    asks_needed,
     cache_key,
     check_cache,
     explain,
@@ -28,9 +31,10 @@ from lineage.explain import (
     pair_texts,
     projected_cost,
     prompt_spans,
+    reground_cache,
 )
 from lineage.explanations import ChangeExplanation, Claim
-from lineage.spend import BudgetError, Meter, load_runs
+from lineage.spend import BUDGET, BudgetError, Meter, load_runs
 
 ORIGIN = "The fee is set for each fiscal year. Records are kept."
 DESCENDANT = "The fee is set every biennium. Records are kept. Appeals go to the board."
@@ -76,13 +80,34 @@ def scripted(*replies: ChangeExplanation | Exception) -> tuple[list[tuple[str, s
     return calls, ask
 
 
-def _explain(ask: Ask | None, cache: Path, meter: Meter | None = None) -> Outcome:
+# Changed on both sides: the fee's period, a paraphrase with text on each.
+BOTH = Claim(
+    kind="changed",
+    summary="The fee is set every biennium rather than each fiscal year.",
+    origin_span_ids=["s0"],
+    descendant_span_ids=["s0"],
+)
+
+
+def _explain(
+    ask: Ask | None, cache: Path, meter: Meter | None = None, *, again: bool = False
+) -> Outcome:
     return explain(
         prompt_spans(SPANS, ORIGIN, DESCENDANT, origin_side="a"),
         ask=ask,
         cache=cache,
         meter=meter,
+        again=again,
     )
+
+
+def _from_earlier_rules(cache: Path) -> Path:
+    """Mark the one cache file as written before the current grounding rules."""
+    [path] = cache.glob("*.json")
+    entry = json.loads(path.read_text())
+    del entry["grounding_rules"]
+    path.write_text(json.dumps(entry))
+    return path
 
 
 def test_the_prompt_carries_the_spans_texts_by_side_and_never_the_whole_bills() -> None:
@@ -132,14 +157,32 @@ def test_a_grounded_reply_is_kept_and_cached_so_a_rerun_makes_no_call(tmp_path: 
     )
 
 
-def test_failing_claims_are_dropped_and_the_rest_kept_without_a_retry(tmp_path: Path) -> None:
-    calls, ask = scripted(ChangeExplanation(claims=[_claim("s2"), _claim("s1", "changed")]))
+def test_a_failing_claim_is_asked_again_once_with_why_then_dropped(tmp_path: Path) -> None:
+    reply = ChangeExplanation(claims=[_claim("s2"), _claim("s1", "changed")])
+    calls, ask = scripted(reply, reply)
 
     outcome = _explain(ask, tmp_path)
 
-    assert len(calls) == 1
+    assert len(calls) == 2
+    assert (
+        "could not be used: a claim fails grounding (claim 2: s1 is an exact copy)" in (calls[1][1])
+    )
     assert outcome.claims == [_claim("s2")]
     assert [why for _, why in outcome.dropped] == ["s1 is an exact copy"]
+
+
+def test_a_retry_that_grounds_every_claim_is_kept_and_a_worse_one_is_not(tmp_path: Path) -> None:
+    failing = ChangeExplanation(claims=[_claim("s2"), _claim("s2", "changed")])
+    _, better = scripted(failing, ChangeExplanation(claims=[_claim("s2"), BOTH]))
+    _, worse = scripted(failing, UnusableReplyError("refused"))
+
+    kept = _explain(better, tmp_path / "better")
+    first = _explain(worse, tmp_path / "worse")
+
+    assert (kept.claims, kept.dropped) == ([_claim("s2"), BOTH], [])
+    # The retry was unusable, so the first reply stands, its failing claim dropped.
+    assert first.claims == [_claim("s2")]
+    assert not first.withheld
 
 
 def test_an_unusable_reply_is_retried_once(tmp_path: Path) -> None:
@@ -227,7 +270,8 @@ def test_the_command_replays_the_cache_and_asks_only_with_live(
 def test_a_cache_file_holds_no_text_and_ci_grounds_it_again_from_what_it_records(
     tmp_path: Path,
 ) -> None:
-    _, ask = scripted(ChangeExplanation(claims=[_claim("s2"), _claim("s1", "changed")]))
+    reply = ChangeExplanation(claims=[_claim("s2"), _claim("s1", "changed")])
+    _, ask = scripted(reply, reply)
     _explain(ask, tmp_path)
     [path] = tmp_path.glob("*.json")
     entry = json.loads(path.read_text())
@@ -235,6 +279,7 @@ def test_a_cache_file_holds_no_text_and_ci_grounds_it_again_from_what_it_records
     assert "Appeals" not in path.read_text()
     assert [s["id"] for s in entry["spans"]] == ["s0", "s1", "s2"]
     assert entry["grounded"] == {"kept": [0], "dropped": [[1, "s1 is an exact copy"]]}
+    assert (entry["grounding_rules"], entry["attempts"]) == (GROUNDING_RULES, 2)
     assert check_cache(tmp_path) == []
 
     # A claim edited to cite a copied span, or a record of what was kept that no longer holds.
@@ -269,7 +314,7 @@ def test_every_call_is_metered_and_a_call_past_the_budget_is_refused(tmp_path: P
     assert (run["calls"], run["input_tokens"], run["output_tokens"]) == (2, 1500, 120)
     assert run["dollars"] == round((1500 * 4 + 120 * 20) / 1e6, 4)
 
-    spend.write_text(json.dumps({"runs": [{**run, "run": "earlier", "dollars": 29.99}]}))
+    spend.write_text(json.dumps({"runs": [{**run, "run": "earlier", "dollars": BUDGET - 0.01}]}))
     broke = Meter(spend, "explain", MODEL, PROMPT_VERSION, "2026-11-12")
     with pytest.raises(BudgetError, match="passes the"):
         _explain(scripted(ChangeExplanation(claims=[]))[1], tmp_path / "other", broke)
@@ -296,3 +341,96 @@ def test_the_retry_says_why_the_first_reply_was_unusable_and_the_cache_keeps_it(
     assert calls[1][1].startswith(calls[0][1])
     [entry] = [json.loads(p.read_text()) for p in tmp_path.glob("*.json")]
     assert entry["unusable_attempts"] == ["off the schema: claims.0.summary: too long"]
+
+
+def test_asked_again_a_reply_kept_under_earlier_rules_is_asked_once_more_with_why(
+    tmp_path: Path,
+) -> None:
+    # Under the earlier rules a changed claim could cite text on one side only.
+    stale = ChangeExplanation(claims=[_claim("s2"), _claim("s2", "changed")])
+    _, ask = scripted(stale, stale)
+    _explain(ask, tmp_path)
+    path = _from_earlier_rules(tmp_path)
+
+    replayed = _explain(None, tmp_path, again=True)
+    calls, ask = scripted(ChangeExplanation(claims=[_claim("s2"), BOTH]))
+    asked = _explain(ask, tmp_path, again=True)
+    no_more_calls = _explain(scripted()[1], tmp_path, again=True)
+
+    assert replayed.claims == [_claim("s2")]  # replaying never asks
+    assert len(calls) == 1
+    assert "claim 2: s2 is on one side only" in calls[0][1]
+    assert asked.claims == no_more_calls.claims == [_claim("s2"), BOTH]
+    entry = json.loads(path.read_text())
+    assert entry["grounding_rules"] == GROUNDING_RULES
+    assert entry["earlier"][0]["explanation"] == stale.model_dump()
+    assert check_cache(tmp_path) == []
+
+
+def test_asked_again_a_withheld_explanation_gets_a_fresh_ask_and_retry_with_why(
+    tmp_path: Path,
+) -> None:
+    _, ask = scripted(UnusableReplyError("too long"), UnusableReplyError("too long"))
+    _explain(ask, tmp_path)
+    _from_earlier_rules(tmp_path)
+
+    calls, ask = scripted(UnusableReplyError("refused"), ChangeExplanation(claims=[_claim("s2")]))
+    outcome = _explain(ask, tmp_path, again=True)
+
+    assert len(calls) == ATTEMPTS
+    assert "could not be used: too long" in calls[0][1]
+    assert "could not be used: refused" in calls[1][1]
+    assert outcome.claims == [_claim("s2")]
+
+
+def test_the_asks_a_pair_needs_are_what_the_projection_counts(tmp_path: Path) -> None:
+    spans = prompt_spans(SPANS, ORIGIN, DESCENDANT, origin_side="a")
+    assert asks_needed(spans, tmp_path, again=True) == ATTEMPTS  # not cached
+
+    stale = ChangeExplanation(claims=[_claim("s2"), _claim("s2", "changed")])
+    _explain(scripted(stale, stale)[1], tmp_path)
+    assert asks_needed(spans, tmp_path, again=True) == 0  # written under the current rules
+    _from_earlier_rules(tmp_path)
+    assert asks_needed(spans, tmp_path, again=False) == 0
+    assert asks_needed(spans, tmp_path, again=True) == 1
+
+    assert projected_cost([spans], [1]) == pytest.approx(projected_cost([spans]) / ATTEMPTS)
+
+
+def test_regrounding_rewrites_each_files_record_under_the_current_rules_without_a_call(
+    tmp_path: Path,
+) -> None:
+    stale = ChangeExplanation(claims=[_claim("s2"), _claim("s2", "changed")])
+    _explain(scripted(stale, stale)[1], tmp_path)
+    path = _from_earlier_rules(tmp_path)
+    entry = json.loads(path.read_text())
+    path.write_text(json.dumps({**entry, "grounded": {"kept": [0, 1], "dropped": []}}))
+    assert any("different set of claims" in p for p in check_cache(tmp_path))
+
+    assert reground_cache(tmp_path) == 1
+    assert reground_cache(tmp_path) == 0
+    assert check_cache(tmp_path) == []
+    assert "grounding_rules" not in json.loads(path.read_text())  # still due to be asked again
+
+
+def test_regrounding_withholds_a_reply_none_of_whose_claims_the_current_rules_keep(
+    tmp_path: Path,
+) -> None:
+    stale = ChangeExplanation(claims=[_claim("s2", "changed")])
+    _explain(scripted(stale, stale)[1], tmp_path)
+    path = _from_earlier_rules(tmp_path)
+    entry = json.loads(path.read_text())
+    path.write_text(json.dumps({**entry, "explanation": stale.model_dump(), "served_by": MODEL}))
+    path.write_text(
+        json.dumps({**json.loads(path.read_text()), "grounded": {"kept": [0], "dropped": []}})
+    )
+
+    assert reground_cache(tmp_path) == 1
+    entry = json.loads(path.read_text())
+    assert (entry["explanation"], entry["grounded"]) == (None, None)
+    assert entry["earlier"][-1]["explanation"] == stale.model_dump()
+    assert check_cache(tmp_path) == []
+    assert (
+        asks_needed(prompt_spans(SPANS, ORIGIN, DESCENDANT, origin_side="a"), tmp_path, again=True)
+        == ATTEMPTS
+    )

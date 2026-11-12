@@ -63,48 +63,55 @@
    "descendant": "5ce1969b2ff891bda6985020e07b952f566aa914eca6a04d8fb10dc3fc25412b"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "changed",
-    "summary": "The descendant requires the appeal to be filed within 10 days after entry of the order; the origin allows 21 days after the day the order is entered.",
-    "origin_span_ids": [
-     "s8"
-    ],
-    "descendant_span_ids": [
-     "s9"
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant requires the appeal to be filed within 10 days after entry of the order; the origin allows 21 days after the day the order is entered.",
+      "origin_span_ids": [
+       "s8"
+      ],
+      "descendant_span_ids": [
+       "s9"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant cross-references § 6003 of its title for the underlying motion; the origin cross-references Section 78B-25-103.",
+      "origin_span_ids": [
+       "s5"
+      ],
+      "descendant_span_ids": [
+       "s6"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin splits the section into numbered subsections (1) and (2) and says the appeal \"shall\" be filed; the descendant is one unnumbered paragraph using \"must\".",
+      "origin_span_ids": [
+       "s3",
+       "s5"
+      ],
+      "descendant_span_ids": [
+       "s6"
+      ]
+     }
     ]
    },
-   {
-    "kind": "changed",
-    "summary": "The descendant cross-references § 6003 of its title for the underlying motion; the origin cross-references Section 78B-25-103.",
-    "origin_span_ids": [
-     "s5"
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2
     ],
-    "descendant_span_ids": [
-     "s6"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The origin splits the section into numbered subsections (1) and (2) and says the appeal \"shall\" be filed; the descendant is one unnumbered paragraph using \"must\".",
-    "origin_span_ids": [
-     "s3",
-     "s5"
-    ],
-    "descendant_span_ids": [
-     "s6"
-    ]
+    "dropped": []
    }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1,
-   2
-  ],
-  "dropped": []
- }
+  }
+ ]
 }

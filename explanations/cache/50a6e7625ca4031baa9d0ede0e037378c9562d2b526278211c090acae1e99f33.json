@@ -81,25 +81,32 @@
    "descendant": "8405dd947d43485b5e63e4dac49e81245fe1c5e6416d396dc94253fc9365c551"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "changed",
-    "summary": "The descendant ties the fee award to a motion under section 554.09; the origin ties it to a motion under Section 78B-25-103.",
-    "origin_span_ids": [
-     "s5"
-    ],
-    "descendant_span_ids": [
-     "s6"
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant ties the fee award to a motion under section 554.09; the origin ties it to a motion under Section 78B-25-103.",
+      "origin_span_ids": [
+       "s5"
+      ],
+      "descendant_span_ids": [
+       "s6"
+      ]
+     }
     ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0
+    ],
+    "dropped": []
    }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0
-  ],
-  "dropped": []
- }
+  }
+ ]
 }

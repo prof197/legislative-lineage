@@ -243,73 +243,80 @@
    "descendant": "8405dd947d43485b5e63e4dac49e81245fe1c5e6416d396dc94253fc9365c551"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "changed",
-    "summary": "The descendant refers to the motion under section 554.09; the origin refers to the motion under Section 78B-25-103.",
-    "origin_span_ids": [
-     "s6",
-     "s27",
-     "s33"
-    ],
-    "descendant_span_ids": [
-     "s7",
-     "s28",
-     "s34"
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant refers to the motion under section 554.09; the origin refers to the motion under Section 78B-25-103.",
+      "origin_span_ids": [
+       "s6",
+       "s27",
+       "s33"
+      ],
+      "descendant_span_ids": [
+       "s7",
+       "s28",
+       "s34"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant asks whether sections 554.07 to 554.19 apply, under section 554.08, paragraphs (b) and (c); the origin asks whether \"this chapter\" applies, under Subsections 78B-25-102(2) and (3).",
+      "origin_span_ids": [
+       "s12",
+       "s15"
+      ],
+      "descendant_span_ids": [
+       "s13",
+       "s16"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant cites section 554.16 for costs, attorney fees and expenses and for prevailing on the motion; the origin cites Section 78B-25-110.",
+      "origin_span_ids": [
+       "s30",
+       "s36"
+      ],
+      "descendant_span_ids": [
+       "s31",
+       "s37"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant is numbered Sec. 27 [554.13], marks its text as new, and lettered subsections (a)-(c) with numbered clauses; the origin is 78B-25-107 with numbered subsections and lettered clauses.",
+      "origin_span_ids": [
+       "s0",
+       "s3",
+       "s9",
+       "s24"
+      ],
+      "descendant_span_ids": [
+       "s1",
+       "s4",
+       "s10",
+       "s25",
+       "s39"
+      ]
+     }
     ]
    },
-   {
-    "kind": "changed",
-    "summary": "The descendant asks whether sections 554.07 to 554.19 apply, under section 554.08, paragraphs (b) and (c); the origin asks whether \"this chapter\" applies, under Subsections 78B-25-102(2) and (3).",
-    "origin_span_ids": [
-     "s12",
-     "s15"
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
     ],
-    "descendant_span_ids": [
-     "s13",
-     "s16"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The descendant cites section 554.16 for costs, attorney fees and expenses and for prevailing on the motion; the origin cites Section 78B-25-110.",
-    "origin_span_ids": [
-     "s30",
-     "s36"
-    ],
-    "descendant_span_ids": [
-     "s31",
-     "s37"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The descendant is numbered Sec. 27 [554.13], marks its text as new, and lettered subsections (a)-(c) with numbered clauses; the origin is 78B-25-107 with numbered subsections and lettered clauses.",
-    "origin_span_ids": [
-     "s0",
-     "s3",
-     "s9",
-     "s24"
-    ],
-    "descendant_span_ids": [
-     "s1",
-     "s4",
-     "s10",
-     "s25",
-     "s39"
-    ]
+    "dropped": []
    }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1,
-   2,
-   3
-  ],
-  "dropped": []
- }
+  }
+ ]
 }

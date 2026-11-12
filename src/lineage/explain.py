@@ -2,10 +2,16 @@
 
 The model sees a pair's aligned spans (lineage.align), each with its id, kind and text on the
 origin's and descendant's sides, never the raw bills. Its reply must fit ChangeExplanation, and
-each claim is checked against the spans in code (lineage.explanations.ground): a failing claim
-is dropped. A reply that is unusable, refused, malformed, or making claims none of which is
-grounded, is asked again once; if the retry is unusable too, the explanation is withheld. A
-reply of no claims says nothing of substance changed, and is kept as such.
+each claim is checked against the spans in code (lineage.explanations.ground). A reply that is
+unusable (refused, malformed, or making claims none of which is grounded) or has a claim that
+fails grounding is asked again once, with why. The better of the usable replies is kept, one
+whose every claim is grounded first, its failing claims dropped; with none, the explanation is
+withheld. A reply of no claims says nothing of substance changed, and is kept as such.
+
+Each cache file records the version of the grounding rules it was written under. Asked again
+(`again`), a file from earlier rules is asked once more, with why: a withheld one afresh, with
+its retry, and a kept one whose reply has a claim the current rules drop, once, the earlier reply
+standing if the new one is no better. What it held before is kept in the file (`earlier`).
 
 Every outcome, withheld ones included, is cached in one file named by the SHA-256 of the model
 id, the prompt version and the spans, so a rerun pays only for pairs it has not seen, keyless
@@ -44,6 +50,9 @@ MODEL = "claude-opus-5-5"
 PROMPT_VERSION = "v1"
 CACHE_DIR = Path("explanations/cache")
 ATTEMPTS = 2  # the first ask and one retry
+# The grounding rules' version, recorded in each cache file. 2 (ruled 2026-11-12): a changed
+# claim cites spans on both sides, each with text on both.
+GROUNDING_RULES = 2
 # Four claims of at most 200 characters, and the thinking medium effort spends on them; a reply
 # cut off at the limit is unusable and asked again.
 MAX_TOKENS = 4096
@@ -130,8 +139,14 @@ def retry_message(user: str, why: str) -> str:
     return (
         f"{user}\n\nAn earlier reply to these spans could not be used: {why}. Reply again "
         "within the limits: at most four claims, each summary at most 200 characters, each "
-        "citing only paraphrased or unmatched spans whose two sides differ."
+        "citing only paraphrased or unmatched spans whose two sides differ. A changed claim "
+        "cites paraphrased spans on both sides; an unmatched span, on one side only, supports "
+        "only a claim that one text has something the other lacks."
     )
+
+
+# Room in a projection for the retry's added text and its reason.
+RETRY_CHARS = len(retry_message("", "")) + 2000
 
 
 def prompt_chars(spans_for_prompt: Sequence[dict[str, Any]]) -> int:
@@ -163,27 +178,62 @@ def cache_path(spans_for_prompt: Sequence[dict[str, Any]], cache: Path, model: s
     return cache / f"{explanation_key(spans_for_prompt, model)}.json"
 
 
-def explain(
-    spans_for_prompt: Sequence[dict[str, Any]],
-    *,
-    ask: Ask | None,
-    cache: Path = CACHE_DIR,
-    model: str = MODEL,
-    meter: Meter | None = None,
-) -> Outcome:
-    """The cached outcome for these spans, or, with `ask`, a new one from the model, each call
-    metered by `meter`."""
-    spans = grounding_spans(spans_for_prompt)
-    path = cache_path(spans_for_prompt, cache, model)
-    if path.exists():
-        return _outcome(json.loads(path.read_text()), spans)
-    if ask is None:
-        raise NotCachedError("no cached explanation for this pair; run with --live to ask")
-    user = user_message(spans_for_prompt)
-    entry: dict[str, Any] = {"explanation": None, "served_by": None}
-    unusable: list[str] = []  # why each attempt before the kept one could not be used
-    for _ in range(ATTEMPTS):
-        asked = retry_message(user, unusable[-1]) if unusable else user
+Kept = tuple[ChangeExplanation, str | None]  # a usable reply and the model that served it
+
+
+def _usable(reply: ChangeExplanation, spans: Sequence[GroundingSpan]) -> bool:
+    return not reply.claims or any(w is None for w in reasons(reply, spans))
+
+
+def _rank(reply: ChangeExplanation, spans: Sequence[GroundingSpan]) -> tuple[bool, int]:
+    why = reasons(reply, spans)
+    return (all(w is None for w in why), sum(w is None for w in why))
+
+
+def _failing(reply: ChangeExplanation, spans: Sequence[GroundingSpan]) -> str | None:
+    """Why a reply is asked again: no claim grounded, or one that fails; None if all pass."""
+    why = reasons(reply, spans)
+    bad = [f"claim {i}: {w}" for i, w in enumerate(why, start=1) if w is not None]
+    if not bad:
+        return None
+    if len(bad) == len(why):
+        return "no claim cites spans that exist and differ (" + "; ".join(bad) + ")"
+    return "a claim fails grounding (" + "; ".join(bad) + ")"
+
+
+@dataclass(frozen=True, slots=True)
+class _Round:
+    attempts: int
+    why: str | None  # what the first ask of the round says was wrong before
+    kept: Kept | None  # the reply standing before the round
+
+
+def _due(entry: dict[str, Any], spans: Sequence[GroundingSpan]) -> _Round | None:
+    """The round a cache file from earlier grounding rules is asked again in, if any."""
+    if int(entry.get("grounding_rules", 1)) >= GROUNDING_RULES:
+        return None
+    if entry["explanation"] is None:
+        before = list(entry.get("unusable_attempts") or [])
+        return _Round(ATTEMPTS, before[-1] if before else None, None)
+    reply = ChangeExplanation.model_validate(entry["explanation"])
+    why = _failing(reply, spans)
+    if why is None:
+        return None
+    return _Round(1, why, (reply, entry["served_by"]) if _usable(reply, spans) else None)
+
+
+def _ask_round(
+    ask: Ask, user: str, spans: Sequence[GroundingSpan], plan: _Round, meter: Meter | None
+) -> tuple[Kept | None, list[str], int]:
+    """Ask up to `plan.attempts` times, each ask after the first saying why the last could not
+    stand. Returns the best usable reply, why each ask but a last fully grounded one was not
+    enough, and how many asks were made."""
+    kept, why = plan.kept, plan.why
+    unusable: list[str] = []
+    asks = 0
+    for _ in range(plan.attempts):
+        asks += 1
+        asked = retry_message(user, why) if why else user
         if meter is not None:
             meter.before_call(len(SYSTEM) + len(asked), MAX_TOKENS)
         try:
@@ -191,36 +241,105 @@ def explain(
         except UnusableReplyError as e:
             if meter is not None:
                 meter.add(e.input_tokens, e.output_tokens, e.served_by)
-            unusable.append(str(e))
+            why = str(e)
+            unusable.append(why)
             continue
         if meter is not None:
             meter.add(reply.input_tokens, reply.output_tokens, reply.served_by)
-        claims = reply.explanation.claims
-        why = reasons(reply.explanation, spans)
-        if not claims or any(w is None for w in why):
-            entry = {"explanation": reply.explanation.model_dump(), "served_by": reply.served_by}
+        got = reply.explanation
+        if _usable(got, spans) and (kept is None or _rank(got, spans) >= _rank(kept[0], spans)):
+            kept = (got, reply.served_by)
+        why = _failing(got, spans)
+        if why is None:
             break
-        unusable.append(
-            "no claim cites spans that exist and differ ("
-            + "; ".join(w for w in why if w is not None)
-            + ")"
-        )
+        unusable.append(why)
+    return kept, unusable, asks
+
+
+def asks_needed(
+    spans_for_prompt: Sequence[dict[str, Any]], cache: Path, *, again: bool, model: str = MODEL
+) -> int:
+    """At most how many asks explaining this pair takes: none when its cached outcome stands."""
+    path = cache_path(spans_for_prompt, cache, model)
+    if not path.exists():
+        return ATTEMPTS
+    if not again:
+        return 0
+    plan = _due(json.loads(path.read_text()), grounding_spans(spans_for_prompt))
+    return 0 if plan is None else plan.attempts
+
+
+def explain(
+    spans_for_prompt: Sequence[dict[str, Any]],
+    *,
+    ask: Ask | None,
+    cache: Path = CACHE_DIR,
+    model: str = MODEL,
+    meter: Meter | None = None,
+    again: bool = False,
+) -> Outcome:
+    """The cached outcome for these spans, or, with `ask`, a new one from the model, each call
+    metered by `meter`; with `again` too, a cache file from earlier grounding rules is asked
+    once more."""
+    spans = grounding_spans(spans_for_prompt)
+    path = cache_path(spans_for_prompt, cache, model)
+    earlier: list[dict[str, Any]] = []
+    if path.exists():
+        entry = json.loads(path.read_text())
+        plan = _due(entry, spans) if again and ask is not None else None
+        if plan is None or ask is None:
+            return _outcome(entry, spans)
+        before = ("explanation", "served_by", "grounded", "unusable_attempts", "attempts")
+        earlier = [*entry.get("earlier", []), {k: entry[k] for k in before if k in entry}]
+    elif ask is None:
+        raise NotCachedError("no cached explanation for this pair; run with --live to ask")
+    else:
+        plan = _Round(ATTEMPTS, None, None)
+    kept, unusable, asks = _ask_round(ask, user_message(spans_for_prompt), spans, plan, meter)
+    new: dict[str, Any] = {
+        "explanation": None if kept is None else kept[0].model_dump(),
+        "served_by": None if kept is None else kept[1],
+    }
     cache.mkdir(parents=True, exist_ok=True)
-    explanation = (
-        None
-        if entry["explanation"] is None
-        else ChangeExplanation.model_validate(entry["explanation"])
-    )
     record = {
         "model": model,
         "prompt_version": PROMPT_VERSION,
+        "grounding_rules": GROUNDING_RULES,
         "spans": [g.as_json() for g in spans],
-        **entry,
-        "grounded": _grounded_record(explanation, spans),
+        **new,
+        "grounded": _grounded_record(None if kept is None else kept[0], spans),
+        "attempts": asks,
         "unusable_attempts": unusable,
+        **({"earlier": earlier} if earlier else {}),
     }
     path.write_text(json.dumps(record, indent=1, ensure_ascii=False) + "\n")
-    return _outcome(entry, spans)
+    return _outcome(new, spans)
+
+
+def reground_cache(cache: Path = CACHE_DIR) -> int:
+    """Rewrite each cache file's record of what grounding keeps under the current rules, with
+    no call; a reply none of whose claims is now grounded becomes withheld, kept in `earlier`.
+    The file's rules version is left as it was, so asking again still reaches it. Returns how
+    many files changed."""
+    changed = 0
+    for path in sorted(cache.glob("*.json")) if cache.exists() else []:
+        entry = json.loads(path.read_text())
+        if entry["explanation"] is None:
+            continue
+        spans = [GroundingSpan.from_json(r) for r in entry["spans"]]
+        reply = ChangeExplanation.model_validate(entry["explanation"])
+        record = _grounded_record(reply, spans)
+        if reply.claims and not ground(reply, spans).claims:
+            before = {k: entry[k] for k in ("explanation", "served_by", "grounded")}
+            entry["earlier"] = [*entry.get("earlier", []), before]
+            entry |= {"explanation": None, "served_by": None, "grounded": None}
+        elif record != entry["grounded"]:
+            entry["grounded"] = record
+        else:
+            continue
+        path.write_text(json.dumps(entry, indent=1, ensure_ascii=False) + "\n")
+        changed += 1
+    return changed
 
 
 def check_cache(cache: Path = CACHE_DIR) -> list[str]:
@@ -250,10 +369,17 @@ def check_cache(cache: Path = CACHE_DIR) -> list[str]:
 
 
 def projected_cost(
-    spans_for_prompts: Sequence[Sequence[dict[str, Any]]], model: str = MODEL
+    spans_for_prompts: Sequence[Sequence[dict[str, Any]]],
+    asks: Sequence[int] | None = None,
+    model: str = MODEL,
 ) -> float:
-    """At most what explaining these pairs costs, each asked as often as it may be retried."""
-    return upper_bound(model, [prompt_chars(s) for s in spans_for_prompts], MAX_TOKENS, ATTEMPTS)
+    """At most what explaining these pairs costs, each asked `asks` times (by default as often
+    as it may be retried), every ask with room for a retry's reason."""
+    counts = [ATTEMPTS] * len(spans_for_prompts) if asks is None else list(asks)
+    return sum(
+        upper_bound(model, [prompt_chars(s) + RETRY_CHARS], MAX_TOKENS, n)
+        for s, n in zip(spans_for_prompts, counts, strict=True)
+    )
 
 
 def anthropic_ask(model: str = MODEL) -> Ask:

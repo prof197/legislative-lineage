@@ -243,63 +243,70 @@
    "descendant": "8405dd947d43485b5e63e4dac49e81245fe1c5e6416d396dc94253fc9365c551"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "changed",
-    "summary": "The descendant applies the dismissal test to whether sections 554.07 to 554.19 apply; the origin asks whether \"this chapter\" applies, citing Subsections 78B-25-102(2) and (3).",
-    "origin_span_ids": [
-     "s12",
-     "s15"
-    ],
-    "descendant_span_ids": [
-     "s13",
-     "s16"
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant applies the dismissal test to whether sections 554.07 to 554.19 apply; the origin asks whether \"this chapter\" applies, citing Subsections 78B-25-102(2) and (3).",
+      "origin_span_ids": [
+       "s12",
+       "s15"
+      ],
+      "descendant_span_ids": [
+       "s13",
+       "s16"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant cites section 554.09 for the motion and 554.16 for costs and fees; the origin cites Sections 78B-25-103 and 78B-25-110.",
+      "origin_span_ids": [
+       "s6",
+       "s27",
+       "s30",
+       "s33",
+       "s36"
+      ],
+      "descendant_span_ids": [
+       "s7",
+       "s28",
+       "s31",
+       "s34",
+       "s37"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant is numbered Sec. 7 [554.13] with subsections (a)-(c) and clauses (1)-(3); the origin is numbered 78B-25-107 with subsections (1)-(3) and clauses (a)-(c).",
+      "origin_span_ids": [
+       "s0",
+       "s3",
+       "s9",
+       "s24"
+      ],
+      "descendant_span_ids": [
+       "s1",
+       "s4",
+       "s10",
+       "s25"
+      ]
+     }
     ]
    },
-   {
-    "kind": "changed",
-    "summary": "The descendant cites section 554.09 for the motion and 554.16 for costs and fees; the origin cites Sections 78B-25-103 and 78B-25-110.",
-    "origin_span_ids": [
-     "s6",
-     "s27",
-     "s30",
-     "s33",
-     "s36"
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2
     ],
-    "descendant_span_ids": [
-     "s7",
-     "s28",
-     "s31",
-     "s34",
-     "s37"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The descendant is numbered Sec. 7 [554.13] with subsections (a)-(c) and clauses (1)-(3); the origin is numbered 78B-25-107 with subsections (1)-(3) and clauses (a)-(c).",
-    "origin_span_ids": [
-     "s0",
-     "s3",
-     "s9",
-     "s24"
-    ],
-    "descendant_span_ids": [
-     "s1",
-     "s4",
-     "s10",
-     "s25"
-    ]
+    "dropped": []
    }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1,
-   2
-  ],
-  "dropped": []
- }
+  }
+ ]
 }

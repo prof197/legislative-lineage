@@ -39,37 +39,44 @@
    "descendant": "269945bd039c2463e30ff12b40ffbd841600e803eb3b077bbbe9d0a9de79345a"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "changed",
-    "summary": "The origin is codified as section 78B-25-110 titled costs, attorney fees, and expenses; the descendant is framed as an act section adding a new section to a new chapter in title 15.",
-    "origin_span_ids": [
-     "s0"
-    ],
-    "descendant_span_ids": [
-     "s1"
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The origin is codified as section 78B-25-110 titled costs, attorney fees, and expenses; the descendant is framed as an act section adding a new section to a new chapter in title 15.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin ties the fee award to a motion under Section 78B-25-103; the descendant ties it to a motion filed under section 3 of the Act.",
+      "origin_span_ids": [
+       "s0",
+       "s3"
+      ],
+      "descendant_span_ids": [
+       "s4"
+      ]
+     }
     ]
    },
-   {
-    "kind": "changed",
-    "summary": "The origin ties the fee award to a motion under Section 78B-25-103; the descendant ties it to a motion filed under section 3 of the Act.",
-    "origin_span_ids": [
-     "s0",
-     "s3"
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1
     ],
-    "descendant_span_ids": [
-     "s4"
-    ]
+    "dropped": []
    }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1
-  ],
-  "dropped": []
- }
+  }
+ ]
 }

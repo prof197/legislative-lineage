@@ -63,47 +63,54 @@
    "descendant": "1dcd2549bdd864e10beb13b18a5d6a19e3d614dd3f73ce0021820de6310f78bb"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "changed",
-    "summary": "The descendant numbers the section as Sec. 10, new section 652.10; the origin numbers it 78B-25-110.",
-    "origin_span_ids": [
-     "s0"
-    ],
-    "descendant_span_ids": [
-     "s1"
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant numbers the section as Sec. 10, new section 652.10; the origin numbers it 78B-25-110.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant ties the fee award to a motion under section 652.3; the origin ties it to a motion under Section 78B-25-103.",
+      "origin_span_ids": [
+       "s3"
+      ],
+      "descendant_span_ids": [
+       "s4"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant introduces its two award cases with \"in the following circumstances\" and omits \"or\" between them; the origin links the two cases with \"or\".",
+      "origin_span_ids": [
+       "s8"
+      ],
+      "descendant_span_ids": [
+       "s6"
+      ]
+     }
     ]
    },
-   {
-    "kind": "changed",
-    "summary": "The descendant ties the fee award to a motion under section 652.3; the origin ties it to a motion under Section 78B-25-103.",
-    "origin_span_ids": [
-     "s3"
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2
     ],
-    "descendant_span_ids": [
-     "s4"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The descendant introduces its two award cases with \"in the following circumstances\" and omits \"or\" between them; the origin links the two cases with \"or\".",
-    "origin_span_ids": [
-     "s8"
-    ],
-    "descendant_span_ids": [
-     "s6"
-    ]
+    "dropped": []
    }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1,
-   2
-  ],
-  "dropped": []
- }
+  }
+ ]
 }

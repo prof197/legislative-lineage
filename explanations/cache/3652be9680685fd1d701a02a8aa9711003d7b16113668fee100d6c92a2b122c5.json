@@ -51,25 +51,32 @@
    "descendant": "6835a572db4ee86257f9b84a79870f71c84c863674264398b961dcdb3e0bed44"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "changed",
-    "summary": "The descendant applies the chapter to civil actions filed or causes of action asserted on or after January 1, 2026; the origin uses May 3, 2023.",
-    "origin_span_ids": [
-     "s6"
-    ],
-    "descendant_span_ids": [
-     "s7"
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant applies the chapter to civil actions filed or causes of action asserted on or after January 1, 2026; the origin uses May 3, 2023.",
+      "origin_span_ids": [
+       "s6"
+      ],
+      "descendant_span_ids": [
+       "s7"
+      ]
+     }
     ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0
+    ],
+    "dropped": []
    }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0
-  ],
-  "dropped": []
- }
+  }
+ ]
 }

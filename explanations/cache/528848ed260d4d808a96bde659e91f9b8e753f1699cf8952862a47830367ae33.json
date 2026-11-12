@@ -303,73 +303,80 @@
    "descendant": "c5cab9cb84ff241afefc58b04e05c3f3bae2a0dc79612f80903d56640705803a"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "changed",
-    "summary": "The descendant uses \"civil action\" where the origin uses \"cause of action\" throughout subsections (1) and (2), though subsection (3) in both keeps \"cause of action.\"",
-    "origin_span_ids": [
-     "s8",
-     "s11",
-     "s20",
-     "s26",
-     "s29",
-     "s32",
-     "s35"
-    ],
-    "descendant_span_ids": [
-     "s9",
-     "s12",
-     "s21",
-     "s27",
-     "s30",
-     "s33",
-     "s36"
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant uses \"civil action\" where the origin uses \"cause of action\" throughout subsections (1) and (2), though subsection (3) in both keeps \"cause of action.\"",
+      "origin_span_ids": [
+       "s8",
+       "s11",
+       "s20",
+       "s26",
+       "s29",
+       "s32",
+       "s35"
+      ],
+      "descendant_span_ids": [
+       "s9",
+       "s12",
+       "s21",
+       "s27",
+       "s30",
+       "s33",
+       "s36"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "Dismissal ground (A) in the descendant is failure to state a \"claim\" upon which relief can be granted; the origin says failure to state a \"cause of action.\"",
+      "origin_span_ids": [
+       "s23"
+      ],
+      "descendant_span_ids": [
+       "s24"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant cross-references bracketed placeholder sections (sections 2, 3, 10, \"the act\"); the origin cites codified Sections 78B-25-102, -103, -110 and \"this chapter.\"",
+      "origin_span_ids": [
+       "s0",
+       "s5",
+       "s14",
+       "s17",
+       "s38",
+       "s41",
+       "s44",
+       "s47"
+      ],
+      "descendant_span_ids": [
+       "s1",
+       "s6",
+       "s15",
+       "s18",
+       "s39",
+       "s42",
+       "s45",
+       "s48"
+      ]
+     }
     ]
    },
-   {
-    "kind": "changed",
-    "summary": "Dismissal ground (A) in the descendant is failure to state a \"claim\" upon which relief can be granted; the origin says failure to state a \"cause of action.\"",
-    "origin_span_ids": [
-     "s23"
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2
     ],
-    "descendant_span_ids": [
-     "s24"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The descendant cross-references bracketed placeholder sections (sections 2, 3, 10, \"the act\"); the origin cites codified Sections 78B-25-102, -103, -110 and \"this chapter.\"",
-    "origin_span_ids": [
-     "s0",
-     "s5",
-     "s14",
-     "s17",
-     "s38",
-     "s41",
-     "s44",
-     "s47"
-    ],
-    "descendant_span_ids": [
-     "s1",
-     "s6",
-     "s15",
-     "s18",
-     "s39",
-     "s42",
-     "s45",
-     "s48"
-    ]
+    "dropped": []
    }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1,
-   2
-  ],
-  "dropped": []
- }
+  }
+ ]
 }

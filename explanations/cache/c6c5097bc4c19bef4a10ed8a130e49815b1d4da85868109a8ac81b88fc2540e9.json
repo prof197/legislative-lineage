@@ -51,36 +51,43 @@
    "descendant": "ff783ed42bb36b16c58e4ea1db13a7092ef9705ea3a0896bb19dd74105983bee"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "changed",
-    "summary": "The descendant counts the 21-day filing deadline from entry of the order; the origin counts it from the day on which the order is entered.",
-    "origin_span_ids": [
-     "s6"
-    ],
-    "descendant_span_ids": [
-     "s7"
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant counts the 21-day filing deadline from entry of the order; the origin counts it from the day on which the order is entered.",
+      "origin_span_ids": [
+       "s6"
+      ],
+      "descendant_span_ids": [
+       "s7"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant says the appeal \"must\" be filed; the origin says it \"shall\" be filed.",
+      "origin_span_ids": [
+       "s3"
+      ],
+      "descendant_span_ids": [
+       "s4"
+      ]
+     }
     ]
    },
-   {
-    "kind": "changed",
-    "summary": "The descendant says the appeal \"must\" be filed; the origin says it \"shall\" be filed.",
-    "origin_span_ids": [
-     "s3"
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1
     ],
-    "descendant_span_ids": [
-     "s4"
-    ]
+    "dropped": []
    }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1
-  ],
-  "dropped": []
- }
+  }
+ ]
 }

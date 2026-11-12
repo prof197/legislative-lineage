@@ -33,36 +33,43 @@
    "descendant": "734306a83ed7bb2e68bf375f9a67461d6d0ebdb69c037e4bf69f9d88e2176c49"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "changed",
-    "summary": "The origin applies the chapter to actions filed on or after May 3, 2023; the descendant uses a placeholder, \"[the effective date of this Act].\"",
-    "origin_span_ids": [
-     "s3"
-    ],
-    "descendant_span_ids": [
-     "s4"
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The origin applies the chapter to actions filed on or after May 3, 2023; the descendant uses a placeholder, \"[the effective date of this Act].\"",
+      "origin_span_ids": [
+       "s3"
+      ],
+      "descendant_span_ids": [
+       "s4"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin numbers the section 78B-25-113; the descendant numbers it § 6013.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     }
     ]
    },
-   {
-    "kind": "changed",
-    "summary": "The origin numbers the section 78B-25-113; the descendant numbers it § 6013.",
-    "origin_span_ids": [
-     "s0"
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1
     ],
-    "descendant_span_ids": [
-     "s1"
-    ]
+    "dropped": []
    }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1
-  ],
-  "dropped": []
- }
+  }
+ ]
 }

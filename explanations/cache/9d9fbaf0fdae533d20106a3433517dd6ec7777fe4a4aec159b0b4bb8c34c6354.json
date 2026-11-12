@@ -33,36 +33,43 @@
    "descendant": "2eca049aa3c44897e654bfb4248c92e3408051ce2532e6397c9ef2c0994f2c9a"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "changed",
-    "summary": "The descendant protects rights guaranteed by the U.S. Constitution or the Minnesota Constitution; the origin refers to the Utah Constitution.",
-    "origin_span_ids": [
-     "s3"
-    ],
-    "descendant_span_ids": [
-     "s4"
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant protects rights guaranteed by the U.S. Constitution or the Minnesota Constitution; the origin refers to the Utah Constitution.",
+      "origin_span_ids": [
+       "s3"
+      ],
+      "descendant_span_ids": [
+       "s4"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant applies the construction rule to sections 554.07 to 554.19 (\"must\" be construed); the origin applies it to \"this chapter\" (\"shall\" be construed).",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     }
     ]
    },
-   {
-    "kind": "changed",
-    "summary": "The descendant applies the construction rule to sections 554.07 to 554.19 (\"must\" be construed); the origin applies it to \"this chapter\" (\"shall\" be construed).",
-    "origin_span_ids": [
-     "s0"
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1
     ],
-    "descendant_span_ids": [
-     "s1"
-    ]
+    "dropped": []
    }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1
-  ],
-  "dropped": []
- }
+  }
+ ]
 }

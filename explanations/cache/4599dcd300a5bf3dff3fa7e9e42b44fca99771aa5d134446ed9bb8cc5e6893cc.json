@@ -99,53 +99,60 @@
    "descendant": "41d22277acbe96d50d76a2033b297c6738ae1c836d54327ce3bb16e351df9791"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "changed",
-    "summary": "The descendant applies the motion to a pleading asserting a \"civil action\" and lets the movant dismiss the civil action or part of it; the origin uses \"cause of action\" throughout.",
-    "origin_span_ids": [
-     "s8",
-     "s11",
-     "s14"
-    ],
-    "descendant_span_ids": [
-     "s9",
-     "s12",
-     "s15"
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant applies the motion to a pleading asserting a \"civil action\" and lets the movant dismiss the civil action or part of it; the origin uses \"cause of action\" throughout.",
+      "origin_span_ids": [
+       "s8",
+       "s11",
+       "s14"
+      ],
+      "descendant_span_ids": [
+       "s9",
+       "s12",
+       "s15"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant lists a \"third-party complaint\" among triggering pleadings; the origin lists a \"third-party claim.\"",
+      "origin_span_ids": [
+       "s5"
+      ],
+      "descendant_span_ids": [
+       "s6"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant refers to scope as \"[sections 1 through 12]\" and is labeled New Section 3; the origin refers to \"this chapter\" and is numbered 78B-25-103.",
+      "origin_span_ids": [
+       "s0",
+       "s8"
+      ],
+      "descendant_span_ids": [
+       "s1",
+       "s9"
+      ]
+     }
     ]
    },
-   {
-    "kind": "changed",
-    "summary": "The descendant lists a \"third-party complaint\" among triggering pleadings; the origin lists a \"third-party claim.\"",
-    "origin_span_ids": [
-     "s5"
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2
     ],
-    "descendant_span_ids": [
-     "s6"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The descendant refers to scope as \"[sections 1 through 12]\" and is labeled New Section 3; the origin refers to \"this chapter\" and is numbered 78B-25-103.",
-    "origin_span_ids": [
-     "s0",
-     "s8"
-    ],
-    "descendant_span_ids": [
-     "s1",
-     "s9"
-    ]
+    "dropped": []
    }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1,
-   2
-  ],
-  "dropped": []
- }
+  }
+ ]
 }

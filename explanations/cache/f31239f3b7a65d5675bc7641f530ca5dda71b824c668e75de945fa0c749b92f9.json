@@ -270,9 +270,13 @@
  "served_by": "claude-opus-5-5",
  "grounded": {
   "kept": [
-   0,
-   1
+   0
   ],
-  "dropped": []
+  "dropped": [
+   [
+    1,
+    "s5 is on one side only, so it shows text one side lacks, not a change"
+   ]
+  ]
  }
 }

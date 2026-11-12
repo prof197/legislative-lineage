@@ -75,25 +75,32 @@
    "descendant": "a025940f2894eeb052f8d2c61b12e11508bea6aad307e78b11adba935e45adee"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "changed",
-    "summary": "The descendant ties the fee award to a motion under section 6-3903, Idaho Code; the origin ties it to a motion under Section 78B-25-103.",
-    "origin_span_ids": [
-     "s3"
-    ],
-    "descendant_span_ids": [
-     "s4"
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant ties the fee award to a motion under section 6-3903, Idaho Code; the origin ties it to a motion under Section 78B-25-103.",
+      "origin_span_ids": [
+       "s3"
+      ],
+      "descendant_span_ids": [
+       "s4"
+      ]
+     }
     ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0
+    ],
+    "dropped": []
    }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0
-  ],
-  "dropped": []
- }
+  }
+ ]
 }

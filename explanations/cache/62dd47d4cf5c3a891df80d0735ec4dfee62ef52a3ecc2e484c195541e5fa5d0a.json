@@ -683,10 +683,17 @@
  "grounded": {
   "kept": [
    0,
-   1,
-   2,
-   3
+   1
   ],
-  "dropped": []
+  "dropped": [
+   [
+    2,
+    "s3 is on one side only, so it shows text one side lacks, not a change"
+   ],
+   [
+    3,
+    "s9 is on one side only, so it shows text one side lacks, not a change"
+   ]
+  ]
  }
 }

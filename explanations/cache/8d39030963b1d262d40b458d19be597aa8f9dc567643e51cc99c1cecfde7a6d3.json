@@ -153,49 +153,56 @@
    "descendant": "52ee9d206df487949984ba417e8ce27f1371a3d9d88e7bf7084a411e40a5e583"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "changed",
-    "summary": "The origin automatically stays all proceedings when a party appeals the ruling, until the appeal concludes. The descendant says proceedings may be stayed by the court until the appeal concludes.",
-    "origin_span_ids": [
-     "s0"
-    ],
-    "descendant_span_ids": [
-     "s1"
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The origin automatically stays all proceedings when a party appeals the ruling, until the appeal concludes. The descendant says proceedings may be stayed by the court until the appeal concludes.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin preserves a party's ability to dismiss part of a cause of action; the descendant instead refers to dismissing a party of a cause of action.",
+      "origin_span_ids": [
+       "s17"
+      ],
+      "descendant_span_ids": [
+       "s18"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin lets the court hear motions unrelated to the motion under Section 78B-25-103. The descendant refers to motions unrelated to an order to show cause, applying if the court issues a stay.",
+      "origin_span_ids": [
+       "s20",
+       "s23"
+      ],
+      "descendant_span_ids": [
+       "s21",
+       "s24"
+      ]
+     }
     ]
    },
-   {
-    "kind": "changed",
-    "summary": "The origin preserves a party's ability to dismiss part of a cause of action; the descendant instead refers to dismissing a party of a cause of action.",
-    "origin_span_ids": [
-     "s17"
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2
     ],
-    "descendant_span_ids": [
-     "s18"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The origin lets the court hear motions unrelated to the motion under Section 78B-25-103. The descendant refers to motions unrelated to an order to show cause, applying if the court issues a stay.",
-    "origin_span_ids": [
-     "s20",
-     "s23"
-    ],
-    "descendant_span_ids": [
-     "s21",
-     "s24"
-    ]
+    "dropped": []
    }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1,
-   2
-  ],
-  "dropped": []
- }
+  }
+ ]
 }

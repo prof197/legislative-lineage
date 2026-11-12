@@ -33,36 +33,43 @@
    "descendant": "51b4a946d539c0b5aa8904a0e1610664eff0cb40c541f5918af89974fc59a4d4"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "changed",
-    "summary": "The descendant protects rights guaranteed by the U.S. Constitution or the Iowa Constitution; the origin refers to the U.S. Constitution or the Utah Constitution.",
-    "origin_span_ids": [
-     "s3"
-    ],
-    "descendant_span_ids": [
-     "s4"
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant protects rights guaranteed by the U.S. Constitution or the Iowa Constitution; the origin refers to the U.S. Constitution or the Utah Constitution.",
+      "origin_span_ids": [
+       "s3"
+      ],
+      "descendant_span_ids": [
+       "s4"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant is numbered as new section 652.11; the origin is numbered section 78B-25-111.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     }
     ]
    },
-   {
-    "kind": "changed",
-    "summary": "The descendant is numbered as new section 652.11; the origin is numbered section 78B-25-111.",
-    "origin_span_ids": [
-     "s0"
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1
     ],
-    "descendant_span_ids": [
-     "s1"
-    ]
+    "dropped": []
    }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1
-  ],
-  "dropped": []
- }
+  }
+ ]
 }

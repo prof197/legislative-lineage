@@ -212,9 +212,13 @@
   "kept": [
    0,
    1,
-   2,
-   3
+   2
   ],
-  "dropped": []
+  "dropped": [
+   [
+    3,
+    "s8 is on one side only, so it shows text one side lacks, not a change"
+   ]
+  ]
  }
 }

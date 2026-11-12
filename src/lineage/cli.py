@@ -51,11 +51,13 @@ from lineage.explain import (
     NotCachedError,
     PairToExplain,
     anthropic_ask,
+    asks_needed,
     check_cache,
     explain,
     load_pairs,
     pair_texts,
     prompt_spans,
+    reground_cache,
 )
 from lineage.explain import cache_path as explanation_cache_path
 from lineage.explain import projected_cost as projected_explain_cost
@@ -1216,29 +1218,53 @@ def explain_command(
     spend: Annotated[
         Path, typer.Option("--spend", help="M6's model-call ledger (committed).")
     ] = CALL_SPEND,
+    again: Annotated[
+        bool,
+        typer.Option(
+            "--again",
+            help="With --live, ask once more for cached explanations written under earlier "
+            "grounding rules: withheld ones, and ones keeping a claim the rules now drop.",
+        ),
+    ] = False,
+    reground: Annotated[
+        bool,
+        typer.Option(
+            "--reground",
+            help="Rewrite each cache file's record of what grounding keeps under the current "
+            "rules, with no call, and stop.",
+        ),
+    ] = False,
 ) -> None:
     """Explain what each descendant changed, grounded in aligned spans; cached, or --live."""
+    if reground:
+        typer.echo(f"{reground_cache(cache)} cache files regrounded under the current rules")
+        return
     try:
+        if again and not live:
+            raise NotCachedError("--again asks the model; run with --live")
         todo = load_pairs(pairs)
         prompts = _pair_prompts(todo, tables, models_dir if paraphrase else None)
         uncached = [p for p in prompts if not explanation_cache_path(p, cache).exists()]
-        projected = projected_explain_cost(uncached)
+        asks = [asks_needed(p, cache, again=again) for p in prompts]
+        due = [(p, n) for p, n in zip(prompts, asks, strict=True) if n]
+        projected = projected_explain_cost([p for p, _ in due], [n for _, n in due])
         typer.echo(
-            f"{len(prompts)} pairs, {len(uncached)} not cached, projected at most "
+            f"{len(prompts)} pairs, {len(uncached)} not cached, "
+            f"{len(due) - len(uncached)} to ask again, projected at most "
             f"${projected:.2f}; ${spent_on_calls(spend):.2f} of ${CALL_BUDGET:.2f} spent"
         )
         if uncached and not live:
             raise NotCachedError(f"{len(uncached)} pairs not cached; run with --live to ask")
         meter = None
         ask = None
-        if uncached:
+        if due:
             check_projection(projected, spend)
             meter = Meter(
                 spend, "explain", EXPLAIN_MODEL, EXPLAIN_PROMPT, datetime.date.today().isoformat()
             )
             ask = anthropic_ask()
         for pair, for_prompt in zip(todo, prompts, strict=True):
-            outcome = explain(for_prompt, ask=ask, cache=cache, meter=meter)
+            outcome = explain(for_prompt, ask=ask, cache=cache, meter=meter, again=again)
             (ob, oo), (db, do) = pair.origin, pair.descendant
             typer.echo(f"\n{ob} section {oo} -> {db} section {do}")
             if outcome.withheld:

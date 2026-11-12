@@ -54,7 +54,8 @@ COPIED = _claim("changed", o=["s0"], d=["s0"])  # dropped by grounding
 
 def _cached(tmp_path: Path, *claims: Claim) -> Path:
     cache = tmp_path / "cache"
-    _, ask = scripted(ChangeExplanation(claims=list(claims)))
+    reply = ChangeExplanation(claims=list(claims))
+    _, ask = scripted(reply, reply)  # a failing claim is asked about once more
     explain(PROMPT, ask=ask, cache=cache)
     return cache
 

@@ -11,11 +11,13 @@ side, the descendant's, or both.
 Grounding is checked in code, not trusted. A claim is kept only if it cites at least one span,
 every id it cites is a span of this alignment with text on the side it is cited for, none is
 an exact copy, and none reads the same on both sides once normalized, since neither is a
-change. A failing claim is dropped with its reason. The check reads each span as a
-GroundingSpan: its id, its kind, and the SHA-256 of each side's normalized text, so it runs the
-same on a live alignment and on a cached explanation in CI, where no bill text is kept. What
-happens when claims fail, a retry and then withholding the explanation, belongs to the step
-that calls the model. See DESIGN.md#explanations.
+change. A "changed" claim must also cite spans on both sides, each with text on both: a span
+on one side only shows text one side lacks, which is an added or removed claim, never a
+change (the M6 review's ruling). A failing claim is dropped with its reason. The check reads
+each span as a GroundingSpan: its id, its kind, and the SHA-256 of each side's normalized
+text, so it runs the same on a live alignment and on a cached explanation in CI, where no bill
+text is kept. What happens when claims fail, a retry and then withholding the explanation,
+belongs to the step that calls the model. See DESIGN.md#explanations.
 """
 
 import hashlib
@@ -104,6 +106,19 @@ def _why_not(claim: Claim, spans: Mapping[str, GroundingSpan]) -> str | None:
             return f"{span_id} has no {role} text"
         if span.origin is not None and span.origin == span.descendant:
             return f"{span_id} reads the same on both sides"
+    if claim.kind == "changed":
+        for _, span_id in cited:
+            span = spans[span_id]
+            if span.origin is None or span.descendant is None:
+                return (
+                    f"{span_id} is on one side only, so it shows text one side lacks, not a change"
+                )
+        for side, ids in (
+            ("origin", claim.origin_span_ids),
+            ("descendant", claim.descendant_span_ids),
+        ):
+            if not ids:
+                return f"a changed claim cites no span on the {side}'s side"
     return None
 
 

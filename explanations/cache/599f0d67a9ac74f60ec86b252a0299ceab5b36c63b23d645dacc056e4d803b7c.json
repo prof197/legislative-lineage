@@ -33,36 +33,43 @@
    "descendant": "b4bdcee1211a42facb6c94c3fa9dd0aa1a422264eedf48e5d504f4748c151359"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "changed",
-    "summary": "The descendant protects rights guaranteed by the U.S. constitution and the Idaho constitution; the origin protects rights guaranteed by the U.S. Constitution or the Utah Constitution.",
-    "origin_span_ids": [
-     "s3"
-    ],
-    "descendant_span_ids": [
-     "s4"
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant protects rights guaranteed by the U.S. constitution and the Idaho constitution; the origin protects rights guaranteed by the U.S. Constitution or the Utah Constitution.",
+      "origin_span_ids": [
+       "s3"
+      ],
+      "descendant_span_ids": [
+       "s4"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant is numbered section 6-3911; the origin is numbered 78B-25-111.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     }
     ]
    },
-   {
-    "kind": "changed",
-    "summary": "The descendant is numbered section 6-3911; the origin is numbered 78B-25-111.",
-    "origin_span_ids": [
-     "s0"
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1
     ],
-    "descendant_span_ids": [
-     "s1"
-    ]
+    "dropped": []
    }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1
-  ],
-  "dropped": []
- }
+  }
+ ]
 }

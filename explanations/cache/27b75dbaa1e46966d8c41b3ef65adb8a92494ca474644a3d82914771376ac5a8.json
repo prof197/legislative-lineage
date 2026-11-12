@@ -524,11 +524,21 @@
  "served_by": "claude-opus-5-5",
  "grounded": {
   "kept": [
-   0,
-   1,
-   2,
-   3
+   2
   ],
-  "dropped": []
+  "dropped": [
+   [
+    0,
+    "s42 is on one side only, so it shows text one side lacks, not a change"
+   ],
+   [
+    1,
+    "s53 is on one side only, so it shows text one side lacks, not a change"
+   ],
+   [
+    3,
+    "s17 is on one side only, so it shows text one side lacks, not a change"
+   ]
+  ]
  }
 }

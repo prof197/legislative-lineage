@@ -45,36 +45,43 @@
    "descendant": "9d2eefaa81c34cef0bd48df9062da837b2996e6d5ff524de30dbe1d229ea7c21"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "changed",
-    "summary": "The descendant protects rights guaranteed by the U.S. Constitution or the Delaware Constitution; the origin refers to the U.S. Constitution or the Utah Constitution.",
-    "origin_span_ids": [
-     "s5"
-    ],
-    "descendant_span_ids": [
-     "s6"
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant protects rights guaranteed by the U.S. Constitution or the Delaware Constitution; the origin refers to the U.S. Constitution or the Utah Constitution.",
+      "origin_span_ids": [
+       "s5"
+      ],
+      "descendant_span_ids": [
+       "s6"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant is numbered § 6011; the origin is numbered 78B-25-111.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     }
     ]
    },
-   {
-    "kind": "changed",
-    "summary": "The descendant is numbered § 6011; the origin is numbered 78B-25-111.",
-    "origin_span_ids": [
-     "s0"
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1
     ],
-    "descendant_span_ids": [
-     "s1"
-    ]
+    "dropped": []
    }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1
-  ],
-  "dropped": []
- }
+  }
+ ]
 }

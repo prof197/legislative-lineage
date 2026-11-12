@@ -339,53 +339,60 @@
    "descendant": "f2491ecb6b732ba06cc0d4170f8e52fd92b875f8a12a57472c6900c82c005485"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "changed",
-    "summary": "The descendant directs technical assistance to any public school district board of education or charter school governing body; the origin names any local board of education.",
-    "origin_span_ids": [
-     "s46"
-    ],
-    "descendant_span_ids": [
-     "s47"
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant directs technical assistance to any public school district board of education or charter school governing body; the origin names any local board of education.",
+      "origin_span_ids": [
+       "s46"
+      ],
+      "descendant_span_ids": [
+       "s47"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant lets each public school district board or charter school governing body add an online safety component on its own schedule; the origin gives this to each local board of education.",
+      "origin_span_ids": [
+       "s49",
+       "s54"
+      ],
+      "descendant_span_ids": [
+       "s50",
+       "s55"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant is a new codified section (Title 70, Section 6-502) with its own lettered subsections; the origin amends existing Code Section 20-2-149 as numbered subsections.",
+      "origin_span_ids": [
+       "s0",
+       "s31",
+       "s37"
+      ],
+      "descendant_span_ids": [
+       "s1",
+       "s32",
+       "s38"
+      ]
+     }
     ]
    },
-   {
-    "kind": "changed",
-    "summary": "The descendant lets each public school district board or charter school governing body add an online safety component on its own schedule; the origin gives this to each local board of education.",
-    "origin_span_ids": [
-     "s49",
-     "s54"
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2
     ],
-    "descendant_span_ids": [
-     "s50",
-     "s55"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The descendant is a new codified section (Title 70, Section 6-502) with its own lettered subsections; the origin amends existing Code Section 20-2-149 as numbered subsections.",
-    "origin_span_ids": [
-     "s0",
-     "s31",
-     "s37"
-    ],
-    "descendant_span_ids": [
-     "s1",
-     "s32",
-     "s38"
-    ]
+    "dropped": []
    }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1,
-   2
-  ],
-  "dropped": []
- }
+  }
+ ]
 }

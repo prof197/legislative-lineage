@@ -213,61 +213,68 @@
    "descendant": "2e345e8f12a4f9247dbc8edc4e99160cee17b77c8eb8becfa0664a9a85a43ab1"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "changed",
-    "summary": "The descendant keeps the stay in effect until 30 days after the ruling or the end of any appeal, whichever is later; the origin ends it when the appeal period expires or the appeal concludes.",
-    "origin_span_ids": [
-     "s9",
-     "s12"
-    ],
-    "descendant_span_ids": [
-     "s10"
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant keeps the stay in effect until 30 days after the ruling or the end of any appeal, whichever is later; the origin ends it when the appeal period expires or the appeal concludes.",
+      "origin_span_ids": [
+       "s9",
+       "s12"
+      ],
+      "descendant_span_ids": [
+       "s10"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "For limited discovery, the descendant requires the party seeking it to show the information cannot be obtained otherwise; the origin lets any party show it is not reasonably available.",
+      "origin_span_ids": [
+       "s15",
+       "s18"
+      ],
+      "descendant_span_ids": [
+       "s16",
+       "s19"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin preserves voluntary dismissal of part of a cause of action; the descendant omits that and speaks of severing a cause of action for a separate trial.",
+      "origin_span_ids": [
+       "s24"
+      ],
+      "descendant_span_ids": [
+       "s27"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "During a stay, the descendant lets the court hear motions for a temporary or preliminary injunction; the origin refers to a special or preliminary injunction.",
+      "origin_span_ids": [
+       "s32"
+      ],
+      "descendant_span_ids": [
+       "s33"
+      ]
+     }
     ]
    },
-   {
-    "kind": "changed",
-    "summary": "For limited discovery, the descendant requires the party seeking it to show the information cannot be obtained otherwise; the origin lets any party show it is not reasonably available.",
-    "origin_span_ids": [
-     "s15",
-     "s18"
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
     ],
-    "descendant_span_ids": [
-     "s16",
-     "s19"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The origin preserves voluntary dismissal of part of a cause of action; the descendant omits that and speaks of severing a cause of action for a separate trial.",
-    "origin_span_ids": [
-     "s24"
-    ],
-    "descendant_span_ids": [
-     "s27"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "During a stay, the descendant lets the court hear motions for a temporary or preliminary injunction; the origin refers to a special or preliminary injunction.",
-    "origin_span_ids": [
-     "s32"
-    ],
-    "descendant_span_ids": [
-     "s33"
-    ]
+    "dropped": []
    }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1,
-   2,
-   3
-  ],
-  "dropped": []
- }
+  }
+ ]
 }

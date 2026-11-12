@@ -614,11 +614,21 @@
  "served_by": "claude-opus-5-5",
  "grounded": {
   "kept": [
-   0,
-   1,
-   2,
-   3
+   1
   ],
-  "dropped": []
+  "dropped": [
+   [
+    0,
+    "s3 is on one side only, so it shows text one side lacks, not a change"
+   ],
+   [
+    2,
+    "s16 is on one side only, so it shows text one side lacks, not a change"
+   ],
+   [
+    3,
+    "s0 is on one side only, so it shows text one side lacks, not a change"
+   ]
+  ]
  }
 }
