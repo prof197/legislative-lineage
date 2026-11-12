@@ -246,6 +246,28 @@ def faithfulness(
     }
 
 
+def run_name(grounding_rules: int) -> str:
+    """A run is named by the grounding rules its explanations were kept under."""
+    return f"grounding-rules-{grounding_rules}"
+
+
+_SUMMARY = ("judge", "pairs", "pairs_explained", "grounding", "overall", "by_kind", "hard_check")
+
+
+def with_earlier_runs(
+    section: dict[str, Any], previous: dict[str, Any] | None, *, run: str
+) -> dict[str, Any]:
+    """This run's results section; a previous run under other rules is kept beside it,
+    summarized, and a previous run of the same name is replaced."""
+    if previous is None:
+        return section | {"run": run, "earlier_runs": []}
+    earlier: list[dict[str, Any]] = list(previous.get("earlier_runs", []))
+    before = str(previous.get("run", run_name(1)))  # the first run predates run names
+    if before != run:
+        earlier.append({"run": before} | {k: previous[k] for k in _SUMMARY if k in previous})
+    return section | {"run": run, "earlier_runs": earlier}
+
+
 def anthropic_judge(model: str = JUDGE_MODEL) -> JudgeAsk:
     """Ask through the Anthropic SDK for JSON fitting ClaimVerdict, at medium effort, every
     reply metered (lineage.structured)."""

@@ -5,7 +5,7 @@ with a Wilson interval. The judge is a scripted stand-in; nothing here calls the
 import json
 from collections.abc import Iterator
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
 import pytest
 
@@ -22,6 +22,8 @@ from lineage.faithfulness import (
     load_judgments,
     pending,
     projected_cost,
+    run_name,
+    with_earlier_runs,
 )
 from lineage.spend import Meter, load_runs
 from tests.test_explain import scripted
@@ -149,3 +151,31 @@ def test_the_judge_is_projected_at_every_retry_at_its_reply_limit(tmp_path: Path
         projected_cost(claims[:1]) + projected_cost(claims[1:])
     )
     assert projected_cost(claims[:1]) > 2 * 1024 * 20 / 1e6
+
+
+def test_a_run_under_new_grounding_rules_keeps_the_earlier_result_beside_it() -> None:
+    first: dict[str, Any] = {
+        "judge": "j",
+        "pairs": "p",
+        "pairs_explained": 137,
+        "grounding": {"claims_kept": 319},
+        "overall": {"share": 0.8},
+        "by_kind": {"added": {"share": 0.88}},
+        "hard_check": {"problems": []},
+        "enactments": "not kept",
+    }
+
+    second = with_earlier_runs({"overall": {"share": 0.9}}, first, run=run_name(2))
+    rerun = with_earlier_runs({"overall": {"share": 0.91}}, second, run=run_name(2))
+
+    assert run_name(2) == "grounding-rules-2"
+    [earlier] = second["earlier_runs"]
+    assert earlier["run"] == "grounding-rules-1"  # a section from before runs were named
+    assert earlier["overall"] == {"share": 0.8}
+    assert "enactments" not in earlier
+    assert (rerun["run"], rerun["overall"], rerun["earlier_runs"]) == (
+        "grounding-rules-2",
+        {"share": 0.91},
+        second["earlier_runs"],
+    )
+    assert with_earlier_runs({}, None, run=run_name(2))["earlier_runs"] == []

@@ -45,9 +45,8 @@ from lineage.doctypes import RULES, DocTypesError, build_eligibility, rule_sampl
 from lineage.embed import embed as embed_texts
 from lineage.embed import load_model
 from lineage.explain import CACHE_DIR as EXPLAIN_CACHE
-from lineage.explain import MODEL as EXPLAIN_MODEL
-from lineage.explain import PROMPT_VERSION as EXPLAIN_PROMPT
 from lineage.explain import (
+    GROUNDING_RULES,
     NotCachedError,
     PairToExplain,
     anthropic_ask,
@@ -59,6 +58,8 @@ from lineage.explain import (
     prompt_spans,
     reground_cache,
 )
+from lineage.explain import MODEL as EXPLAIN_MODEL
+from lineage.explain import PROMPT_VERSION as EXPLAIN_PROMPT
 from lineage.explain import cache_path as explanation_cache_path
 from lineage.explain import projected_cost as projected_explain_cost
 from lineage.faithfulness import (
@@ -74,6 +75,8 @@ from lineage.faithfulness import (
 )
 from lineage.faithfulness import pending as pending_claims
 from lineage.faithfulness import projected_cost as projected_judge_cost
+from lineage.faithfulness import run_name as faithfulness_run
+from lineage.faithfulness import with_earlier_runs as with_earlier_faithfulness
 from lineage.featured import PAIRS as FEATURED_PAIRS
 from lineage.featured import REPORT as FEATURED_REPORT
 from lineage.featured import FeaturedError, build_featured, write_featured
@@ -1949,12 +1952,16 @@ def eval_faithfulness(
     section: dict[str, Any] = {
         "command": "uv run lineage eval faithfulness",
         "pairs": str(pairs),
+        "pairs_explained": len(prompts),
+        "grounding_rules": GROUNDING_RULES,
         "hard_check": {
             "cache_files": len(list(cache.glob("*.json"))) if cache.exists() else 0,
             "problems": problems,
         },
         **doc,
     }
+    previous = json.loads(results.read_text()).get("faithfulness") if results.exists() else None
+    section = with_earlier_faithfulness(section, previous, run=faithfulness_run(GROUNDING_RULES))
     write_results(results, "faithfulness", section)
     overall = doc["overall"]
     shown = (

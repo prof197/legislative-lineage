@@ -1,6 +1,6 @@
 {
  "budget": 40.0,
- "spent": 20.2771,
+ "spent": 22.9218,
  "runs": [
   {
    "run": "explain-2026-11-12-1",
@@ -67,6 +67,20 @@
    "input_tokens": 654880,
    "output_tokens": 72116,
    "dollars": 4.0618,
+   "at": "2026-11-12"
+  },
+  {
+   "run": "judge-2026-11-12-6",
+   "purpose": "judge",
+   "model": "claude-opus-5-5",
+   "prompt": "judge-v1",
+   "calls": 370,
+   "served_by": {
+    "claude-opus-5-5": 370
+   },
+   "input_tokens": 410598,
+   "output_tokens": 50115,
+   "dollars": 2.6447,
    "at": "2026-11-12"
   }
  ]

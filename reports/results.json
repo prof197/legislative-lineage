@@ -6240,6 +6240,8 @@
  "faithfulness": {
   "command": "uv run lineage eval faithfulness",
   "pairs": "evals/featured_pairs.jsonl",
+  "pairs_explained": 121,
+  "grounding_rules": 2,
   "hard_check": {
    "cache_files": 127,
    "problems": []
@@ -6247,62 +6249,133 @@
   "judge": "model:claude-opus-5-5@judge-v1",
   "question": "does the claim describe the spans it cites correctly?",
   "grounding": {
-   "explanations": 137,
-   "withheld": 37,
-   "with_no_claims": 6,
-   "claims_kept": 319,
-   "claims_dropped": {}
+   "explanations": 121,
+   "withheld": 2,
+   "with_no_claims": 8,
+   "claims_kept": 401,
+   "claims_dropped": {
+    "is on one side only, so it shows text one side lacks, not a change": 26
+   }
   },
   "overall": {
-   "claims": 319,
-   "judged": 319,
+   "claims": 401,
+   "judged": 401,
    "unusable": 0,
    "not_judged": 0,
-   "correct": 254,
-   "share": 0.7962,
+   "correct": 285,
+   "share": 0.7107,
    "interval_95": [
-    0.7486,
-    0.8368
+    0.6645,
+    0.7529
    ]
   },
   "by_kind": {
    "added": {
-    "claims": 85,
-    "judged": 85,
+    "claims": 225,
+    "judged": 225,
     "unusable": 0,
     "not_judged": 0,
-    "correct": 75,
-    "share": 0.8824,
+    "correct": 162,
+    "share": 0.72,
     "interval_95": [
-     0.7968,
-     0.9348
+     0.658,
+     0.7746
     ]
    },
    "changed": {
-    "claims": 170,
-    "judged": 170,
+    "claims": 19,
+    "judged": 19,
     "unusable": 0,
     "not_judged": 0,
-    "correct": 128,
-    "share": 0.7529,
+    "correct": 12,
+    "share": 0.6316,
     "interval_95": [
-     0.683,
-     0.8117
+     0.4104,
+     0.8085
     ]
    },
    "removed": {
-    "claims": 64,
-    "judged": 64,
+    "claims": 157,
+    "judged": 157,
     "unusable": 0,
     "not_judged": 0,
-    "correct": 51,
-    "share": 0.7969,
+    "correct": 111,
+    "share": 0.707,
     "interval_95": [
-     0.6829,
-     0.8773
+     0.6316,
+     0.7726
     ]
    }
-  }
+  },
+  "run": "grounding-rules-2",
+  "earlier_runs": [
+   {
+    "run": "grounding-rules-1",
+    "judge": "model:claude-opus-5-5@judge-v1",
+    "pairs": "evals/featured_pairs.jsonl",
+    "grounding": {
+     "explanations": 137,
+     "withheld": 37,
+     "with_no_claims": 6,
+     "claims_kept": 319,
+     "claims_dropped": {}
+    },
+    "overall": {
+     "claims": 319,
+     "judged": 319,
+     "unusable": 0,
+     "not_judged": 0,
+     "correct": 254,
+     "share": 0.7962,
+     "interval_95": [
+      0.7486,
+      0.8368
+     ]
+    },
+    "by_kind": {
+     "added": {
+      "claims": 85,
+      "judged": 85,
+      "unusable": 0,
+      "not_judged": 0,
+      "correct": 75,
+      "share": 0.8824,
+      "interval_95": [
+       0.7968,
+       0.9348
+      ]
+     },
+     "changed": {
+      "claims": 170,
+      "judged": 170,
+      "unusable": 0,
+      "not_judged": 0,
+      "correct": 128,
+      "share": 0.7529,
+      "interval_95": [
+       0.683,
+       0.8117
+      ]
+     },
+     "removed": {
+      "claims": 64,
+      "judged": 64,
+      "unusable": 0,
+      "not_judged": 0,
+      "correct": 51,
+      "share": 0.7969,
+      "interval_95": [
+       0.6829,
+       0.8773
+      ]
+     }
+    },
+    "hard_check": {
+     "cache_files": 127,
+     "problems": []
+    }
+   }
+  ]
  },
  "label_agreement": {
   "command": "uv run lineage eval agreement",
