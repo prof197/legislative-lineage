@@ -31,6 +31,7 @@ from numpy.typing import NDArray
 from lineage.intervals import Z_95, wilson
 from lineage.labels import CORRECT_FROM, MODEL, PERSON, Item, SectionKey, is_correct
 from lineage.pairs import load_cross_state_pairs
+from lineage.semantic import BUILD_THRESHOLD
 from lineage.semantic import MODEL as MODEL_NAME
 from lineage.semantic_pairs import load_semantic_pairs, section_keys
 
@@ -133,6 +134,64 @@ def stratified(parts: Sequence[tuple[int, int, int]]) -> dict[str, Any] | None:
     margin = Z_95 * math.sqrt(variance)
     interval = [round(max(0.0, center - margin), 4), round(min(1.0, center + margin), 4)]
     return {"precision": round(point, 4), "interval_95": interval}
+
+
+def restratified(
+    items: Sequence[Item],
+    labeled: Mapping[str, bool],
+    keys: Mapping[str, int],
+    drawn: Mapping[str, PairKeys],
+    now: Mapping[str, PairKeys],
+) -> dict[str, Any]:
+    """Precision over another population of pairs, `now` by stratum, from a sample drawn by
+    stratum from `drawn`, each item's pair named by its key in `keys`. A sampled pair still in
+    `now` counts in the cell of its stratum as drawn and its stratum now, and each cell is
+    weighted by its size, so pairs that moved between strata, as a pair found by both stages
+    becomes the near-duplicate stage's alone above its cosine, are weighted as they were drawn.
+    A sampled pair no longer in `now` is counted and left out."""
+    cells: dict[tuple[str, str], list[bool]] = {(o, n): [] for o in STRATA for n in STRATA}
+    sampled: dict[tuple[str, str], int] = dict.fromkeys(cells, 0)
+    left = 0
+    for item in items:
+        key = np.uint64(keys[item.pair.pair])
+        where = [n for n in STRATA if _holds(now[n], key)]
+        if not where:
+            left += 1
+            continue
+        cell = (stratum_of(item.pair.stages), where[0])
+        sampled[cell] += 1
+        if item.pair.pair in labeled:
+            cells[cell].append(labeled[item.pair.pair])
+    size = {
+        (o, n): int(np.intersect1d(drawn[o], now[n], assume_unique=True).size) for o, n in cells
+    }
+
+    def over(names: Sequence[str]) -> dict[str, Any] | None:
+        return stratified([(size[c], len(cells[c]), sum(cells[c])) for c in cells if c[1] in names])
+
+    by_stratum = {
+        n: {
+            "size": int(now[n].size),
+            "sampled": sum(sampled[(o, n)] for o in STRATA),
+            "labeled": sum(len(cells[(o, n)]) for o in STRATA),
+            "correct": sum(sum(cells[(o, n)]) for o in STRATA),
+            "estimate": over([n]),
+        }
+        for n in STRATA
+    }
+    return {
+        "strata": by_stratum,
+        "stages": {
+            stage: over([n for n, covers in STRATA.items() if stage in covers]) for stage in STAGES
+        },
+        "overall": over(list(STRATA)),
+        "sampled_pairs_no_longer_found": left,
+    }
+
+
+def _holds(keys: PairKeys, key: np.uint64) -> bool:
+    at = int(np.searchsorted(keys, key))
+    return at < keys.size and keys[at] == key
 
 
 def latest_rows(
@@ -257,12 +316,17 @@ def load_sizes(path: Path = SAMPLE_REPORT) -> dict[str, int]:
 
 
 def stored_strata(
-    tables_dir: Path, *, model: str = MODEL_NAME, dropped: NDArray[np.bool_] | None = None
+    tables_dir: Path,
+    *,
+    model: str = MODEL_NAME,
+    dropped: NDArray[np.bool_] | None = None,
+    threshold: float = BUILD_THRESHOLD,
 ) -> dict[str, PairKeys]:
-    """Both stages' stored cross-state pairs by stratum; with `dropped`, a mask over section
-    numbers, without the pairs either side of which it drops."""
+    """Both stages' stored cross-state pairs by stratum, by meaning at or above `threshold`,
+    by default all the build stores, which the samples were drawn from; with `dropped`, a mask
+    over section numbers, without the pairs either side of which it drops."""
     near = load_cross_state_pairs(tables_dir)
-    meaning = load_semantic_pairs(tables_dir, model)
+    meaning = load_semantic_pairs(tables_dir, model, threshold=threshold)
 
     def keys(left: NDArray[np.uint32], right: NDArray[np.uint32]) -> PairKeys:
         left, right = np.asarray(left), np.asarray(right)

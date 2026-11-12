@@ -23,6 +23,7 @@ uv run lineage stats --samples  # also: sample titles per document-type rule -> 
 uv run lineage index         # signatures, LSH bands, verified pairs, families -> data/tables/{signatures,bands,pairs,same_state_pairs,families}/, reports/index.json
 uv run lineage embed         # every distinct 94-word window embedded once, float16, resumable -> data/tables/semantic/, reports/embedding.json
 uv run lineage neighbors     # each distinct window's 20 nearest by meaning, HNSW over float16, recall checked exactly -> data/tables/semantic/<model>/neighbors/, reports/neighbors.json
+uv run lineage neighbors --check-at-stage  # the built neighbors' recall at the stage's threshold, no build -> reports/neighbors.json
 uv run lineage semantic-pairs  # the neighbors as cross-state section pairs, best cosine and window pair each -> data/tables/semantic/<model>/pairs/, reports/semantic_pairs.json
 uv run lineage precision-sample  # the precision sample, stratified by stage, from both stages' pairs -> evals/precision_sample.jsonl, reports/precision_sample.json
 uv run lineage precision-sample --flagged  # a seeded sample of the pairs the state boilerplate flag drops -> evals/precision_sample_flagged.jsonl, reports/precision_sample_flagged.json
@@ -88,15 +89,16 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   query.py        `lineage query`: sign a bill's text, look up its bands, verify, group by family, score by the share of its words matched
   cost.py         `lineage eval cost`: each stage's build time, memory and size from its report, and a query's seconds by stage
   relatives.py    a corpus bill's relatives from both stages' stored pairs, scored as a query is, the 50 best kept
+  listing.py      what a page lists: matches at the stage's threshold, less the state boilerplate flag's but for pairs both stages found
   acts.py         uniform act texts as eval queries: keep the sections, drop comments and notes
   ulc.py          the commission's enactment lists, and the bills each enactment names
   answer_key.py   `lineage eval answer-key`: the resolved list rows, for checking by eye
   commission.py   `lineage eval commission`: recall, a miss reason per enactment, the results JSON
-  threshold.py    `lineage eval threshold`: a page's precision under each threshold option, weighted from one drawn relative a page
+  threshold.py    `lineage eval threshold`: a page's precision under each threshold option and with the flag; the pair-level diagnostic at the stage's threshold
   results_table.py  the README results table, rendered from reports/results.json
   pair_data.py    the labeled pair dataset (Kim et al., EMNLP 2021): pinned files, fetch, load; no license, so local only
   pair_eval.py    `lineage eval pair-data`: the stages scored on labeled pairs, metrics only
-  semantic.py     the semantic stage: its model and threshold, as the pair evaluation chose them, and a query's search by meaning
+  semantic.py     the semantic stage: its model, the build's threshold (the pair evaluation's) and the stage's (the tuning sample's), and a query's search by meaning
   neighbors.py    `lineage neighbors`: every distinct window's nearest neighbors for the build, HNSW over the float16 vectors
   semantic_pairs.py  `lineage semantic-pairs`: the semantic stage's matches as cross-state section pairs, fingerprinted by model, K and threshold
   align.py        word-level alignment of a section pair: copied, paraphrased and unmatched spans, with ids and offsets (pure functions)

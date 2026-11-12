@@ -18,6 +18,7 @@ from lineage.precision import (
     latest_correct,
     latest_labels,
     pair_keys,
+    restratified,
     sample_rows,
     strata,
     stratified,
@@ -241,6 +242,7 @@ def test_the_command_writes_the_estimate_into_the_results(corpus: Path, tmp_path
 def test_the_sample_is_drawn_from_both_stages_stored_pairs(embedded_commission: Path) -> None:
     from lineage.pairs import load_cross_state_pairs
     from lineage.precision import build_sample
+    from lineage.semantic import BUILD_THRESHOLD
     from lineage.semantic_pairs import build_semantic_pairs, load_semantic_pairs, section_keys
     from tests.conftest import FAKE_MODEL
 
@@ -250,7 +252,8 @@ def test_the_sample_is_drawn_from_both_stages_stored_pairs(embedded_commission: 
     rows, report = build_sample(tables, model=FAKE_MODEL, per_stratum=5)
 
     near = load_cross_state_pairs(tables)
-    meaning = load_semantic_pairs(tables, FAKE_MODEL)
+    # The sample is drawn from every pair the build stores, down to the build's threshold.
+    meaning = load_semantic_pairs(tables, FAKE_MODEL, threshold=BUILD_THRESHOLD)
     bills, ordinals = section_keys(tables)
     key = {(bills[s], int(ordinals[s])): s for s in range(len(bills))}
 
@@ -292,3 +295,36 @@ def test_a_yes_to_the_passage_question_counts_correct_and_is_never_read_as_a_gra
     }  # fmt: skip
     with pytest.raises(PrecisionError, match="not on the 0-4 scale"):
         latest_labels(items, labels, asker, exact=True)
+
+
+def test_a_sample_restratified_weights_each_pair_by_the_stratum_it_was_drawn_from() -> None:
+    near_only, semantic_only, both = "near_duplicate_only", "semantic_only", "both"
+    stages = {near_only: ("near_duplicate",), semantic_only: ("semantic",),
+              both: ("near_duplicate", "semantic")}  # fmt: skip
+    drawn = {
+        near_only: np.arange(10, 20, dtype=np.uint64),  # 10 pairs
+        semantic_only: np.arange(20, 50, dtype=np.uint64),  # 30
+        both: np.arange(0, 10, dtype=np.uint64),  # 10
+    }
+    # Above a stricter cosine: pairs 0-3 found by both stay so, 4-9 are found by wording alone,
+    # and only 20-29 of those found by meaning alone stay.
+    now = {
+        near_only: np.sort(np.r_[np.arange(10, 20), np.arange(4, 10)]).astype(np.uint64),
+        semantic_only: np.arange(20, 30, dtype=np.uint64),
+        both: np.arange(0, 4, dtype=np.uint64),
+    }
+    sampled = [(10, near_only, True), (11, near_only, True), (0, both, True), (5, both, False),
+               (6, both, False), (20, semantic_only, True), (40, semantic_only, False)]  # fmt: skip
+    items = [_item(i, stages[name]) for i, (_, name, _) in enumerate(sampled)]
+    keys = {it.pair.pair: k for it, (k, _, _) in zip(items, sampled, strict=True)}
+    labeled = {it.pair.pair: c for it, (_, _, c) in zip(items, sampled, strict=True)}
+
+    got = restratified(items, labeled, keys, drawn, now)
+
+    # Wording alone now: 10 drawn so (2 of 2 right) and 6 drawn as both (0 of 2 right).
+    assert got["strata"][near_only]["size"] == 16
+    assert got["strata"][near_only]["estimate"] == stratified([(10, 2, 2), (6, 2, 0)])
+    assert got["strata"][both]["estimate"] == stratified([(4, 1, 1)])
+    assert got["strata"][semantic_only]["labeled"] == 1
+    assert got["sampled_pairs_no_longer_found"] == 1
+    assert got["overall"] == stratified([(10, 2, 2), (6, 2, 0), (4, 1, 1), (10, 1, 1)])

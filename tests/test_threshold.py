@@ -5,7 +5,7 @@ from typing import Any
 import pytest
 
 from lineage.intervals import wilson
-from lineage.semantic import THRESHOLD
+from lineage.semantic import BUILD_THRESHOLD
 from lineage.threshold import (
     CANDIDATES,
     Listed,
@@ -47,7 +47,7 @@ def test_an_option_counts_the_sampled_relatives_that_clear_it(t: float) -> None:
 
 def test_listing_apart_splits_the_sample_by_the_stage_that_found_each_relative() -> None:
     wording = page_precision(PAGES, CORRECT, near_duplicate_only)
-    meaning = page_precision(PAGES, CORRECT, by_meaning_only(THRESHOLD))
+    meaning = page_precision(PAGES, CORRECT, by_meaning_only(BUILD_THRESHOLD))
 
     assert (wording["labeled"], wording["correct"]) == (2, 2)
     assert (meaning["labeled"], meaning["correct"]) == (4, 2)
@@ -56,7 +56,7 @@ def test_listing_apart_splits_the_sample_by_the_stage_that_found_each_relative()
 
 
 def test_an_unlabeled_relative_is_counted_and_left_out() -> None:
-    got = page_precision(PAGES, [None, *CORRECT[1:]], at_threshold(THRESHOLD))
+    got = page_precision(PAGES, [None, *CORRECT[1:]], at_threshold(BUILD_THRESHOLD))
 
     assert (got["labeled"], got["unlabeled"]) == (5, 1)
 
@@ -82,7 +82,7 @@ def _commission(found: dict[float, int]) -> dict[str, Any]:
 
 def test_the_proposal_needs_recall_at_every_option() -> None:
     with pytest.raises(ThresholdError, match="no recall"):
-        proposal([], [], {}, _commission({THRESHOLD: 33}), labeler="model:x@y")
+        proposal([], [], {}, _commission({BUILD_THRESHOLD: 33}), labeler="model:x@y")
 
     got = proposal([], [], {}, _commission(dict.fromkeys(CANDIDATES, 33)), labeler="model:x@y")
 

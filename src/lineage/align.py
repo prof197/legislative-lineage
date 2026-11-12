@@ -7,8 +7,11 @@ a coincidence of common phrasing and is not kept.
 
 Between the copies, and over the whole pair when nothing was copied, lie unmatched stretches.
 Inside each stretch that has text on both sides, each side is cut into sentences, and sentences
-are paired by embedding similarity: a pair at or above THRESHOLD, the semantic stage's cosine
-(lineage.semantic), is a paraphrase. Pairs are taken best first and never cross, so each text
+are paired by embedding similarity: a pair at or above THRESHOLD, the pair dataset's cosine
+threshold (lineage.semantic.BUILD_THRESHOLD), is a paraphrase. It stayed there when pages came to
+list matches by meaning at a stricter threshold: both Georgia samples were judged on passages
+aligned at it, and which bills a page lists is a separate question from which sentences of a
+listed pair read alike. Pairs are taken best first and never cross, so each text
 still reads in order. Every sentence left unpaired is unmatched. Without an embedder nothing is
 marked as paraphrase.
 
@@ -28,7 +31,9 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lineage.sections import normalize
-from lineage.semantic import THRESHOLD
+from lineage.semantic import BUILD_THRESHOLD
+
+THRESHOLD = BUILD_THRESHOLD
 
 MIN_COPIED = 5  # words; the shingle length, below which shared wording is a coincidence
 

@@ -82,7 +82,7 @@ def test_a_stricter_threshold_regroups_the_same_hits_and_only_drops(
 ) -> None:
     text = _marked(_raw_text(corpus, "SB 238"))
     result = query_text(text, corpus, semantic=search)
-    cosines = sorted({h[2] for h in result.hits.by_meaning}) if result.hits else []
+    cosines = sorted({h[3] for h in result.hits.by_meaning}) if result.hits else []
 
     assert cosines
     assert regrouped(result, corpus, THRESHOLD) == result.matches

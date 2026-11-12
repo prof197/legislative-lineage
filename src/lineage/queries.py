@@ -548,18 +548,18 @@ def semantic_units_left_out(
     return int(rows[0][0]), int(rows[0][1])
 
 
-def signature_bill_ids_at(
+def signature_sections_at(
     con: duckdb.DuckDBPyConnection, *, parquet_path: Path, rows: list[int]
-) -> dict[int, str]:
-    """The bill id of each wanted row of one signature keys file, by row number."""
-    found: list[tuple[int, str]] = con.execute(
+) -> dict[int, tuple[str, int]]:
+    """The bill id and section ordinal of each wanted row of one signature keys file."""
+    found: list[tuple[int, str, int]] = con.execute(
         """
-        SELECT file_row_number, bill_id FROM read_parquet($p, file_row_number = true)
+        SELECT file_row_number, bill_id, ordinal FROM read_parquet($p, file_row_number = true)
         WHERE file_row_number IN (SELECT unnest($rows))
         """,
         {"p": str(parquet_path), "rows": rows},
     ).fetchall()
-    return dict(found)
+    return {row: (bill_id, ordinal) for row, bill_id, ordinal in found}
 
 
 @dataclass(frozen=True, slots=True)

@@ -5,11 +5,13 @@ index: HNSW over the float16 vectors, which on a sample of the corpus kept 99.9%
 neighbors at or above the threshold, where IVF-PQ re-scored kept 97.2%, and searched faster
 (reports/ann_benchmark.json). HNSW's scores are cosines over the float16 vectors already; an
 index of compressed codes, such as IVF-PQ, has its `candidates` best re-scored against the
-vectors instead. The text itself is dropped, and the K best at or above the stage's threshold
-are kept. The result is two arrays beside the vectors, one row per text id:
-`neighbors/ids.npy` (int32, -1 where fewer than K pass) and `neighbors/scores.npy` (float16
-cosines). The index is never saved: it exists only for the build, and a single query needs
-neither it nor these arrays, since it searches the vectors exactly (lineage.semantic).
+vectors instead. The text itself is dropped, and the K best at or above the build's threshold
+(lineage.semantic.BUILD_THRESHOLD) are kept. The result is two arrays beside the vectors, one
+row per text id: `neighbors/ids.npy` (int32, -1 where fewer than K pass) and
+`neighbors/scores.npy` (float16 cosines). The index is never saved: it exists only for the
+build, and a single query needs neither it nor these arrays, since it searches the vectors
+exactly (lineage.semantic). `check_at` measures the stored neighbors' recall at the stage's
+stricter threshold on the same seeded texts.
 
 The build holds to DR-3's memory bound. It refuses to start when its projected peak, the index
 at its measured bytes per vector plus its buffers, is over the bound, and stops at the first
@@ -40,7 +42,8 @@ from lineage.ann import (
 )
 from lineage.disk import require_free_space
 from lineage.memory import BOUND_BYTES, MemoryBoundError, peak_bytes, require_within
-from lineage.semantic import MODEL, THRESHOLD, K
+from lineage.semantic import BUILD_THRESHOLD as THRESHOLD
+from lineage.semantic import MODEL, K
 from lineage.vectors import EmbedError, load_plan, load_vectors, rows_of, vectors_dir
 
 SEED = 20261111
@@ -88,6 +91,42 @@ def keep_neighbors(found: Neighbors, own: NDArray[np.int64], k: int, threshold: 
     )
 
 
+def seeded_draws(n: int) -> tuple[NDArray[np.int64], NDArray[np.int64]]:
+    """The build's training rows and the texts it checks exactly, drawn in that order from SEED,
+    so a later check reads the same texts."""
+    rng = np.random.default_rng(SEED)
+    train = np.sort(rng.choice(n, size=min(TRAIN_ROWS, n), replace=False)).astype(np.int64)
+    checked = np.sort(rng.choice(n, size=min(CHECKED, n), replace=False)).astype(np.int64)
+    return train, checked
+
+
+def check_at(tables_dir: Path, threshold: float, *, model: str = MODEL) -> dict[str, Any]:
+    """The stored neighbors' recall at a threshold at or above the build's: of each checked
+    text's K nearest at or above it by exact search, the share the stored neighbors at or above
+    it hold. Exact, since the build keeps each text's K nearest before its threshold applies."""
+    if threshold < THRESHOLD:
+        raise EmbedError(f"the neighbors were kept down to {THRESHOLD}, not {threshold}")
+    plan = load_plan(tables_dir)
+    if plan is None:
+        raise EmbedError(f"no semantic plan in {tables_dir}; run `lineage embed`")
+    shards = load_vectors(tables_dir, model, plan)
+    n = sum(s.shape[0] for s in shards)
+    _, checked = seeded_draws(n)
+    where = vectors_dir(tables_dir, model) / "neighbors"
+    ids = np.asarray(np.load(where / "ids.npy", mmap_mode="r")[checked]).astype(np.int64)
+    scores = np.asarray(np.load(where / "scores.npy", mmap_mode="r")[checked])
+    stored = np.where(scores >= threshold, ids, -1)
+    truth = keep_neighbors(
+        exact_search(shards, rows_of(shards, checked), K + 1), checked, K, threshold
+    )
+    return {
+        "threshold": threshold,
+        "texts": int(checked.shape[0]),
+        "true_neighbors": int((truth.ids >= 0).sum()),
+        "recall": round(recall_at(stored, truth.ids), 4),
+    }
+
+
 def build_neighbors(
     tables_dir: Path,
     *,
@@ -120,8 +159,8 @@ def build_neighbors(
         )
     set_threads(THREADS)
 
-    rng = np.random.default_rng(SEED)
-    train = rows_of(shards, np.sort(rng.choice(n, size=min(TRAIN_ROWS, n), replace=False)))
+    train_rows, checked = seeded_draws(n)
+    train = rows_of(shards, train_rows)
     index = train_index(spec, train.shape[1], train)  # a no-op for an index needing no training
     del train
     require_within(bound_bytes, f"training {spec}")
@@ -157,7 +196,6 @@ def build_neighbors(
     scores.flush()
     found = int((np.asarray(ids) >= 0).sum())
     progress(f"checking {min(CHECKED, n):,} texts against exact search")
-    checked = np.sort(rng.choice(n, size=min(CHECKED, n), replace=False)).astype(np.int64)
     truth = keep_neighbors(
         exact_search(shards, rows_of(shards, checked), K + 1), checked, K, THRESHOLD
     )

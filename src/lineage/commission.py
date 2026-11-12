@@ -18,8 +18,8 @@ text. See DESIGN.md#commission-recall.
 import hashlib
 import json
 from collections import Counter
-from collections.abc import Sequence
-from dataclasses import dataclass
+from collections.abc import Collection, Sequence
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, Literal
 
@@ -39,8 +39,8 @@ from lineage.query import (
     require_index,
     sign_query,
 )
+from lineage.semantic import BUILD_THRESHOLD, SemanticSearch, best_cosines_to_bills
 from lineage.semantic import THRESHOLD as THRESHOLD_SEMANTIC
-from lineage.semantic import SemanticSearch, best_cosines_to_bills
 from lineage.sessions import Session, load_sessions
 from lineage.signatures import open_signatures
 from lineage.stats import AMENDMENT_CHARS, AMENDMENT_OPENING, AMENDMENT_SUBSTITUTE
@@ -228,19 +228,23 @@ def evaluate(
     acts: frozenset[str] | None = None,
     semantic: SemanticSearch | None = None,
     semantic_thresholds: Sequence[float] = (),
+    flagged: Collection[tuple[str, int]] = frozenset(),
 ) -> dict[str, Any]:
     """Recall of each act's enactments from its query text, with a reason for every miss.
 
     With `semantic`, both stages search, each enactment records which stages found it, and
     the stage ablation reports recall for each stage alone and for both together. With
-    `semantic_thresholds`, each at or above the stage's, recall is also counted as if the
-    stage's threshold were each of them (lineage.query.regrouped), for the threshold
-    proposal; nothing else changes."""
-    if any(t < THRESHOLD_SEMANTIC for t in semantic_thresholds):
+    `semantic_thresholds`, each at or above the build's, recall is also counted as if the
+    stage's threshold were each of them, for the threshold proposal: each query is searched
+    once at the lowest, and its matches regrouped at each and at the stage's own
+    (lineage.query.regrouped), so nothing else changes. Matches are listed as a page lists
+    them, without one stage's hits on the `flagged` sections (lineage.listing)."""
+    if any(t < BUILD_THRESHOLD for t in semantic_thresholds):
         raise CommissionError(
-            f"a semantic threshold under the search's {THRESHOLD_SEMANTIC} cannot be counted "
-            "without searching again"
+            f"a semantic threshold under the build's {BUILD_THRESHOLD} lists what the build "
+            "never stored, so no page under it can be measured"
         )
+    lowest = min([THRESHOLD_SEMANTIC, *semantic_thresholds])
     require_index(tables_dir)
     stages = ("near_duplicate", "semantic") if semantic is not None else ("near_duplicate",)
     rows = [r for r in snapshot.rows if r.stratum is not None]
@@ -289,7 +293,15 @@ def evaluate(
     records: list[dict[str, Any]] = []
     query_stats: dict[str, dict[str, Any]] = {}
     for act in sorted(query_texts):
-        result = query_text(query_texts[act], tables_dir, semantic=semantic)
+        result = query_text(
+            query_texts[act],
+            tables_dir,
+            semantic=semantic,
+            semantic_threshold=lowest,
+            flagged=flagged,
+        )
+        if lowest < THRESHOLD_SEMANTIC:
+            result = replace(result, matches=regrouped(result, tables_dir, THRESHOLD_SEMANTIC))
         families_at = {
             t: {m.family for m in regrouped(result, tables_dir, t) if m.share > min_share}
             for t in semantic_thresholds
@@ -440,6 +452,10 @@ def evaluate(
             "status": "approved",
         },
         "verification_threshold": THRESHOLD,
+        "semantic_threshold": THRESHOLD_SEMANTIC if semantic is not None else None,
+        "state_boilerplate_flag": (
+            {"sections": len(flagged), "both_stages_exempt": True} if flagged else None
+        ),
         "bucket_cap": BUCKET_CAP,
         "first_year": first_year,
         "queries": query_stats,
@@ -490,6 +506,7 @@ def commission_recall(
     development_path: Path | None = None,
     semantic: SemanticSearch | None = None,
     semantic_thresholds: Sequence[float] = (),
+    flagged: Collection[tuple[str, int]] = frozenset(),
 ) -> dict[str, Any]:
     """The headline eval: each act's own text as the query.
 
@@ -525,6 +542,7 @@ def commission_recall(
         acts=frozenset(act_ids) if development_path else None,
         semantic=semantic,
         semantic_thresholds=semantic_thresholds,
+        flagged=flagged,
     )
     for act, stats in acts.items():
         result["queries"][act] = stats | result["queries"][act]

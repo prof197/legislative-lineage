@@ -43,7 +43,7 @@ from lineage.precision import (
     stratum_of,
     without_sections,
 )
-from lineage.semantic import MODEL
+from lineage.semantic import BUILD_THRESHOLD, MODEL
 from lineage.semantic_pairs import load_semantic_pairs, section_keys
 
 REPORT = Path("reports/state_boilerplate.json")
@@ -164,7 +164,7 @@ def build_state_boilerplate(
     building.rename(where)
 
     near = load_cross_state_pairs(tables_dir)
-    meaning = load_semantic_pairs(tables_dir, model)
+    meaning = load_semantic_pairs(tables_dir, model, threshold=BUILD_THRESHOLD)
     with queries.connect_quiet() as con:
         state_of_bill = queries.bill_states(con, bills_glob=str(tables_dir / "bills" / "*.parquet"))
     states = [state_of_bill[b] for b in bills]
@@ -228,7 +228,10 @@ def build_state_boilerplate(
     }
 
 
-def _dropped(tables_dir: Path, *, model: str, min_families: int) -> dict[str, NDArray[np.uint64]]:
+def dropped_strata(
+    tables_dir: Path, *, model: str = MODEL, min_families: int = MIN_FAMILIES
+) -> dict[str, NDArray[np.uint64]]:
+    """The pairs the flag drops in the build, by stratum, as the dropped pairs were drawn."""
     flag = flagged(load_families_reached(tables_dir), min_families)
     every = stored_strata(tables_dir, model=model)
     kept = stored_strata(tables_dir, model=model, dropped=flag)
@@ -244,7 +247,7 @@ def build_flagged_sample(
     min_families: int = MIN_FAMILIES,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """A seeded draw, per stratum, from the cross-state pairs the flag drops, and its report."""
-    population = _dropped(tables_dir, model=model, min_families=min_families)
+    population = dropped_strata(tables_dir, model=model, min_families=min_families)
     drawn = draw(population, per_stratum=per_stratum, seed=seed)
     bills, ordinals = section_keys(tables_dir)
     rows = sample_rows(drawn, lambda s: SectionKey(bills[s], int(ordinals[s])), prefix="f")

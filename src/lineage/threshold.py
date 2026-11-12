@@ -31,14 +31,21 @@ from itertools import pairwise
 from pathlib import Path
 from typing import Any
 
-from lineage.intervals import wilson
+import numpy as np
+from numpy.typing import NDArray
+
+from lineage.intervals import weighted_share, wilson
 from lineage.labels import Item
-from lineage.precision import latest_correct
-from lineage.semantic import THRESHOLD
+from lineage.listing import ListedPairs, listed_pairs, shipped_flag
+from lineage.precision import STRATA, latest_correct, pair_keys, restratified, stored_strata, strata
+from lineage.relatives import bill_relatives
+from lineage.semantic import BUILD_THRESHOLD, MODEL, THRESHOLD
+from lineage.semantic_pairs import section_keys
+from lineage.state_boilerplate import dropped_strata
 
 # Up to 0.97, the first step at which development recall falls: the two enactments found by
 # meaning alone reach 0.9677 and 0.9632 (reports/results.json, each bill's best_cosine).
-CANDIDATES = (THRESHOLD, 0.90, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97)
+CANDIDATES = (BUILD_THRESHOLD, 0.90, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97)
 REPORT = Path("reports/threshold_proposal.json")
 COMMAND = "uv run lineage eval threshold"
 
@@ -218,9 +225,9 @@ def proposal(
     options.append(
         {
             "option": "listed_apart",
-            "threshold": THRESHOLD,
+            "threshold": BUILD_THRESHOLD,
             "by_wording": page_precision(listed, correct, near_duplicate_only),
-            "by_meaning_alone": page_precision(listed, correct, by_meaning_only(THRESHOLD)),
+            "by_meaning_alone": page_precision(listed, correct, by_meaning_only(BUILD_THRESHOLD)),
             "development_recall": {
                 "on_the_page": _recall(int(both["found"]), enactments),
                 "by_wording": _recall(near, enactments),
@@ -236,3 +243,187 @@ def proposal(
         "by_band": by_band(listed, correct),
         "options": options,
     }
+
+
+# The flag's variants measured at the stage's threshold: (name, flag on, both stages exempt).
+FLAG_VARIANTS = (
+    ("flag_off", False, False),
+    ("flag", True, True),
+    ("flag_without_exemption", True, False),
+)
+
+
+def _pair_key(a: int, b: int) -> int:
+    lo, hi = min(a, b), max(a, b)
+    return (lo << 32) | hi
+
+
+def flag_at_threshold(
+    tables_dir: Path,
+    items: Sequence[Item],
+    labels: Sequence[Mapping[str, Any]],
+    pages: Mapping[str, Mapping[str, Any]],
+    *,
+    labeler: str,
+    threshold: float = THRESHOLD,
+    model: str = MODEL,
+) -> dict[str, Any]:
+    """The tuning sample's pages listed again at `threshold` with the flag off, on, and on
+    without the exemption for pairs both stages found. A drawn relative keeps its label when
+    its page still lists its family and the pair it was judged on still stands; a family listed
+    on other pairs only is counted apart, unlabeled. Each kept relative is weighted by its page's
+    list as drawn over its list now, so the self-normalized share estimates the precision of
+    what a page lists."""
+    flag = shipped_flag(tables_dir)
+    if flag is None:
+        raise ThresholdError("no state boilerplate counts; run `uv run lineage state-boilerplate`")
+    bills, ordinals = section_keys(tables_dir)
+    number = {(b, o): i for i, (b, o) in enumerate(zip(bills, ordinals.tolist(), strict=True))}
+    got = latest_correct(items, labels, labeler, exact=True)
+    ids = [i.pair.pair for i in items]
+    judged = {
+        i.pair.pair: _pair_key(
+            number[(i.pair.query.bill_id, i.pair.query.ordinal)],
+            number[(i.pair.match.bill_id, i.pair.match.ordinal)],
+        )
+        for i in items
+    }
+    page_bills = sorted({str(pages[p]["bill_id"]) for p in ids})
+    variants: dict[str, Any] = {}
+    for name, on, exempt in FLAG_VARIANTS:
+        listed = listed_pairs(
+            tables_dir, model=model, threshold=threshold, flag=flag if on else None,
+            exempt_both=exempt,
+        )  # fmt: skip
+        standing = np.unique(
+            np.concatenate(
+                [
+                    (np.asarray(p.left).astype(np.uint64) << np.uint64(32))
+                    | np.asarray(p.right).astype(np.uint64)
+                    for p in (listed.near, listed.meaning)
+                ]
+            )
+        )
+        stands = dict(
+            zip(
+                ids,
+                np.isin(np.array([judged[p] for p in ids], dtype=np.uint64), standing).tolist(),
+                strict=True,
+            )
+        )
+        relatives = bill_relatives(tables_dir, page_bills, model=model, listed=listed)
+        kept: list[tuple[float, bool]] = []
+        relisted = dropped = unlabeled = 0
+        for p in ids:
+            page = pages[p]
+            now = relatives[str(page["bill_id"])].matches
+            if page["family"] not in {m.family for m in now}:
+                dropped += 1
+            elif not stands[p]:
+                relisted += 1
+            elif got.get(p) is None:
+                unlabeled += 1
+            else:
+                kept.append((int(page["listed"]) / len(now), bool(got[p])))
+        hits = sum(c for _, c in kept)
+        share, interval = weighted_share([w for w, _ in kept], [c for _, c in kept])
+        emptied = sum(not relatives[b].matches for b in page_bills)
+        variants[name] = {
+            "labeled": len(kept),
+            "correct": hits,
+            "precision": round(hits / len(kept), 4) if kept else None,
+            "interval_95": [round(v, 4) for v in wilson(hits, len(kept))],
+            "page_weighted": {
+                "precision": None if share is None else round(share, 4),
+                "interval_95": [round(v, 4) for v in interval],
+            },
+            "relatives_dropped": dropped,
+            "relisted_on_another_pair": relisted,
+            "unlabeled": unlabeled,
+            "pages_listing": len(page_bills) - emptied,
+            "pages_emptied": emptied,
+            "relatives_listed": sum(len(relatives[b].matches) for b in page_bills),
+            "build_pairs_exempted": listed.exempted,
+        }
+    return {"threshold": threshold, "labeler": labeler, "sampled": len(items), **variants}
+
+
+def _strata_of(listed: ListedPairs) -> dict[str, NDArray[np.uint64]]:
+    return strata(
+        pair_keys(listed.near.left, listed.near.right),
+        pair_keys(listed.meaning.left, listed.meaning.right),
+    )
+
+
+def _keys_of(items: Sequence[Item], tables_dir: Path) -> dict[str, int]:
+    bills, ordinals = section_keys(tables_dir)
+    number = {(b, o): i for i, (b, o) in enumerate(zip(bills, ordinals.tolist(), strict=True))}
+    return {
+        i.pair.pair: _pair_key(
+            number[(i.pair.query.bill_id, i.pair.query.ordinal)],
+            number[(i.pair.match.bill_id, i.pair.match.ordinal)],
+        )
+        for i in items
+    }
+
+
+def pair_level_at(
+    tables_dir: Path,
+    items: Sequence[Item],
+    labels: Sequence[Mapping[str, Any]],
+    sizes: Mapping[str, int],
+    *,
+    labeler: str,
+    dropped_items: Sequence[Item] | None = None,
+    dropped_labeler: str | None = None,
+    threshold: float = THRESHOLD,
+    model: str = MODEL,
+) -> dict[str, Any]:
+    """The pair-level diagnostic at the stage's threshold: the precision sample, drawn from
+    every pair the build stores, re-weighted to the pairs found at `threshold` with the flag off
+    and as shipped (lineage.precision.restratified); and the sample of the pairs the flag drops,
+    re-weighted to the pairs it drops at `threshold`, both stages' pairs exempt."""
+    flag = shipped_flag(tables_dir)
+    if flag is None:
+        raise ThresholdError("no state boilerplate counts; run `uv run lineage state-boilerplate`")
+    drawn = stored_strata(tables_dir, model=model)
+    if {n: int(k.size) for n, k in drawn.items()} != dict(sizes):
+        raise ThresholdError(
+            "the build's strata are not the ones the precision sample was drawn from"
+        )
+    every = _strata_of(listed_pairs(tables_dir, model=model, threshold=threshold, flag=None))
+    kept = _strata_of(listed_pairs(tables_dir, model=model, threshold=threshold, flag=flag))
+    keys = _keys_of(items, tables_dir)
+    correct = latest_correct(items, labels, labeler, exact=True)
+    out: dict[str, Any] = {
+        "threshold": threshold,
+        "model_labeler": labeler,
+        "flag_off": restratified(items, correct, keys, drawn, every),
+        "flag_on": restratified(items, correct, keys, drawn, kept),
+        "dropped_pairs": None,
+    }
+    if dropped_items is not None:
+        strict = _strata_of(
+            listed_pairs(tables_dir, model=model, threshold=threshold, flag=flag, exempt_both=False)
+        )
+        who = dropped_labeler or labeler
+        dropped_correct = latest_correct(dropped_items, labels, who, exact=True)
+        dropped_keys = _keys_of(dropped_items, tables_dir)
+        dropped_drawn = dropped_strata(tables_dir, model=model)
+
+        def among(population: Mapping[str, NDArray[np.uint64]]) -> dict[str, Any]:
+            return {
+                "model_labeler": who,
+                **restratified(
+                    dropped_items, dropped_correct, dropped_keys, dropped_drawn, population
+                ),
+            }
+
+        out["dropped_pairs"] = among(
+            {n: np.setdiff1d(every[n], kept[n], assume_unique=True) for n in STRATA}
+        )
+        # The pairs the exemption keeps: a flagged section's pairs both stages found.
+        out["exempted_pairs"] = among(
+            {n: np.setdiff1d(kept[n], strict[n], assume_unique=True) for n in STRATA}
+        )
+    return out

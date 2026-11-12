@@ -6,9 +6,9 @@ import pytest
 from lineage import queries
 from lineage.ann import Neighbors
 from lineage.memory import MemoryBoundError, current_bytes
-from lineage.neighbors import build_neighbors, keep_neighbors, projected_bytes
-from lineage.semantic import K
-from lineage.vectors import build_plan, load_plan, semantic_dir, shard_name, vectors_dir
+from lineage.neighbors import build_neighbors, check_at, keep_neighbors, projected_bytes
+from lineage.semantic import BUILD_THRESHOLD, THRESHOLD, K
+from lineage.vectors import EmbedError, build_plan, load_plan, semantic_dir, shard_name, vectors_dir
 from tests.fakes import bag_of_words
 
 
@@ -158,3 +158,18 @@ def test_the_command_passes_at_the_floor(monkeypatch: pytest.MonkeyPatch, tmp_pa
     result = CliRunner().invoke(cli.app, ["neighbors", "--report", str(tmp_path / "n.json")])
 
     assert result.exit_code == 0, result.output
+
+
+def test_the_check_at_a_stricter_threshold_reads_the_built_neighbors(
+    corpus: Path, tmp_path: Path
+) -> None:
+    tables = _embedded(corpus, tmp_path)
+    build_neighbors(tables, model="fake", spec="Flat", ef_search=None, floor_bytes=0)
+
+    at_build = check_at(tables, BUILD_THRESHOLD, model="fake")
+    at_stage = check_at(tables, THRESHOLD, model="fake")
+
+    assert at_build["recall"] == at_stage["recall"] == 1.0  # a flat index is exact
+    assert 0 < at_stage["true_neighbors"] <= at_build["true_neighbors"]
+    with pytest.raises(EmbedError, match="kept down to"):
+        check_at(tables, BUILD_THRESHOLD - 0.01, model="fake")

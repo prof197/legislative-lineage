@@ -21,5 +21,11 @@
  "peak_memory_bytes": 8456993728,
  "memory_bound_bytes": 17179869184,
  "projected_memory_bytes": 9935804823,
- "within_memory_bound": true
+ "within_memory_bound": true,
+ "exact_check_at_stage_threshold": {
+  "threshold": 0.93,
+  "texts": 2000,
+  "true_neighbors": 8009,
+  "recall": 0.9938
+ }
 }

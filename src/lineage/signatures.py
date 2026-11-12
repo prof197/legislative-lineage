@@ -315,16 +315,16 @@ def signature_values(files: SignatureFiles, rows: NDArray[np.int64]) -> NDArray[
     return out
 
 
-def signature_bill_ids(files: SignatureFiles, rows: NDArray[np.int64]) -> list[str]:
-    """The bill id behind each of the given rows, in the order given."""
-    out = [""] * rows.size
+def signature_sections(files: SignatureFiles, rows: NDArray[np.int64]) -> list[tuple[str, int]]:
+    """The (bill id, ordinal) of the section behind each of the given rows, in the order given."""
+    out: list[tuple[str, int]] = [("", 0)] * rows.size
     which = _by_file(files, rows)
     used: list[int] = np.unique(which).tolist()
     with queries.connect_quiet() as con:
         for f in used:
             positions = np.flatnonzero(which == f)
             local = (rows[positions] - files.starts[f]).tolist()
-            ids = queries.signature_bill_ids_at(con, parquet_path=files.keys[f], rows=local)
+            keys = queries.signature_sections_at(con, parquet_path=files.keys[f], rows=local)
             for position, row in zip(positions.tolist(), local, strict=True):
-                out[position] = ids[row]
+                out[position] = keys[row]
     return out

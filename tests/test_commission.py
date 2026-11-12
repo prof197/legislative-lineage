@@ -29,7 +29,7 @@ from lineage.commission import (
 from lineage.lsh import BANDS, BUCKET_CAP, ROWS
 from lineage.minhash import NUM_PERM
 from lineage.queries import EnactmentBill
-from lineage.semantic import THRESHOLD
+from lineage.semantic import BUILD_THRESHOLD, THRESHOLD
 from lineage.sessions import load_sessions
 from lineage.ulc import ENACTMENTS, load_enactments
 from tests.conftest import COMMISSION
@@ -322,21 +322,28 @@ def test_recall_at_a_stricter_semantic_threshold_matches_the_search_and_never_ri
     act_texts = {act: _raw_text(commission_corpus, bill) for act, bill in build["queries"].items()}
     snapshot = load_enactments(ENACTMENTS)
     sessions = load_sessions(COMMISSION / "sessions.csv")
-    thresholds = (THRESHOLD, 0.95, 0.99, 1.01)
+    thresholds = (BUILD_THRESHOLD, THRESHOLD, 0.95, 0.99, 1.01)
 
     got = evaluate(
         act_texts, snapshot, commission_corpus, sessions,
         semantic=bag_of_words_search(commission_corpus), semantic_thresholds=thresholds,
     )  # fmt: skip
+    alone = evaluate(
+        act_texts, snapshot, commission_corpus, sessions,
+        semantic=bag_of_words_search(commission_corpus),
+    )  # fmt: skip
 
     found = [r["found"] for r in got["recall_by_semantic_threshold"]]
-    assert found[0] == got["recall"]["pooled"]["all"]["found"]
+    assert found[1] == got["recall"]["pooled"]["all"]["found"]
     assert found == sorted(found, reverse=True)
     # Above every cosine, only the near-duplicate stage finds anything.
     assert found[-1] == got["stage_ablation"]["near_duplicate"]["pooled"]["all"]["found"]
     for e in got["enactments"]:
         assert e["found_at_semantic_threshold"][str(THRESHOLD)] == e["found"]
-    with pytest.raises(CommissionError, match="under the search"):
+    # Searching lower for the options leaves the results at the stage's threshold as they were.
+    assert got["recall"] == alone["recall"]
+    assert got["queries"] == alone["queries"]
+    with pytest.raises(CommissionError, match="under the build"):
         evaluate(
             act_texts, snapshot, commission_corpus, sessions,
             semantic=bag_of_words_search(commission_corpus), semantic_thresholds=(0.5,),

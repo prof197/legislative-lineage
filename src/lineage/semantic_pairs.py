@@ -14,9 +14,12 @@ Same-state pairs are not stored, since families come from the near-duplicate sta
 the near-duplicate stage did not sign, being shorter than one shingle, has no number; its
 windows are left out and counted.
 
-The table records the model, K and threshold it was built under, and refuses to load when any
-of them differs from the stage's own, so changing one means rebuilding it. A single query never
-reads it: it searches the vectors exactly. See DESIGN.md#semantic-stage.
+The table is built down to the build's threshold (lineage.semantic.BUILD_THRESHOLD) and read
+at the stage's, or any threshold between: each text keeps its K nearest before a threshold
+applies, so the pairs at or above a stricter one are exactly those a build at it would store.
+It records the model, K and threshold it was built under, and refuses to load under another
+model or K, or at a threshold under its own, so changing one means rebuilding it. A single query
+never reads it: it searches the vectors exactly. See DESIGN.md#semantic-stage.
 """
 
 import json
@@ -32,7 +35,7 @@ from numpy.typing import NDArray
 from lineage import queries
 from lineage.disk import require_free_space
 from lineage.memory import BOUND_BYTES, peak_bytes, require_within
-from lineage.semantic import MODEL, THRESHOLD, K
+from lineage.semantic import BUILD_THRESHOLD, MODEL, THRESHOLD, K
 from lineage.signatures import open_signatures, row_labels
 from lineage.vectors import semantic_dir, vectors_dir
 
@@ -63,7 +66,7 @@ def pairs_dir(tables_dir: Path, model: str = MODEL) -> Path:
     return vectors_dir(tables_dir, model) / "pairs"
 
 
-def fingerprint(model: str, *, k: int = K, threshold: float = THRESHOLD) -> dict[str, Any]:
+def fingerprint(model: str, *, k: int = K, threshold: float = BUILD_THRESHOLD) -> dict[str, Any]:
     return {"model": model, "k": k, "threshold": threshold}
 
 
@@ -112,7 +115,7 @@ def build_semantic_pairs(
     model: str = MODEL,
     floor_bytes: int,
     k: int = K,
-    threshold: float = THRESHOLD,
+    threshold: float = BUILD_THRESHOLD,
     bound_bytes: int = BOUND_BYTES,
 ) -> dict[str, Any]:
     """Expand the kept neighbors into cross-state section pairs and store them; returns the
@@ -180,16 +183,29 @@ def build_semantic_pairs(
     }
 
 
-def load_semantic_pairs(tables_dir: Path, model: str = MODEL) -> SemanticPairs:
-    """The stored pairs, memory-mapped; refused when built under another model, K or threshold."""
+def load_semantic_pairs(
+    tables_dir: Path, model: str = MODEL, *, threshold: float = THRESHOLD
+) -> SemanticPairs:
+    """The stored pairs at or above `threshold`, memory-mapped when that is the build's own;
+    refused when built under another model or K, or at a threshold above `threshold`."""
     where = pairs_dir(tables_dir, model)
     path = where / "fingerprint.json"
     built = json.loads(path.read_text()) if path.exists() else None
-    if built != fingerprint(model):
+    wanted = fingerprint(model)
+    if (
+        not isinstance(built, dict)
+        or {k: v for k, v in cast("dict[str, Any]", built).items() if k != "threshold"}
+        != {k: v for k, v in wanted.items() if k != "threshold"}
+        or float(cast("dict[str, Any]", built)["threshold"]) > threshold
+    ):
         raise SemanticPairsError(
-            f"{where} was built under {built}, not {fingerprint(model)}; run `{COMMAND}`"
+            f"{where} was built under {built}, not {model}, K = {K}, a threshold of {threshold} "
+            f"or under; run `{COMMAND}`"
         )
     arrays = [np.load(where / f"{name}.npy", mmap_mode="r") for name in _FILES]
+    if float(cast("dict[str, Any]", built)["threshold"]) < threshold:
+        keep = np.asarray(arrays[2]) >= threshold
+        arrays = [np.asarray(a)[keep] for a in arrays]
     return SemanticPairs(
         cast("NDArray[np.uint32]", arrays[0]),
         cast("NDArray[np.uint32]", arrays[1]),

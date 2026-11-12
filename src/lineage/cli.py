@@ -61,6 +61,7 @@ from lineage.labels import (
 )
 from lineage.labels import PERSON as PERSON_PREFIX
 from lineage.labels import model_labeler as model_labeler_name
+from lineage.listing import flagged_sections
 from lineage.memory import MemoryBoundError
 from lineage.model_labels import BUDGET as LABEL_BUDGET
 from lineage.model_labels import MAX_COST as LABEL_MAX_COST
@@ -82,6 +83,7 @@ from lineage.model_labels import spent as label_spent
 from lineage.models import MODELS, MODELS_DIR, ModelError, fetch_model
 from lineage.neighbors import EF_SEARCH, RECALL_FLOOR, build_neighbors
 from lineage.neighbors import REPORT as NEIGHBORS_REPORT
+from lineage.neighbors import check_at as check_neighbors_at
 from lineage.neighbors import write_report as write_neighbors_report
 from lineage.pair_data import PAIR_DATA_DIR, PairDataError, fetch_pair_data
 from lineage.pair_eval import REPORT as PAIR_REPORT
@@ -105,6 +107,7 @@ from lineage.relatives_sample import write_sample as write_relatives_sample
 from lineage.results_table import EXPORTED_ONLY, README, ResultsTableError, rendered_readme
 from lineage.sectioning import SectioningError, build_sections
 from lineage.semantic import MODEL as SEMANTIC_MODEL
+from lineage.semantic import THRESHOLD as THRESHOLD_STAGE
 from lineage.semantic import SemanticSearch, open_search
 from lineage.semantic_pairs import REPORT as SEMANTIC_PAIRS_REPORT
 from lineage.semantic_pairs import SemanticPairsError, build_semantic_pairs
@@ -140,7 +143,7 @@ from lineage.text_run import REPORT as FETCH_REPORT
 from lineage.text_run import run_fetch
 from lineage.threshold import CANDIDATES as THRESHOLD_CANDIDATES
 from lineage.threshold import REPORT as THRESHOLD_REPORT
-from lineage.threshold import ThresholdError
+from lineage.threshold import ThresholdError, flag_at_threshold, pair_level_at
 from lineage.threshold import proposal as threshold_proposal
 from lineage.ulc import ENACTMENTS, HELD_OUT_ENACTMENTS, UlcError
 from lineage.vectors import PROCESSES as EMBED_PROCESSES
@@ -457,8 +460,31 @@ def neighbors_command(
     ef_search: Annotated[
         int, typer.Option("--ef-search", help="HNSW's search width; wider finds more.")
     ] = EF_SEARCH,
+    check_at_stage: Annotated[
+        bool,
+        typer.Option(
+            "--check-at-stage",
+            help="Build nothing: check the built neighbors' recall at the stage's threshold.",
+        ),
+    ] = False,
 ) -> None:
     """Every distinct window's nearest neighbors by meaning -> <tables>/semantic/<model>/."""
+    if check_at_stage:
+        try:
+            checked = check_neighbors_at(tables, THRESHOLD_STAGE)
+        except EmbedError as e:
+            typer.echo(f"error: {e}", err=True)
+            raise typer.Exit(1) from e
+        doc = json.loads(report.read_text()) | {"exact_check_at_stage_threshold": checked}
+        write_neighbors_report(doc, report)
+        typer.echo(
+            f"recall {checked['recall']} at {checked['threshold']} on {checked['texts']:,} texts "
+            f"searched exactly ({checked['true_neighbors']:,} true neighbors) -> {report}"
+        )
+        if checked["recall"] < RECALL_FLOOR:
+            typer.echo(f"error: recall {checked['recall']} is below {RECALL_FLOOR}", err=True)
+            raise typer.Exit(1)
+        return
     try:
         doc = build_neighbors(
             tables,
@@ -597,7 +623,9 @@ def query(
     try:
         require_index(tables)
         search = _semantic_search(tables) if semantic else None
-        result = query_text(file.read_text(), tables, semantic=search)
+        result = query_text(
+            file.read_text(), tables, semantic=search, flagged=flagged_sections(tables)
+        )
     except (IndexMissingError, StoplistError, EmbedError, ModelError) as e:
         typer.echo(str(e), err=True)
         raise typer.Exit(1) from None
@@ -605,20 +633,26 @@ def query(
     if not result.matches:
         typer.echo("No relatives found in the index.")
         return
-    typer.echo(
-        f"{'share':>5}  {'best':>4}  {'cos':>4}  {'by':<4}  {'state':<5}  {'session':<10}  "
-        f"{'bill':<12}  {'family':>6}  {'status':<10}  title"
-    )
-    for m in result.matches[:limit]:
-        by = "".join(_STAGE_MARKS[s] for s in sorted(m.sections_by_stage))
-        cos = f"{m.best_cosine:.2f}" if m.best_cosine is not None else ""
+    hidden = 0
+    for found_by, heading in (("wording", "Sharing wording"), ("meaning", "By meaning alone")):
+        matches = [m for m in result.matches if m.found_by == found_by]
+        if not matches:
+            continue
+        typer.echo(f"{heading}: {len(matches):,}")
         typer.echo(
-            f"{m.share:>5.0%}  {m.best_estimate:>4.2f}  {cos:>4}  {by:<4}  {m.state:<5}  "
-            f"{m.session:<10}  {m.identifier:<12}  {m.family_bills:>6}  {m.status or '':<10}  "
-            f"{m.title[:70]}"
+            f"{'share':>5}  {'best':>4}  {'cos':>4}  {'by':<4}  {'state':<5}  {'session':<10}  "
+            f"{'bill':<12}  {'family':>6}  {'status':<10}  title"
         )
-    hidden = len(result.matches) - limit
-    more = f"; {hidden:,} more not shown (--limit)" if hidden > 0 else ""
+        for m in matches[:limit]:
+            by = "".join(_STAGE_MARKS[s] for s in sorted(m.sections_by_stage))
+            cos = f"{m.best_cosine:.2f}" if m.best_cosine is not None else ""
+            typer.echo(
+                f"{m.share:>5.0%}  {m.best_estimate:>4.2f}  {cos:>4}  {by:<4}  {m.state:<5}  "
+                f"{m.session:<10}  {m.identifier:<12}  {m.family_bills:>6}  "
+                f"{m.status or '':<10}  {m.title[:70]}"
+            )
+        hidden += max(len(matches) - limit, 0)
+    more = f"; {hidden:,} more not shown (--limit, per list)" if hidden > 0 else ""
     noun = "family matches" if len(result.matches) == 1 else "families match"
     typer.echo(
         f"{len(result.matches):,} {noun}{more}. Share: of the words in the query's searched "
@@ -1132,6 +1166,7 @@ def eval_commission(
             semantic=search,
             # Development recall at each threshold option, for the proposal; never held out.
             semantic_thresholds=THRESHOLD_CANDIDATES if search is not None and not held_out else (),
+            flagged=flagged_sections(tables),
         )
     except (
         CommissionError,
@@ -1478,6 +1513,9 @@ def eval_threshold(
         pages = load_pages(sample)
         commission = json.loads(results.read_text())["commission"]
         doc = threshold_proposal(items, kept, pages, commission, labeler=model_labeler)
+        doc["state_boilerplate_flag"] = flag_at_threshold(
+            tables, items, kept, pages, labeler=model_labeler
+        )
     except (LabelError, ThresholdError, KeyError) as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
@@ -1551,7 +1589,17 @@ def eval_precision(
             model_labeler=model_labeler,
             dropped_labeler=flagged_labeler,
         )
-    except (LabelError, PrecisionError, StateBoilerplateError) as e:
+        if has_counts(tables):
+            measured["at_stage_threshold"] = pair_level_at(
+                tables,
+                items,
+                kept,
+                sizes,
+                labeler=model_labeler,
+                dropped_items=dropped,
+                dropped_labeler=flagged_labeler,
+            )
+    except (LabelError, PrecisionError, StateBoilerplateError, ThresholdError) as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
     section: dict[str, Any] = {"command": "uv run lineage eval precision", **measured}

@@ -2,7 +2,8 @@
 
 A new text is searched (lineage.query). A bill already in the corpus has its matches stored:
 the near-duplicate stage's cross-state section pairs (lineage.pairs) and the semantic stage's
-(lineage.semantic_pairs), so its relatives are read from them with no search. They are scored by
+(lineage.semantic_pairs), so its relatives are read from them with no search, as a page lists
+them (lineage.listing). They are scored by
 the query's own function, `lineage.query.group_matches`: the share of the bill's words in the
 sections a family matches, of the words of every section either stage searched, each family
 counted once. So a bill and a query of its text score alike.
@@ -21,10 +22,10 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lineage import queries
-from lineage.pairs import load_cross_state_pairs
+from lineage.listing import ListedPairs, listed_pairs
 from lineage.query import Match, group_matches
-from lineage.semantic import MODEL
-from lineage.semantic_pairs import load_semantic_pairs, section_keys
+from lineage.semantic import MODEL, THRESHOLD
+from lineage.semantic_pairs import section_keys
 
 RELATIVES_SHOWN = 50  # a bill page's relatives; DESIGN.md#bill-scoring
 STAGES = ("near_duplicate", "semantic")
@@ -67,8 +68,14 @@ def bill_relatives(
     model: str = MODEL,
     stages: Sequence[str] = STAGES,
     shown: int = RELATIVES_SHOWN,
+    threshold: float = THRESHOLD,
+    flag: NDArray[np.bool_] | None = None,
+    exempt_both: bool = True,
+    listed: ListedPairs | None = None,
 ) -> dict[str, BillRelatives]:
-    """Each wanted bill's relatives in other states, best first, the best `shown` kept."""
+    """Each wanted bill's relatives in other states, best first, the best `shown` kept, as a
+    page lists them (lineage.listing): by meaning at or above `threshold`, and without the pairs
+    of a section `flag` marks that one stage alone found. `listed` passes pairs already read."""
     wanted = sorted(set(bill_ids))
     bills, ordinals = section_keys(tables_dir)
     wanted_set = set(wanted)
@@ -87,13 +94,17 @@ def bill_relatives(
     for bill_id, ordinal, normalized in rows:
         words[bill_id][ordinal] = len(normalized.split())
 
+    if listed is None:
+        listed = listed_pairs(
+            tables_dir, model=model, threshold=threshold, flag=flag, exempt_both=exempt_both
+        )
     near: dict[str, list[Hit]] = {}
     if "near_duplicate" in stages:
-        pairs = load_cross_state_pairs(tables_dir)
+        pairs = listed.near
         near = _hits(pairs.left, pairs.right, pairs.agreements, own, bills, ordinals)
     by_meaning: dict[str, list[Hit]] = {}
     if "semantic" in stages:
-        found = load_semantic_pairs(tables_dir, model)
+        found = listed.meaning
         by_meaning = _hits(found.left, found.right, found.cosine, own, bills, ordinals)
 
     out: dict[str, BillRelatives] = {}

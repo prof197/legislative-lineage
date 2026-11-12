@@ -7,8 +7,9 @@ import numpy as np
 import pytest
 
 from lineage import queries
-from lineage.semantic import THRESHOLD, K
+from lineage.semantic import BUILD_THRESHOLD, THRESHOLD, K
 from lineage.semantic_pairs import (
+    SemanticPairs,
     SemanticPairsError,
     build_semantic_pairs,
     load_semantic_pairs,
@@ -64,18 +65,8 @@ def test_every_cross_state_pair_the_neighbors_imply_is_stored_once_at_its_best(
 ) -> None:
     report = build_semantic_pairs(tables, model=MODEL, floor_bytes=0)
 
-    pairs = load_semantic_pairs(tables, model=MODEL)
-    bills, ordinals = section_keys(tables)
-
-    def key(section: int) -> tuple[str, int]:
-        return bills[section], int(ordinals[section])
-
-    got = {
-        tuple(sorted((key(a), key(b)))): float(c)
-        for a, b, c in zip(
-            pairs.left.tolist(), pairs.right.tolist(), pairs.cosine.tolist(), strict=True
-        )
-    }
+    pairs = load_semantic_pairs(tables, model=MODEL, threshold=BUILD_THRESHOLD)
+    got = _got(tables, pairs)
     expected = _expected(tables)
     assert expected, "the fixture should have cross-state matches by meaning"
     assert got.keys() == expected.keys()
@@ -83,8 +74,40 @@ def test_every_cross_state_pair_the_neighbors_imply_is_stored_once_at_its_best(
         assert got[k] == pytest.approx(c, abs=1e-3)
     assert (pairs.left < pairs.right).all()
     assert len(set(zip(pairs.left.tolist(), pairs.right.tolist(), strict=True))) == pairs.left.size
-    assert (pairs.cosine >= THRESHOLD - 2**-11).all()
+    assert (pairs.cosine >= BUILD_THRESHOLD - 2**-11).all()
     assert report["pairs"] == pairs.left.size
+
+
+Key = tuple[tuple[str, int], tuple[str, int]]
+
+
+def _got(tables: Path, pairs: SemanticPairs) -> dict[Key, float]:
+    bills, ordinals = section_keys(tables)
+
+    def key(a: int, b: int) -> Key:
+        ka, kb = (bills[a], int(ordinals[a])), (bills[b], int(ordinals[b]))
+        return (ka, kb) if ka < kb else (kb, ka)
+
+    return {
+        key(a, b): float(c)
+        for a, b, c in zip(
+            pairs.left.tolist(), pairs.right.tolist(), pairs.cosine.tolist(), strict=True
+        )
+    }
+
+
+def test_read_at_the_stage_threshold_the_table_holds_exactly_the_pairs_at_or_above_it(
+    tables: Path,
+) -> None:
+    build_semantic_pairs(tables, model=MODEL, floor_bytes=0)
+
+    got = _got(tables, load_semantic_pairs(tables, model=MODEL))
+
+    expected = _expected(tables)
+    above = {k for k, c in expected.items() if c >= THRESHOLD}
+    assert above, "the fixture should have pairs at or above the stage's threshold"
+    assert len(above) < len(expected), "and pairs under it"
+    assert got.keys() == above
 
 
 def test_each_pair_names_the_window_pair_that_gave_its_best_cosine(tables: Path) -> None:
@@ -125,7 +148,7 @@ def test_a_table_built_under_another_model_k_or_threshold_refuses_to_load(
     path.write_text(json.dumps(json.loads(path.read_text()) | changed))
 
     with pytest.raises(SemanticPairsError, match="lineage semantic-pairs"):
-        load_semantic_pairs(tables, model=MODEL)
+        load_semantic_pairs(tables, model=MODEL, threshold=BUILD_THRESHOLD)
 
 
 def test_neighbors_kept_at_another_k_are_refused(tables: Path) -> None:
