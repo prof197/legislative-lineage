@@ -40,9 +40,16 @@ class Outcome:
     on: date | None
 
 
-# Enactment is final: nothing after it in the record undoes it in this model, and a conditional
-# veto followed by a signature (New Jersey) is a law.
+# A chapter or act number, or an override, is final: nothing after it in the record undoes it
+# in this model. A signature is final unless a full veto falls on its day or later: Georgia
+# classifies "Date Signed by Governor" as a signature on a bill the governor vetoed that day,
+# and Texas classifies "Transmitted to the Governor" as one. A conditional veto followed by a
+# signature (New Jersey) is a law.
 ENACTED = frozenset({"executive-signature", "became-law", "veto-override-passage"})
+FINAL = frozenset({"became-law", "veto-override-passage"})
+# A veto of items, or one that sends the bill back with changes, leaves a law if it is signed.
+PARTIAL_VETO_WORDING = r"(?i)(line[- ]item|item veto|in part|conditional|amendatory)"
+_PARTIAL_VETO_WORDING = re.compile(PARTIAL_VETO_WORDING)
 KILLED = frozenset({"executive-veto", "failure", "veto-override-failure"})
 SESSION_ENDED = "session-ended"
 ENACTED_IN_WORDS = "enacted-in-words"
@@ -186,13 +193,20 @@ def bill_status(
     `kinds` is the record's classification; `as_of` is the archive's Generated At.
     """
     ordered = chronological(actions, state)
+    vetoed = [local_date(a.date, state) for a in ordered if _full_veto(a)]
+
+    def undone(action: Action) -> bool:
+        """A signature or worded enactment that a full veto on its day or later undoes."""
+        return bool(vetoed) and max(vetoed) >= local_date(action.date, state)
 
     enacted = [a for a in ordered if ENACTED.intersection(a.classification)]
-    if enacted:
+    if enacted and (
+        any(FINAL.intersection(a.classification) for a in enacted) or not undone(enacted[-1])
+    ):
         last = enacted[-1]
         return Outcome(Status.PASSED, _deciding(last, ENACTED), local_date(last.date, state))
     worded = [a for a in ordered if _enacted_in_words(a)]
-    if worded:
+    if worded and not undone(worded[-1]):
         return Outcome(Status.PASSED, ENACTED_IN_WORDS, local_date(worded[-1].date, state))
 
     killed = [a for a in ordered if KILLED.intersection(a.classification)]
@@ -232,6 +246,15 @@ def chronological(actions: Sequence[Action], state: str) -> list[Action]:
     newest_first = days[id(by_order[0])] > days[id(by_order[-1])]
     direction = -1 if newest_first else 1
     return sorted(by_order, key=lambda a: (days[id(a)], direction * a.order))
+
+
+def _full_veto(action: Action) -> bool:
+    """A veto of the whole bill: not of items, and not one returned with changes."""
+    return (
+        "executive-veto" in action.classification
+        and "executive-veto-line-item" not in action.classification
+        and _PARTIAL_VETO_WORDING.search(action.description) is None
+    )
 
 
 def _enacted_in_words(action: Action) -> bool:

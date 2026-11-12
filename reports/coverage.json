@@ -517,9 +517,6 @@
     "concurrent resolution": 37,
     "joint resolution": 4
    },
-   "CT": {
-    "bill": 10
-   },
    "FL": {
     "bill": 3
    },
@@ -1768,8 +1765,8 @@
    },
    "status": {
     "bill": {
-     "died": 8337,
-     "passed": 808
+     "died": 8347,
+     "passed": 798
     },
     "joint resolution": {
      "died": 1009,
@@ -2311,9 +2308,9 @@
    },
    "status": {
     "bill": {
-     "died": 2981,
+     "died": 3027,
      "introduced": 18,
-     "passed": 1460
+     "passed": 1414
     },
     "resolution": {
      "died": 737,
@@ -6681,8 +6678,8 @@
    },
    "status": {
     "bill": {
-     "died": 15525,
-     "passed": 2546,
+     "died": 15536,
+     "passed": 2535,
      "passed_legislature": 2
     },
     "concurrent resolution": {

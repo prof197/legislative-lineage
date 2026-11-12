@@ -102,8 +102,9 @@ def test_derives_status_as_of_each_archive(raw_dir: Path, manifest: Path, tmp_pa
     assert rows == [
         ("AK", "SB 47", "died", "session-ended", "2024-05-15"),
         ("AL", "HB 81", "died", "session-ended", "2023-06-08"),
-        # Georgia files a line-item veto after the signature; the bill is still law.
-        ("GA", "SB 238", "passed", "executive-signature", "2025-05-14"),
+        # Georgia records the governor's action as "Date Signed by Governor" on a bill vetoed
+        # that day ("Veto V7"); the bill died.
+        ("GA", "SB 238", "died", "executive-veto", "2025-05-14"),
         # A simple resolution passes when its chamber adopts it.
         ("GA", "SR 1065", "passed", "passage", "2026-03-31"),
     ]
