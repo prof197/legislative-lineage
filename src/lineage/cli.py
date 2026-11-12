@@ -61,7 +61,7 @@ from lineage.labels import (
 )
 from lineage.labels import PERSON as PERSON_PREFIX
 from lineage.labels import model_labeler as model_labeler_name
-from lineage.listing import flagged_sections
+from lineage.listing import flagged_sections, shipped_flag
 from lineage.memory import MemoryBoundError
 from lineage.model_labels import BUDGET as LABEL_BUDGET
 from lineage.model_labels import MAX_COST as LABEL_MAX_COST
@@ -883,17 +883,37 @@ def relatives_sample(
     report: Annotated[
         Path | None, typer.Option("--report", help="The draw's report JSON (committed).")
     ] = None,
+    excluded_sample: Annotated[
+        Path | None,
+        typer.Option("--excluded", help="The sample whose bills this part never draws."),
+    ] = None,
 ) -> None:
     """Draw listed relatives of random bills of one state, to measure what a page lists."""
     if part not in RELATIVES_PARTS:
         typer.echo(f"error: --part is one of {', '.join(RELATIVES_PARTS)}, not {part!r}", err=True)
         raise typer.Exit(1)
-    skip, default_sample, default_report = RELATIVES_PARTS[part]
-    sample = sample or default_sample
-    report = report or default_report
+    chosen = RELATIVES_PARTS[part]
+    sample = sample or chosen.sample
+    report = report or chosen.report
     try:
-        rows, doc = build_relatives_sample(tables, skip=skip)
-    except (RelativesSampleError, SemanticPairsError) as e:
+        excluded: set[str] = set()
+        if chosen.excludes is not None:
+            other = excluded_sample or RELATIVES_PARTS[chosen.excludes].sample
+            excluded = {str(p["bill_id"]) for p in load_pages(other).values()}
+        flag = shipped_flag(tables) if chosen.flag else None
+        if chosen.flag and flag is None:
+            raise RelativesSampleError(
+                "no state boilerplate counts; run `lineage state-boilerplate`"
+            )
+        rows, doc = build_relatives_sample(
+            tables,
+            seed=chosen.seed,
+            threshold=chosen.threshold,
+            flag=flag,
+            excluded=excluded,
+            first=chosen.first,
+        )
+    except (RelativesSampleError, SemanticPairsError, StateBoilerplateError) as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
     write_relatives_sample(rows, doc, sample_path=sample, report_path=report)
@@ -1505,7 +1525,10 @@ def eval_threshold(
     ] = THRESHOLD_REPORT,
 ) -> None:
     """Each semantic threshold option's page precision on the tuning sample, with its recall."""
-    if sample.resolve() == RELATIVES_PARTS["reporting"][1].resolve() or "reporting" in sample.name:
+    if (
+        sample.resolve() == RELATIVES_PARTS["reporting"].sample.resolve()
+        or "reporting" in sample.name
+    ):
         typer.echo("error: the reporting sample is read only once the threshold is final", err=True)
         raise typer.Exit(1)
     try:

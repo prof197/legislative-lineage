@@ -18,17 +18,19 @@ what a page highlights; failing that, the semantic stage's pair at the best cosi
 sections are aligned (lineage.align), and the copied and paraphrased passages are given
 together, unmarked, alongside both sections. See DESIGN.md#precision-sample.
 
-Two samples come from one seeded draw of the state's bills: its first BILLS bills are the
-tuning sample, which the threshold proposal reads (lineage.threshold), and the next BILLS the
-reporting sample, read only once the threshold is final. They share no bill. Each row records
-what a threshold above the build's needs: the relative's best cosine, whether the
-near-duplicate stage found it, and the best cosines of every relative its page shows by meaning
-alone.
+There are two samples (PARTS). The tuning sample, which the threshold proposal reads
+(lineage.threshold), was drawn from pages as listed at the build's threshold without the state
+boilerplate flag; each of its rows records what a threshold above the build's needs: the
+relative's best cosine, whether the near-duplicate stage found it, and the best cosines of
+every relative its page shows by meaning alone. The reporting sample was drawn afresh once the
+threshold and the flag were final, under its own seed, from pages as they list then, and from
+bills the tuning sample did not draw; it is read once. So its pages, too, were drawn at random
+with one relative each from the lists measured, and the share correct is their precision.
 """
 
 import json
-from collections.abc import Mapping, Sequence
-from dataclasses import replace
+from collections.abc import Collection, Mapping, Sequence
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
 
@@ -39,27 +41,56 @@ from lineage import queries
 from lineage.align import Embedder, align
 from lineage.intervals import wilson
 from lineage.labels import Item
-from lineage.pairs import load_cross_state_pairs
+from lineage.listing import listed_pairs
 from lineage.precision import SEED as PRECISION_SEED
 from lineage.precision import STRATA, latest_correct, stratum_of
 from lineage.relatives import RELATIVES_SHOWN, bill_relatives
-from lineage.semantic import MODEL
-from lineage.semantic_pairs import load_semantic_pairs, section_keys
+from lineage.semantic import BUILD_THRESHOLD, MODEL, THRESHOLD
+from lineage.semantic_pairs import section_keys
 
 STATE = "GA"
 BILLS = 100
 SEED = PRECISION_SEED + 3  # the flagged sample took + 1, the agreement subsample + 2
-# Each part's place in the draw, its sample file and its report.
-PARTS: dict[str, tuple[int, Path, Path]] = {
-    "tuning": (0, Path("evals/relatives_tuning.jsonl"), Path("reports/relatives_tuning.json")),
-    "reporting": (
-        BILLS,
+REPORTING_SEED = PRECISION_SEED + 4
+
+
+@dataclass(frozen=True, slots=True)
+class Part:
+    """One sample's draw: its seed, the threshold and flag its pages were listed under, its
+    first pair id's number, its files, and the part whose bills it never draws."""
+
+    seed: int
+    threshold: float
+    flag: bool
+    first: int
+    sample: Path
+    report: Path
+    excludes: str | None = None
+
+
+PARTS: dict[str, Part] = {
+    # Drawn at the build's threshold without the flag: what the threshold proposal chose from.
+    "tuning": Part(
+        SEED,
+        BUILD_THRESHOLD,
+        False,
+        1,
+        Path("evals/relatives_tuning.jsonl"),
+        Path("reports/relatives_tuning.json"),
+    ),
+    # Drawn afresh once the threshold and the flag were final, from what pages list then.
+    "reporting": Part(
+        REPORTING_SEED,
+        THRESHOLD,
+        True,
+        BILLS + 1,
         Path("evals/relatives_reporting.jsonl"),
         Path("reports/relatives_reporting.json"),
+        excludes="tuning",
     ),
 }
-SAMPLE = PARTS["tuning"][1]
-SAMPLE_REPORT = PARTS["tuning"][2]
+SAMPLE = PARTS["tuning"].sample
+SAMPLE_REPORT = PARTS["tuning"].report
 LABELS = Path("evals/relatives_labels.jsonl")
 COMMAND = "uv run lineage relatives-sample"
 TOP = 5  # a page's first relatives, reported apart from the rest
@@ -104,31 +135,36 @@ def build_relatives_sample(
     state: str = STATE,
     bills: int = BILLS,
     seed: int = SEED,
-    skip: int = 0,
+    threshold: float = BUILD_THRESHOLD,
+    flag: NDArray[np.bool_] | None = None,
+    excluded: Collection[str] = frozenset(),
+    first: int = 1,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """The sample's rows, in the precision sample's format with the page each relative is
-    listed on, and the draw's report: the `bills` bills after the draw's first `skip`."""
+    listed on, and the draw's report: `bills` bills of `state` not in `excluded`, their pages
+    listed at `threshold` with `flag` (lineage.listing), pair ids numbered from `first`."""
     section_bills, ordinals = section_keys(tables_dir)
     with queries.connect_quiet() as con:
         states = queries.bill_states(con, bills_glob=str(tables_dir / "bills" / "*.parquet"))
     in_state = np.fromiter(
         (states.get(b) == state for b in section_bills), dtype=bool, count=len(section_bills)
     )
-    near = load_cross_state_pairs(tables_dir)
-    meaning = load_semantic_pairs(tables_dir, model)
+    pairs = listed_pairs(tables_dir, model=model, threshold=threshold, flag=flag)
+    near, meaning = pairs.near, pairs.meaning
     paired = np.zeros(len(section_bills), dtype=bool)
     for left, right in ((near.left, near.right), (meaning.left, meaning.right)):
         paired[np.asarray(left)] = True
         paired[np.asarray(right)] = True
     signed = sorted({section_bills[s] for s in np.flatnonzero(in_state).tolist()})
-    candidates = sorted({section_bills[s] for s in np.flatnonzero(in_state & paired).tolist()})
-    if len(candidates) < skip + bills:
+    listing = sorted({section_bills[s] for s in np.flatnonzero(in_state & paired).tolist()})
+    candidates = [b for b in listing if b not in excluded]
+    if len(candidates) < bills:
         raise RelativesSampleError(
-            f"{state} has {len(candidates)} bills with a relative, fewer than {skip + bills}"
+            f"{state} has {len(candidates)} bills with a relative to draw, fewer than {bills}"
         )
     order: list[int] = np.random.default_rng(seed).permutation(len(candidates)).tolist()
-    chosen = [candidates[i] for i in order[skip : skip + bills]]
-    relatives = bill_relatives(tables_dir, chosen, model=model)
+    chosen = [candidates[i] for i in order[:bills]]
+    relatives = bill_relatives(tables_dir, chosen, model=model, listed=pairs)
     wanted = set(chosen) | {m.bill_id for page in relatives.values() for m in page.matches}
     numbers: dict[str, list[int]] = {}
     for number, bill_id in enumerate(section_bills):
@@ -136,7 +172,7 @@ def build_relatives_sample(
             numbers.setdefault(bill_id, []).append(number)
     rows: list[dict[str, Any]] = []
     listed: list[int] = []
-    for n, bill_id in enumerate(chosen, start=skip + 1):
+    for n, bill_id in enumerate(chosen, start=first):
         page = relatives[bill_id]
         if not page.matches:
             raise RelativesSampleError(f"{bill_id} has stored pairs but lists no relative")
@@ -195,12 +231,14 @@ def build_relatives_sample(
         "command": COMMAND,
         "state": state,
         "seed": seed,
-        "skip": skip,
+        "threshold": threshold,
+        "state_boilerplate_flag": flag is not None,
+        "bills_excluded": len(set(listing) & set(excluded)),
         "bills": bills,
         "model": model,
         "relatives_shown": RELATIVES_SHOWN,
         "state_bills_signed": len(signed),
-        "state_bills_with_a_relative": len(candidates),
+        "state_bills_with_a_relative": len(listing),
         "listed_quantiles": {
             str(q): float(np.quantile(listed, q)) for q in (0.1, 0.25, 0.5, 0.75, 0.9)
         },

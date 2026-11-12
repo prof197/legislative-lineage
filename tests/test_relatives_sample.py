@@ -18,6 +18,7 @@ from lineage.relatives_sample import (
     estimate,
     with_passages,
 )
+from lineage.semantic import BUILD_THRESHOLD, THRESHOLD
 from lineage.semantic_pairs import build_semantic_pairs, load_semantic_pairs, section_keys
 from tests.conftest import FAKE_MODEL
 
@@ -40,7 +41,7 @@ def _expected_pair(tables: Path, query_bill: str, match_bill: str) -> tuple[int,
     pair at the best cosine, the lowest sections on a tie."""
     bills, ordinals = section_keys(tables)
     near = load_cross_state_pairs(tables)
-    meaning = load_semantic_pairs(tables, model=FAKE_MODEL)
+    meaning = load_semantic_pairs(tables, model=FAKE_MODEL, threshold=BUILD_THRESHOLD)
     for left, right, scores in (
         (near.left, near.right, near.agreements),
         (meaning.left, meaning.right, meaning.cosine),
@@ -64,7 +65,10 @@ def test_each_row_is_one_listed_relative_of_a_random_bill_of_the_state(tables: P
     assert len(rows) == 3
     assert len({r["query"]["bill_id"] for r in rows}) == 3
     assert report["state_bills_with_a_relative"] >= 3
-    listed = bill_relatives(tables, [r["query"]["bill_id"] for r in rows], model=FAKE_MODEL)
+    # By default a draw lists pages as the tuning sample was drawn: at the build's threshold.
+    listed = bill_relatives(
+        tables, [r["query"]["bill_id"] for r in rows], model=FAKE_MODEL, threshold=BUILD_THRESHOLD
+    )
     for row in rows:
         page: dict[str, Any] = row["page"]
         query, match = row["query"]["bill_id"], row["match"]["bill_id"]
@@ -144,23 +148,34 @@ def test_the_estimate_is_the_share_correct_by_relative_stage_and_rank() -> None:
     assert np.isclose(got["overall"]["precision"], 0.5)
 
 
-def test_the_reporting_part_is_the_draws_next_bills_and_records_what_a_threshold_needs(
+def test_a_part_draws_its_own_bills_from_pages_as_listed_and_records_what_a_threshold_needs(
     tables: Path,
 ) -> None:
     first, _ = build_relatives_sample(tables, model=FAKE_MODEL, state=STATE, bills=2)
-    second, report = build_relatives_sample(tables, model=FAKE_MODEL, state=STATE, bills=1, skip=2)
-    both, _ = build_relatives_sample(tables, model=FAKE_MODEL, state=STATE, bills=3)
+    bills, _ = section_keys(tables)
+    flag = np.fromiter((b == first[0]["match"]["bill_id"] for b in bills), bool, len(bills))
 
-    assert [r["pair"] for r in second] == ["r0003"]
-    assert first + second == both
-    assert report["skip"] == 2
-    listed = bill_relatives(tables, [r["query"]["bill_id"] for r in both], model=FAKE_MODEL)
-    for row in both:
+    second, report = build_relatives_sample(
+        tables, model=FAKE_MODEL, state=STATE, bills=1, seed=7, threshold=THRESHOLD, flag=flag,
+        excluded={r["query"]["bill_id"] for r in first}, first=101,
+    )  # fmt: skip
+
+    assert [r["pair"] for r in second] == ["r0101"]
+    assert not {r["query"]["bill_id"] for r in second} & {r["query"]["bill_id"] for r in first}
+    assert (report["threshold"], report["state_boilerplate_flag"]) == (THRESHOLD, True)
+    assert 0 < report["bills_excluded"] <= 2
+    listed = bill_relatives(
+        tables, [r["query"]["bill_id"] for r in second], model=FAKE_MODEL, threshold=THRESHOLD,
+        flag=flag,
+    )  # fmt: skip
+    for row in second:
         page: dict[str, Any] = row["page"]
         shown = listed[row["query"]["bill_id"]].matches
+        assert len(shown) == page["listed"]
         assert page["best_cosine"] == shown[int(page["rank"]) - 1].best_cosine
         assert page["shown_semantic_only"] == sorted(
             float(m.best_cosine)
             for m in shown
             if "near_duplicate" not in m.sections_by_stage and m.best_cosine is not None
         )
+        assert all(c >= THRESHOLD for c in page["shown_semantic_only"])
