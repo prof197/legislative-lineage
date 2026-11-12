@@ -149,7 +149,12 @@ def test_the_held_out_run_is_shown_by_stage_once_the_readme_has_its_section() ->
         "semantic": held_out["recall"],
         "both": held_out["recall"],
     }
-    held_out |= {"semantic_threshold": 0.93, "state_boilerplate_flag": {"sections": 1}}
+    first = {"semantic_threshold": 0.93, "recall": {"all": {"enactments": 4, "found": 3}}}
+    held_out |= {
+        "semantic_threshold": 0.94,
+        "state_boilerplate_flag": {"sections": 1},
+        "earlier_runs": [first],
+    }
     results = {"commission": _merged(3, 2, 4), "commission_held_out": held_out}
 
     out = rendered_readme(readme, results, {"commission": _section(1, 4)})
@@ -157,7 +162,8 @@ def test_the_held_out_run_is_shown_by_stage_once_the_readme_has_its_section() ->
     assert "stale" not in out
     assert "| | Both stages | Near-duplicate stage | Semantic stage |" in out
     assert "| Special Deposits | 3 / 4 (75.0%) | 2 / 4 (50.0%) | 3 / 4 (75.0%) |" in out
-    assert "at 0.93 and with the state boilerplate flag" in out
+    assert "at 0.94 and with the state boilerplate flag" in out
+    assert "first run at a threshold of 0.93, which found 3 of 4" in out
     assert "--held-out --final" in out
     with pytest.raises(ResultsTableError, match="held-out run has no results"):
         rendered_readme(readme, {"commission": _merged(3, 2, 4)}, {"commission": _section(1, 4)})

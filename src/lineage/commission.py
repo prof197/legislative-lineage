@@ -452,12 +452,7 @@ def evaluate(
             "status": "approved",
         },
         "verification_threshold": THRESHOLD,
-        "semantic_threshold": THRESHOLD_SEMANTIC if semantic is not None else None,
-        "state_boilerplate_flag": (
-            {"sections": len(flagged), "both_stages_exempt_from": CORROBORATING}
-            if flagged
-            else None
-        ),
+        **run_configuration(semantic is not None, flagged),
         "bucket_cap": BUCKET_CAP,
         "first_year": first_year,
         "queries": query_stats,
@@ -496,6 +491,52 @@ def evaluate(
 
 def _sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+def run_configuration(semantic: bool, flagged: Collection[tuple[str, int]]) -> dict[str, Any]:
+    """What a run's listing was set to, as its results record it: the semantic stage's
+    threshold, and the state boilerplate flag with the cosine its exemption counts from."""
+    return {
+        "semantic_threshold": THRESHOLD_SEMANTIC if semantic else None,
+        "state_boilerplate_flag": (
+            {"sections": len(flagged), "both_stages_exempt_from": CORROBORATING}
+            if flagged
+            else None
+        ),
+    }
+
+
+def _configuration_of(run: dict[str, Any]) -> dict[str, Any]:
+    return {k: run.get(k) for k in ("semantic_threshold", "state_boilerplate_flag")}
+
+
+def check_held_out_configuration(
+    previous: dict[str, Any] | None, configuration: dict[str, Any]
+) -> None:
+    """Refuse a held-out run at a configuration it has already been run at. The held-out acts
+    were run once at the end of M5 and once more at the configuration the M5 review settled,
+    each recorded (DESIGN.md#commission-recall); rerunning one settles nothing."""
+    runs = [] if previous is None else [previous, *previous.get("earlier_runs", [])]
+    for run in runs:
+        if _configuration_of(run) == configuration:
+            raise CommissionError(
+                "the held-out acts were already run at this configuration "
+                f"({configuration}); see DESIGN.md#commission-recall"
+            )
+
+
+def with_earlier_runs(section: dict[str, Any], previous: dict[str, Any] | None) -> dict[str, Any]:
+    """A held-out run's section, keeping each earlier run's configuration and what it found."""
+    if previous is None:
+        return section | {"earlier_runs": []}
+    ablation: dict[str, dict[str, Any]] = previous.get("stage_ablation") or {}
+    summary: dict[str, Any] = _configuration_of(previous) | {
+        "recall": previous["recall"]["pooled"],
+        "stage_ablation": {stage: r["pooled"] for stage, r in ablation.items()},
+        "miss_reasons": previous["miss_reasons"],
+        "found": sorted(f"{e['act']} {e['state']}" for e in previous["enactments"] if e["found"]),
+    }
+    return section | {"earlier_runs": [*previous.get("earlier_runs", []), summary]}
 
 
 def commission_recall(

@@ -131,11 +131,17 @@ def render_held_out(section: dict[str, Any]) -> str:
     ]
     flag = "with" if section.get("state_boilerplate_flag") else "without"
     read = section["enactments_file"]["read"].removeprefix("ULC Bill List, ")
+    earlier = "".join(
+        f" It was first run at a threshold of {r['semantic_threshold']}, which found "
+        f"{r['recall']['all']['found']} of {r['recall']['all']['enactments']}; the threshold "
+        "then moved on tuning data alone ([DESIGN.md](DESIGN.md#commission-recall))."
+        for r in section.get("earlier_runs", [])
+    )
     lines = [
         "Held-out recall: the same measure on four uniform acts never examined while matching "
-        "was tuned, run once, at the end of M5, with the semantic stage's threshold at "
-        f"{section['semantic_threshold']} and {flag} the state boilerplate flag. The lists were "
-        f"{read}. Reproduce with `{HELD_OUT_COMMAND}` → `reports/results.json`, "
+        "was tuned, run at the end of M5 with the semantic stage's threshold at "
+        f"{section['semantic_threshold']} and {flag} the state boilerplate flag.{earlier} The "
+        f"lists were {read}. Reproduce with `{HELD_OUT_COMMAND}` → `reports/results.json`, "
         "`commission_held_out`.",
         "",
         "| | " + " | ".join(heads) + " |",

@@ -27,7 +27,7 @@ textutil -convert txt -encoding UTF-8 -output data/acts/electronic-estate-planni
 
 This is a one-time local step, not part of the pipeline. The eval records each text file's SHA-256 in its results, so a different edition or conversion shows up there. The enactments it checks are in `evals/ulc_enactments.csv`, copied from the commission's bill list for each act, which loads only in a browser. The file's first line gives the date it was read.
 
-A held-out eval, run once at the end of M5, uses four more acts that were never examined while tuning (DESIGN.md, [Commission recall](DESIGN.md#commission-recall)). Download the same edition of each into `data/acts/held-out/` and convert it the same way:
+A held-out eval, run at the end of M5, uses four more acts that were never examined while tuning (DESIGN.md, [Commission recall](DESIGN.md#commission-recall)). Download the same edition of each into `data/acts/held-out/` and convert it the same way:
 
 ```sh
 textutil -convert txt -encoding UTF-8 -output data/acts/held-out/assignment-for-benefit-of-creditors.txt "data/acts/held-out/Assignment for Benefit of Creditors_Final Act_No Comments_2025dec11.docx"
@@ -60,7 +60,7 @@ The near-duplicate stage finds an enactment only where a state kept the act's wo
 Precision is measured on what a bill's page lists, a model's judgment of a random sample of Georgia's pages. At a semantic threshold of 0.93, 0.69 [0.59, 0.77] of the relatives listed stated the same provision as the bill, 0.86 [0.72, 0.93] of those sharing wording and 0.57 [0.44, 0.69] of those found by meaning alone, which a page lists apart (`uv run lineage eval relatives --part tuning_093` → `reports/results.json`, `relatives_precision_tuning_093`). On 50 pairs a person also labeled, the model's labels gave 0.65 where the person's gave 0.75, so the model's numbers read as a floor. [DESIGN.md](DESIGN.md#precision-sample) has how the sample was drawn and what the check found.
 
 <!-- results:held-out -->
-Held-out recall: the same measure on four uniform acts never examined while matching was tuned, run once, at the end of M5, with the semantic stage's threshold at 0.93 and with the state boilerplate flag. The lists were read 2026-11-07. Reproduce with `uv run lineage eval commission --held-out --final` → `reports/results.json`, `commission_held_out`.
+Held-out recall: the same measure on four uniform acts never examined while matching was tuned, run at the end of M5 with the semantic stage's threshold at 0.94 and with the state boilerplate flag. It was first run at a threshold of 0.93, which found 17 of 19; the threshold then moved on tuning data alone ([DESIGN.md](DESIGN.md#commission-recall)). The lists were read 2026-11-07. Reproduce with `uv run lineage eval commission --held-out --final` → `reports/results.json`, `commission_held_out`.
 
 | | Both stages | Near-duplicate stage | Semantic stage |
 |---|---|---|---|

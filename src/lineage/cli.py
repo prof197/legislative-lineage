@@ -28,7 +28,15 @@ from lineage.agreement import (
 )
 from lineage.align import Embedder
 from lineage.answer_key import ANSWER_KEY, HELD_OUT_KEY, build_answer_key, render_answer_key
-from lineage.commission import RESULTS, CommissionError, commission_recall, write_results
+from lineage.commission import (
+    RESULTS,
+    CommissionError,
+    check_held_out_configuration,
+    commission_recall,
+    run_configuration,
+    with_earlier_runs,
+    write_results,
+)
 from lineage.cost import REPORT as COST_REPORT
 from lineage.cost import cost_report
 from lineage.cost import write_report as write_cost_report
@@ -1170,22 +1178,34 @@ def eval_commission(
         bool, typer.Option("--held-out", help="Evaluate the held-out acts (with --final only).")
     ] = False,
     final: Annotated[
-        bool, typer.Option("--final", help="The one final evaluation of the held-out acts.")
+        bool,
+        typer.Option(
+            "--final",
+            help="The final evaluation of the held-out acts, once per settled configuration.",
+        ),
     ] = False,
     semantic: SemanticOption = True,
 ) -> None:
     """Commission recall: what share of each uniform act's enactments its text finds."""
     if held_out and not final:
         typer.echo(
-            "The held-out acts are evaluated once, at the end of M5 (DESIGN.md#commission-recall). "
-            "Pass --final for that run.",
+            "The held-out acts are evaluated only at the end of M5, once per configuration it "
+            "settled (DESIGN.md#commission-recall). Pass --final for that run.",
             err=True,
         )
         raise typer.Exit(1)
     if final and not held_out:
         typer.echo("--final applies only with --held-out.", err=True)
         raise typer.Exit(1)
+    flagged = flagged_sections(tables)
+    previous: dict[str, Any] | None = (
+        json.loads(results.read_text()).get("commission_held_out")
+        if held_out and results.exists()
+        else None
+    )
     try:
+        if held_out:
+            check_held_out_configuration(previous, run_configuration(semantic, flagged))
         search = _semantic_search(tables) if semantic else None
         section = commission_recall(
             tables,
@@ -1197,8 +1217,10 @@ def eval_commission(
             semantic=search,
             # Development recall at each threshold option, for the proposal; never held out.
             semantic_thresholds=THRESHOLD_CANDIDATES if search is not None and not held_out else (),
-            flagged=flagged_sections(tables),
+            flagged=flagged,
         )
+        if held_out:
+            section = with_earlier_runs(section, previous)
     except (
         CommissionError,
         IndexMissingError,

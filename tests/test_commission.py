@@ -9,6 +9,7 @@ test of the pipeline, not the recall the README reports.
 import json
 from dataclasses import replace
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pytest
@@ -22,9 +23,12 @@ from lineage.commission import (
     CommissionError,
     Probe,
     Relative,
+    check_held_out_configuration,
     evaluate,
     probe,
+    run_configuration,
     target_reason,
+    with_earlier_runs,
 )
 from lineage.lsh import BANDS, BUCKET_CAP, ROWS
 from lineage.minhash import NUM_PERM
@@ -348,3 +352,40 @@ def test_recall_at_a_stricter_semantic_threshold_matches_the_search_and_never_ri
             act_texts, snapshot, commission_corpus, sessions,
             semantic=bag_of_words_search(commission_corpus), semantic_thresholds=(0.5,),
         )  # fmt: skip
+
+
+def _held_out_run(threshold: float, found: list[tuple[str, str]]) -> dict[str, Any]:
+    enactments = [{"act": a, "state": st, "found": True} for a, st in found]
+    pooled = {"all": {"enactments": 3, "found": len(found)}}
+    return {
+        "semantic_threshold": threshold,
+        "state_boilerplate_flag": {"sections": 2, "both_stages_exempt_from": BUILD_THRESHOLD},
+        "recall": {"pooled": pooled},
+        "stage_ablation": {"near_duplicate": {"pooled": pooled}},
+        "miss_reasons": {"not_proposed": 3 - len(found)},
+        "enactments": [*enactments, {"act": "x", "state": "IA", "found": False}],
+    }
+
+
+def test_a_held_out_run_keeps_the_earlier_runs_and_refuses_one_already_run() -> None:
+    first = with_earlier_runs(_held_out_run(0.93, [("x", "PA"), ("x", "NV")]), None)
+    assert first["earlier_runs"] == []
+    second = with_earlier_runs(_held_out_run(0.94, [("x", "PA")]), first)
+
+    assert [r["semantic_threshold"] for r in second["earlier_runs"]] == [0.93]
+    assert second["earlier_runs"][0]["found"] == ["x NV", "x PA"]
+    assert second["earlier_runs"][0]["recall"] == first["recall"]["pooled"]
+    flagged = {("b", 1), ("b", 2)}
+    now = run_configuration(True, flagged)
+    assert now == {k: second[k] for k in ("semantic_threshold", "state_boilerplate_flag")} | {
+        "semantic_threshold": THRESHOLD
+    }
+    # Run at the current configuration, and at the one before it, nothing more is allowed.
+    with pytest.raises(CommissionError, match="already run"):
+        check_held_out_configuration(with_earlier_runs(_held_out_run(THRESHOLD, []), None), now)
+    with pytest.raises(CommissionError, match="already run"):
+        check_held_out_configuration(
+            second, {k: first[k] for k in ("semantic_threshold", "state_boilerplate_flag")}
+        )
+    check_held_out_configuration(None, now)
+    check_held_out_configuration(second, run_configuration(True, {("b", 1)}))
