@@ -4603,42 +4603,60 @@
     "near_duplicate_only": {
      "size": 1392446,
      "sampled": 100,
-     "labeled": 0,
-     "correct": 0,
-     "precision": null,
+     "labeled": 17,
+     "correct": 17,
+     "precision": 1.0,
      "interval_95": [
-      0.0,
+      0.8157,
       1.0
      ]
     },
     "semantic_only": {
      "size": 2855089,
      "sampled": 100,
-     "labeled": 0,
-     "correct": 0,
-     "precision": null,
+     "labeled": 17,
+     "correct": 9,
+     "precision": 0.5294,
      "interval_95": [
-      0.0,
-      1.0
+      0.3096,
+      0.7383
      ]
     },
     "both": {
      "size": 1048762,
      "sampled": 100,
-     "labeled": 0,
-     "correct": 0,
-     "precision": null,
+     "labeled": 16,
+     "correct": 16,
+     "precision": 1.0,
      "interval_95": [
-      0.0,
+      0.8064,
       1.0
      ]
     }
    },
    "stages": {
-    "near_duplicate": null,
-    "semantic": null
+    "near_duplicate": {
+     "precision": 1.0,
+     "interval_95": [
+      0.8156,
+      0.9961
+     ]
+    },
+    "semantic": {
+     "precision": 0.6558,
+     "interval_95": [
+      0.4652,
+      0.7865
+     ]
+    }
    },
-   "overall": null
+   "overall": {
+    "precision": 0.7463,
+    "interval_95": [
+     0.5772,
+     0.8228
+    ]
+   }
   },
   "provisional_model": {
    "strata": {
@@ -4701,15 +4719,15 @@
    }
   },
   "agreement": {
-   "pairs": 0,
-   "same_label": 0,
-   "same_correctness": 0
+   "pairs": 50,
+   "same_label": 23,
+   "same_correctness": 38
   },
   "state_boilerplate_flag": {
    "min_families": 50,
    "dropped_pairs": {
     "correct_from": 2,
-    "model_labeler": "model:claude-opus-5-5@v1",
+    "model_labeler": "model:claude-opus-5-5@passages-v1-high",
     "person": {
      "strata": {
       "near_duplicate_only": {
@@ -4757,42 +4775,60 @@
       "near_duplicate_only": {
        "size": 23948,
        "sampled": 34,
-       "labeled": 0,
-       "correct": 0,
-       "precision": null,
+       "labeled": 34,
+       "correct": 8,
+       "precision": 0.2353,
        "interval_95": [
-        0.0,
-        1.0
+        0.1244,
+        0.4
        ]
       },
       "semantic_only": {
        "size": 148597,
        "sampled": 34,
-       "labeled": 0,
-       "correct": 0,
-       "precision": null,
+       "labeled": 34,
+       "correct": 10,
+       "precision": 0.2941,
        "interval_95": [
-        0.0,
-        1.0
+        0.1683,
+        0.4617
        ]
       },
       "both": {
        "size": 13182,
        "sampled": 34,
-       "labeled": 0,
-       "correct": 0,
-       "precision": null,
+       "labeled": 34,
+       "correct": 30,
+       "precision": 0.8824,
        "interval_95": [
-        0.0,
-        1.0
+        0.7338,
+        0.9533
        ]
       }
      },
      "stages": {
-      "near_duplicate": null,
-      "semantic": null
+      "near_duplicate": {
+       "precision": 0.465,
+       "interval_95": [
+        0.3693,
+        0.5679
+       ]
+      },
+      "semantic": {
+       "precision": 0.342,
+       "interval_95": [
+        0.2218,
+        0.4944
+       ]
+      }
      },
-     "overall": null
+     "overall": {
+      "precision": 0.3283,
+      "interval_95": [
+       0.2256,
+       0.4658
+      ]
+     }
     },
     "agreement": {
      "pairs": 0,
@@ -4813,42 +4849,60 @@
       "near_duplicate_only": {
        "size": 1368498,
        "sampled": 99,
-       "labeled": 0,
-       "correct": 0,
-       "precision": null,
+       "labeled": 17,
+       "correct": 17,
+       "precision": 1.0,
        "interval_95": [
-        0.0,
+        0.8157,
         1.0
        ]
       },
       "semantic_only": {
        "size": 2706492,
        "sampled": 93,
-       "labeled": 0,
-       "correct": 0,
-       "precision": null,
+       "labeled": 17,
+       "correct": 9,
+       "precision": 0.5294,
        "interval_95": [
-        0.0,
-        1.0
+        0.3096,
+        0.7383
        ]
       },
       "both": {
        "size": 1035580,
        "sampled": 98,
-       "labeled": 0,
-       "correct": 0,
-       "precision": null,
+       "labeled": 16,
+       "correct": 16,
+       "precision": 1.0,
        "interval_95": [
-        0.0,
+        0.8064,
         1.0
        ]
       }
      },
      "stages": {
-      "near_duplicate": null,
-      "semantic": null
+      "near_duplicate": {
+       "precision": 1.0,
+       "interval_95": [
+        0.8156,
+        0.9961
+       ]
+      },
+      "semantic": {
+       "precision": 0.6596,
+       "interval_95": [
+        0.4697,
+        0.7881
+       ]
+      }
      },
-     "overall": null
+     "overall": {
+      "precision": 0.7508,
+      "interval_95": [
+       0.5824,
+       0.8248
+      ]
+     }
     },
     "provisional_model": {
      "strata": {
@@ -4911,9 +4965,9 @@
      }
     },
     "agreement": {
-     "pairs": 0,
-     "same_label": 0,
-     "same_correctness": 0
+     "pairs": 50,
+     "same_label": 23,
+     "same_correctness": 38
     }
    }
   }
