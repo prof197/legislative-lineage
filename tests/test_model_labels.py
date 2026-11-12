@@ -374,6 +374,7 @@ def test_the_passage_question_shows_the_passages_first_and_never_says_how_they_m
         assert word not in PASSAGES_SYSTEM.lower()
     assert "beyond boilerplate" in PASSAGES_SYSTEM
     assert (PASSAGES_HIGH.effort, PASSAGES_HIGH.passages) == ("high", True)
+    assert PASSAGES_HIGH.max_tokens == 2048
     assert PROMPTS["passages-v1-high"] is PASSAGES_HIGH
 
 

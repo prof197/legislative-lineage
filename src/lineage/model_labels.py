@@ -195,8 +195,12 @@ RELATIVES_HIGH = Prompt(
 # The question the claim rests on (DESIGN.md#precision-sample): do the passages that list a
 # relative state the same provision? Asked at high effort, the effort the person's check was
 # met at on the correct/incorrect cutoff.
+# At high effort the section prompt's replies averaged 134 tokens, thinking included (6,713 over
+# 50; reports/label_spend.json); 2,048 is still some 15 times that, and keeps the projection,
+# which counts every reply at its limit, inside the budget. A reply cut off is unusable.
+PASSAGES_MAX_TOKENS = 2048
 PASSAGES_HIGH = Prompt(
-    "passages-v1-high", PASSAGES_SYSTEM, passage_message, "high", HIGH_EFFORT_MAX_TOKENS,
+    "passages-v1-high", PASSAGES_SYSTEM, passage_message, "high", PASSAGES_MAX_TOKENS,
     passages=True, schema=SameProvision, scale=SAME_PROVISION,
 )  # fmt: skip
 PROMPTS = {
