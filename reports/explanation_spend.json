@@ -1,6 +1,6 @@
 {
  "budget": 30.0,
- "spent": 13.5633,
+ "spent": 16.2153,
  "runs": [
   {
    "run": "explain-2026-11-12-1",
@@ -39,6 +39,20 @@
    "metered": false,
    "note": "replies the SDK's parse helper rejected before returning them, so their usage was never recorded; counted at an upper bound: the largest featured prompt, 31,957 characters at 2.5 a token, and a reply at the 4,096-token limit, each",
    "dollars": 11.3094,
+   "at": "2026-11-12"
+  },
+  {
+   "run": "judge-2026-11-12-4",
+   "purpose": "judge",
+   "model": "claude-opus-5-5",
+   "prompt": "judge-v1",
+   "calls": 319,
+   "served_by": {
+    "claude-opus-5-5": 319
+   },
+   "input_tokens": 405770,
+   "output_tokens": 51448,
+   "dollars": 2.652,
    "at": "2026-11-12"
   }
  ]
