@@ -39,7 +39,7 @@ uv run lineage label-import SAVED --sample SAMPLE --labeler HANDLE  # the page's
 uv run lineage pair-data fetch  # the labeled pair dataset at its pinned commit -> data/pair_data/ (local, evaluation only, never committed)
 uv run lineage eval pair-data  # both stages scored on the pair dataset; each model's threshold set on train+val, measured on test -> reports/pair_data.json
 uv run lineage eval cost  # cost and runtime per stage: the build's from its reports, each development act's query timed by stage -> reports/cost.json
-uv run lineage relatives-sample  # 100 Georgia bills at random, one listed relative each, for the precision of what a page lists -> evals/relatives_sample.jsonl
+uv run lineage relatives-sample [--part reporting]  # 100 Georgia bills at random, one listed relative each, the threshold's tuning sample (or the next 100, the reporting sample) -> evals/relatives_{tuning,reporting}.jsonl, reports/relatives_{tuning,reporting}.json
 uv run lineage eval relatives  # that precision, from the relatives' labels -> reports/results.json
 uv run lineage label-spend --batch-id ID  # record an ended label batch's tokens and cost -> reports/label_spend.json
 uv run lineage agreement-sample  # 50 of the precision sample's pairs, stratified by stage, for a person to label -> evals/agreement_sample.jsonl

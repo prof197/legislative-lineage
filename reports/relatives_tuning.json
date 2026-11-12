@@ -2,6 +2,7 @@
  "command": "uv run lineage relatives-sample",
  "state": "GA",
  "seed": 20261115,
+ "skip": 0,
  "bills": 100,
  "model": "bge-small-en-v1.5",
  "relatives_shown": 50,

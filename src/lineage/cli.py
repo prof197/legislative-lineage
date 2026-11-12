@@ -92,8 +92,8 @@ from lineage.precision import SAMPLE_REPORT as PRECISION_SAMPLE_REPORT
 from lineage.precision import PrecisionError, build_sample, estimate, load_sizes, write_sample
 from lineage.query import IndexMissingError, query_text, require_index
 from lineage.relatives_sample import LABELS as RELATIVES_LABELS
+from lineage.relatives_sample import PARTS as RELATIVES_PARTS
 from lineage.relatives_sample import SAMPLE as RELATIVES_SAMPLE
-from lineage.relatives_sample import SAMPLE_REPORT as RELATIVES_SAMPLE_REPORT
 from lineage.relatives_sample import (
     RelativesSampleError,
     build_relatives_sample,
@@ -832,16 +832,29 @@ def agreement_sample(
 @app.command("relatives-sample")
 def relatives_sample(
     tables: TablesOption = Path("data/tables"),
+    part: Annotated[
+        str,
+        typer.Option(
+            "--part", help="tuning (the draw's first bills) or reporting (the next ones)."
+        ),
+    ] = "tuning",
     sample: Annotated[
-        Path, typer.Option("--sample", help="The sample file, one relative per line (committed).")
-    ] = RELATIVES_SAMPLE,
+        Path | None,
+        typer.Option("--sample", help="The sample file, one relative per line (committed)."),
+    ] = None,
     report: Annotated[
-        Path, typer.Option("--report", help="The draw's report JSON (committed).")
-    ] = RELATIVES_SAMPLE_REPORT,
+        Path | None, typer.Option("--report", help="The draw's report JSON (committed).")
+    ] = None,
 ) -> None:
     """Draw listed relatives of random bills of one state, to measure what a page lists."""
+    if part not in RELATIVES_PARTS:
+        typer.echo(f"error: --part is one of {', '.join(RELATIVES_PARTS)}, not {part!r}", err=True)
+        raise typer.Exit(1)
+    skip, default_sample, default_report = RELATIVES_PARTS[part]
+    sample = sample or default_sample
+    report = report or default_report
     try:
-        rows, doc = build_relatives_sample(tables)
+        rows, doc = build_relatives_sample(tables, skip=skip)
     except (RelativesSampleError, SemanticPairsError) as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e

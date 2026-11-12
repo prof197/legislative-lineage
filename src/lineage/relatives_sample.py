@@ -17,6 +17,13 @@ near-duplicate stage found comes first, the most band agreements first, since it
 what a page highlights; failing that, the semantic stage's pair at the best cosine. The two
 sections are aligned (lineage.align), and the copied and paraphrased passages are given
 together, unmarked, alongside both sections. See DESIGN.md#precision-sample.
+
+Two samples come from one seeded draw of the state's bills: its first BILLS bills are the
+tuning sample, which the threshold proposal reads (lineage.threshold), and the next BILLS the
+reporting sample, read only once the threshold is final. They share no bill. Each row records
+what a threshold above the build's needs: the relative's best cosine, whether the
+near-duplicate stage found it, and the best cosines of every relative its page shows by meaning
+alone.
 """
 
 import json
@@ -42,8 +49,17 @@ from lineage.semantic_pairs import load_semantic_pairs, section_keys
 STATE = "GA"
 BILLS = 100
 SEED = PRECISION_SEED + 3  # the flagged sample took + 1, the agreement subsample + 2
-SAMPLE = Path("evals/relatives_sample.jsonl")
-SAMPLE_REPORT = Path("reports/relatives_sample.json")
+# Each part's place in the draw, its sample file and its report.
+PARTS: dict[str, tuple[int, Path, Path]] = {
+    "tuning": (0, Path("evals/relatives_tuning.jsonl"), Path("reports/relatives_tuning.json")),
+    "reporting": (
+        BILLS,
+        Path("evals/relatives_reporting.jsonl"),
+        Path("reports/relatives_reporting.json"),
+    ),
+}
+SAMPLE = PARTS["tuning"][1]
+SAMPLE_REPORT = PARTS["tuning"][2]
 LABELS = Path("evals/relatives_labels.jsonl")
 COMMAND = "uv run lineage relatives-sample"
 TOP = 5  # a page's first relatives, reported apart from the rest
@@ -88,9 +104,10 @@ def build_relatives_sample(
     state: str = STATE,
     bills: int = BILLS,
     seed: int = SEED,
+    skip: int = 0,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """The sample's rows, in the precision sample's format with the page each relative is
-    listed on, and the draw's report."""
+    listed on, and the draw's report: the `bills` bills after the draw's first `skip`."""
     section_bills, ordinals = section_keys(tables_dir)
     with queries.connect_quiet() as con:
         states = queries.bill_states(con, bills_glob=str(tables_dir / "bills" / "*.parquet"))
@@ -105,12 +122,12 @@ def build_relatives_sample(
         paired[np.asarray(right)] = True
     signed = sorted({section_bills[s] for s in np.flatnonzero(in_state).tolist()})
     candidates = sorted({section_bills[s] for s in np.flatnonzero(in_state & paired).tolist()})
-    if len(candidates) < bills:
+    if len(candidates) < skip + bills:
         raise RelativesSampleError(
-            f"{state} has {len(candidates)} bills with a relative, fewer than {bills}"
+            f"{state} has {len(candidates)} bills with a relative, fewer than {skip + bills}"
         )
     order: list[int] = np.random.default_rng(seed).permutation(len(candidates)).tolist()
-    chosen = [candidates[i] for i in order[:bills]]
+    chosen = [candidates[i] for i in order[skip : skip + bills]]
     relatives = bill_relatives(tables_dir, chosen, model=model)
     wanted = set(chosen) | {m.bill_id for page in relatives.values() for m in page.matches}
     numbers: dict[str, list[int]] = {}
@@ -119,7 +136,7 @@ def build_relatives_sample(
             numbers.setdefault(bill_id, []).append(number)
     rows: list[dict[str, Any]] = []
     listed: list[int] = []
-    for n, bill_id in enumerate(chosen, start=1):
+    for n, bill_id in enumerate(chosen, start=skip + 1):
         page = relatives[bill_id]
         if not page.matches:
             raise RelativesSampleError(f"{bill_id} has stored pairs but lists no relative")
@@ -162,6 +179,14 @@ def build_relatives_sample(
                     "state": relative.state,
                     "share": round(relative.share, 4),
                     "relative_stages": sorted(relative.sections_by_stage),
+                    "best_cosine": relative.best_cosine,
+                    # Every relative the page shows by meaning alone, by its best cosine: what
+                    # a higher threshold would take off the page.
+                    "shown_semantic_only": sorted(
+                        float(m.best_cosine)
+                        for m in page.matches
+                        if "near_duplicate" not in m.sections_by_stage and m.best_cosine is not None
+                    ),
                 },
             }
         )
@@ -170,6 +195,7 @@ def build_relatives_sample(
         "command": COMMAND,
         "state": state,
         "seed": seed,
+        "skip": skip,
         "bills": bills,
         "model": model,
         "relatives_shown": RELATIVES_SHOWN,

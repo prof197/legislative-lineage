@@ -1,0 +1,23 @@
+{
+ "command": "uv run lineage relatives-sample",
+ "state": "GA",
+ "seed": 20261115,
+ "skip": 100,
+ "bills": 100,
+ "model": "bge-small-en-v1.5",
+ "relatives_shown": 50,
+ "state_bills_signed": 4554,
+ "state_bills_with_a_relative": 2088,
+ "listed_quantiles": {
+  "0.1": 1.0,
+  "0.25": 2.75,
+  "0.5": 9.0,
+  "0.75": 25.25,
+  "0.9": 44.50000000000004
+ },
+ "relative_strata": {
+  "near_duplicate_only": 0,
+  "semantic_only": 91,
+  "both": 9
+ }
+}

@@ -142,3 +142,25 @@ def test_the_estimate_is_the_share_correct_by_relative_stage_and_rank() -> None:
     assert got["rank"][f"first_{TOP}"]["labeled"] == 3
     assert got["rank"][f"after_{TOP}"]["correct"] == 0
     assert np.isclose(got["overall"]["precision"], 0.5)
+
+
+def test_the_reporting_part_is_the_draws_next_bills_and_records_what_a_threshold_needs(
+    tables: Path,
+) -> None:
+    first, _ = build_relatives_sample(tables, model=FAKE_MODEL, state=STATE, bills=2)
+    second, report = build_relatives_sample(tables, model=FAKE_MODEL, state=STATE, bills=1, skip=2)
+    both, _ = build_relatives_sample(tables, model=FAKE_MODEL, state=STATE, bills=3)
+
+    assert [r["pair"] for r in second] == ["r0003"]
+    assert first + second == both
+    assert report["skip"] == 2
+    listed = bill_relatives(tables, [r["query"]["bill_id"] for r in both], model=FAKE_MODEL)
+    for row in both:
+        page: dict[str, Any] = row["page"]
+        shown = listed[row["query"]["bill_id"]].matches
+        assert page["best_cosine"] == shown[int(page["rank"]) - 1].best_cosine
+        assert page["shown_semantic_only"] == sorted(
+            float(m.best_cosine)
+            for m in shown
+            if "near_duplicate" not in m.sections_by_stage and m.best_cosine is not None
+        )
