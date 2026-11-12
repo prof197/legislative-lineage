@@ -139,6 +139,9 @@ from lineage.text_quality import STORE, run_sample
 from lineage.text_run import REPORT as FETCH_REPORT
 from lineage.text_run import run_fetch
 from lineage.threshold import CANDIDATES as THRESHOLD_CANDIDATES
+from lineage.threshold import REPORT as THRESHOLD_REPORT
+from lineage.threshold import ThresholdError
+from lineage.threshold import proposal as threshold_proposal
 from lineage.ulc import ENACTMENTS, HELD_OUT_ENACTMENTS, UlcError
 from lineage.vectors import PROCESSES as EMBED_PROCESSES
 from lineage.vectors import REPORT as EMBED_REPORT
@@ -1444,6 +1447,51 @@ def eval_relatives(
         )
         typer.echo(f"{who.replace('_', ' ')}: {shown}")
     typer.echo(f"-> {results}")
+
+
+@eval_app.command("threshold")
+def eval_threshold(
+    sample: Annotated[
+        Path,
+        typer.Argument(help="The tuning sample of relatives.", exists=True, dir_okay=False),
+    ] = RELATIVES_SAMPLE,
+    tables: TablesOption = Path("data/tables"),
+    labels: Annotated[
+        Path, typer.Option("--labels", help="Labels file (committed).")
+    ] = RELATIVES_LABELS,
+    model_labeler: Annotated[
+        str, typer.Option("--model-labeler", help="The model labeler counted, model id@prompt.")
+    ] = model_labeler_name(LABEL_MODEL, "passages-v1-high"),
+    results: Annotated[
+        Path, typer.Option("--results", help="Results JSON, read for development recall.")
+    ] = RESULTS,
+    report: Annotated[
+        Path, typer.Option("--report", help="The proposal's report JSON (committed).")
+    ] = THRESHOLD_REPORT,
+) -> None:
+    """Each semantic threshold option's page precision on the tuning sample, with its recall."""
+    if sample.resolve() == RELATIVES_PARTS["reporting"][1].resolve() or "reporting" in sample.name:
+        typer.echo("error: the reporting sample is read only once the threshold is final", err=True)
+        raise typer.Exit(1)
+    try:
+        items, kept = _current_items(sample, tables, labels)
+        pages = load_pages(sample)
+        commission = json.loads(results.read_text())["commission"]
+        doc = threshold_proposal(items, kept, pages, commission, labeler=model_labeler)
+    except (LabelError, ThresholdError, KeyError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    report.write_text(json.dumps(doc, indent=1) + "\n")
+    for option in doc["options"]:
+        name = option["option"] + (f" {option['threshold']}" if "threshold" in option else "")
+        page = option.get("page") or option["by_meaning_alone"]
+        recall = option["development_recall"]
+        recall = recall.get("on_the_page", recall)
+        typer.echo(
+            f"{name}: page precision {page['precision']}, "
+            f"recall {recall['found']}/{recall['enactments']}"
+        )
+    typer.echo(f"-> {report}")
 
 
 @eval_app.command("precision")

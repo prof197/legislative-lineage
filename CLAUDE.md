@@ -29,6 +29,7 @@ uv run lineage precision-sample --flagged  # a seeded sample of the pairs the st
 uv run lineage state-boilerplate  # each section's count of other same-state families its near-duplicates reach; flagged at 50 -> data/tables/state_boilerplate/, reports/state_boilerplate.json
 uv run lineage query FILE     # a bill's relatives by both stages, offline, from the built index and vectors (--no-semantic: near-duplicates only)
 uv run lineage eval commission  # commission recall, act texts from data/acts/ -> reports/results.json (--results reports/results_exported_only.json after an --exported-only merge); with the stage ablation unless --no-semantic
+uv run lineage eval threshold  # each semantic threshold option's page precision on the tuning sample of relatives, beside development recall -> reports/threshold_proposal.json
 uv run lineage eval answer-key  # each commission list row and the bills it resolved to -> reports/answer_key.csv
 uv run lineage eval answer-key --held-out  # the held-out lists resolved, development-set bills skipped -> reports/answer_key_heldout.csv
 uv run lineage eval commission --held-out --final  # held-out recall: run once, at the end of M5, never before
@@ -91,6 +92,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   ulc.py          the commission's enactment lists, and the bills each enactment names
   answer_key.py   `lineage eval answer-key`: the resolved list rows, for checking by eye
   commission.py   `lineage eval commission`: recall, a miss reason per enactment, the results JSON
+  threshold.py    `lineage eval threshold`: a page's precision under each threshold option, weighted from one drawn relative a page
   results_table.py  the README results table, rendered from reports/results.json
   pair_data.py    the labeled pair dataset (Kim et al., EMNLP 2021): pinned files, fetch, load; no license, so local only
   pair_eval.py    `lineage eval pair-data`: the stages scored on labeled pairs, metrics only
