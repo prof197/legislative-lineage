@@ -62,7 +62,7 @@ def _claim(span: str, kind: Literal["added", "removed", "changed"] = "added") ->
     )
 
 
-def _scripted(*replies: ChangeExplanation | Exception) -> tuple[list[tuple[str, str]], Ask]:
+def scripted(*replies: ChangeExplanation | Exception) -> tuple[list[tuple[str, str]], Ask]:
     calls: list[tuple[str, str]] = []
     queue: Iterator[ChangeExplanation | Exception] = iter(replies)
 
@@ -115,7 +115,7 @@ def test_the_cache_key_changes_with_the_model_the_prompt_or_any_span() -> None:
 
 
 def test_a_grounded_reply_is_kept_and_cached_so_a_rerun_makes_no_call(tmp_path: Path) -> None:
-    calls, ask = _scripted(ChangeExplanation(claims=[_claim("s2")]))
+    calls, ask = scripted(ChangeExplanation(claims=[_claim("s2")]))
 
     first = _explain(ask, tmp_path)
     again = _explain(None, tmp_path)
@@ -133,7 +133,7 @@ def test_a_grounded_reply_is_kept_and_cached_so_a_rerun_makes_no_call(tmp_path: 
 
 
 def test_failing_claims_are_dropped_and_the_rest_kept_without_a_retry(tmp_path: Path) -> None:
-    calls, ask = _scripted(ChangeExplanation(claims=[_claim("s2"), _claim("s1", "changed")]))
+    calls, ask = scripted(ChangeExplanation(claims=[_claim("s2"), _claim("s1", "changed")]))
 
     outcome = _explain(ask, tmp_path)
 
@@ -143,7 +143,7 @@ def test_failing_claims_are_dropped_and_the_rest_kept_without_a_retry(tmp_path: 
 
 
 def test_an_unusable_reply_is_retried_once(tmp_path: Path) -> None:
-    calls, ask = _scripted(
+    calls, ask = scripted(
         ChangeExplanation(claims=[_claim("s1", "changed")]),
         ChangeExplanation(claims=[_claim("s2")]),
     )
@@ -155,7 +155,7 @@ def test_an_unusable_reply_is_retried_once(tmp_path: Path) -> None:
 
 
 def test_after_one_retry_the_explanation_is_withheld_and_that_is_cached(tmp_path: Path) -> None:
-    calls, ask = _scripted(UnusableReplyError("refused"), ChangeExplanation(claims=[_claim("s9")]))
+    calls, ask = scripted(UnusableReplyError("refused"), ChangeExplanation(claims=[_claim("s9")]))
 
     outcome = _explain(ask, tmp_path)
     again = _explain(None, tmp_path)
@@ -172,7 +172,7 @@ def test_without_a_cached_reply_or_a_live_model_nothing_is_made_up(tmp_path: Pat
 
 
 def test_no_claims_means_nothing_changed_and_is_not_retried(tmp_path: Path) -> None:
-    calls, ask = _scripted(ChangeExplanation(claims=[]))
+    calls, ask = scripted(ChangeExplanation(claims=[]))
 
     outcome = _explain(ask, tmp_path)
 
@@ -215,7 +215,7 @@ def test_the_command_replays_the_cache_and_asks_only_with_live(
     spans = align(origin, descendant).spans
     changed = next(s for s in spans if s.kind != "copied" and s.b is not None)
     claim = _claim(changed.id)
-    _, ask = _scripted(ChangeExplanation(claims=[claim]))
+    _, ask = scripted(ChangeExplanation(claims=[claim]))
     explain(prompt_spans(spans, origin, descendant, origin_side="a"), ask=ask, cache=cache)
 
     cached = CliRunner().invoke(app, [*args, "--spend", str(tmp_path / "spend.json")])
@@ -227,7 +227,7 @@ def test_the_command_replays_the_cache_and_asks_only_with_live(
 def test_a_cache_file_holds_no_text_and_ci_grounds_it_again_from_what_it_records(
     tmp_path: Path,
 ) -> None:
-    _, ask = _scripted(ChangeExplanation(claims=[_claim("s2"), _claim("s1", "changed")]))
+    _, ask = scripted(ChangeExplanation(claims=[_claim("s2"), _claim("s1", "changed")]))
     _explain(ask, tmp_path)
     [path] = tmp_path.glob("*.json")
     entry = json.loads(path.read_text())
@@ -248,7 +248,7 @@ def test_a_cache_file_holds_no_text_and_ci_grounds_it_again_from_what_it_records
 def test_a_withheld_explanation_passes_the_check_and_an_unreadable_file_does_not(
     tmp_path: Path,
 ) -> None:
-    _, ask = _scripted(UnusableReplyError("refused"), UnusableReplyError("refused"))
+    _, ask = scripted(UnusableReplyError("refused"), UnusableReplyError("refused"))
     _explain(ask, tmp_path)
     assert check_cache(tmp_path) == []
 
@@ -259,7 +259,7 @@ def test_a_withheld_explanation_passes_the_check_and_an_unreadable_file_does_not
 def test_every_call_is_metered_and_a_call_past_the_budget_is_refused(tmp_path: Path) -> None:
     spend = tmp_path / "spend.json"
     meter = Meter(spend, "explain", MODEL, PROMPT_VERSION, "2026-11-12")
-    _, ask = _scripted(
+    _, ask = scripted(
         UnusableReplyError("refused", 500, 20, "claude-opus-5-5"),
         ChangeExplanation(claims=[_claim("s2")]),
     )
@@ -272,7 +272,7 @@ def test_every_call_is_metered_and_a_call_past_the_budget_is_refused(tmp_path: P
     spend.write_text(json.dumps({"runs": [{**run, "run": "earlier", "dollars": 29.99}]}))
     broke = Meter(spend, "explain", MODEL, PROMPT_VERSION, "2026-11-12")
     with pytest.raises(BudgetError, match="passes the"):
-        _explain(_scripted(ChangeExplanation(claims=[]))[1], tmp_path / "other", broke)
+        _explain(scripted(ChangeExplanation(claims=[]))[1], tmp_path / "other", broke)
 
 
 def test_the_projection_counts_every_retry_at_the_reply_limit() -> None:

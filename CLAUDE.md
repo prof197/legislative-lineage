@@ -39,6 +39,7 @@ uv run lineage label SAMPLE --labeler HANDLE  # label sampled matches by hand, 0
 uv run lineage label-page SAMPLE --labeler HANDLE  # the same labeling as a phone page: pending pairs, aligned, blind -> data/label_page/ (local), published as a private artifact
 uv run lineage label-import SAVED --sample SAMPLE --labeler HANDLE  # the page's saved labels, checked against the sample -> evals/precision_labels.jsonl
 uv run lineage explain PAIRS  # grounded explanations from the cache -> explanations/cache/ (--live asks the model for uncached pairs within the budget; ANTHROPIC_API_KEY)
+uv run lineage eval faithfulness PAIRS  # model-judged: do the kept claims describe their cited spans correctly? with the hard check's result -> reports/results.json (--live asks the judge for unjudged claims within the budget -> evals/faithfulness_judgments.jsonl)
 uv run lineage pair-data fetch  # the labeled pair dataset at its pinned commit -> data/pair_data/ (local, evaluation only, never committed)
 uv run lineage eval pair-data  # both stages scored on the pair dataset; each model's threshold set on train+val, measured on test -> reports/pair_data.json
 uv run lineage eval cost  # cost and runtime per stage: the build's from its reports, each development act's query timed by stage -> reports/cost.json
@@ -113,6 +114,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   explanations.py the model's reply schema (Pydantic) and the span-grounding check that drops unbacked claims
   explanations.py the model's reply schema (Pydantic) and the span-grounding check, on spans hashed so CI can run it
   explain.py      `lineage explain`: the prompt from aligned spans, the SDK call, retry and withholding, the cache, and the cache's check
+  faithfulness.py `lineage eval faithfulness`: a model judges each kept claim against its cited spans, verdicts cached without text, the Wilson share
   spend.py        M6's model calls metered against their $30 cap, projected before a run and checked before each call -> reports/explanation_spend.json
   stoplist.py     document-frequency stoplist and its report
   state_boilerplate.py  `lineage state-boilerplate`: a section flagged as its state's boilerplate by the other families it reaches; precision with the flag on, and the dropped pairs' sample

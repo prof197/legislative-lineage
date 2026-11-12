@@ -49,7 +49,9 @@ from lineage.explain import MODEL as EXPLAIN_MODEL
 from lineage.explain import PROMPT_VERSION as EXPLAIN_PROMPT
 from lineage.explain import (
     NotCachedError,
+    PairToExplain,
     anthropic_ask,
+    check_cache,
     explain,
     load_pairs,
     pair_texts,
@@ -57,6 +59,19 @@ from lineage.explain import (
 )
 from lineage.explain import cache_path as explanation_cache_path
 from lineage.explain import projected_cost as projected_explain_cost
+from lineage.faithfulness import (
+    JUDGE_MODEL,
+    JUDGE_PROMPT,
+    JUDGMENTS,
+    anthropic_judge,
+    claims_to_judge,
+    faithfulness,
+    judge_claims,
+    judge_name,
+    load_judgments,
+)
+from lineage.faithfulness import pending as pending_claims
+from lineage.faithfulness import projected_cost as projected_judge_cost
 from lineage.fetch import SOURCE, FetchError, fetch_raw
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
@@ -1127,6 +1142,18 @@ def label_spend(
     )
 
 
+def _pair_prompts(
+    todo: Sequence[PairToExplain], tables: Path, models_dir: Path | None
+) -> list[list[dict[str, Any]]]:
+    """Each pair's aligned spans as the explanation prompt gives them, paraphrase marked with
+    the semantic stage's model unless `models_dir` is None."""
+    embedder = _model_embedder(models_dir) if models_dir is not None else None
+    return [
+        prompt_spans(align(o, d, embed=embedder).spans, o, d, origin_side="a")
+        for o, d in pair_texts(tables, todo)
+    ]
+
+
 @app.command("explain")
 def explain_command(
     pairs: Annotated[
@@ -1161,11 +1188,7 @@ def explain_command(
     """Explain what each descendant changed, grounded in aligned spans; cached, or --live."""
     try:
         todo = load_pairs(pairs)
-        texts = pair_texts(tables, todo)
-        embedder = _model_embedder(models_dir) if paraphrase else None
-        prompts = [
-            prompt_spans(align(o, d, embed=embedder).spans, o, d, origin_side="a") for o, d in texts
-        ]
+        prompts = _pair_prompts(todo, tables, models_dir if paraphrase else None)
         uncached = [p for p in prompts if not explanation_cache_path(p, cache).exists()]
         projected = projected_explain_cost(uncached)
         typer.echo(
@@ -1806,6 +1829,85 @@ def eval_precision(
                 f"(95% {on['interval_95'][0]:.3f}-{on['interval_95'][1]:.3f})"
             )
     typer.echo(f"-> {results}")
+
+
+@eval_app.command("faithfulness")
+def eval_faithfulness(
+    pairs: Annotated[
+        Path,
+        typer.Argument(
+            help="The pairs explained, one per line: the featured scope.",
+            exists=True,
+            dir_okay=False,
+        ),
+    ],
+    tables: TablesOption = Path("data/tables"),
+    live: Annotated[
+        bool,
+        typer.Option("--live", help="Ask the judge about unjudged claims (costs money)."),
+    ] = False,
+    cache: Annotated[
+        Path, typer.Option("--cache", help="Cached explanations (committed).")
+    ] = EXPLAIN_CACHE,
+    judgments: Annotated[
+        Path, typer.Option("--judgments", help="The judge's verdicts, appended to (committed).")
+    ] = JUDGMENTS,
+    paraphrase: Annotated[
+        bool,
+        typer.Option(
+            "--paraphrase/--no-paraphrase",
+            help="Mark paraphrased sentences, with the semantic stage's model (local).",
+        ),
+    ] = True,
+    models_dir: Annotated[
+        Path, typer.Option("--models", help="Directory of model files (local).")
+    ] = MODELS_DIR,
+    spend: Annotated[
+        Path, typer.Option("--spend", help="M6's model-call ledger (committed).")
+    ] = CALL_SPEND,
+    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+) -> None:
+    """Faithfulness, model-judged: the share of kept claims that describe their cited spans
+    correctly, beside the hard check that every kept claim cites spans that exist and differ."""
+    try:
+        prompts = _pair_prompts(load_pairs(pairs), tables, models_dir if paraphrase else None)
+        claims, counts = claims_to_judge(prompts, cache=cache)
+        todo = pending_claims(claims, load_judgments(judgments), judge_name())
+        projected = projected_judge_cost(todo)
+        typer.echo(
+            f"{len(claims)} kept claims, {len(todo)} not yet judged, projected at most "
+            f"${projected:.2f}; ${spent_on_calls(spend):.2f} of ${CALL_BUDGET:.2f} spent"
+        )
+        if todo and live:
+            check_projection(projected, spend)
+            today = datetime.date.today().isoformat()
+            meter = Meter(spend, "judge", JUDGE_MODEL, JUDGE_PROMPT, today)
+            judge_claims(todo, ask=anthropic_judge(), path=judgments, meter=meter, today=today)
+    except (ValueError, NotCachedError, ModelError, BudgetError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    doc = faithfulness(claims, load_judgments(judgments), counts)
+    problems = check_cache(cache)
+    section: dict[str, Any] = {
+        "command": "uv run lineage eval faithfulness",
+        "pairs": str(pairs),
+        "hard_check": {
+            "cache_files": len(list(cache.glob("*.json"))) if cache.exists() else 0,
+            "problems": problems,
+        },
+        **doc,
+    }
+    write_results(results, "faithfulness", section)
+    overall = doc["overall"]
+    shown = (
+        "nothing judged"
+        if overall["share"] is None
+        else (
+            f"{overall['correct']}/{overall['judged']} = {overall['share']:.3f} "
+            f"(95% {overall['interval_95'][0]:.3f}-{overall['interval_95'][1]:.3f})"
+        )
+    )
+    typer.echo(f"model-judged faithful: {shown}; hard check: {len(problems)} problems -> {results}")
 
 
 @eval_app.command("cost")
