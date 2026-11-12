@@ -1,5 +1,7 @@
 {
- "budget": 40.0,
+ "budget": 55.0,
+ "metered": 11.6124,
+ "bounded": 11.3094,
  "spent": 22.9218,
  "runs": [
   {
@@ -7,6 +9,8 @@
    "purpose": "explain",
    "model": "claude-opus-5-5",
    "prompt": "v1",
+   "projected": null,
+   "metered": true,
    "calls": 3,
    "served_by": {
     "claude-opus-5-5": 3
@@ -21,6 +25,8 @@
    "purpose": "explain",
    "model": "claude-opus-5-5",
    "prompt": "v1",
+   "projected": null,
+   "metered": true,
    "calls": 173,
    "served_by": {
     "claude-opus-5-5": 88
@@ -46,6 +52,8 @@
    "purpose": "judge",
    "model": "claude-opus-5-5",
    "prompt": "judge-v1",
+   "projected": null,
+   "metered": true,
    "calls": 319,
    "served_by": {
     "claude-opus-5-5": 319
@@ -60,6 +68,8 @@
    "purpose": "explain",
    "model": "claude-opus-5-5",
    "prompt": "v1",
+   "projected": 16.96,
+   "metered": true,
    "calls": 151,
    "served_by": {
     "claude-opus-5-5": 151
@@ -74,6 +84,8 @@
    "purpose": "judge",
    "model": "claude-opus-5-5",
    "prompt": "judge-v1",
+   "projected": null,
+   "metered": true,
    "calls": 370,
    "served_by": {
     "claude-opus-5-5": 370

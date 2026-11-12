@@ -326,6 +326,23 @@ def test_every_call_is_metered_and_a_call_past_the_budget_is_refused(tmp_path: P
         _explain(scripted(ChangeExplanation(claims=[]))[1], tmp_path / "other", broke)
 
 
+def test_the_ledger_keeps_each_runs_bound_apart_from_what_it_spent(tmp_path: Path) -> None:
+    spend = tmp_path / "spend.json"
+    lost = {"run": "lost", "calls": 3, "metered": False, "dollars": 1.5, "at": "2026-11-12"}
+    spend.write_text(json.dumps({"runs": [lost]}))
+    meter = Meter(spend, "explain", MODEL, PROMPT_VERSION, "2026-11-12", projected=2.25)
+    _explain(scripted(ChangeExplanation(claims=[_claim("s2")]))[1], tmp_path / "cache", meter)
+
+    doc = json.loads(spend.read_text())
+    run = doc["runs"][-1]
+    assert (run["projected"], run["metered"]) == (2.25, True)
+    assert run["dollars"] == round((1000 * 4 + 100 * 20) / 1e6, 4)
+    assert doc["metered"] == run["dollars"]  # what usage records
+    assert doc["bounded"] == 1.5  # calls whose usage was lost, at their bound
+    assert doc["spent"] == round(doc["metered"] + doc["bounded"], 4)  # what the cap counts
+    assert doc["budget"] == BUDGET == 55.0
+
+
 def test_the_projection_counts_every_retry_at_the_reply_limit() -> None:
     spans = prompt_spans(SPANS, ORIGIN, DESCENDANT, origin_side="a")
 

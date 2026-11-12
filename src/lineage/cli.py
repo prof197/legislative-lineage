@@ -1297,7 +1297,12 @@ def explain_command(
         if due:
             check_projection(projected, spend)
             meter = Meter(
-                spend, "explain", EXPLAIN_MODEL, EXPLAIN_PROMPT, datetime.date.today().isoformat()
+                spend,
+                "explain",
+                EXPLAIN_MODEL,
+                EXPLAIN_PROMPT,
+                datetime.date.today().isoformat(),
+                projected=projected,
             )
             ask = anthropic_ask()
         for pair, for_prompt in zip(todo, prompts, strict=True):
@@ -1979,7 +1984,7 @@ def eval_faithfulness(
         if todo and live:
             check_projection(projected, spend)
             today = datetime.date.today().isoformat()
-            meter = Meter(spend, "judge", JUDGE_MODEL, JUDGE_PROMPT, today)
+            meter = Meter(spend, "judge", JUDGE_MODEL, JUDGE_PROMPT, today, projected=projected)
             judge_claims(todo, ask=anthropic_judge(), path=judgments, meter=meter, today=today)
     except (ValueError, NotCachedError, ModelError, BudgetError) as e:
         typer.echo(f"error: {e}", err=True)
