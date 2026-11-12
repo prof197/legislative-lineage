@@ -1,0 +1,86 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "0924c1bb00cc844cda0551bfd3aaf63d1d6f7308c00e35a9662c0a5bd75d0821",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "bd6298acf4f4f20325d8f57456f29adf0a6bfdab17112cf5cbae59e88f971954"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "0bc75fa9a44d80f895170f12281fef9b47ca82f98d299df5cf0e1cbfdaa1a54d",
+   "descendant": "0bc75fa9a44d80f895170f12281fef9b47ca82f98d299df5cf0e1cbfdaa1a54d"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "d3fdc10688227667106a1a00e6ecc5ac000b844c31ed15a06c3a4f4cd47c449b",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "d1faa31c2f30855c75c6c38d8707bcffbf16c9a027a144d74e74b66d568f0e25",
+   "descendant": "d1faa31c2f30855c75c6c38d8707bcffbf16c9a027a144d74e74b66d568f0e25"
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+   "descendant": null
+  },
+  {
+   "id": "s7",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "66db6a59cecd0957fb9df2314ca192993352be2d9c5653c3d41aeb50440a5476"
+  },
+  {
+   "id": "s8",
+   "kind": "copied",
+   "origin": "0dc91dfbd4ab8b8ffb82b1a335f4eb26f3460277376ab9ebf6604204e472bc30",
+   "descendant": "0dc91dfbd4ab8b8ffb82b1a335f4eb26f3460277376ab9ebf6604204e472bc30"
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": "28f40b7769eea1f5ef65763836a097e45dedf0b4276bb615ffa31f4a74358eff",
+   "descendant": null
+  },
+  {
+   "id": "s10",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d"
+  },
+  {
+   "id": "s11",
+   "kind": "copied",
+   "origin": "cf8d5c976ac4cc4cc9ab86b58797566ab57cab0d8c3be749f30827c4de55b83e",
+   "descendant": "cf8d5c976ac4cc4cc9ab86b58797566ab57cab0d8c3be749f30827c4de55b83e"
+  }
+ ],
+ "explanation": {
+  "claims": []
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [],
+  "dropped": []
+ }
+}

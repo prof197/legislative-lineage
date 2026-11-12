@@ -1,0 +1,112 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "grounding_rules": 2,
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "4f8ee3e12b752e81e7346382307548215aa0d8f3496c88dbf344367b1fbe94be",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "a0a955a306777bcf6031db9250b1d8bbf3405553b78fb0086f9d028a4b52e43b"
+  },
+  {
+   "id": "s2",
+   "kind": "paraphrased",
+   "origin": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce",
+   "descendant": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "52f39ace2988c395e35a2990feaa0ad51d94cee02d7e59aacf03bd1a04b22977",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "d64d07bf7aca89088434bc8fdd85c481f9f4de8f09833b48b9ef4e093276277b"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "1eed5a02de2370e791b52df395e0833df3bc5ff1dfc31fae98fb5a36f3fb6660",
+   "descendant": "1eed5a02de2370e791b52df395e0833df3bc5ff1dfc31fae98fb5a36f3fb6660"
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": "2c7bb4b91c4f2aaed5b6d415dcb171a80a28d008f2d0f0ea227ea31f47557fcf",
+   "descendant": null
+  },
+  {
+   "id": "s7",
+   "kind": "copied",
+   "origin": "79a148e22802951371a70ffe527e30384ac8bbd2191e6edcde5c71b7082d1f8a",
+   "descendant": "79a148e22802951371a70ffe527e30384ac8bbd2191e6edcde5c71b7082d1f8a"
+  },
+  {
+   "id": "s8",
+   "kind": "unmatched",
+   "origin": "a5c935d142e9fa6eeb75c3424cad28ec117de0d1f6f818f7a8ec41247862d13a",
+   "descendant": null
+  },
+  {
+   "id": "s9",
+   "kind": "copied",
+   "origin": "27b02f5891c9e7e63d9e78d191364973d79fdc6e5c16737b3a5d7755c7ef75e0",
+   "descendant": "27b02f5891c9e7e63d9e78d191364973d79fdc6e5c16737b3a5d7755c7ef75e0"
+  },
+  {
+   "id": "s10",
+   "kind": "unmatched",
+   "origin": "b2e16945343a70956ce770786cf736f23ffe7c82dff59fe8459e4b7c1a70d125",
+   "descendant": null
+  },
+  {
+   "id": "s11",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "79e457d60f7c9a0f146e220e5b6933bc2716204b8a235695e98ab4c1ccef7b28"
+  },
+  {
+   "id": "s12",
+   "kind": "copied",
+   "origin": "1a5218e4f1c4ac8a3265a35a77eba93b8ee9fc4f7a2da5b0e760ce176bb3a699",
+   "descendant": "1a5218e4f1c4ac8a3265a35a77eba93b8ee9fc4f7a2da5b0e760ce176bb3a699"
+  },
+  {
+   "id": "s13",
+   "kind": "unmatched",
+   "origin": "5fcd801b745d851159bf17649d1e70aeac9f18c5d8e70b5b4ec185466361cae3",
+   "descendant": null
+  },
+  {
+   "id": "s14",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "dfc8c5f81fd68ea6be58572c94a6bd41ab1d1bfabde875a90f5bacb2bd6328f1"
+  }
+ ],
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "attempts": 2,
+ "unusable_attempts": [
+  "off the schema: claims.0.summary: String should have at most 200 characters",
+  "off the schema: claims.3.summary: String should have at most 200 characters"
+ ],
+ "earlier": [
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
+}

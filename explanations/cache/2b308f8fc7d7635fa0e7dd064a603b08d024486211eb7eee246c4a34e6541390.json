@@ -1,0 +1,309 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "f3f2c0050ac4ffb4ac04f3785b2ba903616e648e17778207c58e8ce23dfbf0d6",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "d35fbc0ebb76edf28caeb30c0ff45330664d524c5c31505ff77455dececca693"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "7b97fc2e511760457b1f10da20d8f508cb2d7c369eba53d528830daeab60f00e",
+   "descendant": "7b97fc2e511760457b1f10da20d8f508cb2d7c369eba53d528830daeab60f00e"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "16791c7da1ec371c3ab228f7457a2618da6c70a8088b58e30698ea539155158c"
+  },
+  {
+   "id": "s4",
+   "kind": "copied",
+   "origin": "369c6635c256ceedad8270b58dd50d69ff0065251954bf4f3991ea1d8206d2ac",
+   "descendant": "369c6635c256ceedad8270b58dd50d69ff0065251954bf4f3991ea1d8206d2ac"
+  },
+  {
+   "id": "s5",
+   "kind": "unmatched",
+   "origin": "4af4f03fc5cc96104e5d272aa141ae8dcecf8ff4f3b8a9955e249a1aed441eb6",
+   "descendant": null
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "2564a910a330aa70b722ef18683e47efa67d825ac2656f112d725c971ab76705"
+  },
+  {
+   "id": "s7",
+   "kind": "copied",
+   "origin": "52f5fcebfc857b9d95e3b6c271de3b8536f76b7f04a034c180816469328ed88f",
+   "descendant": "52f5fcebfc857b9d95e3b6c271de3b8536f76b7f04a034c180816469328ed88f"
+  },
+  {
+   "id": "s8",
+   "kind": "unmatched",
+   "origin": "064ac6da12a39327209c6d8c0bbd1ad1951a949d14c27093e262fad315c33de5",
+   "descendant": null
+  },
+  {
+   "id": "s9",
+   "kind": "copied",
+   "origin": "51b7e66ce79b8042271c9039b48a96d2bc196a24f0c351807ae65ce283e9abdd",
+   "descendant": "51b7e66ce79b8042271c9039b48a96d2bc196a24f0c351807ae65ce283e9abdd"
+  },
+  {
+   "id": "s10",
+   "kind": "paraphrased",
+   "origin": "5726b253f523b820929f83d30174c40c2f2591332f2283355b75cb72de8ff893",
+   "descendant": "49c404e08b71e49e74ffd01b1c7d0cd4fbc255e30ad35cc44a27421c77d6f11b"
+  },
+  {
+   "id": "s11",
+   "kind": "copied",
+   "origin": "f963eed1b45f0390210544d6328e3998a20492e86280af9b57aa26c2f410241b",
+   "descendant": "f963eed1b45f0390210544d6328e3998a20492e86280af9b57aa26c2f410241b"
+  },
+  {
+   "id": "s12",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "11275823a11b7503c1f2f9c17051a95964a8e0bdb1345b00a8e20113554ab0da"
+  },
+  {
+   "id": "s13",
+   "kind": "copied",
+   "origin": "2f3f5bb918d5e765134a0d8d1f94111fac96b440825c8a00f08fa0e7e77b13cf",
+   "descendant": "2f3f5bb918d5e765134a0d8d1f94111fac96b440825c8a00f08fa0e7e77b13cf"
+  },
+  {
+   "id": "s14",
+   "kind": "paraphrased",
+   "origin": "2667c45b608f3fb83a10c7050e2bf88b7893779013ae7f991384e80ca04fc09b",
+   "descendant": "7a5cf99b9b78367bae15798e1116251be7afb48deabe4791a021a970ad58786a"
+  },
+  {
+   "id": "s15",
+   "kind": "copied",
+   "origin": "87c79fae26ec62f6c2697d2309b4f327a58fcdf37d268135c745c0f2d405e721",
+   "descendant": "87c79fae26ec62f6c2697d2309b4f327a58fcdf37d268135c745c0f2d405e721"
+  },
+  {
+   "id": "s16",
+   "kind": "unmatched",
+   "origin": "ad45bab62b252d38434948bac263cccf3e8693127f637dff019c9e42ee7702c3",
+   "descendant": null
+  },
+  {
+   "id": "s17",
+   "kind": "copied",
+   "origin": "3529c7f1dad87b1f4cbea74b6284b898da05f7cb742a0c7e6f34453796b4f60e",
+   "descendant": "3529c7f1dad87b1f4cbea74b6284b898da05f7cb742a0c7e6f34453796b4f60e"
+  },
+  {
+   "id": "s18",
+   "kind": "paraphrased",
+   "origin": "ce3d4faa2ba4fd01ddbf2b3b06004351a86480c97819d57a38dc8013282613ef",
+   "descendant": "797df75f3938641afa55ae50d1d8f954f8712e524b743b2ba731944e105e298f"
+  },
+  {
+   "id": "s19",
+   "kind": "unmatched",
+   "origin": "7175517a370b5cd2e664e3fd29c4ea9db5ce17058eb9772fe090a5485e49dad6",
+   "descendant": null
+  },
+  {
+   "id": "s20",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "6201111b83a0cb5b0922cb37cc442b9a40e24e3b1ce100a4bb204f4c63fd2ac0"
+  },
+  {
+   "id": "s21",
+   "kind": "copied",
+   "origin": "5da68afe94784280b66aa3503913c66a3104c9716d793e22b9e5bb820a52925b",
+   "descendant": "5da68afe94784280b66aa3503913c66a3104c9716d793e22b9e5bb820a52925b"
+  },
+  {
+   "id": "s22",
+   "kind": "paraphrased",
+   "origin": "ed8a7900773a59862dd36f80bc790ef1226795c7814ca565ce77a0e6c2708a81",
+   "descendant": "eb2c5681eb0190a58c55dda1d8b0fdd0857304c421ed859df75f829985639a22"
+  },
+  {
+   "id": "s23",
+   "kind": "paraphrased",
+   "origin": "5c421e47c9e4253c4b86892d7132bbc5f9b4c0dfc2808a7a70d0f6190e08df58",
+   "descendant": "ca28f93bb83e42d2fa9bd4c9c81565971319ea3a6857344cda701cec33350819"
+  },
+  {
+   "id": "s24",
+   "kind": "paraphrased",
+   "origin": "74e27e0b9cb1eebedefba8d87cb6173a7d78acd3df8ce99a18d52e318e3c05a5",
+   "descendant": "4799250382ad41c077c212b02b75b75a1c53d0137bfeca6ca45e22e659dd3fa2"
+  },
+  {
+   "id": "s25",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "abbd4ece4b34b70a8a662b9e8287f04d0ebad49e876226d31258aba7cadd8286"
+  },
+  {
+   "id": "s26",
+   "kind": "copied",
+   "origin": "ef610a972d300555894e14f9591d4330f5f805d7ba451a530a707bb449fd717a",
+   "descendant": "ef610a972d300555894e14f9591d4330f5f805d7ba451a530a707bb449fd717a"
+  },
+  {
+   "id": "s27",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "1a8522c085f0e36c6e30d0960d7524868a044df29269d3550858375c9d19e105"
+  },
+  {
+   "id": "s28",
+   "kind": "copied",
+   "origin": "0d77d07499b51c554345138ff15a45ba370d5c30cf588ed7d98d92966298f411",
+   "descendant": "0d77d07499b51c554345138ff15a45ba370d5c30cf588ed7d98d92966298f411"
+  },
+  {
+   "id": "s29",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "b9776d7ddf459c9ad5b0e1d6ac61e27befb5e99fd62446677600d7cacef544d0"
+  },
+  {
+   "id": "s30",
+   "kind": "copied",
+   "origin": "8fb20101d9ae61dbd1e86bbe91acd0e9f4e3716c6b2243ca9a05615886d0321a",
+   "descendant": "8fb20101d9ae61dbd1e86bbe91acd0e9f4e3716c6b2243ca9a05615886d0321a"
+  },
+  {
+   "id": "s31",
+   "kind": "paraphrased",
+   "origin": "0b22f40bb71c86c993f01befd99951a36ff47f18b71b7a3b360fd1e817f5436b",
+   "descendant": "f77e26645d419f260f964f3ebe241c31058a982281e1e984f248bf161e774f94"
+  },
+  {
+   "id": "s32",
+   "kind": "unmatched",
+   "origin": "7902699be42c8a8e46fbbb4501726517e86b22c56a189f7625a6da49081b2451",
+   "descendant": null
+  },
+  {
+   "id": "s33",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "2c624232cdd221771294dfbb310aca000a0df6ac8b66b696d90ef06fdefb64a3"
+  },
+  {
+   "id": "s34",
+   "kind": "copied",
+   "origin": "5f9ca527466a7ddf6439f10831d52cd2cfd604256e4d85cf66366b5d014b1daf",
+   "descendant": "5f9ca527466a7ddf6439f10831d52cd2cfd604256e4d85cf66366b5d014b1daf"
+  },
+  {
+   "id": "s35",
+   "kind": "paraphrased",
+   "origin": "7eaadd8e460b39349614460c3c1f22005eb678869320f3c972cc576f6e6af9d0",
+   "descendant": "1092544f4a6ec143dd7af5a52999cf201385800d10a989b5baa239c4d639c31e"
+  },
+  {
+   "id": "s36",
+   "kind": "unmatched",
+   "origin": "2c624232cdd221771294dfbb310aca000a0df6ac8b66b696d90ef06fdefb64a3",
+   "descendant": null
+  },
+  {
+   "id": "s37",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "19581e27de7ced00ff1ce50b2047e7a567c76b1cbaebabe5ef03f7c3017bb5b7"
+  },
+  {
+   "id": "s38",
+   "kind": "copied",
+   "origin": "1d79063e9e89b331cc6e78ced4ce58f066f04940dc12538877d1bbc55d3506aa",
+   "descendant": "1d79063e9e89b331cc6e78ced4ce58f066f04940dc12538877d1bbc55d3506aa"
+  },
+  {
+   "id": "s39",
+   "kind": "paraphrased",
+   "origin": "506f3199138d7dd9bfe7d99b76a702c077c0792351f5fc99d3e8934b7ff07a83",
+   "descendant": "aa90f84683bafca7c1600c8ecc1d8dc4eabdfd0fede11cc5121de07cd2813727"
+  },
+  {
+   "id": "s40",
+   "kind": "unmatched",
+   "origin": "19581e27de7ced00ff1ce50b2047e7a567c76b1cbaebabe5ef03f7c3017bb5b7",
+   "descendant": null
+  },
+  {
+   "id": "s41",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5"
+  },
+  {
+   "id": "s42",
+   "kind": "copied",
+   "origin": "1c3d3a36ef27db2fe4100957deee274d608d97eb9160ddccc7e8335e397a23fc",
+   "descendant": "1c3d3a36ef27db2fe4100957deee274d608d97eb9160ddccc7e8335e397a23fc"
+  },
+  {
+   "id": "s43",
+   "kind": "unmatched",
+   "origin": "2dc0c07d0eeb7b5b235443cb76a71e00663c50d4ead2b9d7d5c9f8658c5f614e",
+   "descendant": null
+  },
+  {
+   "id": "s44",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "69f3282bb3b9fc4fcad9186ad50d2d509e4b8769b9d752df4ed228833fe37365"
+  },
+  {
+   "id": "s45",
+   "kind": "copied",
+   "origin": "dfe5f0304c8c463dbe25ce8e4a131f2758d0b98e3b171c49ad5652852ac40a67",
+   "descendant": "dfe5f0304c8c463dbe25ce8e4a131f2758d0b98e3b171c49ad5652852ac40a67"
+  },
+  {
+   "id": "s46",
+   "kind": "unmatched",
+   "origin": "efa1f375d76194fa51a3556a97e641e61685f914d446979da50a551a4333ffd7",
+   "descendant": null
+  },
+  {
+   "id": "s47",
+   "kind": "copied",
+   "origin": "59c318c0fdc30a735a155ee7b6af7680bf31ba684506709aabd620ed1ba48574",
+   "descendant": "59c318c0fdc30a735a155ee7b6af7680bf31ba684506709aabd620ed1ba48574"
+  },
+  {
+   "id": "s48",
+   "kind": "unmatched",
+   "origin": "974937680ef2f8545ec653713aa6631d0e20f2944a843afdcd25165150975f44",
+   "descendant": null
+  },
+  {
+   "id": "s49",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "e07a9308470c6c3e1c1c1d48e186e823e8ed2001fa8df1b04e79283225f4b26a"
+  }
+ ],
+ "explanation": null,
+ "served_by": null,
+ "grounded": null
+}

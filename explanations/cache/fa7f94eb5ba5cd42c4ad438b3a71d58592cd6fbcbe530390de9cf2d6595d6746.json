@@ -1,0 +1,320 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "grounding_rules": 2,
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "e21aba72c2c0b2ed151b9f598188ae71ab798355496af18fde98a83780a1640e",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "70e84bfd5a7f271a9576637d1995267d377c990bf6341d393eabad669e76e65a"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "2cb69e09a9ecbe87d24e14016d264d0655c429e0e09aa559e63310719b572deb",
+   "descendant": "2cb69e09a9ecbe87d24e14016d264d0655c429e0e09aa559e63310719b572deb"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "64ac3e36da5f101394a78d4043a80b1eb00772bf9bcd4a515b1673c842444dbb",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "b79c9672204948d26edadd93faa1febe8937c70a1212af77a7a3a772bc63d489"
+  },
+  {
+   "id": "s5",
+   "kind": "paraphrased",
+   "origin": "e7f6c011776e8db7cd330b54174fd76f7d0216b612387a5ffcfb81e6f0919683",
+   "descendant": "e7f6c011776e8db7cd330b54174fd76f7d0216b612387a5ffcfb81e6f0919683"
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "9d4f1fa537a3594d16175aff5b04fe4a4a6d11e1bccc05959e76e50eff29d088"
+  },
+  {
+   "id": "s7",
+   "kind": "copied",
+   "origin": "186e2ae6d2bf9583c0e4dfb8738d83b40a7dfdf614fe3c6cd4dad5db6b4cc9b6",
+   "descendant": "186e2ae6d2bf9583c0e4dfb8738d83b40a7dfdf614fe3c6cd4dad5db6b4cc9b6"
+  },
+  {
+   "id": "s8",
+   "kind": "paraphrased",
+   "origin": "72b8ce7bd7e0fd8c47365501181a9671c776f5550e31dbf1301c05a6c9a1b84c",
+   "descendant": "72b8ce7bd7e0fd8c47365501181a9671c776f5550e31dbf1301c05a6c9a1b84c"
+  },
+  {
+   "id": "s9",
+   "kind": "copied",
+   "origin": "27dbeed1d616b87e5469373ac64fd6ceada6eb619f8973e62b32851600a2201f",
+   "descendant": "27dbeed1d616b87e5469373ac64fd6ceada6eb619f8973e62b32851600a2201f"
+  },
+  {
+   "id": "s10",
+   "kind": "paraphrased",
+   "origin": "72b8ce7bd7e0fd8c47365501181a9671c776f5550e31dbf1301c05a6c9a1b84c",
+   "descendant": "72b8ce7bd7e0fd8c47365501181a9671c776f5550e31dbf1301c05a6c9a1b84c"
+  },
+  {
+   "id": "s11",
+   "kind": "copied",
+   "origin": "0d86a60e8abb6dba3d6607036d6014feff7ddabcf426f7245bb44c5bc2b9b5fd",
+   "descendant": "0d86a60e8abb6dba3d6607036d6014feff7ddabcf426f7245bb44c5bc2b9b5fd"
+  },
+  {
+   "id": "s12",
+   "kind": "paraphrased",
+   "origin": "39bcae4f93d4e3fcd034f146c6c54d1067221e6f83fe672170f96b86e0ef76d7",
+   "descendant": "55ac0b9a6376d6edabb6ff3fcf9638dcb80856c792fccccc9b622088e7e5e98b"
+  },
+  {
+   "id": "s13",
+   "kind": "copied",
+   "origin": "fc1bf839c254d62095f17000158dac5f32a663934c4158e634b10c68f9ac28a0",
+   "descendant": "fc1bf839c254d62095f17000158dac5f32a663934c4158e634b10c68f9ac28a0"
+  },
+  {
+   "id": "s14",
+   "kind": "unmatched",
+   "origin": "39bcae4f93d4e3fcd034f146c6c54d1067221e6f83fe672170f96b86e0ef76d7",
+   "descendant": null
+  },
+  {
+   "id": "s15",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "55ac0b9a6376d6edabb6ff3fcf9638dcb80856c792fccccc9b622088e7e5e98b"
+  },
+  {
+   "id": "s16",
+   "kind": "copied",
+   "origin": "2bf5d877b5641bb34eb3d1b181c3074d9a8a03bb457d606c51fef8ef31f4e2e0",
+   "descendant": "2bf5d877b5641bb34eb3d1b181c3074d9a8a03bb457d606c51fef8ef31f4e2e0"
+  },
+  {
+   "id": "s17",
+   "kind": "unmatched",
+   "origin": "de7d1b721a1e0632b7cf04edf5032c8ecffa9f9a08492152b926f1a5a7e765d7",
+   "descendant": null
+  },
+  {
+   "id": "s18",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+  },
+  {
+   "id": "s19",
+   "kind": "copied",
+   "origin": "f55c03e335f51e714933040010ba511d0847dff48e8d6700ff7b06c05c814aa9",
+   "descendant": "f55c03e335f51e714933040010ba511d0847dff48e8d6700ff7b06c05c814aa9"
+  },
+  {
+   "id": "s20",
+   "kind": "paraphrased",
+   "origin": "5d7f49449ab22deac22d767b89549c554134c8e47de4d38e748049875c83503b",
+   "descendant": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+  },
+  {
+   "id": "s21",
+   "kind": "copied",
+   "origin": "3f450dd80175c47063f50720d00a607807e3c40624dae8cbafdb2b10a8379ebe",
+   "descendant": "3f450dd80175c47063f50720d00a607807e3c40624dae8cbafdb2b10a8379ebe"
+  },
+  {
+   "id": "s22",
+   "kind": "paraphrased",
+   "origin": "f5557d4fcf727a981a3c315aca733eefa2996f7c7cdae1fa7e0de28522820bb0",
+   "descendant": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+  },
+  {
+   "id": "s23",
+   "kind": "copied",
+   "origin": "ca68d35cf9733eba0f102360adad0b56463bc7a41b5580f10749aa91fe63ab32",
+   "descendant": "ca68d35cf9733eba0f102360adad0b56463bc7a41b5580f10749aa91fe63ab32"
+  },
+  {
+   "id": "s24",
+   "kind": "unmatched",
+   "origin": "0ab306823035661bb8dba21cc25352319fe2a28eccdad81eaaaf7356ead6bf19",
+   "descendant": null
+  },
+  {
+   "id": "s25",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a"
+  },
+  {
+   "id": "s26",
+   "kind": "copied",
+   "origin": "c0ec7e4bc589ea57b38d63b0167e1ee6757a61cf068ced3774244024ff0fdedc",
+   "descendant": "c0ec7e4bc589ea57b38d63b0167e1ee6757a61cf068ced3774244024ff0fdedc"
+  },
+  {
+   "id": "s27",
+   "kind": "unmatched",
+   "origin": "dbf3fa473651e1e6ff4f51705e615ce2e66d5e0be61a74e08d971beda5d02ec9",
+   "descendant": null
+  },
+  {
+   "id": "s28",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "bc3539ad8077bd87352ab535b6d0b6dc2c55ff038a2239d0f775d512b6b71bb0"
+  },
+  {
+   "id": "s29",
+   "kind": "copied",
+   "origin": "e23f7b39d08418e9c995c7a023389a69c44a715f20a83cd2a454534e488702d3",
+   "descendant": "e23f7b39d08418e9c995c7a023389a69c44a715f20a83cd2a454534e488702d3"
+  },
+  {
+   "id": "s30",
+   "kind": "unmatched",
+   "origin": "7902699be42c8a8e46fbbb4501726517e86b22c56a189f7625a6da49081b2451",
+   "descendant": null
+  },
+  {
+   "id": "s31",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "53a2a30327877db8e77ab50191c80c07337b095bbc30eb264af232ede5a2ff9e"
+  },
+  {
+   "id": "s32",
+   "kind": "copied",
+   "origin": "4cad3d037a83fe09100689e2b5f52f77b8fac7e2da77ef35ed8b763ec0e034db",
+   "descendant": "4cad3d037a83fe09100689e2b5f52f77b8fac7e2da77ef35ed8b763ec0e034db"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin defines educational entity (public and private schools, colleges, universities), minor as under 16, minor account holder, and post; the descendant has none of these.",
+    "origin_span_ids": [
+     "s3",
+     "s27"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant defines minor as any individual under 18 and adds definitions of obscene material, parent, and school equipment.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s6"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant defines acceptable-use policy, child pornography, harmful to minors, identifiable minor, and technology protection measure; the origin has no such terms.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1",
+     "s4",
+     "s31"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant excludes from 'social media platform' services used by or under the direction of a public school district or charter school in the state.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s28"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant defines a minor as anyone under 18; the origin defines a minor as a state resident known or reasonably believed by a platform to be under 16.",
+      "origin_span_ids": [
+       "s3"
+      ],
+      "descendant_span_ids": [
+       "s6"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant adds definitions for acceptable-use policy, child pornography, harmful to minors, identifiable minor, obscene material, parent, school equipment and technology protection measure.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s4",
+       "s6",
+       "s31"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin defines educational entity (public and private schools, state university and technical college units, private colleges), minor account holder and post; the descendant lacks these.",
+      "origin_span_ids": [
+       "s3"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant excludes services used by a public school district or charter school in the state; the origin excludes services used by any educational entity.",
+      "origin_span_ids": [
+       "s27"
+      ],
+      "descendant_span_ids": [
+       "s28"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     1,
+     2
+    ],
+    "dropped": [
+     [
+      0,
+      "s3 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      3,
+      "s27 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
+}

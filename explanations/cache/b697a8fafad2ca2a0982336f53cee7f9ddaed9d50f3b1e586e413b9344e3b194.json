@@ -1,0 +1,224 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "grounding_rules": 2,
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "d3fdc10688227667106a1a00e6ecc5ac000b844c31ed15a06c3a4f4cd47c449b",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "9e68c9a73c015e4421836ed700f24e087cf8cbe243651e110597bd8c5e146d96"
+  },
+  {
+   "id": "s2",
+   "kind": "paraphrased",
+   "origin": "37db4da09daf555c0d3daf451195cac74431694f1f263aba69842d185d733858",
+   "descendant": "0628a20af713681b7f1c07b6456130cf616c473d1f32f1eb110d3f699b18318e"
+  },
+  {
+   "id": "s3",
+   "kind": "copied",
+   "origin": "97cabaea411e14982d8f580411e35b56b521cffa397d44af587806f9722f3ec7",
+   "descendant": "97cabaea411e14982d8f580411e35b56b521cffa397d44af587806f9722f3ec7"
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": "643b68859810d74fb3192434cc3004f890287a7f2d1605348b5fee9f24551f57",
+   "descendant": null
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "dd8b50290abb892cf37286faa40b42fdef77a9a4032b484a1f1621d2f90dc58f",
+   "descendant": "dd8b50290abb892cf37286faa40b42fdef77a9a4032b484a1f1621d2f90dc58f"
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "effd16de87319b320c454e2be2fee91522e25fc0b9bcc77b99c3ce0d0b7c6f8f"
+  },
+  {
+   "id": "s7",
+   "kind": "copied",
+   "origin": "2316373c6208946c5ede8561270a5b84db3abb95db96f6631fc5168452c60b7e",
+   "descendant": "2316373c6208946c5ede8561270a5b84db3abb95db96f6631fc5168452c60b7e"
+  },
+  {
+   "id": "s8",
+   "kind": "unmatched",
+   "origin": "667b9327cc0b3ab64f0bea63ff617f1a7e3d085854965f76f502a02ebc62f075",
+   "descendant": null
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "f83f07be16e270186d35b876916c461995ebc3af5b1798f898c33285a1847dbc"
+  },
+  {
+   "id": "s10",
+   "kind": "copied",
+   "origin": "ac22be9b2c8d0d3ab1e6b17403ffe54312d516e21c83ca1f52c397dadaf6ee02",
+   "descendant": "ac22be9b2c8d0d3ab1e6b17403ffe54312d516e21c83ca1f52c397dadaf6ee02"
+  },
+  {
+   "id": "s11",
+   "kind": "unmatched",
+   "origin": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+   "descendant": null
+  },
+  {
+   "id": "s12",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "2735d0823be7adb42e16154988b6d1cc3e3a4652e22f88ff2cc8744b9a006e0c"
+  },
+  {
+   "id": "s13",
+   "kind": "copied",
+   "origin": "e3aa77c302fc0749ac8374d6bd27b736e2399d2fd9317e089a91c1984c56bb6b",
+   "descendant": "e3aa77c302fc0749ac8374d6bd27b736e2399d2fd9317e089a91c1984c56bb6b"
+  },
+  {
+   "id": "s14",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "bc4b0cb3126e2703b154588e40fcda89bc3e4cff732d8658d4f9dfa22c9da680"
+  },
+  {
+   "id": "s15",
+   "kind": "copied",
+   "origin": "518d54a9ffe08964a0e2b51de8c2a723294fe3c015ffd269a561f5590a322b81",
+   "descendant": "518d54a9ffe08964a0e2b51de8c2a723294fe3c015ffd269a561f5590a322b81"
+  },
+  {
+   "id": "s16",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "6f8b92d26a72417475765db094bc73e06b2753e331c85c93e671cff0c12d296a"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "changed",
+    "summary": "The descendant titles the section an order to show cause, with the bracketed special-motion title; the origin titles it a special motion for expedited relief.",
+    "origin_span_ids": [
+     "s2"
+    ],
+    "descendant_span_ids": [
+     "s2"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant lets a party file an application for an order to show cause with the court to dismiss, alongside bracketed special-motion wording.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s12",
+     "s14"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant includes a petition among the served pleadings that start the 60-day period.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s6"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant adds a stay provision under which filing an application lets the court stay other proceedings, discovery and related actions between the parties.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s16"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant lets the party file an application for an order to show cause with the court to dismiss; the origin provides for a special motion for expedited relief.",
+      "origin_span_ids": [
+       "s2",
+       "s11"
+      ],
+      "descendant_span_ids": [
+       "s2",
+       "s12",
+       "s14"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant also starts the 60-day filing period on service of a petition, not only a complaint or other pleading.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s6"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant includes a stay provision: on filing the application, the court may stay other proceedings, discovery and actions involving other parties.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s16"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin refers to the cause of action to which this chapter applies; the descendant refers to this act.",
+      "origin_span_ids": [
+       "s8"
+      ],
+      "descendant_span_ids": [
+       "s9"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     1,
+     2
+    ],
+    "dropped": [
+     [
+      0,
+      "s11 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      3,
+      "s8 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
+}

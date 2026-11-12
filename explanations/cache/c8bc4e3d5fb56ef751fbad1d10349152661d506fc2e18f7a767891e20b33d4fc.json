@@ -1,0 +1,174 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "grounding_rules": 2,
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "4f8ee3e12b752e81e7346382307548215aa0d8f3496c88dbf344367b1fbe94be",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "24e8c4effa65a60b8397c3fea2ef97e0f5499ebc4c4d06b04f992a46a440cd54"
+  },
+  {
+   "id": "s2",
+   "kind": "paraphrased",
+   "origin": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce",
+   "descendant": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "52f39ace2988c395e35a2990feaa0ad51d94cee02d7e59aacf03bd1a04b22977",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "2a108d683c54dd821820c3c757bc1c244b0c561d1c0c231cbc4b070561cfa755"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "d16089f5fd6ffde8845abde398f0d929ac72b975b6dfb07b62c7ad677d8f6811",
+   "descendant": "d16089f5fd6ffde8845abde398f0d929ac72b975b6dfb07b62c7ad677d8f6811"
+  },
+  {
+   "id": "s6",
+   "kind": "paraphrased",
+   "origin": "ca00771428bf1e888354c5398fd4bf40193f494efc47b5c66ee405a15a3e2030",
+   "descendant": "ff9c31c60689885af0f95c52cdc3a495c1a349caaee4178ba608b31b6832b9ee"
+  },
+  {
+   "id": "s7",
+   "kind": "copied",
+   "origin": "0b8995b83aba7aefe686d13289ebc6a72dae5563d389e03ab00c7909945bdd18",
+   "descendant": "0b8995b83aba7aefe686d13289ebc6a72dae5563d389e03ab00c7909945bdd18"
+  },
+  {
+   "id": "s8",
+   "kind": "unmatched",
+   "origin": "878a5e2a7315eb88e219ddcda3ef26cd7442ee70d8d1420cbd1cca24ce2a4bda",
+   "descendant": null
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "a02de5613a28835cdae93e65cb1aba1bb1a38efdaa8fb300d6a9b45f0db489a7"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "added",
+    "summary": "The descendant defines \"consent,\" \"deep fake,\" and \"depicted individual\" for deep fakes of any individual; the origin's section has no such definitions.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1",
+     "s4"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant bars willful dissemination of a deep fake without the depicted individual's written consent, with injunctive relief, actual and punitive damages, costs, and attorney's fees.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s9"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin makes the sponsor of an electioneering communication liable, and a medium liable only if it removes a required disclosure or alters content into synthetic media.",
+    "origin_span_ids": [
+     "s3"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant lists exemptions for parody with disclosure, news broadcasts, paid broadcasts, publications, research, and legal proceedings, and keeps 47 U.S.C. 230 immunities intact.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s9"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant defines \"deep fake,\" \"consent\" and \"depicted individual,\" covering realistic, technically produced media lacking adequate labeling or disclaimers.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s4"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant makes it unlawful to knowingly disseminate a deep fake without the depicted person's written consent, with injunctive relief, actual and punitive damages, costs and attorney fees.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s9"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin limits liability for electioneering communications to the sponsor, making a medium liable only if it strips the disclosure or alters content into synthetic media; the descendant lacks this.",
+      "origin_span_ids": [
+       "s3"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin lets an interactive computer service be held liable when it strips disclosures or alters content; the descendant bars such liability, preserves 47 U.S.C. 230, and exempts news media.",
+      "origin_span_ids": [
+       "s3",
+       "s8"
+      ],
+      "descendant_span_ids": [
+       "s9"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2
+    ],
+    "dropped": [
+     [
+      3,
+      "s3 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
+}

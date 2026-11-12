@@ -1,0 +1,212 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "grounding_rules": 2,
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "f5eacff124c72b6161a3105fb7b7bd34dc639a702f01511b90d887d9bb1ed5da",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "paraphrased",
+   "origin": "add93534eeb463800fe0ed0946048d33636dd2a014fab92e8a37f77ce98c740b",
+   "descendant": "add93534eeb463800fe0ed0946048d33636dd2a014fab92e8a37f77ce98c740b"
+  },
+  {
+   "id": "s2",
+   "kind": "unmatched",
+   "origin": "eae87e26afd1522f925267cef06de2661f5a0d3bddaa99952e3dd5da9e32a82d",
+   "descendant": null
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "7890b59a9c43d44ffe6f12f8179a6f7a59ed81f5cfa0c65db4d4e3bacb266d42"
+  },
+  {
+   "id": "s4",
+   "kind": "copied",
+   "origin": "cf86160a4aebe81e3d89caca8e01e14e948db4967278b73d5f40335f7c93318c",
+   "descendant": "cf86160a4aebe81e3d89caca8e01e14e948db4967278b73d5f40335f7c93318c"
+  },
+  {
+   "id": "s5",
+   "kind": "paraphrased",
+   "origin": "de0bed8e8920d7c6dfe5497d05dfa3df0206ff0d9d37a8914a33d3b614cc33f7",
+   "descendant": "12f7c2bacb00871e0af2ec434623d0ce2f310904697c05e526d26d8b4bbcad62"
+  },
+  {
+   "id": "s6",
+   "kind": "copied",
+   "origin": "a9be6737388122dc4b9cc7dbc085def47c41bbe6b7cc61b129d38032070d9c8a",
+   "descendant": "a9be6737388122dc4b9cc7dbc085def47c41bbe6b7cc61b129d38032070d9c8a"
+  },
+  {
+   "id": "s7",
+   "kind": "unmatched",
+   "origin": "67c35e377c5af0b46c7e67ca62b42aaed873a5820cd7505be4e4c1c55c246f73",
+   "descendant": null
+  },
+  {
+   "id": "s8",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "f03c91f982239d4d1ea9b3e0408978e92f719efa21dd02a6e3cd83f0d6b81bf0"
+  },
+  {
+   "id": "s9",
+   "kind": "copied",
+   "origin": "9c4b7b1e09a1253f270b7362d2daf62abf26b2818c2e2a057e5c303ef9b5a4e1",
+   "descendant": "9c4b7b1e09a1253f270b7362d2daf62abf26b2818c2e2a057e5c303ef9b5a4e1"
+  },
+  {
+   "id": "s10",
+   "kind": "unmatched",
+   "origin": "377c3ecfb8d2b8512d70779ff6107a5766a0abaf516fc5d965393d7bc14c9106",
+   "descendant": null
+  },
+  {
+   "id": "s11",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "93b5d767b9e6a5434f5f25828f089ff1e1a942d2717e197ad5518d5abe946bfc"
+  },
+  {
+   "id": "s12",
+   "kind": "copied",
+   "origin": "59792c3cd3ed96bf30c27d5eb9600ed24479b38ebae09428d2eee312567f9c9f",
+   "descendant": "59792c3cd3ed96bf30c27d5eb9600ed24479b38ebae09428d2eee312567f9c9f"
+  },
+  {
+   "id": "s13",
+   "kind": "unmatched",
+   "origin": "b944ac1aca2333b4d388773975a1914a2345aa0ffcf8b5d29725ef1dffd43a75",
+   "descendant": null
+  },
+  {
+   "id": "s14",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "70feb65ffb0b933fcfec7a24025b7150eef731186ad14aa67cd9e6e01312221a"
+  },
+  {
+   "id": "s15",
+   "kind": "copied",
+   "origin": "988fd80b4f35cdaf408a684435cb49fb5588ca52da472ac4f8ba87c79ec990fd",
+   "descendant": "988fd80b4f35cdaf408a684435cb49fb5588ca52da472ac4f8ba87c79ec990fd"
+  },
+  {
+   "id": "s16",
+   "kind": "unmatched",
+   "origin": "42ed941b2c5905ed7e79446c9300944bb788d5df928e7c7080d325ff191cd02b",
+   "descendant": null
+  },
+  {
+   "id": "s17",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "d3d348de9753cf4f99ca4c4c80a87499072084f4678974f79f774c29fb24ed18"
+  },
+  {
+   "id": "s18",
+   "kind": "copied",
+   "origin": "ff0785cc8e77255c0449074938a6fd1a30be8aac81843dd48dd4321be4356291",
+   "descendant": "ff0785cc8e77255c0449074938a6fd1a30be8aac81843dd48dd4321be4356291"
+  },
+  {
+   "id": "s19",
+   "kind": "unmatched",
+   "origin": "692e42afa809f0b6ed2d9da3c28c8f1cc9b78f8360131a5f82147abdd05f0489",
+   "descendant": null
+  },
+  {
+   "id": "s20",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "a3add1adda5cb7dcece4359860c597c3c7867b20010dcc033f50a8d70595ecb5"
+  },
+  {
+   "id": "s21",
+   "kind": "copied",
+   "origin": "07ae416ca19ba9aa0756a780aec4e8a2c78440904dbbf9f0f4a570b5baa7c599",
+   "descendant": "07ae416ca19ba9aa0756a780aec4e8a2c78440904dbbf9f0f4a570b5baa7c599"
+  },
+  {
+   "id": "s22",
+   "kind": "unmatched",
+   "origin": "5aeb7d3191170f11b609ba3a3994b17b9a1571264a2b8c75797bf56f8ad35f0e",
+   "descendant": null
+  },
+  {
+   "id": "s23",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "7fa422409610d134eab22529842f44f6f56a4a15f77ef5bdf9a37fcdb96518b3"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "added",
+    "summary": "The descendant bars reckless dissemination of deceptive synthetic media within 90 days before an election unless it carries a set AI-manipulation statement for images, audio, or video.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s17",
+     "s20",
+     "s23"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant exempts certain broadcasters, news websites and periodicals, and satire or parody, and sets civil fines of up to $1,000, $5,000, or $10,000.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s23"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin lets a candidate seek injunctions and damages with attorney fees, makes disclosure an affirmative defense, requires clear and convincing evidence, and urges quick rulings.",
+    "origin_span_ids": [
+     "s16",
+     "s22"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant separately defines 'deceptive and fraudulent synthetic media' as depicting statements or actions the individual did not make or take, or giving a fundamentally different impression.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s11",
+     "s14"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "a claim fails grounding (claim 1: s16 is on one side only, so it shows text one side lacks, not a change; claim 2: s16 is on one side only, so it shows text one side lacks, not a change)"
+ ],
+ "earlier": [
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
+}

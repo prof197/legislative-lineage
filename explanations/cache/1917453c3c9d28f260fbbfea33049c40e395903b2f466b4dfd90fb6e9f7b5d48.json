@@ -1,0 +1,340 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "grounding_rules": 2,
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "c9b80ace28086b32c2a4b4744e6b8af5addf47a5dc39c0060ab53b7aca16e075",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "345c28d22b5ac41abad3580e01c9998acf5802c3751211a4f9c4d60a19e4bb1e"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "ff8b112120800be5ceebdffca7e1ddcff8251ae032016d0a0b8e13912facb1ba",
+   "descendant": "ff8b112120800be5ceebdffca7e1ddcff8251ae032016d0a0b8e13912facb1ba"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "a0696c754b7f84f459f745806a48ef7eb04b0bfd64641c78db527c0989d3ebef",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "copied",
+   "origin": "26619bd0da212ec15646816943a397dac53c5061fe8498abd1ca8aace7bec8eb",
+   "descendant": "26619bd0da212ec15646816943a397dac53c5061fe8498abd1ca8aace7bec8eb"
+  },
+  {
+   "id": "s5",
+   "kind": "unmatched",
+   "origin": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+   "descendant": null
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+  },
+  {
+   "id": "s7",
+   "kind": "copied",
+   "origin": "e5a9116a22570f31e7205deea23f00322be09e5d981b49882b620fc12b3927b9",
+   "descendant": "e5a9116a22570f31e7205deea23f00322be09e5d981b49882b620fc12b3927b9"
+  },
+  {
+   "id": "s8",
+   "kind": "paraphrased",
+   "origin": "0d888c25f84b76087be8175b068f491044738620a9928a2bba1f6e4ead81c96d",
+   "descendant": "2cfc896d67cd906b0848931575270877b9d828f4366c931a6355fe838f1caf70"
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": "81cd6b95d00fbc13de4c74fc651527e5c2e60ba2ac65c81770bffd50ba17e50d",
+   "descendant": null
+  },
+  {
+   "id": "s10",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "f37dad9e85959238e365182f78f1885fd3857202e099fb032242faa29d3c5e96"
+  },
+  {
+   "id": "s11",
+   "kind": "copied",
+   "origin": "ab71e87946cdcf39858464f3fd939935acd8b6c6a9c38133a385f1dfa9772012",
+   "descendant": "ab71e87946cdcf39858464f3fd939935acd8b6c6a9c38133a385f1dfa9772012"
+  },
+  {
+   "id": "s12",
+   "kind": "unmatched",
+   "origin": "7f33c3711bee6edde8e935cab5f86384b729449b984fa21b0320fe95cd60a3ba",
+   "descendant": null
+  },
+  {
+   "id": "s13",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "81c4ae95a8f6a9616a2a76d84f17be9ca49146e2b90655923a0355eaf6da28e8"
+  },
+  {
+   "id": "s14",
+   "kind": "copied",
+   "origin": "e617eb1663fa2a1033a2ea2ba121263db5c22c63518c2ad5728f120f133b880a",
+   "descendant": "e617eb1663fa2a1033a2ea2ba121263db5c22c63518c2ad5728f120f133b880a"
+  },
+  {
+   "id": "s15",
+   "kind": "paraphrased",
+   "origin": "894f0c732d17f5ae30f5136b7451d0ce05a204f343e37925ff7d417fad2d9ac4",
+   "descendant": "e8ec201b4d8a8dd24048c460b892f3e37cf8ce1f1513cc3ff4545962ff35445a"
+  },
+  {
+   "id": "s16",
+   "kind": "copied",
+   "origin": "6b6f9540094e78d164e91e2a63330ef692e753e03bf76a735ab60c57ad626e99",
+   "descendant": "6b6f9540094e78d164e91e2a63330ef692e753e03bf76a735ab60c57ad626e99"
+  },
+  {
+   "id": "s17",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "d6a7cd2a7371b1a15d543196979ff74fdb027023ebf187d5d329be11055c77fd"
+  },
+  {
+   "id": "s18",
+   "kind": "copied",
+   "origin": "40b7ba1a35a8d86df24d277958dc34301cfdcc3dd221b853b9d1a6bea1eb9aec",
+   "descendant": "40b7ba1a35a8d86df24d277958dc34301cfdcc3dd221b853b9d1a6bea1eb9aec"
+  },
+  {
+   "id": "s19",
+   "kind": "unmatched",
+   "origin": "4137b01e139589b7a1d3b3fc4da031d8ce5bb415808734e970c3a58ea0e98f0f",
+   "descendant": null
+  },
+  {
+   "id": "s20",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "56ee5b508706bf2de91712d85d6d1e11ddbff01949142ed6e8c22e3b1bed1c71"
+  },
+  {
+   "id": "s21",
+   "kind": "copied",
+   "origin": "acbcc0d813f2e12e488389b0f87775aba929199257f3fa4839296a064099b5df",
+   "descendant": "acbcc0d813f2e12e488389b0f87775aba929199257f3fa4839296a064099b5df"
+  },
+  {
+   "id": "s22",
+   "kind": "unmatched",
+   "origin": "4137b01e139589b7a1d3b3fc4da031d8ce5bb415808734e970c3a58ea0e98f0f",
+   "descendant": null
+  },
+  {
+   "id": "s23",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "56ee5b508706bf2de91712d85d6d1e11ddbff01949142ed6e8c22e3b1bed1c71"
+  },
+  {
+   "id": "s24",
+   "kind": "copied",
+   "origin": "d329cc36ae05d7aa3a263713568d95298e1977c2f7ec00f0559f7625d07959f3",
+   "descendant": "d329cc36ae05d7aa3a263713568d95298e1977c2f7ec00f0559f7625d07959f3"
+  },
+  {
+   "id": "s25",
+   "kind": "unmatched",
+   "origin": "0cb4f11dec4f7752a36f792ce1b7e800d21b23ab6002f274b17768a2e7b60edd",
+   "descendant": null
+  },
+  {
+   "id": "s26",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+  },
+  {
+   "id": "s27",
+   "kind": "copied",
+   "origin": "f10d3b7f2748cbb8f942ae8b142acc4f210024cd9b41a11800a6d580b309cb5c",
+   "descendant": "f10d3b7f2748cbb8f942ae8b142acc4f210024cd9b41a11800a6d580b309cb5c"
+  },
+  {
+   "id": "s28",
+   "kind": "unmatched",
+   "origin": "8b772e10572317890e6c65a9ff5e8876730844f67629d5830f6b0c69aa0ef8e3",
+   "descendant": null
+  },
+  {
+   "id": "s29",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "d73ba7e01a5a39d0dadf9efaeeb7cc11af4dff6a3312ebf77d0475b947f4c07c"
+  },
+  {
+   "id": "s30",
+   "kind": "copied",
+   "origin": "e68dfb2991ab0b2e8996dbb8c783024859fa30e21febfcf98310fc9eb17b0634",
+   "descendant": "e68dfb2991ab0b2e8996dbb8c783024859fa30e21febfcf98310fc9eb17b0634"
+  },
+  {
+   "id": "s31",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "aaf8f21ae37f7a49289dc8a668bceef1ea74c4fb29cbaab7063e8a59cfb9e25b"
+  },
+  {
+   "id": "s32",
+   "kind": "copied",
+   "origin": "c36f08bcd00acc8f71bcbd9bddaabeb8f78bb55d62a2ce2fa750552bfaea51c6",
+   "descendant": "c36f08bcd00acc8f71bcbd9bddaabeb8f78bb55d62a2ce2fa750552bfaea51c6"
+  },
+  {
+   "id": "s33",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+  },
+  {
+   "id": "s34",
+   "kind": "copied",
+   "origin": "5c5c3c96fb2509d78a56f8ae731243c9c28d129e2eb915837545b74362880d93",
+   "descendant": "5c5c3c96fb2509d78a56f8ae731243c9c28d129e2eb915837545b74362880d93"
+  },
+  {
+   "id": "s35",
+   "kind": "paraphrased",
+   "origin": "77c8ac1c72e5e1df818bef6688b30061fd8afb0b0a690d5fde61cad2553e0891",
+   "descendant": "285be74970c72715c899f0bdb17a4a8dce05b93be5d2e10439c480ba124432ab"
+  },
+  {
+   "id": "s36",
+   "kind": "unmatched",
+   "origin": "00e82ae0e1188d1347705bf5f9b7a1a0f6c24984f282de72d40dab398e351f59",
+   "descendant": null
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "added",
+    "summary": "The descendant bars a creator from distributing deceptive synthetic media within 90 days of an election, and defines \"creator\" and includes incumbents as candidates.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1",
+     "s13"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin lets a candidate depicted in synthetic media seek injunctive relief and damages against the sponsor, with attorneys' fees; the descendant has no such civil remedies.",
+    "origin_span_ids": [
+     "s12"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin places the burden on the plaintiff to prove synthetic media use by clear and convincing evidence and encourages courts to decide matters expediently; the descendant lacks this.",
+    "origin_span_ids": [
+     "s36"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant applies the audio-only disclosure rule only when no visual disclosure is feasible and also requires a speed easily heard by the average listener.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s29",
+     "s31"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant defines \"candidate\" to include incumbents and defines \"creator\" as the entity using AI to generate synthetic media, excluding AI providers or developers.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant bars creators from distributing deceptive synthetic media within 90 days of an election unless disclosed; the origin instead gives candidates a civil right to injunctions and damages.",
+      "origin_span_ids": [
+       "s12"
+      ],
+      "descendant_span_ids": [
+       "s13"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin makes a disclosure saying the media \"has been manipulated\" an affirmative defense; the descendant makes disclosure that it was manipulated or AI-generated an exception to the prohibition.",
+      "origin_span_ids": [
+       "s12"
+      ],
+      "descendant_span_ids": [
+       "s13"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin places a clear-and-convincing burden of proof on plaintiffs and encourages expedient court decisions; the descendant has neither provision.",
+      "origin_span_ids": [
+       "s36"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     3
+    ],
+    "dropped": [
+     [
+      1,
+      "s12 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      2,
+      "s12 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
+}

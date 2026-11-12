@@ -1,0 +1,50 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "76b7eba0fa4993c88c11799a11a4fd10664704c8d79699ed53cd603b215564f6",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "f788282ee88a48db4141f7eb4fe03d82019d4802ad64d318455be3d358a43c45"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "42b9854cde38ae518a019506a6dc5b8bcda9e13b0ac186a2f2d40b578683eae3",
+   "descendant": "42b9854cde38ae518a019506a6dc5b8bcda9e13b0ac186a2f2d40b578683eae3"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "d3fdc10688227667106a1a00e6ecc5ac000b844c31ed15a06c3a4f4cd47c449b",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "efacd6e33fca86c609febd349ccb1938560de92ad3725b4079e290fabfbd11f4",
+   "descendant": "efacd6e33fca86c609febd349ccb1938560de92ad3725b4079e290fabfbd11f4"
+  }
+ ],
+ "explanation": {
+  "claims": []
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [],
+  "dropped": []
+ }
+}

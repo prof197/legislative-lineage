@@ -1,0 +1,122 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "grounding_rules": 2,
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "304276de376d6a112c6df78a7d5592df5992b523132a777b768730929b4b1fa5",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "dd6f0fc3bcf7f7ea2b9d006de20263b830b3bc91c0d56249338b91c3f93cb42a"
+  },
+  {
+   "id": "s2",
+   "kind": "paraphrased",
+   "origin": "7a01adea4b8a1084a7aebd7f3256080c31a3013aa5ad7638add2136d6f3e5371",
+   "descendant": "7a01adea4b8a1084a7aebd7f3256080c31a3013aa5ad7638add2136d6f3e5371"
+  },
+  {
+   "id": "s3",
+   "kind": "paraphrased",
+   "origin": "c7e43f92bdf4e3f58fe3a4a84aed553a6edd794fc118d9342c1b199a24687b18",
+   "descendant": "7da13c488b8fe2567269aa01e02d474e20952540dce8db4a8a5e3331f3cafa38"
+  },
+  {
+   "id": "s4",
+   "kind": "copied",
+   "origin": "15add4d8dc3ca17e8ea2d1a4fef49323b0723d07bbf36a7739b07dbce7518ef4",
+   "descendant": "15add4d8dc3ca17e8ea2d1a4fef49323b0723d07bbf36a7739b07dbce7518ef4"
+  },
+  {
+   "id": "s5",
+   "kind": "unmatched",
+   "origin": "f6f93d37a5bbd12f3fdc4298b8b7f7ab0d2991c4b0240de269113b09c80e8f18",
+   "descendant": null
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "9d2eefaa81c34cef0bd48df9062da837b2996e6d5ff524de30dbe1d229ea7c21"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin extends broad construction to rights guaranteed by the Utah Constitution; the descendant has no reference to the Utah Constitution.",
+    "origin_span_ids": [
+     "s5"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant extends broad construction to rights guaranteed by the Delaware Constitution, which the origin does not mention.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s6"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1
+  ],
+  "dropped": []
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "a claim fails grounding (claim 1: s5 is on one side only, so it shows text one side lacks, not a change)"
+ ],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant protects rights guaranteed by the U.S. Constitution or the Delaware Constitution; the origin refers to the U.S. Constitution or the Utah Constitution.",
+      "origin_span_ids": [
+       "s5"
+      ],
+      "descendant_span_ids": [
+       "s6"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant is numbered § 6011; the origin is numbered 78B-25-111.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1
+    ],
+    "dropped": []
+   }
+  },
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
+}

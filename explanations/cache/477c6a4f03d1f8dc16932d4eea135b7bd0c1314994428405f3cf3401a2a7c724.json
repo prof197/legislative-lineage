@@ -1,0 +1,383 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "grounding_rules": 2,
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "0b40d640f097c0d18f8978fb7e69e42baf7593f13fa75b35908925e52e0d9a00",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "b61dde3e5f6e83d5305d0e68618ef00b687e8dac6b39060aaf24bb3b9c88da77"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "14f07a75751c233c475b5729e01b5a84d8ebe6ac71a2cc2fbb5ae5d99a55e7d2",
+   "descendant": "14f07a75751c233c475b5729e01b5a84d8ebe6ac71a2cc2fbb5ae5d99a55e7d2"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "ff7f47ad3e1d1844646ec508fb81f36edc235ed48a235ab2bd81be4fb7d84f5d",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "54d71f26f7dee270bf422fc7e24fb9a10b758102ba922caee32ee70e0292094f"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "c4ae11acbb8802ee97f39eec61e6b8fa9294a6d3259af78fe3561ffedf37515b",
+   "descendant": "c4ae11acbb8802ee97f39eec61e6b8fa9294a6d3259af78fe3561ffedf37515b"
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": "15b89e132ce14dd29944a203c99bf62ac53c2a337c8f0fa5d7f937bc679e4a1c",
+   "descendant": null
+  },
+  {
+   "id": "s7",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "14a6f0e9e9c278e4f8330ae9abc301709ad1a3e4023075c53d76c96609ba7f02"
+  },
+  {
+   "id": "s8",
+   "kind": "copied",
+   "origin": "84193792aa25208e5ac53a5a2e29d5586c8843b565e4c23c7ecc7ef7725213f8",
+   "descendant": "84193792aa25208e5ac53a5a2e29d5586c8843b565e4c23c7ecc7ef7725213f8"
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": "b539afa65420ce590a037d5ba076a983ced0caa95df85864e46b14420d65d70d",
+   "descendant": null
+  },
+  {
+   "id": "s10",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "4264a121d38b54fb6edbd8e024d035d9dea7c139f9cce5c9fd696a67753d17c9"
+  },
+  {
+   "id": "s11",
+   "kind": "copied",
+   "origin": "9358ffb22e03128f3804499e9baf27a35e58f803494330505a440ff9d522000a",
+   "descendant": "9358ffb22e03128f3804499e9baf27a35e58f803494330505a440ff9d522000a"
+  },
+  {
+   "id": "s12",
+   "kind": "unmatched",
+   "origin": "de7d1b721a1e0632b7cf04edf5032c8ecffa9f9a08492152b926f1a5a7e765d7",
+   "descendant": null
+  },
+  {
+   "id": "s13",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb"
+  },
+  {
+   "id": "s14",
+   "kind": "copied",
+   "origin": "a614e18bb87e5e175861e55bf1a454ee48c1b8dce11bb183da3035d314c9bc33",
+   "descendant": "a614e18bb87e5e175861e55bf1a454ee48c1b8dce11bb183da3035d314c9bc33"
+  },
+  {
+   "id": "s15",
+   "kind": "unmatched",
+   "origin": "5d7f49449ab22deac22d767b89549c554134c8e47de4d38e748049875c83503b",
+   "descendant": null
+  },
+  {
+   "id": "s16",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d"
+  },
+  {
+   "id": "s17",
+   "kind": "copied",
+   "origin": "5907fa4f9bf898cd0d41720a42219df9eb69d8b288feaf02e3c1333e72097604",
+   "descendant": "5907fa4f9bf898cd0d41720a42219df9eb69d8b288feaf02e3c1333e72097604"
+  },
+  {
+   "id": "s18",
+   "kind": "unmatched",
+   "origin": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+   "descendant": null
+  },
+  {
+   "id": "s19",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "de7d1b721a1e0632b7cf04edf5032c8ecffa9f9a08492152b926f1a5a7e765d7"
+  },
+  {
+   "id": "s20",
+   "kind": "copied",
+   "origin": "08e6732ecd321793d3d83a1513049e41f78e50915575b1774d8b177dfb855b37",
+   "descendant": "08e6732ecd321793d3d83a1513049e41f78e50915575b1774d8b177dfb855b37"
+  },
+  {
+   "id": "s21",
+   "kind": "unmatched",
+   "origin": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+   "descendant": null
+  },
+  {
+   "id": "s22",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "5d7f49449ab22deac22d767b89549c554134c8e47de4d38e748049875c83503b"
+  },
+  {
+   "id": "s23",
+   "kind": "copied",
+   "origin": "4813a761ac9746e5b666112704cd868a26975feee2bad96609f04c8898399c58",
+   "descendant": "4813a761ac9746e5b666112704cd868a26975feee2bad96609f04c8898399c58"
+  },
+  {
+   "id": "s24",
+   "kind": "unmatched",
+   "origin": "6e862940d0bf2eea9e01e33fa78cc34f393fd931f0d3f04697898b06f7a10315",
+   "descendant": null
+  },
+  {
+   "id": "s25",
+   "kind": "copied",
+   "origin": "7222c3810b622840d1ccd65a48efddf7d301a6cf40b95f9589e5f9a8ed26c6a0",
+   "descendant": "7222c3810b622840d1ccd65a48efddf7d301a6cf40b95f9589e5f9a8ed26c6a0"
+  },
+  {
+   "id": "s26",
+   "kind": "unmatched",
+   "origin": "ff7f47ad3e1d1844646ec508fb81f36edc235ed48a235ab2bd81be4fb7d84f5d",
+   "descendant": null
+  },
+  {
+   "id": "s27",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "54d71f26f7dee270bf422fc7e24fb9a10b758102ba922caee32ee70e0292094f"
+  },
+  {
+   "id": "s28",
+   "kind": "copied",
+   "origin": "8c52c2fe521315deaaad11c23b188287b6eb220655fa8a31fbdc2eb1183076f9",
+   "descendant": "8c52c2fe521315deaaad11c23b188287b6eb220655fa8a31fbdc2eb1183076f9"
+  },
+  {
+   "id": "s29",
+   "kind": "unmatched",
+   "origin": "90ebe427619d9f0e8f68ca3c7c22256717f22b3b216478d964bf578fe6a53466",
+   "descendant": null
+  },
+  {
+   "id": "s30",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "5414a92e3bf73dde34c5011585b4fd5994628a1dfed1b20cef96339ec797a8eb"
+  },
+  {
+   "id": "s31",
+   "kind": "copied",
+   "origin": "138a10e1147a0b0c06c04ffb90450d3d04b9a44fc23dc1d75f23f8bddba7370d",
+   "descendant": "138a10e1147a0b0c06c04ffb90450d3d04b9a44fc23dc1d75f23f8bddba7370d"
+  },
+  {
+   "id": "s32",
+   "kind": "unmatched",
+   "origin": "ff7f47ad3e1d1844646ec508fb81f36edc235ed48a235ab2bd81be4fb7d84f5d",
+   "descendant": null
+  },
+  {
+   "id": "s33",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "54d71f26f7dee270bf422fc7e24fb9a10b758102ba922caee32ee70e0292094f"
+  },
+  {
+   "id": "s34",
+   "kind": "copied",
+   "origin": "4ad6801f9a9885e2ed38510d28adcc06f1b0a7697ae0b97cb3aa4163c687565d",
+   "descendant": "4ad6801f9a9885e2ed38510d28adcc06f1b0a7697ae0b97cb3aa4163c687565d"
+  },
+  {
+   "id": "s35",
+   "kind": "unmatched",
+   "origin": "441cff7886ba86dfa692b6bb710610393350b2f628a4fca43f79d21ec500493e",
+   "descendant": null
+  },
+  {
+   "id": "s36",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "81974af2e79235bc9431c4d27a32d20bb6fd7ab5cf22e32eca513fcd0f3354b1"
+  },
+  {
+   "id": "s37",
+   "kind": "copied",
+   "origin": "c5cab9cb84ff241afefc58b04e05c3f3bae2a0dc79612f80903d56640705803a",
+   "descendant": "c5cab9cb84ff241afefc58b04e05c3f3bae2a0dc79612f80903d56640705803a"
+  },
+  {
+   "id": "s38",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "fdfabc215c4c89ac3e7ed00891cc271122aa4062a2ed25724c78914e4bbd7dbf"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "added",
+    "summary": "The descendant is a single comprehensive section that also sets the act's title, definitions, scope and exclusions, motion timing, stays, hearing schedule and evidence for the motion.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant also sets deadlines for ruling, a 21-day appeal right, fee awards, broad construction, uniformity, an August 28, 2026 applicability date, and bracketed text of a prior section 537.528.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s38"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The origin cross-references separate chapter sections (78B-25-102, -103, -110); the descendant cites subsections of the same section (3, 4, 5, 12).",
+    "origin_span_ids": [
+     "s3",
+     "s6",
+     "s9",
+     "s26",
+     "s32",
+     "s35"
+    ],
+    "descendant_span_ids": [
+     "s4",
+     "s7",
+     "s10",
+     "s27",
+     "s33",
+     "s36"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "After a voluntary dismissal without prejudice, the descendant lets the moving party seek reasonable attorney's fees and reasonable litigation expenses; the origin says attorney fees and expenses.",
+    "origin_span_ids": [
+     "s29"
+    ],
+    "descendant_span_ids": [
+     "s30"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1
+  ],
+  "dropped": [
+   [
+    2,
+    "s3 is on one side only, so it shows text one side lacks, not a change"
+   ],
+   [
+    3,
+    "s29 is on one side only, so it shows text one side lacks, not a change"
+   ]
+  ]
+ },
+ "attempts": 1,
+ "unusable_attempts": [
+  "off the schema: claims.1.summary: String should have at most 200 characters"
+ ],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant is a single comprehensive section that also sets the act's title, definitions, scope and exclusions, motion timing, stays, hearing schedule and evidence for the motion.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant also sets deadlines for ruling, a 21-day appeal right, fee awards, broad construction, uniformity, an August 28, 2026 applicability date, and bracketed text of a prior section 537.528.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s38"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin cross-references separate chapter sections (78B-25-102, -103, -110); the descendant cites subsections of the same section (3, 4, 5, 12).",
+      "origin_span_ids": [
+       "s3",
+       "s6",
+       "s9",
+       "s26",
+       "s32",
+       "s35"
+      ],
+      "descendant_span_ids": [
+       "s4",
+       "s7",
+       "s10",
+       "s27",
+       "s33",
+       "s36"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "After a voluntary dismissal without prejudice, the descendant lets the moving party seek reasonable attorney's fees and reasonable litigation expenses; the origin says attorney fees and expenses.",
+      "origin_span_ids": [
+       "s29"
+      ],
+      "descendant_span_ids": [
+       "s30"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1
+    ],
+    "dropped": [
+     [
+      2,
+      "s3 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      3,
+      "s29 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
+}

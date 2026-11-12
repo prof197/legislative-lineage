@@ -1,0 +1,209 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "grounding_rules": 2,
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "c50c2bebb6411a8ea3cb03c33e0ae026bb9da24e0cb3bd800939e93800d4fd8e",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "e472339d0758b3045a2e00acd64cc11a7feb712c91b2d168a613430448e5e84f"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "dcb78a605a727926f3ffa0226255fe471912457728e233ca77925ef4a883453b",
+   "descendant": "dcb78a605a727926f3ffa0226255fe471912457728e233ca77925ef4a883453b"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "af189f17a33a1efbb1b252b132d2f41a46cd8ffb15effed484b154945b86640c",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "f295ec57c65f3f96220a61845a3140110d61f15e7c47d163b43e61b04b90942f"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "e617eb1663fa2a1033a2ea2ba121263db5c22c63518c2ad5728f120f133b880a",
+   "descendant": "e617eb1663fa2a1033a2ea2ba121263db5c22c63518c2ad5728f120f133b880a"
+  },
+  {
+   "id": "s6",
+   "kind": "paraphrased",
+   "origin": "894f0c732d17f5ae30f5136b7451d0ce05a204f343e37925ff7d417fad2d9ac4",
+   "descendant": "e8ec201b4d8a8dd24048c460b892f3e37cf8ce1f1513cc3ff4545962ff35445a"
+  },
+  {
+   "id": "s7",
+   "kind": "copied",
+   "origin": "49a4e59c112241286917d926c948c58db12eaf505c71f44acb7c00d92b38b6be",
+   "descendant": "49a4e59c112241286917d926c948c58db12eaf505c71f44acb7c00d92b38b6be"
+  },
+  {
+   "id": "s8",
+   "kind": "unmatched",
+   "origin": "4137b01e139589b7a1d3b3fc4da031d8ce5bb415808734e970c3a58ea0e98f0f",
+   "descendant": null
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "56ee5b508706bf2de91712d85d6d1e11ddbff01949142ed6e8c22e3b1bed1c71"
+  },
+  {
+   "id": "s10",
+   "kind": "copied",
+   "origin": "f1fd60b1b3a5d7ec819be8d1e93a7a1a35b4d150e743fb96cde2eb52eac7ef4f",
+   "descendant": "f1fd60b1b3a5d7ec819be8d1e93a7a1a35b4d150e743fb96cde2eb52eac7ef4f"
+  },
+  {
+   "id": "s11",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+  },
+  {
+   "id": "s12",
+   "kind": "copied",
+   "origin": "5d1a35fe8e88350e80b892ff802e8a2ad78d45123fe5e0a99ec426043f04e11d",
+   "descendant": "5d1a35fe8e88350e80b892ff802e8a2ad78d45123fe5e0a99ec426043f04e11d"
+  },
+  {
+   "id": "s13",
+   "kind": "paraphrased",
+   "origin": "444fd546d0cf95b3148ab8030fc63db4921463b324679d116beeceeec22dfe18",
+   "descendant": "d75faeea8610d79f83b3f03993d66e9ac801788dbbb8b2264b3ffd5db9a16ea1"
+  },
+  {
+   "id": "s14",
+   "kind": "copied",
+   "origin": "d329cc36ae05d7aa3a263713568d95298e1977c2f7ec00f0559f7625d07959f3",
+   "descendant": "d329cc36ae05d7aa3a263713568d95298e1977c2f7ec00f0559f7625d07959f3"
+  },
+  {
+   "id": "s15",
+   "kind": "unmatched",
+   "origin": "0cb4f11dec4f7752a36f792ce1b7e800d21b23ab6002f274b17768a2e7b60edd",
+   "descendant": null
+  },
+  {
+   "id": "s16",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+  },
+  {
+   "id": "s17",
+   "kind": "copied",
+   "origin": "28bef74db3606f3ddf21bb82af80a5f46376844485272f344b1be837a10b44e5",
+   "descendant": "28bef74db3606f3ddf21bb82af80a5f46376844485272f344b1be837a10b44e5"
+  },
+  {
+   "id": "s18",
+   "kind": "unmatched",
+   "origin": "4137b01e139589b7a1d3b3fc4da031d8ce5bb415808734e970c3a58ea0e98f0f",
+   "descendant": null
+  },
+  {
+   "id": "s19",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "56ee5b508706bf2de91712d85d6d1e11ddbff01949142ed6e8c22e3b1bed1c71"
+  },
+  {
+   "id": "s20",
+   "kind": "copied",
+   "origin": "3eb8b0f81a8f1a93af0d4e8a3969c9c90e05e6db25314e2d439b6cb35ac9872d",
+   "descendant": "3eb8b0f81a8f1a93af0d4e8a3969c9c90e05e6db25314e2d439b6cb35ac9872d"
+  },
+  {
+   "id": "s21",
+   "kind": "paraphrased",
+   "origin": "77c8ac1c72e5e1df818bef6688b30061fd8afb0b0a690d5fde61cad2553e0891",
+   "descendant": "6a55673cfc7ac8e86e6015b1cd974b7f4800337793a67c4e479489db2b084190"
+  },
+  {
+   "id": "s22",
+   "kind": "unmatched",
+   "origin": "00e82ae0e1188d1347705bf5f9b7a1a0f6c24984f282de72d40dab398e351f59",
+   "descendant": null
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin defines synthetic media and gives candidates a right to seek injunctive relief and damages against the sponsor, with attorneys' fees; the descendant has none of this.",
+    "origin_span_ids": [
+     "s0"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant bars anyone from distributing a known deceptive deepfake of a candidate or party within 90 days of an election unless the required disclosure is included.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant's disclosure says the media was manipulated or generated by artificial intelligence; the origin's disclosure says only that it has been manipulated.",
+    "origin_span_ids": [
+     "s3"
+    ],
+    "descendant_span_ids": [
+     "s4"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin puts on the plaintiff the burden of proving synthetic media use by clear and convincing evidence and urges courts to decide such matters expediently; the descendant lacks this.",
+    "origin_span_ids": [
+     "s22"
+    ],
+    "descendant_span_ids": []
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   3
+  ],
+  "dropped": [
+   [
+    2,
+    "s3 is on one side only, so it shows text one side lacks, not a change"
+   ]
+  ]
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "off the schema: claims.0.summary: String should have at most 200 characters",
+  "a claim fails grounding (claim 3: s3 is on one side only, so it shows text one side lacks, not a change)"
+ ],
+ "earlier": [
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
+}

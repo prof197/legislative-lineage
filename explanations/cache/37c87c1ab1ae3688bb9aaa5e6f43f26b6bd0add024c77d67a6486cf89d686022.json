@@ -1,0 +1,272 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "grounding_rules": 2,
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "4abe88ee00dab634b0010446b34d76040fd04d5a392f2cdedb637481d1982035",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "3a3ed0cde8c518693ab5a70fe8208650ff5ea04e0230e2ee55d5be2fbce35b8b"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "f7af8fb77014412607613b7e30eceb7a17e567fda0aa1627571cf3769b4a7222",
+   "descendant": "f7af8fb77014412607613b7e30eceb7a17e567fda0aa1627571cf3769b4a7222"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "f2689136334395e579d1e5c64543c638ae0e7c44b367ca7a05717a7efab216ff",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "copied",
+   "origin": "7c4e3153ff7b2e8c2f904d8f3636b8440711a2b217d5593658d3eaf2b1e21cfc",
+   "descendant": "7c4e3153ff7b2e8c2f904d8f3636b8440711a2b217d5593658d3eaf2b1e21cfc"
+  },
+  {
+   "id": "s5",
+   "kind": "unmatched",
+   "origin": "3b0fe0d342e9fa16a5c68dbba33f2e63c024f72a9d4c1ce1028570101d5229ff",
+   "descendant": null
+  },
+  {
+   "id": "s6",
+   "kind": "copied",
+   "origin": "42a5bf3ebd11631a09fa7d7a0631e9b581358a378c6cea851ab401f5e45f736a",
+   "descendant": "42a5bf3ebd11631a09fa7d7a0631e9b581358a378c6cea851ab401f5e45f736a"
+  },
+  {
+   "id": "s7",
+   "kind": "paraphrased",
+   "origin": "68bf0109c6f8a87bfa96d1ecd9503326ba35cf4a6086988a1d2c8a20fbef00d1",
+   "descendant": "cbedbde861ac4af28bac65fe214712e47f0fcdc1b563e94f58bf8de1e6787588"
+  },
+  {
+   "id": "s8",
+   "kind": "copied",
+   "origin": "0448e5c197320c1d9b6ccd66da042ef24b1afe8f6329e5df042b3b53b0462c4f",
+   "descendant": "0448e5c197320c1d9b6ccd66da042ef24b1afe8f6329e5df042b3b53b0462c4f"
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": "56ee5b508706bf2de91712d85d6d1e11ddbff01949142ed6e8c22e3b1bed1c71",
+   "descendant": null
+  },
+  {
+   "id": "s10",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "4137b01e139589b7a1d3b3fc4da031d8ce5bb415808734e970c3a58ea0e98f0f"
+  },
+  {
+   "id": "s11",
+   "kind": "copied",
+   "origin": "dccc3f3207e88d322c32cd14061dc173ffd5dd1fc7049d406ea6470a72ce75ae",
+   "descendant": "dccc3f3207e88d322c32cd14061dc173ffd5dd1fc7049d406ea6470a72ce75ae"
+  },
+  {
+   "id": "s12",
+   "kind": "unmatched",
+   "origin": "3c5415f13ecf42ae8e823cefc4896301ea627db6031f18a29d510e7098012abf",
+   "descendant": null
+  },
+  {
+   "id": "s13",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "d5e97d2d14a871f86e6cedc7790baab523faa4dd4c9398059ed0f26530ccf8fb"
+  },
+  {
+   "id": "s14",
+   "kind": "copied",
+   "origin": "1a789d970030a161bbec9c4cad9523342eac5c05128f1d24803b952f3080c906",
+   "descendant": "1a789d970030a161bbec9c4cad9523342eac5c05128f1d24803b952f3080c906"
+  },
+  {
+   "id": "s15",
+   "kind": "unmatched",
+   "origin": "b5fc0ff1034b5892aa27f07ff5c886a3fb18bd66f46dccfc121610806b453fc8",
+   "descendant": null
+  },
+  {
+   "id": "s16",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "ce067f9928261b9fe7f38b4733c1dd77c07d0a8e353257ce7833d09e1c98be7b"
+  },
+  {
+   "id": "s17",
+   "kind": "paraphrased",
+   "origin": "20c9e8c22045b06dc20a49a37371f27bc0f8c5b4667ac066bca53f104a7c8891",
+   "descendant": "bbf4954f67a92bb24583876e2707ac05d7bb02e64601b8cfb825cfed35e52e3a"
+  },
+  {
+   "id": "s18",
+   "kind": "unmatched",
+   "origin": "4c94485e0c21ae6c41ce1dfe7b6bfaceea5ab68e40a2476f50208e526f506080",
+   "descendant": null
+  },
+  {
+   "id": "s19",
+   "kind": "copied",
+   "origin": "4bbba7e7f8a61c73c085ef59de46ac16647b126ff2f767be1e93e48458f15b46",
+   "descendant": "4bbba7e7f8a61c73c085ef59de46ac16647b126ff2f767be1e93e48458f15b46"
+  },
+  {
+   "id": "s20",
+   "kind": "unmatched",
+   "origin": "64f339138b6fee3ebec97d35c6453cf0f9960f2ae3228a7fafcdd58856ce647e",
+   "descendant": null
+  },
+  {
+   "id": "s21",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "063bffb4b52b2315935e18bd22fda7a3e1954c19a4a7397636265aa4c767bfe1"
+  },
+  {
+   "id": "s22",
+   "kind": "copied",
+   "origin": "e7884be3f5d496c84b2eca197b2e1d416c8b8c972e999a20fdae6dfdbfd872ba",
+   "descendant": "e7884be3f5d496c84b2eca197b2e1d416c8b8c972e999a20fdae6dfdbfd872ba"
+  },
+  {
+   "id": "s23",
+   "kind": "unmatched",
+   "origin": "8688f19e6d9812d266beb14f5e437d91778b03682a39dec25fdffe93124359c2",
+   "descendant": null
+  },
+  {
+   "id": "s24",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "063bffb4b52b2315935e18bd22fda7a3e1954c19a4a7397636265aa4c767bfe1"
+  },
+  {
+   "id": "s25",
+   "kind": "copied",
+   "origin": "381337459e61e6e425bbff08c4f8fe3992388d80e016a3eea44bbcbd0ffd9e74",
+   "descendant": "381337459e61e6e425bbff08c4f8fe3992388d80e016a3eea44bbcbd0ffd9e74"
+  },
+  {
+   "id": "s26",
+   "kind": "unmatched",
+   "origin": "8b09b10328a0b2fa4f7ea7bd3178ec57c18b64f9f0883c2eb3e1919a9f40d53d",
+   "descendant": null
+  },
+  {
+   "id": "s27",
+   "kind": "copied",
+   "origin": "a270cc397d5aa2a3ebececf3a65d95e5e2453ec500d67fd63166142f89f3fd97",
+   "descendant": "a270cc397d5aa2a3ebececf3a65d95e5e2453ec500d67fd63166142f89f3fd97"
+  },
+  {
+   "id": "s28",
+   "kind": "unmatched",
+   "origin": "5694d08a2e53ffcae0c3103e5ad6f6076abd960eb1f8a56577040bc1028f702b",
+   "descendant": null
+  },
+  {
+   "id": "s29",
+   "kind": "copied",
+   "origin": "6cdf18c7b706168450b68638fbdccbea60e39be8ccf4297bb9935bf80722bdac",
+   "descendant": "6cdf18c7b706168450b68638fbdccbea60e39be8ccf4297bb9935bf80722bdac"
+  },
+  {
+   "id": "s30",
+   "kind": "unmatched",
+   "origin": "1db037e203bbe0f19684147e5cd91c0877b9f3d90f7e8054a0d3e4adec4abfc8",
+   "descendant": null
+  },
+  {
+   "id": "s31",
+   "kind": "copied",
+   "origin": "cd5e46809fe16d44b670b0155c425614c09e7013b9b004a5a4e6b97891401bca",
+   "descendant": "cd5e46809fe16d44b670b0155c425614c09e7013b9b004a5a4e6b97891401bca"
+  },
+  {
+   "id": "s32",
+   "kind": "unmatched",
+   "origin": "3b0fe0d342e9fa16a5c68dbba33f2e63c024f72a9d4c1ce1028570101d5229ff",
+   "descendant": null
+  },
+  {
+   "id": "s33",
+   "kind": "copied",
+   "origin": "41dc8ff82f457f629d4be263d8174adc26ae9a55e6f15103b21337691ddc6089",
+   "descendant": "41dc8ff82f457f629d4be263d8174adc26ae9a55e6f15103b21337691ddc6089"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "added",
+    "summary": "The descendant sets a deadline of March 1, 2027 for the Department of Education to develop the model programs; the origin sets no deadline.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin requires instruction on social media's social, emotional and physical effects and on disinformation and misinformation; the descendant has neither topic.",
+    "origin_span_ids": [
+     "s12",
+     "s15"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant covers social media's ability to manipulate and influence thoughts and behaviors; the origin covers how social media influences them, without mentioning manipulation.",
+    "origin_span_ids": [
+     "s17"
+    ],
+    "descendant_span_ids": [
+     "s17"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin lets programs cover benefits of social media use and requires the Department to give technical assistance to local boards; the descendant includes neither.",
+    "origin_span_ids": [
+     "s26",
+     "s30"
+    ],
+    "descendant_span_ids": []
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "a claim fails grounding (claim 2: s12 is on one side only, so it shows text one side lacks, not a change)"
+ ],
+ "earlier": [
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
+}

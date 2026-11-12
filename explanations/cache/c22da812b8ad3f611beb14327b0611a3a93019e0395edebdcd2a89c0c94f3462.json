@@ -1,0 +1,221 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "grounding_rules": 2,
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "57f4a0020dba86a2abadddbdffc89a2fbc1a066396e865b460b1118a07886c30",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "db5e36b6b23da5c3ed44f1f829e56bd8dee31025dad074d9b096689fc07c5ee9"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "00701bac5d0d45edc53bf2b80a0b1dc7ff158c9da30e288bcd65a48634f89aa7",
+   "descendant": "00701bac5d0d45edc53bf2b80a0b1dc7ff158c9da30e288bcd65a48634f89aa7"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "4c665ad07e109deb8c58409a8513c978e319d03a988fc0165f7ca8e7ccfc8636",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "98abd99eeb9e54c5e3932702d2abf3bbdc0f669b83af339bd6a3d500ff172596"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "cfc16bbfb76b5d0c3a5b0a75578d870aacda1ebd566460d2909bd79275219903",
+   "descendant": "cfc16bbfb76b5d0c3a5b0a75578d870aacda1ebd566460d2909bd79275219903"
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": "8a899c81079b28ed24c3f4e508493bbd26fc05a40f031987ff905a9378d01950",
+   "descendant": null
+  },
+  {
+   "id": "s7",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "4f4631ed62ffda13ff67ff716632a90040a67f43f7ca2f0464bfd7c465669e0a"
+  },
+  {
+   "id": "s8",
+   "kind": "copied",
+   "origin": "f48bc41a9f9e3e38fc83aeab6d3c0e78a1e930ddeb154756dfc28c76ed25f162",
+   "descendant": "f48bc41a9f9e3e38fc83aeab6d3c0e78a1e930ddeb154756dfc28c76ed25f162"
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": "7175517a370b5cd2e664e3fd29c4ea9db5ce17058eb9772fe090a5485e49dad6",
+   "descendant": null
+  },
+  {
+   "id": "s10",
+   "kind": "copied",
+   "origin": "6b0ba85df42a4e0d13f5d13cc56ae2b2437ac09170f75463f16a9375c5d00135",
+   "descendant": "6b0ba85df42a4e0d13f5d13cc56ae2b2437ac09170f75463f16a9375c5d00135"
+  },
+  {
+   "id": "s11",
+   "kind": "unmatched",
+   "origin": "0345d24923653534d94efa63b2f139a3369e360770b6db4314840f3b53e6e3af",
+   "descendant": null
+  },
+  {
+   "id": "s12",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "51b4a946d539c0b5aa8904a0e1610664eff0cb40c541f5918af89974fc59a4d4"
+  },
+  {
+   "id": "s13",
+   "kind": "copied",
+   "origin": "636623cb9cd4ac3d953edcde86d72b57fae57c9dfc8f2fa00a57e2b7b7dd2a03",
+   "descendant": "636623cb9cd4ac3d953edcde86d72b57fae57c9dfc8f2fa00a57e2b7b7dd2a03"
+  },
+  {
+   "id": "s14",
+   "kind": "unmatched",
+   "origin": "fac100eb023b77db8e1d3171adf5ceb73b535d6764d0e2864b5720f4be4cf882",
+   "descendant": null
+  },
+  {
+   "id": "s15",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "8bf072c75688ed472992baa8938d9a616ce69137a17eb506c61739ea85491d1a"
+  },
+  {
+   "id": "s16",
+   "kind": "copied",
+   "origin": "df5bced0f1817c7467b93b71bae1ca8a4e9dbf2b528874c428e73f782bb50b6e",
+   "descendant": "df5bced0f1817c7467b93b71bae1ca8a4e9dbf2b528874c428e73f782bb50b6e"
+  },
+  {
+   "id": "s17",
+   "kind": "unmatched",
+   "origin": "7175517a370b5cd2e664e3fd29c4ea9db5ce17058eb9772fe090a5485e49dad6",
+   "descendant": null
+  },
+  {
+   "id": "s18",
+   "kind": "copied",
+   "origin": "bad875b8e9ffbef18f40fe50556bcb38684b1552a9f8424d6789c6ca2da195a8",
+   "descendant": "bad875b8e9ffbef18f40fe50556bcb38684b1552a9f8424d6789c6ca2da195a8"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin defines \"person\" as an individual, estate, trust, partnership, business or nonprofit entity, governmental unit, or other legal entity; the descendant has no such definition.",
+    "origin_span_ids": [
+     "s3"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin protects rights guaranteed by the United States Constitution or the Utah Constitution; the descendant has no reference to the Utah Constitution.",
+    "origin_span_ids": [
+     "s11"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant protects rights guaranteed by the Constitution of the United States or the Constitution of the State of Iowa.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s12"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant is headed as a new section numbered 652.2, while the origin is numbered 78B-25-102.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin defines \"person\" as an individual, estate, trust, partnership, business or nonprofit entity, governmental unit, or other legal entity; the descendant has no such definition.",
+      "origin_span_ids": [
+       "s3"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant protects rights guaranteed by the U.S. Constitution or the Constitution of the State of Iowa; the origin refers to the U.S. Constitution or the Utah Constitution.",
+      "origin_span_ids": [
+       "s11"
+      ],
+      "descendant_span_ids": [
+       "s12"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The section is numbered 78B-25-102 in the origin and appears as new section 652.2 (Sec. 2) in the descendant.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0
+    ],
+    "dropped": [
+     [
+      1,
+      "s11 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      2,
+      "s0 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
+}

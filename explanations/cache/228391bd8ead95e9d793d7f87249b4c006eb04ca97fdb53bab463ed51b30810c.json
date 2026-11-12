@@ -1,0 +1,356 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "grounding_rules": 2,
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "4b75f7d2f1d844529b70448c169c221aeb26868364cafe71e31097b7af202558",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "d96e26ea61dd09c50f8faf145ca91a2142b5937f13a43a7f4acc3c41418f7d38"
+  },
+  {
+   "id": "s2",
+   "kind": "paraphrased",
+   "origin": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+   "descendant": "e3c8a5b6f039339b5355da37f7404d3ce978997b8ed12d91604498ac1f0631b6"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+  },
+  {
+   "id": "s4",
+   "kind": "copied",
+   "origin": "58118682cad5fe39fe9172dafa8dbd26c0b119259fd6549bf9ca8549de3fe326",
+   "descendant": "58118682cad5fe39fe9172dafa8dbd26c0b119259fd6549bf9ca8549de3fe326"
+  },
+  {
+   "id": "s5",
+   "kind": "unmatched",
+   "origin": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+   "descendant": null
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+  },
+  {
+   "id": "s7",
+   "kind": "copied",
+   "origin": "2c87a40ea8f9028e38c6481a2fdac644510af6f298732b1c621741e77622d3c2",
+   "descendant": "2c87a40ea8f9028e38c6481a2fdac644510af6f298732b1c621741e77622d3c2"
+  },
+  {
+   "id": "s8",
+   "kind": "unmatched",
+   "origin": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+   "descendant": null
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+  },
+  {
+   "id": "s10",
+   "kind": "copied",
+   "origin": "f952da21866a2d7f100587cf49559912903bc7e6d4422652c67bc5140c944282",
+   "descendant": "f952da21866a2d7f100587cf49559912903bc7e6d4422652c67bc5140c944282"
+  },
+  {
+   "id": "s11",
+   "kind": "unmatched",
+   "origin": "c478ba1343a5f264833ff03e8dfbcfe4aa6f45423a8631b12cc560da79197699",
+   "descendant": null
+  },
+  {
+   "id": "s12",
+   "kind": "copied",
+   "origin": "920933a4cba635f4089c9f527f06e18fa89d339faa5658e0beddea1026acadc2",
+   "descendant": "920933a4cba635f4089c9f527f06e18fa89d339faa5658e0beddea1026acadc2"
+  },
+  {
+   "id": "s13",
+   "kind": "paraphrased",
+   "origin": "06f433ab6be9c05ab183ec08e6560c0b43611e33f2104445fba6c215b6c59a41",
+   "descendant": "85ad25cad99727fad0b179c453ce0b33dfeaced4585203b00db02a49b78dbe2d"
+  },
+  {
+   "id": "s14",
+   "kind": "copied",
+   "origin": "594684d4a6d01400ccb4a7b5142d113f269f5f6e99790f4a388d4631cef5a7b7",
+   "descendant": "594684d4a6d01400ccb4a7b5142d113f269f5f6e99790f4a388d4631cef5a7b7"
+  },
+  {
+   "id": "s15",
+   "kind": "unmatched",
+   "origin": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+   "descendant": null
+  },
+  {
+   "id": "s16",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+  },
+  {
+   "id": "s17",
+   "kind": "copied",
+   "origin": "3a8012e4c22ca8945865eaae1957c141d11425e8ef250e7ef85a6298a5af8112",
+   "descendant": "3a8012e4c22ca8945865eaae1957c141d11425e8ef250e7ef85a6298a5af8112"
+  },
+  {
+   "id": "s18",
+   "kind": "unmatched",
+   "origin": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+   "descendant": null
+  },
+  {
+   "id": "s19",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+  },
+  {
+   "id": "s20",
+   "kind": "copied",
+   "origin": "465d2b10f2aeaef3c660b45428f6b8c36a125fc2e075a72e981b155f85ec821a",
+   "descendant": "465d2b10f2aeaef3c660b45428f6b8c36a125fc2e075a72e981b155f85ec821a"
+  },
+  {
+   "id": "s21",
+   "kind": "unmatched",
+   "origin": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+   "descendant": null
+  },
+  {
+   "id": "s22",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+  },
+  {
+   "id": "s23",
+   "kind": "copied",
+   "origin": "97678f19f5642d03a18363d1b847fc8936db628a310d2f272c999c5d434bb710",
+   "descendant": "97678f19f5642d03a18363d1b847fc8936db628a310d2f272c999c5d434bb710"
+  },
+  {
+   "id": "s24",
+   "kind": "unmatched",
+   "origin": "75371f5a57ca5232c85c1858415de4b06f5c9e4bc879404e348748c273540986",
+   "descendant": null
+  },
+  {
+   "id": "s25",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "c1e0802acaa4cd370473e8a9f745b62ae06bc0090783689bfe92acd28e73fedd"
+  },
+  {
+   "id": "s26",
+   "kind": "copied",
+   "origin": "62114ee539292d1b39a2af5d8a5bd7622ba336b4f3ba9843de58b67881ace6fd",
+   "descendant": "62114ee539292d1b39a2af5d8a5bd7622ba336b4f3ba9843de58b67881ace6fd"
+  },
+  {
+   "id": "s27",
+   "kind": "unmatched",
+   "origin": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce",
+   "descendant": null
+  },
+  {
+   "id": "s28",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6"
+  },
+  {
+   "id": "s29",
+   "kind": "copied",
+   "origin": "d2a1d796c05c16724da185b5107e40ca0d6f709239e860c7cab46b875082d3f9",
+   "descendant": "d2a1d796c05c16724da185b5107e40ca0d6f709239e860c7cab46b875082d3f9"
+  },
+  {
+   "id": "s30",
+   "kind": "unmatched",
+   "origin": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+   "descendant": null
+  },
+  {
+   "id": "s31",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+  },
+  {
+   "id": "s32",
+   "kind": "copied",
+   "origin": "062e399e569c8fed34272d6c8505b41c5fd37b06befec2c41f7465ad0ebc87f0",
+   "descendant": "062e399e569c8fed34272d6c8505b41c5fd37b06befec2c41f7465ad0ebc87f0"
+  },
+  {
+   "id": "s33",
+   "kind": "unmatched",
+   "origin": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+   "descendant": null
+  },
+  {
+   "id": "s34",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+  },
+  {
+   "id": "s35",
+   "kind": "copied",
+   "origin": "956e24ebb38b086f1b6655b3efb25e61b0a42c33557b06dc1c0e6e2ba820a166",
+   "descendant": "956e24ebb38b086f1b6655b3efb25e61b0a42c33557b06dc1c0e6e2ba820a166"
+  },
+  {
+   "id": "s36",
+   "kind": "unmatched",
+   "origin": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+   "descendant": null
+  },
+  {
+   "id": "s37",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+  },
+  {
+   "id": "s38",
+   "kind": "copied",
+   "origin": "2d321474794eedbc0d18225f093b9d3ec018c4fa4eaae62477b69597ecd17095",
+   "descendant": "2d321474794eedbc0d18225f093b9d3ec018c4fa4eaae62477b69597ecd17095"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin's definition of \"person\" expressly lists trust and partnership; the descendant's definition omits those two terms.",
+    "origin_span_ids": [
+     "s11"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin covers speech and related rights guaranteed by the Utah Constitution alongside the U.S. Constitution.",
+    "origin_span_ids": [
+     "s24"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant covers speech and related rights guaranteed by Delaware's Constitution alongside the U.S. Constitution.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s25"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant introduces definitions with \"In this section\" under (a) and cross-references subsection (c); the origin uses \"As used in this section\" and Subsection (3).",
+    "origin_span_ids": [
+     "s2",
+     "s13"
+    ],
+    "descendant_span_ids": [
+     "s2",
+     "s13"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin's definition of \"person\" expressly lists trusts and partnerships; the descendant's definition omits those two terms.",
+      "origin_span_ids": [
+       "s11"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant protects rights guaranteed by the U.S. or Delaware Constitution; the origin refers to the U.S. or Utah Constitution.",
+      "origin_span_ids": [
+       "s24"
+      ],
+      "descendant_span_ids": [
+       "s25"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant places definitions in subsection (a) with numbered items (1)-(3); the origin uses subsection (1) with lettered items (a)-(c), and renumbers the remaining subsections likewise.",
+      "origin_span_ids": [
+       "s0",
+       "s2",
+       "s5",
+       "s8",
+       "s13",
+       "s27"
+      ],
+      "descendant_span_ids": [
+       "s1",
+       "s2",
+       "s3",
+       "s6",
+       "s9",
+       "s13",
+       "s28"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0
+    ],
+    "dropped": [
+     [
+      1,
+      "s24 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      2,
+      "s0 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
+}

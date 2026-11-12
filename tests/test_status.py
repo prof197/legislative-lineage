@@ -426,3 +426,74 @@ def test_a_classified_outcome_is_read_before_the_wording() -> None:
     actions[-1] = Action("2025-05-20", ("executive-signature",), 3, "Executive", "Approved")
 
     assert _status(actions, as_of=AFTER_SESSION).reason == "executive-signature"
+
+
+def _at(day: str, kinds: tuple[str, ...], description: str, order: int) -> Action:
+    return Action(day, kinds, order, "Governor", description)
+
+
+SIGNED = ("2024-05-07", ("executive-signature",))
+
+
+def test_a_signature_and_a_full_veto_the_same_day_is_a_veto() -> None:
+    # Georgia records the governor's action date as "Date Signed by Governor", classified as a
+    # signature, on a bill the governor vetoed (SB 368, 2023-24: "Veto V12").
+    actions = [
+        *_actions(("2024-02-29", "introduction"), ("2024-03-21", "passage")),
+        _at(*SIGNED, "Senate Date Signed by Governor", 3),
+        _at("2024-05-07", ("executive-veto",), "Veto V12", 4),
+    ]
+
+    assert _status(actions, as_of=AFTER_SESSION) == Outcome(
+        Status.DIED, "executive-veto", date(2024, 5, 7)
+    )
+
+
+def test_a_veto_after_a_signature_classified_on_the_transmittal_is_a_veto() -> None:
+    # Texas classifies "Transmitted to the Governor" as a signature.
+    actions = [
+        _at("2023-04-10", ("executive-signature",), "Transmitted to the Governor", 0),
+        _at("2023-06-18", ("executive-veto",), "Vetoed by the Governor", 1),
+    ]
+
+    assert _status(actions, as_of=AFTER_SESSION).status is Status.DIED
+
+
+def test_a_veto_after_an_act_number_in_words_is_a_veto() -> None:
+    # Connecticut numbers a public act before the governor acts on it.
+    actions = [
+        _at("2023-06-14", (), "PUBLIC ACT 23-108", 0),
+        _at("2023-06-29", ("executive-veto",), "VETOED BY GOVERNOR", 1),
+    ]
+
+    assert _status(actions, as_of=AFTER_SESSION) == Outcome(
+        Status.DIED, "executive-veto", date(2023, 6, 29)
+    )
+
+
+@pytest.mark.parametrize(
+    ("kinds", "description"),
+    [
+        (("executive-veto", "executive-veto-line-item"), "Vetoed on 07/15/26 (Gov. Msg. No. 1)"),
+        (("executive-veto",), "Line item veto receipt"),
+        (("executive-veto",), "Vetoed in part by the Governor (Policy)"),
+        (("executive-veto",), "Governor Amendatory Veto"),
+    ],
+)
+def test_a_partial_veto_the_day_of_the_signature_leaves_a_law(
+    kinds: tuple[str, ...], description: str
+) -> None:
+    actions = [_at(*SIGNED, "Signed by Governor", 0), _at("2024-05-07", kinds, description, 1)]
+
+    assert _status(actions, as_of=AFTER_SESSION).status is Status.PASSED
+
+
+def test_a_chapter_number_beside_a_veto_is_a_law() -> None:
+    # Wyoming assigns a chapter only to a law; a veto beside it was of items, or overridden.
+    actions = [
+        _at("2023-03-17", ("became-law",), "Assigned Chapter Number 189", 0),
+        _at(*SIGNED, "Governor Signed SEA No. 0090", 1),
+        _at("2023-03-17", ("executive-veto",), "Governor Vetoed SEA No. 0090", 2),
+    ]
+
+    assert _status(actions, as_of=AFTER_SESSION).status is Status.PASSED

@@ -1,0 +1,324 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "grounding_rules": 2,
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "ff7f47ad3e1d1844646ec508fb81f36edc235ed48a235ab2bd81be4fb7d84f5d",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "f1660cc2e6ac981cb57f0d729a0ca632459e2c05f049d53fb19d1778177b1c29"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "525dface1b4f06f2d3d6abddccdc5be9e3c7037547a3c335b5520ba847e73828",
+   "descendant": "525dface1b4f06f2d3d6abddccdc5be9e3c7037547a3c335b5520ba847e73828"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "daabb39c4fcc222565a74fb4e68ab56280e449139e14c72ea0e21ce230a94d05"
+  },
+  {
+   "id": "s4",
+   "kind": "copied",
+   "origin": "038462a7352c875c5d6ddff23ba466cc932ab898257f7309b9546cee8911b447",
+   "descendant": "038462a7352c875c5d6ddff23ba466cc932ab898257f7309b9546cee8911b447"
+  },
+  {
+   "id": "s5",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "fcce92230a1f54e69f73882644fafea167634cfe6798e78ae3c2e52334f38858"
+  },
+  {
+   "id": "s6",
+   "kind": "copied",
+   "origin": "24a66f70dc50cf2a39fd8da8897a055139ba952e939d31c0e01e2b6f01c39ad6",
+   "descendant": "24a66f70dc50cf2a39fd8da8897a055139ba952e939d31c0e01e2b6f01c39ad6"
+  },
+  {
+   "id": "s7",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb"
+  },
+  {
+   "id": "s8",
+   "kind": "copied",
+   "origin": "9bd6ae03792e457403491ec5bda29473f84737864e24f67a48a4e88d65ee879f",
+   "descendant": "9bd6ae03792e457403491ec5bda29473f84737864e24f67a48a4e88d65ee879f"
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": "7175517a370b5cd2e664e3fd29c4ea9db5ce17058eb9772fe090a5485e49dad6",
+   "descendant": null
+  },
+  {
+   "id": "s10",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "59d22313f6610acdce2f789496b39734612e9fe694b9f95d5f180990589997da"
+  },
+  {
+   "id": "s11",
+   "kind": "copied",
+   "origin": "41e3337cb8704acb97d1e742742fff079fd9a2fcdf791300718bc073e4844dff",
+   "descendant": "41e3337cb8704acb97d1e742742fff079fd9a2fcdf791300718bc073e4844dff"
+  },
+  {
+   "id": "s12",
+   "kind": "unmatched",
+   "origin": "0c7044eb3e64611397dfcb51f4fc3f485f5acf7375ee37a4320bbdc5530f0bba",
+   "descendant": null
+  },
+  {
+   "id": "s13",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "534355bb5a6279d149c913cd17d607e8b49dcf089f46449f24787c02613f2740"
+  },
+  {
+   "id": "s14",
+   "kind": "paraphrased",
+   "origin": "b5c3010396b792febf99e1d742d12968ad384fdf5d5700dc1fdcdd281f3d21f0",
+   "descendant": "fd02b908fd0a0ef3c1f2aa5af9e9c9bb3e7b6ffc75ff92ffc4a2b560532c81f2"
+  },
+  {
+   "id": "s15",
+   "kind": "copied",
+   "origin": "4ea3faca5175508eaaa4d69fdb5c0bd7147e2cbddd4c5206d3e95cc33a680abf",
+   "descendant": "4ea3faca5175508eaaa4d69fdb5c0bd7147e2cbddd4c5206d3e95cc33a680abf"
+  },
+  {
+   "id": "s16",
+   "kind": "unmatched",
+   "origin": "1c3fc5d7e73669fa657b051d407cb0b03137035ce72e3043f7578c045739655e",
+   "descendant": null
+  },
+  {
+   "id": "s17",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "562974bb65fe0808a5fa4a1c0cb978f1c2778c459bdac1d576b7ba9959cb44b6"
+  },
+  {
+   "id": "s18",
+   "kind": "copied",
+   "origin": "a5d747df8cc26eeb5eb79ec04711a6fe86aba963bce8dd06fca015a11dde5db4",
+   "descendant": "a5d747df8cc26eeb5eb79ec04711a6fe86aba963bce8dd06fca015a11dde5db4"
+  },
+  {
+   "id": "s19",
+   "kind": "unmatched",
+   "origin": "8e21c78d4d520baafdbc37aef5735e26e8a374837fb24cb1b2641e6e950dbbb8",
+   "descendant": null
+  },
+  {
+   "id": "s20",
+   "kind": "copied",
+   "origin": "1663eb194213aafc13583822a405132ee3886b4e6f8c631658d9e212c59fca84",
+   "descendant": "1663eb194213aafc13583822a405132ee3886b4e6f8c631658d9e212c59fca84"
+  },
+  {
+   "id": "s21",
+   "kind": "unmatched",
+   "origin": "ff7f47ad3e1d1844646ec508fb81f36edc235ed48a235ab2bd81be4fb7d84f5d",
+   "descendant": null
+  },
+  {
+   "id": "s22",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "b6886610c6e7f24c3d3655cefa0ac75f64c2770897b10319e15a0f48b176513e"
+  },
+  {
+   "id": "s23",
+   "kind": "copied",
+   "origin": "59b4b55da2de13d1bb494ad71f8f92834aa9fc370e93d367fe09f8179739d73b",
+   "descendant": "59b4b55da2de13d1bb494ad71f8f92834aa9fc370e93d367fe09f8179739d73b"
+  },
+  {
+   "id": "s24",
+   "kind": "paraphrased",
+   "origin": "c86ebcf5687346c110c048ca9af99f09b2592d03f2643b181cb4f21616468541",
+   "descendant": "5dbe14a4368168103a4b8772d2c6d7b2773129a1adf716e207509f3daa8c86d5"
+  },
+  {
+   "id": "s25",
+   "kind": "unmatched",
+   "origin": "3b878c81e737f40d5eef37d84b5d2a7b901765a165c3f68dc7704dd3cf8d5c46",
+   "descendant": null
+  },
+  {
+   "id": "s26",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "962586c02e4e426eca90a70fd1b172440e9d6200c4a458fdbbb090bbf9fcf714"
+  },
+  {
+   "id": "s27",
+   "kind": "copied",
+   "origin": "a3855744cdf1fdbca0f4f4c8a6fd7558d6ff276fe2f7ca27e1ada3a5432ffd77",
+   "descendant": "a3855744cdf1fdbca0f4f4c8a6fd7558d6ff276fe2f7ca27e1ada3a5432ffd77"
+  },
+  {
+   "id": "s28",
+   "kind": "paraphrased",
+   "origin": "42effdd5fe35496716615cf673a24d6044b353de449f5f2938c63c732d11a7c0",
+   "descendant": "0422335c11b1e243e34b041aadff684e89cfa9e9d0c547746b3cd277f9a6d53b"
+  },
+  {
+   "id": "s29",
+   "kind": "copied",
+   "origin": "9e6803ccc8ea509accbe0c53fdea0abfbb91eb5dba4f2302e862838e6e7cdda3",
+   "descendant": "9e6803ccc8ea509accbe0c53fdea0abfbb91eb5dba4f2302e862838e6e7cdda3"
+  },
+  {
+   "id": "s30",
+   "kind": "unmatched",
+   "origin": "9eead334de13ced92bf3ee78ed97895b5a779f6ef26dd5ba62b8808549cee3f9",
+   "descendant": null
+  },
+  {
+   "id": "s31",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "e9dfe9803cdc7ae7b4e81688d2c1356fdf4833d6375e1c25fff193982bc2f8a7"
+  },
+  {
+   "id": "s32",
+   "kind": "copied",
+   "origin": "0eee81bf30c091eb8ab62c35fef8afd8b3dece7328f1cd0b8c30c60adae26724",
+   "descendant": "0eee81bf30c091eb8ab62c35fef8afd8b3dece7328f1cd0b8c30c60adae26724"
+  },
+  {
+   "id": "s33",
+   "kind": "unmatched",
+   "origin": "848de9eb8e43d528780b5b8fcad071a10efce7b4559d629d4047615b6bffa862",
+   "descendant": null
+  },
+  {
+   "id": "s34",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "eb8f6f881f610be14735871d444dd46d6c610be2f3ab85e77382a26d5d8fa189"
+  },
+  {
+   "id": "s35",
+   "kind": "copied",
+   "origin": "96d375350a09d8b049a73740dd29ced354c499d8b435fc9a8023e885f0a9b9d1",
+   "descendant": "96d375350a09d8b049a73740dd29ced354c499d8b435fc9a8023e885f0a9b9d1"
+  },
+  {
+   "id": "s36",
+   "kind": "unmatched",
+   "origin": "3fb45623cb3075a8af9a2f81ef3beaa4038541cd71f08e4bf6c79c088f7a4026",
+   "descendant": null
+  },
+  {
+   "id": "s37",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "b4b1ac118cbc7b333e0f6c90f759f0ae71d9753654b039800c42279f2f3ffc26"
+  },
+  {
+   "id": "s38",
+   "kind": "copied",
+   "origin": "9edc7daf7473aabbe4ccef90cbfe73d8e7532fde1bdef8ef60d39c79b16b4024",
+   "descendant": "9edc7daf7473aabbe4ccef90cbfe73d8e7532fde1bdef8ef60d39c79b16b4024"
+  },
+  {
+   "id": "s39",
+   "kind": "unmatched",
+   "origin": "ff7f47ad3e1d1844646ec508fb81f36edc235ed48a235ab2bd81be4fb7d84f5d",
+   "descendant": null
+  },
+  {
+   "id": "s40",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "b6886610c6e7f24c3d3655cefa0ac75f64c2770897b10319e15a0f48b176513e"
+  },
+  {
+   "id": "s41",
+   "kind": "copied",
+   "origin": "40b066c40b8a1a694a2475c4dfea2f42a9d091f5de26344bbc1d7561af8a31f4",
+   "descendant": "40b066c40b8a1a694a2475c4dfea2f42a9d091f5de26344bbc1d7561af8a31f4"
+  },
+  {
+   "id": "s42",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "4768d045c374ff9ba7e36ecb349356cbe3d3a6954c412094007af17f5a17ff8e"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "added",
+    "summary": "The descendant contains a full public expression protection act: definitions, scope, special motion to dismiss, hearing and ruling deadlines, appeal, fee awards, and repeal of a prior section.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1",
+     "s42"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant allows a stay of another party's hearing only if its ruling would decide an issue material to the motion, and a stay of discovery only if it relates to that issue.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s10",
+     "s13"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin makes its stay of all proceedings during an appeal subject to exceptions listed in Subsections (5), (6), and (7).",
+    "origin_span_ids": [
+     "s19"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin expressly names attorney fees, along with costs and expenses, in the motion that is not subject to a stay.",
+    "origin_span_ids": [
+     "s33"
+    ],
+    "descendant_span_ids": []
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "a claim fails grounding (claim 2: s9 is on one side only, so it shows text one side lacks, not a change; claim 3: s19 is on one side only, so it shows text one side lacks, not a change; claim 4: s33 is on one side only, so it shows text one side lacks, not a change)"
+ ],
+ "earlier": [
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
+}

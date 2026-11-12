@@ -83,8 +83,9 @@ def test_reports_types_status_and_freshness_per_state(tables: tuple[Path, Path])
     assert ga["types"] == {"bill": 1, "resolution": 1}
     # SR 1065 recognizes a week; its title says so.
     assert ga["commemorative_title_candidates"] == {"resolution": 1}
+    # SB 238 was vetoed the day Georgia records as "Date Signed by Governor" (test_ingest).
     assert ga["status"] == {
-        "bill": {"passed": 1},
+        "bill": {"died": 1},
         "resolution": {"passed": 1},
     }
 

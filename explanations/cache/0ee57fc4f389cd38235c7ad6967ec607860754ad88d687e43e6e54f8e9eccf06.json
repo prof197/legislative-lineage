@@ -1,0 +1,328 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "grounding_rules": 2,
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "768bf4934ee48c8fabfecb30afcf99ab7adffb2608c32320a99a25d12cc714ab",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "9e964c39b405b72f0718d1441e4c0e562b775f9de355a2dc93a49c9c8079d945"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "6d373c9833d44317da641ca63d978b5d10c5d8e41d71884156b2464dd78f8395",
+   "descendant": "6d373c9833d44317da641ca63d978b5d10c5d8e41d71884156b2464dd78f8395"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "254bb97b57f12e1608fefc4517de768427b2fd6d2cffbbfcbc09f3c818198d5f",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "93ab21f33fb3f91a01d988c06bd0844092d78bdd354c3abba8e8726bf1f8c18c",
+   "descendant": "93ab21f33fb3f91a01d988c06bd0844092d78bdd354c3abba8e8726bf1f8c18c"
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "b31240553a05b967f5bbcd0b412d0135ce9a007690b9db8e0e9a74b1c885a278"
+  },
+  {
+   "id": "s7",
+   "kind": "copied",
+   "origin": "f87c2b5a194dc088fbc56a289742d945ba384ddb0c0e4a94627e3196464f33fa",
+   "descendant": "f87c2b5a194dc088fbc56a289742d945ba384ddb0c0e4a94627e3196464f33fa"
+  },
+  {
+   "id": "s8",
+   "kind": "unmatched",
+   "origin": "17399ea5ec9f61569b3951cf0464783123784279e4dad6f45cdf6248e2e460b9",
+   "descendant": null
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "3c6852482bbc9dcd31396ad5118714364d92a011b609c2d088995cebdc49fce4"
+  },
+  {
+   "id": "s10",
+   "kind": "copied",
+   "origin": "15a9cd1e1ad9155a255c1c21cf76332f10bd9337b9208055c03ad3a049e06911",
+   "descendant": "15a9cd1e1ad9155a255c1c21cf76332f10bd9337b9208055c03ad3a049e06911"
+  },
+  {
+   "id": "s11",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "9176646123007151e243a1fb5fc482cb1ddc96e2fc1ac9bbf759302dbcf94307"
+  },
+  {
+   "id": "s12",
+   "kind": "copied",
+   "origin": "2bfd1101ea1fee851c9bf17c1c533e3491cb6522acb4af7f30cac39b2f82db90",
+   "descendant": "2bfd1101ea1fee851c9bf17c1c533e3491cb6522acb4af7f30cac39b2f82db90"
+  },
+  {
+   "id": "s13",
+   "kind": "unmatched",
+   "origin": "66f60fe8f93c35e084581b2cc05444fd712c247d099c6feddf690acebac75391",
+   "descendant": null
+  },
+  {
+   "id": "s14",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "5b7623e042a1ed11ceea441cf682ab54beece46acdafdf7f809f3ce30878ba9f"
+  },
+  {
+   "id": "s15",
+   "kind": "copied",
+   "origin": "7c2a27e4361f3e974bb30166271ae0b4aff9108451d907a74e35f4318879587a",
+   "descendant": "7c2a27e4361f3e974bb30166271ae0b4aff9108451d907a74e35f4318879587a"
+  },
+  {
+   "id": "s16",
+   "kind": "unmatched",
+   "origin": "ce668745ab60d5dbf4283e604732e3f8b651c8a19bf87a37732d298fe6c2b568",
+   "descendant": null
+  },
+  {
+   "id": "s17",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "5ef971bff41373da3e7615a16a4367260688e3bfa43d49e3fe569d5f0ee4e262"
+  },
+  {
+   "id": "s18",
+   "kind": "copied",
+   "origin": "49e6ad16e774aaf7187c38236ddd51bcb282c924a52e02e03988fd4fe747a06a",
+   "descendant": "49e6ad16e774aaf7187c38236ddd51bcb282c924a52e02e03988fd4fe747a06a"
+  },
+  {
+   "id": "s19",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "91c49ac727694a2a93cc3d9e7eea50b82eeb7a01ae07b2301b755a2c9f17c9d6"
+  },
+  {
+   "id": "s20",
+   "kind": "copied",
+   "origin": "9257b8914290549ea05b2ea809dad7d40bf7f6536fff24ff891d5732c5c7a023",
+   "descendant": "9257b8914290549ea05b2ea809dad7d40bf7f6536fff24ff891d5732c5c7a023"
+  },
+  {
+   "id": "s21",
+   "kind": "unmatched",
+   "origin": "b55bf8fa747a953e2082b6d6c9ae3f22c99412bd20ef0e0f7175d80221327507",
+   "descendant": null
+  },
+  {
+   "id": "s22",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "2766c153e06c4f10730a33286cc6ba0aede09f3eb5cbaca81f314b37e72c24a1"
+  },
+  {
+   "id": "s23",
+   "kind": "copied",
+   "origin": "ced1f7eb7a0de35ce64f236247bb6d1419c1bdbfba45b77d592d992029f6773a",
+   "descendant": "ced1f7eb7a0de35ce64f236247bb6d1419c1bdbfba45b77d592d992029f6773a"
+  },
+  {
+   "id": "s24",
+   "kind": "unmatched",
+   "origin": "1872adcdfffeda56c8305bd2a47f76a3957752df25018124f6a082da95ea1468",
+   "descendant": null
+  },
+  {
+   "id": "s25",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "9070857c98f8379539edd468056de76d3f343c22a6f56bb6893582308b98ee24"
+  },
+  {
+   "id": "s26",
+   "kind": "copied",
+   "origin": "7d3ad08263276fc2862ad17417160052aa877b17aefd7b34c2269a4d27d4b63d",
+   "descendant": "7d3ad08263276fc2862ad17417160052aa877b17aefd7b34c2269a4d27d4b63d"
+  },
+  {
+   "id": "s27",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "254bb97b57f12e1608fefc4517de768427b2fd6d2cffbbfcbc09f3c818198d5f"
+  },
+  {
+   "id": "s28",
+   "kind": "copied",
+   "origin": "cb684c4f4ee3ef4489845a19ddda053c738e93eee999047cc8d53020f837e10f",
+   "descendant": "cb684c4f4ee3ef4489845a19ddda053c738e93eee999047cc8d53020f837e10f"
+  },
+  {
+   "id": "s29",
+   "kind": "unmatched",
+   "origin": "47951833ecf6211793c07d246c29b2314abdd784d806d2253c5723dc5e3b0d74",
+   "descendant": null
+  },
+  {
+   "id": "s30",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d"
+  },
+  {
+   "id": "s31",
+   "kind": "copied",
+   "origin": "e67f99a763999bb6a8af4668f1a299a8d7b1939e05f2b2712b92ff7de9ed3bc8",
+   "descendant": "e67f99a763999bb6a8af4668f1a299a8d7b1939e05f2b2712b92ff7de9ed3bc8"
+  },
+  {
+   "id": "s32",
+   "kind": "unmatched",
+   "origin": "3db95fc6fd24a7ecf1d3bbf55e960ae698e9e9fb07a75c0565b3cbfc2ea4de73",
+   "descendant": null
+  },
+  {
+   "id": "s33",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "1353276e77c8ce6ac44c5be93fbff906fd5cc8b4a5470030a1657c7893620d2d"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "added",
+    "summary": "The descendant itself creates the cause of action: injunctive relief and damages against the sponsor, attorney's fees, a disclosure affirmative defense, venue, and a clear-and-convincing burden.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant extends the medium's liability shield and exceptions to the medium's advertising sales representative.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s6",
+     "s11"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant makes liability for removing a disclosure require intentional removal plus failure to remove the communication or replace the disclosure when notified.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s14",
+     "s19"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin defines \"interactive computer service\" and \"information content provider\"; the descendant lacks these definitions but encourages courts to decide matters expediently.",
+    "origin_span_ids": [
+     "s32"
+    ],
+    "descendant_span_ids": [
+     "s33"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant itself creates the cause of action for altered officers or candidates, with injunctive relief, damages, attorney's fees, a disclosure defense, venue, and a clear-and-convincing burden.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant shields both the medium and its advertising sales representative from liability; the origin's exceptions apply only to the medium.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s6",
+       "s11"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant imposes liability for removing a disclosure only if done intentionally and the communication is not removed or the disclosure not replaced when notified.",
+      "origin_span_ids": [
+       "s13"
+      ],
+      "descendant_span_ids": [
+       "s14",
+       "s19"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin defines \"interactive computer service\" and \"information content provider\"; the descendant lacks these definitions but encourages courts to decide matters expediently.",
+      "origin_span_ids": [
+       "s32"
+      ],
+      "descendant_span_ids": [
+       "s33"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     3
+    ],
+    "dropped": [
+     [
+      1,
+      "s6 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      2,
+      "s13 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
+}

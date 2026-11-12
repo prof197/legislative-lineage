@@ -1,0 +1,106 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "grounding_rules": 2,
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "d016e9a0cbc61437494dd2769feba8bd25c97d0a862511dd031d0f50000236a1",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "34b617c83872b0a2be4e0d44ef7d0cef0c807df4dc96700966cb3a1bce2a13c8"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "1df543536d232a744faccaba53e471e71ce941fcaaf7fd0cb2918b0a26577289",
+   "descendant": "1df543536d232a744faccaba53e471e71ce941fcaaf7fd0cb2918b0a26577289"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "6d5d287a3d1749b01e95949e22684ad6ad119c774d852a4f1f2a2b8df96d79af",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "51abb77d3cae9c3237036d7e0a78383a37d648ff536ded29dfa137ac4cbebe0c"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "5d6bac4eae27e1e464296a325fbe7aa8f7a08148ebfb9f6e278bd286fe63cccf",
+   "descendant": "5d6bac4eae27e1e464296a325fbe7aa8f7a08148ebfb9f6e278bd286fe63cccf"
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": "d843bd4b03f356fd86ca5d5d295c1deb7224e71ac7eb65d4682713daf01a443b",
+   "descendant": null
+  },
+  {
+   "id": "s7",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "ff783ed42bb36b16c58e4ea1db13a7092ef9705ea3a0896bb19dd74105983bee"
+  }
+ ],
+ "explanation": {
+  "claims": []
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [],
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant counts the 21-day filing deadline from entry of the order; the origin counts it from the day on which the order is entered.",
+      "origin_span_ids": [
+       "s6"
+      ],
+      "descendant_span_ids": [
+       "s7"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant says the appeal \"must\" be filed; the origin says it \"shall\" be filed.",
+      "origin_span_ids": [
+       "s3"
+      ],
+      "descendant_span_ids": [
+       "s4"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1
+    ],
+    "dropped": []
+   }
+  },
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
+}

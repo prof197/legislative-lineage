@@ -1,0 +1,384 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "grounding_rules": 2,
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "db6b2b970311e9d16f204b0ee40e49d816170b966ccd6f430ba85f946451f30c",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "e087a7b1e8edd5afbb23b5817bc71feff1348aafc22a310cacb43eaeaa1fcfa9"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "e5bba4634d68b9ec8ce345ed7cd1515e579d5b43ef75910b002ec5d727b23637",
+   "descendant": "e5bba4634d68b9ec8ce345ed7cd1515e579d5b43ef75910b002ec5d727b23637"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "4595792f0f53fd0cdfcb55ac7d930841fef1aa03ec0e85ff86c3f648967ef825"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "416c5460266bd773c4816b8c9a0162cb01777679630f5461033b10255b94bfa5",
+   "descendant": "416c5460266bd773c4816b8c9a0162cb01777679630f5461033b10255b94bfa5"
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": "d3fdc10688227667106a1a00e6ecc5ac000b844c31ed15a06c3a4f4cd47c449b",
+   "descendant": null
+  },
+  {
+   "id": "s7",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "a9774b5c60eadd2956d84898c1231442f7019ff08c25e4c330fa13c9dcf139b5"
+  },
+  {
+   "id": "s8",
+   "kind": "copied",
+   "origin": "09f82f34964d09c0f1d3d5375fdfa6ecd52035d9cf7a60d9aa7d3f5a9384013a",
+   "descendant": "09f82f34964d09c0f1d3d5375fdfa6ecd52035d9cf7a60d9aa7d3f5a9384013a"
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+   "descendant": null
+  },
+  {
+   "id": "s10",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "cb6ac51c70684784a2ecfb23a1670267929e4cc1a68208419c251136b44cdf63"
+  },
+  {
+   "id": "s11",
+   "kind": "copied",
+   "origin": "8b12eef7c277e74d062f9e0340269a2e5d2d3814f612be8d7311c46435c45b40",
+   "descendant": "8b12eef7c277e74d062f9e0340269a2e5d2d3814f612be8d7311c46435c45b40"
+  },
+  {
+   "id": "s12",
+   "kind": "unmatched",
+   "origin": "47558cdc34740113e031cf8665ec3a41b9a7acd4bec39b390dcd00c00c0324e2",
+   "descendant": null
+  },
+  {
+   "id": "s13",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "e39c2916a8a35b37c254efbf2a417ce83ef045d586e8081cb724294a082cc1e0"
+  },
+  {
+   "id": "s14",
+   "kind": "copied",
+   "origin": "675fbe86316b63c8ab9253ebea172f6ac4e6d35561e854e8d7a284d954708ecd",
+   "descendant": "675fbe86316b63c8ab9253ebea172f6ac4e6d35561e854e8d7a284d954708ecd"
+  },
+  {
+   "id": "s15",
+   "kind": "unmatched",
+   "origin": "4cac8764b0e461960fd7b1fb269440cf8a7f03e9598a13e0a49d143e8c083fb7",
+   "descendant": null
+  },
+  {
+   "id": "s16",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "2f63c03bf44b40fcd56d9b0ae21f1c47dcba39df903ee013626756eab01c5252"
+  },
+  {
+   "id": "s17",
+   "kind": "copied",
+   "origin": "8cfa1af42bb58eaaed87c9fbb092d9a3ccf437183c42e7c7eb04e4119e65c172",
+   "descendant": "8cfa1af42bb58eaaed87c9fbb092d9a3ccf437183c42e7c7eb04e4119e65c172"
+  },
+  {
+   "id": "s18",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "2052e77495272e8d76d3210cc04a067ff7e03daf070343edef5651f3d802033c"
+  },
+  {
+   "id": "s19",
+   "kind": "copied",
+   "origin": "e8e67e4f8dde99407cf4781f137951f75fb9957d80326768f443be5868185fdb",
+   "descendant": "e8e67e4f8dde99407cf4781f137951f75fb9957d80326768f443be5868185fdb"
+  },
+  {
+   "id": "s20",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "2052e77495272e8d76d3210cc04a067ff7e03daf070343edef5651f3d802033c"
+  },
+  {
+   "id": "s21",
+   "kind": "copied",
+   "origin": "866f335715779512832ac6d0476a0a22db758e32fc0909b31306b3a962980503",
+   "descendant": "866f335715779512832ac6d0476a0a22db758e32fc0909b31306b3a962980503"
+  },
+  {
+   "id": "s22",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "2052e77495272e8d76d3210cc04a067ff7e03daf070343edef5651f3d802033c"
+  },
+  {
+   "id": "s23",
+   "kind": "copied",
+   "origin": "37ff82a7739179a635f5336e7c80c0743e455323a604df457ef05e956d3e9659",
+   "descendant": "37ff82a7739179a635f5336e7c80c0743e455323a604df457ef05e956d3e9659"
+  },
+  {
+   "id": "s24",
+   "kind": "unmatched",
+   "origin": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+   "descendant": null
+  },
+  {
+   "id": "s25",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "d2ebbba731e5cb1572112655b37afdd1f3c20edcdb0ef77d748921e304a49d88"
+  },
+  {
+   "id": "s26",
+   "kind": "copied",
+   "origin": "034155ef331dfcb836a011f003604ae83be7b5d109ac65512f0a6d1dd11350e3",
+   "descendant": "034155ef331dfcb836a011f003604ae83be7b5d109ac65512f0a6d1dd11350e3"
+  },
+  {
+   "id": "s27",
+   "kind": "unmatched",
+   "origin": "d3fdc10688227667106a1a00e6ecc5ac000b844c31ed15a06c3a4f4cd47c449b",
+   "descendant": null
+  },
+  {
+   "id": "s28",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "a9774b5c60eadd2956d84898c1231442f7019ff08c25e4c330fa13c9dcf139b5"
+  },
+  {
+   "id": "s29",
+   "kind": "copied",
+   "origin": "7f03305daa8c4b59a47bd3ea6a5a576355f6733a6345e995854a8ea14b960060",
+   "descendant": "7f03305daa8c4b59a47bd3ea6a5a576355f6733a6345e995854a8ea14b960060"
+  },
+  {
+   "id": "s30",
+   "kind": "unmatched",
+   "origin": "c0340a5c751d8d7053a56c6a6700fdbe63f7b49c396ca1ce89807bc9625a3899",
+   "descendant": null
+  },
+  {
+   "id": "s31",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "837e4355f2155c91691fe369fd391298e2b6974e37037e15ac2e861da503b2ff"
+  },
+  {
+   "id": "s32",
+   "kind": "copied",
+   "origin": "202ed9b06b20899fe87a4250a1e7141ddfe6164563b20e0a8891fb681160fe80",
+   "descendant": "202ed9b06b20899fe87a4250a1e7141ddfe6164563b20e0a8891fb681160fe80"
+  },
+  {
+   "id": "s33",
+   "kind": "unmatched",
+   "origin": "d3fdc10688227667106a1a00e6ecc5ac000b844c31ed15a06c3a4f4cd47c449b",
+   "descendant": null
+  },
+  {
+   "id": "s34",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "a9774b5c60eadd2956d84898c1231442f7019ff08c25e4c330fa13c9dcf139b5"
+  },
+  {
+   "id": "s35",
+   "kind": "copied",
+   "origin": "384148bafe1254e6e7bbdb269600a879200170042e2de558a0bab2141cf3eb96",
+   "descendant": "384148bafe1254e6e7bbdb269600a879200170042e2de558a0bab2141cf3eb96"
+  },
+  {
+   "id": "s36",
+   "kind": "unmatched",
+   "origin": "76b7eba0fa4993c88c11799a11a4fd10664704c8d79699ed53cd603b215564f6",
+   "descendant": null
+  },
+  {
+   "id": "s37",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "fd850dbea2f8ce703293cc52a9dba648296df1017b81e40eeffb180658303fa5"
+  },
+  {
+   "id": "s38",
+   "kind": "copied",
+   "origin": "c5cab9cb84ff241afefc58b04e05c3f3bae2a0dc79612f80903d56640705803a",
+   "descendant": "c5cab9cb84ff241afefc58b04e05c3f3bae2a0dc79612f80903d56640705803a"
+  },
+  {
+   "id": "s39",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "8405dd947d43485b5e63e4dac49e81245fe1c5e6416d396dc94253fc9365c551"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin's cross-references point to Sections 78B-25-102, 78B-25-103 and 78B-25-110 and say the protections apply under \"this chapter\"; the descendant lacks these references.",
+    "origin_span_ids": [
+     "s6",
+     "s12",
+     "s15",
+     "s27",
+     "s30",
+     "s33",
+     "s36"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant's cross-references point to sections 554.08, 554.09 and 554.16 and set the scope as \"sections 554.07 to 554.19\", references absent from the origin.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s7",
+     "s13",
+     "s16",
+     "s28",
+     "s31",
+     "s34",
+     "s37"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant is headed Sec. 7 [554.13], uses (a)-(c) subsections with (1)-(3) clauses, and marks its text as new text; the origin lacks these.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1",
+     "s4",
+     "s10",
+     "s25",
+     "s39"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin is numbered 78B-25-107 and uses (1)-(3) subsections with (a)-(c) clauses; the descendant lacks this numbering.",
+    "origin_span_ids": [
+     "s0",
+     "s3",
+     "s9",
+     "s24"
+    ],
+    "descendant_span_ids": []
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "a claim fails grounding (claim 1: s12 is on one side only, so it shows text one side lacks, not a change; claim 2: s6 is on one side only, so it shows text one side lacks, not a change; claim 3: s0 is on one side only, so it shows text one side lacks, not a change)"
+ ],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant applies the dismissal test to whether sections 554.07 to 554.19 apply; the origin asks whether \"this chapter\" applies, citing Subsections 78B-25-102(2) and (3).",
+      "origin_span_ids": [
+       "s12",
+       "s15"
+      ],
+      "descendant_span_ids": [
+       "s13",
+       "s16"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant cites section 554.09 for the motion and 554.16 for costs and fees; the origin cites Sections 78B-25-103 and 78B-25-110.",
+      "origin_span_ids": [
+       "s6",
+       "s27",
+       "s30",
+       "s33",
+       "s36"
+      ],
+      "descendant_span_ids": [
+       "s7",
+       "s28",
+       "s31",
+       "s34",
+       "s37"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant is numbered Sec. 7 [554.13] with subsections (a)-(c) and clauses (1)-(3); the origin is numbered 78B-25-107 with subsections (1)-(3) and clauses (a)-(c).",
+      "origin_span_ids": [
+       "s0",
+       "s3",
+       "s9",
+       "s24"
+      ],
+      "descendant_span_ids": [
+       "s1",
+       "s4",
+       "s10",
+       "s25"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2
+    ],
+    "dropped": []
+   }
+  },
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
+}

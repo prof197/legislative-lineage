@@ -1,0 +1,334 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "grounding_rules": 2,
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "647004ea5c819c94d47a5d22d0dd5e3005ccd3079a090adc556db17638cd01c4",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "dd04d5882b686fd58ad0764bea82b06e99c1c4c912dccee015b1ca58aff7d9da"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "2a0f7f0b7943830e57495d6bd65c87242d83e65ed5d4dcec74be357101036bf7",
+   "descendant": "2a0f7f0b7943830e57495d6bd65c87242d83e65ed5d4dcec74be357101036bf7"
+  },
+  {
+   "id": "s3",
+   "kind": "paraphrased",
+   "origin": "0bc9ac423d2cb291f97cacc16c59328500fc453a1abaed135dbc9165b9153134",
+   "descendant": "319da88473a7801754f6cdc54b6fb9e7de934a2819b38cce4addf99b1eb85d21"
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": "cdcd676cefe9a94faaa945726e16fb4d93a4e5c07bd0ad2e93d88c4300c7bbfb",
+   "descendant": null
+  },
+  {
+   "id": "s5",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "f53200b9801f60f30bc61ee54e4d37987abe3dd41acdb790f6d6eaf9ecdd9052"
+  },
+  {
+   "id": "s6",
+   "kind": "copied",
+   "origin": "5d9965249929c3fd04dcb678f6bb50c35628d68e00cc74f9001becc8d533a4fd",
+   "descendant": "5d9965249929c3fd04dcb678f6bb50c35628d68e00cc74f9001becc8d533a4fd"
+  },
+  {
+   "id": "s7",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "9e3baedd4ac7d5df5836a303a565c0ff7e792f63f798f4cfffcf9fb63541bdf5"
+  },
+  {
+   "id": "s8",
+   "kind": "copied",
+   "origin": "b2589ac6e71f5a221f7e01356d0050803eb2bcb7941d4135ea4a6c4a7989c5d5",
+   "descendant": "b2589ac6e71f5a221f7e01356d0050803eb2bcb7941d4135ea4a6c4a7989c5d5"
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": "521273d98be56a634fdd1844fbd5ba7926e26020eb3f3a58f60f4e0c66702cbe",
+   "descendant": null
+  },
+  {
+   "id": "s10",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "fda1feca943fdae728512200e5c8a6adf98f59ffb16c05d652295b1039697020"
+  },
+  {
+   "id": "s11",
+   "kind": "copied",
+   "origin": "3b06292631c3ab2d66c4421219f0358a13f05fbedfa431996f7a661b3cf5afd8",
+   "descendant": "3b06292631c3ab2d66c4421219f0358a13f05fbedfa431996f7a661b3cf5afd8"
+  },
+  {
+   "id": "s12",
+   "kind": "unmatched",
+   "origin": "af13982fbb769565b8170b71515096d16a95bd5cda835fce0670078a2caa3726",
+   "descendant": null
+  },
+  {
+   "id": "s13",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "d47f2af0f394749421d9abd7e8d21938793f9c21366eaa3771b8ebb70b4041db"
+  },
+  {
+   "id": "s14",
+   "kind": "copied",
+   "origin": "92d117b72606539fe2b43c30cc964c7c981492887074b09190e9f5ac9fdb4c2d",
+   "descendant": "92d117b72606539fe2b43c30cc964c7c981492887074b09190e9f5ac9fdb4c2d"
+  },
+  {
+   "id": "s15",
+   "kind": "unmatched",
+   "origin": "6e89b63dda991902d948f3e9725ee78357b70f7780b7677790eb05fe3728ab0f",
+   "descendant": null
+  },
+  {
+   "id": "s16",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "bdfa4703026409ab28d299dfe903ea666e2b59b9ef08a53fb5366b72d1724af4"
+  },
+  {
+   "id": "s17",
+   "kind": "copied",
+   "origin": "8e9f687bebeb5d978d8af95e6c9428b99e51e0dc9a7ac8815692e62c2a64ec5f",
+   "descendant": "8e9f687bebeb5d978d8af95e6c9428b99e51e0dc9a7ac8815692e62c2a64ec5f"
+  },
+  {
+   "id": "s18",
+   "kind": "unmatched",
+   "origin": "8670521a600a3045eb842ec83e04cecf9bc975bba1f898bb1810ba59857980fa",
+   "descendant": null
+  },
+  {
+   "id": "s19",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "f433452b073d3a814f0704ba949ceddaa9c819d0219851a5a0b10a21bd6f41a2"
+  },
+  {
+   "id": "s20",
+   "kind": "copied",
+   "origin": "7a64ac0e07bb4e8bc98716b0dc8e9a82fbf94adc59abc7aa5f1d3a7703432833",
+   "descendant": "7a64ac0e07bb4e8bc98716b0dc8e9a82fbf94adc59abc7aa5f1d3a7703432833"
+  },
+  {
+   "id": "s21",
+   "kind": "unmatched",
+   "origin": "e7f6c011776e8db7cd330b54174fd76f7d0216b612387a5ffcfb81e6f0919683",
+   "descendant": null
+  },
+  {
+   "id": "s22",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "3f79bb7b435b05321651daefd374cdc681dc06faa65e374e38337b88ca046dea"
+  },
+  {
+   "id": "s23",
+   "kind": "copied",
+   "origin": "1424f30cd59d61fe677388e80b9d694987f0f19fbe7be78a570668175dbd4a3e",
+   "descendant": "1424f30cd59d61fe677388e80b9d694987f0f19fbe7be78a570668175dbd4a3e"
+  },
+  {
+   "id": "s24",
+   "kind": "unmatched",
+   "origin": "fa51968d7662c4938e8895b29d3e931f86b0a38a1c29aef45cf39c60d901098c",
+   "descendant": null
+  },
+  {
+   "id": "s25",
+   "kind": "copied",
+   "origin": "3a35acc10e76dbc531248f021aa9c1c36946038cc93a1affb741b6acff0b2485",
+   "descendant": "3a35acc10e76dbc531248f021aa9c1c36946038cc93a1affb741b6acff0b2485"
+  },
+  {
+   "id": "s26",
+   "kind": "unmatched",
+   "origin": "7902699be42c8a8e46fbbb4501726517e86b22c56a189f7625a6da49081b2451",
+   "descendant": null
+  },
+  {
+   "id": "s27",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "372049ed13a42d2ab1347c1a1ae528d6d9ca3bde963134d7988a984d6c1f83d8"
+  },
+  {
+   "id": "s28",
+   "kind": "copied",
+   "origin": "6c5a5f55109ad63977842d323ba0d14d6db9331a54241bc9c205b7201e214b93",
+   "descendant": "6c5a5f55109ad63977842d323ba0d14d6db9331a54241bc9c205b7201e214b93"
+  },
+  {
+   "id": "s29",
+   "kind": "unmatched",
+   "origin": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+   "descendant": null
+  },
+  {
+   "id": "s30",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "ac317d068937666f4a8a142ba8d45914f12aa876a753f9bfaf51f7042fd003e0"
+  },
+  {
+   "id": "s31",
+   "kind": "copied",
+   "origin": "cf122fb01e57431313ff7e26e4fc90770a8de99004cb453ba593d80b7c082e46",
+   "descendant": "cf122fb01e57431313ff7e26e4fc90770a8de99004cb453ba593d80b7c082e46"
+  },
+  {
+   "id": "s32",
+   "kind": "unmatched",
+   "origin": "7eb75bc6f4f6e47b15c3032321a9e5e63c4c8f67ab289511b32a20d162496cbf",
+   "descendant": null
+  },
+  {
+   "id": "s33",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "4f77e5f73ad80135b58797b20e4701e7150806ae720e02bd3bbf50d6e7174ba0"
+  },
+  {
+   "id": "s34",
+   "kind": "copied",
+   "origin": "2e345e8f12a4f9247dbc8edc4e99160cee17b77c8eb8becfa0664a9a85a43ab1",
+   "descendant": "2e345e8f12a4f9247dbc8edc4e99160cee17b77c8eb8becfa0664a9a85a43ab1"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "added",
+    "summary": "The descendant keeps the stay until thirty days after the ruling on the motion or the end of any appeal, whichever is later.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s10"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin ends the stay when the order is entered and the appeal deadline expires, and has a separate stay during appeal that lasts until the appeal concludes.",
+    "origin_span_ids": [
+     "s9",
+     "s12"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin preserves a party's ability to voluntarily dismiss part of a cause of action during a stay; the descendant does not mention partial dismissal.",
+    "origin_span_ids": [
+     "s24"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant specifies that the preserved motion to sever a cause of action is one for a separate trial.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s27"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "off the schema: claims.0.summary: String should have at most 200 characters; claims.1.summary: String should have at most 200 characters"
+ ],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant keeps the stay in effect until 30 days after the ruling or the end of any appeal, whichever is later; the origin ends it when the appeal period expires or the appeal concludes.",
+      "origin_span_ids": [
+       "s9",
+       "s12"
+      ],
+      "descendant_span_ids": [
+       "s10"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "For limited discovery, the descendant requires the party seeking it to show the information cannot be obtained otherwise; the origin lets any party show it is not reasonably available.",
+      "origin_span_ids": [
+       "s15",
+       "s18"
+      ],
+      "descendant_span_ids": [
+       "s16",
+       "s19"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin preserves voluntary dismissal of part of a cause of action; the descendant omits that and speaks of severing a cause of action for a separate trial.",
+      "origin_span_ids": [
+       "s24"
+      ],
+      "descendant_span_ids": [
+       "s27"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "During a stay, the descendant lets the court hear motions for a temporary or preliminary injunction; the origin refers to a special or preliminary injunction.",
+      "origin_span_ids": [
+       "s32"
+      ],
+      "descendant_span_ids": [
+       "s33"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   }
+  },
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
+}

@@ -1,0 +1,95 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "grounding_rules": 2,
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "716b860a349826a62c089bac1a0b3106e0385d683b283c2fdaf49028df2da577",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "cd92008affa4da9b52de3000926132398239b379de03cc4af0f65bf730560324"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "d2616b006981962d73afe6354777d07acd6bc1508852c0c52610e06d74fc3dc2",
+   "descendant": "d2616b006981962d73afe6354777d07acd6bc1508852c0c52610e06d74fc3dc2"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "878a5e2a7315eb88e219ddcda3ef26cd7442ee70d8d1420cbd1cca24ce2a4bda",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "2b577ca8309d143cfc636228565ccc5f84769f3251557b410fb0762eb1a3c0e7"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin limits liability for electioneering communications to the sponsor, with exceptions for media that strip disclosures or create synthetic media; the descendant has no such provision.",
+    "origin_span_ids": [
+     "s0"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant defines artificial intelligence, commercial purposes, digital replica, expressive work, identity, and individual (a person domiciled in the state); the origin lacks these definitions.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant defines internet, performance (digital replica substituting for a performer), and professional performer; the origin has no such definitions.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s4"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin places its information content provider definition within a liability section on interactive computer services, which also bars treating providers as publishers of others' content.",
+    "origin_span_ids": [
+     "s3",
+     "s0"
+    ],
+    "descendant_span_ids": []
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 2,
+ "unusable_attempts": [
+  "off the schema: claims.0.summary: String should have at most 200 characters"
+ ],
+ "earlier": [
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null
+  }
+ ]
+}

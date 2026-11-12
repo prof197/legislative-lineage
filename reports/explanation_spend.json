@@ -1,0 +1,87 @@
+{
+ "budget": 40.0,
+ "spent": 22.9218,
+ "runs": [
+  {
+   "run": "explain-2026-11-12-1",
+   "purpose": "explain",
+   "model": "claude-opus-5-5",
+   "prompt": "v1",
+   "calls": 3,
+   "served_by": {
+    "claude-opus-5-5": 3
+   },
+   "input_tokens": 8321,
+   "output_tokens": 1139,
+   "dollars": 0.0561,
+   "at": "2026-11-12"
+  },
+  {
+   "run": "explain-2026-11-12-2",
+   "purpose": "explain",
+   "model": "claude-opus-5-5",
+   "prompt": "v1",
+   "calls": 173,
+   "served_by": {
+    "claude-opus-5-5": 88
+   },
+   "input_tokens": 392702,
+   "output_tokens": 31349,
+   "dollars": 2.1978,
+   "at": "2026-11-12"
+  },
+  {
+   "run": "explain-2026-11-12-2-unmetered",
+   "purpose": "explain",
+   "model": "claude-opus-5-5",
+   "prompt": "v1",
+   "calls": 85,
+   "metered": false,
+   "note": "replies the SDK's parse helper rejected before returning them, so their usage was never recorded; counted at an upper bound: the largest featured prompt, 31,957 characters at 2.5 a token, and a reply at the 4,096-token limit, each",
+   "dollars": 11.3094,
+   "at": "2026-11-12"
+  },
+  {
+   "run": "judge-2026-11-12-4",
+   "purpose": "judge",
+   "model": "claude-opus-5-5",
+   "prompt": "judge-v1",
+   "calls": 319,
+   "served_by": {
+    "claude-opus-5-5": 319
+   },
+   "input_tokens": 405770,
+   "output_tokens": 51448,
+   "dollars": 2.652,
+   "at": "2026-11-12"
+  },
+  {
+   "run": "explain-2026-11-12-5",
+   "purpose": "explain",
+   "model": "claude-opus-5-5",
+   "prompt": "v1",
+   "calls": 151,
+   "served_by": {
+    "claude-opus-5-5": 151
+   },
+   "input_tokens": 654880,
+   "output_tokens": 72116,
+   "dollars": 4.0618,
+   "at": "2026-11-12"
+  },
+  {
+   "run": "judge-2026-11-12-6",
+   "purpose": "judge",
+   "model": "claude-opus-5-5",
+   "prompt": "judge-v1",
+   "calls": 370,
+   "served_by": {
+    "claude-opus-5-5": 370
+   },
+   "input_tokens": 410598,
+   "output_tokens": 50115,
+   "dollars": 2.6447,
+   "at": "2026-11-12"
+  }
+ ]
+}

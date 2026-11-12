@@ -1,0 +1,294 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "grounding_rules": 2,
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "8d19527a915d236c974642de760c1ce3f5f48b922c8aa325e0c48f7b9161421a",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "142d02d36af56bdf7ce9cbf087e4171a1328bac8f44ff9afc6b38e4cc279f119"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "3a239e7cd2cc394cabe58828079eae030dd1dcd95b4eb96dc08205f454f427d4",
+   "descendant": "3a239e7cd2cc394cabe58828079eae030dd1dcd95b4eb96dc08205f454f427d4"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "3fb45623cb3075a8af9a2f81ef3beaa4038541cd71f08e4bf6c79c088f7a4026",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "f83f07be16e270186d35b876916c461995ebc3af5b1798f898c33285a1847dbc"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "767de3e278ca896fac1927aa5f1660ffcf79a01e8747f9de519d8f009f8d6225",
+   "descendant": "767de3e278ca896fac1927aa5f1660ffcf79a01e8747f9de519d8f009f8d6225"
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": "c9816e5e4df2699c99e5fa4c1672cf24fc180a90f3cb7d29c10caed062e12c75",
+   "descendant": null
+  },
+  {
+   "id": "s7",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "344ac850c8e71439f95ec5cb3b5265f5bfea82f97dcde91110e3760a91d5bcba"
+  },
+  {
+   "id": "s8",
+   "kind": "copied",
+   "origin": "e385a7266e24dbc64b820bd956dc79a5a8792ef3392f292e93af27ea237a9101",
+   "descendant": "e385a7266e24dbc64b820bd956dc79a5a8792ef3392f292e93af27ea237a9101"
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "ee54bafc48ca4843dc9f502eea38321f5a5b818114033857f8743aec75157edc"
+  },
+  {
+   "id": "s10",
+   "kind": "copied",
+   "origin": "ad325f22f8dabd57f9e2bae245fda9022baded1e618f531dfca0cb5288a70b60",
+   "descendant": "ad325f22f8dabd57f9e2bae245fda9022baded1e618f531dfca0cb5288a70b60"
+  },
+  {
+   "id": "s11",
+   "kind": "unmatched",
+   "origin": "3131f55967425afbd93f3fa393faec4c5da5ba9ac3acedad6bdd59a6ba46b14d",
+   "descendant": null
+  },
+  {
+   "id": "s12",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "161f6df6fcf645a905a5d18d85dc8a098f880a80ac92ad23b88f1f59e8a2ed97"
+  },
+  {
+   "id": "s13",
+   "kind": "copied",
+   "origin": "02d8ea8166168aedaa0029916faf0b48fa7ba14dc29abc59f97a0cbea285e7d9",
+   "descendant": "02d8ea8166168aedaa0029916faf0b48fa7ba14dc29abc59f97a0cbea285e7d9"
+  },
+  {
+   "id": "s14",
+   "kind": "unmatched",
+   "origin": "7fd6c4d92c3b1742d30333b7e177d85b172d12f551fd464d15d58b847fb4e321",
+   "descendant": null
+  },
+  {
+   "id": "s15",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "7119e43eee8f23903dddaf1a92dbbd3ced57c986e68dc0c4152e6b2d681b4821"
+  },
+  {
+   "id": "s16",
+   "kind": "copied",
+   "origin": "e31c0d2d5a31a4a82499ae1021dcea65d3e7b301187b5e1f13d9e1afbcb5b5b6",
+   "descendant": "e31c0d2d5a31a4a82499ae1021dcea65d3e7b301187b5e1f13d9e1afbcb5b5b6"
+  },
+  {
+   "id": "s17",
+   "kind": "unmatched",
+   "origin": "76f1355faa1c529def667ee730ba918d949ab37a222443450dd9ef6c2153d190",
+   "descendant": null
+  },
+  {
+   "id": "s18",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "f1bd2a3c6a466e3e0c4d968c4be406f94ec691a82fe825d3827e6fa3923845ea"
+  },
+  {
+   "id": "s19",
+   "kind": "copied",
+   "origin": "ac1f2573feaad5f15f14283632da93f4ed607900bf3188c2e9ab0f4b55bd1f74",
+   "descendant": "ac1f2573feaad5f15f14283632da93f4ed607900bf3188c2e9ab0f4b55bd1f74"
+  },
+  {
+   "id": "s20",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "9576451bbe03cb09d4d6226eb61ded83618faae6678a2ea6f0b8d1d16f4363cc"
+  },
+  {
+   "id": "s21",
+   "kind": "copied",
+   "origin": "ba56ea88f5989dd56c0e57c931d345cfc49d4177a423551723882b7198419814",
+   "descendant": "ba56ea88f5989dd56c0e57c931d345cfc49d4177a423551723882b7198419814"
+  },
+  {
+   "id": "s22",
+   "kind": "unmatched",
+   "origin": "4e86c7528270aa94c08e76583f35baf3027269ad0d815c4bc74f6ef264c87ada",
+   "descendant": null
+  },
+  {
+   "id": "s23",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "8e879ae493108a707a7e0e72067b49bb2f2ac6f200169e60c61bf10e98dc1436"
+  },
+  {
+   "id": "s24",
+   "kind": "copied",
+   "origin": "dcfedb0f9a76b6c848172faa4b83b750e926ed2022c1c4a22c4a2dd4c69df0ab",
+   "descendant": "dcfedb0f9a76b6c848172faa4b83b750e926ed2022c1c4a22c4a2dd4c69df0ab"
+  },
+  {
+   "id": "s25",
+   "kind": "unmatched",
+   "origin": "672e99dbd051e12ef521a4f16b149bb0712fb313aebdf863156a339969bf7e39",
+   "descendant": null
+  },
+  {
+   "id": "s26",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "7c1e11cb2df49dfb3363aa0e2f0147bdfbe9524cbdfa98d322f99765a8e7906c"
+  },
+  {
+   "id": "s27",
+   "kind": "copied",
+   "origin": "2d321474794eedbc0d18225f093b9d3ec018c4fa4eaae62477b69597ecd17095",
+   "descendant": "2d321474794eedbc0d18225f093b9d3ec018c4fa4eaae62477b69597ecd17095"
+  },
+  {
+   "id": "s28",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "0abbb5d3949b65d531739f78795e125f6a1d4116c9728f1002b25082ceec7ff0"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin exempts causes of action against governmental units or their agents acting officially, and those by governmental units enforcing laws against imminent public health or safety threats.",
+    "origin_span_ids": [
+     "s25"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant excludes claims by individuals under listed civil rights, employment, whistleblower, workers' compensation, and freedom of information statutes.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s28"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant covers only causes of action asserted after the act's effective date.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s9"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant refers to rights guaranteed by the state constitution of 1963.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s23"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The origin states the chapter applies to listed causes of action; the descendant instead defines an \"eligible cause of action,\" limited to those asserted after the act's effective date.",
+      "origin_span_ids": [
+       "s6"
+      ],
+      "descendant_span_ids": [
+       "s7",
+       "s9"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin excludes causes of action against governmental units or their agents acting officially, and those by governmental units enforcing laws against imminent public health or safety threats.",
+      "origin_span_ids": [
+       "s25"
+      ],
+      "descendant_span_ids": [
+       "s26"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant excludes claims by individuals under listed civil rights, whistleblower, disability, workers' compensation, FOIA, and federal employment and education statutes.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s28"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant covers the right to petition the government for redress of grievances and cites the state constitution of 1963; the origin cites the Utah Constitution.",
+      "origin_span_ids": [
+       "s22"
+      ],
+      "descendant_span_ids": [
+       "s20",
+       "s23"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     1,
+     2
+    ],
+    "dropped": [
+     [
+      0,
+      "s6 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      3,
+      "s22 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
+}

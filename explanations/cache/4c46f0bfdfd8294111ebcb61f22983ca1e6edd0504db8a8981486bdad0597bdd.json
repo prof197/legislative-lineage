@@ -1,0 +1,168 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "grounding_rules": 2,
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "76b7eba0fa4993c88c11799a11a4fd10664704c8d79699ed53cd603b215564f6",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "8836965cabb59c0cc297e0fb8d8066e62e9837ac0e1dd272b204006d7b75b1ac"
+  },
+  {
+   "id": "s2",
+   "kind": "paraphrased",
+   "origin": "be25a6110d940bfc5b2dffafb66f26b7a06d7583a390475c1d86a403bb051189",
+   "descendant": "09a6e9a319cf4dc76874156ef42b0a23569e858dd087132f983c9f4fd75c67bf"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb"
+  },
+  {
+   "id": "s4",
+   "kind": "copied",
+   "origin": "0bc75fa9a44d80f895170f12281fef9b47ca82f98d299df5cf0e1cbfdaa1a54d",
+   "descendant": "0bc75fa9a44d80f895170f12281fef9b47ca82f98d299df5cf0e1cbfdaa1a54d"
+  },
+  {
+   "id": "s5",
+   "kind": "unmatched",
+   "origin": "d3fdc10688227667106a1a00e6ecc5ac000b844c31ed15a06c3a4f4cd47c449b",
+   "descendant": null
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "f84097d5369286fc93a381e289d199177c03f7da5e53abe5ddef21b77ddb1b39"
+  },
+  {
+   "id": "s7",
+   "kind": "copied",
+   "origin": "8da116c47e0e4b6524471dc167d1942d1dc85dcf2fae2de37b62aa90fb98ac01",
+   "descendant": "8da116c47e0e4b6524471dc167d1942d1dc85dcf2fae2de37b62aa90fb98ac01"
+  },
+  {
+   "id": "s8",
+   "kind": "paraphrased",
+   "origin": "5561ba03cac2c86f883ddbe7966f05c12375f0ce18fe8a0938733d170887fe76",
+   "descendant": "3c719e1ca4d4220b4c314fb1dfff9f484b640c87c93acc113cafb8261905e68c"
+  },
+  {
+   "id": "s9",
+   "kind": "copied",
+   "origin": "a9685fba2684e1a04cdc335b2bcf0ca330b239b66e84ca5208225352afa15a67",
+   "descendant": "a9685fba2684e1a04cdc335b2bcf0ca330b239b66e84ca5208225352afa15a67"
+  },
+  {
+   "id": "s10",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "509f7397f3760a6caf8831864a566002c193ed612c0c23f8f2d9bc6406ef2980"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "added",
+    "summary": "The descendant adds a subsection (b) requiring the court to award punitive damages to a prevailing moving party if the action was brought or continued to harass or maliciously inhibit speech rights.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s10"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant cross-references the motion provision as § 6003 of this title and numbers itself § 6010, with the fee rule designated as subsection (a).",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1",
+     "s3",
+     "s6"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin numbers the section 78B-25-110 and cross-references the motion provision as Section 78B-25-103; the descendant lacks these numbers.",
+    "origin_span_ids": [
+     "s0",
+     "s5"
+    ],
+    "descendant_span_ids": []
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2
+  ],
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant requires the court to award punitive damages to a prevailing moving party if the action was brought or continued to harass, intimidate, punish, or maliciously inhibit speech rights.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s10",
+       "s3"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant cites the motion provision as § 6003 of this title; the origin cites Section 78B-25-103.",
+      "origin_span_ids": [
+       "s5"
+      ],
+      "descendant_span_ids": [
+       "s6"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant is numbered § 6010; the origin is numbered 78B-25-110.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0
+    ],
+    "dropped": [
+     [
+      1,
+      "s5 is on one side only, so it shows text one side lacks, not a change"
+     ],
+     [
+      2,
+      "s0 is on one side only, so it shows text one side lacks, not a change"
+     ]
+    ]
+   }
+  }
+ ]
+}
