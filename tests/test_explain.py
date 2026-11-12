@@ -346,7 +346,7 @@ def test_the_retry_says_why_the_first_reply_was_unusable_and_the_cache_keeps_it(
 def test_asked_again_a_reply_kept_under_earlier_rules_is_asked_once_more_with_why(
     tmp_path: Path,
 ) -> None:
-    # Under the earlier rules a changed claim could cite text on one side only.
+    # Under the earlier rules a changed claim could cite text from one text only.
     stale = ChangeExplanation(claims=[_claim("s2"), _claim("s2", "changed")])
     _, ask = scripted(stale, stale)
     _explain(ask, tmp_path)
@@ -359,7 +359,7 @@ def test_asked_again_a_reply_kept_under_earlier_rules_is_asked_once_more_with_wh
 
     assert replayed.claims == [_claim("s2")]  # replaying never asks
     assert len(calls) == 1
-    assert "claim 2: s2 is on one side only" in calls[0][1]
+    assert "claim 2: a changed claim cites no span on the origin's side" in calls[0][1]
     assert asked.claims == no_more_calls.claims == [_claim("s2"), BOTH]
     entry = json.loads(path.read_text())
     assert entry["grounding_rules"] == GROUNDING_RULES

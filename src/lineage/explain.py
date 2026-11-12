@@ -51,8 +51,9 @@ PROMPT_VERSION = "v1"
 CACHE_DIR = Path("explanations/cache")
 ATTEMPTS = 2  # the first ask and one retry
 # The grounding rules' version, recorded in each cache file. 2 (ruled 2026-11-12): a changed
-# claim cites spans on both sides, each with text on both.
-GROUNDING_RULES = 2
+# claim cites spans on both sides, each with text on both. 3 (ruled 2026-11-12, correcting 2):
+# a changed claim cites text from both texts, a span on one side only counting for that side.
+GROUNDING_RULES = 3
 # Four claims of at most 200 characters, and the thinking medium effort spends on them; a reply
 # cut off at the limit is unusable and asked again.
 MAX_TOKENS = 4096
@@ -140,8 +141,9 @@ def retry_message(user: str, why: str) -> str:
         f"{user}\n\nAn earlier reply to these spans could not be used: {why}. Reply again "
         "within the limits: at most four claims, each summary at most 200 characters, each "
         "citing only paraphrased or unmatched spans whose two sides differ. A changed claim "
-        "cites paraphrased spans on both sides; an unmatched span, on one side only, supports "
-        "only a claim that one text has something the other lacks."
+        "cites text from both texts: at least one span in origin_span_ids and one in "
+        "descendant_span_ids, each with text on the side it is cited for; an unmatched span "
+        "counts for the side it has text on."
     )
 
 

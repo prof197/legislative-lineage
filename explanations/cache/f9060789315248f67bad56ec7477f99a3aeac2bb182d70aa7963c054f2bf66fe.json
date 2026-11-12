@@ -168,20 +168,14 @@
  "served_by": "claude-opus-5-5",
  "grounded": {
   "kept": [
+   1,
+   2,
    3
   ],
   "dropped": [
    [
     0,
-    "s3 is on one side only, so it shows text one side lacks, not a change"
-   ],
-   [
-    1,
-    "s5 is on one side only, so it shows text one side lacks, not a change"
-   ],
-   [
-    2,
-    "s13 is on one side only, so it shows text one side lacks, not a change"
+    "a changed claim cites no span on the descendant's side"
    ]
   ]
  },

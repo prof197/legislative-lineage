@@ -253,18 +253,11 @@
  "grounded": {
   "kept": [
    0,
+   1,
+   2,
    3
   ],
-  "dropped": [
-   [
-    1,
-    "s3 is on one side only, so it shows text one side lacks, not a change"
-   ],
-   [
-    2,
-    "s18 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
+  "dropped": []
  },
  "attempts": 2,
  "unusable_attempts": [

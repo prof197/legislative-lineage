@@ -108,24 +108,32 @@ def test_a_claim_without_a_real_difference_behind_it_is_dropped(claim: Claim, re
     assert [why for _, why in grounded.dropped] == [reason]
 
 
-ONE_SIDED = "is on one side only, so it shows text one side lacks, not a change"
-
-
 @pytest.mark.parametrize(
     ("claim", "reason"),
     [
-        # Text removed from one side and text added on the other are two claims, not a change.
-        (_claim(origin=["s2"], descendant=["s3"]), f"s2 {ONE_SIDED}"),
-        (_claim(origin=["s1", "s2"], descendant=["s1"]), f"s2 {ONE_SIDED}"),
-        (_claim(origin=["s1"], descendant=["s1", "s3"]), f"s3 {ONE_SIDED}"),
         (_claim(origin=["s1"]), "a changed claim cites no span on the descendant's side"),
         (_claim(descendant=["s1"]), "a changed claim cites no span on the origin's side"),
+        (_claim(origin=["s2"]), "a changed claim cites no span on the descendant's side"),
+        (_claim(descendant=["s3"]), "a changed claim cites no span on the origin's side"),
     ],
 )
-def test_a_changed_claim_cites_spans_with_text_on_both_sides_on_both_sides(
-    claim: Claim, reason: str
-) -> None:
+def test_a_changed_claim_must_cite_text_from_both_texts(claim: Claim, reason: str) -> None:
     assert reasons(ChangeExplanation(claims=[claim]), SPANS) == [reason]
+
+
+@pytest.mark.parametrize(
+    "claim",
+    [
+        # Text the origin has where the descendant has other text: a removed span and an added
+        # one, each counting for its own side (the M6 faithfulness ruling).
+        _claim(origin=["s2"], descendant=["s3"]),
+        _claim(origin=["s1", "s2"], descendant=["s1"]),
+        _claim(origin=["s1"], descendant=["s1", "s3"]),
+        _claim(origin=["s1"], descendant=["s1"]),
+    ],
+)
+def test_a_span_on_one_side_only_counts_for_that_side_of_a_changed_claim(claim: Claim) -> None:
+    assert reasons(ChangeExplanation(claims=[claim]), SPANS) == [None]
 
 
 def test_a_one_sided_span_still_supports_a_claim_that_one_text_lacks_something() -> None:
