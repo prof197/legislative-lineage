@@ -1,6 +1,7 @@
 """The precision of what a page lists: random bills of one state, one listed relative each,
 judged on the section pair its listing rests on most, with the aligned passages."""
 
+from itertools import pairwise
 from pathlib import Path
 from typing import Any
 
@@ -12,6 +13,9 @@ from lineage.labels import Item, Pair, Section, SectionKey, SectionRef, text_sha
 from lineage.pairs import load_cross_state_pairs
 from lineage.relatives import bill_relatives
 from lineage.relatives_sample import (
+    BILLS,
+    DISCARDED,
+    PARTS,
     TOP,
     RelativesSampleError,
     build_relatives_sample,
@@ -191,3 +195,16 @@ def test_a_part_draws_its_own_bills_from_pages_as_listed_and_records_what_a_thre
             if "near_duplicate" not in m.sections_by_stage and m.best_cosine is not None
         )
         assert all(c >= THRESHOLD for c in page["shown_semantic_only"])
+
+
+def test_each_part_draws_its_own_bills_under_its_own_seed_and_pair_ids() -> None:
+    parts = list(PARTS.values())
+    assert len({p.seed for p in parts}) == len(parts)
+    firsts = sorted(p.first for p in parts)
+    assert all(b - a >= BILLS for a, b in pairwise(firsts))
+    # The reporting sample is drawn from bills no earlier sample drew, the discarded one too.
+    reporting = PARTS["reporting"]
+    earlier = {p.sample for name, p in PARTS.items() if name != "reporting"} | {DISCARDED}
+    assert set(reporting.excludes) == earlier
+    assert reporting.threshold == THRESHOLD
+    assert reporting.flag

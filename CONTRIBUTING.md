@@ -37,7 +37,7 @@ uv run lineage label evals/precision_sample.jsonl --labeler YOUR_GITHUB_HANDLE
 uv run lineage label evals/relatives_tuning.jsonl --labeler YOUR_GITHUB_HANDLE --labels evals/relatives_labels.jsonl
 ```
 
-The first is the pair-level sample: cross-state section pairs drawn per stage. The second holds one listed relative of each of 100 random Georgia bills, the measure of what a bill's page shows. `evals/relatives_reporting.jsonl` is its twin, kept for reporting.
+The first is the pair-level sample: cross-state section pairs drawn per stage. The second holds one listed relative of each of 100 random Georgia bills, the measure of what a bill's page shows. `evals/relatives_tuning_093.jsonl` and `evals/relatives_reporting.jsonl` are drawn the same way from pages as later thresholds list them, the last kept for reporting.
 
 Each pair is shown as two sections, with copied text in green, paraphrased sentences in yellow and unmatched text dimmed. Give it one label:
 
@@ -53,4 +53,4 @@ A match counts as correct from 2 up. Judge the text alone. You are not told whic
 
 **What a label records.** Each side's bill id and the SHA-256 of its section's normalized text, so a label outlives a re-split of the corpus, the label, your handle as `github:HANDLE` and the date. Never your name: the tool refuses anything that isn't a GitHub handle. Commit the labels file in a pull request.
 
-**What would help most.** The model's labels on the relatives samples answer a narrower question than the scale above: do the passages the alignment matched state the same provision, beyond boilerplate? That question has not been checked against a person. Labels on `evals/relatives_tuning.jsonl` and `evals/relatives_reporting.jsonl` would check it, label 2 or above taken as yes.
+**What would help most.** The model's labels on the relatives samples answer a narrower question than the scale above: do the passages the alignment matched state the same provision, beyond boilerplate? That question has not been checked against a person. Labels on any of the three would check it, label 2 or above taken as yes.

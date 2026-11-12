@@ -143,7 +143,13 @@ from lineage.text_run import REPORT as FETCH_REPORT
 from lineage.text_run import run_fetch
 from lineage.threshold import CANDIDATES as THRESHOLD_CANDIDATES
 from lineage.threshold import REPORT as THRESHOLD_REPORT
-from lineage.threshold import ThresholdError, flag_at_threshold, pair_level_at
+from lineage.threshold import (
+    ThresholdError,
+    at_threshold,
+    flag_at_threshold,
+    page_precision,
+    pair_level_at,
+)
 from lineage.threshold import by_band as threshold_by_band
 from lineage.threshold import proposal as threshold_proposal
 from lineage.threshold import sample_inputs as threshold_sample_inputs
@@ -875,7 +881,7 @@ def relatives_sample(
     part: Annotated[
         str,
         typer.Option(
-            "--part", help="tuning (the draw's first bills) or reporting (the next ones)."
+            "--part", help="tuning, tuning_093 or reporting (lineage.relatives_sample.PARTS)."
         ),
     ] = "tuning",
     sample: Annotated[
@@ -885,9 +891,9 @@ def relatives_sample(
     report: Annotated[
         Path | None, typer.Option("--report", help="The draw's report JSON (committed).")
     ] = None,
-    excluded_sample: Annotated[
-        Path | None,
-        typer.Option("--excluded", help="The sample whose bills this part never draws."),
+    excluded_samples: Annotated[
+        list[Path] | None,
+        typer.Option("--excluded", help="A sample whose bills this part never draws (repeat)."),
     ] = None,
 ) -> None:
     """Draw listed relatives of random bills of one state, to measure what a page lists."""
@@ -898,10 +904,11 @@ def relatives_sample(
     sample = sample or chosen.sample
     report = report or chosen.report
     try:
-        excluded: set[str] = set()
-        if chosen.excludes is not None:
-            other = excluded_sample or RELATIVES_PARTS[chosen.excludes].sample
-            excluded = {str(p["bill_id"]) for p in load_pages(other).values()}
+        excluded = {
+            str(p["bill_id"])
+            for other in (excluded_samples or chosen.excludes)
+            for p in load_pages(other).values()
+        }
         flag = shipped_flag(tables) if chosen.flag else None
         if chosen.flag and flag is None:
             raise RelativesSampleError(
@@ -1468,17 +1475,17 @@ def eval_agreement(
 
 @eval_app.command("relatives")
 def eval_relatives(
-    sample: Annotated[
-        Path,
-        typer.Argument(help="The relatives sample, one per line.", exists=True, dir_okay=False),
-    ] = RELATIVES_PARTS["reporting"].sample,
+    part: Annotated[
+        str,
+        typer.Option(
+            "--part",
+            help="The sample read: reporting, or a tuning part (lineage.relatives_sample.PARTS).",
+        ),
+    ] = "reporting",
     tables: TablesOption = Path("data/tables"),
     labels: Annotated[
         Path, typer.Option("--labels", help="Labels file (committed).")
     ] = RELATIVES_LABELS,
-    draw: Annotated[
-        Path, typer.Option("--draw", help="The sample's draw report, recorded beside it.")
-    ] = RELATIVES_PARTS["reporting"].report,
     model_labeler: Annotated[
         str, typer.Option("--model-labeler", help="The model labeler counted, model id@prompt.")
     ] = model_labeler_name(LABEL_MODEL, "passages-v1-high"),
@@ -1487,7 +1494,12 @@ def eval_relatives(
     ] = MODELS_DIR,
     results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
 ) -> None:
-    """The precision of what a page lists, from the reporting sample's labels."""
+    """The precision of what a page lists, from the reporting sample's labels; with --part, a
+    tuning sample's, recorded apart."""
+    if part not in RELATIVES_PARTS:
+        typer.echo(f"error: --part is one of {', '.join(RELATIVES_PARTS)}, not {part!r}", err=True)
+        raise typer.Exit(1)
+    sample, draw = RELATIVES_PARTS[part].sample, RELATIVES_PARTS[part].report
     try:
         items, kept = _current_items(sample, tables, labels)
         # The passages the labels were asked on, so the shares with and without them are real.
@@ -1508,10 +1520,21 @@ def eval_relatives(
         ),
     }
     # Where along the cosine the model's labels change, as the threshold proposal counted it:
-    # a description of the reporting sample, which tunes nothing.
+    # of the reporting sample, a description that tunes nothing.
     listed, correct = threshold_sample_inputs(items, kept, pages, model_labeler)
     section["provisional_model"]["by_band"] = threshold_by_band(listed, correct)
-    write_results(results, "relatives_precision", section)
+    if part != "reporting":
+        # What a tuning sample says of each stricter option, estimated from cosines as the
+        # proposal estimated them.
+        section["provisional_model"]["at_stricter_thresholds"] = [
+            {"threshold": t, **page_precision(listed, correct, at_threshold(t))}
+            for t in THRESHOLD_CANDIDATES
+            if t > float(drawn["threshold"])
+        ]
+    write_results(
+        results, "relatives_precision" if part == "reporting" else f"relatives_precision_{part}",
+        section,
+    )  # fmt: skip
     for who in ("person", "provisional_model"):
         overall = section[who]["overall"]
         shown = (

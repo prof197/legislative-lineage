@@ -7108,9 +7108,9 @@
    }
   }
  },
- "relatives_precision": {
+ "relatives_precision_tuning_093": {
   "command": "uv run lineage eval relatives",
-  "sample": "../legislative-lineage-m5/evals/relatives_reporting.jsonl",
+  "sample": "evals/relatives_tuning_093.jsonl",
   "threshold": 0.93,
   "state_boilerplate_flag": true,
   "person": {
@@ -7440,6 +7440,60 @@
       0.7216,
       0.9328
      ]
+    }
+   ],
+   "at_stricter_thresholds": [
+    {
+     "threshold": 0.94,
+     "labeled": 62,
+     "correct": 53,
+     "precision": 0.8548,
+     "interval_95": [
+      0.7466,
+      0.9217
+     ],
+     "pages_listing": 72,
+     "pages_emptied": 28,
+     "unlabeled": 0
+    },
+    {
+     "threshold": 0.95,
+     "labeled": 54,
+     "correct": 47,
+     "precision": 0.8704,
+     "interval_95": [
+      0.7558,
+      0.9358
+     ],
+     "pages_listing": 63,
+     "pages_emptied": 37,
+     "unlabeled": 0
+    },
+    {
+     "threshold": 0.96,
+     "labeled": 49,
+     "correct": 42,
+     "precision": 0.8571,
+     "interval_95": [
+      0.7333,
+      0.929
+     ],
+     "pages_listing": 58,
+     "pages_emptied": 42,
+     "unlabeled": 0
+    },
+    {
+     "threshold": 0.97,
+     "labeled": 43,
+     "correct": 36,
+     "precision": 0.8372,
+     "interval_95": [
+      0.7003,
+      0.9188
+     ],
+     "pages_listing": 54,
+     "pages_emptied": 46,
+     "unlabeled": 0
     }
    ]
   }

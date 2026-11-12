@@ -18,14 +18,17 @@ what a page highlights; failing that, the semantic stage's pair at the best cosi
 sections are aligned (lineage.align), and the copied and paraphrased passages are given
 together, unmarked, alongside both sections. See DESIGN.md#precision-sample.
 
-There are two samples (PARTS). The tuning sample, which the threshold proposal reads
-(lineage.threshold), was drawn from pages as listed at the build's threshold without the state
-boilerplate flag; each of its rows records what a threshold above the build's needs: the
-relative's best cosine, whether the near-duplicate stage found it, and the best cosines of
-every relative its page shows by meaning alone. The reporting sample was drawn afresh once the
-threshold and the flag were final, under its own seed, from pages as they list then, and from
-bills the tuning sample did not draw; it is read once. So its pages, too, were drawn at random
-with one relative each from the lists measured, and the share correct is their precision.
+There are three samples (PARTS), each drawn under its own seed from pages as they were
+listed when it was drawn. The first tuning sample, which the threshold proposal reads
+(lineage.threshold), was drawn at the build's threshold without the state boilerplate flag; each
+of its rows records what a threshold above the build's needs: the relative's best cosine,
+whether the near-duplicate stage found it, and the best cosines of every relative its page
+shows by meaning alone. The second was drawn at 0.93 with the flag to report that threshold's
+precision; once read it showed where 0.93 went wrong, the M5 review moved the threshold on it,
+and it became tuning data too. The reporting sample was drawn once the threshold and the flag
+were final, from bills no earlier sample drew, a draw discarded unread among them; it is read
+once. Its pages, too, were drawn at random with one relative each from the lists measured, so
+the share correct is their precision. See DESIGN.md#precision-sample.
 """
 
 import json
@@ -51,13 +54,17 @@ from lineage.semantic_pairs import section_keys
 STATE = "GA"
 BILLS = 100
 SEED = PRECISION_SEED + 3  # the flagged sample took + 1, the agreement subsample + 2
-REPORTING_SEED = PRECISION_SEED + 4
+TUNING_093_SEED = PRECISION_SEED + 4
+REPORTING_SEED = PRECISION_SEED + 5
+# The first reporting draw, discarded unread when the flag's ruling changed what pages list: kept
+# only so that no later sample draws its bills.
+DISCARDED = Path("evals/relatives_discarded.jsonl")
 
 
 @dataclass(frozen=True, slots=True)
 class Part:
     """One sample's draw: its seed, the threshold and flag its pages were listed under, its
-    first pair id's number, its files, and the part whose bills it never draws."""
+    first pair id's number, its files, and the samples whose bills it never draws."""
 
     seed: int
     threshold: float
@@ -65,28 +72,40 @@ class Part:
     first: int
     sample: Path
     report: Path
-    excludes: str | None = None
+    excludes: tuple[Path, ...] = ()
 
 
+_TUNING = Part(
+    SEED,
+    BUILD_THRESHOLD,
+    False,
+    1,
+    Path("evals/relatives_tuning.jsonl"),
+    Path("reports/relatives_tuning.json"),
+)
+_TUNING_093 = Part(
+    TUNING_093_SEED,
+    0.93,
+    True,
+    BILLS + 1,
+    Path("evals/relatives_tuning_093.jsonl"),
+    Path("reports/relatives_tuning_093.json"),
+    excludes=(_TUNING.sample,),
+)
 PARTS: dict[str, Part] = {
     # Drawn at the build's threshold without the flag: what the threshold proposal chose from.
-    "tuning": Part(
-        SEED,
-        BUILD_THRESHOLD,
-        False,
-        1,
-        Path("evals/relatives_tuning.jsonl"),
-        Path("reports/relatives_tuning.json"),
-    ),
-    # Drawn afresh once the threshold and the flag were final, from what pages list then.
+    "tuning": _TUNING,
+    # Drawn at 0.93 with the flag to report it; read, it moved the threshold.
+    "tuning_093": _TUNING_093,
+    # Drawn once the threshold and the flag were final, from what pages list then.
     "reporting": Part(
         REPORTING_SEED,
         THRESHOLD,
         True,
-        BILLS + 1,
+        2 * BILLS + 1,
         Path("evals/relatives_reporting.jsonl"),
         Path("reports/relatives_reporting.json"),
-        excludes="tuning",
+        excludes=(_TUNING.sample, DISCARDED, _TUNING_093.sample),
     ),
 }
 SAMPLE = PARTS["tuning"].sample
