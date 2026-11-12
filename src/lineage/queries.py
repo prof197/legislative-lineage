@@ -1274,6 +1274,17 @@ def sections_at(
     return {(b, o): (h, t, n) for b, o, h, t, n in rows}
 
 
+def section_headings(
+    con: duckdb.DuckDBPyConnection, *, sections_glob: str, bill_id: str
+) -> dict[int, str | None]:
+    """Each section's heading of one bill, by ordinal."""
+    rows: list[tuple[int, str | None]] = con.execute(
+        "SELECT ordinal, heading FROM read_parquet($sections) WHERE bill_id = $id",
+        {"sections": sections_glob, "id": bill_id},
+    ).fetchall()
+    return dict(rows)
+
+
 def normalized_texts_of(
     con: duckdb.DuckDBPyConnection, *, sections_glob: str, bill_ids: list[str]
 ) -> list[tuple[str, str]]:

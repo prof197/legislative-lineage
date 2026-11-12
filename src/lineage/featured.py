@@ -14,14 +14,16 @@ which text came first (DESIGN.md#explanations).
 - Deepfakes: Washington SB 5152 of 2023-24, against the relatives its page lists that were
   introduced after it.
 - Georgia: SB 351 of 2023-24, the Protecting Georgia's Children on Social Media Act, against
-  every relative its page lists.
+  every relative its page lists, from its social-media sections only (GEORGIA_SECTIONS). Its
+  sections on school internet filtering and on age verification for material harmful to minors
+  keep their relatives on the bill's page but stay out of the story, which says so (scope_note).
 
 The pairs file names sections by bill id and ordinal and holds no text; the report lists each
 story's relatives with their titles and pair counts.
 """
 
 import json
-from collections.abc import Collection, Sequence
+from collections.abc import Collection, Mapping, Sequence
 from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
@@ -59,14 +61,45 @@ class Story:
     identifier: str
     relatives: Relatives
     act: str | None = None  # for ENACTMENTS: the act whose enactments are the relatives
+    # The headings of the anchor's sections a pair's origin must lie in; empty, every section.
+    sections: tuple[str, ...] = ()
+    scope_note: str | None = None  # the story copy's line saying what the scope leaves out
 
+
+# SB 351's social-media provisions (the M6 review's ruling): Part II's instruction on social
+# media and school social-media policies, and Part III's new Chapter 6 of Title 39, its heading
+# section and each Code section. Left out: SECTION 2-3., school acceptable-use policies against
+# obscene material (the sectioner splits its tail off under "Section 16-12-100."), and
+# SECTION 3-2., age verification by sites publishing material harmful to minors.
+GEORGIA_SECTIONS = (
+    "SECTION 2-2.",
+    "SECTION 2-4.",
+    "SECTION 3-1.",
+    "39-6-1.",
+    "39-6-2.",
+    "39-6-3.",
+    "39-6-4.",
+    "39-6-5.",
+)
 
 STORIES = (
     Story(
         "anti-slapp", "UT", "2023", "SB 18", Relatives.ENACTMENTS, "public-expression-protection"
     ),
     Story("deepfakes", "WA", "2023-2024", "SB 5152", Relatives.LISTED_LATER),
-    Story("georgia-social-media", "GA", "2023_24", "SB 351", Relatives.LISTED),
+    Story(
+        "georgia-social-media",
+        "GA",
+        "2023_24",
+        "SB 351",
+        Relatives.LISTED,
+        sections=GEORGIA_SECTIONS,
+        scope_note=(
+            "This story follows SB 351's social-media provisions; its sections on school "
+            "internet filtering and on age verification for material harmful to minors have "
+            "relatives of their own, listed on the bill's page."
+        ),
+    ),
 )
 
 SectionPair = tuple[int, str, int]  # (anchor's ordinal, relative's bill id, relative's ordinal)
@@ -96,6 +129,21 @@ def pairs_with(
                 if other in wanted:
                     out.add((int(ordinals[s]), other, int(ordinals[t])))
     return sorted(out, key=lambda p: (p[1], p[0], p[2]))
+
+
+def in_scope(
+    pairs: Sequence[SectionPair], headings: Mapping[int, str | None], sections: Sequence[str]
+) -> list[SectionPair]:
+    """The pairs whose anchor section is headed by one of `sections`; every pair when none is
+    named. `headings` is the anchor's heading by ordinal."""
+    if not sections:
+        return list(pairs)
+    present = set(headings.values())
+    missing = [h for h in sections if h not in present]
+    if missing:
+        raise FeaturedError(f"the anchor has no section headed {missing[0]!r}")
+    ordinals = {o for o, h in headings.items() if h in sections}
+    return [p for p in pairs if p[0] in ordinals]
 
 
 def introduced_after(
@@ -166,7 +214,17 @@ def build_featured(
             if story.relatives is Relatives.LISTED_LATER:
                 first = {b: d[5] for b, d in details.items()}
                 relatives = introduced_after(relatives, first, first[anchor])
-            pairs = pairs_with(listed, bills, ordinals, anchor, relatives)
+            every_pair = pairs_with(listed, bills, ordinals, anchor, relatives)
+            headings = queries.section_headings(
+                con, sections_glob=str(tables_dir / "sections" / "*.parquet"), bill_id=anchor
+            )
+            try:
+                pairs = in_scope(every_pair, headings, story.sections)
+            except FeaturedError as e:
+                raise FeaturedError(f"{story.name}: {e}") from e
+            out_of_scope: dict[str, int] = {}
+            for p in set(every_pair) - set(pairs):
+                out_of_scope[p[1]] = out_of_scope.get(p[1], 0) + 1
             by_relative: dict[str, int] = {}
             for origin, relative, ordinal in pairs:
                 by_relative[relative] = by_relative.get(relative, 0) + 1
@@ -185,11 +243,19 @@ def build_featured(
             report["stories"][story.name] = {
                 "anchor": _bill(anchor, details),
                 "relatives_rule": str(story.relatives),
+                "anchor_sections": list(story.sections) or "every section",
+                "scope_note": story.scope_note,
                 "relatives": [
-                    _bill(r, details) | {"section_pairs": by_relative.get(r, 0)} for r in relatives
+                    _bill(r, details)
+                    | {
+                        "section_pairs": by_relative.get(r, 0),
+                        "section_pairs_out_of_scope": out_of_scope.get(r, 0),
+                    }
+                    for r in relatives
                 ],
                 "relatives_without_a_pair": sum(1 for r in relatives if r not in by_relative),
                 "section_pairs": len(pairs),
+                "section_pairs_out_of_scope": len(every_pair) - len(pairs),
             }
     report["section_pairs"] = len(rows)
     return rows, report

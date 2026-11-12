@@ -1168,7 +1168,8 @@ def featured_command(
     for name, story in doc["stories"].items():
         typer.echo(
             f"{name}: {story['section_pairs']} section pairs with {len(story['relatives'])} "
-            f"relatives, {story['relatives_without_a_pair']} without a pair"
+            f"relatives, {story['relatives_without_a_pair']} without a pair, "
+            f"{story['section_pairs_out_of_scope']} out of the story's sections"
         )
     typer.echo(f"{len(rows)} pairs -> {out}, {report}")
 
