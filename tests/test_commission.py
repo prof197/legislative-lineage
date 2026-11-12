@@ -17,7 +17,15 @@ from typer.testing import CliRunner
 from lineage import queries
 from lineage.acts import ACTS, HELD_OUT_ACTS
 from lineage.cli import app
-from lineage.commission import MISS_REASONS, Probe, Relative, evaluate, probe, target_reason
+from lineage.commission import (
+    MISS_REASONS,
+    CommissionError,
+    Probe,
+    Relative,
+    evaluate,
+    probe,
+    target_reason,
+)
 from lineage.lsh import BANDS, BUCKET_CAP, ROWS
 from lineage.minhash import NUM_PERM
 from lineage.queries import EnactmentBill
@@ -305,3 +313,31 @@ def test_the_final_run_reads_the_held_out_acts(commission_corpus: Path, tmp_path
 def test_every_miss_reason_is_documented(reason: str) -> None:
     design = (Path(__file__).parents[1] / "DESIGN.md").read_text()
     assert f"`{reason}`" in design
+
+
+def test_recall_at_a_stricter_semantic_threshold_matches_the_search_and_never_rises(
+    commission_corpus: Path,
+) -> None:
+    build = json.loads((COMMISSION / "build.json").read_text())
+    act_texts = {act: _raw_text(commission_corpus, bill) for act, bill in build["queries"].items()}
+    snapshot = load_enactments(ENACTMENTS)
+    sessions = load_sessions(COMMISSION / "sessions.csv")
+    thresholds = (THRESHOLD, 0.95, 0.99, 1.01)
+
+    got = evaluate(
+        act_texts, snapshot, commission_corpus, sessions,
+        semantic=bag_of_words_search(commission_corpus), semantic_thresholds=thresholds,
+    )  # fmt: skip
+
+    found = [r["found"] for r in got["recall_by_semantic_threshold"]]
+    assert found[0] == got["recall"]["pooled"]["all"]["found"]
+    assert found == sorted(found, reverse=True)
+    # Above every cosine, only the near-duplicate stage finds anything.
+    assert found[-1] == got["stage_ablation"]["near_duplicate"]["pooled"]["all"]["found"]
+    for e in got["enactments"]:
+        assert e["found_at_semantic_threshold"][str(THRESHOLD)] == e["found"]
+    with pytest.raises(CommissionError, match="under the search"):
+        evaluate(
+            act_texts, snapshot, commission_corpus, sessions,
+            semantic=bag_of_words_search(commission_corpus), semantic_thresholds=(0.5,),
+        )  # fmt: skip

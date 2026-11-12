@@ -18,6 +18,7 @@ text. See DESIGN.md#commission-recall.
 import hashlib
 import json
 from collections import Counter
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal
@@ -34,9 +35,11 @@ from lineage.query import (
     bucket_sizes,
     matchable_sections,
     query_text,
+    regrouped,
     require_index,
     sign_query,
 )
+from lineage.semantic import THRESHOLD as THRESHOLD_SEMANTIC
 from lineage.semantic import SemanticSearch, best_cosines_to_bills
 from lineage.sessions import Session, load_sessions
 from lineage.signatures import open_signatures
@@ -224,11 +227,20 @@ def evaluate(
     development: frozenset[tuple[str, int, str]] = frozenset(),
     acts: frozenset[str] | None = None,
     semantic: SemanticSearch | None = None,
+    semantic_thresholds: Sequence[float] = (),
 ) -> dict[str, Any]:
     """Recall of each act's enactments from its query text, with a reason for every miss.
 
     With `semantic`, both stages search, each enactment records which stages found it, and
-    the stage ablation reports recall for each stage alone and for both together."""
+    the stage ablation reports recall for each stage alone and for both together. With
+    `semantic_thresholds`, each at or above the stage's, recall is also counted as if the
+    stage's threshold were each of them (lineage.query.regrouped), for the threshold
+    proposal; nothing else changes."""
+    if any(t < THRESHOLD_SEMANTIC for t in semantic_thresholds):
+        raise CommissionError(
+            f"a semantic threshold under the search's {THRESHOLD_SEMANTIC} cannot be counted "
+            "without searching again"
+        )
     require_index(tables_dir)
     stages = ("near_duplicate", "semantic") if semantic is not None else ("near_duplicate",)
     rows = [r for r in snapshot.rows if r.stratum is not None]
@@ -278,6 +290,10 @@ def evaluate(
     query_stats: dict[str, dict[str, Any]] = {}
     for act in sorted(query_texts):
         result = query_text(query_texts[act], tables_dir, semantic=semantic)
+        families_at = {
+            t: {m.family for m in regrouped(result, tables_dir, t) if m.share > min_share}
+            for t in semantic_thresholds
+        }
         relatives = {
             m.family: Relative(
                 rank, round(m.share, 4), m.identifier, frozenset(m.sections_by_stage)
@@ -386,6 +402,14 @@ def evaluate(
                         for stage in stages
                     },
                     "found_by": best["identifier"] if best else None,
+                    "found_at_semantic_threshold": {
+                        str(t): any(
+                            by_id[b.id].family in families_at[t]
+                            for b in match.bills
+                            if by_id[b.id].family
+                        )
+                        for t in semantic_thresholds
+                    },
                     "rank": best["rank"] if best else None,
                     "share": best["share"] if best else None,
                     "miss_reason": miss,
@@ -420,6 +444,14 @@ def evaluate(
         "first_year": first_year,
         "queries": query_stats,
         "recall": breakdown(records),
+        "recall_by_semantic_threshold": [
+            {
+                "threshold": t,
+                "enactments": len(records),
+                "found": sum(r["found_at_semantic_threshold"][str(t)] for r in records),
+            }
+            for t in semantic_thresholds
+        ],
         "recall_by_min_share": [
             {
                 "min_share": s,
@@ -457,6 +489,7 @@ def commission_recall(
     act_ids: tuple[str, ...] = ACTS,
     development_path: Path | None = None,
     semantic: SemanticSearch | None = None,
+    semantic_thresholds: Sequence[float] = (),
 ) -> dict[str, Any]:
     """The headline eval: each act's own text as the query.
 
@@ -491,6 +524,7 @@ def commission_recall(
         # The held-out lists carry reserve acts; the development lists hold only the acts run.
         acts=frozenset(act_ids) if development_path else None,
         semantic=semantic,
+        semantic_thresholds=semantic_thresholds,
     )
     for act, stats in acts.items():
         result["queries"][act] = stats | result["queries"][act]

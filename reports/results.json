@@ -2214,6 +2214,53 @@
     }
    }
   },
+  "recall_by_semantic_threshold": [
+   {
+    "threshold": 0.8905,
+    "enactments": 36,
+    "found": 33
+   },
+   {
+    "threshold": 0.9,
+    "enactments": 36,
+    "found": 33
+   },
+   {
+    "threshold": 0.91,
+    "enactments": 36,
+    "found": 33
+   },
+   {
+    "threshold": 0.92,
+    "enactments": 36,
+    "found": 33
+   },
+   {
+    "threshold": 0.93,
+    "enactments": 36,
+    "found": 33
+   },
+   {
+    "threshold": 0.94,
+    "enactments": 36,
+    "found": 33
+   },
+   {
+    "threshold": 0.95,
+    "enactments": 36,
+    "found": 33
+   },
+   {
+    "threshold": 0.96,
+    "enactments": 36,
+    "found": 33
+   },
+   {
+    "threshold": 0.97,
+    "enactments": 36,
+    "found": 32
+   }
+  ],
   "recall_by_min_share": [
    {
     "min_share": 0.0,
@@ -2281,6 +2328,17 @@
      "semantic": true
     },
     "found_by": "SB 50",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 10,
     "share": 0.9009,
     "miss_reason": null,
@@ -2320,6 +2378,17 @@
      "semantic": true
     },
     "found_by": "HF 3560",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 48,
     "share": 0.3423,
     "miss_reason": null,
@@ -2378,6 +2447,17 @@
      "semantic": true
     },
     "found_by": "HB 181",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 6,
     "share": 0.9367,
     "miss_reason": null,
@@ -2417,6 +2497,17 @@
      "semantic": true
     },
     "found_by": "HB 180",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 49,
     "share": 0.082,
     "miss_reason": null,
@@ -2545,6 +2636,17 @@
      "semantic": true
     },
     "found_by": "SB 2127",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 7,
     "share": 0.9367,
     "miss_reason": null,
@@ -2584,6 +2686,17 @@
      "semantic": true
     },
     "found_by": "HB 24-1248",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 3,
     "share": 0.9632,
     "miss_reason": null,
@@ -2623,6 +2736,17 @@
      "semantic": true
     },
     "found_by": "SB 468",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 11,
     "share": 0.8672,
     "miss_reason": null,
@@ -2662,6 +2786,17 @@
      "semantic": true
     },
     "found_by": "SB 5787",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 4,
     "share": 0.945,
     "miss_reason": null,
@@ -2701,6 +2836,17 @@
      "semantic": true
     },
     "found_by": "SB 1930",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 5,
     "share": 0.9367,
     "miss_reason": null,
@@ -2759,6 +2905,17 @@
      "semantic": true
     },
     "found_by": "HB 4045",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 10,
     "share": 0.842,
     "miss_reason": null,
@@ -2798,6 +2955,17 @@
      "semantic": true
     },
     "found_by": "HB 2666",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 18,
     "share": 0.6993,
     "miss_reason": null,
@@ -2872,6 +3040,17 @@
      "semantic": true
     },
     "found_by": "SB 137",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 30,
     "share": 0.4972,
     "miss_reason": null,
@@ -2911,6 +3090,17 @@
      "semantic": true
     },
     "found_by": "SB 80",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 6,
     "share": 0.9014,
     "miss_reason": null,
@@ -2950,6 +3140,17 @@
      "semantic": true
     },
     "found_by": "S 1001",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 29,
     "share": 0.5664,
     "miss_reason": null,
@@ -2989,6 +3190,17 @@
      "semantic": true
     },
     "found_by": "SF 47",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 5,
     "share": 0.9056,
     "miss_reason": null,
@@ -3044,6 +3256,17 @@
      "semantic": true
     },
     "found_by": "HB 292",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 2,
     "share": 0.9056,
     "miss_reason": null,
@@ -3083,6 +3306,17 @@
      "semantic": true
     },
     "found_by": "SB 237",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": false
+    },
     "rank": 42,
     "share": 0.2315,
     "miss_reason": null,
@@ -3121,6 +3355,17 @@
      "semantic": false
     },
     "found_by": null,
+    "found_at_semantic_threshold": {
+     "0.8905": false,
+     "0.9": false,
+     "0.91": false,
+     "0.92": false,
+     "0.93": false,
+     "0.94": false,
+     "0.95": false,
+     "0.96": false,
+     "0.97": false
+    },
     "rank": null,
     "share": null,
     "miss_reason": "not_proposed",
@@ -3157,6 +3402,17 @@
      "semantic": true
     },
     "found_by": "SF 4271",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 24,
     "share": 0.6434,
     "miss_reason": null,
@@ -3253,6 +3509,17 @@
      "semantic": false
     },
     "found_by": null,
+    "found_at_semantic_threshold": {
+     "0.8905": false,
+     "0.9": false,
+     "0.91": false,
+     "0.92": false,
+     "0.93": false,
+     "0.94": false,
+     "0.95": false,
+     "0.96": false,
+     "0.97": false
+    },
     "rank": null,
     "share": null,
     "miss_reason": "verification",
@@ -3305,6 +3572,17 @@
      "semantic": true
     },
     "found_by": "A 4393",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 14,
     "share": 0.8217,
     "miss_reason": null,
@@ -3363,6 +3641,17 @@
      "semantic": false
     },
     "found_by": null,
+    "found_at_semantic_threshold": {
+     "0.8905": false,
+     "0.9": false,
+     "0.91": false,
+     "0.92": false,
+     "0.93": false,
+     "0.94": false,
+     "0.95": false,
+     "0.96": false,
+     "0.97": false
+    },
     "rank": null,
     "share": null,
     "miss_reason": "not_proposed",
@@ -3399,6 +3688,17 @@
      "semantic": true
     },
     "found_by": "SB 18",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 16,
     "share": 0.7902,
     "miss_reason": null,
@@ -3438,6 +3738,17 @@
      "semantic": true
     },
     "found_by": "HB 1502",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 12,
     "share": 0.9512,
     "miss_reason": null,
@@ -3477,6 +3788,17 @@
      "semantic": true
     },
     "found_by": "A 5345",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 7,
     "share": 0.9947,
     "miss_reason": null,
@@ -3516,6 +3838,17 @@
      "semantic": true
     },
     "found_by": "HB 7265",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 8,
     "share": 0.9697,
     "miss_reason": null,
@@ -3574,6 +3907,17 @@
      "semantic": true
     },
     "found_by": "SB 1206",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 5,
     "share": 0.9947,
     "miss_reason": null,
@@ -3613,6 +3957,17 @@
      "semantic": true
     },
     "found_by": "LB 231",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 4,
     "share": 1.0,
     "miss_reason": null,
@@ -3652,6 +4007,17 @@
      "semantic": true
     },
     "found_by": "HB 40",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 9,
     "share": 0.9565,
     "miss_reason": null,
@@ -3691,6 +4057,17 @@
      "semantic": true
     },
     "found_by": "SB 2123",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 13,
     "share": 0.9512,
     "miss_reason": null,
@@ -3730,6 +4107,17 @@
      "semantic": true
     },
     "found_by": "SB 294",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 14,
     "share": 0.9512,
     "miss_reason": null,
@@ -3769,6 +4157,17 @@
      "semantic": true
     },
     "found_by": "SB 561",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 10,
     "share": 0.9565,
     "miss_reason": null,
@@ -3846,6 +4245,17 @@
      "semantic": true
     },
     "found_by": "HB 24-1232",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 11,
     "share": 0.9512,
     "miss_reason": null,
@@ -3885,6 +4295,17 @@
      "semantic": true
     },
     "found_by": "SB 308",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 1,
     "share": 1.0,
     "miss_reason": null,
@@ -3924,6 +4345,17 @@
      "semantic": true
     },
     "found_by": "SB 1819",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 15,
     "share": 0.9262,
     "miss_reason": null,
@@ -3963,6 +4395,17 @@
      "semantic": true
     },
     "found_by": "SB 5801",
+    "found_at_semantic_threshold": {
+     "0.8905": true,
+     "0.9": true,
+     "0.91": true,
+     "0.92": true,
+     "0.93": true,
+     "0.94": true,
+     "0.95": true,
+     "0.96": true,
+     "0.97": true
+    },
     "rank": 3,
     "share": 1.0,
     "miss_reason": null,

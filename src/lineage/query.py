@@ -65,6 +65,16 @@ class Match:
 
 
 @dataclass(frozen=True, slots=True)
+class Hits:
+    """A query's hits before grouping, so its matches can be grouped again under a stricter
+    semantic threshold (`regrouped`) without searching again."""
+
+    near: Sequence[tuple[int, str, int]]  # (query section, bill id, agreements)
+    by_meaning: Sequence[tuple[int, str, float]]  # (query section, bill id, cosine)
+    words: dict[int, int]  # each query section's words
+
+
+@dataclass(frozen=True, slots=True)
 class QueryResult:
     sections: int
     signed: int  # sections with at least one signed window
@@ -76,6 +86,7 @@ class QueryResult:
     # Seconds each step took: "near_duplicate" (signing, lookup and verification), "semantic"
     # (embedding and exact search), "scoring" (grouping by family and ranking).
     seconds: dict[str, float] = field(default_factory=dict[str, float])
+    hits: Hits | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -263,8 +274,21 @@ def query_text(
 
     started = time.perf_counter()
     words_searched = sum(words[q] for q in searched)
-    results = group_matches(near, by_meaning, dict(enumerate(words)), words_searched, tables_dir)
+    hits = Hits(near, by_meaning, dict(enumerate(words)))
+    results = group_matches(hits.near, hits.by_meaning, hits.words, words_searched, tables_dir)
     seconds["scoring"] = time.perf_counter() - started
     return QueryResult(
-        query.sections, query.signed, results, len(searched), words_searched, seconds
+        query.sections, query.signed, results, len(searched), words_searched, seconds, hits
+    )
+
+
+def regrouped(result: QueryResult, tables_dir: Path, semantic_threshold: float) -> list[Match]:
+    """The matches the query would have had with the semantic stage's threshold raised to
+    `semantic_threshold`. Exact for any threshold at or above the search's: each window keeps
+    its K nearest before the threshold applies, so a stricter threshold only drops hits."""
+    if result.hits is None:
+        return []
+    by_meaning = [h for h in result.hits.by_meaning if h[2] >= semantic_threshold]
+    return group_matches(
+        result.hits.near, by_meaning, result.hits.words, result.words_searched, tables_dir
     )

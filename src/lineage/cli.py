@@ -138,6 +138,7 @@ from lineage.text_quality import REPORT as QUALITY
 from lineage.text_quality import STORE, run_sample
 from lineage.text_run import REPORT as FETCH_REPORT
 from lineage.text_run import run_fetch
+from lineage.threshold import CANDIDATES as THRESHOLD_CANDIDATES
 from lineage.ulc import ENACTMENTS, HELD_OUT_ENACTMENTS, UlcError
 from lineage.vectors import PROCESSES as EMBED_PROCESSES
 from lineage.vectors import REPORT as EMBED_REPORT
@@ -1126,6 +1127,8 @@ def eval_commission(
             act_ids=HELD_OUT_ACTS if held_out else ACTS,
             development_path=ENACTMENTS if held_out else None,
             semantic=search,
+            # Development recall at each threshold option, for the proposal; never held out.
+            semantic_thresholds=THRESHOLD_CANDIDATES if search is not None and not held_out else (),
         )
     except (
         CommissionError,
