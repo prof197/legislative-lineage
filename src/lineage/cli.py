@@ -66,12 +66,14 @@ from lineage.faithfulness import (
     JUDGE_MODEL,
     JUDGE_PROMPT,
     JUDGMENTS,
+    PairView,
     anthropic_judge,
     claims_to_judge,
     faithfulness,
     judge_claims,
     judge_name,
     load_judgments,
+    pair_view,
 )
 from lineage.faithfulness import pending as pending_claims
 from lineage.faithfulness import projected_cost as projected_judge_cost
@@ -1179,16 +1181,30 @@ def featured_command(
     typer.echo(f"{len(rows)} pairs -> {out}, {report}")
 
 
+def _pair_alignments(
+    todo: Sequence[PairToExplain], tables: Path, models_dir: Path | None
+) -> list[tuple[list[dict[str, Any]], PairView]]:
+    """Each pair's aligned spans as the explanation prompt gives them, and its texts as a
+    reader sees them, paraphrase marked with the semantic stage's model unless `models_dir`
+    is None."""
+    embedder = _model_embedder(models_dir) if models_dir is not None else None
+    out: list[tuple[list[dict[str, Any]], PairView]] = []
+    for o, d in pair_texts(tables, todo):
+        spans = align(o, d, embed=embedder).spans
+        out.append(
+            (
+                prompt_spans(spans, o, d, origin_side="a"),
+                pair_view(spans, o, d, origin_side="a"),
+            )
+        )
+    return out
+
+
 def _pair_prompts(
     todo: Sequence[PairToExplain], tables: Path, models_dir: Path | None
 ) -> list[list[dict[str, Any]]]:
-    """Each pair's aligned spans as the explanation prompt gives them, paraphrase marked with
-    the semantic stage's model unless `models_dir` is None."""
-    embedder = _model_embedder(models_dir) if models_dir is not None else None
-    return [
-        prompt_spans(align(o, d, embed=embedder).spans, o, d, origin_side="a")
-        for o, d in pair_texts(tables, todo)
-    ]
+    """Each pair's aligned spans as the explanation prompt gives them."""
+    return [prompt for prompt, _ in _pair_alignments(todo, tables, models_dir)]
 
 
 @app.command("explain")
@@ -1951,8 +1967,9 @@ def eval_faithfulness(
     """Faithfulness, model-judged: the share of kept claims that describe their cited spans
     correctly, beside the hard check that every kept claim cites spans that exist and differ."""
     try:
-        prompts = _pair_prompts(load_pairs(pairs), tables, models_dir if paraphrase else None)
-        claims, counts = claims_to_judge(prompts, cache=cache)
+        aligned = _pair_alignments(load_pairs(pairs), tables, models_dir if paraphrase else None)
+        prompts = [prompt for prompt, _ in aligned]
+        claims, counts = claims_to_judge(prompts, [view for _, view in aligned], cache=cache)
         todo = pending_claims(claims, load_judgments(judgments), judge_name())
         projected = projected_judge_cost(todo)
         typer.echo(

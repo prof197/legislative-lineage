@@ -3,10 +3,14 @@
 Grounding in code (lineage.explanations) is the hard check: every kept claim cites spans that
 exist and differ between the two texts, and CI checks it on every committed explanation. What
 code cannot check is whether the claim's words are true of those spans. A model judges that,
-one claim at a time: it sees the claim's kind and summary and the text of each span it cites on
-the side it cites it, and answers yes or no through structured output. Nothing else is shown, so
-the verdict is about the cited evidence alone. It is reported as model-judged, as precision is;
-no person's labels check it (the M5 review's ruling).
+one claim at a time, seeing what a reader of the comparison panel sees: each span the claim
+cites, on the side it cites it, marked within the aligned text around it, CONTEXT_CHARS
+characters either way cut at whole words. The claim must describe the marked text; the rest is
+there only to read it by, and a claim resting on unmarked text is incorrect. The judge answers
+yes or no through structured output. It is reported as model-judged, as precision is; no
+person's labels check it (the M5 review's ruling). The first judge (judge-v1) saw the cited
+spans' text alone, which judged a claim on less than a reader sees (the M6 faithfulness
+ruling).
 
 A verdict is keyed by the explanation's cache key, the claim's position among its kept claims,
 and the SHA-256 of the claim with the grounding form of the spans it cites, so a regenerated
@@ -27,32 +31,41 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict
 
+from lineage.align import Span
 from lineage.explain import CACHE_DIR, explain, explanation_key
-from lineage.explanations import Claim, grounding_spans
+from lineage.explanations import Claim, Side, grounding_spans
 from lineage.intervals import wilson
 from lineage.spend import Meter, upper_bound
 from lineage.structured import UnusableReplyError, ask_structured
 
 JUDGE_MODEL = "claude-opus-5-5"
-JUDGE_PROMPT = "judge-v1"
+JUDGE_PROMPT = "judge-v2"
+# Characters of aligned text shown either side of a cited span, cut back to whole words: about
+# fifty words, enough to read a clause by, and few enough that the marked text stays the point.
+CONTEXT_CHARS = 300
 JUDGMENTS = Path("evals/faithfulness_judgments.jsonl")
 ATTEMPTS = 2
 MAX_TOKENS = 1024
 
 JUDGE_SYSTEM = """\
 You check one claim that a summarizer made about how a descendant section of state legislation \
-differs from its origin. You are given the claim and the aligned spans it cites, as JSON: each \
-span's kind ("paraphrased": the same thing said in other words; "unmatched": text on one side \
-only) and its text on the origin's side and the descendant's.
+differs from its origin. You are given, as JSON, the claim, the kind of each aligned span it \
+cites ("paraphrased": the same thing said in other words; "unmatched": text on one side only) \
+and the sides it cites it on, and passages of the origin's text and the descendant's around \
+the cited spans. In each passage a cited span's text is marked, as ⟦s3⟧this⟦/s3⟧. A text the \
+claim cites nothing in has no passages.
 
-The claim describes its spans correctly when both hold. Its kind fits them: "added" is text the \
-descendant has and the origin lacks, "removed" text the origin has and the descendant lacks, \
-"changed" text both have that differs. And everything its summary asserts is borne out by the \
-cited text: nothing misstated, reversed or exaggerated, and nothing asserted that the spans do \
-not show. "Origin" and "descendant" only name the two texts: nothing is known about which came \
-first or who drew on whom. A claim that says or implies a state, legislature or drafter \
-changed, copied or adopted anything, or which text came first, does not describe its spans \
-correctly. Judge only from the spans given. Answer true or false."""
+The claim describes its spans correctly when both hold. Its kind fits the marked text: "added" \
+is text the descendant has and the origin lacks, "removed" text the origin has and the \
+descendant lacks, "changed" a difference between marked text on both sides, the descendant \
+saying otherwise what the origin says. And everything its summary asserts is borne out by the \
+marked text: nothing misstated, reversed or exaggerated, and nothing asserted that the marked \
+text does not show. The unmarked text is there only to read the marked text by. A claim that \
+rests on unmarked text, asserting what only the unmarked text shows, does not describe its \
+spans correctly. "Origin" and "descendant" only name the two texts: nothing is known about \
+which came first or who drew on whom. A claim that says or implies a state, legislature or \
+drafter changed, copied or adopted anything, or which text came first, does not describe its \
+spans correctly. Judge only from what is given. Answer true or false."""
 
 
 class ClaimVerdict(BaseModel):
@@ -72,6 +85,61 @@ class Verdict:
 JudgeAsk = Callable[[str, str], Verdict]  # (system, user) -> verdict; raises UnusableReplyError
 
 
+Offsets = tuple[int, int] | None
+
+
+@dataclass(frozen=True, slots=True)
+class PairView:
+    """What a reader sees of a pair: its two texts and where each span lies in them."""
+
+    origin: str
+    descendant: str
+    at: dict[str, tuple[Offsets, Offsets]]  # span id -> its offsets in the origin, descendant
+
+
+def pair_view(spans: Sequence[Span], a: str, b: str, *, origin_side: Side) -> PairView:
+    """The pair's texts by role, as lineage.explain.prompt_spans gives its spans."""
+    if origin_side == "a":
+        return PairView(a, b, {s.id: (s.a, s.b) for s in spans})
+    return PairView(b, a, {s.id: (s.b, s.a) for s in spans})
+
+
+def marked_passages(
+    text: str, cited: Sequence[tuple[str, tuple[int, int]]], width: int = CONTEXT_CHARS
+) -> list[str]:
+    """The passages of `text` around the cited spans, each span marked ⟦id⟧…⟦/id⟧ within
+    `width` characters of text either way, cut back to whole words; spans whose windows meet
+    share a passage."""
+    windows: list[list[Any]] = []  # [start, end, spans inside]
+    for span_id, (lo, hi) in sorted(cited, key=lambda c: c[1]):
+        start, end = max(0, lo - width), min(len(text), hi + width)
+        if start > 0 and not text[start - 1].isspace():
+            while start < lo and not text[start].isspace():
+                start += 1
+        if end < len(text) and not text[end].isspace():
+            while end > hi and not text[end - 1].isspace():
+                end -= 1
+        while start < lo and text[start].isspace():
+            start += 1
+        while end > hi and text[end - 1].isspace():
+            end -= 1
+        if windows and start <= windows[-1][1]:
+            windows[-1][1] = max(windows[-1][1], end)
+            windows[-1][2].append((span_id, lo, hi))
+        else:
+            windows.append([start, end, [(span_id, lo, hi)]])
+    out: list[str] = []
+    for start, end, inside in windows:
+        parts = ["…" if start > 0 else ""]
+        at = start
+        for span_id, lo, hi in inside:
+            parts += [text[at:lo], f"⟦{span_id}⟧", text[lo:hi], f"⟦/{span_id}⟧"]
+            at = hi
+        parts += [text[at:end], "…" if end < len(text) else ""]
+        out.append("".join(parts))
+    return out
+
+
 @dataclass(frozen=True, slots=True)
 class ClaimToJudge:
     key: str  # the explanation's cache key
@@ -79,13 +147,36 @@ class ClaimToJudge:
     claim: Claim
     cited: list[dict[str, Any]]  # the prompt's spans the claim cites, with their text
     claim_sha256: str
+    passages: dict[str, list[str]]  # by side, the aligned text around the cited spans, marked
+
+
+def _passages(claim: Claim, view: PairView) -> dict[str, list[str]]:
+    out: dict[str, list[str]] = {}
+    for side, text, ids in (
+        ("origin", view.origin, claim.origin_span_ids),
+        ("descendant", view.descendant, claim.descendant_span_ids),
+    ):
+        cited: list[tuple[str, tuple[int, int]]] = []
+        for span_id in dict.fromkeys(ids):
+            if span_id not in view.at:
+                raise ValueError(f"{span_id} is not a span of the pair's view")
+            at = view.at[span_id][0 if side == "origin" else 1]
+            if at is None:
+                raise ValueError(f"{span_id} has no {side} text in the pair's view")
+            cited.append((span_id, at))
+        out[side] = marked_passages(text, cited)
+    return out
 
 
 def claims_to_judge(
-    prompts: Sequence[Sequence[dict[str, Any]]], *, cache: Path = CACHE_DIR
+    prompts: Sequence[Sequence[dict[str, Any]]],
+    views: Sequence[PairView],
+    *,
+    cache: Path = CACHE_DIR,
 ) -> tuple[list[ClaimToJudge], dict[str, Any]]:
-    """Every kept claim of the pairs' cached explanations, with the spans it cites; and what
-    grounding did across them: explanations, withheld ones, claims kept and dropped by reason."""
+    """Every kept claim of the pairs' cached explanations, with the spans it cites and the
+    passages a reader sees them in; and what grounding did across them: explanations, withheld
+    ones, claims kept and dropped by reason."""
     out: list[ClaimToJudge] = []
     counts: dict[str, Any] = {
         "explanations": 0,
@@ -94,7 +185,7 @@ def claims_to_judge(
         "claims_kept": 0,
         "claims_dropped": {},
     }
-    for for_prompt in prompts:
+    for for_prompt, view in zip(prompts, views, strict=True):
         outcome = explain(for_prompt, ask=None, cache=cache)
         counts["explanations"] += 1
         counts["withheld"] += outcome.withheld
@@ -110,7 +201,11 @@ def claims_to_judge(
             ids = list(dict.fromkeys([*claim.origin_span_ids, *claim.descendant_span_ids]))
             doc = {"claim": claim.model_dump(), "spans": [hashed[i] for i in ids]}
             digest = hashlib.sha256(json.dumps(doc, sort_keys=True).encode()).hexdigest()
-            out.append(ClaimToJudge(key, index, claim, [by_id[i] for i in ids], digest))
+            out.append(
+                ClaimToJudge(
+                    key, index, claim, [by_id[i] for i in ids], digest, _passages(claim, view)
+                )
+            )
     counts["claims_dropped"] = dict(sorted(counts["claims_dropped"].items()))
     return out, counts
 
@@ -122,8 +217,6 @@ def judge_message(c: ClaimToJudge) -> str:
         {
             "id": s["id"],
             "kind": s["kind"],
-            "origin": s["origin"],
-            "descendant": s["descendant"],
             "cited_on": [
                 side
                 for side, ids in (("origin", origin), ("descendant", descendant))
@@ -133,7 +226,8 @@ def judge_message(c: ClaimToJudge) -> str:
         for s in c.cited
     ]
     claim = {"kind": c.claim.kind, "summary": c.claim.summary}
-    return json.dumps({"claim": claim, "spans": spans}, ensure_ascii=False, indent=1)
+    doc = {"claim": claim, "spans": spans, **c.passages}
+    return json.dumps(doc, ensure_ascii=False, indent=1)
 
 
 def judge_name(model: str = JUDGE_MODEL, prompt: str = JUDGE_PROMPT) -> str:
@@ -239,6 +333,7 @@ def faithfulness(
     kinds = sorted({c.claim.kind for c in claims})
     return {
         "judge": judge,
+        "judge_context_chars": CONTEXT_CHARS,
         "question": "does the claim describe the spans it cites correctly?",
         "grounding": counts,
         "overall": share(verdicts),
@@ -251,7 +346,16 @@ def run_name(grounding_rules: int) -> str:
     return f"grounding-rules-{grounding_rules}"
 
 
-_SUMMARY = ("judge", "pairs", "pairs_explained", "grounding", "overall", "by_kind", "hard_check")
+_SUMMARY = (
+    "judge",
+    "judge_context_chars",
+    "pairs",
+    "pairs_explained",
+    "grounding",
+    "overall",
+    "by_kind",
+    "hard_check",
+)
 
 
 def with_earlier_runs(
