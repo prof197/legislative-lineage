@@ -90,7 +90,12 @@ BOTH = Claim(
 
 
 def _explain(
-    ask: Ask | None, cache: Path, meter: Meter | None = None, *, again: bool = False
+    ask: Ask | None,
+    cache: Path,
+    meter: Meter | None = None,
+    *,
+    again: bool = False,
+    afresh: bool = False,
 ) -> Outcome:
     return explain(
         prompt_spans(SPANS, ORIGIN, DESCENDANT, origin_side="a"),
@@ -98,6 +103,7 @@ def _explain(
         cache=cache,
         meter=meter,
         again=again,
+        afresh=afresh,
     )
 
 
@@ -381,6 +387,35 @@ def test_asked_again_a_withheld_explanation_gets_a_fresh_ask_and_retry_with_why(
     assert "could not be used: too long" in calls[0][1]
     assert "could not be used: refused" in calls[1][1]
     assert outcome.claims == [_claim("s2")]
+
+
+def test_asked_afresh_every_file_from_earlier_rules_gets_a_new_round_of_its_own(
+    tmp_path: Path,
+) -> None:
+    # A reply every claim of which the current rules keep, written under earlier ones: asking
+    # again leaves it, asking afresh replaces it, since earlier rules shaped how it was told.
+    before = ChangeExplanation(claims=[_claim("s2"), BOTH])
+    _explain(scripted(before)[1], tmp_path)
+    path = _from_earlier_rules(tmp_path)
+    spans = prompt_spans(SPANS, ORIGIN, DESCENDANT, origin_side="a")
+
+    assert asks_needed(spans, tmp_path, again=True) == 0
+    assert asks_needed(spans, tmp_path, again=True, afresh=True) == ATTEMPTS
+    left = _explain(scripted()[1], tmp_path, again=True)
+    calls, ask = scripted(ChangeExplanation(claims=[_claim("s2")]))
+    fresh = _explain(ask, tmp_path, again=True, afresh=True)
+    no_more_calls = _explain(scripted()[1], tmp_path, again=True, afresh=True)
+
+    assert left.claims == [_claim("s2"), BOTH]
+    assert len(calls) == 1
+    assert "could not be used" not in calls[0][1]  # a first ask, with no earlier reason
+    # The new round's reply stands though it says less: it is not ranked against the old one.
+    assert fresh.claims == no_more_calls.claims == [_claim("s2")]
+    entry = json.loads(path.read_text())
+    assert entry["grounding_rules"] == GROUNDING_RULES
+    assert entry["earlier"][-1]["explanation"] == before.model_dump()
+    assert asks_needed(spans, tmp_path, again=True, afresh=True) == 0
+    assert check_cache(tmp_path) == []
 
 
 def test_the_asks_a_pair_needs_are_what_the_projection_counts(tmp_path: Path) -> None:

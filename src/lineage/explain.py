@@ -11,7 +11,10 @@ withheld. A reply of no claims says nothing of substance changed, and is kept as
 Each cache file records the version of the grounding rules it was written under. Asked again
 (`again`), a file from earlier rules is asked once more, with why: a withheld one afresh, with
 its retry, and a kept one whose reply has a claim the current rules drop, once, the earlier reply
-standing if the new one is no better. What it held before is kept in the file (`earlier`).
+standing if the new one is no better. Asked afresh (`afresh`), every file from earlier rules
+gets a new round of its own, a first ask and its retry, and its new reply stands whatever the
+old one was: earlier rules shape how a reply is told, not only which claims it keeps. What a
+file held before is kept in it (`earlier`).
 
 Every outcome, withheld ones included, is cached in one file named by the SHA-256 of the model
 id, the prompt version and the spans, so a rerun pays only for pairs it has not seen, keyless
@@ -210,10 +213,13 @@ class _Round:
     kept: Kept | None  # the reply standing before the round
 
 
-def _due(entry: dict[str, Any], spans: Sequence[GroundingSpan]) -> _Round | None:
-    """The round a cache file from earlier grounding rules is asked again in, if any."""
+def _due(entry: dict[str, Any], spans: Sequence[GroundingSpan], *, afresh: bool) -> _Round | None:
+    """The round a cache file from earlier grounding rules is asked again in, if any: afresh,
+    a new round of its own whatever the file held."""
     if int(entry.get("grounding_rules", 1)) >= GROUNDING_RULES:
         return None
+    if afresh:
+        return _Round(ATTEMPTS, None, None)
     if entry["explanation"] is None:
         before = list(entry.get("unusable_attempts") or [])
         return _Round(ATTEMPTS, before[-1] if before else None, None)
@@ -259,7 +265,12 @@ def _ask_round(
 
 
 def asks_needed(
-    spans_for_prompt: Sequence[dict[str, Any]], cache: Path, *, again: bool, model: str = MODEL
+    spans_for_prompt: Sequence[dict[str, Any]],
+    cache: Path,
+    *,
+    again: bool,
+    afresh: bool = False,
+    model: str = MODEL,
 ) -> int:
     """At most how many asks explaining this pair takes: none when its cached outcome stands."""
     path = cache_path(spans_for_prompt, cache, model)
@@ -267,7 +278,7 @@ def asks_needed(
         return ATTEMPTS
     if not again:
         return 0
-    plan = _due(json.loads(path.read_text()), grounding_spans(spans_for_prompt))
+    plan = _due(json.loads(path.read_text()), grounding_spans(spans_for_prompt), afresh=afresh)
     return 0 if plan is None else plan.attempts
 
 
@@ -279,16 +290,17 @@ def explain(
     model: str = MODEL,
     meter: Meter | None = None,
     again: bool = False,
+    afresh: bool = False,
 ) -> Outcome:
     """The cached outcome for these spans, or, with `ask`, a new one from the model, each call
     metered by `meter`; with `again` too, a cache file from earlier grounding rules is asked
-    once more."""
+    once more, and with `afresh`, every such file is given a new round of its own."""
     spans = grounding_spans(spans_for_prompt)
     path = cache_path(spans_for_prompt, cache, model)
     earlier: list[dict[str, Any]] = []
     if path.exists():
         entry = json.loads(path.read_text())
-        plan = _due(entry, spans) if again and ask is not None else None
+        plan = _due(entry, spans, afresh=afresh) if again and ask is not None else None
         if plan is None or ask is None:
             return _outcome(entry, spans)
         before = ("explanation", "served_by", "grounded", "unusable_attempts", "attempts")

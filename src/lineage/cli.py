@@ -1229,6 +1229,14 @@ def explain_command(
             "grounding rules: withheld ones, and ones keeping a claim the rules now drop.",
         ),
     ] = False,
+    afresh: Annotated[
+        bool,
+        typer.Option(
+            "--afresh",
+            help="With --live --again, give every cached explanation written under earlier "
+            "grounding rules a new round of its own, whatever it held.",
+        ),
+    ] = False,
     reground: Annotated[
         bool,
         typer.Option(
@@ -1246,18 +1254,28 @@ def explain_command(
         todo = load_pairs(pairs)
         prompts = _pair_prompts(todo, tables, models_dir if paraphrase else None)
         uncached = [p for p in prompts if not explanation_cache_path(p, cache).exists()]
-        asks = [asks_needed(p, cache, again=again) for p in prompts]
-        due = [(p, n) for p, n in zip(prompts, asks, strict=True) if n]
+        asks = [asks_needed(p, cache, again=again, afresh=afresh) for p in prompts]
+        # Pairs with the same spans share one cache file, asked for once.
+        due = list(
+            {
+                explanation_cache_path(p, cache): (p, n)
+                for p, n in zip(prompts, asks, strict=True)
+                if n
+            }.values()
+        )
         projected = projected_explain_cost([p for p, _ in due], [n for _, n in due])
+        again_files = sum(explanation_cache_path(p, cache).exists() for p, _ in due)
         typer.echo(
             f"{len(prompts)} pairs, {len(uncached)} not cached, "
-            f"{len(due) - len(uncached)} to ask again, projected at most "
+            f"{again_files} cache files to ask again, projected at most "
             f"${projected:.2f}; ${spent_on_calls(spend):.2f} of ${CALL_BUDGET:.2f} spent"
         )
         if uncached and not live:
             raise NotCachedError(f"{len(uncached)} pairs not cached; run with --live to ask")
         if again and not live:
             raise NotCachedError("--again asks the model; run with --live")
+        if afresh and not again:
+            raise NotCachedError("--afresh is a way of asking again; run with --live --again")
         meter = None
         ask = None
         if due:
@@ -1267,7 +1285,9 @@ def explain_command(
             )
             ask = anthropic_ask()
         for pair, for_prompt in zip(todo, prompts, strict=True):
-            outcome = explain(for_prompt, ask=ask, cache=cache, meter=meter, again=again)
+            outcome = explain(
+                for_prompt, ask=ask, cache=cache, meter=meter, again=again, afresh=afresh
+            )
             (ob, oo), (db, do) = pair.origin, pair.descendant
             typer.echo(f"\n{ob} section {oo} -> {db} section {do}")
             if outcome.withheld:
