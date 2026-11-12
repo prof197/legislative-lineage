@@ -1,0 +1,68 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "3b5c34b11956e0235a9d5ba14315e7cb222c37a0c7c1390a6e501b71223ed16c",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "9ccf3a5c6454f37d7b06fb090e3e9a97e81cf3c1682f8a7f6546fb28ec48759f"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "51139803e1054dbe875134860ae00d678c5a969081dd53fba7b29322918b02bc",
+   "descendant": "51139803e1054dbe875134860ae00d678c5a969081dd53fba7b29322918b02bc"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "cd57db52f6f42eb48439bfbe141de42c17bdd72b1cf37749cd1096c9d71f57c4",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "734306a83ed7bb2e68bf375f9a67461d6d0ebdb69c037e4bf69f9d88e2176c49"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "changed",
+    "summary": "The origin applies the chapter to actions filed on or after May 3, 2023; the descendant uses a placeholder, \"[the effective date of this Act].\"",
+    "origin_span_ids": [
+     "s3"
+    ],
+    "descendant_span_ids": [
+     "s4"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The origin numbers the section 78B-25-113; the descendant numbers it § 6013.",
+    "origin_span_ids": [
+     "s0"
+    ],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1
+  ],
+  "dropped": []
+ }
+}

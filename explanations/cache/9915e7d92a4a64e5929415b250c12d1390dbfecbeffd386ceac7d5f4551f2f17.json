@@ -1,0 +1,39 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "716b860a349826a62c089bac1a0b3106e0385d683b283c2fdaf49028df2da577",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "cd92008affa4da9b52de3000926132398239b379de03cc4af0f65bf730560324"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "d2616b006981962d73afe6354777d07acd6bc1508852c0c52610e06d74fc3dc2",
+   "descendant": "d2616b006981962d73afe6354777d07acd6bc1508852c0c52610e06d74fc3dc2"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "878a5e2a7315eb88e219ddcda3ef26cd7442ee70d8d1420cbd1cca24ce2a4bda",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "2b577ca8309d143cfc636228565ccc5f84769f3251557b410fb0762eb1a3c0e7"
+  }
+ ],
+ "explanation": null,
+ "served_by": null,
+ "grounded": null
+}

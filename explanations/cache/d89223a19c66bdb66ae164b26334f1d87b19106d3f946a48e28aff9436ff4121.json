@@ -1,0 +1,75 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "144a3647d3a0d2bf79b40b2fc340f0bc4f8e6ea53b189e82981d29236db3fbf8",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "2afea06bb0305532c1c1ab7793caad464015ded1685a2e3557bf46d66a9cd756"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "d6700c22c88fc6cbff92b405ef69202d179633e7ec126d88ca6716bdf3a92eb0",
+   "descendant": "d6700c22c88fc6cbff92b405ef69202d179633e7ec126d88ca6716bdf3a92eb0"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "426fe7d0035853602ba43e647cab7bd37a8c5f5c4b0f4e2a131376fe8703adf0",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "075b1aeae1c89a0eed65af9276b5ef20f646701dc0af9c31df9a37072f01f740"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "269945bd039c2463e30ff12b40ffbd841600e803eb3b077bbbe9d0a9de79345a",
+   "descendant": "269945bd039c2463e30ff12b40ffbd841600e803eb3b077bbbe9d0a9de79345a"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "changed",
+    "summary": "The origin is codified as section 78B-25-110 titled costs, attorney fees, and expenses; the descendant is framed as an act section adding a new section to a new chapter in title 15.",
+    "origin_span_ids": [
+     "s0"
+    ],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The origin ties the fee award to a motion under Section 78B-25-103; the descendant ties it to a motion filed under section 3 of the Act.",
+    "origin_span_ids": [
+     "s0",
+     "s3"
+    ],
+    "descendant_span_ids": [
+     "s4"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1
+  ],
+  "dropped": []
+ }
+}

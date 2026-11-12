@@ -1,0 +1,93 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "29ff0d33a821c2be88e200e9eba6dd6ed173ffe0977ba8749bd6522deacca95b",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "5b23a38ea64fbe9708fcc97846ebbb17a25dfbccc5e543e0e9fedcd7625a7356"
+  },
+  {
+   "id": "s2",
+   "kind": "paraphrased",
+   "origin": "55952ece0cde1aa10662028984f98e39382dcabeae2fe3c091277b6e726be78e",
+   "descendant": "5d96e3a0b4b6279ec87d27bdda56bb0301b06f0ec394972018a1f95f40b39ae7"
+  },
+  {
+   "id": "s3",
+   "kind": "copied",
+   "origin": "405c063d9650c190fbebc30f2894681743e144c8a36a65d931af12d1114bb2de",
+   "descendant": "405c063d9650c190fbebc30f2894681743e144c8a36a65d931af12d1114bb2de"
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": "878a5e2a7315eb88e219ddcda3ef26cd7442ee70d8d1420cbd1cca24ce2a4bda",
+   "descendant": null
+  },
+  {
+   "id": "s5",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "c82bcf37aded3c5b23eaf5964ca5100d16e107d60790e756ed1bd9958bf89ed6"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin assigns liability for electioneering communications to the sponsor rather than the disseminating medium, with exceptions; the descendant has no such liability provision.",
+    "origin_span_ids": [
+     "s0"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant defines a school-employee term (excluding enrolled students), \"depicted individual,\" \"digital depiction,\" and \"intimate digital depiction\"; the origin has none of these.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1",
+     "s5"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "Both define \"information content provider\" in the same substance; the origin places it after the interactive computer service definition, the descendant before it, in plural form.",
+    "origin_span_ids": [
+     "s4"
+    ],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The origin gives the interactive computer service definition as lettered item (b) using \"means\"; the descendant numbers it (4) without \"means.\"",
+    "origin_span_ids": [
+     "s2"
+    ],
+    "descendant_span_ids": [
+     "s2"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ }
+}

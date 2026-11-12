@@ -1,0 +1,69 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "d016e9a0cbc61437494dd2769feba8bd25c97d0a862511dd031d0f50000236a1",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "e4e53c1a424b572960763e66cc67b5122415af3ea5eb595b5c22d625146e63e0"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "1df543536d232a744faccaba53e471e71ce941fcaaf7fd0cb2918b0a26577289",
+   "descendant": "1df543536d232a744faccaba53e471e71ce941fcaaf7fd0cb2918b0a26577289"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "6d5d287a3d1749b01e95949e22684ad6ad119c774d852a4f1f2a2b8df96d79af",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "90442a31b9784e5cf1b81f9afb4b8b7de9ae93b9d13eabed37b2aa8c594f8e93"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "0b7b7b09bec9858fc34256396f9c296f15d109e3d485104654e9f3eeae5a1f41",
+   "descendant": "0b7b7b09bec9858fc34256396f9c296f15d109e3d485104654e9f3eeae5a1f41"
+  },
+  {
+   "id": "s6",
+   "kind": "paraphrased",
+   "origin": "47482cc3da3bd16eb7fbd5a0644dac50998573d457e5992727320e72e945bbc2",
+   "descendant": "1d16b177f914ae7d0ba2556808f994eb0e508f25a2e9fba7c83dc22edf838bf7"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "changed",
+    "summary": "The descendant requires the appeal to be filed within thirty days after entry of the order; the origin allows 21 days after the day the order is entered.",
+    "origin_span_ids": [
+     "s6"
+    ],
+    "descendant_span_ids": [
+     "s6"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0
+  ],
+  "dropped": []
+ }
+}

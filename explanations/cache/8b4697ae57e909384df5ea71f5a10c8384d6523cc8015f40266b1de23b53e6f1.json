@@ -1,0 +1,213 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "f5eacff124c72b6161a3105fb7b7bd34dc639a702f01511b90d887d9bb1ed5da",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "copied",
+   "origin": "2227d2dbf1591561c2a2383e2a3f4f1130d2b6e70e4739a12b1ea52061163af7",
+   "descendant": "2227d2dbf1591561c2a2383e2a3f4f1130d2b6e70e4739a12b1ea52061163af7"
+  },
+  {
+   "id": "s2",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "72cab3f328eab8a0b38e41b4f1f9f51399fb4f37ce4616c070ba33b7309cce69"
+  },
+  {
+   "id": "s3",
+   "kind": "copied",
+   "origin": "59b2c7329952cf19886f115a0fd89927270cc20e90a86418967229eb03546a60",
+   "descendant": "59b2c7329952cf19886f115a0fd89927270cc20e90a86418967229eb03546a60"
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "ad8f7bb1b3f2800393cad8e7f0632f234b1c638610d643bc3796f882aab410ce"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "95a61e51eba4da241044668e19c8ca83ed5f98e8f450362ecb85b8731493815e",
+   "descendant": "95a61e51eba4da241044668e19c8ca83ed5f98e8f450362ecb85b8731493815e"
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": "9ed4f5a12604f52b7c5e20cca44b65e1c8c63da28b4f627ffac893f0909ce8be",
+   "descendant": null
+  },
+  {
+   "id": "s7",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "7cfb854a2182e95926e2b6d95c5b8b60b7c93a4c11f5b613825e40d237782ac6"
+  },
+  {
+   "id": "s8",
+   "kind": "copied",
+   "origin": "4fc12830d2ec73ae8bcfbee0e3a376d43828e306e9705e9e5257e2c7c04aa79e",
+   "descendant": "4fc12830d2ec73ae8bcfbee0e3a376d43828e306e9705e9e5257e2c7c04aa79e"
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": "af189f17a33a1efbb1b252b132d2f41a46cd8ffb15effed484b154945b86640c",
+   "descendant": null
+  },
+  {
+   "id": "s10",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "f893f9a80e663fd250da32a2aced2ab763e31af1daf885de2ee40ae4839fa4ca"
+  },
+  {
+   "id": "s11",
+   "kind": "copied",
+   "origin": "e617eb1663fa2a1033a2ea2ba121263db5c22c63518c2ad5728f120f133b880a",
+   "descendant": "e617eb1663fa2a1033a2ea2ba121263db5c22c63518c2ad5728f120f133b880a"
+  },
+  {
+   "id": "s12",
+   "kind": "unmatched",
+   "origin": "003833cb1291f14407fb927e9c3ff18006b4afcdd49c3e199684663c93d2789a",
+   "descendant": null
+  },
+  {
+   "id": "s13",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "56ee5b508706bf2de91712d85d6d1e11ddbff01949142ed6e8c22e3b1bed1c71"
+  },
+  {
+   "id": "s14",
+   "kind": "copied",
+   "origin": "db2cd814092bbbca383eddf8da790bf9fd9d9762bf7b42b79e3536c2148c39fb",
+   "descendant": "db2cd814092bbbca383eddf8da790bf9fd9d9762bf7b42b79e3536c2148c39fb"
+  },
+  {
+   "id": "s15",
+   "kind": "paraphrased",
+   "origin": "444fd546d0cf95b3148ab8030fc63db4921463b324679d116beeceeec22dfe18",
+   "descendant": "d75faeea8610d79f83b3f03993d66e9ac801788dbbb8b2264b3ffd5db9a16ea1"
+  },
+  {
+   "id": "s16",
+   "kind": "copied",
+   "origin": "d329cc36ae05d7aa3a263713568d95298e1977c2f7ec00f0559f7625d07959f3",
+   "descendant": "d329cc36ae05d7aa3a263713568d95298e1977c2f7ec00f0559f7625d07959f3"
+  },
+  {
+   "id": "s17",
+   "kind": "unmatched",
+   "origin": "0cb4f11dec4f7752a36f792ce1b7e800d21b23ab6002f274b17768a2e7b60edd",
+   "descendant": null
+  },
+  {
+   "id": "s18",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "18ac3e7343f016890c510e93f935261169d9e3f565436429830faf0934f4f8e4"
+  },
+  {
+   "id": "s19",
+   "kind": "copied",
+   "origin": "28bef74db3606f3ddf21bb82af80a5f46376844485272f344b1be837a10b44e5",
+   "descendant": "28bef74db3606f3ddf21bb82af80a5f46376844485272f344b1be837a10b44e5"
+  },
+  {
+   "id": "s20",
+   "kind": "unmatched",
+   "origin": "4137b01e139589b7a1d3b3fc4da031d8ce5bb415808734e970c3a58ea0e98f0f",
+   "descendant": null
+  },
+  {
+   "id": "s21",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "56ee5b508706bf2de91712d85d6d1e11ddbff01949142ed6e8c22e3b1bed1c71"
+  },
+  {
+   "id": "s22",
+   "kind": "copied",
+   "origin": "3eb8b0f81a8f1a93af0d4e8a3969c9c90e05e6db25314e2d439b6cb35ac9872d",
+   "descendant": "3eb8b0f81a8f1a93af0d4e8a3969c9c90e05e6db25314e2d439b6cb35ac9872d"
+  },
+  {
+   "id": "s23",
+   "kind": "paraphrased",
+   "origin": "77c8ac1c72e5e1df818bef6688b30061fd8afb0b0a690d5fde61cad2553e0891",
+   "descendant": "6a55673cfc7ac8e86e6015b1cd974b7f4800337793a67c4e479489db2b084190"
+  },
+  {
+   "id": "s24",
+   "kind": "unmatched",
+   "origin": "00e82ae0e1188d1347705bf5f9b7a1a0f6c24984f282de72d40dab398e351f59",
+   "descendant": null
+  },
+  {
+   "id": "s25",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "3415f82279981a19ffb43f75e29742557b40aa438b4133f522240a54cf707213"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "added",
+    "summary": "The descendant defines a \"deceptive and fraudulent deepfake\" and bars distributing one about a candidate or party within ninety days before an election unless it carries a disclosure.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s2",
+     "s7"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The origin lets candidates seek injunctions and damages plus attorneys' fees from the sponsor, with disclosure as an affirmative defense; the descendant allows only injunctive or equitable relief.",
+    "origin_span_ids": [
+     "s6",
+     "s9"
+    ],
+    "descendant_span_ids": [
+     "s25"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin puts on the plaintiff a clear-and-convincing burden of proof, urges courts to decide quickly, and sets a minimum font size for visual disclosures; the descendant has none of these.",
+    "origin_span_ids": [
+     "s24",
+     "s12"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant exempts certain news broadcasts, paid broadcasts made in good faith, news publications that state the media is inaccurate, and satire or parody.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s25"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ }
+}

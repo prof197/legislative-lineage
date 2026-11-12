@@ -25,19 +25,19 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, ValidationError
+from pydantic import BaseModel, ConfigDict
 
-from lineage.explain import CACHE_DIR, UnusableReplyError, explain, explanation_key
+from lineage.explain import CACHE_DIR, explain, explanation_key
 from lineage.explanations import Claim, grounding_spans
 from lineage.intervals import wilson
 from lineage.spend import Meter, upper_bound
+from lineage.structured import UnusableReplyError, ask_structured
 
 JUDGE_MODEL = "claude-opus-5-5"
 JUDGE_PROMPT = "judge-v1"
 JUDGMENTS = Path("evals/faithfulness_judgments.jsonl")
 ATTEMPTS = 2
 MAX_TOKENS = 1024
-_FALLBACK_BETA = "server-side-fallback-2026-07-01"
 
 JUDGE_SYSTEM = """\
 You check one claim that a summarizer made about how a descendant section of state legislation \
@@ -247,31 +247,24 @@ def faithfulness(
 
 
 def anthropic_judge(model: str = JUDGE_MODEL) -> JudgeAsk:
-    """Ask through the Anthropic SDK with structured output from ClaimVerdict, at medium
-    effort, with the server-side fallback for a declined request."""
+    """Ask through the Anthropic SDK for JSON fitting ClaimVerdict, at medium effort, every
+    reply metered (lineage.structured)."""
     import anthropic
 
     client = anthropic.Anthropic()
 
     def ask(system: str, user: str) -> Verdict:
-        try:
-            response = client.beta.messages.parse(
-                model=model,
-                max_tokens=MAX_TOKENS,
-                system=system,
-                messages=[{"role": "user", "content": user}],
-                output_format=ClaimVerdict,
-                output_config={"effort": "medium"},
-                betas=[_FALLBACK_BETA],
-                fallbacks="default",
-            )
-        except ValidationError as e:
-            raise UnusableReplyError(f"the reply does not fit the schema: {e}") from e
-        tokens = (response.usage.input_tokens, response.usage.output_tokens)
-        if response.stop_reason == "refusal" or response.parsed_output is None:
-            raise UnusableReplyError(
-                f"no usable reply (stop reason {response.stop_reason})", *tokens, response.model
-            )
-        return Verdict(response.parsed_output.describes_spans_correctly, response.model, *tokens)
+        got = ask_structured(
+            client,
+            ClaimVerdict,
+            model=model,
+            system=system,
+            messages=[{"role": "user", "content": user}],
+            max_tokens=MAX_TOKENS,
+            effort="medium",
+        )
+        return Verdict(
+            got.value.describes_spans_correctly, got.served_by, got.input_tokens, got.output_tokens
+        )
 
     return ask

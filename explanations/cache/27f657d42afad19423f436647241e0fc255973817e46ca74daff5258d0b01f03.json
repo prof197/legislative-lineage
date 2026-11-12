@@ -1,0 +1,81 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "716b860a349826a62c089bac1a0b3106e0385d683b283c2fdaf49028df2da577",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "copied",
+   "origin": "1eed5a02de2370e791b52df395e0833df3bc5ff1dfc31fae98fb5a36f3fb6660",
+   "descendant": "1eed5a02de2370e791b52df395e0833df3bc5ff1dfc31fae98fb5a36f3fb6660"
+  },
+  {
+   "id": "s2",
+   "kind": "unmatched",
+   "origin": "2c7bb4b91c4f2aaed5b6d415dcb171a80a28d008f2d0f0ea227ea31f47557fcf",
+   "descendant": null
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "8594314c5e18e5a4b010975d50d892ebe29279a497973854b857b7f120e228f6"
+  },
+  {
+   "id": "s4",
+   "kind": "copied",
+   "origin": "777042996f87c9a018cfb7c01953a9531dce0b21e586533517e8788a87888a8d",
+   "descendant": "777042996f87c9a018cfb7c01953a9531dce0b21e586533517e8788a87888a8d"
+  },
+  {
+   "id": "s5",
+   "kind": "unmatched",
+   "origin": "3e2b7c1c2841c87da73482a82b716b02e9cb72c8a6ff3858bdf2e85629cd70a7",
+   "descendant": null
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "8f2948f13d7911010c54444dc4ed930fba973c0d22e92bffb45c88244124ee2d"
+  },
+  {
+   "id": "s7",
+   "kind": "copied",
+   "origin": "381e281138aca59c1fb30f05f2b3383ee61aa06f4ba642471bb965da1bbfc81e",
+   "descendant": "381e281138aca59c1fb30f05f2b3383ee61aa06f4ba642471bb965da1bbfc81e"
+  },
+  {
+   "id": "s8",
+   "kind": "paraphrased",
+   "origin": "38a81e87e79631e602bf5fbd307ce2fcd382b1670c585ea09032aac778a80531",
+   "descendant": "da15caaee9de1b0dc60aade31644ba5fa2faa3ebba81c9ec122c7d5e25de9d9a"
+  },
+  {
+   "id": "s9",
+   "kind": "copied",
+   "origin": "65306b81190c01a5f349ba921e616546b05057c4459ec23f72a2ccac301104fd",
+   "descendant": "65306b81190c01a5f349ba921e616546b05057c4459ec23f72a2ccac301104fd"
+  },
+  {
+   "id": "s10",
+   "kind": "paraphrased",
+   "origin": "9af6365bcc4d451f4f692101c5e65733cd02a279dc6acdc7c115e3ac38349b18",
+   "descendant": "444612ee15528391eea4af93bbee4d247fdacd0596de6d5cc2997af20d4d47e1"
+  },
+  {
+   "id": "s11",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "167d5dd9b4e0950a46d1c32a002b4829ed7ead04c3601a39c0c9c6aff87fb0dc"
+  }
+ ],
+ "explanation": null,
+ "served_by": null,
+ "grounded": null
+}

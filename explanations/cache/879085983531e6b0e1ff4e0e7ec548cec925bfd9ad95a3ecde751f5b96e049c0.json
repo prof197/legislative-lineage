@@ -1,0 +1,44 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "d3fdc10688227667106a1a00e6ecc5ac000b844c31ed15a06c3a4f4cd47c449b",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "b5ffb299fed6f68f56a1c1b4df73c693ec240ed3da89090e4a96aaa7113f35a6"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "68743b0c0d39d411e80f0930160751749ddda45a35b526af4e24bb1f31ea23a4",
+   "descendant": "68743b0c0d39d411e80f0930160751749ddda45a35b526af4e24bb1f31ea23a4"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "643b68859810d74fb3192434cc3004f890287a7f2d1605348b5fee9f24551f57",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "copied",
+   "origin": "eaaf33556b7068af7f66806b48778955b29a7ea711b625375a9dba6c719b173e",
+   "descendant": "eaaf33556b7068af7f66806b48778955b29a7ea711b625375a9dba6c719b173e"
+  }
+ ],
+ "explanation": {
+  "claims": []
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [],
+  "dropped": []
+ }
+}

@@ -1,0 +1,250 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "92e72066d066cab6be1a533061c32356ce4adf99e57008302c9f462caa1f4a8c",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "8b8cb2907cc346c011c07f33cb1b51a7d006ec92f11566a70cdb09deb011abb3"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "c91d59fb57562c28d81d73f0326998d058f698be3d767c8b04aa74d7d6a04912",
+   "descendant": "c91d59fb57562c28d81d73f0326998d058f698be3d767c8b04aa74d7d6a04912"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "eb25c97ca973e1c62a6be4b4acb6851c7d2be7508a48d8bc50537437735c0557",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "01222286c43e6d86eec2d7554ec911ac80cd6ddda70b99d2be98a2302d1968fb"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "69f82cd4d9630e47595f0a3f426bb357ec2e1819f76479c08209a8be45028285",
+   "descendant": "69f82cd4d9630e47595f0a3f426bb357ec2e1819f76479c08209a8be45028285"
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": "33ad01760e622701f308de0275b2de7978b52d90dbc448ef32a7373fe52db0a0",
+   "descendant": null
+  },
+  {
+   "id": "s7",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "2a72cd311d1a8ec46598dd5ee9c593470ad508c722bcdb0c47d7c500901c3392"
+  },
+  {
+   "id": "s8",
+   "kind": "copied",
+   "origin": "282eec21031a9a797a64379c15e1f7b59a273e2a94af19ca50d70b625741e85a",
+   "descendant": "282eec21031a9a797a64379c15e1f7b59a273e2a94af19ca50d70b625741e85a"
+  },
+  {
+   "id": "s9",
+   "kind": "paraphrased",
+   "origin": "9285a0bee85a38c958051d978ad2d8ca7059d54bfb4f14672a002618bf701894",
+   "descendant": "c844be054e1c536b21ee1da4031c691169fc192d7af76c7b32176b164e9c80ee"
+  },
+  {
+   "id": "s10",
+   "kind": "unmatched",
+   "origin": "5ce23fecefb0e5b28eaff28e8a0717fa98a7da7dcd93ac760f1eb5380dbb02fa",
+   "descendant": null
+  },
+  {
+   "id": "s11",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "00e47298670729a948ec119892ff905a5ad8e499e5652aa9498f987ffa6ee7d8"
+  },
+  {
+   "id": "s12",
+   "kind": "copied",
+   "origin": "d3f53e6887dc2c5ccf2b5f57637ba50515b974623d67b23e877377521c1b66cd",
+   "descendant": "d3f53e6887dc2c5ccf2b5f57637ba50515b974623d67b23e877377521c1b66cd"
+  },
+  {
+   "id": "s13",
+   "kind": "paraphrased",
+   "origin": "3ed146317119224cc27a41da7c409333a445fb2483e8f85b76ba68715b34605f",
+   "descendant": "9c92ff24faa7d833fcbee8e638af42f0aacf08508e44dce1abc8c24d95106ee0"
+  },
+  {
+   "id": "s14",
+   "kind": "copied",
+   "origin": "3ed44d285fd5c8c075a7c9c67dbb391f054f1508d208f065cf523a36f38c0f77",
+   "descendant": "3ed44d285fd5c8c075a7c9c67dbb391f054f1508d208f065cf523a36f38c0f77"
+  },
+  {
+   "id": "s15",
+   "kind": "unmatched",
+   "origin": "de7d1b721a1e0632b7cf04edf5032c8ecffa9f9a08492152b926f1a5a7e765d7",
+   "descendant": null
+  },
+  {
+   "id": "s16",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "c41fc01a63aa0b1966fd1a4cc62c6c87571b0f217a33a098c698e949197b78e2"
+  },
+  {
+   "id": "s17",
+   "kind": "copied",
+   "origin": "bab4cc7a246330218df0a80483190ffd74963dcc7a1f7c90e9593025e2f1df67",
+   "descendant": "bab4cc7a246330218df0a80483190ffd74963dcc7a1f7c90e9593025e2f1df67"
+  },
+  {
+   "id": "s18",
+   "kind": "unmatched",
+   "origin": "7a32990cd7049f30697ec2cb34c229e41d4f695469c9a2c5d82ce3cce43036f8",
+   "descendant": null
+  },
+  {
+   "id": "s19",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+  },
+  {
+   "id": "s20",
+   "kind": "copied",
+   "origin": "4031417207e504db88f444b8beace9dd6fbd2cd12558fca7f726c0b1f0862e31",
+   "descendant": "4031417207e504db88f444b8beace9dd6fbd2cd12558fca7f726c0b1f0862e31"
+  },
+  {
+   "id": "s21",
+   "kind": "paraphrased",
+   "origin": "8272fb87fc70b75bad54a78a32a32bdb84f2afbe3433b7927137ca0c342eea74",
+   "descendant": "40168669f7024b97a26aaaa18d0f4210561f25f785aabd76381c4c85becc008d"
+  },
+  {
+   "id": "s22",
+   "kind": "unmatched",
+   "origin": "a9c8d38e370b91e9964e877108b9b226b32a04886cda858b6214f732cdc661c9",
+   "descendant": null
+  },
+  {
+   "id": "s23",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+  },
+  {
+   "id": "s24",
+   "kind": "copied",
+   "origin": "3529c7f1dad87b1f4cbea74b6284b898da05f7cb742a0c7e6f34453796b4f60e",
+   "descendant": "3529c7f1dad87b1f4cbea74b6284b898da05f7cb742a0c7e6f34453796b4f60e"
+  },
+  {
+   "id": "s25",
+   "kind": "paraphrased",
+   "origin": "ce3d4faa2ba4fd01ddbf2b3b06004351a86480c97819d57a38dc8013282613ef",
+   "descendant": "7ff4264c1beac99bd6159a8f1cbf21fcf44ae75a8d3543d00fcc4801ab375ef4"
+  },
+  {
+   "id": "s26",
+   "kind": "unmatched",
+   "origin": "564fc3ec46b96d2322a87dd4273ae23a2e5fe0ddd11a4db3230f94eed6da48b2",
+   "descendant": null
+  },
+  {
+   "id": "s27",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "d0f128c35c73b986b8d7e4a0b80721e8c609ae7244a9d1622c1fb7de9654407f"
+  },
+  {
+   "id": "s28",
+   "kind": "copied",
+   "origin": "d273b940872a938238b6c388c5409b61ad508f14ff9a1de0a4d10e096608a00b",
+   "descendant": "d273b940872a938238b6c388c5409b61ad508f14ff9a1de0a4d10e096608a00b"
+  },
+  {
+   "id": "s29",
+   "kind": "unmatched",
+   "origin": "098b97b24108605c6e6b29482a96ba535b6c58fa6baa724bf12a32068434765a",
+   "descendant": null
+  },
+  {
+   "id": "s30",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "008e1076d9a6c63efdfd1bd294468d4c4978c836cf2727e2a260da0c41b3ee47"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin requires commercial entities to use reasonable age verification before granting access to websites with a substantial portion of harmful material; the descendant lacks this.",
+    "origin_span_ids": [
+     "s29"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin sets liability, damages, a fine of up to $10,000 per violation, data-retention limits, and exemptions for news, cloud and internet service providers; the descendant has none of these.",
+    "origin_span_ids": [
+     "s29"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant defines content harmful to minors as a performance meeting all three prongs; the origin applies the definition to material meeting any one prong.",
+    "origin_span_ids": [
+     "s3",
+     "s6",
+     "s10",
+     "s22",
+     "s26"
+    ],
+    "descendant_span_ids": [
+     "s4",
+     "s7",
+     "s11",
+     "s27"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant defines \"adult performance\", listing topless, go-go and exotic dancers, strippers, male or female impersonators and sexual performers, and defines \"obscene\" by cross-reference.",
+    "origin_span_ids": [
+     "s0"
+    ],
+    "descendant_span_ids": [
+     "s1",
+     "s30"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ }
+}

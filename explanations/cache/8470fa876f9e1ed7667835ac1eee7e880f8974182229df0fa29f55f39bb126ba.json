@@ -1,0 +1,112 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "29ff0d33a821c2be88e200e9eba6dd6ed173ffe0977ba8749bd6522deacca95b",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "50203aaa751eb4201699f5bad1cc2a9561ba2eb6dae3877b21f198ed29e5eaea"
+  },
+  {
+   "id": "s2",
+   "kind": "paraphrased",
+   "origin": "55952ece0cde1aa10662028984f98e39382dcabeae2fe3c091277b6e726be78e",
+   "descendant": "d512f8526665148c95f2b2b63bbcb4f0eb7f158f3b077ad37358611e6357fabd"
+  },
+  {
+   "id": "s3",
+   "kind": "copied",
+   "origin": "405c063d9650c190fbebc30f2894681743e144c8a36a65d931af12d1114bb2de",
+   "descendant": "405c063d9650c190fbebc30f2894681743e144c8a36a65d931af12d1114bb2de"
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": "1f81190d2aff40645bc01ffc66268d9afe45db6d1645ba3d79f62adf6077dbfa",
+   "descendant": null
+  },
+  {
+   "id": "s5",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "a69d01d031fe7cad486d7699ab4d8d5594f63c974c4d5496a764988bd8dea9d2"
+  },
+  {
+   "id": "s6",
+   "kind": "copied",
+   "origin": "93ac4d1cca2bd3d65aa7a218b08b1b6ccc173d966f80ab8edba6035c1a4d854c",
+   "descendant": "93ac4d1cca2bd3d65aa7a218b08b1b6ccc173d966f80ab8edba6035c1a4d854c"
+  },
+  {
+   "id": "s7",
+   "kind": "unmatched",
+   "origin": "4e242920fe1cba91552017fadbf2c8f3959963804007a03a576e3ded3c8ab52a",
+   "descendant": null
+  },
+  {
+   "id": "s8",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "7174840b90900903527efa7301efe08f7fea816dddd7147e239add2d07f05f5b"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin assigns liability for electioneering communications to the sponsor, not the disseminating medium, except where the medium removes a disclosure or alters content into synthetic media.",
+    "origin_span_ids": [
+     "s0"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant, titled \"The Taylor Swift Act,\" defines consent, depicted individual, digital depiction, intimate digital depiction and sexually explicit conduct.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1",
+     "s5"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant lets a depicted individual sue over nonconsensual disclosure of an intimate digital depiction, with damages, $150,000 liquidated damages, injunctions and exceptions.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s5"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The origin bars treating interactive computer services as publishers except as stated; the descendant shields them for good-faith actions restricting access to intimate depictions.",
+    "origin_span_ids": [
+     "s0",
+     "s4",
+     "s7"
+    ],
+    "descendant_span_ids": [
+     "s8",
+     "s2"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ }
+}

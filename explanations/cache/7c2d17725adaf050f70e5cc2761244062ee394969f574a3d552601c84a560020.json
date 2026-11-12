@@ -1,0 +1,112 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "29ff0d33a821c2be88e200e9eba6dd6ed173ffe0977ba8749bd6522deacca95b",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "aa23ae44093abb67fcfdebbbf78d2dd55ad7b0c4fa2d46b387b8e21020d78d37"
+  },
+  {
+   "id": "s2",
+   "kind": "paraphrased",
+   "origin": "55952ece0cde1aa10662028984f98e39382dcabeae2fe3c091277b6e726be78e",
+   "descendant": "5d96e3a0b4b6279ec87d27bdda56bb0301b06f0ec394972018a1f95f40b39ae7"
+  },
+  {
+   "id": "s3",
+   "kind": "copied",
+   "origin": "405c063d9650c190fbebc30f2894681743e144c8a36a65d931af12d1114bb2de",
+   "descendant": "405c063d9650c190fbebc30f2894681743e144c8a36a65d931af12d1114bb2de"
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": "1f81190d2aff40645bc01ffc66268d9afe45db6d1645ba3d79f62adf6077dbfa",
+   "descendant": null
+  },
+  {
+   "id": "s5",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "07b2d973bf17e6659933c15ff0020af5c7b4d865d29fe4e3278bcde019fc4d45"
+  },
+  {
+   "id": "s6",
+   "kind": "copied",
+   "origin": "93ac4d1cca2bd3d65aa7a218b08b1b6ccc173d966f80ab8edba6035c1a4d854c",
+   "descendant": "93ac4d1cca2bd3d65aa7a218b08b1b6ccc173d966f80ab8edba6035c1a4d854c"
+  },
+  {
+   "id": "s7",
+   "kind": "unmatched",
+   "origin": "4e242920fe1cba91552017fadbf2c8f3959963804007a03a576e3ded3c8ab52a",
+   "descendant": null
+  },
+  {
+   "id": "s8",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "0cad04070f8e0972d2c6bcc38a708c7a4841811af08849a860ed70e1f4d4bbf8"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin assigns liability for electioneering-communication actions to the sponsor, making a medium liable only if it strips disclosures or alters content into synthetic media.",
+    "origin_span_ids": [
+     "s0"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant creates a crime of disclosing, or threatening to disclose, a digital depiction of a minor or an intimate digital depiction with harmful intent or knowledge.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s5"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant defines depicted individual, digital depiction, intimate digital depiction and sexually explicit conduct, and makes violations class E or class C felonies.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1",
+     "s5"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The origin bars treating interactive computer services as publishers of others' content; the descendant shields them for good-faith actions restricting access to depictions.",
+    "origin_span_ids": [
+     "s0",
+     "s4",
+     "s7"
+    ],
+    "descendant_span_ids": [
+     "s8",
+     "s2"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ }
+}

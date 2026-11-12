@@ -117,6 +117,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   explanations.py the model's reply schema (Pydantic) and the span-grounding check, on spans hashed so CI can run it
   explain.py      `lineage explain`: the prompt from aligned spans, the SDK call, retry and withholding, the cache, and the cache's check
   faithfulness.py `lineage eval faithfulness`: a model judges each kept claim against its cited spans, verdicts cached without text, the Wilson share
+  structured.py   one structured-output request: the schema sent without the bounds the API ignores, the reply validated in code, every reply metered
   spend.py        M6's model calls metered against their $30 cap, projected before a run and checked before each call -> reports/explanation_spend.json
   stoplist.py     document-frequency stoplist and its report
   state_boilerplate.py  `lineage state-boilerplate`: a section flagged as its state's boilerplate by the other families it reaches; precision with the flag on, and the dropped pairs' sample

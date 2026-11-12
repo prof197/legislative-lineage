@@ -1,0 +1,76 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "a054cf5964a767c096285a0de0d01d5eafc288b8a8b4abc86929fc1fb91c0d48",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "ddf0888477c83f679153ba9451a46c11be9b4e224c5615d3eed3f6a8896a667b"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "3bd7f0bdac4c35d0f13e28b27639d2b7ef25682ae6676228c9a01e58bc143ea8",
+   "descendant": "3bd7f0bdac4c35d0f13e28b27639d2b7ef25682ae6676228c9a01e58bc143ea8"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "59d79850dbb9d4464cc6a324e8d118c80ed33d6413df8ba5ae3439c7977a553d"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin assigns liability for electioneering communications to the sponsor, not the disseminating medium, except when the medium strips disclosures or alters content into synthetic media.",
+    "origin_span_ids": [
+     "s0"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin states that no interactive computer service provider or user is treated as publisher or speaker of another's content, except as allowed under its liability subsection.",
+    "origin_span_ids": [
+     "s0"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant defines consent, coerced consent (fraud, duress, incapacity, exploiting immigration status, etc.), computer, covered platform, and covered platform operator.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant defines intimate visual depiction, pornographic image, sexually explicit conduct, user, and visual depiction, focused on platforms hosting pornographic images.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s3"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ }
+}

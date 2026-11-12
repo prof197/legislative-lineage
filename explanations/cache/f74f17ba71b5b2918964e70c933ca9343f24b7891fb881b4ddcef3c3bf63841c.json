@@ -1,0 +1,110 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "ccd6ad5ef4e528307b3371f92ec89f2d902f515950e43442ce5f92c07a4c939d",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "36f1791d2e15eb527e08286dc12ccb89177d4cec6ce9f5942047865c0926cddb"
+  },
+  {
+   "id": "s2",
+   "kind": "paraphrased",
+   "origin": "da7e2d4b40b63f98e9fc566d7b5145da923c16c638a22c9f1885bf030e4dc72a",
+   "descendant": "da7e2d4b40b63f98e9fc566d7b5145da923c16c638a22c9f1885bf030e4dc72a"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "copied",
+   "origin": "1df543536d232a744faccaba53e471e71ce941fcaaf7fd0cb2918b0a26577289",
+   "descendant": "1df543536d232a744faccaba53e471e71ce941fcaaf7fd0cb2918b0a26577289"
+  },
+  {
+   "id": "s5",
+   "kind": "unmatched",
+   "origin": "6d5d287a3d1749b01e95949e22684ad6ad119c774d852a4f1f2a2b8df96d79af",
+   "descendant": null
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "1c6b34f2132ee60c52459a0fd2999dd67ff197d8528701c1edddf22fc94b6a62"
+  },
+  {
+   "id": "s7",
+   "kind": "copied",
+   "origin": "0b7b7b09bec9858fc34256396f9c296f15d109e3d485104654e9f3eeae5a1f41",
+   "descendant": "0b7b7b09bec9858fc34256396f9c296f15d109e3d485104654e9f3eeae5a1f41"
+  },
+  {
+   "id": "s8",
+   "kind": "unmatched",
+   "origin": "47482cc3da3bd16eb7fbd5a0644dac50998573d457e5992727320e72e945bbc2",
+   "descendant": null
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "5ce1969b2ff891bda6985020e07b952f566aa914eca6a04d8fb10dc3fc25412b"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "changed",
+    "summary": "The descendant requires the appeal to be filed within 10 days after entry of the order; the origin allows 21 days after the day the order is entered.",
+    "origin_span_ids": [
+     "s8"
+    ],
+    "descendant_span_ids": [
+     "s9"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant cross-references § 6003 of its title for the underlying motion; the origin cross-references Section 78B-25-103.",
+    "origin_span_ids": [
+     "s5"
+    ],
+    "descendant_span_ids": [
+     "s6"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The origin splits the section into numbered subsections (1) and (2) and says the appeal \"shall\" be filed; the descendant is one unnumbered paragraph using \"must\".",
+    "origin_span_ids": [
+     "s3",
+     "s5"
+    ],
+    "descendant_span_ids": [
+     "s6"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2
+  ],
+  "dropped": []
+ }
+}

@@ -1,0 +1,220 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "a3a607c912cfae58ca266d2498f53bcd0569555a2e5c162320dd23ac9ec2276f",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "5da166f0def72b1135b9b96ac92bbe7485eb1fd37215ed162089791815178422"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "3c819f036795c1a63e408d4fb13b6124ee7c9e6a20c4a34ed28e56df309a392b",
+   "descendant": "3c819f036795c1a63e408d4fb13b6124ee7c9e6a20c4a34ed28e56df309a392b"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb"
+  },
+  {
+   "id": "s4",
+   "kind": "paraphrased",
+   "origin": "5ee7e02587cd0745d52915f56b9ec00d3cd6a2909b3d9271afa85ec961a4c569",
+   "descendant": "56ecc7c86b274d5e6d403648dcf01f2c8d91ddfecf98a45ea838f2718bb07e45"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "608b73399f2892e16082f36d96c9947f6bfb9ace124feb2996315c9aa5112432",
+   "descendant": "608b73399f2892e16082f36d96c9947f6bfb9ace124feb2996315c9aa5112432"
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d"
+  },
+  {
+   "id": "s7",
+   "kind": "copied",
+   "origin": "cb19c82a4d51e37f7e8bfed976745f184996ac94f04382b34f0f243683e47cb1",
+   "descendant": "cb19c82a4d51e37f7e8bfed976745f184996ac94f04382b34f0f243683e47cb1"
+  },
+  {
+   "id": "s8",
+   "kind": "unmatched",
+   "origin": "35d4472ce7595df30e78016767de69bec3eb9c7627add84614bdb0d8d459b4f3",
+   "descendant": null
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "09341fbcb8e0a030d478423e7a88c3b15ee4522c6fae521ffab2f571d25c36f9"
+  },
+  {
+   "id": "s10",
+   "kind": "copied",
+   "origin": "0ce1116e80a67a918d3be0a50c23a56b6d0aa26f003a3526a8a76c10fb290a8b",
+   "descendant": "0ce1116e80a67a918d3be0a50c23a56b6d0aa26f003a3526a8a76c10fb290a8b"
+  },
+  {
+   "id": "s11",
+   "kind": "paraphrased",
+   "origin": "39bcae4f93d4e3fcd034f146c6c54d1067221e6f83fe672170f96b86e0ef76d7",
+   "descendant": "55ac0b9a6376d6edabb6ff3fcf9638dcb80856c792fccccc9b622088e7e5e98b"
+  },
+  {
+   "id": "s12",
+   "kind": "copied",
+   "origin": "c2d5440867d7fb59b420b9c86ccfd81e1d2987a93744e16b900c2b5eaadd29cc",
+   "descendant": "c2d5440867d7fb59b420b9c86ccfd81e1d2987a93744e16b900c2b5eaadd29cc"
+  },
+  {
+   "id": "s13",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb"
+  },
+  {
+   "id": "s14",
+   "kind": "copied",
+   "origin": "185252dae45c402f4d713a2b0baba87abf0aacd3835267b4e2de2775feab32e6",
+   "descendant": "185252dae45c402f4d713a2b0baba87abf0aacd3835267b4e2de2775feab32e6"
+  },
+  {
+   "id": "s15",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d"
+  },
+  {
+   "id": "s16",
+   "kind": "copied",
+   "origin": "4d2483afaa49d76149e3594c5f011e4685abd463a972c371f185933864ed9aae",
+   "descendant": "4d2483afaa49d76149e3594c5f011e4685abd463a972c371f185933864ed9aae"
+  },
+  {
+   "id": "s17",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6"
+  },
+  {
+   "id": "s18",
+   "kind": "copied",
+   "origin": "4a3f1f23847e44d29a20958eb7e21401db97277861c96e549f1db7adbde3f296",
+   "descendant": "4a3f1f23847e44d29a20958eb7e21401db97277861c96e549f1db7adbde3f296"
+  },
+  {
+   "id": "s19",
+   "kind": "unmatched",
+   "origin": "39bcae4f93d4e3fcd034f146c6c54d1067221e6f83fe672170f96b86e0ef76d7",
+   "descendant": null
+  },
+  {
+   "id": "s20",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "55ac0b9a6376d6edabb6ff3fcf9638dcb80856c792fccccc9b622088e7e5e98b"
+  },
+  {
+   "id": "s21",
+   "kind": "copied",
+   "origin": "c3397848b9ea4c3604b27e8326ec2dc7b956fe189c0985b6e3d384083d87a0be",
+   "descendant": "c3397848b9ea4c3604b27e8326ec2dc7b956fe189c0985b6e3d384083d87a0be"
+  },
+  {
+   "id": "s22",
+   "kind": "unmatched",
+   "origin": "f1acaf7d2e09cecc05f33ce6110e978532e2f4eb94793a36259928e400568ecf",
+   "descendant": null
+  },
+  {
+   "id": "s23",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "5d9a489fbb28ff59628063a708aeea0c18b84259ca2c12bcbd01fa7399da3b8b"
+  },
+  {
+   "id": "s24",
+   "kind": "copied",
+   "origin": "c045e3d8e670eb23a8c863ef2104eca8e7102d9d3896a392e26fa511ca4b9b8a",
+   "descendant": "c045e3d8e670eb23a8c863ef2104eca8e7102d9d3896a392e26fa511ca4b9b8a"
+  },
+  {
+   "id": "s25",
+   "kind": "unmatched",
+   "origin": "9ccb0194b178b0a8a4f78069cdf504bf405bb6f9769650ce4a44b1338d4b3d9f",
+   "descendant": null
+  },
+  {
+   "id": "s26",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "6f6a526857a2716d2abb36bb69c13f4f6e87f1a9e79ae080507d426b4422c2c0"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin includes definitions (account holder, educational entity, minor, post, social media platform, user) and exclusions for email and adult-only services; the descendant lacks these.",
+    "origin_span_ids": [
+     "s0"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin lists many further exclusions (photo editing, cloud storage, teleconferencing, payments, educational and career services, etc.) and a 'user' definition; the descendant lacks them.",
+    "origin_span_ids": [
+     "s25"
+    ],
+    "descendant_span_ids": [
+     "s26"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant includes a provision on communications that are shared only between sender and recipient, visible only to them, and not posted publicly; the origin has no such text.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant's streaming exclusion covers 'licensed media' without the origin's 'not user generated' limit; its news exclusion covers functions 'dependent upon' content, not 'indirectly related.'",
+    "origin_span_ids": [
+     "s4",
+     "s8"
+    ],
+    "descendant_span_ids": [
+     "s4",
+     "s9"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ }
+}

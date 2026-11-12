@@ -1,0 +1,143 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "6ff6f7ac6baed1c7d65cbd9e7242ec4aed6cbd08ff782998c727c7e49d7e6fbf",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "a2a947bf18ba8706c9f188c8e686eb0d963e6b95a65c8c7a10fc0b78af673695"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "4a4645526282da74681c103bbee8701effa7cbea26030a7cc20814b49197648c",
+   "descendant": "4a4645526282da74681c103bbee8701effa7cbea26030a7cc20814b49197648c"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "b9776d7ddf459c9ad5b0e1d6ac61e27befb5e99fd62446677600d7cacef544d0"
+  },
+  {
+   "id": "s4",
+   "kind": "copied",
+   "origin": "1b3735a3b42ddfdb78c65f523d2ca3251fac5b7ba4c1a7612f1c25b8e3e31548",
+   "descendant": "1b3735a3b42ddfdb78c65f523d2ca3251fac5b7ba4c1a7612f1c25b8e3e31548"
+  },
+  {
+   "id": "s5",
+   "kind": "unmatched",
+   "origin": "75371f5a57ca5232c85c1858415de4b06f5c9e4bc879404e348748c273540986",
+   "descendant": null
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "1b5b9a112bd05ec4f7a3a3db945bcf6df6a343ef60fc0e5fb57375f8c7d3fee0"
+  },
+  {
+   "id": "s7",
+   "kind": "copied",
+   "origin": "62114ee539292d1b39a2af5d8a5bd7622ba336b4f3ba9843de58b67881ace6fd",
+   "descendant": "62114ee539292d1b39a2af5d8a5bd7622ba336b4f3ba9843de58b67881ace6fd"
+  },
+  {
+   "id": "s8",
+   "kind": "unmatched",
+   "origin": "b4810dcdc9ff777e1e7e8d43bf86f8ec6b6f38f9767b3d8df5eb82593421ae5b",
+   "descendant": null
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "b987ecd1db1728429e17b58cae036bfa1df55444d4043cf591760897c8560c28"
+  },
+  {
+   "id": "s10",
+   "kind": "copied",
+   "origin": "607a18e6623782e723c10249e95069c25b0d227132b8f8da587ada30bd83f9a5",
+   "descendant": "607a18e6623782e723c10249e95069c25b0d227132b8f8da587ada30bd83f9a5"
+  },
+  {
+   "id": "s11",
+   "kind": "unmatched",
+   "origin": "fe52aa0518510db462f4c8d39f42f1531927afed6d789388aef093375fa5cf8c",
+   "descendant": null
+  },
+  {
+   "id": "s12",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "07ca1edae5af5229f1d7548fbd95723b86dde744496d834960c100d428af3065"
+  },
+  {
+   "id": "s13",
+   "kind": "copied",
+   "origin": "8a79e9982a924c81ddb59d648a828978b8ceee42db15d0287d40f68c52ac62bb",
+   "descendant": "8a79e9982a924c81ddb59d648a828978b8ceee42db15d0287d40f68c52ac62bb"
+  },
+  {
+   "id": "s14",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "178ce41ca92989c9d82418658de2a7f9ef0d58444efdd330ab9151a2caf3af91"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "changed",
+    "summary": "The descendant protects rights guaranteed by the Montana constitution; the origin refers to the Utah Constitution.",
+    "origin_span_ids": [
+     "s5"
+    ],
+    "descendant_span_ids": [
+     "s6"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant refers to a \"claim for relief\" and to sections 1 through 12; the origin refers to a \"cause of action\" and to \"this chapter.\"",
+    "origin_span_ids": [
+     "s0",
+     "s8",
+     "s11"
+    ],
+    "descendant_span_ids": [
+     "s1",
+     "s9",
+     "s12"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant places the definitions of goods or services, governmental unit, and person in a final subsection (3); the origin places the same definitions in its opening subsection (1).",
+    "origin_span_ids": [
+     "s0"
+    ],
+    "descendant_span_ids": [
+     "s14"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2
+  ],
+  "dropped": []
+ }
+}

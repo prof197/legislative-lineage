@@ -1,0 +1,174 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "f81e0f7099ca86566c292b1e1a9740a54fe115bc093ff6e18e785d370b5e8686",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "d493e2725faf5f1b4d4ba3a4b7a424db393b164b645088ed3842b3368afaf1f0"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "f9c1b1c3a39922daf407f565c35b6c95073b880a5b28a4930d3b96d5e417ab9b",
+   "descendant": "f9c1b1c3a39922daf407f565c35b6c95073b880a5b28a4930d3b96d5e417ab9b"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "dfae50b141c07b6ee9a41cc1199e5ef079b8817f488bf2925ae3ec8dc27f73e9",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "43dd12cd7193f4e23003484441cdf8749cdc07f09e1771a1336bcd88bb93f542"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "e617eb1663fa2a1033a2ea2ba121263db5c22c63518c2ad5728f120f133b880a",
+   "descendant": "e617eb1663fa2a1033a2ea2ba121263db5c22c63518c2ad5728f120f133b880a"
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": "003833cb1291f14407fb927e9c3ff18006b4afcdd49c3e199684663c93d2789a",
+   "descendant": null
+  },
+  {
+   "id": "s7",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "56ee5b508706bf2de91712d85d6d1e11ddbff01949142ed6e8c22e3b1bed1c71"
+  },
+  {
+   "id": "s8",
+   "kind": "copied",
+   "origin": "86a35a553bf5f3fdd6f28e4e7859c7db2a53403e27bd170be18fb6cff6afd0ac",
+   "descendant": "86a35a553bf5f3fdd6f28e4e7859c7db2a53403e27bd170be18fb6cff6afd0ac"
+  },
+  {
+   "id": "s9",
+   "kind": "paraphrased",
+   "origin": "e6b9a696615f80777786d0db61189cf2dc122b4283edd90a87ea0a06987416d0",
+   "descendant": "d75faeea8610d79f83b3f03993d66e9ac801788dbbb8b2264b3ffd5db9a16ea1"
+  },
+  {
+   "id": "s10",
+   "kind": "copied",
+   "origin": "ea687c9dfae03ed5a7624225e15096e21913e9df3e2425423b3dd4cec78d009e",
+   "descendant": "ea687c9dfae03ed5a7624225e15096e21913e9df3e2425423b3dd4cec78d009e"
+  },
+  {
+   "id": "s11",
+   "kind": "unmatched",
+   "origin": "0cab1c9617404faf2b24e221e189ca5945813e14d3f766345b09ca13bbe28ffc",
+   "descendant": null
+  },
+  {
+   "id": "s12",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "06afd3e27ab99434fbd9922e68e64a5cfe09c97a03f00995185252b43791e226"
+  },
+  {
+   "id": "s13",
+   "kind": "paraphrased",
+   "origin": "6d062f9c8c48d33b791983181e9f1ae3dc64eacf6c8d50f2470fe501571a80dd",
+   "descendant": "4504ba74ef832e57523e9e7d86d667002ac06a6ed1f7044727dbb399f585d89a"
+  },
+  {
+   "id": "s14",
+   "kind": "copied",
+   "origin": "ff147956d4321b77486bc539d4292acfbbaf9b5cc46305eea15b8ac53e50bbfa",
+   "descendant": "ff147956d4321b77486bc539d4292acfbbaf9b5cc46305eea15b8ac53e50bbfa"
+  },
+  {
+   "id": "s15",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "6201111b83a0cb5b0922cb37cc442b9a40e24e3b1ce100a4bb204f4c63fd2ac0"
+  },
+  {
+   "id": "s16",
+   "kind": "copied",
+   "origin": "02c9f036d4863fd3298d85f8b708a108c65a26260ef305752b7b7a6df1f30727",
+   "descendant": "02c9f036d4863fd3298d85f8b708a108c65a26260ef305752b7b7a6df1f30727"
+  },
+  {
+   "id": "s17",
+   "kind": "unmatched",
+   "origin": "68944e723051aa5a90d720b1edd518c6e95bd039e9c4c213d840d9a45a2a8e7b",
+   "descendant": null
+  },
+  {
+   "id": "s18",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "cf9718dde3f59067bcf7a9ee4bd11df9edb10de980da62d13e82f7154427486b"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "changed",
+    "summary": "The descendant defines \"generative artificial intelligence\"; the origin defines \"synthetic media\" as intentionally manipulated realistic but false images, audio, or video of an individual.",
+    "origin_span_ids": [
+     "s0",
+     "s3"
+    ],
+    "descendant_span_ids": [
+     "s1",
+     "s4"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant requires covered political ads by candidates, committees, or parties to include an AI disclosure; in the origin, a \"manipulated\" disclosure is only an affirmative defense to suit.",
+    "origin_span_ids": [
+     "s3"
+    ],
+    "descendant_span_ids": [
+     "s1",
+     "s4"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin requires visual disclosure text no smaller than other text, audio disclosures repeated every two minutes, a clear and convincing evidence burden, and expedited court handling.",
+    "origin_span_ids": [
+     "s6",
+     "s17"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant exempts bona fide news broadcasts, paid broadcasters acting in good faith, news publications with clear statements, and satire or parody.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s18"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ }
+}

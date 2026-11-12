@@ -1,0 +1,151 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "d3fdc10688227667106a1a00e6ecc5ac000b844c31ed15a06c3a4f4cd47c449b",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "c7ea1e33d039bf3d20b2be56824bf8172f55df187e33e2df3af6f5533243d2fd"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "68743b0c0d39d411e80f0930160751749ddda45a35b526af4e24bb1f31ea23a4",
+   "descendant": "68743b0c0d39d411e80f0930160751749ddda45a35b526af4e24bb1f31ea23a4"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "643b68859810d74fb3192434cc3004f890287a7f2d1605348b5fee9f24551f57",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "copied",
+   "origin": "699bfd75902728afb8fadf04429483b6027a9d728160678bdc5a7a61a9045ef0",
+   "descendant": "699bfd75902728afb8fadf04429483b6027a9d728160678bdc5a7a61a9045ef0"
+  },
+  {
+   "id": "s5",
+   "kind": "unmatched",
+   "origin": "dd1b3c312cf7d816130354452e9629ce39355b0c534129dd26a08cd9a4502ede",
+   "descendant": null
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "5d08b02d678fc068788ca5ade565148e494083821ac8d1bce4c3fba092bc634e"
+  },
+  {
+   "id": "s7",
+   "kind": "copied",
+   "origin": "0235633618c25fd72d28fcf02d0f931bd5e7516bcd9313dbe45589d484e80421",
+   "descendant": "0235633618c25fd72d28fcf02d0f931bd5e7516bcd9313dbe45589d484e80421"
+  },
+  {
+   "id": "s8",
+   "kind": "unmatched",
+   "origin": "5c949c8daea8e89ac7e279cfd7f350f6dda565dfd06b6581a20ea8eaa5af9490",
+   "descendant": null
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "3bd61a8361a72b30b3e14e624da6214267c3c0bcaf856ebc7c47ffabe414effd"
+  },
+  {
+   "id": "s10",
+   "kind": "copied",
+   "origin": "1d319ce1b8ae4cc3afd8f29058465c12715e815e1eeee69d37b745425a686682",
+   "descendant": "1d319ce1b8ae4cc3afd8f29058465c12715e815e1eeee69d37b745425a686682"
+  },
+  {
+   "id": "s11",
+   "kind": "unmatched",
+   "origin": "f63922f4139c9030c5f6ffb1eedcce660b44d5691d427ab9957f2a82f6c4c013",
+   "descendant": null
+  },
+  {
+   "id": "s12",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "1272dcc42dbfeb2af89e74602906819ed69e7e47a712a8a11f67aa98b4136b43"
+  },
+  {
+   "id": "s13",
+   "kind": "copied",
+   "origin": "ebfda05e9e6481f5b38db06272f5668705ef050a2577285f401b134d63ed6b17",
+   "descendant": "ebfda05e9e6481f5b38db06272f5668705ef050a2577285f401b134d63ed6b17"
+  },
+  {
+   "id": "s14",
+   "kind": "unmatched",
+   "origin": "fe52aa0518510db462f4c8d39f42f1531927afed6d789388aef093375fa5cf8c",
+   "descendant": null
+  },
+  {
+   "id": "s15",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "41d22277acbe96d50d76a2033b297c6738ae1c836d54327ce3bb16e351df9791"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "changed",
+    "summary": "The descendant applies the motion to a pleading asserting a \"civil action\" and lets the movant dismiss the civil action or part of it; the origin uses \"cause of action\" throughout.",
+    "origin_span_ids": [
+     "s8",
+     "s11",
+     "s14"
+    ],
+    "descendant_span_ids": [
+     "s9",
+     "s12",
+     "s15"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant lists a \"third-party complaint\" among triggering pleadings; the origin lists a \"third-party claim.\"",
+    "origin_span_ids": [
+     "s5"
+    ],
+    "descendant_span_ids": [
+     "s6"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant refers to scope as \"[sections 1 through 12]\" and is labeled New Section 3; the origin refers to \"this chapter\" and is numbered 78B-25-103.",
+    "origin_span_ids": [
+     "s0",
+     "s8"
+    ],
+    "descendant_span_ids": [
+     "s1",
+     "s9"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2
+  ],
+  "dropped": []
+ }
+}

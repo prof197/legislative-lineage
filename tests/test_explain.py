@@ -280,3 +280,19 @@ def test_the_projection_counts_every_retry_at_the_reply_limit() -> None:
 
     assert projected_cost([spans, spans]) == pytest.approx(2 * projected_cost([spans]))
     assert projected_cost([spans]) > 2 * 4096 * 20 / 1e6
+
+
+def test_the_retry_says_why_the_first_reply_was_unusable_and_the_cache_keeps_it(
+    tmp_path: Path,
+) -> None:
+    calls, ask = scripted(
+        UnusableReplyError("off the schema: claims.0.summary: too long"),
+        ChangeExplanation(claims=[_claim("s2")]),
+    )
+
+    _explain(ask, tmp_path)
+
+    assert "could not be used: off the schema: claims.0.summary: too long" in calls[1][1]
+    assert calls[1][1].startswith(calls[0][1])
+    [entry] = [json.loads(p.read_text()) for p in tmp_path.glob("*.json")]
+    assert entry["unusable_attempts"] == ["off the schema: claims.0.summary: too long"]

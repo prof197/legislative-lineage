@@ -1,0 +1,68 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "304276de376d6a112c6df78a7d5592df5992b523132a777b768730929b4b1fa5",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "53ad1f9ad564a770f05e7b8b2c52fa00be920d956b769d8a00f40018c6fe601c"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "0c0de50954e3bac4da38e6999257e2e78ecb09e093105e57fc887f4ef2ec1289",
+   "descendant": "0c0de50954e3bac4da38e6999257e2e78ecb09e093105e57fc887f4ef2ec1289"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "879bc6c973a1219524f79945b23994a4227ef182f05cf78ab18d1d9bc8f3d75f",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "b4bdcee1211a42facb6c94c3fa9dd0aa1a422264eedf48e5d504f4748c151359"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "changed",
+    "summary": "The descendant protects rights guaranteed by the U.S. constitution and the Idaho constitution; the origin protects rights guaranteed by the U.S. Constitution or the Utah Constitution.",
+    "origin_span_ids": [
+     "s3"
+    ],
+    "descendant_span_ids": [
+     "s4"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant is numbered section 6-3911; the origin is numbered 78B-25-111.",
+    "origin_span_ids": [
+     "s0"
+    ],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1
+  ],
+  "dropped": []
+ }
+}

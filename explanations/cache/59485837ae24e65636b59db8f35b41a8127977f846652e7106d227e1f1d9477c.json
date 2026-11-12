@@ -1,0 +1,214 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "c9b80ace28086b32c2a4b4744e6b8af5addf47a5dc39c0060ab53b7aca16e075",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "ef624f619ef3ccf26c95e4d2b5d77c8681783a3154db34ed24b45508247b550e"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "1ee2fb7ec7b497abac51aa6ee2ddecb67ab15c6777f9ab226ce2d8accfcdfa86",
+   "descendant": "1ee2fb7ec7b497abac51aa6ee2ddecb67ab15c6777f9ab226ce2d8accfcdfa86"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "f66f0724fec8c3cb3ca116d3f51e8a87476a7ff2aed58d69bcfff510b60dc36c",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "60ccb16062bd45da50a155dae2afacd9f53bc9e5444dac479d2cdf613b630368"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "6bdb782fa605b07c4317d7315157db8e9f017a030581ae6eb0a13b784c67e32b",
+   "descendant": "6bdb782fa605b07c4317d7315157db8e9f017a030581ae6eb0a13b784c67e32b"
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": "d24e30ec3d9639b327318b091498948bcaa735271fdab5f6c5893c6a6c1a254a",
+   "descendant": null
+  },
+  {
+   "id": "s7",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "02b0996ee1ef92789a8c89c9b73092462b297d7c9f87220d1eeca59478c63b29"
+  },
+  {
+   "id": "s8",
+   "kind": "copied",
+   "origin": "6caff55963e4af901fffb67df5b33cceb6892a4904110d7d5abab17362180d10",
+   "descendant": "6caff55963e4af901fffb67df5b33cceb6892a4904110d7d5abab17362180d10"
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": "211ecce03089a18293130073413a1e36ba00f0f8cd74ef6dae58e3e0409a69bd",
+   "descendant": null
+  },
+  {
+   "id": "s10",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "3b566704e2a1f0c52f906917aa97d3024d7d7fc0599c8a23e68752a8d282e919"
+  },
+  {
+   "id": "s11",
+   "kind": "copied",
+   "origin": "9d7ae145a9c0e0c13f87bfe51b9bfe141bcfce82e144084052485de43548055c",
+   "descendant": "9d7ae145a9c0e0c13f87bfe51b9bfe141bcfce82e144084052485de43548055c"
+  },
+  {
+   "id": "s12",
+   "kind": "unmatched",
+   "origin": "d70779804e93bc63d45668fc59dbfdab5e229d75691ebfa13d583d82c1b83676",
+   "descendant": null
+  },
+  {
+   "id": "s13",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "231c0c6c88f8a254ef0b8ce2350b9093a4a70d4270b5efee889c08b3242b9c6f"
+  },
+  {
+   "id": "s14",
+   "kind": "copied",
+   "origin": "52a70b54519677ea757cb0c8805c866ac25812b6607082309663aad7389f5046",
+   "descendant": "52a70b54519677ea757cb0c8805c866ac25812b6607082309663aad7389f5046"
+  },
+  {
+   "id": "s15",
+   "kind": "unmatched",
+   "origin": "4b72bf360079ad6c591a5d90d0ccd5fac2fc957823f2f131933eaf9890e9286a",
+   "descendant": null
+  },
+  {
+   "id": "s16",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "75142eecd86e737b7350d2711d2c1047cd008f394b2e33866eb2c200555e5a4b"
+  },
+  {
+   "id": "s17",
+   "kind": "copied",
+   "origin": "3467675cf94de6c969f521a8edd5e7c4aaeacae166c3714d172ab3dbe0fc7e22",
+   "descendant": "3467675cf94de6c969f521a8edd5e7c4aaeacae166c3714d172ab3dbe0fc7e22"
+  },
+  {
+   "id": "s18",
+   "kind": "unmatched",
+   "origin": "c20829aa11697d815d9d65d35698330d2d3fb54f942c807804a717ec12124212",
+   "descendant": null
+  },
+  {
+   "id": "s19",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "93d8a4ac1df08bb26b96e93c8b10949615e806b99c1ed7ead2ee353e1c8bfc75"
+  },
+  {
+   "id": "s20",
+   "kind": "copied",
+   "origin": "b5336ddfe9966c1b986b1752abc3695335de85b7caddff616972ad4967992437",
+   "descendant": "b5336ddfe9966c1b986b1752abc3695335de85b7caddff616972ad4967992437"
+  },
+  {
+   "id": "s21",
+   "kind": "unmatched",
+   "origin": "3695bc66d382be32e94c40fab25e352241363dbbe37a725a0e17e8d370d27165",
+   "descendant": null
+  },
+  {
+   "id": "s22",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "080310e67376da28bc6b733de3421302c0decbfc7b2f8c52fd2abe6974212a9d"
+  },
+  {
+   "id": "s23",
+   "kind": "copied",
+   "origin": "6c00dc1098880ee3bf87fe3aed18c86a0595bd0087351afe22f837332215a16e",
+   "descendant": "6c00dc1098880ee3bf87fe3aed18c86a0595bd0087351afe22f837332215a16e"
+  },
+  {
+   "id": "s24",
+   "kind": "unmatched",
+   "origin": "c3cbb993bb2d8b567b871bece18003dac4c14012442136c4ef96f13d41c4966e",
+   "descendant": null
+  },
+  {
+   "id": "s25",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "0f86f5967deae1f725dbf193ad08d24c527b58ceb839e28c6bffc9d6d5ccf9b3"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "changed",
+    "summary": "The descendant's remedy is an injunction available to any subject of synthetic media; the origin lets a candidate seek injunctive relief, damages, and attorneys' fees against the sponsor.",
+    "origin_span_ids": [
+     "s15"
+    ],
+    "descendant_span_ids": [
+     "s25"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant exempts certain news media, publications, and satire or parody, requires posting original content for media disseminated within 90 days of an election, and has state board powers.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1",
+     "s16",
+     "s25"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant makes violations a crime with civil penalties of $1,000 to $10,000; the origin provides only civil remedies, with disclosure serving as an affirmative defense.",
+    "origin_span_ids": [
+     "s15"
+    ],
+    "descendant_span_ids": [
+     "s25"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin puts the burden on the plaintiff to prove synthetic media use by clear and convincing evidence and encourages courts to decide quickly; the descendant has neither provision.",
+    "origin_span_ids": [
+     "s24"
+    ],
+    "descendant_span_ids": []
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ }
+}

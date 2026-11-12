@@ -1,0 +1,68 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "1c9e0dbb09f7645c8ed363507da54dda19ee520de21b1e69a4bb4e580ae2cc30",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "29b3f386b2975049213c5fe53392ab169dbfc036e443d5a8455f29c941a65e75"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "15add4d8dc3ca17e8ea2d1a4fef49323b0723d07bbf36a7739b07dbce7518ef4",
+   "descendant": "15add4d8dc3ca17e8ea2d1a4fef49323b0723d07bbf36a7739b07dbce7518ef4"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "f6f93d37a5bbd12f3fdc4298b8b7f7ab0d2991c4b0240de269113b09c80e8f18",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "2eca049aa3c44897e654bfb4248c92e3408051ce2532e6397c9ef2c0994f2c9a"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "changed",
+    "summary": "The descendant protects rights guaranteed by the U.S. Constitution or the Minnesota Constitution; the origin refers to the Utah Constitution.",
+    "origin_span_ids": [
+     "s3"
+    ],
+    "descendant_span_ids": [
+     "s4"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant applies the construction rule to sections 554.07 to 554.19 (\"must\" be construed); the origin applies it to \"this chapter\" (\"shall\" be construed).",
+    "origin_span_ids": [
+     "s0"
+    ],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1
+  ],
+  "dropped": []
+ }
+}

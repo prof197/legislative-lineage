@@ -1,0 +1,282 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "b887f049d2932a3901f1de9f91f427f3f178429c93587c5c52cbe5efa43c42c1",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "18b85511193c560f263800e8b0bad6fcd7fef0b48b3d89042a41156c0b7dd423"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "58118682cad5fe39fe9172dafa8dbd26c0b119259fd6549bf9ca8549de3fe326",
+   "descendant": "58118682cad5fe39fe9172dafa8dbd26c0b119259fd6549bf9ca8549de3fe326"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "6e2c911c7cf044152f341350a8c0bce7456b177585b42e55ac53f1eec544a099"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "2c87a40ea8f9028e38c6481a2fdac644510af6f298732b1c621741e77622d3c2",
+   "descendant": "2c87a40ea8f9028e38c6481a2fdac644510af6f298732b1c621741e77622d3c2"
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+   "descendant": null
+  },
+  {
+   "id": "s7",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "5aca51bf34cafa98394011fe8542b82628317304752257a21ec00cb3d592ec5a"
+  },
+  {
+   "id": "s8",
+   "kind": "copied",
+   "origin": "a254f237848b8bb0e3cf6e97edea367dc478e11d363b050efdc25992527b669e",
+   "descendant": "a254f237848b8bb0e3cf6e97edea367dc478e11d363b050efdc25992527b669e"
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": "eb024dc79a017f5db21ec458a7936ecbf8654766e205b3b425e9c6a6de643637",
+   "descendant": null
+  },
+  {
+   "id": "s10",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "53913edb4261f77a91ffb079053ecd085c45b576b9dee3a81f00d9d9c68d2dce"
+  },
+  {
+   "id": "s11",
+   "kind": "copied",
+   "origin": "f1168c6cf5dd937b12f7c8b7f24a55181267436fbccb649762804b42f7255aaf",
+   "descendant": "f1168c6cf5dd937b12f7c8b7f24a55181267436fbccb649762804b42f7255aaf"
+  },
+  {
+   "id": "s12",
+   "kind": "unmatched",
+   "origin": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+   "descendant": null
+  },
+  {
+   "id": "s13",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "cb6ac51c70684784a2ecfb23a1670267929e4cc1a68208419c251136b44cdf63"
+  },
+  {
+   "id": "s14",
+   "kind": "copied",
+   "origin": "3a8012e4c22ca8945865eaae1957c141d11425e8ef250e7ef85a6298a5af8112",
+   "descendant": "3a8012e4c22ca8945865eaae1957c141d11425e8ef250e7ef85a6298a5af8112"
+  },
+  {
+   "id": "s15",
+   "kind": "unmatched",
+   "origin": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+   "descendant": null
+  },
+  {
+   "id": "s16",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "6e2c911c7cf044152f341350a8c0bce7456b177585b42e55ac53f1eec544a099"
+  },
+  {
+   "id": "s17",
+   "kind": "copied",
+   "origin": "465d2b10f2aeaef3c660b45428f6b8c36a125fc2e075a72e981b155f85ec821a",
+   "descendant": "465d2b10f2aeaef3c660b45428f6b8c36a125fc2e075a72e981b155f85ec821a"
+  },
+  {
+   "id": "s18",
+   "kind": "unmatched",
+   "origin": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+   "descendant": null
+  },
+  {
+   "id": "s19",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "5aca51bf34cafa98394011fe8542b82628317304752257a21ec00cb3d592ec5a"
+  },
+  {
+   "id": "s20",
+   "kind": "copied",
+   "origin": "97678f19f5642d03a18363d1b847fc8936db628a310d2f272c999c5d434bb710",
+   "descendant": "97678f19f5642d03a18363d1b847fc8936db628a310d2f272c999c5d434bb710"
+  },
+  {
+   "id": "s21",
+   "kind": "unmatched",
+   "origin": "75371f5a57ca5232c85c1858415de4b06f5c9e4bc879404e348748c273540986",
+   "descendant": null
+  },
+  {
+   "id": "s22",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "a74d2d8aaf81da844e092609b9041e612e7bc2776c45449b3d86f339136e0850"
+  },
+  {
+   "id": "s23",
+   "kind": "copied",
+   "origin": "62114ee539292d1b39a2af5d8a5bd7622ba336b4f3ba9843de58b67881ace6fd",
+   "descendant": "62114ee539292d1b39a2af5d8a5bd7622ba336b4f3ba9843de58b67881ace6fd"
+  },
+  {
+   "id": "s24",
+   "kind": "unmatched",
+   "origin": "2110afe56170a96e8adff05e8f9f290d9ed327a218ba73c4dba98f13c872f8ac",
+   "descendant": null
+  },
+  {
+   "id": "s25",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "ead6c246dd9412702691270d4f96c1c2e03535661592c43111f8b2f6f042af24"
+  },
+  {
+   "id": "s26",
+   "kind": "copied",
+   "origin": "9c7bb79daa82aaa49a6e527a117b3e1f806330aa9ce650029af9ac7c484a5dfd",
+   "descendant": "9c7bb79daa82aaa49a6e527a117b3e1f806330aa9ce650029af9ac7c484a5dfd"
+  },
+  {
+   "id": "s27",
+   "kind": "unmatched",
+   "origin": "5a7564d3dd673d6cfafd75514cd4c313bbc29a30b02f668fa7e0683a5752f0a7",
+   "descendant": null
+  },
+  {
+   "id": "s28",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "cb6ac51c70684784a2ecfb23a1670267929e4cc1a68208419c251136b44cdf63"
+  },
+  {
+   "id": "s29",
+   "kind": "copied",
+   "origin": "062e399e569c8fed34272d6c8505b41c5fd37b06befec2c41f7465ad0ebc87f0",
+   "descendant": "062e399e569c8fed34272d6c8505b41c5fd37b06befec2c41f7465ad0ebc87f0"
+  },
+  {
+   "id": "s30",
+   "kind": "unmatched",
+   "origin": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+   "descendant": null
+  },
+  {
+   "id": "s31",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "6e2c911c7cf044152f341350a8c0bce7456b177585b42e55ac53f1eec544a099"
+  },
+  {
+   "id": "s32",
+   "kind": "copied",
+   "origin": "c70e5fc3780f1413739ea3a2b7995fda14aec21e21279d365d37b46bcf3ff76f",
+   "descendant": "c70e5fc3780f1413739ea3a2b7995fda14aec21e21279d365d37b46bcf3ff76f"
+  },
+  {
+   "id": "s33",
+   "kind": "unmatched",
+   "origin": "76f1355faa1c529def667ee730ba918d949ab37a222443450dd9ef6c2153d190",
+   "descendant": null
+  },
+  {
+   "id": "s34",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "5aca51bf34cafa98394011fe8542b82628317304752257a21ec00cb3d592ec5a"
+  },
+  {
+   "id": "s35",
+   "kind": "copied",
+   "origin": "2d321474794eedbc0d18225f093b9d3ec018c4fa4eaae62477b69597ecd17095",
+   "descendant": "2d321474794eedbc0d18225f093b9d3ec018c4fa4eaae62477b69597ecd17095"
+  },
+  {
+   "id": "s36",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "4c29452401797674f6df607f99f739c817129d758e0a6e9770b528db51d598b4"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "added",
+    "summary": "The descendant excludes many more causes of action: crime-victim suits, real property, bodily injury, insurance, fraud, protection orders, employment, consumer protection and federal-law claims.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s36"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant restores coverage for excluded commercial-speech, fraud and consumer-protection claims when they target news gathering, artistic works or consumer reviews and ratings.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s36"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant protects speech guaranteed by the U.S. or Minnesota Constitution; the origin refers to the U.S. or Utah Constitution.",
+    "origin_span_ids": [
+     "s21"
+    ],
+    "descendant_span_ids": [
+     "s22"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant applies to sections 554.07 to 554.19; the origin applies to its chapter and limits its definitions to that section.",
+    "origin_span_ids": [
+     "s0",
+     "s9",
+     "s24"
+    ],
+    "descendant_span_ids": [
+     "s1",
+     "s10",
+     "s25"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ }
+}

@@ -1,0 +1,97 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "d3fdc10688227667106a1a00e6ecc5ac000b844c31ed15a06c3a4f4cd47c449b",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "a91829d661a2fe0f07ecb8ddebcb4259a9d3f4f5e518dd49e2629e8931cad0c3"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "043f68290672e2c8d5a9fdeb284fc7ec7ee61904ae02276db4cf2036f62865de",
+   "descendant": "043f68290672e2c8d5a9fdeb284fc7ec7ee61904ae02276db4cf2036f62865de"
+  },
+  {
+   "id": "s3",
+   "kind": "paraphrased",
+   "origin": "0365c499f6b0b5c32d02a8555bb804e04f0f075fbd728b848bab3476a9b7d388",
+   "descendant": "1d16b3424c9200744af730864c48eb88e9bc07f3ef876d0f7dee3eca79c12f66"
+  },
+  {
+   "id": "s4",
+   "kind": "copied",
+   "origin": "dd8b50290abb892cf37286faa40b42fdef77a9a4032b484a1f1621d2f90dc58f",
+   "descendant": "dd8b50290abb892cf37286faa40b42fdef77a9a4032b484a1f1621d2f90dc58f"
+  },
+  {
+   "id": "s5",
+   "kind": "unmatched",
+   "origin": "5d08b02d678fc068788ca5ade565148e494083821ac8d1bce4c3fba092bc634e",
+   "descendant": null
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "fe09b7f231ec19d6c8d3d9a5a6c0419374b31e50bf3c84b7fc5a95d8017f5ba5"
+  },
+  {
+   "id": "s7",
+   "kind": "copied",
+   "origin": "76850b947a65d9031bef95908d75bbc0a4d56ced97449d3d7897d600f26a96be",
+   "descendant": "76850b947a65d9031bef95908d75bbc0a4d56ced97449d3d7897d600f26a96be"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "changed",
+    "summary": "The descendant lists a \"petition\" among the pleadings that start the filing deadline; the origin lists a \"complaint\" instead.",
+    "origin_span_ids": [
+     "s5"
+    ],
+    "descendant_span_ids": [
+     "s6"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant's deadline runs \"sixty days after\" service; the origin's runs \"60 days after the day on which\" a party is served.",
+    "origin_span_ids": [
+     "s3"
+    ],
+    "descendant_span_ids": [
+     "s3"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant carries the heading \"Sec. 3. NEW SECTION. 652.3\"; the origin is numbered 78B-25-103.",
+    "origin_span_ids": [
+     "s0"
+    ],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2
+  ],
+  "dropped": []
+ }
+}

@@ -1,0 +1,154 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "4f8ee3e12b752e81e7346382307548215aa0d8f3496c88dbf344367b1fbe94be",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "8f1408f771e849603aeb6f0b5cabb5481b12ab36901f5d1b3c1286e8f4846fe9"
+  },
+  {
+   "id": "s2",
+   "kind": "paraphrased",
+   "origin": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+   "descendant": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "a3c1208d4b187b90ba8653b126e26d22b309bd9daeffc0b44b5870891bee4630",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "110746b204750089cfd0af2eb3c6ff0bacb4c7ef8093c59105e777fb37e9f448"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "cf86160a4aebe81e3d89caca8e01e14e948db4967278b73d5f40335f7c93318c",
+   "descendant": "cf86160a4aebe81e3d89caca8e01e14e948db4967278b73d5f40335f7c93318c"
+  },
+  {
+   "id": "s6",
+   "kind": "paraphrased",
+   "origin": "96e2fcd0cc6e431eeff07281f9d91e7e527483ad7a853e8891c31f9ef9f83498",
+   "descendant": "1173e6fe8b6d32ac747e3e2c3f5b08633b20f67a606841f593fb630ba00ed1d1"
+  },
+  {
+   "id": "s7",
+   "kind": "copied",
+   "origin": "a7b0262b82ca76c9562af61853ff75b1146b4e0f8b98a366dee006b06e3952e6",
+   "descendant": "a7b0262b82ca76c9562af61853ff75b1146b4e0f8b98a366dee006b06e3952e6"
+  },
+  {
+   "id": "s8",
+   "kind": "unmatched",
+   "origin": "ed094b1aa9a2186b586eb5bbd2f473932060c11b0c4b5326c5f34596647354e2",
+   "descendant": null
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "b5fba435121a24e5ba3b027fb3067bd7ab6fd7af93e0fc3573742918a76bfc10"
+  },
+  {
+   "id": "s10",
+   "kind": "copied",
+   "origin": "67941c238b7ae055c36568fa228395b65702de5f275a1475d87a296f4f8d2ade",
+   "descendant": "67941c238b7ae055c36568fa228395b65702de5f275a1475d87a296f4f8d2ade"
+  },
+  {
+   "id": "s11",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "f3319ecd1d2c8069c29ba816ecdcbbd910d19927a33be3ffb2be770e60addeb5"
+  },
+  {
+   "id": "s12",
+   "kind": "copied",
+   "origin": "c012a161ba2b058389a7ba8dc1f0321b6f1e26f891547930608e6f8a58f12ab8",
+   "descendant": "c012a161ba2b058389a7ba8dc1f0321b6f1e26f891547930608e6f8a58f12ab8"
+  },
+  {
+   "id": "s13",
+   "kind": "unmatched",
+   "origin": "58cb593265a61021ef1f2bf5a98ff3be9848242e3383fc3d5caf9e22bb44ae55",
+   "descendant": null
+  },
+  {
+   "id": "s14",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "19e3987aba4d15413c0c0c24340187cb4ac35353322d23483cc19dc9149a3c85"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin gives depicted candidates a right to injunctive relief and damages against the sponsor, with attorneys' fees; the descendant's text here has no such remedies.",
+    "origin_span_ids": [
+     "s13"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "changed",
+    "summary": "The origin treats a manipulation disclosure as an affirmative defense; the descendant excludes content with a disclosure under Section 5 from the definition of synthetic media.",
+    "origin_span_ids": [
+     "s13"
+    ],
+    "descendant_span_ids": [
+     "s14"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant limits synthetic media to depictions of an identifiable natural individual made without that individual's consent; the origin covers any real individual, with no consent element.",
+    "origin_span_ids": [
+     "s6",
+     "s8"
+    ],
+    "descendant_span_ids": [
+     "s6",
+     "s9",
+     "s11"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant places the definition in a full election definitions section, adding terms such as electioneering communication, sponsor, generative adversarial network and neural network.",
+    "origin_span_ids": [
+     "s0",
+     "s3"
+    ],
+    "descendant_span_ids": [
+     "s1",
+     "s4",
+     "s14"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ }
+}

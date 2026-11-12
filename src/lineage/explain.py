@@ -38,6 +38,7 @@ from lineage.explanations import (
     reasons,
 )
 from lineage.spend import Meter, upper_bound
+from lineage.structured import UnusableReplyError, ask_structured
 
 MODEL = "claude-opus-5-5"
 PROMPT_VERSION = "v1"
@@ -46,9 +47,6 @@ ATTEMPTS = 2  # the first ask and one retry
 # Four claims of at most 200 characters, and the thinking medium effort spends on them; a reply
 # cut off at the limit is unusable and asked again.
 MAX_TOKENS = 4096
-# Declines are rerun on the fallback model the API picks for the refusal's category; the cache
-# records which model served the reply.
-_FALLBACK_BETA = "server-side-fallback-2026-07-01"
 
 SYSTEM = """\
 You compare two versions of one section of state legislation. One is the story's anchor, \
@@ -76,22 +74,6 @@ If the two texts do not differ in substance, return no claims."""
 
 class NotCachedError(Exception):
     pass
-
-
-class UnusableReplyError(Exception):
-    """The model declined, or its reply did not fit the schema; with what the call cost."""
-
-    def __init__(
-        self,
-        why: str,
-        input_tokens: int = 0,
-        output_tokens: int = 0,
-        served_by: str | None = None,
-    ) -> None:
-        super().__init__(why)
-        self.input_tokens = input_tokens
-        self.output_tokens = output_tokens
-        self.served_by = served_by
 
 
 @dataclass(frozen=True, slots=True)
@@ -143,6 +125,15 @@ def user_message(spans_for_prompt: Sequence[dict[str, Any]]) -> str:
     return json.dumps({"spans": list(spans_for_prompt)}, ensure_ascii=False, indent=1)
 
 
+def retry_message(user: str, why: str) -> str:
+    """The prompt asked again, with why the first reply could not be used."""
+    return (
+        f"{user}\n\nAn earlier reply to these spans could not be used: {why}. Reply again "
+        "within the limits: at most four claims, each summary at most 200 characters, each "
+        "citing only paraphrased or unmatched spans whose two sides differ."
+    )
+
+
 def prompt_chars(spans_for_prompt: Sequence[dict[str, Any]]) -> int:
     return len(SYSTEM) + len(user_message(spans_for_prompt))
 
@@ -190,21 +181,30 @@ def explain(
         raise NotCachedError("no cached explanation for this pair; run with --live to ask")
     user = user_message(spans_for_prompt)
     entry: dict[str, Any] = {"explanation": None, "served_by": None}
+    unusable: list[str] = []  # why each attempt before the kept one could not be used
     for _ in range(ATTEMPTS):
+        asked = retry_message(user, unusable[-1]) if unusable else user
         if meter is not None:
-            meter.before_call(len(SYSTEM) + len(user), MAX_TOKENS)
+            meter.before_call(len(SYSTEM) + len(asked), MAX_TOKENS)
         try:
-            reply = ask(SYSTEM, user)
+            reply = ask(SYSTEM, asked)
         except UnusableReplyError as e:
             if meter is not None:
                 meter.add(e.input_tokens, e.output_tokens, e.served_by)
+            unusable.append(str(e))
             continue
         if meter is not None:
             meter.add(reply.input_tokens, reply.output_tokens, reply.served_by)
         claims = reply.explanation.claims
-        if not claims or ground(reply.explanation, spans).claims:
+        why = reasons(reply.explanation, spans)
+        if not claims or any(w is None for w in why):
             entry = {"explanation": reply.explanation.model_dump(), "served_by": reply.served_by}
             break
+        unusable.append(
+            "no claim cites spans that exist and differ ("
+            + "; ".join(w for w in why if w is not None)
+            + ")"
+        )
     cache.mkdir(parents=True, exist_ok=True)
     explanation = (
         None
@@ -217,6 +217,7 @@ def explain(
         "spans": [g.as_json() for g in spans],
         **entry,
         "grounded": _grounded_record(explanation, spans),
+        "unusable_attempts": unusable,
     }
     path.write_text(json.dumps(record, indent=1, ensure_ascii=False) + "\n")
     return _outcome(entry, spans)
@@ -256,32 +257,24 @@ def projected_cost(
 
 
 def anthropic_ask(model: str = MODEL) -> Ask:
-    """Ask through the Anthropic SDK with structured output from ChangeExplanation. The key
-    comes from the environment, as every secret here does."""
+    """Ask through the Anthropic SDK for JSON fitting ChangeExplanation, at medium effort,
+    every reply metered (lineage.structured). The key comes from the environment, as every
+    secret here does."""
     import anthropic
 
     client = anthropic.Anthropic()
 
     def ask(system: str, user: str) -> Reply:
-        try:
-            response = client.beta.messages.parse(
-                model=model,
-                max_tokens=MAX_TOKENS,
-                system=system,
-                messages=[{"role": "user", "content": user}],
-                output_format=ChangeExplanation,
-                output_config={"effort": "medium"},
-                betas=[_FALLBACK_BETA],
-                fallbacks="default",
-            )
-        except ValidationError as e:
-            raise UnusableReplyError(f"the reply does not fit the schema: {e}") from e
-        tokens = (response.usage.input_tokens, response.usage.output_tokens)
-        if response.stop_reason == "refusal" or response.parsed_output is None:
-            raise UnusableReplyError(
-                f"no usable reply (stop reason {response.stop_reason})", *tokens, response.model
-            )
-        return Reply(response.parsed_output, response.model, *tokens)
+        got = ask_structured(
+            client,
+            ChangeExplanation,
+            model=model,
+            system=system,
+            messages=[{"role": "user", "content": user}],
+            max_tokens=MAX_TOKENS,
+            effort="medium",
+        )
+        return Reply(got.value, got.served_by, got.input_tokens, got.output_tokens)
 
     return ask
 

@@ -1,0 +1,174 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "4f8ee3e12b752e81e7346382307548215aa0d8f3496c88dbf344367b1fbe94be",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "d66fc1cac4edbacc677c2ba5a2288e385a7d42cf1334a022286ea603f3a364bd"
+  },
+  {
+   "id": "s2",
+   "kind": "paraphrased",
+   "origin": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+   "descendant": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "a3c1208d4b187b90ba8653b126e26d22b309bd9daeffc0b44b5870891bee4630",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "821be35862f7e2bcec482a14f1b845cc0af921c3f169c93ba773f95ab86761ad"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "cf86160a4aebe81e3d89caca8e01e14e948db4967278b73d5f40335f7c93318c",
+   "descendant": "cf86160a4aebe81e3d89caca8e01e14e948db4967278b73d5f40335f7c93318c"
+  },
+  {
+   "id": "s6",
+   "kind": "paraphrased",
+   "origin": "96bf0188e5a20b6caa78cd41aaf1649d32c326e2c7f840d969c566af9224c143",
+   "descendant": "f2484fe39d2a5efc53c78b031302f40f398ba113599782363eaa194082b18363"
+  },
+  {
+   "id": "s7",
+   "kind": "copied",
+   "origin": "18f22b1136b2f5c11179218b04ede56a8c78ab0b77a77e774d7f378c58c41984",
+   "descendant": "18f22b1136b2f5c11179218b04ede56a8c78ab0b77a77e774d7f378c58c41984"
+  },
+  {
+   "id": "s8",
+   "kind": "unmatched",
+   "origin": "4e16456c1c627b6a0882210d30945c85f88b1eb9c01db34caced4ee4bcec2128",
+   "descendant": null
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "27201474ffc8ce7a7a1112e9b8a410fe0f715f729840ec9fb1e23b69ddeedf3b"
+  },
+  {
+   "id": "s10",
+   "kind": "copied",
+   "origin": "38ac4d43f1350e1b0162c298a8f097262a09bf1b35b26175e388349d1f8c584b",
+   "descendant": "38ac4d43f1350e1b0162c298a8f097262a09bf1b35b26175e388349d1f8c584b"
+  },
+  {
+   "id": "s11",
+   "kind": "unmatched",
+   "origin": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+   "descendant": null
+  },
+  {
+   "id": "s12",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+  },
+  {
+   "id": "s13",
+   "kind": "copied",
+   "origin": "54d2d37aa82e477ad192efe242d0aff934ee2e6b1c023c4667338196a17cb3e0",
+   "descendant": "54d2d37aa82e477ad192efe242d0aff934ee2e6b1c023c4667338196a17cb3e0"
+  },
+  {
+   "id": "s14",
+   "kind": "unmatched",
+   "origin": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+   "descendant": null
+  },
+  {
+   "id": "s15",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+  },
+  {
+   "id": "s16",
+   "kind": "copied",
+   "origin": "ab71e87946cdcf39858464f3fd939935acd8b6c6a9c38133a385f1dfa9772012",
+   "descendant": "ab71e87946cdcf39858464f3fd939935acd8b6c6a9c38133a385f1dfa9772012"
+  },
+  {
+   "id": "s17",
+   "kind": "unmatched",
+   "origin": "645137fb005ea41ca24aecfd4ade11b7c7bb5bd7bf3811fa3fe04795e3adcd16",
+   "descendant": null
+  },
+  {
+   "id": "s18",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "bc70b9c5fe3f17df5e1a726d0a9a90005a01b70956b8e9bd12a5feeb3e697f83"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin gives a depicted candidate a right to seek injunctive relief and damages against the sponsor, with attorneys' fees; the descendant has no such remedies.",
+    "origin_span_ids": [
+     "s17"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin makes a labeled manipulation disclosure an affirmative defense, sets clear and convincing evidence as the burden, and urges expedient court handling; the descendant lacks these.",
+    "origin_span_ids": [
+     "s17"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant places the synthetic media definition in a general election-law definitions list that also defines electioneering communication, sponsor, e-poll book and many other terms.",
+    "origin_span_ids": [
+     "s0",
+     "s3"
+    ],
+    "descendant_span_ids": [
+     "s1",
+     "s4",
+     "s18"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The origin's definition covers an individual's appearance, speech, or conduct; the descendant's covers appearance, action, or speech and excludes content bearing a required disclosure.",
+    "origin_span_ids": [
+     "s8"
+    ],
+    "descendant_span_ids": [
+     "s9",
+     "s18"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ }
+}

@@ -1,0 +1,157 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "f4665417e464e7183e2265140f41f1d556e7551dd602633199995aac343f2f44",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "decad0e900f4c86fa4d22c5812922760f33bf92f4d33013bcd7f21b4d560b3e1"
+  },
+  {
+   "id": "s2",
+   "kind": "paraphrased",
+   "origin": "cf934e3934e4b67c53fa42db1d82b05ad807517f10641b8aebac56c604e625b0",
+   "descendant": "ecf265bcdae30fbf7797607f5c7268e1876cdc76e8b7929f48ad6ab4863494f7"
+  },
+  {
+   "id": "s3",
+   "kind": "copied",
+   "origin": "30b74b3320062ea3e9da1802f48b2a9dd81af8c240d1bbbccbd4ddeb8cda4e6f",
+   "descendant": "30b74b3320062ea3e9da1802f48b2a9dd81af8c240d1bbbccbd4ddeb8cda4e6f"
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": "f5f0386f8daab53b1a14ce7d78e021f5003c7c62dec35246d4cc3d5563503604",
+   "descendant": null
+  },
+  {
+   "id": "s5",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "7bf1e78f21e7331a001d8d5976e14f3042d4d44f34c8f28026b8035ae838b8b5"
+  },
+  {
+   "id": "s6",
+   "kind": "copied",
+   "origin": "1bab9446e36c7447cf6576e9d21b2f551debe26cf679c420a37ac8d4689bdf0c",
+   "descendant": "1bab9446e36c7447cf6576e9d21b2f551debe26cf679c420a37ac8d4689bdf0c"
+  },
+  {
+   "id": "s7",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "6201111b83a0cb5b0922cb37cc442b9a40e24e3b1ce100a4bb204f4c63fd2ac0"
+  },
+  {
+   "id": "s8",
+   "kind": "copied",
+   "origin": "f56deaabab47c4354f8219cb032c947b3d4da10ca967a8c13c0fd537475450de",
+   "descendant": "f56deaabab47c4354f8219cb032c947b3d4da10ca967a8c13c0fd537475450de"
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": "ca2d29ea5bc0e0b1f76d4187dc2b02b250ee5302167eed842237284945fabeee",
+   "descendant": null
+  },
+  {
+   "id": "s10",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "afe293def4667ae68beb3bd88258da379b52497079db16ae177f20f19027326c"
+  },
+  {
+   "id": "s11",
+   "kind": "copied",
+   "origin": "95f05296652d8051e6596ab2abc005126a1c6b9bf564ab17e7e5a2fa97675943",
+   "descendant": "95f05296652d8051e6596ab2abc005126a1c6b9bf564ab17e7e5a2fa97675943"
+  },
+  {
+   "id": "s12",
+   "kind": "unmatched",
+   "origin": "8199238d139d9ee5e308835078ce8b6c3197cfef767e7c5beb92851eace96e81",
+   "descendant": null
+  },
+  {
+   "id": "s13",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "5520969c51892d30c2fec6a763ec95fc74f9484a0747852e456684a2b4240b6d"
+  },
+  {
+   "id": "s14",
+   "kind": "copied",
+   "origin": "0f310f634ddbc6f3a87a473f06279ac3e802230ab921bcc737885ce8340e9f6b",
+   "descendant": "0f310f634ddbc6f3a87a473f06279ac3e802230ab921bcc737885ce8340e9f6b"
+  },
+  {
+   "id": "s15",
+   "kind": "unmatched",
+   "origin": "549f7fdd2e799dd5b4743cefafbcac8681ef3218828c42444005ee27dff6811b",
+   "descendant": null
+  },
+  {
+   "id": "s16",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "62dfbe37814e71914398c9e1fcbd916fcdc6bf5f3835dfbac43005a8508a748c"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin amends a school internet-safety code section with definitions (acceptable-use policy, child pornography, harmful to minors, Internet, local governing body); the descendant lacks these.",
+    "origin_span_ids": [
+     "s0",
+     "s15"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant bars obscene materials from public library collections, events and displays curated for children under 15, as determined by a Commission on Age Appropriate Literacy.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant's obscenity test covers material appealing to prurient interest, defined as lustful, erotic, shameful or morbid; the origin covers material that predominantly appeals or panders to it.",
+    "origin_span_ids": [
+     "s4"
+    ],
+    "descendant_span_ids": [
+     "s5"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant defines \"patently offensive\" and excludes age-appropriate anatomy diagrams for science and classical art content from obscene material.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s16"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ }
+}

@@ -1,0 +1,75 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "d642a4990fc823748696641152388646c9d2fe6a994f4bfc9081dddf9b9f5df3",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "0f36273bd39a37e00832633a37bd78d6f7865da592f2dfb005e285fc39a5a397"
+  },
+  {
+   "id": "s2",
+   "kind": "copied",
+   "origin": "3d5c1ad1d685831da5bf80910eeb6674f96affc878f7a5006032b1d493f04252",
+   "descendant": "3d5c1ad1d685831da5bf80910eeb6674f96affc878f7a5006032b1d493f04252"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "b6c1b3019533568147c9c7fd568a4c1a37fd22b75704322717f514ff65413712",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "94390db3b6573f11d1484c85231417fac2f17a551262879a43d401d93d435b04"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "834fd3bd7e941c3567180f24f91f95e1fd156516a007dcd742dcced97cabc0d4",
+   "descendant": "834fd3bd7e941c3567180f24f91f95e1fd156516a007dcd742dcced97cabc0d4"
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": "416d9a49a5047c68fd8c684783590422af03a648e11a9939519ee2ca3b0d9a36",
+   "descendant": null
+  },
+  {
+   "id": "s7",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "dc4b6326acb9e1e26159be3692ca6a75e890085618b8887563130a6b590389b6"
+  },
+  {
+   "id": "s8",
+   "kind": "copied",
+   "origin": "d2616b006981962d73afe6354777d07acd6bc1508852c0c52610e06d74fc3dc2",
+   "descendant": "d2616b006981962d73afe6354777d07acd6bc1508852c0c52610e06d74fc3dc2"
+  },
+  {
+   "id": "s9",
+   "kind": "unmatched",
+   "origin": "878a5e2a7315eb88e219ddcda3ef26cd7442ee70d8d1420cbd1cca24ce2a4bda",
+   "descendant": null
+  },
+  {
+   "id": "s10",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "5fcaaaee927b547f23305ed0dc948250c826563a94c61023e84856525a1f1f0f"
+  }
+ ],
+ "explanation": null,
+ "served_by": null,
+ "grounded": null
+}

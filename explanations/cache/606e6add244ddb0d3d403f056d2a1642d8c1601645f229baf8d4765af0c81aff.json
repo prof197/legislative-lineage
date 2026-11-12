@@ -1,0 +1,129 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "3e227cec30f7d8ea2911c9d0a23c5d22f5bf70a7333882c92041f834bbd822ab"
+  },
+  {
+   "id": "s1",
+   "kind": "paraphrased",
+   "origin": "f5eacff124c72b6161a3105fb7b7bd34dc639a702f01511b90d887d9bb1ed5da",
+   "descendant": "f5eacff124c72b6161a3105fb7b7bd34dc639a702f01511b90d887d9bb1ed5da"
+  },
+  {
+   "id": "s2",
+   "kind": "unmatched",
+   "origin": "add93534eeb463800fe0ed0946048d33636dd2a014fab92e8a37f77ce98c740b",
+   "descendant": null
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "615b72139d5c0d9878ff661912d4e0d08f993a51012c0405aaa15ecde0af0edd"
+  },
+  {
+   "id": "s4",
+   "kind": "paraphrased",
+   "origin": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce",
+   "descendant": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+  },
+  {
+   "id": "s5",
+   "kind": "unmatched",
+   "origin": "2692a855ddb06be0c3a45f2f3afc2a03a4552fe2e91356720a9faebc5b34fc1d",
+   "descendant": null
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "f5be533381447a3dfe3b66b001424e8cd4d7f65308364071537f258c9b515c0a"
+  },
+  {
+   "id": "s7",
+   "kind": "paraphrased",
+   "origin": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+   "descendant": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d"
+  },
+  {
+   "id": "s8",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "d1210c9743d7a5d132093e75dec86f1ce08f2a357bbfb20d7f697ab6dad7d03d"
+  },
+  {
+   "id": "s9",
+   "kind": "copied",
+   "origin": "d2616b006981962d73afe6354777d07acd6bc1508852c0c52610e06d74fc3dc2",
+   "descendant": "d2616b006981962d73afe6354777d07acd6bc1508852c0c52610e06d74fc3dc2"
+  },
+  {
+   "id": "s10",
+   "kind": "unmatched",
+   "origin": "878a5e2a7315eb88e219ddcda3ef26cd7442ee70d8d1420cbd1cca24ce2a4bda",
+   "descendant": null
+  },
+  {
+   "id": "s11",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "53898c8d191848736612f656e94e9b96217c5ed14cdc653844e58228ed24e7ce"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin limits liability for electioneering communications to the sponsor, not the disseminating medium, except where the medium strips disclosures or alters content into synthetic media.",
+    "origin_span_ids": [
+     "s5"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin shields interactive computer service providers and users from being treated as publisher or speaker of others' content; the descendant has no such immunity provision.",
+    "origin_span_ids": [
+     "s5"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant is a definitions section for an abortion chapter, defining terms such as abortion fund, abortion-inducing drug, abortion provider, affiliate, elective abortion and medical emergency.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s3",
+     "s6",
+     "s8",
+     "s11"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "Both define \"information content provider\"; the origin covers \"any person or entity,\" while the descendant says \"a person\" and lists it as a numbered definition.",
+    "origin_span_ids": [
+     "s10"
+    ],
+    "descendant_span_ids": [
+     "s8"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ }
+}

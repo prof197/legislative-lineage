@@ -1,0 +1,75 @@
+{
+ "model": "claude-opus-5-5",
+ "prompt_version": "v1",
+ "spans": [
+  {
+   "id": "s0",
+   "kind": "unmatched",
+   "origin": "3b5c34b11956e0235a9d5ba14315e7cb222c37a0c7c1390a6e501b71223ed16c",
+   "descendant": null
+  },
+  {
+   "id": "s1",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "7ac178a51bd18dfefc85687b0c41cf4fd0adc88137c92f372b52a224b11c1fc8"
+  },
+  {
+   "id": "s2",
+   "kind": "paraphrased",
+   "origin": "f9ea19a260cb7f3046fcb2f02a2b1433ce19232e7f69b434457e84b177f8156b",
+   "descendant": "f9ea19a260cb7f3046fcb2f02a2b1433ce19232e7f69b434457e84b177f8156b"
+  },
+  {
+   "id": "s3",
+   "kind": "unmatched",
+   "origin": "204f8f2ae146d55c28115582f41d69a0813218bdfcde8fd581ed9322b4e0f429",
+   "descendant": null
+  },
+  {
+   "id": "s4",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "15857e6074b20b9d4609854bb85c22ce774ed18d2529a19cbdb89d7fa0c98d5c"
+  },
+  {
+   "id": "s5",
+   "kind": "copied",
+   "origin": "646b30cd9c3692b18629ec7ee69067d92c3fb4b332aecaaceb1ff880674b3bc0",
+   "descendant": "646b30cd9c3692b18629ec7ee69067d92c3fb4b332aecaaceb1ff880674b3bc0"
+  },
+  {
+   "id": "s6",
+   "kind": "unmatched",
+   "origin": "cd57db52f6f42eb48439bfbe141de42c17bdd72b1cf37749cd1096c9d71f57c4",
+   "descendant": null
+  },
+  {
+   "id": "s7",
+   "kind": "unmatched",
+   "origin": null,
+   "descendant": "6835a572db4ee86257f9b84a79870f71c84c863674264398b961dcdb3e0bed44"
+  }
+ ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "changed",
+    "summary": "The descendant applies the chapter to civil actions filed or causes of action asserted on or after January 1, 2026; the origin uses May 3, 2023.",
+    "origin_span_ids": [
+     "s6"
+    ],
+    "descendant_span_ids": [
+     "s7"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0
+  ],
+  "dropped": []
+ }
+}
