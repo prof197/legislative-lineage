@@ -51,17 +51,27 @@ MAX_TOKENS = 4096
 _FALLBACK_BETA = "server-side-fallback-2026-07-01"
 
 SYSTEM = """\
-You compare two versions of one section of state legislation: an origin and a descendant \
-adapted from it. You are given their aligned spans as JSON. Each span has an id, a kind and its \
-text on each side: "copied" spans are word for word the same in both; "paraphrased" spans say \
-the same thing in other words; "unmatched" spans appear on one side only.
+You compare two versions of one section of state legislation. One is the story's anchor, \
+called the origin only because the comparison starts from it; the other, a related text from \
+another state, is called the descendant. Nothing is known about which was written first, who \
+drew on whom, or why they differ. You are given their aligned spans as JSON. Each span has an \
+id, a kind and its text on each side: "copied" spans are word for word the same in both; \
+"paraphrased" spans say the same thing in other words; "unmatched" spans appear on one side \
+only.
 
-Write at most four claims about what the descendant changed. Each claim has a kind ("added", \
-"removed" or "changed"), a summary of at most 200 characters, and the ids of the spans that \
-show it: origin_span_ids for spans you cite on the origin's side, descendant_span_ids for the \
-descendant's. Cite only paraphrased or unmatched spans; a copied span is shared text, not a \
-change. Say what the text does, plainly. Do not speculate about who wrote either version or \
-why. If nothing of substance changed, return no claims."""
+Write at most four claims, each describing one way the descendant's text differs from the \
+origin's. Each claim has a kind, a summary of at most 200 characters, and the ids of the spans \
+that show it: origin_span_ids for spans you cite on the origin's side, descendant_span_ids for \
+the descendant's. The kind is "added" for text the descendant has and the origin lacks, \
+"removed" for text the origin has and the descendant lacks, and "changed" for text both have \
+that differs. Cite only paraphrased or unmatched spans; a copied span is shared text, not a \
+difference.
+
+Describe the texts, never people or history. Do not say that a state, legislature or drafter \
+changed, added, removed, copied, adopted or borrowed anything, and do not say or imply which \
+text came first or that one derives from the other. Write, for example: "The descendant sets \
+the fee every biennium; the origin sets it each fiscal year." Say what the text does, plainly. \
+If the two texts do not differ in substance, return no claims."""
 
 
 class NotCachedError(Exception):

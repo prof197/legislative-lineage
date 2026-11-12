@@ -49,7 +49,10 @@ The claim describes its spans correctly when both hold. Its kind fits them: "add
 descendant has and the origin lacks, "removed" text the origin has and the descendant lacks, \
 "changed" text both have that differs. And everything its summary asserts is borne out by the \
 cited text: nothing misstated, reversed or exaggerated, and nothing asserted that the spans do \
-not show. Judge only from the spans given. Answer true or false."""
+not show. "Origin" and "descendant" only name the two texts: nothing is known about which came \
+first or who drew on whom. A claim that says or implies a state, legislature or drafter \
+changed, copied or adopted anything, or which text came first, does not describe its spans \
+correctly. Judge only from the spans given. Answer true or false."""
 
 
 class ClaimVerdict(BaseModel):
