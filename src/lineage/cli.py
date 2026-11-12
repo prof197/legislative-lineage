@@ -891,6 +891,13 @@ def label_model(
     models_dir: Annotated[
         Path, typer.Option("--models", help="Directory of model files (local), for alignment.")
     ] = MODELS_DIR,
+    also: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--also",
+            help="Another SAMPLE=LABELS asked in the same batch under the same prompt; repeatable.",
+        ),
+    ] = None,
 ) -> None:
     """Provisional labels from a model, kept apart from people's; asks only with --live."""
     if prompt_version not in LABEL_PROMPTS:
@@ -899,12 +906,29 @@ def label_model(
         )
         raise typer.Exit(1)
     prompt = LABEL_PROMPTS[prompt_version]
+    targets = [(sample, labels)]
+    for extra in also or []:
+        extra_sample, sep, extra_labels = extra.partition("=")
+        if not sep or not extra_sample or not extra_labels:
+            typer.echo(f"error: --also takes SAMPLE=LABELS, not {extra!r}", err=True)
+            raise typer.Exit(1)
+        targets.append((Path(extra_sample), Path(extra_labels)))
+    if len(targets) > 1 and not (batch or batch_id is not None):
+        typer.echo("error: --also asks several samples in one batch; add --batch", err=True)
+        raise typer.Exit(1)
+    todo: list[Item] = []
+    paths: dict[str, Path] = {}
     try:
-        items, kept = _current_items(sample, tables, labels)
+        for target_sample, target_labels in targets:
+            items, kept = _current_items(target_sample, tables, target_labels)
+            for item in model_pending(items, kept, prompt):
+                if item.pair.pair in paths:
+                    raise LabelError(f"pair id {item.pair.pair} is in two of the samples asked")
+                paths[item.pair.pair] = target_labels
+                todo.append(item)
     except LabelError as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
-    todo = model_pending(items, kept, prompt)
     if prompt.passages:
         try:
             todo = with_passages(todo, _model_embedder(models_dir))
@@ -939,7 +963,8 @@ def label_model(
             err=True,
         )
         raise typer.Exit(1)
-    labels.parent.mkdir(parents=True, exist_ok=True)
+    for _, target_labels in targets:
+        target_labels.parent.mkdir(parents=True, exist_ok=True)
     today = datetime.date.today().isoformat()
     if batched:
         batches = anthropic_batches()
@@ -947,7 +972,7 @@ def label_model(
             todo,
             batches=batches,
             model=model,
-            labels_path=labels,
+            labels_path=paths,
             today=today,
             wait=lambda: time.sleep(60),
             batch_id=batch_id,
@@ -958,7 +983,8 @@ def label_model(
             spend, batch_id=sent, model=model, prompt=prompt.version,
             usage=batch_usage(batches, sent), today=today,
         )  # fmt: skip
-        typer.echo(f"{done} labeled from batch {sent}, {unusable} unusable replies -> {labels}")
+        files = ", ".join(sorted({str(p) for _, p in targets}))
+        typer.echo(f"{done} labeled from batch {sent}, {unusable} unusable replies -> {files}")
         typer.echo(f"${ledger['spent']:,.2f} of the ${budget:,.2f} budget spent -> {spend}")
         return
     done, unusable = label_with_model(

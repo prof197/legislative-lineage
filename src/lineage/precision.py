@@ -29,7 +29,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lineage.intervals import Z_95, wilson
-from lineage.labels import CORRECT_FROM, MODEL, PERSON, Item, SectionKey
+from lineage.labels import CORRECT_FROM, MODEL, PERSON, Item, SectionKey, is_correct
 from lineage.pairs import load_cross_state_pairs
 from lineage.semantic import MODEL as MODEL_NAME
 from lineage.semantic_pairs import load_semantic_pairs, section_keys
@@ -135,13 +135,13 @@ def stratified(parts: Sequence[tuple[int, int, int]]) -> dict[str, Any] | None:
     return {"precision": round(point, 4), "interval_95": interval}
 
 
-def latest_labels(
+def latest_rows(
     items: Sequence[Item], labels: Sequence[Mapping[str, Any]], labeler: str, *, exact: bool = False
-) -> dict[str, int]:
-    """Each pair's latest label among labelers named with the prefix `labeler`, or with
-    `exact`, by that labeler alone; by pair id."""
+) -> dict[str, Mapping[str, Any]]:
+    """Each pair's latest label row among labelers named with the prefix `labeler`, or with
+    `exact`, by that labeler alone; by pair id. Of rows given the same day, the later wins."""
     by_sides = {(i.query.ref.key, i.match.ref.key): i.pair.pair for i in items}
-    latest: dict[str, tuple[str, int]] = {}
+    latest: dict[str, Mapping[str, Any]] = {}
     for row in labels:
         name = str(row["labeler"])
         if (name != labeler) if exact else not name.startswith(labeler):
@@ -151,19 +151,39 @@ def latest_labels(
             (row["match"]["bill_id"], row["match"]["text_sha256"]),
         )
         pair = by_sides.get(sides)
-        if pair is not None and (pair not in latest or str(row["at"]) >= latest[pair][0]):
-            latest[pair] = (str(row["at"]), int(row["label"]))
-    return {pair: label for pair, (_, label) in latest.items()}
+        if pair is not None and (pair not in latest or str(row["at"]) >= str(latest[pair]["at"])):
+            latest[pair] = row
+    return latest
+
+
+def latest_labels(
+    items: Sequence[Item], labels: Sequence[Mapping[str, Any]], labeler: str, *, exact: bool = False
+) -> dict[str, int]:
+    """Each pair's latest label on the 0-4 scale, by pair id (latest_rows); refused for a row
+    on another scale, whose labels say something else."""
+    rows = latest_rows(items, labels, labeler, exact=exact)
+    for pair, row in rows.items():
+        if row.get("scale") is not None:
+            raise PrecisionError(f"{pair}'s label by {row['labeler']} is not on the 0-4 scale")
+    return {pair: int(row["label"]) for pair, row in rows.items()}
+
+
+def latest_correct(
+    items: Sequence[Item], labels: Sequence[Mapping[str, Any]], labeler: str, *, exact: bool = False
+) -> dict[str, bool]:
+    """Whether each pair's latest label (latest_rows) counts it correct, on whichever scale it
+    was asked (lineage.labels.is_correct)."""
+    return {p: is_correct(r) for p, r in latest_rows(items, labels, labeler, exact=exact).items()}
 
 
 def _estimate(
-    items: Sequence[Item], labeled: Mapping[str, int], sizes: Mapping[str, int]
+    items: Sequence[Item], labeled: Mapping[str, bool], sizes: Mapping[str, int]
 ) -> dict[str, Any]:
     by_stratum: dict[str, dict[str, Any]] = {}
     for name in STRATA:
         mine = [i.pair.pair for i in items if stratum_of(i.pair.stages) == name]
         got = [labeled[p] for p in mine if p in labeled]
-        correct = sum(label >= CORRECT_FROM for label in got)
+        correct = sum(got)
         by_stratum[name] = {
             "size": int(sizes.get(name, 0)),
             "sampled": len(mine),
@@ -200,24 +220,27 @@ def estimate(
             raise PrecisionError(f"labeler {row['labeler']!r} is neither a person nor a model")
     for item in items:
         stratum_of(item.pair.stages)
-    people = latest_labels(items, labels, PERSON)
+    people = latest_rows(items, labels, PERSON)
     model = (
-        latest_labels(items, labels, MODEL)
+        latest_rows(items, labels, MODEL)
         if model_labeler is None
-        else latest_labels(items, labels, model_labeler, exact=True)
+        else latest_rows(items, labels, model_labeler, exact=True)
     )
     both = [p for p in people if p in model]
     return {
         "correct_from": CORRECT_FROM,
         "model_labeler": model_labeler or MODEL,
-        "person": _estimate(items, people, sizes),
-        "provisional_model": _estimate(items, model, sizes),
+        "person": _estimate(items, {p: is_correct(r) for p, r in people.items()}, sizes),
+        "provisional_model": _estimate(items, {p: is_correct(r) for p, r in model.items()}, sizes),
         "agreement": {
             "pairs": len(both),
-            "same_label": sum(people[p] == model[p] for p in both),
-            "same_correctness": sum(
-                (people[p] >= CORRECT_FROM) == (model[p] >= CORRECT_FROM) for p in both
+            # A label on another scale is never the same label.
+            "same_label": sum(
+                people[p].get("scale") == model[p].get("scale")
+                and people[p]["label"] == model[p]["label"]
+                for p in both
             ),
+            "same_correctness": sum(is_correct(people[p]) == is_correct(model[p]) for p in both),
         },
     }
 

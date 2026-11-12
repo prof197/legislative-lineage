@@ -9,11 +9,23 @@ import pytest
 from typer.testing import CliRunner
 
 from lineage.cli import app
-from lineage.labels import Item, Pair, Section, SectionKey, SectionRef, pending, text_sha256
+from lineage.labels import (
+    SAME_PROVISION,
+    Item,
+    Pair,
+    Section,
+    SectionKey,
+    SectionRef,
+    is_correct,
+    pending,
+    text_sha256,
+)
 from lineage.model_labels import (
     BUDGET,
     CHARS_PER_TOKEN,
     MAX_TOKENS,
+    PASSAGES_HIGH,
+    PASSAGES_SYSTEM,
     PRICES,
     PROMPT_VERSION,
     PROMPTS,
@@ -23,12 +35,15 @@ from lineage.model_labels import (
     SYSTEM,
     BatchReply,
     ModelLabel,
+    SameProvision,
+    Schema,
     UnusableReplyError,
     batch_dollars,
     batch_usage,
     label_in_batch,
     label_with_model,
     model_pending,
+    passage_message,
     projected_cost,
     record_spend,
     relative_message,
@@ -198,7 +213,8 @@ class _FakeBatches:
         self.polls += 1
         return self.polls >= 2
 
-    def results(self, batch_id: str) -> list[BatchReply]:
+    def results(self, batch_id: str, schema: Schema = ModelLabel) -> list[BatchReply]:
+        self.schema = schema
         return [
             BatchReply(
                 custom_id, label, served_by, None if label is not None else "errored", 1000, 50
@@ -267,7 +283,9 @@ def test_the_relatives_prompt_gives_the_passages_without_saying_how_they_matched
     for word in ("copied", "paraphras", "semantic", "near-duplicate"):
         assert word not in RELATIVES_SYSTEM + relative_message(item)
     assert RELATIVES.passages
-    assert set(PROMPTS) == {"v1", "v1-high", "relatives-v1", "relatives-v1-high"}
+    assert set(PROMPTS) == {
+        "v1", "v1-high", "relatives-v1", "relatives-v1-high", "passages-v1-high"
+    }  # fmt: skip
 
 
 def test_another_effort_is_another_labeler_asked_at_its_own_limit(tmp_path: Path) -> None:
@@ -343,3 +361,57 @@ def test_live_over_the_budget_asks_nothing(
     assert result.exit_code == 1
     assert "budget" in result.output
     assert not labels.exists()
+
+
+def test_the_passage_question_shows_the_passages_first_and_never_says_how_they_matched() -> None:
+    item = replace(_item(0), passages=(("the board shall", "the commission shall"),))
+
+    message = json.loads(passage_message(item))
+
+    assert list(message) == ["passages", "first", "second"]
+    assert message["passages"] == [{"first": "the board shall", "second": "the commission shall"}]
+    for word in ("copied", "paraphras", "stage", "cosine"):
+        assert word not in PASSAGES_SYSTEM.lower()
+    assert "beyond boilerplate" in PASSAGES_SYSTEM
+    assert (PASSAGES_HIGH.effort, PASSAGES_HIGH.passages) == ("high", True)
+    assert PROMPTS["passages-v1-high"] is PASSAGES_HIGH
+
+
+def test_a_yes_or_no_is_recorded_on_its_own_scale_and_counted_correct_only_for_yes() -> None:
+    assert SameProvision.model_validate_json('{"same_provision": true}').as_label() == 1
+    assert ModelLabel.model_validate_json('{"label": 3}').as_label() == 3
+
+    yes = PASSAGES_HIGH.row(_item(0), 1, "claude-opus-5-5", "2026-11-12")
+    no = PASSAGES_HIGH.row(_item(0), 0, "claude-opus-5-5", "2026-11-12")
+    graded = SECTIONS_HIGH.row(_item(0), 1, "claude-opus-5-5", "2026-11-12")
+
+    assert yes["scale"] == SAME_PROVISION
+    assert yes["labeler"] == "model:claude-opus-5-5@passages-v1-high"
+    assert (is_correct(yes), is_correct(no)) == (True, False)
+    # The same 1 on the 0-4 scale is "partially related", which is not correct.
+    assert "scale" not in graded
+    assert is_correct(graded) is False
+
+
+def test_one_batch_labels_several_samples_each_into_its_own_file(tmp_path: Path) -> None:
+    first, second = _item(0), replace(_item(1), passages=(("a", "b"),))
+    batches = _FakeBatches({"p0": (1, "claude-opus-5-5"), "p1": (0, "claude-opus-5-5")})
+    paths = {"p0": tmp_path / "a.jsonl", "p1": tmp_path / "b.jsonl"}
+
+    done, unusable, _ = label_in_batch(
+        [first, second], batches=batches, model="claude-opus-5-5", labels_path=paths,
+        today="2026-11-12", wait=lambda: None, prompt=PASSAGES_HIGH,
+    )  # fmt: skip
+
+    assert (done, unusable) == (2, 0)
+    assert batches.schema is SameProvision
+    [a] = [json.loads(line) for line in paths["p0"].read_text().splitlines()]
+    [b] = [json.loads(line) for line in paths["p1"].read_text().splitlines()]
+    assert (a["label"], b["label"], a["scale"]) == (1, 0, SAME_PROVISION)
+    schema = batches.sent[0][1]["output_config"]
+    assert schema["format"]["schema"] == SameProvision.model_json_schema()  # type: ignore[index]
+    with pytest.raises(UnusableReplyError, match="share an id"):
+        label_in_batch(
+            [first, first], batches=batches, model="claude-opus-5-5", labels_path=paths,
+            today="2026-11-12", wait=lambda: None, prompt=PASSAGES_HIGH,
+        )  # fmt: skip

@@ -22,7 +22,7 @@ here calls a model; provisional model labels come from lineage.model_labels.
 import hashlib
 import json
 import re
-from collections.abc import Callable, Collection, Sequence
+from collections.abc import Callable, Collection, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -43,6 +43,10 @@ SCALE = (
     "the same provision in mostly the same words, with small edits",
     "the same text, apart from formatting, numbering or place names",
 )
+# The passage-level question's scale: do the matched passages state the same provision, beyond
+# boilerplate? A row asked it records `"scale": SAME_PROVISION` and a label of 1 for yes and 0
+# for no, so it is never read on the 0-4 scale above. A row without a scale is on that scale.
+SAME_PROVISION = "same_provision"
 LABELS_PATH = Path("evals/precision_labels.jsonl")
 PERSON = "github:"
 MODEL = "model:"
@@ -134,6 +138,15 @@ class Item:
     match: Section
     # The aligned passages (query side, match side) a relative is judged on; none for a pair.
     passages: tuple[tuple[str, str], ...] = ()
+
+
+def is_correct(row: Mapping[str, Any]) -> bool:
+    """Whether a label row counts its match as correct: from CORRECT_FROM on the 0-4 scale, or
+    a yes to the passage-level question."""
+    label = int(row["label"])
+    if row.get("scale") == SAME_PROVISION:
+        return label == 1
+    return label >= CORRECT_FROM
 
 
 def load_sample(path: Path) -> list[Pair]:

@@ -31,10 +31,10 @@ from numpy.typing import NDArray
 from lineage import queries
 from lineage.align import Embedder, align
 from lineage.intervals import wilson
-from lineage.labels import CORRECT_FROM, Item
+from lineage.labels import Item
 from lineage.pairs import load_cross_state_pairs
 from lineage.precision import SEED as PRECISION_SEED
-from lineage.precision import STRATA, latest_labels, stratum_of
+from lineage.precision import STRATA, latest_correct, stratum_of
 from lineage.relatives import RELATIVES_SHOWN, bill_relatives
 from lineage.semantic import MODEL
 from lineage.semantic_pairs import load_semantic_pairs, section_keys
@@ -253,8 +253,8 @@ def load_pages(path: Path = SAMPLE) -> dict[str, dict[str, Any]]:
     return pages
 
 
-def _share(labels: Sequence[int]) -> dict[str, Any]:
-    correct = sum(label >= CORRECT_FROM for label in labels)
+def _share(labels: Sequence[bool]) -> dict[str, Any]:
+    correct = sum(labels)
     return {
         "labeled": len(labels),
         "correct": correct,
@@ -273,7 +273,7 @@ def estimate(
 ) -> dict[str, Any]:
     """The share of sampled relatives labeled correct, overall with its Wilson interval, by the
     stages that found the relative, and for a page's first TOP relatives against the rest."""
-    got = latest_labels(items, labels, labeler, exact=exact)
+    got = latest_correct(items, labels, labeler, exact=exact)
     ids = [i.pair.pair for i in items if i.pair.pair in got]
     by_stage = {
         name: _share([got[p] for p in ids if _stratum(pages[p]["relative_stages"]) == name])

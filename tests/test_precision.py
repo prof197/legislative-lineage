@@ -9,12 +9,14 @@ import numpy as np
 import pytest
 
 from lineage.intervals import wilson
-from lineage.labels import Item, Pair, Section, SectionKey, SectionRef, text_sha256
+from lineage.labels import SAME_PROVISION, Item, Pair, Section, SectionKey, SectionRef, text_sha256
 from lineage.precision import (
     STRATA,
     PrecisionError,
     draw,
     estimate,
+    latest_correct,
+    latest_labels,
     pair_keys,
     sample_rows,
     strata,
@@ -270,3 +272,23 @@ def test_the_sample_is_drawn_from_both_stages_stored_pairs(embedded_commission: 
         found = {stage for stage, pairs in by_stage.items() if (a, b) in pairs}
         assert set(row["stages"]) == found
     assert build_sample(tables, model=FAKE_MODEL, per_stratum=5)[0] == rows  # seeded
+
+
+def test_a_yes_to_the_passage_question_counts_correct_and_is_never_read_as_a_grade() -> None:
+    items = [_item(i, ("semantic",)) for i in range(3)]
+    asker = "model:claude-opus-5-5@passages-v1-high"
+    labels = [
+        {**_label(items[0], 1, asker), "scale": SAME_PROVISION},
+        {**_label(items[1], 0, asker), "scale": SAME_PROVISION},
+        {**_label(items[2], 1, asker), "scale": SAME_PROVISION},
+    ]
+    sizes = {"near_duplicate_only": 0, "semantic_only": 10, "both": 0}
+
+    got = estimate(items, labels, sizes, model_labeler=asker)
+
+    assert got["provisional_model"]["strata"]["semantic_only"]["correct"] == 2
+    assert latest_correct(items, labels, asker, exact=True) == {
+        "p0": True, "p1": False, "p2": True
+    }  # fmt: skip
+    with pytest.raises(PrecisionError, match="not on the 0-4 scale"):
+        latest_labels(items, labels, asker, exact=True)

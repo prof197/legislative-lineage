@@ -3,8 +3,12 @@
 A model labels the precision sample on the same scale, with the same definitions, a person
 sees (lineage.labels.SCALE), so precision has a provisional estimate before volunteers have
 labeled, and where both have labeled, their agreement says how far the provisional one can be
-trusted. The model sees the two section texts and nothing else: not the stages that found the
-pair, not the alignment. Its reply must fit ModelLabel, one label and no prose.
+trusted. Under the section prompts (v1, v1-high) the model sees the two section texts and
+nothing else: not the stages that found the pair, not the alignment. Under the passage prompt
+(passages-v1-high) it sees the passages the alignment matched, unmarked as copied or
+paraphrased, with both sections for context, and answers whether they state the same provision
+beyond boilerplate: yes or no, recorded on its own scale (lineage.labels.SAME_PROVISION). Never
+the stages. Its reply must fit the prompt's schema, no prose.
 
 Each label is appended to the labels file under `model:<model id>@<prompt version>`, the id of
 the model that served the reply, so a fallback is on record. The file is the cache: a pair
@@ -22,7 +26,7 @@ from typing import Any, Literal, Protocol, cast
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
-from lineage.labels import MODEL, Item, model_labeler, scale_lines
+from lineage.labels import MODEL, SAME_PROVISION, Item, model_labeler, scale_lines
 
 MODEL_ID = "claude-opus-5-5"
 PROMPT_VERSION = "v1"
@@ -71,10 +75,44 @@ is listed, judge the two sections whole. Do not guess who wrote either section. 
 one label that fits best."""
 
 
+PASSAGES_SYSTEM = """\
+You are given the passages an alignment matched between two sections of state legislation, \
+and the two sections whole for context, as JSON: each entry of "passages" is a stretch of the \
+"first" section and the stretch of the "second" it was matched to. A page lists the second \
+section's bill as related to the first's because of these passages.
+
+Answer one question: do the matched passages state the same provision, beyond boilerplate? A \
+provision is a rule the law makes: who must or may do what, under which conditions, and with \
+what effect. Answer yes when at least one passage states the same such rule in both sections, \
+whether in the same words or in others. Answer no when the passages share only boilerplate, \
+such as a severability, effective-date, short-title or enacting clause or a clause a \
+legislature attaches to many unrelated bills, or share only a subject or a turn of phrase \
+while making different rules. When no passage is listed, answer for the two sections whole.
+
+Judge the text alone. Do not guess who wrote either section."""
+
+
 class ModelLabel(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     label: Literal[0, 1, 2, 3, 4]
+
+    def as_label(self) -> int:
+        return self.label
+
+
+class SameProvision(BaseModel):
+    """The passage-level question's answer, recorded as 1 for yes and 0 for no."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    same_provision: bool
+
+    def as_label(self) -> int:
+        return int(self.same_provision)
+
+
+Schema = type[ModelLabel] | type[SameProvision]
 
 
 class UnusableReplyError(Exception):
@@ -103,6 +141,19 @@ def relative_message(item: Item) -> str:
     )
 
 
+def passage_message(item: Item) -> str:
+    """The matched passages first, since they are what is asked about, then both sections."""
+    return json.dumps(
+        {
+            "passages": [{"first": a, "second": b} for a, b in item.passages],
+            "first": item.query.text,
+            "second": item.match.text,
+        },
+        ensure_ascii=False,
+        indent=1,
+    )
+
+
 @dataclass(frozen=True, slots=True)
 class Prompt:
     """What a model is asked and how hard it thinks. The version names the labeler, so a
@@ -114,6 +165,21 @@ class Prompt:
     effort: Effort
     max_tokens: int
     passages: bool = False  # the items must carry their aligned passages
+    schema: Schema = ModelLabel  # the reply's shape
+    scale: str | None = None  # recorded on each row when not the 0-4 scale
+
+    def row(self, item: Item, label: int, served_by: str, today: str) -> dict[str, Any]:
+        """The label row for one reply, keyed as every label is."""
+        row: dict[str, Any] = {
+            "query": item.query.ref.as_dict(),
+            "match": item.match.ref.as_dict(),
+            "label": label,
+            "labeler": model_labeler(served_by, self.version),
+            "at": today,
+        }
+        if self.scale is not None:
+            row["scale"] = self.scale
+        return row
 
 
 # At high effort, thinking runs longer than 1,024 tokens holds.
@@ -126,7 +192,16 @@ RELATIVES = Prompt("relatives-v1", RELATIVES_SYSTEM, relative_message, EFFORT, M
 RELATIVES_HIGH = Prompt(
     "relatives-v1-high", RELATIVES_SYSTEM, relative_message, "high", HIGH_EFFORT_MAX_TOKENS, True
 )
-PROMPTS = {p.version: p for p in (SECTIONS, SECTIONS_HIGH, RELATIVES, RELATIVES_HIGH)}
+# The question the claim rests on (DESIGN.md#precision-sample): do the passages that list a
+# relative state the same provision? Asked at high effort, the effort the person's check was
+# met at on the correct/incorrect cutoff.
+PASSAGES_HIGH = Prompt(
+    "passages-v1-high", PASSAGES_SYSTEM, passage_message, "high", HIGH_EFFORT_MAX_TOKENS,
+    passages=True, schema=SameProvision, scale=SAME_PROVISION,
+)  # fmt: skip
+PROMPTS = {
+    p.version: p for p in (SECTIONS, SECTIONS_HIGH, RELATIVES, RELATIVES_HIGH, PASSAGES_HIGH)
+}
 
 
 def projected_cost(
@@ -176,13 +251,7 @@ def label_with_model(
         except UnusableReplyError:
             unusable += 1
             continue
-        row = {
-            "query": item.query.ref.as_dict(),
-            "match": item.match.ref.as_dict(),
-            "label": label,
-            "labeler": model_labeler(served_by, prompt.version),
-            "at": today,
-        }
+        row = prompt.row(item, label, served_by, today)
         with labels_path.open("a") as f:
             f.write(json.dumps(row) + "\n")
         labeled += 1
@@ -203,7 +272,7 @@ def anthropic_ask(model: str = MODEL_ID, prompt: Prompt = SECTIONS) -> Ask:
                 max_tokens=prompt.max_tokens,
                 system=system,
                 messages=[{"role": "user", "content": user}],
-                output_format=ModelLabel,
+                output_format=prompt.schema,
                 output_config={"effort": prompt.effort},
                 betas=[_FALLBACK_BETA],
                 fallbacks="default",
@@ -212,7 +281,7 @@ def anthropic_ask(model: str = MODEL_ID, prompt: Prompt = SECTIONS) -> Ask:
             raise UnusableReplyError(f"the reply does not fit the schema: {e}") from e
         if response.stop_reason == "refusal" or response.parsed_output is None:
             raise UnusableReplyError(f"no usable reply (stop reason {response.stop_reason})")
-        return response.parsed_output.label, response.model
+        return response.parsed_output.as_label(), response.model
 
     return ask
 
@@ -232,7 +301,7 @@ class Batches(Protocol):
 
     def submit(self, requests: list[tuple[str, dict[str, Any]]]) -> str: ...
     def ended(self, batch_id: str) -> bool: ...
-    def results(self, batch_id: str) -> Iterable[BatchReply]: ...
+    def results(self, batch_id: str, schema: Schema = ModelLabel) -> Iterable[BatchReply]: ...
 
 
 def request_params(item: Item, model: str, prompt: Prompt = SECTIONS) -> dict[str, Any]:
@@ -244,7 +313,7 @@ def request_params(item: Item, model: str, prompt: Prompt = SECTIONS) -> dict[st
         "messages": [{"role": "user", "content": prompt.message(item)}],
         "output_config": {
             "effort": prompt.effort,
-            "format": {"type": "json_schema", "schema": ModelLabel.model_json_schema()},
+            "format": {"type": "json_schema", "schema": prompt.schema.model_json_schema()},
         },
     }
 
@@ -254,7 +323,7 @@ def label_in_batch(
     *,
     batches: Batches,
     model: str,
-    labels_path: Path,
+    labels_path: Path | Mapping[str, Path],
     today: str,
     wait: Callable[[], None],
     batch_id: str | None = None,
@@ -263,31 +332,39 @@ def label_in_batch(
 ) -> tuple[int, int, str]:
     """Send every pair in one batch, or collect `batch_id` if it was sent already; wait until it
     ends, then append each usable label. Returns how many were labeled, how many replies were
-    unusable, and the batch id. A batch is not resumed part way: its results are read whole."""
+    unusable, and the batch id. A batch is not resumed part way: its results are read whole.
+
+    `labels_path` is one labels file, or each pair id's own, so one batch can carry several
+    samples, each labeled into its file; their pair ids must then differ."""
+    if len({i.pair.pair for i in items}) != len(items):
+        raise UnusableReplyError("two pairs asked in one batch share an id")
+    paths = (
+        {i.pair.pair: labels_path for i in items}
+        if isinstance(labels_path, Path)
+        else dict(labels_path)
+    )
     if batch_id is None:
         batch_id = batches.submit([(i.pair.pair, request_params(i, model, prompt)) for i in items])
         submitted(batch_id)
     while not batches.ended(batch_id):
         wait()
     by_id = {i.pair.pair: i for i in items}
+    rows: dict[Path, list[dict[str, Any]]] = {}
     labeled = unusable = 0
-    with labels_path.open("a") as f:
-        for reply in batches.results(batch_id):
-            item = by_id.get(reply.custom_id)
-            if item is None:
-                raise UnusableReplyError(f"batch {batch_id} answered {reply.custom_id}, not asked")
-            if reply.label is None or reply.served_by is None:
-                unusable += 1
-                continue
-            row = {
-                "query": item.query.ref.as_dict(),
-                "match": item.match.ref.as_dict(),
-                "label": reply.label,
-                "labeler": model_labeler(reply.served_by, prompt.version),
-                "at": today,
-            }
-            f.write(json.dumps(row) + "\n")
-            labeled += 1
+    for reply in batches.results(batch_id, prompt.schema):
+        item = by_id.get(reply.custom_id)
+        if item is None:
+            raise UnusableReplyError(f"batch {batch_id} answered {reply.custom_id}, not asked")
+        if reply.label is None or reply.served_by is None:
+            unusable += 1
+            continue
+        rows.setdefault(paths[item.pair.pair], []).append(
+            prompt.row(item, reply.label, reply.served_by, today)
+        )
+        labeled += 1
+    for path, written in rows.items():
+        with path.open("a") as f:
+            f.writelines(json.dumps(r) + "\n" for r in written)
     return labeled, unusable, batch_id
 
 
@@ -308,7 +385,7 @@ def anthropic_batches() -> Batches:
         def ended(self, batch_id: str) -> bool:
             return client.messages.batches.retrieve(batch_id).processing_status == "ended"
 
-        def results(self, batch_id: str) -> Iterable[BatchReply]:
+        def results(self, batch_id: str, schema: Schema = ModelLabel) -> Iterable[BatchReply]:
             for entry in client.messages.batches.results(batch_id):
                 result = entry.result
                 if result.type != "succeeded":
@@ -323,7 +400,7 @@ def anthropic_batches() -> Batches:
                     continue
                 text = next((b.text for b in message.content if b.type == "text"), "")
                 try:
-                    label = ModelLabel.model_validate_json(text).label
+                    label = schema.model_validate_json(text).as_label()
                 except ValidationError:
                     yield BatchReply(entry.custom_id, None, None, "not the schema", *tokens)
                     continue
