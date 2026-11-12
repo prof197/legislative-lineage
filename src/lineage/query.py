@@ -6,8 +6,9 @@ query section matches a bill when any of its windows matches any of the bill's. 
 keys are looked up in the memory-mapped band index by binary search, and a bucket over the
 build's cap yields nothing here either. Every candidate is verified against its stored signature
 at the build's threshold. Matches are grouped by family, so a state's copies of a bill count
-once, and a family is scored from the query's side: the share of the query's signed sections it
-matches, so a provision carried inside a larger bill still scores high.
+once, and a family is scored from the query's side: the share of the query's words that fall in
+the sections it matches, of the words of every section searched, so a provision carried inside
+a larger bill still scores high, and a long matched section counts for more than a short one.
 
 With the semantic stage's search (lineage.semantic), each matchable section's windows are also
 embedded and searched by meaning, and a bill matches a query section when either stage finds
@@ -16,7 +17,9 @@ alone and together. Nothing here needs a network connection or an API key. See
 DESIGN.md#near-duplicate-stage and DESIGN.md#semantic-stage.
 """
 
+import time
 from collections import defaultdict
+from collections.abc import Collection, Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -26,12 +29,14 @@ from numpy.typing import NDArray
 from lineage import queries
 from lineage.bands import load_band_index
 from lineage.boilerplate import boilerplate_kind
+from lineage.listing import MeaningHit, NearHit, SectionKey, listed_hits
 from lineage.lsh import BANDS, BUCKET_CAP, BandIndex, band_keys
 from lineage.minhash import NUM_PERM, permutations, signatures
 from lineage.sections import normalize, split_sections
-from lineage.semantic import SemanticSearch, search_sections
+from lineage.semantic import CORROBORATING, SemanticSearch, search_sections
+from lineage.semantic import THRESHOLD as SEMANTIC_THRESHOLD
 from lineage.shingles import section_shingles
-from lineage.signatures import open_signatures, signature_bill_ids, signature_values
+from lineage.signatures import open_signatures, signature_sections, signature_values
 from lineage.stoplist import apply_stoplist, load_stoplist
 from lineage.verify import THRESHOLD, min_agreements
 from lineage.windows import normalized_windows
@@ -54,11 +59,31 @@ class Match:
     title: str
     status: str | None
     sections_matched: int  # of the query's sections either stage could match
-    share: float
+    share: float  # of the searched sections' words, the share in sections the family matches
     best_estimate: float  # the highest estimated similarity of any matched section pair, or 0
     # Query sections each stage matched, by stage: "near_duplicate", "semantic".
     sections_by_stage: dict[str, int] = field(default_factory=dict[str, int])
     best_cosine: float | None = None  # the semantic stage's best, when it matched
+
+    @property
+    def found_by(self) -> str:
+        """ "wording" when the near-duplicate stage matched any of its sections, else "meaning":
+        a page lists the two apart, since each list has its own precision
+        (DESIGN.md#choosing-the-threshold)."""
+        return "wording" if "near_duplicate" in self.sections_by_stage else "meaning"
+
+
+@dataclass(frozen=True, slots=True)
+class Hits:
+    """A query's hits before grouping, so its matches can be grouped again under a stricter
+    semantic threshold (`regrouped`) without searching again. The hits by meaning go down to
+    the lower of the search's threshold and the cosine that corroborates a match, which the
+    state boilerplate flag's exemption reads (lineage.listing)."""
+
+    near: Sequence[NearHit]  # (query section, bill id, ordinal, agreements)
+    by_meaning: Sequence[MeaningHit]  # (query section, bill id, ordinal, cosine)
+    words: dict[int, int]  # each query section's words
+    flagged: Collection[SectionKey] = frozenset()  # corpus sections the flag drops
 
 
 @dataclass(frozen=True, slots=True)
@@ -66,9 +91,14 @@ class QueryResult:
     sections: int
     signed: int  # sections with at least one signed window
     matches: list[Match]
-    # Sections either stage could match, the share's denominator: the signed ones, and with
-    # the semantic stage every matchable section with a window.
+    # Sections either stage could match: the signed ones, and with the semantic stage every
+    # matchable section with a window. Their words are the share's denominator.
     searched: int = 0
+    words_searched: int = 0
+    # Seconds each step took: "near_duplicate" (signing, lookup and verification), "semantic"
+    # (embedding and exact search), "scoring" (grouping by family and ranking).
+    seconds: dict[str, float] = field(default_factory=dict[str, float])
+    hits: Hits | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -146,8 +176,8 @@ def require_index(tables_dir: Path) -> None:
         raise IndexMissingError(f"no index in {tables_dir}; run `lineage index` first")
 
 
-def _near_duplicate_hits(query: SignedQuery, tables_dir: Path) -> list[tuple[int, str, int]]:
-    """(query section, bill id, agreements) for every verified window pair."""
+def _near_duplicate_hits(query: SignedQuery, tables_dir: Path) -> list[NearHit]:
+    """(query section, bill id, ordinal, agreements) for every verified window pair."""
     if not query.signed:
         return []
     query_rows, rows = _candidates(band_keys(query.values), tables_dir)
@@ -155,30 +185,28 @@ def _near_duplicate_hits(query: SignedQuery, tables_dir: Path) -> list[tuple[int
     counts = np.count_nonzero(signature_values(files, rows) == query.values[query_rows], axis=1)
     kept = counts >= min_agreements(THRESHOLD)
     query_rows, rows, counts = query.section[query_rows[kept]], rows[kept], counts[kept]
-    bill_ids = signature_bill_ids(files, rows)
-    return list(zip(query_rows.tolist(), bill_ids, counts.tolist(), strict=True))
+    sections = signature_sections(files, rows)
+    return [
+        (q, bill_id, ordinal, count)
+        for q, (bill_id, ordinal), count in zip(
+            query_rows.tolist(), sections, counts.tolist(), strict=True
+        )
+    ]
 
 
-def query_text(
-    raw: str, tables_dir: Path, *, semantic: SemanticSearch | None = None
-) -> QueryResult:
-    """Every family that shares text with `raw`, best first: verified near-duplicates, and with
-    `semantic`, the semantic stage's matches too."""
-    require_index(tables_dir)
-    query = sign_query(raw, tables_dir)
-    near = _near_duplicate_hits(query, tables_dir)
-    searched = set(query.section.tolist())
-    by_meaning: list[tuple[int, str, float]] = []
-    if semantic is not None:
-        _, matchable = matchable_sections(raw)
-        texts = [text for text, _ in matchable]
-        searched |= {i for i, text in enumerate(texts) if text.split()}
-        by_meaning = [
-            (h.query_section, h.bill_id, h.cosine) for h in search_sections(texts, semantic)
-        ]
-    if not searched:
-        return QueryResult(query.sections, query.signed, [], 0)
+def group_matches(
+    near: Sequence[tuple[int, str, int]],
+    by_meaning: Sequence[tuple[int, str, float]],
+    words: Mapping[int, int],
+    words_searched: int,
+    tables_dir: Path,
+) -> list[Match]:
+    """Matches grouped by family, best first, scored from the query's side.
 
+    `near` holds (query section, bill id, agreements) and `by_meaning` (query section, bill id,
+    cosine); `words` gives each query section's words, and `words_searched` the share's
+    denominator. A corpus bill's relatives are scored by the same function (lineage.relatives),
+    so a bill and a query scored alike agree."""
     with queries.connect_quiet() as con:
         summaries = queries.bill_summaries(
             con,
@@ -210,6 +238,7 @@ def query_text(
         shown = by_id[min(bills, key=lambda b: (-len(covered(b)), -best[b], b))]
         stages = {stage for b in bills for stage in matched[b]}
         cosines = [cosine[b] for b in bills if b in cosine]
+        family_covers = set[int]().union(*(covered(b) for b in bills))
         results.append(
             Match(
                 family=family,
@@ -220,8 +249,8 @@ def query_text(
                 identifier=shown.identifier,
                 title=shown.title,
                 status=shown.status,
-                sections_matched=len(set[int]().union(*(covered(b) for b in bills))),
-                share=len(set[int]().union(*(covered(b) for b in bills))) / len(searched),
+                sections_matched=len(family_covers),
+                share=sum(words[q] for q in family_covers) / max(words_searched, 1),
                 best_estimate=max(best[b] for b in bills) / NUM_PERM,
                 sections_by_stage={
                     stage: len(set[int]().union(*(matched[b][stage] for b in bills)))
@@ -231,4 +260,70 @@ def query_text(
             )
         )
     results.sort(key=lambda m: (-m.share, -m.best_estimate, m.state, m.identifier, m.bill_id))
-    return QueryResult(query.sections, query.signed, results, len(searched))
+    return results
+
+
+def query_text(
+    raw: str,
+    tables_dir: Path,
+    *,
+    semantic: SemanticSearch | None = None,
+    semantic_threshold: float = SEMANTIC_THRESHOLD,
+    flagged: Collection[SectionKey] = frozenset(),
+) -> QueryResult:
+    """Every family that shares text with `raw`, best first: verified near-duplicates, and with
+    `semantic`, the semantic stage's matches at `semantic_threshold` too, as a page lists them
+    (lineage.listing): without hits on the `flagged` sections that one stage alone found. It
+    searches down to the cosine that corroborates a match, so the flag's exemption sees the
+    hits under `semantic_threshold`, and lists only those at or above it."""
+    require_index(tables_dir)
+    seconds: dict[str, float] = {}
+    started = time.perf_counter()
+    query = sign_query(raw, tables_dir)
+    near = _near_duplicate_hits(query, tables_dir)
+    seconds["near_duplicate"] = time.perf_counter() - started
+    searched: set[int] = set(query.section.tolist())
+    _, matchable = matchable_sections(raw)
+    words = [len(normalized.split()) for _, normalized in matchable]
+    by_meaning: list[MeaningHit] = []
+    if semantic is not None:
+        texts = [text for text, _ in matchable]
+        searched |= {i for i, text in enumerate(texts) if text.split()}
+        started = time.perf_counter()
+        by_meaning = [
+            (h.query_section, h.bill_id, h.ordinal, h.cosine)
+            for h in search_sections(
+                texts, semantic, threshold=min(semantic_threshold, CORROBORATING)
+            )
+        ]
+        seconds["semantic"] = time.perf_counter() - started
+    if not searched:
+        return QueryResult(query.sections, query.signed, [], 0, seconds=seconds | {"scoring": 0.0})
+
+    started = time.perf_counter()
+    words_searched = sum(words[q] for q in searched)
+    hits = Hits(near, by_meaning, dict(enumerate(words)), flagged)
+    listed_near, listed_meaning = listed_hits(
+        near, by_meaning, threshold=semantic_threshold, flagged=flagged
+    )
+    results = group_matches(listed_near, listed_meaning, hits.words, words_searched, tables_dir)
+    seconds["scoring"] = time.perf_counter() - started
+    return QueryResult(
+        query.sections, query.signed, results, len(searched), words_searched, seconds, hits
+    )
+
+
+def regrouped(result: QueryResult, tables_dir: Path, semantic_threshold: float) -> list[Match]:
+    """The matches the query would have had with the semantic stage's threshold raised to
+    `semantic_threshold`. Exact for any threshold at or above the search's: each window keeps
+    its K nearest before the threshold applies, so a stricter threshold only drops hits. The
+    flag applies as it did to the query, at the stricter threshold's hits."""
+    if result.hits is None:
+        return []
+    near, by_meaning = listed_hits(
+        result.hits.near,
+        result.hits.by_meaning,
+        threshold=semantic_threshold,
+        flagged=result.hits.flagged,
+    )
+    return group_matches(near, by_meaning, result.hits.words, result.words_searched, tables_dir)

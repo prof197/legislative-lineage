@@ -4,6 +4,7 @@ pyright cannot see inside SQL strings, so each query here is exercised against c
 fixtures in the tests. See DESIGN.md#dr-4.
 """
 
+import re
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -464,18 +465,101 @@ def semantic_text_ids_of(
     return rows
 
 
-def signature_bill_ids_at(
+def semantic_section_pairs(
+    con: duckdb.DuckDBPyConnection,
+    *,
+    units_glob: str,
+    bills_glob: str,
+    sections: dict[str, Any],
+    neighbors: dict[str, Any],
+) -> dict[str, Any]:
+    """Cross-state section pairs whose windows carry the same text or neighboring texts, each
+    once, at its best cosine and with the window pair that gave it.
+
+    `sections` numbers the signed sections (`section`, `bill_id`, `ordinal`); a window of any
+    other section is left out. `neighbors` holds each kept neighbor (`a`, `b`, `cosine`), in
+    either direction. A text shared by two windows pairs them at a cosine of 1. Pairs come out
+    with left < right, sorted, and ties at the best cosine go to the lowest window pair."""
+    con.register("signed_sections", sections)
+    con.register("kept_neighbors", neighbors)
+    try:
+        result = con.execute(
+            """
+            WITH units AS (
+                SELECT u.text_id, s.section, u.window_number, b.state
+                FROM read_parquet($units) u
+                JOIN signed_sections s ON s.bill_id = u.bill_id AND s.ordinal = u.ordinal
+                JOIN (SELECT id, state FROM read_parquet($bills)) b ON b.id = u.bill_id
+            ), linked AS (
+                SELECT a, b, CAST(cosine AS FLOAT) AS cosine FROM kept_neighbors
+                UNION ALL
+                SELECT DISTINCT text_id, text_id, CAST(1.0 AS FLOAT) FROM units
+            ), expanded AS (
+                SELECT
+                    least(x.section, y.section) AS l,
+                    greatest(x.section, y.section) AS r,
+                    linked.cosine,
+                    CASE WHEN x.section < y.section THEN x.window_number
+                         ELSE y.window_number END AS lw,
+                    CASE WHEN x.section < y.section THEN y.window_number
+                         ELSE x.window_number END AS rw
+                FROM linked
+                JOIN units x ON x.text_id = linked.a
+                JOIN units y ON y.text_id = linked.b
+                WHERE x.state <> y.state
+            )
+            SELECT
+                CAST(l AS UINTEGER) AS l, CAST(r AS UINTEGER) AS r, cosine,
+                CAST(lw AS UINTEGER) AS lw, CAST(rw AS UINTEGER) AS rw
+            FROM (
+                SELECT *, row_number() OVER (
+                    PARTITION BY l, r ORDER BY cosine DESC, lw, rw
+                ) AS n
+                FROM expanded
+            )
+            WHERE n = 1
+            ORDER BY l, r
+            """,
+            {"units": units_glob, "bills": bills_glob},
+        )
+        found: dict[str, Any] = result.fetchnumpy()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+    finally:
+        con.unregister("signed_sections")
+        con.unregister("kept_neighbors")
+    return found
+
+
+def semantic_units_left_out(
+    con: duckdb.DuckDBPyConnection, *, units_glob: str, sections: dict[str, Any]
+) -> tuple[int, int]:
+    """Windows, and sections, of the semantic stage that no signed section holds."""
+    con.register("signed_sections", sections)
+    try:
+        rows: list[tuple[int, int]] = con.execute(
+            """
+            SELECT count(*), count(DISTINCT (u.bill_id, u.ordinal))
+            FROM read_parquet($units) u
+            ANTI JOIN signed_sections s ON s.bill_id = u.bill_id AND s.ordinal = u.ordinal
+            """,
+            {"units": units_glob},
+        ).fetchall()
+    finally:
+        con.unregister("signed_sections")
+    return int(rows[0][0]), int(rows[0][1])
+
+
+def signature_sections_at(
     con: duckdb.DuckDBPyConnection, *, parquet_path: Path, rows: list[int]
-) -> dict[int, str]:
-    """The bill id of each wanted row of one signature keys file, by row number."""
-    found: list[tuple[int, str]] = con.execute(
+) -> dict[int, tuple[str, int]]:
+    """The bill id and section ordinal of each wanted row of one signature keys file."""
+    found: list[tuple[int, str, int]] = con.execute(
         """
-        SELECT file_row_number, bill_id FROM read_parquet($p, file_row_number = true)
+        SELECT file_row_number, bill_id, ordinal FROM read_parquet($p, file_row_number = true)
         WHERE file_row_number IN (SELECT unnest($rows))
         """,
         {"p": str(parquet_path), "rows": rows},
     ).fetchall()
-    return dict(found)
+    return {row: (bill_id, ordinal) for row, bill_id, ordinal in found}
 
 
 @dataclass(frozen=True, slots=True)
@@ -1145,6 +1229,40 @@ def matchable_bill_ids(
     return [bill for (bill,) in rows]
 
 
+def sections_at(
+    con: duckdb.DuckDBPyConnection, *, sections_glob: str, keys: list[tuple[str, int]]
+) -> dict[tuple[str, int], tuple[str | None, str, str]]:
+    """The heading, display text and normalized text of each wanted (bill id, ordinal) section."""
+    rows: list[tuple[str, int, str | None, str, str]] = con.execute(
+        """
+        SELECT s.bill_id, s.ordinal, s.heading, s.text, s.normalized
+        FROM read_parquet($sections) s
+        JOIN (SELECT unnest($ids) AS bill_id, unnest($ordinals) AS ordinal) k
+            ON s.bill_id = k.bill_id AND s.ordinal = k.ordinal
+        """,
+        {
+            "sections": sections_glob,
+            "ids": [b for b, _ in keys],
+            "ordinals": [o for _, o in keys],
+        },
+    ).fetchall()
+    return {(b, o): (h, t, n) for b, o, h, t, n in rows}
+
+
+def normalized_texts_of(
+    con: duckdb.DuckDBPyConnection, *, sections_glob: str, bill_ids: list[str]
+) -> list[tuple[str, str]]:
+    """(bill id, normalized text) of every section of the given bills."""
+    rows: list[tuple[str, str]] = con.execute(
+        """
+        SELECT bill_id, normalized FROM read_parquet($sections)
+        WHERE bill_id IN (SELECT unnest($ids))
+        """,
+        {"sections": sections_glob, "ids": bill_ids},
+    ).fetchall()
+    return rows
+
+
 def matchable_section_texts(
     con: duckdb.DuckDBPyConnection, *, sections_glob: str, eligible_path: Path, ids: list[str]
 ) -> list[tuple[str, int, str]]:
@@ -1153,6 +1271,30 @@ def matchable_section_texts(
         f"SELECT s.bill_id, s.ordinal, s.text {_MATCHABLE} "
         "AND s.bill_id IN (SELECT unnest($ids)) ORDER BY s.bill_id, s.ordinal",
         {"sections": sections_glob, "eligible": str(eligible_path), "ids": ids},
+    ).fetchall()
+    return rows
+
+
+def matchable_section_normalized(
+    con: duckdb.DuckDBPyConnection, *, sections_glob: str, eligible_path: Path, ids: list[str]
+) -> list[tuple[str, int, str]]:
+    """(bill id, ordinal, normalized text) of the wanted bills' matchable sections."""
+    rows: list[tuple[str, int, str]] = con.execute(
+        f"SELECT s.bill_id, s.ordinal, s.normalized {_MATCHABLE} "
+        "AND s.bill_id IN (SELECT unnest($ids)) ORDER BY s.bill_id, s.ordinal",
+        {"sections": sections_glob, "eligible": str(eligible_path), "ids": ids},
+    ).fetchall()
+    return rows
+
+
+def sections_naming(
+    con: duckdb.DuckDBPyConnection, *, sections_glob: str, phrases: list[str]
+) -> list[tuple[str, int]]:
+    """(bill id, ordinal) of every section whose normalized text holds one of `phrases`."""
+    rows: list[tuple[str, int]] = con.execute(
+        "SELECT bill_id, ordinal FROM read_parquet($sections) "
+        "WHERE regexp_matches(normalized, $pattern) ORDER BY bill_id, ordinal",
+        {"sections": sections_glob, "pattern": "|".join(re.escape(p) for p in phrases)},
     ).fetchall()
     return rows
 

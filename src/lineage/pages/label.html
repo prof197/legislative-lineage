@@ -1,0 +1,497 @@
+<title>Section Pair Labeling</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+/* Layout: a reading column of two section cards, a slim progress header on top and the
+   0-4 scale fixed to the bottom edge within thumb reach; side by side on wide screens. */
+:root {
+  --paper: #f3f5f8;
+  --card: #ffffff;
+  --ink: #18202c;
+  --muted: #5b6577;
+  --rule: #d8dde6;
+  --accent: #2b4c8c;
+  --accent-ink: #ffffff;
+  --copied-bg: #d5eed8;
+  --copied-ink: #123f22;
+  --para-bg: #f9e4b2;
+  --para-ink: #5e4100;
+  --unmatched: #7f8899;
+  --danger: #a3261b;
+  --ui: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --text: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --bar-h: 92px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #11151c; --card: #19202a; --ink: #e5e9ef; --muted: #9aa3b2; --rule: #2a3240;
+    --accent: #8eaef0; --accent-ink: #0d1422; --copied-bg: #1d3b26; --copied-ink: #bce9c6;
+    --para-bg: #443617; --para-ink: #f2d897; --unmatched: #6f7888; --danger: #f08a7f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #11151c; --card: #19202a; --ink: #e5e9ef; --muted: #9aa3b2; --rule: #2a3240;
+  --accent: #8eaef0; --accent-ink: #0d1422; --copied-bg: #1d3b26; --copied-ink: #bce9c6;
+  --para-bg: #443617; --para-ink: #f2d897; --unmatched: #6f7888; --danger: #f08a7f;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink); font-family: var(--ui); font-size: 15px;
+  line-height: 1.45;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 10; background: var(--card);
+}
+.gutter {
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+header {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--card); border-bottom: 1px solid var(--rule);
+}
+.head-row { display: flex; align-items: center; gap: 12px; padding-block: 10px; }
+.count { font-variant-numeric: tabular-nums; font-weight: 600; }
+.count small { color: var(--muted); font-weight: 400; }
+.grow { flex: 1; min-width: 0; }
+.meter { height: 4px; background: var(--rule); border-radius: 2px; overflow: hidden; margin-top: 6px; }
+.meter > i { display: block; height: 100%; background: var(--accent); width: 0; transition: width .2s; }
+button {
+  font: inherit; color: inherit; background: none; border: 1px solid var(--rule);
+  border-radius: 8px; padding: 8px 12px; cursor: pointer; min-height: 40px;
+}
+button:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button:disabled { opacity: .4; cursor: default; }
+main { display: grid; gap: 14px; padding-block: 14px calc(var(--bar-h) + 24px + env(safe-area-inset-bottom, 0px)); max-width: 1280px; margin: 0 auto; }
+.status { color: var(--muted); font-size: 13px; }
+.status.error { color: var(--danger); }
+details.scale { background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 10px 14px; }
+details.scale summary { cursor: pointer; font-weight: 600; }
+.scale ol { margin: 8px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.scale li { display: grid; grid-template-columns: 1.6em 1fr; gap: 6px; }
+.scale b { font-variant-numeric: tabular-nums; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+.sw.copied { background: var(--copied-bg); }
+.sw.paraphrased { background: var(--para-bg); }
+.sw.unmatched { border: 1px dashed var(--unmatched); }
+.pair-meta { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+.pair-meta .legend { flex-basis: 100%; }
+.pair-meta h1 { font-size: 17px; margin: 0; text-wrap: balance; }
+.pair-meta .mono { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+/* Both panes the same height, each scrolling on its own: stacked halves of what the header
+   and the label bar leave on a phone, one row of full-height panes on a wide screen. */
+.sections {
+  display: grid; gap: 14px;
+  --chrome: calc(300px + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));
+  --pane-h: max(220px, calc((100vh - var(--chrome)) / 2));
+}
+@supports (height: 100dvh) { .sections { --pane-h: max(220px, calc((100dvh - var(--chrome)) / 2)); } }
+@media (min-width: 900px) {
+  .sections { grid-template-columns: 1fr 1fr; --chrome: calc(260px + env(safe-area-inset-bottom, 0px)); --pane-h: max(360px, calc(100vh - var(--chrome))); }
+  @supports (height: 100dvh) { .sections { --pane-h: max(360px, calc(100dvh - var(--chrome))); } }
+}
+.section {
+  background: var(--card); border: 1px solid var(--rule); border-radius: 10px; min-width: 0;
+  display: flex; flex-direction: column; height: var(--pane-h); overflow: hidden;
+}
+.section-head { padding: 10px 14px; border-bottom: 1px solid var(--rule); display: grid; gap: 2px; }
+.section-head .role { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.section-head .where { font-size: 14px; }
+.section-head .bill { font-family: var(--mono); font-size: 11.5px; color: var(--muted); overflow-wrap: anywhere; }
+.section-text {
+  font-family: var(--text); font-size: 16.5px; line-height: 1.6; padding: 12px 14px 16px;
+  white-space: pre-wrap; overflow-wrap: anywhere;
+  flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+}
+[data-span] { cursor: pointer; }
+.flash { outline: 2px solid var(--accent); outline-offset: 1px; }
+.hint { font-size: 13px; color: var(--muted); }
+.k-copied { background: var(--copied-bg); color: var(--copied-ink); border-radius: 2px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.k-paraphrased { background: var(--para-bg); color: var(--para-ink); border-radius: 2px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.k-unmatched { color: var(--unmatched); }
+.bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; background: var(--card);
+  border-top: 1px solid var(--rule);
+  padding-top: 8px; padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+}
+.bar-inner { max-width: 760px; margin: 0 auto; display: grid; gap: 6px; }
+.labels { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.labels button {
+  display: grid; justify-items: center; gap: 1px; padding: 6px 2px; min-height: 56px;
+  background: var(--paper);
+}
+.labels button b { font-size: 19px; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.labels button span { font-size: 11px; line-height: 1.15; color: var(--muted); text-align: center; }
+.labels button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.labels button[aria-pressed="true"] span { color: var(--accent-ink); }
+.nav { display: flex; gap: 6px; align-items: center; }
+.nav .status { flex: 1; min-width: 0; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nav button { min-height: 34px; padding: 4px 12px; font-size: 14px; }
+dialog { border: 1px solid var(--rule); border-radius: 12px; background: var(--card); color: var(--ink); width: min(520px, calc(100vw - 32px)); padding: 16px; }
+dialog::backdrop { background: rgb(0 0 0 / .35); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap: 6px; margin: 12px 0; }
+.grid button { min-height: 44px; padding: 0; font-variant-numeric: tabular-nums; display: grid; place-items: center; line-height: 1.05; }
+.grid button small { font-size: 10px; color: var(--muted); }
+.grid button.done { background: var(--paper); }
+.grid button.here { border-color: var(--accent); border-width: 2px; }
+.done-panel { background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 16px; display: grid; gap: 8px; }
+.done-panel h2 { margin: 0; font-size: 18px; }
+@media (prefers-reduced-motion: reduce) { .meter > i { transition: none; } }
+</style>
+
+<header>
+  <div class="gutter head-row">
+    <div class="grow">
+      <div class="count" id="count">Loading the sample…</div>
+      <div class="meter" aria-hidden="true"><i id="meter"></i></div>
+    </div>
+    <button id="open-all" type="button" aria-haspopup="dialog">All pairs</button>
+  </div>
+</header>
+
+<main class="gutter">
+  <p class="status" id="store-status">Connecting to the label store…</p>
+  <section id="pair" aria-live="polite">
+    <div class="done-panel">
+      <h2>Two sections will appear here</h2>
+      <p>Each pair shows a section from one state's bill and the section another state's bill matched to it. Read both, then pick how closely they are related on the scale at the bottom.</p>
+    </div>
+  </section>
+  <details class="scale" id="scale">
+    <summary>The 0–4 scale</summary>
+    <ol id="scale-list"></ol>
+  </details>
+  <p class="status">Each label is saved as you tap it. Stop whenever you like and pick up on any device.</p>
+</main>
+
+<template id="legend-tpl">
+  <div class="legend">
+    <span><i class="sw copied"></i>copied, five words or more</span>
+    <span class="legend-para"><i class="sw paraphrased"></i>paraphrased sentence</span>
+    <span><i class="sw unmatched"></i><span class="k-unmatched">unmatched</span></span>
+    <span class="hint">Tap a highlighted passage to line up its match.</span>
+  </div>
+</template>
+
+<nav class="bar gutter" aria-label="Label this pair">
+  <div class="bar-inner">
+    <div class="labels" id="labels"></div>
+    <div class="nav">
+      <button id="prev" type="button">‹ Back</button>
+      <span class="status" id="saved">Tap a label to save it and move on.</span>
+      <button id="next" type="button">Skip ›</button>
+    </div>
+  </div>
+</nav>
+
+<dialog id="all" aria-labelledby="all-title">
+  <h2 id="all-title" style="margin:0;font-size:17px">All pairs</h2>
+  <p class="status" id="all-summary"></p>
+  <div class="grid" id="all-grid"></div>
+  <form method="dialog"><button type="submit" id="close-all">Close</button></form>
+</dialog>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const state = { data: null, labels: new Map(), at: 0, db: null, writing: new Map(), storeOk: false };
+  const POS_KEY = "label-page-position";
+
+  const today = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  };
+  const ref = (side) => ({ bill_id: side.bill_id, heading: side.heading, ordinal: side.ordinal, text_sha256: side.text_sha256 });
+  const remember = () => { try { localStorage.setItem(POS_KEY, String(state.at)); } catch {} };
+  const recall = () => { try { return Number(localStorage.getItem(POS_KEY)); } catch { return NaN; } };
+
+  function marked(text, spans, side) {
+    const frag = document.createDocumentFragment();
+    const pieces = spans.map((s, i) => ({ s, i })).filter(({ s }) => s[side])
+      .map(({ s, i }) => ({ kind: s.kind, start: s[side][0], end: s[side][1], twin: s.kind !== "unmatched" && s.a && s.b ? i : null }))
+      .sort((x, y) => x.start - y.start);
+    let pos = 0;
+    for (const p of pieces) {
+      if (p.start > pos) frag.append(text.slice(pos, p.start));
+      const el = document.createElement("span");
+      el.className = "k-" + p.kind;
+      el.textContent = text.slice(p.start, p.end);
+      if (p.twin !== null) el.dataset.span = String(p.twin);
+      frag.append(el);
+      pos = Math.max(pos, p.end);
+    }
+    if (pos < text.length) frag.append(text.slice(pos));
+    return frag;
+  }
+
+  function sectionCard(role, side, spans, key) {
+    const card = document.createElement("article");
+    card.className = "section";
+    const head = document.createElement("div");
+    head.className = "section-head";
+    const r = document.createElement("div"); r.className = "role"; r.textContent = role;
+    const w = document.createElement("div"); w.className = "where";
+    w.textContent = `Section ${side.ordinal}` + (side.heading ? ` · ${side.heading}` : "");
+    const b = document.createElement("div"); b.className = "bill"; b.textContent = side.bill_id;
+    head.append(r, w, b);
+    const body = document.createElement("div");
+    body.className = "section-text";
+    body.append(marked(side.text, spans, key));
+    card.append(head, body);
+    return card;
+  }
+
+  const pairs = () => state.data ? state.data.pairs : [];
+  const labelOf = (p) => state.labels.get(p.pair);
+  const doneCount = () => pairs().filter((p) => labelOf(p) !== undefined).length;
+  const nextOpen = (from) => {
+    const ps = pairs();
+    for (let k = 1; k <= ps.length; k++) {
+      const i = (from + k) % ps.length;
+      if (labelOf(ps[i]) === undefined) return i;
+    }
+    return -1;
+  };
+
+  function renderHeader() {
+    const n = pairs().length, done = doneCount();
+    $("count").innerHTML = "";
+    const strong = document.createElement("span");
+    strong.textContent = n ? `Pair ${state.at + 1} of ${n} ` : "No pairs to label";
+    const small = document.createElement("small");
+    small.textContent = n ? `· ${done} labeled` : "";
+    $("count").append(strong, small);
+    $("meter").style.width = n ? `${(100 * done) / n}%` : "0";
+  }
+
+  function renderPair() {
+    const host = $("pair");
+    host.innerHTML = "";
+    const ps = pairs();
+    if (!ps.length) {
+      const panel = document.createElement("div");
+      panel.className = "done-panel";
+      panel.innerHTML = "<h2>Nothing left to label</h2><p>Every pair in this sample already had a person's label when the page was built.</p>";
+      host.append(panel);
+      return;
+    }
+    const p = ps[state.at];
+    if (doneCount() === ps.length) {
+      const panel = document.createElement("div");
+      panel.className = "done-panel";
+      const h = document.createElement("h2"); h.textContent = `All ${ps.length} pairs labeled`;
+      const t = document.createElement("p");
+      t.textContent = "Your labels are saved. Tell Claude you're done, and it will import them into the labels file. You can still go back and change any label.";
+      panel.append(h, t);
+      host.append(panel);
+    }
+    const meta = document.createElement("div");
+    meta.className = "pair-meta";
+    const h1 = document.createElement("h1"); h1.textContent = "How closely are these related?";
+    const id = document.createElement("span"); id.className = "mono"; id.textContent = p.pair;
+    const legend = $("legend-tpl").content.firstElementChild.cloneNode(true);
+    if (!state.data.paraphrase_marked) legend.querySelector(".legend-para").hidden = true;
+    meta.append(h1, id, legend);
+    const grid = document.createElement("div");
+    grid.className = "sections";
+    grid.append(sectionCard("First section", p.query, p.spans, "a"), sectionCard("Second section", p.match, p.spans, "b"));
+    host.append(meta, grid);
+  }
+
+  function renderBar() {
+    const p = pairs()[state.at];
+    const current = p ? labelOf(p) : undefined;
+    for (const btn of $("labels").children) {
+      btn.setAttribute("aria-pressed", String(Number(btn.dataset.label) === current));
+      btn.disabled = !p || !state.storeOk;
+    }
+    $("prev").disabled = !p || state.at === 0;
+    $("next").disabled = !p || state.at >= pairs().length - 1;
+  }
+
+  function render({ scroll = false } = {}) {
+    renderHeader();
+    renderPair();
+    renderBar();
+    if (scroll) window.scrollTo({ top: 0 });
+  }
+
+  function go(i) {
+    const n = pairs().length;
+    if (!n) return;
+    state.at = Math.max(0, Math.min(n - 1, i));
+    remember();
+    render({ scroll: true });
+  }
+
+  function say(text, error = false) {
+    $("saved").textContent = text;
+    $("saved").classList.toggle("error", error);
+  }
+
+  async function save(value) {
+    const p = pairs()[state.at];
+    if (!p || !state.db) return;
+    const scale = state.data.scale[value];
+    const doc = {
+      pair: p.pair, query: ref(p.query), match: ref(p.match),
+      label: value, labeler: state.data.labeler, at: today(),
+    };
+    const before = state.labels.get(p.pair);
+    state.labels.set(p.pair, value);
+    const here = state.at;
+    const after = nextOpen(here);
+    if (after !== -1 && before === undefined) go(after); else render();
+    say(`Saved ${p.pair}: ${value} ${scale.name}`);
+    // One write at a time per pair: a changed mind waits for the write before it.
+    const prior = state.writing.get(p.pair) || Promise.resolve();
+    const write = prior.then(() => state.db.collection("labels").doc(p.pair).set(doc));
+    const chained = write.catch(() => {});
+    state.writing.set(p.pair, chained);
+    try {
+      await write;
+    } catch (e) {
+      if (before === undefined) state.labels.delete(p.pair); else state.labels.set(p.pair, before);
+      state.at = here;
+      render({ scroll: true });
+      say(`Not saved: ${e && e.message ? e.message : "the label store refused it"}. Try again.`, true);
+    } finally {
+      if (state.writing.get(p.pair) === chained) state.writing.delete(p.pair);
+    }
+  }
+
+  function openAll() {
+    const g = $("all-grid");
+    g.innerHTML = "";
+    pairs().forEach((p, i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      const v = labelOf(p);
+      b.className = (v !== undefined ? "done" : "") + (i === state.at ? " here" : "");
+      b.innerHTML = `<span>${i + 1}</span><small>${v !== undefined ? "label " + v : "open"}</small>`;
+      b.setAttribute("aria-label", `Pair ${i + 1}, ${v !== undefined ? "labeled " + v : "not labeled"}`);
+      b.addEventListener("click", () => { $("all").close(); go(i); });
+      g.append(b);
+    });
+    const n = pairs().length, done = doneCount();
+    $("all-summary").textContent = `${done} of ${n} labeled, ${n - done} left.`;
+    if (typeof $("all").showModal === "function") $("all").showModal();
+  }
+
+  function buildScale() {
+    const list = $("scale-list"), bar = $("labels");
+    for (const s of state.data.scale) {
+      const li = document.createElement("li");
+      const b = document.createElement("b"); b.textContent = s.label;
+      const t = document.createElement("span");
+      const name = document.createElement("strong"); name.textContent = s.name;
+      t.append(name, `: ${s.gloss}`);
+      li.append(b, t);
+      list.append(li);
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.dataset.label = String(s.label);
+      btn.title = `${s.label} ${s.name}: ${s.gloss}`;
+      const big = document.createElement("b"); big.textContent = s.label;
+      const small = document.createElement("span"); small.textContent = s.name;
+      btn.append(big, small);
+      btn.addEventListener("click", () => save(s.label));
+      bar.append(btn);
+    }
+  }
+
+  async function connect() {
+    const db = await (window.claude && window.claude.use ? window.claude.use("db") : Promise.resolve(null));
+    if (!db) {
+      $("store-status").textContent = "Labels can't be saved here. Open this page on claude.ai, signed in as its owner.";
+      $("store-status").classList.add("error");
+      return;
+    }
+    state.db = db;
+    db.collection("labels").onSnapshot((snap) => {
+      const seen = new Map();
+      for (const d of snap.docs) {
+        const body = d.data();
+        if (body && Number.isInteger(body.label)) seen.set(d.id, body.label);
+      }
+      // A write still in flight shows as given, not as the store last had it.
+      for (const [pair, v] of state.labels) if (!seen.has(pair) && state.writing.has(pair)) seen.set(pair, v);
+      state.labels = seen;
+      const first = !state.storeOk;
+      state.storeOk = true;
+      $("store-status").hidden = true;
+      if (first) {
+        const saved = recall();
+        const open = Number.isInteger(saved) && saved >= 0 && saved < pairs().length ? saved : 0;
+        state.at = labelOf(pairs()[open] || {}) === undefined ? open : Math.max(0, nextOpen(open));
+        render({ scroll: true });
+      } else {
+        render();
+      }
+    }, (e) => {
+      $("store-status").hidden = false;
+      $("store-status").textContent = `The label store stopped answering (${e.code}). Reload the page; saved labels are kept.`;
+      $("store-status").classList.add("error");
+      state.storeOk = false;
+      renderBar();
+    });
+  }
+
+  async function start() {
+    try {
+      const res = await fetch("pairs.json");
+      if (!res.ok) throw new Error(`pairs.json answered ${res.status}`);
+      state.data = await res.json();
+    } catch (e) {
+      $("count").textContent = "The sample did not load";
+      $("store-status").textContent = `Reload the page. (${e.message})`;
+      $("store-status").classList.add("error");
+      return;
+    }
+    buildScale();
+    render();
+    connect();
+  }
+
+  const wide = window.matchMedia("(min-width: 900px)");
+  function lineUp(el) {
+    const pane = el.closest(".section-text");
+    const other = [...document.querySelectorAll("#pair .section-text")].find((p) => p !== pane);
+    const twin = other && other.querySelector(`[data-span="${el.dataset.span}"]`);
+    if (!twin) return;
+    const top = (node) => node.getBoundingClientRect().top;
+    const want = () => (wide.matches ? top(el) : top(el) - top(pane) + top(other));
+    other.scrollTop += top(twin) - want();
+    pane.scrollTop -= top(twin) - want();
+    for (const node of [el, twin]) {
+      node.classList.add("flash");
+      setTimeout(() => node.classList.remove("flash"), 1200);
+    }
+  }
+  $("pair").addEventListener("click", (e) => {
+    const el = e.target instanceof Element ? e.target.closest("[data-span]") : null;
+    const picked = window.getSelection && String(window.getSelection()).length > 0;
+    if (el && !picked) lineUp(el);
+  });
+
+  $("prev").addEventListener("click", () => go(state.at - 1));
+  $("next").addEventListener("click", () => go(state.at + 1));
+  $("open-all").addEventListener("click", openAll);
+  document.addEventListener("keydown", (e) => {
+    if (e.target instanceof HTMLInputElement || e.metaKey || e.ctrlKey || e.altKey) return;
+    if ($("all").open) return;
+    if (/^[0-4]$/.test(e.key) && state.storeOk) save(Number(e.key));
+    else if (e.key === "ArrowLeft") go(state.at - 1);
+    else if (e.key === "ArrowRight") go(state.at + 1);
+  });
+  start();
+})();
+</script>

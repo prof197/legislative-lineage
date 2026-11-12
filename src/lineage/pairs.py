@@ -2,16 +2,19 @@
 
 Reads the signatures and band index that `lineage index` writes before it. Candidates are pairs
 of windows; a section pair is verified when any pair of its windows is (DESIGN.md#windows).
-Writes two tables:
+Writes three tables:
 
 - `<tables>/pairs/`: the verified cross-state section pairs as three aligned vectors
   (`left.npy` and `right.npy`, section numbers with left < right, and `agreements.npy`, the
   signature positions on which their best pair of windows agrees), sorted by left, then right.
   Sections are numbered in the signatures table's row order (`SignatureTable.sections`).
+- `<tables>/same_state_pairs/`: the verified same-state section pairs, in the same layout. The
+  state boilerplate flag (lineage.state_boilerplate) counts the families each section's
+  near-duplicates reach in its own state.
 - `<tables>/families/families.parquet`: every signed bill's family, named by the first bill id
   in the family in sort order. A bill with no near-duplicate in its state is its own family.
 
-Same-state pairs serve only to form families and are not stored. See
+Same-state pairs form families and the state boilerplate flag; they never become matches. See
 DESIGN.md#near-duplicate-stage.
 """
 
@@ -216,7 +219,9 @@ def build_pairs(
     linking = merge_section_pairs(same_parts)
     require_free_space(
         tables_dir,
-        needed=stored.left.size * _PAIR_BYTES + bills.size * _FAMILY_ROW_BYTES + (1 << 20),
+        needed=(stored.left.size + linking.left.size) * _PAIR_BYTES
+        + bills.size * _FAMILY_ROW_BYTES
+        + (1 << 20),
         floor=floor_bytes,
     )
 
@@ -242,10 +247,13 @@ def build_pairs(
             }
         )
 
-    def write_pairs(directory: Path) -> None:
-        np.save(directory / "left.npy", stored.left)
-        np.save(directory / "right.npy", stored.right)
-        np.save(directory / "agreements.npy", stored.agreements)
+    def write_pairs(found: SectionPairs) -> Callable[[Path], None]:
+        def write(directory: Path) -> None:
+            np.save(directory / "left.npy", found.left)
+            np.save(directory / "right.npy", found.right)
+            np.save(directory / "agreements.npy", found.agreements)
+
+        return write
 
     def write_families(directory: Path) -> None:
         with queries.connect_quiet() as con:
@@ -256,7 +264,8 @@ def build_pairs(
                 families=bills[labels].tolist(),
             )
 
-    _replace_dir(tables_dir / "pairs", write_pairs)
+    _replace_dir(tables_dir / "pairs", write_pairs(stored))
+    _replace_dir(tables_dir / "same_state_pairs", write_pairs(linking))
     _replace_dir(tables_dir / "families", write_families)
 
     lowest = np.minimum(shares.first_share, shares.second_share)
@@ -291,7 +300,7 @@ def build_pairs(
             },
             # Candidate window pairs before verification, by estimated similarity in 1/16 steps.
             "estimate_histogram": {k: v.tolist() for k, v in histogram.items()},
-            "stored_bytes": int(stored.left.size) * _PAIR_BYTES,
+            "stored_bytes": int(stored.left.size + linking.left.size) * _PAIR_BYTES,
         },
         "families": {
             "share": FAMILY_SHARE,
@@ -307,14 +316,25 @@ def build_pairs(
     }
 
 
-def load_cross_state_pairs(tables_dir: Path) -> SectionPairs:
-    """The verified cross-state pairs, memory-mapped."""
-    pairs = tables_dir / "pairs"
+def _load_pairs(pairs: Path) -> SectionPairs:
     return SectionPairs(
         cast("NDArray[np.uint32]", np.load(pairs / "left.npy", mmap_mode="r")),
         cast("NDArray[np.uint32]", np.load(pairs / "right.npy", mmap_mode="r")),
         cast("NDArray[np.uint8]", np.load(pairs / "agreements.npy", mmap_mode="r")),
     )
+
+
+def load_cross_state_pairs(tables_dir: Path) -> SectionPairs:
+    """The verified cross-state pairs, memory-mapped."""
+    return _load_pairs(tables_dir / "pairs")
+
+
+def load_same_state_pairs(tables_dir: Path) -> SectionPairs:
+    """The verified same-state pairs, memory-mapped; run `lineage index` if they are missing."""
+    where = tables_dir / "same_state_pairs"
+    if not (where / "left.npy").exists():
+        raise FileNotFoundError(f"no same-state pairs in {where}; run `lineage index`")
+    return _load_pairs(where)
 
 
 def load_families(tables_dir: Path) -> dict[str, str]:

@@ -1,10 +1,18 @@
 """The semantic stage: its model, its cosine threshold, and its search for a query's windows.
 
-The model and threshold were chosen on the labeled pair dataset before development recall was
-measured, so the 36 development enactments tuned neither (`uv run lineage eval pair-data` ->
+The model was chosen on the labeled pair dataset before development recall was measured, so
+the 36 development enactments did not tune it (`uv run lineage eval pair-data` ->
 reports/pair_data.json). bge-small-en-v1.5 scored better than all-MiniLM-L6-v2 at every
-precision measured and in ROC AUC. Its threshold is the lowest cosine whose precision on the
-training and validation pairs reaches the target precision, 0.9.
+precision measured and in ROC AUC. The pair dataset's threshold, the lowest cosine whose
+precision on its training and validation pairs reaches 0.9, is BUILD_THRESHOLD: the build keeps
+every match down to it. On this corpus a page listed 0.47 right at it, so the threshold pages
+list at, THRESHOLD, was set higher on samples of Georgia's pages (lineage.threshold,
+DESIGN.md#choosing-the-threshold). The two have two roles. THRESHOLD is what a match by meaning
+needs to be listed on its own. CORROBORATING, the build's, is enough to corroborate what is
+already there: a pair the near-duplicate stage found too, which the state boilerplate flag then
+keeps (lineage.listing), and a paraphrase inside a relative already listed (lineage.align). Each
+window keeps its K nearest before a threshold applies, so the matches at THRESHOLD are exactly
+the stored ones at or above it.
 
 A query's matchable sections are cut into the stage's windows, 94 words without overlap, and
 each window keeps its K nearest corpus texts at or above the threshold, found by exact search
@@ -28,7 +36,11 @@ from lineage.windows import WINDOW_WORDS, display_windows
 
 MODEL = "bge-small-en-v1.5"
 # reports/pair_data.json: semantic.models[MODEL].at_precision["0.9"].threshold
-THRESHOLD = 0.8905
+BUILD_THRESHOLD = 0.8905
+# What corroborates a match another stage found, or a paraphrase inside a listed relative.
+CORROBORATING = BUILD_THRESHOLD
+# The M5 review's choice, on the 0.93 sample's band above 0.93 (DESIGN.md#choosing-the-threshold)
+THRESHOLD = 0.94
 K = 20  # nearest corpus texts each query window keeps
 
 Embedder = Callable[[Sequence[str]], NDArray[np.float32]]

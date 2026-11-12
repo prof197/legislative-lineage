@@ -1,0 +1,686 @@
+{
+ "command": "uv run lineage eval threshold",
+ "sample": "tuning",
+ "labeler": "model:claude-opus-5-5@passages-v1-high",
+ "sampled": 100,
+ "labeled": 100,
+ "by_band": [
+  {
+   "band": "by meaning, 0.8905 to 0.9",
+   "labeled": 41,
+   "correct": 15,
+   "precision": 0.3659,
+   "interval_95": [
+    0.2359,
+    0.5188
+   ]
+  },
+  {
+   "band": "by meaning, 0.9 to 0.91",
+   "labeled": 23,
+   "correct": 7,
+   "precision": 0.3043,
+   "interval_95": [
+    0.156,
+    0.5087
+   ]
+  },
+  {
+   "band": "by meaning, 0.91 to 0.92",
+   "labeled": 14,
+   "correct": 7,
+   "precision": 0.5,
+   "interval_95": [
+    0.268,
+    0.732
+   ]
+  },
+  {
+   "band": "by meaning, 0.92 to 0.93",
+   "labeled": 3,
+   "correct": 1,
+   "precision": 0.3333,
+   "interval_95": [
+    0.0615,
+    0.7923
+   ]
+  },
+  {
+   "band": "by meaning, 0.93 to 0.94",
+   "labeled": 3,
+   "correct": 2,
+   "precision": 0.6667,
+   "interval_95": [
+    0.2077,
+    0.9385
+   ]
+  },
+  {
+   "band": "by meaning, 0.94 to 0.95",
+   "labeled": 4,
+   "correct": 4,
+   "precision": 1.0,
+   "interval_95": [
+    0.5101,
+    1.0
+   ]
+  },
+  {
+   "band": "by meaning, 0.95 to 0.96",
+   "labeled": 3,
+   "correct": 2,
+   "precision": 0.6667,
+   "interval_95": [
+    0.2077,
+    0.9385
+   ]
+  },
+  {
+   "band": "by meaning, 0.96 to 0.97",
+   "labeled": 0,
+   "correct": 0,
+   "precision": null,
+   "interval_95": [
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "band": "by meaning, 0.97 to 1.0",
+   "labeled": 1,
+   "correct": 1,
+   "precision": 1.0,
+   "interval_95": [
+    0.2065,
+    1.0
+   ]
+  },
+  {
+   "band": "by wording",
+   "labeled": 8,
+   "correct": 8,
+   "precision": 1.0,
+   "interval_95": [
+    0.6756,
+    1.0
+   ]
+  }
+ ],
+ "options": [
+  {
+   "option": "threshold",
+   "threshold": 0.8905,
+   "page": {
+    "labeled": 100,
+    "correct": 47,
+    "precision": 0.47,
+    "interval_95": [
+     0.3751,
+     0.5671
+    ],
+    "pages_listing": 100,
+    "pages_emptied": 0,
+    "unlabeled": 0
+   },
+   "by_meaning_alone": {
+    "labeled": 92,
+    "correct": 39,
+    "precision": 0.4239,
+    "interval_95": [
+     0.328,
+     0.5259
+    ],
+    "pages_listing": 99,
+    "pages_emptied": 1,
+    "unlabeled": 0
+   },
+   "development_recall": {
+    "found": 33,
+    "enactments": 36,
+    "recall": 0.9167
+   }
+  },
+  {
+   "option": "threshold",
+   "threshold": 0.9,
+   "page": {
+    "labeled": 59,
+    "correct": 32,
+    "precision": 0.5424,
+    "interval_95": [
+     0.4166,
+     0.663
+    ],
+    "pages_listing": 82,
+    "pages_emptied": 18,
+    "unlabeled": 0
+   },
+   "by_meaning_alone": {
+    "labeled": 51,
+    "correct": 24,
+    "precision": 0.4706,
+    "interval_95": [
+     0.3405,
+     0.6048
+    ],
+    "pages_listing": 80,
+    "pages_emptied": 20,
+    "unlabeled": 0
+   },
+   "development_recall": {
+    "found": 33,
+    "enactments": 36,
+    "recall": 0.9167
+   }
+  },
+  {
+   "option": "threshold",
+   "threshold": 0.91,
+   "page": {
+    "labeled": 36,
+    "correct": 25,
+    "precision": 0.6944,
+    "interval_95": [
+     0.5314,
+     0.82
+    ],
+    "pages_listing": 71,
+    "pages_emptied": 29,
+    "unlabeled": 0
+   },
+   "by_meaning_alone": {
+    "labeled": 28,
+    "correct": 17,
+    "precision": 0.6071,
+    "interval_95": [
+     0.4241,
+     0.7643
+    ],
+    "pages_listing": 67,
+    "pages_emptied": 33,
+    "unlabeled": 0
+   },
+   "development_recall": {
+    "found": 33,
+    "enactments": 36,
+    "recall": 0.9167
+   }
+  },
+  {
+   "option": "threshold",
+   "threshold": 0.92,
+   "page": {
+    "labeled": 22,
+    "correct": 18,
+    "precision": 0.8182,
+    "interval_95": [
+     0.6148,
+     0.9269
+    ],
+    "pages_listing": 62,
+    "pages_emptied": 38,
+    "unlabeled": 0
+   },
+   "by_meaning_alone": {
+    "labeled": 14,
+    "correct": 10,
+    "precision": 0.7143,
+    "interval_95": [
+     0.4535,
+     0.8828
+    ],
+    "pages_listing": 54,
+    "pages_emptied": 46,
+    "unlabeled": 0
+   },
+   "development_recall": {
+    "found": 33,
+    "enactments": 36,
+    "recall": 0.9167
+   }
+  },
+  {
+   "option": "threshold",
+   "threshold": 0.93,
+   "page": {
+    "labeled": 19,
+    "correct": 17,
+    "precision": 0.8947,
+    "interval_95": [
+     0.6861,
+     0.9706
+    ],
+    "pages_listing": 56,
+    "pages_emptied": 44,
+    "unlabeled": 0
+   },
+   "by_meaning_alone": {
+    "labeled": 11,
+    "correct": 9,
+    "precision": 0.8182,
+    "interval_95": [
+     0.523,
+     0.9486
+    ],
+    "pages_listing": 47,
+    "pages_emptied": 53,
+    "unlabeled": 0
+   },
+   "development_recall": {
+    "found": 33,
+    "enactments": 36,
+    "recall": 0.9167
+   }
+  },
+  {
+   "option": "threshold",
+   "threshold": 0.94,
+   "page": {
+    "labeled": 16,
+    "correct": 15,
+    "precision": 0.9375,
+    "interval_95": [
+     0.7167,
+     0.9889
+    ],
+    "pages_listing": 47,
+    "pages_emptied": 53,
+    "unlabeled": 0
+   },
+   "by_meaning_alone": {
+    "labeled": 8,
+    "correct": 7,
+    "precision": 0.875,
+    "interval_95": [
+     0.5291,
+     0.9776
+    ],
+    "pages_listing": 36,
+    "pages_emptied": 64,
+    "unlabeled": 0
+   },
+   "development_recall": {
+    "found": 33,
+    "enactments": 36,
+    "recall": 0.9167
+   }
+  },
+  {
+   "option": "threshold",
+   "threshold": 0.95,
+   "page": {
+    "labeled": 12,
+    "correct": 11,
+    "precision": 0.9167,
+    "interval_95": [
+     0.6461,
+     0.9851
+    ],
+    "pages_listing": 38,
+    "pages_emptied": 62,
+    "unlabeled": 0
+   },
+   "by_meaning_alone": {
+    "labeled": 4,
+    "correct": 3,
+    "precision": 0.75,
+    "interval_95": [
+     0.3006,
+     0.9544
+    ],
+    "pages_listing": 23,
+    "pages_emptied": 77,
+    "unlabeled": 0
+   },
+   "development_recall": {
+    "found": 33,
+    "enactments": 36,
+    "recall": 0.9167
+   }
+  },
+  {
+   "option": "threshold",
+   "threshold": 0.96,
+   "page": {
+    "labeled": 9,
+    "correct": 9,
+    "precision": 1.0,
+    "interval_95": [
+     0.7009,
+     1.0
+    ],
+    "pages_listing": 34,
+    "pages_emptied": 66,
+    "unlabeled": 0
+   },
+   "by_meaning_alone": {
+    "labeled": 1,
+    "correct": 1,
+    "precision": 1.0,
+    "interval_95": [
+     0.2065,
+     1.0
+    ],
+    "pages_listing": 10,
+    "pages_emptied": 90,
+    "unlabeled": 0
+   },
+   "development_recall": {
+    "found": 33,
+    "enactments": 36,
+    "recall": 0.9167
+   }
+  },
+  {
+   "option": "threshold",
+   "threshold": 0.97,
+   "page": {
+    "labeled": 9,
+    "correct": 9,
+    "precision": 1.0,
+    "interval_95": [
+     0.7009,
+     1.0
+    ],
+    "pages_listing": 31,
+    "pages_emptied": 69,
+    "unlabeled": 0
+   },
+   "by_meaning_alone": {
+    "labeled": 1,
+    "correct": 1,
+    "precision": 1.0,
+    "interval_95": [
+     0.2065,
+     1.0
+    ],
+    "pages_listing": 6,
+    "pages_emptied": 94,
+    "unlabeled": 0
+   },
+   "development_recall": {
+    "found": 32,
+    "enactments": 36,
+    "recall": 0.8889
+   }
+  },
+  {
+   "option": "near_duplicate_only",
+   "page": {
+    "labeled": 8,
+    "correct": 8,
+    "precision": 1.0,
+    "interval_95": [
+     0.6756,
+     1.0
+    ],
+    "pages_listing": 28,
+    "pages_emptied": 72,
+    "unlabeled": 0
+   },
+   "development_recall": {
+    "found": 31,
+    "enactments": 36,
+    "recall": 0.8611
+   }
+  },
+  {
+   "option": "listed_apart",
+   "threshold": 0.8905,
+   "by_wording": {
+    "labeled": 8,
+    "correct": 8,
+    "precision": 1.0,
+    "interval_95": [
+     0.6756,
+     1.0
+    ],
+    "pages_listing": 28,
+    "pages_emptied": 72,
+    "unlabeled": 0
+   },
+   "by_meaning_alone": {
+    "labeled": 92,
+    "correct": 39,
+    "precision": 0.4239,
+    "interval_95": [
+     0.328,
+     0.5259
+    ],
+    "pages_listing": 99,
+    "pages_emptied": 1,
+    "unlabeled": 0
+   },
+   "development_recall": {
+    "on_the_page": {
+     "found": 33,
+     "enactments": 36,
+     "recall": 0.9167
+    },
+    "by_wording": {
+     "found": 31,
+     "enactments": 36,
+     "recall": 0.8611
+    }
+   }
+  }
+ ],
+ "state_boilerplate_flag": {
+  "threshold": 0.94,
+  "labeler": "model:claude-opus-5-5@passages-v1-high",
+  "sampled": 100,
+  "flag_off": {
+   "labeled": 15,
+   "correct": 14,
+   "precision": 0.9333,
+   "interval_95": [
+    0.7018,
+    0.9881
+   ],
+   "page_weighted": {
+    "precision": 0.7515,
+    "interval_95": [
+     0.4178,
+     1.0
+    ]
+   },
+   "relatives_dropped": 85,
+   "relisted_on_another_pair": 0,
+   "unlabeled": 0,
+   "pages_listing": 47,
+   "pages_emptied": 53,
+   "relatives_listed": 355,
+   "build_pairs_exempted": {
+    "near_duplicate": 0,
+    "semantic": 0
+   }
+  },
+  "flag": {
+   "labeled": 15,
+   "correct": 14,
+   "precision": 0.9333,
+   "interval_95": [
+    0.7018,
+    0.9881
+   ],
+   "page_weighted": {
+    "precision": 0.7572,
+    "interval_95": [
+     0.424,
+     1.0
+    ]
+   },
+   "relatives_dropped": 85,
+   "relisted_on_another_pair": 0,
+   "unlabeled": 0,
+   "pages_listing": 47,
+   "pages_emptied": 53,
+   "relatives_listed": 323,
+   "build_pairs_exempted": {
+    "near_duplicate": 13182,
+    "semantic": 8027
+   }
+  },
+  "flag_exempt_at_threshold": {
+   "labeled": 15,
+   "correct": 14,
+   "precision": 0.9333,
+   "interval_95": [
+    0.7018,
+    0.9881
+   ],
+   "page_weighted": {
+    "precision": 0.7575,
+    "interval_95": [
+     0.4251,
+     1.0
+    ]
+   },
+   "relatives_dropped": 85,
+   "relisted_on_another_pair": 0,
+   "unlabeled": 0,
+   "pages_listing": 47,
+   "pages_emptied": 53,
+   "relatives_listed": 322,
+   "build_pairs_exempted": {
+    "near_duplicate": 8027,
+    "semantic": 8027
+   }
+  },
+  "flag_without_exemption": {
+   "labeled": 15,
+   "correct": 14,
+   "precision": 0.9333,
+   "interval_95": [
+    0.7018,
+    0.9881
+   ],
+   "page_weighted": {
+    "precision": 0.7575,
+    "interval_95": [
+     0.4251,
+     1.0
+    ]
+   },
+   "relatives_dropped": 85,
+   "relisted_on_another_pair": 0,
+   "unlabeled": 0,
+   "pages_listing": 47,
+   "pages_emptied": 53,
+   "relatives_listed": 322,
+   "build_pairs_exempted": {
+    "near_duplicate": 0,
+    "semantic": 0
+   }
+  }
+ },
+ "state_boilerplate_flag_at_first_choice": {
+  "threshold": 0.93,
+  "labeler": "model:claude-opus-5-5@passages-v1-high",
+  "sampled": 100,
+  "flag_off": {
+   "labeled": 18,
+   "correct": 16,
+   "precision": 0.8889,
+   "interval_95": [
+    0.672,
+    0.969
+   ],
+   "page_weighted": {
+    "precision": 0.8581,
+    "interval_95": [
+     0.6363,
+     1.0
+    ]
+   },
+   "relatives_dropped": 82,
+   "relisted_on_another_pair": 0,
+   "unlabeled": 0,
+   "pages_listing": 56,
+   "pages_emptied": 44,
+   "relatives_listed": 434,
+   "build_pairs_exempted": {
+    "near_duplicate": 0,
+    "semantic": 0
+   }
+  },
+  "flag": {
+   "labeled": 18,
+   "correct": 16,
+   "precision": 0.8889,
+   "interval_95": [
+    0.672,
+    0.969
+   ],
+   "page_weighted": {
+    "precision": 0.8614,
+    "interval_95": [
+     0.6415,
+     1.0
+    ]
+   },
+   "relatives_dropped": 82,
+   "relisted_on_another_pair": 0,
+   "unlabeled": 0,
+   "pages_listing": 56,
+   "pages_emptied": 44,
+   "relatives_listed": 403,
+   "build_pairs_exempted": {
+    "near_duplicate": 13182,
+    "semantic": 9532
+   }
+  },
+  "flag_exempt_at_threshold": {
+   "labeled": 18,
+   "correct": 16,
+   "precision": 0.8889,
+   "interval_95": [
+    0.672,
+    0.969
+   ],
+   "page_weighted": {
+    "precision": 0.8616,
+    "interval_95": [
+     0.6416,
+     1.0
+    ]
+   },
+   "relatives_dropped": 82,
+   "relisted_on_another_pair": 0,
+   "unlabeled": 0,
+   "pages_listing": 56,
+   "pages_emptied": 44,
+   "relatives_listed": 402,
+   "build_pairs_exempted": {
+    "near_duplicate": 9532,
+    "semantic": 9532
+   }
+  },
+  "flag_without_exemption": {
+   "labeled": 18,
+   "correct": 16,
+   "precision": 0.8889,
+   "interval_95": [
+    0.672,
+    0.969
+   ],
+   "page_weighted": {
+    "precision": 0.8616,
+    "interval_95": [
+     0.6416,
+     1.0
+    ]
+   },
+   "relatives_dropped": 82,
+   "relisted_on_another_pair": 0,
+   "unlabeled": 0,
+   "pages_listing": 56,
+   "pages_emptied": 44,
+   "relatives_listed": 402,
+   "build_pairs_exempted": {
+    "near_duplicate": 0,
+    "semantic": 0
+   }
+  }
+ }
+}

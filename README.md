@@ -27,7 +27,7 @@ textutil -convert txt -encoding UTF-8 -output data/acts/electronic-estate-planni
 
 This is a one-time local step, not part of the pipeline. The eval records each text file's SHA-256 in its results, so a different edition or conversion shows up there. The enactments it checks are in `evals/ulc_enactments.csv`, copied from the commission's bill list for each act, which loads only in a browser. The file's first line gives the date it was read.
 
-A held-out eval, run once at the end of M5, uses four more acts that were never examined while tuning (DESIGN.md, [Commission recall](DESIGN.md#commission-recall)). Download the same edition of each into `data/acts/held-out/` and convert it the same way:
+A held-out eval, run at the end of M5, uses four more acts that were never examined while tuning (DESIGN.md, [Commission recall](DESIGN.md#commission-recall)). Download the same edition of each into `data/acts/held-out/` and convert it the same way:
 
 ```sh
 textutil -convert txt -encoding UTF-8 -output data/acts/held-out/assignment-for-benefit-of-creditors.txt "data/acts/held-out/Assignment for Benefit of Creditors_Final Act_No Comments_2025dec11.docx"
@@ -55,7 +55,25 @@ Commission recall: of the bills that enacted three uniform acts, the share that 
 Misses by both stages, at the step where the near-duplicate stage lost them: never proposed 2, verification 1. The reasons are defined in DESIGN.md, [Commission recall](DESIGN.md#commission-recall).
 <!-- /results:commission -->
 
-The near-duplicate stage finds an enactment only where a state kept the act's wording closely enough, section by section. The semantic stage adds enactments that put the act in other words. The results file lists every enactment's bills, with each bill's signed sections, the stages that found it, its best similarity to the act by each, and the step that lost it. The commission lists no failed bills, so this measures recall only. The precision of what each stage finds is not yet measured ([DESIGN.md](DESIGN.md#stage-ablation)).
+The near-duplicate stage finds an enactment only where a state kept the act's wording closely enough, section by section. The semantic stage adds enactments that put the act in other words. The results file lists every enactment's bills, with each bill's signed sections, the stages that found it, its best similarity to the act by each, and the step that lost it. The commission lists no failed bills, so this measures recall only.
+
+Precision is measured on what a bill's page lists, a model's judgment of a random sample of Georgia's pages, drawn once the semantic stage's threshold was final at 0.94: 0.83 [0.74, 0.89] of the relatives listed state the same provision as the bill, 0.90 [0.79, 0.96] of those sharing wording and 0.75 [0.61, 0.85] of those found by meaning alone, which a page lists apart (`uv run lineage eval relatives` → `reports/results.json`, `relatives_precision`). On 50 pairs a person also labeled, the model's labels gave 0.65 where the person's gave 0.75, so the model's numbers more likely run low than high, though the question asked of these pages was not itself checked against a person. [DESIGN.md](DESIGN.md#precision-sample) has how the sample was drawn, the samples the threshold was chosen on, and what the check found.
+
+<!-- results:held-out -->
+Held-out recall: the same measure on four uniform acts never examined while matching was tuned, run at the end of M5 with the semantic stage's threshold at 0.94 and with the state boilerplate flag. It was first run at a threshold of 0.93, which found 17 of 19; the threshold then moved on tuning data alone ([DESIGN.md](DESIGN.md#commission-recall)). The lists were read 2026-11-07. Reproduce with `uv run lineage eval commission --held-out --final` → `reports/results.json`, `commission_held_out`.
+
+| | Both stages | Near-duplicate stage | Semantic stage |
+|---|---|---|---|
+| Pooled, four acts | 17 / 19 (89.5%) | 15 / 19 (78.9%) | 17 / 19 (89.5%) |
+| Assignment for Benefit of Creditors | 5 / 6 (83.3%) | 5 / 6 (83.3%) | 5 / 6 (83.3%) |
+| Directed Trust | 4 / 4 (100.0%) | 3 / 4 (75.0%) | 4 / 4 (100.0%) |
+| Easement Relocation | 4 / 5 (80.0%) | 4 / 5 (80.0%) | 4 / 5 (80.0%) |
+| Mortgage Modification | 4 / 4 (100.0%) | 3 / 4 (75.0%) | 4 / 4 (100.0%) |
+| Enacted | 17 / 18 (94.4%) | 15 / 18 (83.3%) | 17 / 18 (94.4%) |
+| Substantially similar | 0 / 1 (0.0%) | 0 / 1 (0.0%) | 0 / 1 (0.0%) |
+
+Misses by both stages, at the step where the near-duplicate stage lost them: never proposed 2.
+<!-- /results:held-out -->
 
 ## Finding a bill's relatives
 
@@ -69,4 +87,4 @@ uv run lineage query bill.txt
 
 Embedding every distinct window takes about 25 hours on the reference laptop ([DESIGN.md](DESIGN.md#semantic-stage)); `lineage embed` resumes where it stopped. Until it has finished, `uv run lineage query bill.txt --no-semantic` searches the near-duplicate stage alone.
 
-A query runs offline against the index and the vectors in `data/tables/`. It lists the families of bills that share sections with the query, found by near-identical text, by similar meaning, or both, and says which. A family is one state's near-identical bills, such as companion bills in each chamber, counted once. For each family it shows the share of the query's sections with a match, the highest estimated similarity of a near-identical section, and the best cosine of a match by meaning.
+A query runs offline against the index and the vectors in `data/tables/`. It lists the families of bills that share sections with the query, found by near-identical text, by similar meaning, or both, and says which. Families found by meaning alone are listed apart from those that share wording, since they are right less often. A family is one state's near-identical bills, such as companion bills in each chamber, counted once. For each family it shows the share of the query's sections with a match, the highest estimated similarity of a near-identical section, and the best cosine of a match by meaning.

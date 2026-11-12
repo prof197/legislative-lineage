@@ -1,0 +1,26 @@
+{
+ "command": "uv run lineage relatives-sample",
+ "state": "GA",
+ "seed": 20261117,
+ "threshold": 0.94,
+ "state_boilerplate_flag": true,
+ "flag_exempts_both_stages_from": 0.8905,
+ "bills_excluded": 156,
+ "bills": 100,
+ "model": "bge-small-en-v1.5",
+ "relatives_shown": 50,
+ "state_bills_signed": 4554,
+ "state_bills_with_a_relative": 750,
+ "listed_quantiles": {
+  "0.1": 1.0,
+  "0.25": 1.0,
+  "0.5": 3.0,
+  "0.75": 5.0,
+  "0.9": 13.100000000000009
+ },
+ "relative_strata": {
+  "near_duplicate_only": 27,
+  "semantic_only": 48,
+  "both": 25
+ }
+}

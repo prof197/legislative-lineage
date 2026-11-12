@@ -1,0 +1,57 @@
+{
+ "command": "uv run lineage label-model --batch",
+ "budget": 30.0,
+ "spent": 20.1868,
+ "batches": [
+  {
+   "batch_id": "msgbatch_01XHTJn1BppCTng9r9m7Hq9w",
+   "model": "claude-opus-5-5",
+   "prompt": "v1",
+   "replies": 300,
+   "input_tokens": 3134052,
+   "output_tokens": 3115,
+   "dollars": 6.2993,
+   "at": "2026-11-11"
+  },
+  {
+   "batch_id": "msgbatch_01JyoJjkUnPLgWyU6gjdJqTY",
+   "model": "claude-opus-5-5",
+   "prompt": "v1-high",
+   "replies": 50,
+   "input_tokens": 426472,
+   "output_tokens": 6713,
+   "dollars": 0.9201,
+   "at": "2026-11-11"
+  },
+  {
+   "batch_id": "msgbatch_012QhJZVqjBfJzMD9d7jeiiw",
+   "model": "claude-opus-5-5",
+   "prompt": "passages-v1-high",
+   "replies": 302,
+   "input_tokens": 4700468,
+   "output_tokens": 31248,
+   "dollars": 9.7134,
+   "at": "2026-11-11"
+  },
+  {
+   "batch_id": "msgbatch_01SkcsGDLC5iH8Q3UcEu5mq5",
+   "model": "claude-opus-5-5",
+   "prompt": "passages-v1-high",
+   "replies": 100,
+   "input_tokens": 529020,
+   "output_tokens": 7561,
+   "dollars": 1.1337,
+   "at": "2026-11-12"
+  },
+  {
+   "batch_id": "msgbatch_0188P2w8f4YfDYmgPA15nnnF",
+   "model": "claude-opus-5-5",
+   "prompt": "passages-v1-high",
+   "replies": 100,
+   "input_tokens": 1018082,
+   "output_tokens": 8411,
+   "dollars": 2.1203,
+   "at": "2026-11-12"
+  }
+ ]
+}

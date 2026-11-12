@@ -20,17 +20,34 @@ uv run lineage eligible      # document-type rules -> data/tables/eligible.parqu
 uv run lineage boilerplate   # shingle stoplist -> data/tables/stoplist.parquet, reports/boilerplate.json
 uv run lineage stats         # coverage, sections, types, status per state/session -> reports/coverage.json
 uv run lineage stats --samples  # also: sample titles per document-type rule -> data/reports/ (local; names private people, never committed)
-uv run lineage index         # signatures, LSH bands, verified pairs, families -> data/tables/{signatures,bands,pairs,families}/, reports/index.json
+uv run lineage index         # signatures, LSH bands, verified pairs, families -> data/tables/{signatures,bands,pairs,same_state_pairs,families}/, reports/index.json
 uv run lineage embed         # every distinct 94-word window embedded once, float16, resumable -> data/tables/semantic/, reports/embedding.json
 uv run lineage neighbors     # each distinct window's 20 nearest by meaning, HNSW over float16, recall checked exactly -> data/tables/semantic/<model>/neighbors/, reports/neighbors.json
+uv run lineage neighbors --check-at-stage  # the built neighbors' recall at the stage's threshold, no build -> reports/neighbors.json
+uv run lineage semantic-pairs  # the neighbors as cross-state section pairs, best cosine and window pair each -> data/tables/semantic/<model>/pairs/, reports/semantic_pairs.json
+uv run lineage precision-sample  # the precision sample, stratified by stage, from both stages' pairs -> evals/precision_sample.jsonl, reports/precision_sample.json
+uv run lineage precision-sample --flagged  # a seeded sample of the pairs the state boilerplate flag drops -> evals/precision_sample_flagged.jsonl, reports/precision_sample_flagged.json
+uv run lineage state-boilerplate  # each section's count of other same-state families its near-duplicates reach; flagged at 50 -> data/tables/state_boilerplate/, reports/state_boilerplate.json
 uv run lineage query FILE     # a bill's relatives by both stages, offline, from the built index and vectors (--no-semantic: near-duplicates only)
 uv run lineage eval commission  # commission recall, act texts from data/acts/ -> reports/results.json (--results reports/results_exported_only.json after an --exported-only merge); with the stage ablation unless --no-semantic
+uv run lineage eval threshold  # each semantic threshold option's page precision on the tuning sample of relatives, beside development recall -> reports/threshold_proposal.json
 uv run lineage eval answer-key  # each commission list row and the bills it resolved to -> reports/answer_key.csv
 uv run lineage eval answer-key --held-out  # the held-out lists resolved, development-set bills skipped -> reports/answer_key_heldout.csv
-uv run lineage eval commission --held-out --final  # held-out recall: run once, at the end of M5, never before
+uv run lineage eval commission --held-out --final  # held-out recall: run at the end of M5 (2026-11-12), at 0.93 and then at the final configuration; refuses a configuration already run
 uv run lineage eval readme   # regenerate README.md's results table from reports/results.json and results_exported_only.json
+uv run lineage label SAMPLE --labeler HANDLE  # label sampled matches by hand, 0 unrelated to 4 identical, blind to the stage, resumable -> evals/precision_labels.jsonl
+uv run lineage label-page SAMPLE --labeler HANDLE  # the same labeling as a phone page: pending pairs, aligned, blind -> data/label_page/ (local), published as a private artifact
+uv run lineage label-import SAVED --sample SAMPLE --labeler HANDLE  # the page's saved labels, checked against the sample -> evals/precision_labels.jsonl
 uv run lineage pair-data fetch  # the labeled pair dataset at its pinned commit -> data/pair_data/ (local, evaluation only, never committed)
 uv run lineage eval pair-data  # both stages scored on the pair dataset; each model's threshold set on train+val, measured on test -> reports/pair_data.json
+uv run lineage eval cost  # cost and runtime per stage: the build's from its reports, each development act's query timed by stage -> reports/cost.json
+uv run lineage relatives-sample [--part tuning_093|reporting]  # 100 Georgia bills at random, one listed relative each: the threshold's first tuning sample at 0.8905 (tuning_093: the second, read at 0.93 with the flag; reporting: drawn once at the final threshold, from bills no earlier sample drew) -> evals/relatives_<part>.jsonl, reports/relatives_<part>.json
+uv run lineage eval relatives [--part tuning_093]  # product precision, from the reporting sample's labels (or a tuning part's, recorded apart) -> reports/results.json
+uv run lineage label-spend --batch-id ID  # record an ended label batch's tokens and cost -> reports/label_spend.json
+uv run lineage agreement-sample  # 50 of the precision sample's pairs, stratified by stage, for a person to label -> evals/agreement_sample.jsonl
+uv run lineage eval agreement  # a person's labels against the model's on that subsample: weighted kappa, cutoff agreement -> reports/results.json
+uv run lineage label-model SAMPLE  # provisional labels from a model, kept apart from people's; asks nothing without --live
+uv run lineage eval precision  # precision per stratum, stage and overall, people's and the model's apart -> reports/results.json
 uv run lineage text inventory  # version to fetch per record, by host, robots.txt read -> data/text/plan.parquet, reports/text_inventory.json
 uv run lineage text sample   # quality test: fetch a seeded sample per state and format -> data/text/sample/, reports/text_quality.json
 uv run lineage text fetch    # fetch every planned record as rules/text_layer.toml says, California from its bulk download; resumable -> data/text/full/, reports/text_fetch.json
@@ -67,19 +84,33 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   bands.py        build the band index from the signatures; cap counter and cap sweep
   verify.py       re-estimate candidates from full signatures; the verification threshold
   families.py     same-state families: bill match shares, connected components (pure functions)
-  pairs.py        verify window candidates, store cross-state section pairs, write families
+  pairs.py        verify window candidates, store cross-state and same-state section pairs, write families
   index.py        `lineage index`: signatures, bands, pairs and families, then reports/index.json
-  query.py        `lineage query`: sign a bill's text, look up its bands, verify, group by family
+  query.py        `lineage query`: sign a bill's text, look up its bands, verify, group by family, score by the share of its words matched
+  cost.py         `lineage eval cost`: each stage's build time, memory and size from its report, and a query's seconds by stage
+  relatives.py    a corpus bill's relatives from both stages' stored pairs, scored as a query is, the 50 best kept
+  listing.py      what a page lists: matches at the stage's threshold, less the state boilerplate flag's but for pairs both stages found
   acts.py         uniform act texts as eval queries: keep the sections, drop comments and notes
   ulc.py          the commission's enactment lists, and the bills each enactment names
   answer_key.py   `lineage eval answer-key`: the resolved list rows, for checking by eye
   commission.py   `lineage eval commission`: recall, a miss reason per enactment, the results JSON
+  threshold.py    `lineage eval threshold`: a page's precision under each threshold option and with the flag; the pair-level diagnostic at the stage's threshold
   results_table.py  the README results table, rendered from reports/results.json
   pair_data.py    the labeled pair dataset (Kim et al., EMNLP 2021): pinned files, fetch, load; no license, so local only
   pair_eval.py    `lineage eval pair-data`: the stages scored on labeled pairs, metrics only
-  semantic.py     the semantic stage: its model and threshold, as the pair evaluation chose them, and a query's search by meaning
+  semantic.py     the semantic stage: its model, the build's threshold (the pair evaluation's) and the stage's (the tuning sample's), and a query's search by meaning
   neighbors.py    `lineage neighbors`: every distinct window's nearest neighbors for the build, HNSW over the float16 vectors
+  semantic_pairs.py  `lineage semantic-pairs`: the semantic stage's matches as cross-state section pairs, fingerprinted by model, K and threshold
+  align.py        word-level alignment of a section pair: copied, paraphrased and unmatched spans, with ids and offsets (pure functions)
+  labels.py       `lineage label`: a person labels the precision sample's pairs, aligned; labels keyed to survive a re-split
+  label_page.py   `lineage label-page` and `label-import`: the labeling session as a phone page (pages/label.html), and its saved labels checked back in
+  agreement.py    the subsample a person labels to check the model's labels, and the agreement: weighted kappa, cutoff agreement, the bars
+  relatives_sample.py  the precision of what a page lists: random bills' listed relatives, the pair each rests on, its aligned passages
+  model_labels.py  provisional precision labels from a model, under its id and prompt version; each batch's spend against the budget
+  precision.py    the precision sample's strata and seeded draw, and the estimate weighted by stratum size
+  intervals.py    the Wilson interval
   stoplist.py     document-frequency stoplist and its report
+  state_boilerplate.py  `lineage state-boilerplate`: a section flagged as its state's boilerplate by the other families it reaches; precision with the flag on, and the dropped pairs' sample
   stats.py        coverage report: the measurements that replace the design's estimates
   versions.py     which bill version the text layer fetches (pure functions)
   robots.py       robots.txt rules for this project's User-Agent; temporary refusals asked again
@@ -103,7 +134,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
 tools/            dev and CI checks
   leak_check.py   local paths and deny-listed terms in tracked files and every commit
-evals/            eval inputs: ulc_enactments.csv (hand copy of the commission's lists, dated), ulc_enactments_heldout.csv (the held-out acts' lists, reserves included)
+evals/            eval inputs: ulc_enactments.csv (hand copy of the commission's lists, dated), ulc_enactments_heldout.csv (the held-out acts' lists, reserves included), precision_labels.jsonl (the precision sample's labels, keyed by Open States bill id and section text hash; labelers by GitHub handle or model id; no text)
   fixture.py      dev-only: builds tests/fixtures/commission/ from the snapshot
 tests/            pytest; small committed fixtures only
   fixtures/openstates/  trimmed real records in archive layout (README + *_bills.json)
@@ -127,7 +158,7 @@ data/             local snapshots and derived tables; gitignored, never committe
   raw/<ST>/*.zip  Open States session archives, never edited
   acts/<act>.txt  uniform act texts, downloaded from the ULC under its terms; never committed
   acts/held-out/<act>.txt  the held-out acts' texts, read only by the parser check and the final run
-  tables/         Parquet tables written by the pipeline; bills/ holds the source's records under the project's names, texts/ each record's chosen text; signatures/, bands/ and pairs/ hold .npy arrays
+  tables/         Parquet tables written by the pipeline; bills/ holds the source's records under the project's names, texts/ each record's chosen text; signatures/, bands/, pairs/ and same_state_pairs/ hold .npy arrays
   text/           the text layer's fetch plan and fetched text (JSON lines per host)
   tables/semantic/  the semantic stage's windows (units/), distinct texts (texts/), and each model's float16 vector shards
   pair_data/      the labeled pair dataset's split files, from `lineage pair-data fetch`; never committed

@@ -1,0 +1,89 @@
+{
+ "command": "uv run lineage eval cost",
+ "k": 20,
+ "build": {
+  "near_duplicate_index": {
+   "source": "reports/index.json (build, signature_bytes, lsh.index_bytes, pairs)",
+   "seconds": 2312,
+   "workers": 10,
+   "peak_memory_bytes": 8383941888,
+   "stored_bytes": 15354764799,
+   "dollars": 0
+  },
+  "embedding": {
+   "source": "reports/embedding.json (seconds, processes_threads, peak_memory_bytes, vector_bytes, texts_embedded_in_runs)",
+   "seconds": 86875,
+   "texts_timed": 7195431,
+   "texts": 7326503,
+   "workers": 4,
+   "peak_memory_bytes": 7757571456,
+   "stored_bytes": 5626811648,
+   "dollars": 0
+  },
+  "neighbors": {
+   "source": "reports/neighbors.json (seconds, peak_memory_bytes, texts, k)",
+   "seconds": 4456,
+   "workers": null,
+   "peak_memory_bytes": 8456993728,
+   "stored_bytes": 879180360,
+   "dollars": 0
+  },
+  "semantic_pairs": {
+   "source": "reports/semantic_pairs.json (seconds, peak_memory_bytes, bytes)",
+   "seconds": 13,
+   "workers": null,
+   "peak_memory_bytes": 4033884224,
+   "stored_bytes": 78077020,
+   "dollars": 0
+  },
+  "state_boilerplate": {
+   "source": "reports/state_boilerplate.json (seconds, peak_memory_bytes, bytes)",
+   "seconds": 53,
+   "workers": null,
+   "peak_memory_bytes": 6522421632,
+   "stored_bytes": 22986048,
+   "dollars": 0
+  }
+ },
+ "query": {
+  "electronic-estate-planning-documents": {
+   "sections_searched": 15,
+   "first": {
+    "near_duplicate": 1.491,
+    "semantic": 7.989,
+    "scoring": 0.091
+   },
+   "warm": {
+    "near_duplicate": 0.139,
+    "semantic": 3.262,
+    "scoring": 0.078
+   }
+  },
+  "public-expression-protection": {
+   "sections_searched": 12,
+   "first": {
+    "near_duplicate": 0.89,
+    "semantic": 2.324,
+    "scoring": 0.08
+   },
+   "warm": {
+    "near_duplicate": 0.148,
+    "semantic": 2.329,
+    "scoring": 0.076
+   }
+  },
+  "special-deposits": {
+   "sections_searched": 15,
+   "first": {
+    "near_duplicate": 1.318,
+    "semantic": 3.755,
+    "scoring": 0.081
+   },
+   "warm": {
+    "near_duplicate": 0.14,
+    "semantic": 3.673,
+    "scoring": 0.078
+   }
+  }
+ }
+}

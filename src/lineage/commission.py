@@ -2,8 +2,9 @@
 
 Each act's text is the query. An enactment is found when a bill its list row names (see
 `lineage.ulc`) belongs to a family among the query's relatives with a score above the threshold.
-The score is the share of the query's signed sections the family matches, and the commission's
-standard closing sections are boilerplate, so they never count. Rank is reported, not used: an
+The score is the share of the query's words in the sections the family matches
+(DESIGN.md#bill-scoring), and the commission's standard closing sections are boilerplate, so
+they never count. Rank is reported, not used: an
 act's relatives can outnumber any fixed rank once every state's versions count. Every enactment
 that is not found gets one miss reason, taken from the bill that got furthest through the
 pipeline: no stored text, an amendment stored instead of the bill, an excluded document type,
@@ -17,7 +18,8 @@ text. See DESIGN.md#commission-recall.
 import hashlib
 import json
 from collections import Counter
-from dataclasses import dataclass
+from collections.abc import Collection, Sequence
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, Literal
 
@@ -33,10 +35,12 @@ from lineage.query import (
     bucket_sizes,
     matchable_sections,
     query_text,
+    regrouped,
     require_index,
     sign_query,
 )
-from lineage.semantic import SemanticSearch, best_cosines_to_bills
+from lineage.semantic import BUILD_THRESHOLD, CORROBORATING, SemanticSearch, best_cosines_to_bills
+from lineage.semantic import THRESHOLD as THRESHOLD_SEMANTIC
 from lineage.sessions import Session, load_sessions
 from lineage.signatures import open_signatures
 from lineage.stats import AMENDMENT_CHARS, AMENDMENT_OPENING, AMENDMENT_SUBSTITUTE
@@ -223,11 +227,24 @@ def evaluate(
     development: frozenset[tuple[str, int, str]] = frozenset(),
     acts: frozenset[str] | None = None,
     semantic: SemanticSearch | None = None,
+    semantic_thresholds: Sequence[float] = (),
+    flagged: Collection[tuple[str, int]] = frozenset(),
 ) -> dict[str, Any]:
     """Recall of each act's enactments from its query text, with a reason for every miss.
 
     With `semantic`, both stages search, each enactment records which stages found it, and
-    the stage ablation reports recall for each stage alone and for both together."""
+    the stage ablation reports recall for each stage alone and for both together. With
+    `semantic_thresholds`, each at or above the build's, recall is also counted as if the
+    stage's threshold were each of them, for the threshold proposal: each query is searched
+    once at the lowest, and its matches regrouped at each and at the stage's own
+    (lineage.query.regrouped), so nothing else changes. Matches are listed as a page lists
+    them, without one stage's hits on the `flagged` sections (lineage.listing)."""
+    if any(t < BUILD_THRESHOLD for t in semantic_thresholds):
+        raise CommissionError(
+            f"a semantic threshold under the build's {BUILD_THRESHOLD} lists what the build "
+            "never stored, so no page under it can be measured"
+        )
+    lowest = min([THRESHOLD_SEMANTIC, *semantic_thresholds])
     require_index(tables_dir)
     stages = ("near_duplicate", "semantic") if semantic is not None else ("near_duplicate",)
     rows = [r for r in snapshot.rows if r.stratum is not None]
@@ -276,7 +293,19 @@ def evaluate(
     records: list[dict[str, Any]] = []
     query_stats: dict[str, dict[str, Any]] = {}
     for act in sorted(query_texts):
-        result = query_text(query_texts[act], tables_dir, semantic=semantic)
+        result = query_text(
+            query_texts[act],
+            tables_dir,
+            semantic=semantic,
+            semantic_threshold=lowest,
+            flagged=flagged,
+        )
+        if lowest < THRESHOLD_SEMANTIC:
+            result = replace(result, matches=regrouped(result, tables_dir, THRESHOLD_SEMANTIC))
+        families_at = {
+            t: {m.family for m in regrouped(result, tables_dir, t) if m.share > min_share}
+            for t in semantic_thresholds
+        }
         relatives = {
             m.family: Relative(
                 rank, round(m.share, 4), m.identifier, frozenset(m.sections_by_stage)
@@ -385,6 +414,14 @@ def evaluate(
                         for stage in stages
                     },
                     "found_by": best["identifier"] if best else None,
+                    "found_at_semantic_threshold": {
+                        str(t): any(
+                            by_id[b.id].family in families_at[t]
+                            for b in match.bills
+                            if by_id[b.id].family
+                        )
+                        for t in semantic_thresholds
+                    },
                     "rank": best["rank"] if best else None,
                     "share": best["share"] if best else None,
                     "miss_reason": miss,
@@ -409,16 +446,25 @@ def evaluate(
         "stages": list(stages),
         "stage_ablation": ablation if semantic is not None else None,
         "threshold": {
-            "score": "share of the query's signed sections that the family matches",
+            "score": "share of the query's words in the sections the family matches",
             "min_share": min_share,
             "found_when": "score above min_share",
             "status": "approved",
         },
         "verification_threshold": THRESHOLD,
+        **run_configuration(semantic is not None, flagged),
         "bucket_cap": BUCKET_CAP,
         "first_year": first_year,
         "queries": query_stats,
         "recall": breakdown(records),
+        "recall_by_semantic_threshold": [
+            {
+                "threshold": t,
+                "enactments": len(records),
+                "found": sum(r["found_at_semantic_threshold"][str(t)] for r in records),
+            }
+            for t in semantic_thresholds
+        ],
         "recall_by_min_share": [
             {
                 "min_share": s,
@@ -447,6 +493,52 @@ def _sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def run_configuration(semantic: bool, flagged: Collection[tuple[str, int]]) -> dict[str, Any]:
+    """What a run's listing was set to, as its results record it: the semantic stage's
+    threshold, and the state boilerplate flag with the cosine its exemption counts from."""
+    return {
+        "semantic_threshold": THRESHOLD_SEMANTIC if semantic else None,
+        "state_boilerplate_flag": (
+            {"sections": len(flagged), "both_stages_exempt_from": CORROBORATING}
+            if flagged
+            else None
+        ),
+    }
+
+
+def _configuration_of(run: dict[str, Any]) -> dict[str, Any]:
+    return {k: run.get(k) for k in ("semantic_threshold", "state_boilerplate_flag")}
+
+
+def check_held_out_configuration(
+    previous: dict[str, Any] | None, configuration: dict[str, Any]
+) -> None:
+    """Refuse a held-out run at a configuration it has already been run at. The held-out acts
+    were run once at the end of M5 and once more at the configuration the M5 review settled,
+    each recorded (DESIGN.md#commission-recall); rerunning one settles nothing."""
+    runs = [] if previous is None else [previous, *previous.get("earlier_runs", [])]
+    for run in runs:
+        if _configuration_of(run) == configuration:
+            raise CommissionError(
+                "the held-out acts were already run at this configuration "
+                f"({configuration}); see DESIGN.md#commission-recall"
+            )
+
+
+def with_earlier_runs(section: dict[str, Any], previous: dict[str, Any] | None) -> dict[str, Any]:
+    """A held-out run's section, keeping each earlier run's configuration and what it found."""
+    if previous is None:
+        return section | {"earlier_runs": []}
+    ablation: dict[str, dict[str, Any]] = previous.get("stage_ablation") or {}
+    summary: dict[str, Any] = _configuration_of(previous) | {
+        "recall": previous["recall"]["pooled"],
+        "stage_ablation": {stage: r["pooled"] for stage, r in ablation.items()},
+        "miss_reasons": previous["miss_reasons"],
+        "found": sorted(f"{e['act']} {e['state']}" for e in previous["enactments"] if e["found"]),
+    }
+    return section | {"earlier_runs": [*previous.get("earlier_runs", []), summary]}
+
+
 def commission_recall(
     tables_dir: Path,
     *,
@@ -456,6 +548,8 @@ def commission_recall(
     act_ids: tuple[str, ...] = ACTS,
     development_path: Path | None = None,
     semantic: SemanticSearch | None = None,
+    semantic_thresholds: Sequence[float] = (),
+    flagged: Collection[tuple[str, int]] = frozenset(),
 ) -> dict[str, Any]:
     """The headline eval: each act's own text as the query.
 
@@ -490,6 +584,8 @@ def commission_recall(
         # The held-out lists carry reserve acts; the development lists hold only the acts run.
         acts=frozenset(act_ids) if development_path else None,
         semantic=semantic,
+        semantic_thresholds=semantic_thresholds,
+        flagged=flagged,
     )
     for act, stats in acts.items():
         result["queries"][act] = stats | result["queries"][act]

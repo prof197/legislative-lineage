@@ -152,7 +152,7 @@
     40631435
    ]
   },
-  "stored_bytes": 21970872
+  "stored_bytes": 417121407
  },
  "families": {
   "share": 0.8,
@@ -280,10 +280,10 @@
   ]
  },
  "build": {
-  "seconds": 2145,
+  "seconds": 2312,
   "workers": 10,
-  "peak_memory_bytes": 8569854016,
-  "peak_worker_resident_bytes": 1525432320,
+  "peak_memory_bytes": 8383941888,
+  "peak_worker_resident_bytes": 1408024576,
   "machine": {
    "platform": "macOS-15.7.3-arm64-arm-64bit-Mach-O",
    "memory_bytes": 34359738368

@@ -7,7 +7,14 @@ import pytest
 from typer.testing import CliRunner
 
 from lineage.cli import app
-from lineage.results_table import END, START, ResultsTableError, rendered_readme
+from lineage.results_table import (
+    END,
+    HELD_OUT_END,
+    HELD_OUT_START,
+    START,
+    ResultsTableError,
+    rendered_readme,
+)
 
 ROOT = Path(__file__).parents[1]
 
@@ -95,6 +102,24 @@ def test_results_from_different_thresholds_are_not_set_side_by_side() -> None:
         rendered_readme(readme, {"commission": _section(1, 3)}, {"commission": other})
 
 
+def test_at_a_threshold_of_zero_a_changed_score_still_compares() -> None:
+    # At 0, an enactment is found by any matched section, however the score weighs them.
+    readme = f"{START}\n{END}\n"
+    scored = _section(2, 3) | {"threshold": {"min_share": 0.0, "score": "by words"}}
+    other = _section(1, 3) | {"threshold": {"min_share": 0.0, "score": "by sections"}}
+
+    assert "2 / 3" in rendered_readme(readme, {"commission": scored}, {"commission": other})
+
+
+def test_above_zero_a_changed_score_does_not_compare() -> None:
+    readme = f"{START}\n{END}\n"
+    scored = _section(2, 3) | {"threshold": {"min_share": 0.5, "score": "by words"}}
+    other = _section(1, 3) | {"threshold": {"min_share": 0.5, "score": "by sections"}}
+
+    with pytest.raises(ResultsTableError, match="threshold"):
+        rendered_readme(readme, {"commission": scored}, {"commission": other})
+
+
 def test_the_command_rewrites_only_the_results_section(tmp_path: Path) -> None:
     readme, results = tmp_path / "README.md", tmp_path / "results.json"
     exported = tmp_path / "exported.json"
@@ -113,3 +138,32 @@ def test_the_command_rewrites_only_the_results_section(tmp_path: Path) -> None:
     assert text.startswith("Intro.\n")
     assert text.endswith("Outro.\n")
     assert "2 / 4 (50.0%)" in text
+
+
+def test_the_held_out_run_is_shown_by_stage_once_the_readme_has_its_section() -> None:
+    readme = f"{START}\n{END}\n{HELD_OUT_START}\nstale\n{HELD_OUT_END}\n"
+    held_out = _merged(3, 2, 4)
+    near_alone = _section(2, 4)["recall"]
+    held_out["stage_ablation"] = {
+        "near_duplicate": near_alone,
+        "semantic": held_out["recall"],
+        "both": held_out["recall"],
+    }
+    first = {"semantic_threshold": 0.93, "recall": {"all": {"enactments": 4, "found": 3}}}
+    held_out |= {
+        "semantic_threshold": 0.94,
+        "state_boilerplate_flag": {"sections": 1},
+        "earlier_runs": [first],
+    }
+    results = {"commission": _merged(3, 2, 4), "commission_held_out": held_out}
+
+    out = rendered_readme(readme, results, {"commission": _section(1, 4)})
+
+    assert "stale" not in out
+    assert "| | Both stages | Near-duplicate stage | Semantic stage |" in out
+    assert "| Special Deposits | 3 / 4 (75.0%) | 2 / 4 (50.0%) | 3 / 4 (75.0%) |" in out
+    assert "at 0.94 and with the state boilerplate flag" in out
+    assert "first run at a threshold of 0.93, which found 3 of 4" in out
+    assert "--held-out --final" in out
+    with pytest.raises(ResultsTableError, match="held-out run has no results"):
+        rendered_readme(readme, {"commission": _merged(3, 2, 4)}, {"commission": _section(1, 4)})
