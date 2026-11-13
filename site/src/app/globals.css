@@ -188,6 +188,7 @@ table.data tbody tr:hover { background: var(--paper-2); }
 .m-para { background: #e9e2f7; border-bottom: 2px dashed #4e3d8f; }
 .m-diff { font-weight: 600; }
 .ring { outline: 2px solid var(--ink); outline-offset: 2px; }
+.struck { text-decoration: line-through; text-decoration-thickness: 1px; color: var(--ink-3); }
 .claim-dot { display: inline-flex; align-items: center; justify-content: center; width: 17px; height: 17px; margin: 0 3px; vertical-align: 3px; border-radius: 50%; border: 1px solid var(--ink-3); background: var(--paper); color: var(--ink-3); font-family: var(--sans); font-size: 10px; font-weight: 700; line-height: 1; text-decoration: none; }
 .claim-dot.on { background: var(--ink); color: var(--paper); }
 .unfold { margin-top: 8px; min-height: 40px; width: 100%; padding: 0 14px; border: 1px dashed #a29e94; border-radius: 2px; background: var(--paper-2); font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); text-align: left; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }

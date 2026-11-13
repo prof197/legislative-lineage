@@ -6,6 +6,7 @@ import { STANDING, StatusBadge } from "@/components/Status";
 import { nameRoles } from "@/lib/claims";
 import { fetchData } from "@/lib/fetch";
 import { billName, sectionLabel, session, similarity, STATUS_LABEL } from "@/lib/format";
+import { revisorMarks, segments, type Revisor } from "@/lib/revisor";
 import { previewEnd, rows, shown, type Kind, type Piece, type Row } from "@/lib/rows";
 import type { AlignedPair, BillPage, BillRef, BillTexts, Claim, Comparison, Relative } from "@/types/export";
 
@@ -35,8 +36,8 @@ function Glyph({ kind, title }: { kind: Kind; title?: string }) {
 
 // One side of a row: its pieces marked, the selected claim's text ringed, and a numbered marker
 // after the last words each claim cites here.
-function Cell({ text, pieces, until, claims, selected, onPick }: {
-  text: string; pieces: Piece[]; until: number | null; claims: Numbered[]; selected: number | null; onPick: (n: number) => void;
+function Cell({ text, pieces, until, claims, selected, onPick, rev }: {
+  text: string; pieces: Piece[]; until: number | null; claims: Numbered[]; selected: number | null; onPick: (n: number) => void; rev: Revisor | null;
 }) {
   const ring = new Set(claims.find((x) => x.n === selected)?.cited ?? []);
   const lastFor = new Map<number, number>();
@@ -45,7 +46,9 @@ function Cell({ text, pieces, until, claims, selected, onPick }: {
   pieces.forEach((p, i) => {
     const to = until === null ? p.to : Math.min(p.to, until);
     if (to <= p.from) return;
-    const t = shown(text, p.from, to);
+    const t = segments(p.from, to, rev).map((g, k) =>
+      g.struck ? <s key={k} className="struck">{shown(text, g.from, g.to)}</s> : shown(text, g.from, g.to),
+    );
     const ringed = p.span !== null && ring.has(p.span) ? " ring" : "";
     out.push(
       p.mark === "copied" ? <mark key={i} className={`m-copied${ringed}`}>{t}</mark>
@@ -64,6 +67,15 @@ function Cell({ text, pieces, until, claims, selected, onPick }: {
   if (until !== null) out.push(<span key="more"> …</span>);
   return <p className="row-text">{out}</p>;
 }
+
+// Minnesota's revisor markers, found once per section text (lib/revisor.ts).
+const marksCache = new Map<string, Revisor | null>();
+function marksOf(text: string): Revisor | null {
+  if (!marksCache.has(text)) marksCache.set(text, revisorMarks(text));
+  return marksCache.get(text)!;
+}
+const blank = (text: string, pieces: Piece[], rev: Revisor | null) =>
+  pieces.every((p) => segments(p.from, p.to, rev).every((g) => !text.slice(g.from, g.to).trim()));
 
 function Found({ stages }: { stages: AlignedPair["stages"] }) {
   return stages.includes("near_duplicate") ? (
@@ -233,6 +245,7 @@ export function CompareView({ hosted, issues, footer, act }: { hosted: string; i
               {version && <>Text shown: {c.b.identifier} {version}. </>}
               {introduced && c.b.status === "passed" && "The bill passed, so amendments made before passage may not appear here. "}
               {STANDING}
+              {(c.a.state === "MN" || c.b.state === "MN") && " Minnesota's bill text includes the language a bill deletes from current law, shown struck through."}
             </span>
           </p>
           <p className="cmp-explain">
@@ -270,13 +283,19 @@ export function CompareView({ hosted, issues, footer, act }: { hosted: string; i
                         if (hides(r)) return null;
                         const key = `${i}.${k}`;
                         const folded = r.fold && !unfolded.has(key) && !cites(r, anyCited);
+                        const revA = c.a.state === "MN" ? marksOf(ta) : null;
+                        const revB = c.b.state === "MN" ? marksOf(tb) : null;
+                        // A row that is only Minnesota's markers shows nothing, so it is not shown.
+                        const emptyA = !r.a.length || blank(ta, r.a, revA);
+                        const emptyB = !r.b.length || blank(tb, r.b, revB);
+                        if (emptyA && emptyB) return null;
                         const side = (s: "a" | "b") => {
                           const text = s === "a" ? ta : tb;
                           const pieces = r[s];
-                          if (!pieces.length) return <div className="row-gap">Not in {billName(s === "a" ? c.a : c.b)}</div>;
+                          if (s === "a" ? emptyA : emptyB) return <div className="row-gap">Not in {billName(s === "a" ? c.a : c.b)}</div>;
                           return (
                             <>
-                              <Cell text={text} pieces={pieces} until={folded ? previewEnd(text, pieces) : null} claims={claims} selected={selected} onPick={pick} />
+                              <Cell text={text} pieces={pieces} until={folded ? previewEnd(text, pieces) : null} claims={claims} selected={selected} onPick={pick} rev={s === "a" ? revA : revB} />
                               {folded && (
                                 <button type="button" className="unfold" onClick={() => setUnfolded(new Set(unfolded).add(key))}>
                                   Show all {r.words.toLocaleString("en-US")} words
