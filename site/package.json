@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit",
     "build": "next build",
     "size": "node scripts/size.mjs",
+    "test:copy": "node --experimental-strip-types --no-warnings scripts/copy-check.mts",
     "test": "node --experimental-strip-types --test src/lib/*.test.ts",
     "dev": "next dev"
   },
