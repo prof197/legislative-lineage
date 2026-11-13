@@ -10,6 +10,17 @@ import type { BillPage, Relative } from "@/types/export";
 
 const SHOWN = 10;
 
+function mostRelated(relatives: Relative[]): string | null {
+  const by = new Map<string, { n: number; best: number }>();
+  for (const r of relatives) {
+    const x = by.get(r.bill.state) ?? { n: 0, best: 0 };
+    by.set(r.bill.state, { n: x.n + 1, best: Math.max(x.best, r.share) });
+  }
+  let top: [string, { n: number; best: number }] | null = null;
+  for (const e of by) if (!top || e[1].n > top[1].n || (e[1].n === top[1].n && e[1].best > top[1].best)) top = e;
+  return top?.[0] ?? null;
+}
+
 const count = (n: number) => `${n.toLocaleString("en-US")} ${n === 1 ? "bill" : "bills"}`;
 
 // The sections a relative shares: "All N sections" or "K of N sections", the list behind it.
@@ -28,7 +39,9 @@ function Shares({ ordinals, total, label, order }: { ordinals: number[]; total: 
 export function BillView({ page }: { page: BillPage }) {
   const b = page.bill;
   const [sec, setSec] = useState<number | null>(null);
-  const [picked, setSel] = useState<string | null>(null);
+  // The map opens on the state with the most related bills, the closer match breaking a tie, so
+  // the panel beside it shows bills rather than a prompt.
+  const [picked, setSel] = useState<string | null>(() => mostRelated(page.relatives));
   const [hovered, setHover] = useState<string | null>(null);
   const sel = hovered ?? picked;
   const [all, setAll] = useState(false);

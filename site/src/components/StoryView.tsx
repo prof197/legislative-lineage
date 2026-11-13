@@ -98,9 +98,10 @@ export function StoryView({ story, slug, compareLabel, listNoun, listHeading }: 
       <section aria-labelledby="time-h" style={{ marginTop: 56 }}>
         <h2 id="time-h" className="section">When the bills appeared, by session year</h2>
         <p className="note" style={{ marginTop: 8 }}>Each bill sits in the year its session began.</p>
-        <ol style={{ listStyle: "none", margin: "16px 0 0", padding: 0, display: "flex", flexWrap: "wrap", gap: "16px 32px" }}>
+        {/* One column per year, all the same width, so the years line up however many bills each has. */}
+        <ol style={{ listStyle: "none", margin: "16px 0 0", padding: 0, display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "20px 24px", alignItems: "start" }}>
           {slug === "anti-slapp" && (
-            <li style={{ maxWidth: 220 }}>
+            <li>
               <strong style={{ fontFamily: "var(--serif)", fontSize: 24 }}>2020</strong>
               <p className="note" style={{ margin: "4px 0 0" }}>The Commission approves the model act. This corpus starts in 2023, so earlier state bills are not shown.</p>
             </li>
@@ -108,7 +109,7 @@ export function StoryView({ story, slug, compareLabel, listNoun, listHeading }: 
           {years.map(([y, list]) => (
             <li key={y}>
               <strong style={{ fontFamily: "var(--serif)", fontSize: 24 }}>{y}</strong> <span className="small">{list.length}</span>
-              <ul style={{ listStyle: "none", margin: "6px 0 0", padding: 0, display: "flex", flexWrap: "wrap", gap: 4, maxWidth: 260 }}>
+              <ul style={{ listStyle: "none", margin: "6px 0 0", padding: 0, display: "flex", flexWrap: "wrap", gap: 4 }}>
                 {list.map((r) => (
                   <li key={r.bill.slug} className={`status ${r.bill.status ?? ""}`} title={`${stateName(r.bill.state)} ${r.bill.identifier}`}>
                     {r.bill.state} {r.bill.identifier}

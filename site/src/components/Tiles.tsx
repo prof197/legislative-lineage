@@ -4,7 +4,9 @@ import { TILES, type Status } from "@/lib/format";
 export type Fill = Status | "home" | "none";
 
 // The state tile grid. A click, tap or keyboard focus selects a tile and it stays selected;
-// hovering another tile previews it, and leaving the map goes back to the selection. What a
+// hovering another tile previews it, and leaving a tile goes back to the selection. The grid is
+// wider than its tiles, so leaving the grid alone would keep a preview while the pointer crosses
+// its empty space. What a
 // tile shows is the caller's: it shows `hovered ?? selected`.
 export function TileMap({
   fills,
@@ -36,6 +38,7 @@ export function TileMap({
             onClick={() => { onSelect(code); onHover(null); }}
             onFocus={() => onSelect(code)}
             onMouseEnter={() => onHover(code)}
+            onMouseLeave={() => onHover(null)}
           >
             {code}
           </button>
