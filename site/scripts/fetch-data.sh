@@ -5,6 +5,9 @@
 set -euo pipefail
 tag="$1"
 state="${2:-GA}"
+# The tag reaches a file name and release.json, so only the release naming is accepted.
+[[ "$tag" =~ ^data-[a-z]{2}-[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || { echo "not a data release tag: $tag" >&2; exit 2; }
+[[ "$state" =~ ^[A-Z]{2}$ ]] || { echo "not a state code: $state" >&2; exit 2; }
 asset="export-${state}-${tag}.tar.gz"
 here="$(cd "$(dirname "$0")/.." && pwd)"
 work="$(mktemp -d)"
