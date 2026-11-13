@@ -43,7 +43,7 @@ export default function Home() {
               one&apos;s text differs.
             </p>
             <form action="bills/" method="get" style={{ marginTop: 44, maxWidth: 680 }}>
-              <label htmlFor="find" style={{ display: "block", fontSize: 14, fontWeight: 600, marginBottom: 8 }}>
+              <label htmlFor="find" style={{ display: "block", fontSize: 16.5, fontWeight: 600, marginBottom: 8 }}>
                 Find a {state} bill
               </label>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
