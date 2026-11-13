@@ -27,7 +27,9 @@ function Shares({ ordinals, total, label, order }: { ordinals: number[]; total: 
 export function BillView({ page }: { page: BillPage }) {
   const b = page.bill;
   const [sec, setSec] = useState<number | null>(null);
-  const [sel, setSel] = useState<string | null>(null);
+  const [picked, setSel] = useState<string | null>(null);
+  const [hovered, setHover] = useState<string | null>(null);
+  const sel = hovered ?? picked;
   const [all, setAll] = useState(false);
   const labels = useMemo(() => sectionLabels(page.sections), [page.sections]);
   const label = (o: number) => labels.get(o) ?? `Section ${o}`;
@@ -53,18 +55,7 @@ export function BillView({ page }: { page: BillPage }) {
 
   return (
     <>
-      <div className="field" style={{ marginTop: 40, maxWidth: 420 }}>
-        <label htmlFor="section">Related bills that share</label>
-        <select id="section" className="select" value={sec ?? ""} onChange={(e) => { setSec(e.target.value === "" ? null : Number(e.target.value)); setSel(null); }}>
-          <option value="">Any section · {count(page.relatives.length)}</option>
-          {withRelatives.map((s) => (
-            <option key={s.ordinal} value={s.ordinal}>{label(s.ordinal)} · {count(s.with_relatives)}</option>
-          ))}
-        </select>
-        <p className="note" style={{ margin: 0 }}>Matching runs section by section. Counts are bills, not states; one bill can share several sections.</p>
-      </div>
-
-      <section aria-labelledby="where" style={{ marginTop: 32, display: "flex", flexWrap: "wrap", gap: "24px 48px" }}>
+      <section aria-labelledby="where" style={{ marginTop: 48, display: "flex", flexWrap: "wrap", gap: "24px 48px" }}>
         <div style={{ flex: "1 1 480px", minWidth: 0 }}>
           <h2 id="where" className="section">Where the related bills are</h2>
           <p className="note" style={{ marginTop: 8 }}>
@@ -73,8 +64,9 @@ export function BillView({ page }: { page: BillPage }) {
           <div style={{ marginTop: 16 }}>
             <TileMap
               fills={fills(best, b.state)}
-              selected={sel}
+              selected={picked}
               onSelect={setSel}
+              onHover={setHover}
               label="Related bills by state"
               aria={(code, name, fill) => `${name}: ${code === b.state ? "this bill" : fill === "none" ? "no related bill" : STATUS_LABEL[fill as keyof typeof STATUS_LABEL]}`}
             />
@@ -88,7 +80,18 @@ export function BillView({ page }: { page: BillPage }) {
           </ul>
           <p className="note">{STANDING} A state with several related bills shows the one that went furthest.</p>
         </div>
-        <div style={{ flex: "1 1 300px", minWidth: 0 }} aria-live="polite">
+        <div style={{ flex: "1 1 300px", minWidth: 0 }}>
+          <div className="field" style={{ maxWidth: 420, marginBottom: 28 }}>
+            <label htmlFor="section">Related bills that share</label>
+            <select id="section" className="select" value={sec ?? ""} onChange={(e) => { setSec(e.target.value === "" ? null : Number(e.target.value)); }}>
+              <option value="">Any section · {count(page.relatives.length)}</option>
+              {withRelatives.map((s) => (
+                <option key={s.ordinal} value={s.ordinal}>{label(s.ordinal)} · {count(s.with_relatives)}</option>
+              ))}
+            </select>
+            <p className="note" style={{ margin: 0 }}>Matching runs section by section. Counts are bills, not states; one bill can share several sections.</p>
+          </div>
+          <div aria-live="polite">
           <p className="eyebrow">Selected state</p>
           {sel === null ? (
             <p className="body-serif" style={{ marginTop: 8 }}>Select a state to see its bills.</p>
@@ -103,8 +106,11 @@ export function BillView({ page }: { page: BillPage }) {
                 <ul style={{ listStyle: "none", padding: 0, margin: "12px 0 0" }}>
                   {shown.map((r) => (
                     <li key={r.bill.slug} style={{ borderTop: "1px solid var(--line)", padding: "10px 0" }}>
-                      <strong>{r.bill.identifier}</strong>
-                      <div className="small">{session(r.bill.session)} · {r.bill.status ? STATUS_LABEL[r.bill.status] : "Status not recorded"} · {[...new Set(r.pairs.map((p) => p.ordinal))].map(label).join(", ")}</div>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+                        <span><strong>{r.bill.identifier}</strong> <span className="small">{session(r.bill.session)}</span></span>
+                        <StatusBadge status={r.bill.status} />
+                      </div>
+                      <div className="small" style={{ marginTop: 4 }}>{[...new Set(r.pairs.map((p) => p.ordinal))].sort((x, y) => (order.get(x) ?? x) - (order.get(y) ?? y)).map(label).join(", ")}</div>
                       <Link href={`/compare/?c=${r.comparison}`}>Compare</Link>
                     </li>
                   ))}
@@ -112,6 +118,7 @@ export function BillView({ page }: { page: BillPage }) {
               )}
             </>
           )}
+          </div>
         </div>
       </section>
 

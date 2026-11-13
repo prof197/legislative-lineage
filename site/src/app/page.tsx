@@ -113,7 +113,8 @@ export default function Home() {
               const t = tally(best);
               return (
                 <article key={slug} style={{ display: "flex", flexDirection: "column", gap: 14, borderTop: "2px solid var(--ink)", paddingTop: 20 }}>
-                  <div style={{ padding: "8px 0 6px" }}><MiniMap fills={fills(best)} /></div>
+                  {/* The map opens the story too; the title stays the link screen readers and the keyboard use. */}
+                  <Link href={`/stories/${slug}/`} tabIndex={-1} aria-hidden="true" style={{ display: "block", padding: "8px 0 6px" }}><MiniMap fills={fills(best)} /></Link>
                   <p className="eyebrow">{copy.eyebrow}</p>
                   <h3 className="card"><Link href={`/stories/${slug}/`} style={{ textDecoration: "none" }}>{copy.card}</Link></h3>
                   <p className="body-serif">{cardLine(slug, t.states, s)}</p>

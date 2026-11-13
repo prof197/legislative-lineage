@@ -13,7 +13,9 @@ type SortKey = "state" | "yr" | "sim";
 export function StoryView({ story, slug, compareLabel, listNoun, listHeading }: { story: Story; slug: string; compareLabel: string; listNoun: string; listHeading: string }) {
   const best = storyBest(story);
   const t = tally(best);
-  const [sel, setSel] = useState<string | null>(null);
+  const [picked, setSel] = useState<string | null>(null);
+  const [hovered, setHover] = useState<string | null>(null);
+  const sel = hovered ?? picked;
   const [sort, setSort] = useState<SortKey>("yr");
   const [dir, setDir] = useState(1);
   const d = sel ? best.get(sel) : undefined;
@@ -50,8 +52,9 @@ export function StoryView({ story, slug, compareLabel, listNoun, listHeading }: 
           <div style={{ marginTop: 16 }}>
             <TileMap
               fills={fills(best)}
-              selected={sel}
+              selected={picked}
               onSelect={setSel}
+              onHover={setHover}
               label="Matching bills by state"
               aria={(code, name, fill) => {
                 const r = best.get(code);
@@ -69,8 +72,10 @@ export function StoryView({ story, slug, compareLabel, listNoun, listHeading }: 
               <h3 className="card" style={{ marginTop: 8 }}>{stateName(sel)}</h3>
               {d ? (
                 <div className="stack" style={{ marginTop: 10 }}>
-                  <p style={{ margin: 0, fontWeight: 600 }}>{d.bill.identifier} <span className="small">{session(d.bill.session)}</span></p>
-                  <StatusBadge status={d.bill.status} />
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+                    <span><strong>{d.bill.identifier}</strong> <span className="small">{session(d.bill.session)}</span></span>
+                    <StatusBadge status={d.bill.status} />
+                  </div>
                   {d.share !== null && <p style={{ margin: 0 }}>Similarity <strong>{similarity(d.share)}</strong></p>}
                   {d.comparison ? <p style={{ margin: 0 }}><Link href={`/compare/?c=${d.comparison}`}>{compareLabel}</Link></p> : <p className="note" style={{ margin: 0 }}>No section of this bill is paired with {listNoun} in the story.</p>}
                 </div>
