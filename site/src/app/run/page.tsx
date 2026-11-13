@@ -38,17 +38,17 @@ export default function RunPage() {
         <p className="lede">
           This site shows {stateName(m.state)}. The open-source tool that built it runs on your own
           computer: it builds the 50-state index from Open States&apos; archives and the legislatures&apos;
-          published text, then writes these pages for the state you choose. For now it builds
-          everything from source.
+          published text, then writes a state&apos;s pages. It has built {stateName(m.state)}&apos;s site;
+          building the site for other states is being tested. For now it builds everything from source.
         </p>
         <section aria-labelledby="quick" style={{ marginTop: 48 }}>
           <h2 id="quick" className="section">Build it from source</h2>
-          <RunCommands repository={REPOSITORY} />
+          <RunCommands repository={REPOSITORY} initial={m.state} />
         </section>
         <section aria-labelledby="get" style={{ marginTop: 48 }}>
           <h2 id="get" className="section">What you get</h2>
           <ul className="body-serif" style={{ marginTop: 12, paddingLeft: 22 }}>
-            <li>A copy of this site for your state&apos;s 2023–2026 bills: the browse list, a page for each bill and side-by-side comparisons.</li>
+            <li>A copy of this site for the state you export, from its 2023–2026 bills: the browse list, a page for each bill and side-by-side comparisons.</li>
             <li><code>uv run lineage query bill.txt</code>, which lists the related bills across the 50-state index for any bill&apos;s text saved as a file, offline.</li>
             <li>The validation figures, rerun against your build with <code>uv run lineage eval commission</code> once you download the acts&apos; texts from the Uniform Law Commission&apos;s site, as the README says.</li>
             <li>Plain static files you can host anywhere, with no server or database.</li>

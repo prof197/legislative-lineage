@@ -57,7 +57,7 @@ export default function ValidationPage() {
                   <ul className="squares" aria-label={`${ACT_NAME[a] ?? a}: found ${x.found} of ${x.enactments}`}>
                     {rows.map((e) => <li key={`${e.state}-${e.bill_cell}`} className={e.found ? "found" : "missed"} title={`${e.state} ${e.bill_cell} (${e.year}): ${e.found ? "found" : "missed"}`} />)}
                   </ul>
-                  <strong>{x.found} of {x.enactments}</strong>
+                  <strong style={{ whiteSpace: "nowrap" }}>{x.found} of {x.enactments}</strong>
                 </li>
               );
             })}
@@ -82,7 +82,7 @@ export default function ValidationPage() {
                     <span style={{ flex: 1, height: 14, background: "#eceae4", display: "block" }} aria-hidden="true">
                       <span style={{ display: "block", height: 14, width: pct(x.recall), background: "var(--ink)" }} />
                     </span>
-                    <span style={{ width: 150 }}>Recall {pct(x.recall)} ({x.found} of {x.enactments})</span>
+                    <span style={{ flex: "none", width: 200, whiteSpace: "nowrap" }}>Recall {pct(x.recall)} ({x.found} of {x.enactments})</span>
                   </div>
                 </figure>
               );

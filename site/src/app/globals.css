@@ -1,6 +1,7 @@
 /* The mocks' palette and type, as tokens. Every pairing of text and ground passes 4.5:1. */
 :root {
   --ink: #1a1a17;
+  --lede-width: 800px; /* a story title and the paragraph under it share this width */
   --ink-2: #2e2c28;
   --ink-3: #45433d;
   --muted: #67645c;
@@ -60,7 +61,7 @@ h1.display { margin: 0; font-family: var(--serif); font-weight: 500; font-size: 
 h1.hero { margin: 0; max-width: 15ch; font-family: var(--serif); font-weight: 500; font-size: clamp(40px, 5.2vw, 64px); line-height: 1.04; letter-spacing: -0.02em; text-wrap: balance; }
 h2.section { margin: 0; font-family: var(--serif); font-weight: 500; font-size: 32px; letter-spacing: -0.01em; line-height: 1.15; }
 h3.card { margin: 0; font-family: var(--serif); font-weight: 500; font-size: 27px; line-height: 1.15; }
-.lede { margin: 18px 0 0; max-width: 40em; font-family: var(--serif); font-size: 20px; line-height: 1.55; color: var(--ink-2); text-wrap: pretty; }
+.lede { margin: 18px 0 0; max-width: var(--lede-width); font-family: var(--serif); font-size: 20px; line-height: 1.55; color: var(--ink-2); text-wrap: pretty; }
 .body-serif { font-family: var(--serif); font-size: 18px; line-height: 1.5; color: var(--ink-3); margin: 0; }
 .note { font-size: 14px; line-height: 1.55; color: var(--ink-3); max-width: 52em; }
 .small { font-size: 13px; color: var(--muted); }

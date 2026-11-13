@@ -55,7 +55,6 @@ export function Header({ current }: { current: Section }) {
           <Link href="/" className="brand" {...here("home")}>
             <Logo />
             <span className="brand-name">Legislative Lineage</span>
-            <span className="badge-dashed">Working title</span>
           </Link>
           <nav aria-label="Main" className="nav">
             <Link href="/#stories" {...here("stories")}>Stories</Link>

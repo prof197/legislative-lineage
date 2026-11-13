@@ -35,7 +35,7 @@ export default async function StoryPage({ params }: Props) {
       <main className="wrap" style={{ paddingTop: 40 }}>
         <p className="crumbs"><Link href="/#stories">Stories</Link><span aria-hidden="true">/</span><span>{copy.title}</span></p>
         <p className="eyebrow" style={{ marginTop: 28 }}>{copy.pageEyebrow}</p>
-        <h1 className="display" style={{ marginTop: 10, maxWidth: "20ch" }}>{copy.headline}</h1>
+        <h1 className="display" style={{ marginTop: 10, maxWidth: "var(--lede-width)" }}>{copy.headline}</h1>
         <p className="lede">
           {slug === "anti-slapp" ? (
             <>
