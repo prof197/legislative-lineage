@@ -27,11 +27,20 @@ export default function Home() {
         <section className="wrap" style={{ paddingTop: 80, paddingBottom: 64, display: "flex", flexWrap: "wrap", alignItems: "flex-start", gap: "48px 56px" }}>
           <div style={{ flex: "999 1 540px", minWidth: 0 }}>
             <p className="eyebrow" style={{ fontSize: 13, marginBottom: 20 }}>State bills, traced across states</p>
-            <h1 className="hero">Which {state} bills share language with other states?</h1>
+            {/* TODO(v2): once lineage (direction from dates, documented origins and shared quirks of
+                wording) lands, swap back in the mocks' tagline:
+                  headline "Which {state} bills share language with other states?"
+                  lede "Pick a {state} bill from the 2023–2026 sessions to see bills in other states
+                    with similar provisions: where they were introduced, what happened to each one,
+                    and what each state changed. It shows shared language and timing. It does not
+                    tell you who wrote a bill."
+                  and the aside's close "…so you know when to start asking… who is really writing
+                    our laws?"
+                v1 states no direction or authorship, so it reads as below. */}
+            <h1 className="hero">Why does that {state} bill look so familiar?</h1>
             <p className="lede" style={{ marginTop: 28, fontSize: 21, maxWidth: "34em", color: "var(--ink-3)" }}>
-              Pick a {state} bill from the 2023–2026 sessions to see bills in other states with similar
-              provisions: where they were introduced, what happened to each one, and what each state
-              changed. It shows shared language and timing. It does not tell you who wrote a bill.
+              Find bills in other states that share provisions with a {state} bill, and see how each
+              one&apos;s text differs.
             </p>
             <form action="bills/" method="get" style={{ marginTop: 44, maxWidth: 680 }}>
               <label htmlFor="find" style={{ display: "block", fontSize: 14, fontWeight: 600, marginBottom: 8 }}>
@@ -45,11 +54,12 @@ export default function Home() {
                 </button>
               </div>
               <p className="note" style={{ marginTop: 14, maxWidth: "40em" }}>
-                A 2019 investigation by USA Today, the Arizona Republic and the Center for Public Integrity
-                found 10,000 instances of lawmakers introducing bills copied from model legislation,
-                2010–2018.{" "}
-                <a href="https://archive.publicintegrity.org/politics/state-politics/copy-paste-legislate/how-we-uncovered-10000-times-lawmakers-introduced-copycat-model-bills-and-why-it-matters">
-                  How they found them
+                A 2019 investigation by USA TODAY, The Arizona Republic and the Center for Public
+                Integrity examined nearly 1 million bills introduced from 2010 to October 2018, with
+                comparisons run on the equivalent of more than 150 virtual machines, nonstop for
+                months.{" "}
+                <a href="https://publicintegrity.org/state-politics/copy-paste-legislate/how-we-uncovered-10000-times-lawmakers-introduced-copycat-model-bills-and-why-it-matters/">
+                  How they did it
                 </a>
               </p>
             </form>
@@ -66,8 +76,7 @@ export default function Home() {
             </p>
             <p style={{ margin: "14px 0 0", fontFamily: "var(--serif)", fontSize: 18, lineHeight: 1.55, color: "#f1efea" }}>
               Matching language across states is the trail. This site lines the versions up side by side
-              and shows where each one passed, died or changed, so you know when to start asking… who is
-              really writing our laws?
+              and shows what happened to each one.
             </p>
           </aside>
         </section>

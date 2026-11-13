@@ -10,7 +10,7 @@ import type { Story, StoryRelative } from "@/types/export";
 type SortKey = "state" | "yr" | "sim";
 
 // A story's map, timeline and list of relatives.
-export function StoryView({ story, slug, compareLabel, listNoun }: { story: Story; slug: string; compareLabel: string; listNoun: string }) {
+export function StoryView({ story, slug, compareLabel, listNoun, listHeading }: { story: Story; slug: string; compareLabel: string; listNoun: string; listHeading: string }) {
   const best = storyBest(story);
   const t = tally(best);
   const [sel, setSel] = useState<string | null>(null);
@@ -75,7 +75,7 @@ export function StoryView({ story, slug, compareLabel, listNoun }: { story: Stor
                   {d.comparison ? <p style={{ margin: 0 }}><Link href={`/compare/?c=${d.comparison}`}>{compareLabel}</Link></p> : <p className="note" style={{ margin: 0 }}>No section of this bill is paired with {listNoun} in the story.</p>}
                 </div>
               ) : (
-                <p className="body-serif">No 2023–2026 bill in this corpus shares language with {listNoun}.</p>
+                <p className="body-serif">{slug === "anti-slapp" ? "The Commission lists no 2023–2026 enactment in this state." : `No 2023–2026 bill in this corpus shares language with ${listNoun}.`}</p>
               )}
             </>
           )}
@@ -116,7 +116,7 @@ export function StoryView({ story, slug, compareLabel, listNoun }: { story: Stor
       </section>
 
       <section aria-labelledby="list-h" style={{ marginTop: 56 }}>
-        <h2 id="list-h" className="section">{rows.length} bills that share language with {listNoun}</h2>
+        <h2 id="list-h" className="section">{rows.length} {listHeading}</h2>
         <p className="note" style={{ marginTop: 8 }}>Select a column heading to sort.</p>
         <div className="table-box">
           <table className="data" style={{ minWidth: 720 }}>
@@ -145,7 +145,8 @@ export function StoryView({ story, slug, compareLabel, listNoun }: { story: Stor
           </table>
         </div>
         <p className="note">
-          <strong style={{ color: "var(--ink)" }}>Similarity</strong> runs from 0 to 1: the share of {slug === "anti-slapp" ? "the model act" : listNoun}&apos;s text that has a matching section in the bill, by exact wording or similar meaning. {STANDING}
+          {slug === "anti-slapp" && <>Each enactment is compared with {listNoun}, the earliest in the index. </>}
+          <strong style={{ color: "var(--ink)" }}>Similarity</strong> runs from 0 to 1: the share of {listNoun}&apos;s text that has a matching section in the bill, by exact wording or similar meaning. {STANDING}
         </p>
       </section>
     </>

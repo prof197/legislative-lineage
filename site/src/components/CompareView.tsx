@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { STANDING, StatusBadge } from "@/components/Status";
+import { nameRoles } from "@/lib/claims";
 import { fetchData } from "@/lib/fetch";
 import { billName, sectionLabel, session, similarity, STATUS_LABEL } from "@/lib/format";
 import { previewEnd, rows, shown, type Kind, type Piece, type Row } from "@/lib/rows";
@@ -22,7 +23,7 @@ function label(kind: Kind, c: Comparison): string {
   switch (kind) {
     case "same": return "Same words";
     case "chg": return "Some words differ";
-    case "rew": return "Reworded";
+    case "rew": return "Similar meaning";
     case "add": return `Only in ${billName(c.b)}`;
     case "rem": return `Only in ${billName(c.a)}`;
   }
@@ -127,7 +128,7 @@ function Column({ bill, version, children }: { bill: BillRef; version: string | 
 const cites = (r: Row, ids: Set<string>) => [...r.a, ...r.b].some((x) => x.span !== null && ids.has(x.span));
 const rowId = (pair: number, k: number) => `p${pair}-r${k}`;
 
-export function CompareView({ hosted, issues, footer }: { hosted: string; issues: string; footer: React.ReactNode }) {
+export function CompareView({ hosted, issues, footer, act }: { hosted: string; issues: string; footer: React.ReactNode; act: { anchor: string; page: string } | null }) {
   const name = useSearchParams().get("c");
   const [data, setData] = useState<Loaded | null>(null);
   const [page, setPage] = useState<BillPage | null>(null);
@@ -302,13 +303,20 @@ export function CompareView({ hosted, issues, footer }: { hosted: string; issues
                   </section>
                 );
               })}
-              <p className="note" style={{ marginTop: 28 }}>Shared language shows that two texts are alike, not who wrote either one.</p>
+              <p className="note" style={{ marginTop: 28 }}>
+                Shared language shows that two texts are alike, not who wrote either one.
+                {act?.anchor === c.a.slug && (
+                  <>
+                    {" "}The Uniform Law Commission drafted <a href={act.page}>this act</a> in 2020. This story compares each enactment with {billName(c.a)}, the earliest in the index&apos;s 2023–2026 sessions.
+                  </>
+                )}
+              </p>
             </div>
 
             {explained && (
               <div className="cmp-aside">
                 <aside aria-labelledby="chg-h" style={asideMax ? { maxHeight: asideMax } : undefined}>
-                  <h2 id="chg-h">What this version changed</h2>
+                  <h2 id="chg-h">How the two texts differ</h2>
                   <p style={{ margin: "10px 0 0" }}>
                     <span className="chip-dashed">
                       <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true"><rect x="4" y="4" width="8" height="8" rx="1" /><path d="M6 1.5v2M10 1.5v2M6 12.5v2M10 12.5v2M1.5 6h2M1.5 10h2M12.5 6h2M12.5 10h2" /></svg>
@@ -323,7 +331,7 @@ export function CompareView({ hosted, issues, footer }: { hosted: string; issues
                         <li key={x.n} id={`claim-${x.n}`} className={x.n === selected ? "on" : undefined}>
                           <button type="button" aria-pressed={x.n === selected} onClick={() => pick(x.n)}>
                             <span className="claim-num" aria-hidden="true">{x.n}</span>
-                            <span>{x.claim.summary}</span>
+                            <span>{nameRoles(x.claim.summary, billName(c.a), billName(c.b))}</span>
                           </button>
                           <p>Rests on <a href={`#pair-${x.pair}`}>{c.b.identifier} {sectionLabel(hb, p.ordinal_b)}</a></p>
                         </li>
@@ -350,8 +358,8 @@ export function CompareView({ hosted, issues, footer }: { hosted: string; issues
         <div className="cmp-wrap">
           <div className="legend-keys">
             <div className="legend-line">
-              <span><mark className="m-copied legend-sample">same words</mark>Exact copying</span>
-              <span><mark className="m-para legend-sample">said differently</mark>Paraphrase</span>
+              <span><mark className="m-copied legend-sample">same words</mark>Same words</span>
+              <span><mark className="m-para legend-sample">said differently</mark>Similar meaning</span>
               <span><b className="legend-sample bold">bold</b>Words that differ</span>
             </div>
             <div className="legend-line glyphs">

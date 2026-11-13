@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Footer, Header, REPOSITORY } from "@/components/Chrome";
 import { RunCommands } from "@/components/RunCommands";
-import { meta } from "@/lib/data";
+import { meta, runFigures } from "@/lib/data";
 import { asOf, stateName } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Run it for your state" };
@@ -21,8 +21,14 @@ const LIMITS: [string, string][] = [
   ],
 ];
 
+const hours = (s: number) => `${(s / 3600).toFixed(1)} hours`;
+const minutes = (s: number) => `${Math.round(s / 60)} minutes`;
+const gb = (b: number) => `${(b / 1e9).toFixed(1)} GB`;
+const gib = (b: number) => `${(b / 2 ** 30).toFixed(0)} GiB`;
+
 export default function RunPage() {
   const m = meta();
+  const f = runFigures();
   const latest = m.archives.map((a) => a.generated_at).sort().at(-1);
   return (
     <>
@@ -30,31 +36,39 @@ export default function RunPage() {
       <main className="wrap" style={{ paddingTop: 56 }}>
         <h1 className="display">Run it for your state</h1>
         <p className="lede">
-          This site shows {stateName(m.state)}. The same open-source tool runs on your own computer for any
-          state, against the same 50-state index. It is also where you can paste in a bill of your own and
-          see what shares its language.
+          This site shows {stateName(m.state)}. The open-source tool that built it runs on your own
+          computer: it builds the 50-state index from Open States&apos; archives and the legislatures&apos;
+          published text, then writes these pages for the state you choose. For now it builds
+          everything from source.
         </p>
         <section aria-labelledby="quick" style={{ marginTop: 48 }}>
-          <h2 id="quick" className="section">Quick start</h2>
-          <RunCommands />
+          <h2 id="quick" className="section">Build it from source</h2>
+          <RunCommands repository={REPOSITORY} />
         </section>
         <section aria-labelledby="get" style={{ marginTop: 48 }}>
           <h2 id="get" className="section">What you get</h2>
           <ul className="body-serif" style={{ marginTop: 12, paddingLeft: 22 }}>
-            <li>A copy of this site for your state&apos;s 2023–2026 bills: the browse list, a page for each bill, maps and side-by-side comparisons.</li>
-            <li>A paste-a-bill box that works only on your computer. Paste any bill&apos;s text to see related bills across the 50-state index.</li>
-            <li>The validation report, rerun against your build, so you can check the numbers yourself.</li>
+            <li>A copy of this site for your state&apos;s 2023–2026 bills: the browse list, a page for each bill and side-by-side comparisons.</li>
+            <li><code>uv run lineage query bill.txt</code>, which lists the related bills across the 50-state index for any bill&apos;s text saved as a file, offline.</li>
+            <li>The validation figures, rerun against your build with <code>uv run lineage eval commission</code> once you download the acts&apos; texts from the Uniform Law Commission&apos;s site, as the README says.</li>
             <li>Plain static files you can host anywhere, with no server or database.</li>
           </ul>
         </section>
         <section aria-labelledby="long" style={{ marginTop: 48 }}>
           <h2 id="long" className="section">How long it takes</h2>
-          <p style={{ margin: "12px 0 0", fontFamily: "var(--serif)", fontSize: 28 }}>30–45 min <span className="small">first build, recent laptop</span></p>
+          <p className="note" style={{ marginTop: 12 }}>Measured on the reference laptop, with {gib(f.machineMemoryBytes)} of memory:</p>
+          <ul className="body-serif" style={{ marginTop: 8, paddingLeft: 22 }}>
+            <li>Matching wording across the index: {minutes(f.indexSeconds)}</li>
+            <li>Embedding every window of text by meaning: {hours(f.embedSeconds)}. It resumes where it stopped.</li>
+            <li>Finding each window&apos;s nearest neighbors by meaning: {minutes(f.neighborsSeconds)}</li>
+            <li>Writing {stateName(f.exportState)}&apos;s pages: {hours(f.exportSeconds)}</li>
+          </ul>
+          <p className="note">The downloads, the text fetch and the other steps were not timed. The text fetch asks each legislature&apos;s server for one page at a time.</p>
           <p className="note">
-            The first build downloads the 50-state index snapshot, about 4 GB. Most of the time goes to the
-            similar-meaning stage. Building for a second state takes about 10 minutes.
+            The archives take {gb(f.archiveBytes)}, the wording index {gb(f.indexBytes)} and the meaning vectors {gb(f.vectorBytes)},
+            besides the text tables; a large write stops if it would leave under 20 GiB free. Memory peaked at{" "}
+            {gb(f.peakMemoryBytes)}. No account or API key.
           </p>
-          <p className="note">Needs Python 3.13 or later and about 6 GB of free disk. No account or API key.</p>
         </section>
         <section aria-labelledby="limits" style={{ marginTop: 48 }}>
           <h2 id="limits" className="section">Known limits</h2>

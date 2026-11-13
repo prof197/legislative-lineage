@@ -41,9 +41,10 @@ export default async function StoryPage({ params }: Props) {
             <>
               The Uniform Law Commission drafted the Uniform Public Expression Protection Act and approved
               it in 2020 as a model for states to adopt. It gives people sued over their speech on public
-              matters a fast way to ask a court to dismiss the case. Because the Commission publishes the
-              model text, it is a documented origin. In this corpus, bills in {t.states} states share
-              language with it, and {t.passed} of them passed.
+              matters a fast way to ask a court to dismiss the case. In this corpus, bills in {t.states}{" "}
+              states share language with it, and {t.passed} of them passed. This story compares each
+              enactment with {billName(s.anchor)}, the earliest enactment in the index&apos;s 2023–2026
+              sessions.
             </>
           ) : (
             <>
@@ -54,10 +55,10 @@ export default async function StoryPage({ params }: Props) {
         </p>
         {s.scope_note && <p className="note" style={{ marginTop: 14 }}>{s.scope_note}</p>}
         <p className="note" style={{ marginTop: 14 }}>
-          {copy.origin && <>Origin: <strong style={{ color: "var(--ink)" }}>{copy.origin}</strong> · </>}
+          {copy.actPage && <><a href={copy.actPage}>Read the act on the Uniform Law Commission&apos;s site</a> · </>}
           Based on the {latest ? asOf(latest) : ""} snapshot
         </p>
-        <StoryView story={s} slug={slug} compareLabel={copy.compareLabel} listNoun={copy.listNoun} />
+        <StoryView story={s} slug={slug} compareLabel={copy.compareLabel} listNoun={copy.listNoun} listHeading={copy.listHeading} />
         {slug === "anti-slapp" && missed.length > 0 && (
           <p className="note" style={{ marginTop: 20 }}>
             The Commission also lists{" "}
