@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -58,61 +58,13 @@
    "descendant": "7174840b90900903527efa7301efe08f7fea816dddd7147e239add2d07f05f5b"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "removed",
-    "summary": "The origin assigns liability for electioneering communications to the sponsor, not the disseminating medium, except where the medium removes a disclosure or alters content into synthetic media.",
-    "origin_span_ids": [
-     "s0"
-    ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant, titled \"The Taylor Swift Act,\" defines consent, depicted individual, digital depiction, intimate digital depiction and sexually explicit conduct.",
-    "origin_span_ids": [],
-    "descendant_span_ids": [
-     "s1",
-     "s5"
-    ]
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant lets a depicted individual sue over nonconsensual disclosure of an intimate digital depiction, with damages, $150,000 liquidated damages, injunctions and exceptions.",
-    "origin_span_ids": [],
-    "descendant_span_ids": [
-     "s5"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The origin bars treating interactive computer services as publishers except as stated; the descendant shields them for good-faith actions restricting access to intimate depictions.",
-    "origin_span_ids": [
-     "s0",
-     "s4",
-     "s7"
-    ],
-    "descendant_span_ids": [
-     "s8",
-     "s2"
-    ]
-   }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1,
-   2,
-   3
-  ],
-  "dropped": []
- },
- "attempts": 1,
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "attempts": 2,
  "unusable_attempts": [
-  "off the schema: claims.1.summary: String should have at most 200 characters"
+  "off the schema: claims.2.summary: String should have at most 200 characters; claims.3.summary: String should have at most 200 characters",
+  "off the schema: claims.2.summary: String should have at most 200 characters"
  ],
  "earlier": [
   {
@@ -172,6 +124,64 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin assigns liability for electioneering communications to the sponsor, not the disseminating medium, except where the medium removes a disclosure or alters content into synthetic media.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant, titled \"The Taylor Swift Act,\" defines consent, depicted individual, digital depiction, intimate digital depiction and sexually explicit conduct.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s5"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant lets a depicted individual sue over nonconsensual disclosure of an intimate digital depiction, with damages, $150,000 liquidated damages, injunctions and exceptions.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s5"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin bars treating interactive computer services as publishers except as stated; the descendant shields them for good-faith actions restricting access to intimate depictions.",
+      "origin_span_ids": [
+       "s0",
+       "s4",
+       "s7"
+      ],
+      "descendant_span_ids": [
+       "s8",
+       "s2"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "off the schema: claims.1.summary: String should have at most 200 characters"
+   ],
+   "attempts": 1
   }
  ]
 }

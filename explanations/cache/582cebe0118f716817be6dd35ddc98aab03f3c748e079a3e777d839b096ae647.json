@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -247,27 +247,17 @@
  "explanation": {
   "claims": [
    {
-    "kind": "removed",
-    "summary": "The origin's cross-references point to Sections 78B-25-102, 78B-25-103 and 78B-25-110 and say the protections apply under \"this chapter\"; the descendant lacks these references.",
+    "kind": "changed",
+    "summary": "The descendant cross-references sections 554.09 (motion) and 554.16 (costs and fees); the origin cites Sections 78B-25-103 and 78B-25-110 for the same provisions.",
     "origin_span_ids": [
      "s6",
-     "s12",
-     "s15",
      "s27",
      "s30",
      "s33",
      "s36"
     ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant's cross-references point to sections 554.08, 554.09 and 554.16 and set the scope as \"sections 554.07 to 554.19\", references absent from the origin.",
-    "origin_span_ids": [],
     "descendant_span_ids": [
      "s7",
-     "s13",
-     "s16",
      "s28",
      "s31",
      "s34",
@@ -275,27 +265,32 @@
     ]
    },
    {
-    "kind": "added",
-    "summary": "The descendant is headed Sec. 7 [554.13], uses (a)-(c) subsections with (1)-(3) clauses, and marks its text as new text; the origin lacks these.",
-    "origin_span_ids": [],
+    "kind": "changed",
+    "summary": "The descendant refers to applicability under section 554.08, paragraphs (b) and (c), of sections 554.07 to 554.19; the origin refers to Subsections 78B-25-102(2) and (3) and \"this chapter.\"",
+    "origin_span_ids": [
+     "s12",
+     "s15"
+    ],
     "descendant_span_ids": [
-     "s1",
-     "s4",
-     "s10",
-     "s25",
-     "s39"
+     "s13",
+     "s16"
     ]
    },
    {
-    "kind": "removed",
-    "summary": "The origin is numbered 78B-25-107 and uses (1)-(3) subsections with (a)-(c) clauses; the descendant lacks this numbering.",
+    "kind": "changed",
+    "summary": "The descendant numbers the section 554.13 with subsections (a)-(c) and clauses (1)-(3); the origin numbers it 78B-25-107 with subsections (1)-(3) and clauses (a)-(c).",
     "origin_span_ids": [
      "s0",
      "s3",
      "s9",
      "s24"
     ],
-    "descendant_span_ids": []
+    "descendant_span_ids": [
+     "s1",
+     "s4",
+     "s10",
+     "s25"
+    ]
    }
   ]
  },
@@ -304,15 +299,12 @@
   "kept": [
    0,
    1,
-   2,
-   3
+   2
   ],
   "dropped": []
  },
- "attempts": 2,
- "unusable_attempts": [
-  "a claim fails grounding (claim 1: s12 is on one side only, so it shows text one side lacks, not a change; claim 2: s6 is on one side only, so it shows text one side lacks, not a change; claim 3: s0 is on one side only, so it shows text one side lacks, not a change)"
- ],
+ "attempts": 1,
+ "unusable_attempts": [],
  "earlier": [
   {
    "explanation": {
@@ -379,6 +371,77 @@
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin's cross-references point to Sections 78B-25-102, 78B-25-103 and 78B-25-110 and say the protections apply under \"this chapter\"; the descendant lacks these references.",
+      "origin_span_ids": [
+       "s6",
+       "s12",
+       "s15",
+       "s27",
+       "s30",
+       "s33",
+       "s36"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant's cross-references point to sections 554.08, 554.09 and 554.16 and set the scope as \"sections 554.07 to 554.19\", references absent from the origin.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s7",
+       "s13",
+       "s16",
+       "s28",
+       "s31",
+       "s34",
+       "s37"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant is headed Sec. 7 [554.13], uses (a)-(c) subsections with (1)-(3) clauses, and marks its text as new text; the origin lacks these.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s4",
+       "s10",
+       "s25",
+       "s39"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin is numbered 78B-25-107 and uses (1)-(3) subsections with (a)-(c) clauses; the descendant lacks this numbering.",
+      "origin_span_ids": [
+       "s0",
+       "s3",
+       "s9",
+       "s24"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "a claim fails grounding (claim 1: s12 is on one side only, so it shows text one side lacks, not a change; claim 2: s6 is on one side only, so it shows text one side lacks, not a change; claim 3: s0 is on one side only, so it shows text one side lacks, not a change)"
+   ],
+   "attempts": 2
   }
  ]
 }

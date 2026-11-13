@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -193,39 +193,47 @@
  "explanation": {
   "claims": [
    {
-    "kind": "added",
-    "summary": "The descendant bars distributing materially deceptive audio or visual media with actual malice within 90 days of an election, covering both candidates and election safety or operations.",
-    "origin_span_ids": [],
+    "kind": "changed",
+    "summary": "The origin defines \"synthetic media\" as realistic false depictions made with GAN or digital tech; the descendant defines materially deceptive media, including election-operations content.",
+    "origin_span_ids": [
+     "s0",
+     "s3"
+    ],
     "descendant_span_ids": [
      "s1",
-     "s7"
+     "s4"
     ]
    },
    {
-    "kind": "added",
-    "summary": "The descendant exempts bona fide news broadcasts, paid broadcasts, news publications, and satire or parody, and preserves Section 230 protections for interactive service providers.",
-    "origin_span_ids": [],
+    "kind": "changed",
+    "summary": "The descendant bars distributing deceptive media with actual malice within 90 days of an election unless disclosed; in the origin, disclosure is an affirmative defense to a candidate's suit.",
+    "origin_span_ids": [
+     "s6",
+     "s9"
+    ],
     "descendant_span_ids": [
-     "s30"
+     "s7",
+     "s10"
     ]
    },
    {
-    "kind": "added",
-    "summary": "The descendant lets the attorney general seek injunctive relief and allows damages against any entity that distributed the media; the origin's damages run against the sponsor.",
-    "origin_span_ids": [],
+    "kind": "changed",
+    "summary": "The descendant lets the attorney general also seek injunctions and allows damages against any distributor; the origin allows damages against the sponsor and urges courts to act expediently.",
+    "origin_span_ids": [
+     "s6",
+     "s29"
+    ],
     "descendant_span_ids": [
      "s27"
     ]
    },
    {
-    "kind": "removed",
-    "summary": "The origin defines synthetic media by reference to generative adversarial network techniques, makes disclosure an affirmative defense, and urges courts to decide cases expediently.",
-    "origin_span_ids": [
-     "s3",
-     "s6",
-     "s29"
-    ],
-    "descendant_span_ids": []
+    "kind": "added",
+    "summary": "The descendant exempts Section 230 providers, broadcasters airing news with authenticity caveats or paid ads, news publications with disclaimers, and satire or parody.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s30"
+    ]
    }
   ]
  },
@@ -241,13 +249,68 @@
  },
  "attempts": 2,
  "unusable_attempts": [
-  "off the schema: claims.1.summary: String should have at most 200 characters"
+  "off the schema: claims.1.summary: String should have at most 200 characters; claims.2.summary: String should have at most 200 characters; claims.3.summary: String should have at most 200 characters"
  ],
  "earlier": [
   {
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant bars distributing materially deceptive audio or visual media with actual malice within 90 days of an election, covering both candidates and election safety or operations.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s7"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant exempts bona fide news broadcasts, paid broadcasts, news publications, and satire or parody, and preserves Section 230 protections for interactive service providers.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s30"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant lets the attorney general seek injunctive relief and allows damages against any entity that distributed the media; the origin's damages run against the sponsor.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s27"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin defines synthetic media by reference to generative adversarial network techniques, makes disclosure an affirmative defense, and urges courts to decide cases expediently.",
+      "origin_span_ids": [
+       "s3",
+       "s6",
+       "s29"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "off the schema: claims.1.summary: String should have at most 200 characters"
+   ],
+   "attempts": 2
   }
  ]
 }

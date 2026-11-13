@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -226,56 +226,14 @@
    "descendant": null
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "added",
-    "summary": "The descendant bars a creator from distributing deceptive synthetic media within 90 days of an election, and defines \"creator\" and includes incumbents as candidates.",
-    "origin_span_ids": [],
-    "descendant_span_ids": [
-     "s1",
-     "s13"
-    ]
-   },
-   {
-    "kind": "removed",
-    "summary": "The origin lets a candidate depicted in synthetic media seek injunctive relief and damages against the sponsor, with attorneys' fees; the descendant has no such civil remedies.",
-    "origin_span_ids": [
-     "s12"
-    ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "removed",
-    "summary": "The origin places the burden on the plaintiff to prove synthetic media use by clear and convincing evidence and encourages courts to decide matters expediently; the descendant lacks this.",
-    "origin_span_ids": [
-     "s36"
-    ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant applies the audio-only disclosure rule only when no visual disclosure is feasible and also requires a speed easily heard by the average listener.",
-    "origin_span_ids": [],
-    "descendant_span_ids": [
-     "s29",
-     "s31"
-    ]
-   }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1,
-   2,
-   3
-  ],
-  "dropped": []
- },
- "attempts": 1,
- "unusable_attempts": [],
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "attempts": 2,
+ "unusable_attempts": [
+  "off the schema: claims.1.summary: String should have at most 200 characters",
+  "off the schema: claims.2.summary: String should have at most 200 characters"
+ ],
  "earlier": [
   {
    "explanation": {
@@ -335,6 +293,58 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant bars a creator from distributing deceptive synthetic media within 90 days of an election, and defines \"creator\" and includes incumbents as candidates.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s13"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin lets a candidate depicted in synthetic media seek injunctive relief and damages against the sponsor, with attorneys' fees; the descendant has no such civil remedies.",
+      "origin_span_ids": [
+       "s12"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin places the burden on the plaintiff to prove synthetic media use by clear and convincing evidence and encourages courts to decide matters expediently; the descendant lacks this.",
+      "origin_span_ids": [
+       "s36"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant applies the audio-only disclosure rule only when no visual disclosure is feasible and also requires a speed easily heard by the average listener.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s29",
+       "s31"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [],
+   "attempts": 1
   }
  ]
 }

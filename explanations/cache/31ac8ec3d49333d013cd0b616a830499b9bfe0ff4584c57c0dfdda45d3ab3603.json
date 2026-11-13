@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -224,38 +224,38 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant lets an altered candidate seek injunctions, damages and fees; sets a disclosure defense, county venue, a clear-and-convincing burden, and urges speedy rulings.",
+    "summary": "The descendant itself grants candidates injunctive relief and damages, with fees, a disclosure affirmative defense, a county venue rule and a clear-and-convincing burden.",
     "origin_span_ids": [],
     "descendant_span_ids": [
-     "s1",
-     "s35"
+     "s1"
     ]
    },
    {
     "kind": "changed",
-    "summary": "The descendant makes a medium liable only if it intentionally removes a required disclosure; the origin's disclosure-removal ground has no intent element.",
+    "summary": "The descendant makes a medium liable for removing a disclosure only if it does so intentionally and fails to remove the content or restore the disclosure when notified.",
     "origin_span_ids": [
      "s13"
     ],
     "descendant_span_ids": [
-     "s13"
-    ]
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant also requires that the medium fail to remove the communication or replace the disclosure when notified before it is liable for removing a disclosure.",
-    "origin_span_ids": [],
-    "descendant_span_ids": [
+     "s13",
      "s18"
     ]
    },
    {
     "kind": "removed",
-    "summary": "The origin defines \"interactive computer service\" and \"information content provider\"; the descendant gives no such definitions.",
+    "summary": "The origin defines \"interactive computer service\" and \"information content provider\"; the descendant has no such definitions.",
     "origin_span_ids": [
      "s34"
     ],
     "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant encourages courts to decide matters under the section expediently; the origin has no such provision.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s35"
+    ]
    }
   ]
  },
@@ -271,13 +271,68 @@
  },
  "attempts": 2,
  "unusable_attempts": [
-  "a claim fails grounding (claim 2: s18 is on one side only, so it shows text one side lacks, not a change)"
+  "off the schema: claims.0.summary: String should have at most 200 characters; claims.1.summary: String should have at most 200 characters"
  ],
  "earlier": [
   {
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant lets an altered candidate seek injunctions, damages and fees; sets a disclosure defense, county venue, a clear-and-convincing burden, and urges speedy rulings.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s35"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant makes a medium liable only if it intentionally removes a required disclosure; the origin's disclosure-removal ground has no intent element.",
+      "origin_span_ids": [
+       "s13"
+      ],
+      "descendant_span_ids": [
+       "s13"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant also requires that the medium fail to remove the communication or replace the disclosure when notified before it is liable for removing a disclosure.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s18"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin defines \"interactive computer service\" and \"information content provider\"; the descendant gives no such definitions.",
+      "origin_span_ids": [
+       "s34"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "a claim fails grounding (claim 2: s18 is on one side only, so it shows text one side lacks, not a change)"
+   ],
+   "attempts": 2
   }
  ]
 }

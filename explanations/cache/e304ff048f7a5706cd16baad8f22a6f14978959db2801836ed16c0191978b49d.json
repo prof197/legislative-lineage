@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -518,7 +518,7 @@
   "claims": [
    {
     "kind": "removed",
-    "summary": "The origin defines 'Internet', 'local governing body' (excluding certain charter schools and academies) and 'social media platform'; the descendant has no definitions.",
+    "summary": "The origin defines 'Internet', 'local governing body' and 'social media platform'; the descendant has no definitions subsection.",
     "origin_span_ids": [
      "s0"
     ],
@@ -526,7 +526,7 @@
    },
    {
     "kind": "removed",
-    "summary": "The origin lets the State Board of Education take corrective action, including withholding state funding, and lets the governing body sue in superior court; the descendant lacks both.",
+    "summary": "The origin lets the State Board of Education withhold state funding for noncompliance and lets the governing body sue in superior court; the descendant has no such enforcement provisions.",
     "origin_span_ids": [
      "s84"
     ],
@@ -534,21 +534,23 @@
    },
    {
     "kind": "changed",
-    "summary": "The origin gives a paper copy of the policy on written request of a parent or guardian; the descendant gives it on request of a parent of an enrolled student.",
+    "summary": "The descendant sets the policy submission deadline at April 15, 2026, submitted electronically; the origin requires submission by April 1, 2026, with no electronic requirement.",
     "origin_span_ids": [
+     "s38"
+    ],
+    "descendant_span_ids": [
+     "s39"
+    ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin covers parents and legal guardians in parental procedures and paper-copy requests; the descendant names parents only.",
+    "origin_span_ids": [
+     "s21",
      "s34"
     ],
     "descendant_span_ids": [
      "s34"
-    ]
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant requires the policy and its revisions to be submitted electronically to the State Department of Education, with the policy due by April 15, 2026.",
-    "origin_span_ids": [],
-    "descendant_span_ids": [
-     "s39",
-     "s45"
     ]
    }
   ]
@@ -623,6 +625,59 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin defines 'Internet', 'local governing body' (excluding certain charter schools and academies) and 'social media platform'; the descendant has no definitions.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin lets the State Board of Education take corrective action, including withholding state funding, and lets the governing body sue in superior court; the descendant lacks both.",
+      "origin_span_ids": [
+       "s84"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin gives a paper copy of the policy on written request of a parent or guardian; the descendant gives it on request of a parent of an enrolled student.",
+      "origin_span_ids": [
+       "s34"
+      ],
+      "descendant_span_ids": [
+       "s34"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant requires the policy and its revisions to be submitted electronically to the State Department of Education, with the policy due by April 15, 2026.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s39",
+       "s45"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [],
+   "attempts": 1
   }
  ]
 }

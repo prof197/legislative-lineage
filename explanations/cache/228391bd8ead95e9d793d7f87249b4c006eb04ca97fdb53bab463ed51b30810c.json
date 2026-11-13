@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -249,31 +249,34 @@
     "descendant_span_ids": []
    },
    {
-    "kind": "removed",
-    "summary": "The origin covers speech and related rights guaranteed by the Utah Constitution alongside the U.S. Constitution.",
+    "kind": "changed",
+    "summary": "The descendant covers speech and related rights guaranteed by the Delaware Constitution; the origin refers to the Utah Constitution.",
     "origin_span_ids": [
      "s24"
     ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant covers speech and related rights guaranteed by Delaware's Constitution alongside the U.S. Constitution.",
-    "origin_span_ids": [],
     "descendant_span_ids": [
      "s25"
     ]
    },
    {
     "kind": "changed",
-    "summary": "The descendant introduces definitions with \"In this section\" under (a) and cross-references subsection (c); the origin uses \"As used in this section\" and Subsection (3).",
+    "summary": "The descendant puts definitions in subsection (a) with numbered items (1)-(3); the origin uses subsection (1) with lettered items (a)-(c), and other subdivisions swap likewise.",
     "origin_span_ids": [
+     "s0",
      "s2",
-     "s13"
+     "s5",
+     "s8",
+     "s13",
+     "s27"
     ],
     "descendant_span_ids": [
+     "s1",
      "s2",
-     "s13"
+     "s3",
+     "s6",
+     "s9",
+     "s13",
+     "s28"
     ]
    }
   ]
@@ -283,8 +286,7 @@
   "kept": [
    0,
    1,
-   2,
-   3
+   2
   ],
   "dropped": []
  },
@@ -351,6 +353,60 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin's definition of \"person\" expressly lists trust and partnership; the descendant's definition omits those two terms.",
+      "origin_span_ids": [
+       "s11"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin covers speech and related rights guaranteed by the Utah Constitution alongside the U.S. Constitution.",
+      "origin_span_ids": [
+       "s24"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant covers speech and related rights guaranteed by Delaware's Constitution alongside the U.S. Constitution.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s25"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant introduces definitions with \"In this section\" under (a) and cross-references subsection (c); the origin uses \"As used in this section\" and Subsection (3).",
+      "origin_span_ids": [
+       "s2",
+       "s13"
+      ],
+      "descendant_span_ids": [
+       "s2",
+       "s13"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [],
+   "attempts": 1
   }
  ]
 }

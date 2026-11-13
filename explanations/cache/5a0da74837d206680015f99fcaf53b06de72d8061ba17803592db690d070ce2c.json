@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -62,7 +62,7 @@
   "claims": [
    {
     "kind": "removed",
-    "summary": "The origin limits liability for electioneering communications to the sponsor, making a medium liable only if it strips disclosures or alters content into synthetic media; the descendant lacks this.",
+    "summary": "The origin limits liability for electioneering communications to the sponsor, making a medium liable only if it strips disclosures or alters content into synthetic media.",
     "origin_span_ids": [
      "s0"
     ],
@@ -70,7 +70,7 @@
    },
    {
     "kind": "added",
-    "summary": "The descendant, titled \"The Taylor Swift Act,\" defines consent, depicted individual, digital depiction, intimate digital depiction and sexually explicit conduct; the origin has none of these.",
+    "summary": "The descendant creates a civil action for nonconsensual disclosure of intimate digital depictions, defining consent, depicted individual, and sexually explicit conduct.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s1",
@@ -79,18 +79,19 @@
    },
    {
     "kind": "added",
-    "summary": "The descendant gives depicted individuals a civil action for nonconsensual disclosure of intimate or minor depictions, with damages incl. $150,000 liquidated, injunctions and exceptions.",
+    "summary": "The descendant allows recovery of profits, actual or $150,000 liquidated damages, punitive damages, fees and injunctions, with exceptions for law enforcement and public-interest disclosures.",
     "origin_span_ids": [],
     "descendant_span_ids": [
-     "s5",
-     "s8"
+     "s5"
     ]
    },
    {
     "kind": "changed",
-    "summary": "The origin bars treating interactive computer services as publishers of others' content; the descendant shields them only for good-faith steps to restrict access to digital depictions.",
+    "summary": "The origin says interactive computer services are not treated as publishers but may be liable for altering content; the descendant shields them for good-faith actions restricting access.",
     "origin_span_ids": [
-     "s0"
+     "s0",
+     "s4",
+     "s7"
     ],
     "descendant_span_ids": [
      "s8"
@@ -110,14 +111,70 @@
  },
  "attempts": 2,
  "unusable_attempts": [
-  "off the schema: claims.1.summary: String should have at most 200 characters; claims.2.summary: String should have at most 200 characters",
-  "a claim fails grounding (claim 4: s0 is on one side only, so it shows text one side lacks, not a change)"
+  "off the schema: claims.0.summary: String should have at most 200 characters"
  ],
  "earlier": [
   {
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin limits liability for electioneering communications to the sponsor, making a medium liable only if it strips disclosures or alters content into synthetic media; the descendant lacks this.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant, titled \"The Taylor Swift Act,\" defines consent, depicted individual, digital depiction, intimate digital depiction and sexually explicit conduct; the origin has none of these.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s5"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant gives depicted individuals a civil action for nonconsensual disclosure of intimate or minor depictions, with damages incl. $150,000 liquidated, injunctions and exceptions.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s5",
+       "s8"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin bars treating interactive computer services as publishers of others' content; the descendant shields them only for good-faith steps to restrict access to digital depictions.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s8"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "off the schema: claims.1.summary: String should have at most 200 characters; claims.2.summary: String should have at most 200 characters",
+    "a claim fails grounding (claim 4: s0 is on one side only, so it shows text one side lacks, not a change)"
+   ],
+   "attempts": 2
   }
  ]
 }

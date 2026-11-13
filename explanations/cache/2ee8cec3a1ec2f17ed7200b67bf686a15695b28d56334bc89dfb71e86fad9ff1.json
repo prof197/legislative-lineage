@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -343,9 +343,13 @@
  "explanation": {
   "claims": [
    {
-    "kind": "added",
-    "summary": "The descendant extends technical assistance and the optional internet safety component to public school district boards of education and charter school governing bodies.",
-    "origin_span_ids": [],
+    "kind": "changed",
+    "summary": "The descendant extends technical assistance and the option to teach internet safety to public school district boards or charter school governing bodies; the origin names local boards of education.",
+    "origin_span_ids": [
+     "s46",
+     "s49",
+     "s54"
+    ],
     "descendant_span_ids": [
      "s47",
      "s50",
@@ -353,28 +357,22 @@
     ]
    },
    {
-    "kind": "removed",
-    "summary": "The origin addresses technical assistance and the optional internet safety component only to local boards of education, a term the descendant does not use.",
+    "kind": "changed",
+    "summary": "The descendant is framed as a new codified section of law; the origin is framed as an amendment revising an existing Code section on online internet safety.",
     "origin_span_ids": [
-     "s46",
-     "s49",
-     "s54"
+     "s0"
     ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant enacts the provisions as a new section, codified as Section 6-502 of Title 70 of the Oklahoma Statutes.",
-    "origin_span_ids": [],
     "descendant_span_ids": [
      "s1"
     ]
    },
    {
     "kind": "removed",
-    "summary": "The origin presents the provisions as a revision of existing Code Section 20-2-149 on the online internet safety program; the descendant has no such amending clause.",
+    "summary": "The origin's text includes the struck wording \"a model program\" and \"Internet\" alongside the revised wording; the descendant has only the final wording.",
     "origin_span_ids": [
-     "s0"
+     "s3",
+     "s5",
+     "s52"
     ],
     "descendant_span_ids": []
    }
@@ -385,15 +383,12 @@
   "kept": [
    0,
    1,
-   2,
-   3
+   2
   ],
   "dropped": []
  },
- "attempts": 2,
- "unusable_attempts": [
-  "a claim fails grounding (claim 1: s46 is on one side only, so it shows text one side lacks, not a change; claim 2: s0 is on one side only, so it shows text one side lacks, not a change)"
- ],
+ "attempts": 1,
+ "unusable_attempts": [],
  "earlier": [
   {
    "explanation": {
@@ -450,6 +445,62 @@
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant extends technical assistance and the optional internet safety component to public school district boards of education and charter school governing bodies.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s47",
+       "s50",
+       "s55"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin addresses technical assistance and the optional internet safety component only to local boards of education, a term the descendant does not use.",
+      "origin_span_ids": [
+       "s46",
+       "s49",
+       "s54"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant enacts the provisions as a new section, codified as Section 6-502 of Title 70 of the Oklahoma Statutes.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin presents the provisions as a revision of existing Code Section 20-2-149 on the online internet safety program; the descendant has no such amending clause.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "a claim fails grounding (claim 1: s46 is on one side only, so it shows text one side lacks, not a change; claim 2: s0 is on one side only, so it shows text one side lacks, not a change)"
+   ],
+   "attempts": 2
   }
  ]
 }

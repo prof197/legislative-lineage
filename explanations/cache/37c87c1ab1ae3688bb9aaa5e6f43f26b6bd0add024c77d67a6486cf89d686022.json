@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -212,34 +212,39 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant sets a deadline of March 1, 2027 for the Department of Education to develop the model programs; the origin sets no deadline.",
-    "origin_span_ids": [],
+    "summary": "The descendant requires the Department of Education to develop the model programs by March 1, 2027; the origin sets no deadline.",
+    "origin_span_ids": [
+     "s0"
+    ],
     "descendant_span_ids": [
      "s1"
     ]
    },
    {
-    "kind": "removed",
-    "summary": "The origin requires instruction on social media's social, emotional and physical effects and on disinformation and misinformation; the descendant has neither topic.",
+    "kind": "changed",
+    "summary": "The descendant's instruction covers negative mental health effects including addiction and social media's ability to manipulate; the origin lists social, emotional, physical effects and influence.",
     "origin_span_ids": [
      "s12",
-     "s15"
-    ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "changed",
-    "summary": "The descendant covers social media's ability to manipulate and influence thoughts and behaviors; the origin covers how social media influences them, without mentioning manipulation.",
-    "origin_span_ids": [
+     "s15",
      "s17"
     ],
     "descendant_span_ids": [
+     "s13",
+     "s16",
      "s17"
     ]
    },
    {
     "kind": "removed",
-    "summary": "The origin lets programs cover benefits of social media use and requires the Department to give technical assistance to local boards; the descendant includes neither.",
+    "summary": "The origin requires instruction on disinformation and misinformation on social media and notes risks particularly to teenagers; the descendant omits these topics.",
+    "origin_span_ids": [
+     "s15"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin allows programs to cover benefits of social media and requires the Department to give technical assistance to local boards; the descendant has neither provision.",
     "origin_span_ids": [
      "s26",
      "s30"
@@ -258,15 +263,69 @@
   ],
   "dropped": []
  },
- "attempts": 2,
- "unusable_attempts": [
-  "a claim fails grounding (claim 2: s12 is on one side only, so it shows text one side lacks, not a change)"
- ],
+ "attempts": 1,
+ "unusable_attempts": [],
  "earlier": [
   {
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant sets a deadline of March 1, 2027 for the Department of Education to develop the model programs; the origin sets no deadline.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin requires instruction on social media's social, emotional and physical effects and on disinformation and misinformation; the descendant has neither topic.",
+      "origin_span_ids": [
+       "s12",
+       "s15"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant covers social media's ability to manipulate and influence thoughts and behaviors; the origin covers how social media influences them, without mentioning manipulation.",
+      "origin_span_ids": [
+       "s17"
+      ],
+      "descendant_span_ids": [
+       "s17"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin lets programs cover benefits of social media use and requires the Department to give technical assistance to local boards; the descendant includes neither.",
+      "origin_span_ids": [
+       "s26",
+       "s30"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "a claim fails grounding (claim 2: s12 is on one side only, so it shows text one side lacks, not a change)"
+   ],
+   "attempts": 2
   }
  ]
 }

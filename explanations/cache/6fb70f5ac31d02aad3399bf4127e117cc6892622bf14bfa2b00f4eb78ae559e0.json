@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -212,7 +212,7 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant contains a full anti-SLAPP procedure: special motion to dismiss, stays, hearing and ruling deadlines, dismissal standards, appeal, and fee awards; the origin's section has none.",
+    "summary": "The descendant includes the full anti-SLAPP procedure in this section: special motion to dismiss, stays, hearing and ruling deadlines, appeal, fee awards, construction and an effective date.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s33"
@@ -220,7 +220,7 @@
    },
    {
     "kind": "changed",
-    "summary": "The descendant defines \"governmental unit\" as cities, counties, political subdivisions of the state and their agencies; the origin uses any public corporation, government, subdivision, or agency.",
+    "summary": "The descendant defines \"governmental unit\" as cities, counties, other political subdivisions and their agencies; the origin defines it as any public corporation, government, subdivision or agency.",
     "origin_span_ids": [
      "s3"
     ],
@@ -230,21 +230,22 @@
    },
    {
     "kind": "changed",
-    "summary": "The descendant protects rights under the Constitution of the United States or of Missouri; the origin refers to the United States Constitution or Utah Constitution.",
+    "summary": "The descendant limits its \"goods or services\" exclusion to dramatic, literary or similar works; the origin also excludes their creation, dissemination, exhibition and advertising.",
     "origin_span_ids": [
-     "s18"
+     "s3"
     ],
     "descendant_span_ids": [
-     "s19"
+     "s33"
     ]
    },
    {
     "kind": "added",
-    "summary": "The descendant names itself the \"Uniform Public Expression Protection Act\", makes the section apply to actions filed on or after August 28, 2026, and calls for broad, uniform construction.",
-    "origin_span_ids": [],
+    "summary": "The descendant gives the section a short title, the \"Uniform Public Expression Protection Act\"; the origin's text is headed only \"Scope.\"",
+    "origin_span_ids": [
+     "s0"
+    ],
     "descendant_span_ids": [
-     "s1",
-     "s33"
+     "s1"
     ]
    }
   ]
@@ -261,14 +262,71 @@
  },
  "attempts": 2,
  "unusable_attempts": [
-  "off the schema: claims.0.summary: String should have at most 200 characters; claims.1.summary: String should have at most 200 characters; claims.2.summary: String should have at most 200 characters",
-  "a claim fails grounding (claim 2: s3 is on one side only, so it shows text one side lacks, not a change; claim 3: s18 is on one side only, so it shows text one side lacks, not a change)"
+  "off the schema: claims.1.summary: String should have at most 200 characters; claims.2.summary: String should have at most 200 characters"
  ],
  "earlier": [
   {
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant contains a full anti-SLAPP procedure: special motion to dismiss, stays, hearing and ruling deadlines, dismissal standards, appeal, and fee awards; the origin's section has none.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s33"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant defines \"governmental unit\" as cities, counties, political subdivisions of the state and their agencies; the origin uses any public corporation, government, subdivision, or agency.",
+      "origin_span_ids": [
+       "s3"
+      ],
+      "descendant_span_ids": [
+       "s4"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant protects rights under the Constitution of the United States or of Missouri; the origin refers to the United States Constitution or Utah Constitution.",
+      "origin_span_ids": [
+       "s18"
+      ],
+      "descendant_span_ids": [
+       "s19"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant names itself the \"Uniform Public Expression Protection Act\", makes the section apply to actions filed on or after August 28, 2026, and calls for broad, uniform construction.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s33"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "off the schema: claims.0.summary: String should have at most 200 characters; claims.1.summary: String should have at most 200 characters; claims.2.summary: String should have at most 200 characters",
+    "a claim fails grounding (claim 2: s3 is on one side only, so it shows text one side lacks, not a change; claim 3: s18 is on one side only, so it shows text one side lacks, not a change)"
+   ],
+   "attempts": 2
   }
  ]
 }

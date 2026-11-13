@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -266,15 +266,17 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant opens with a section heading and an introductory clause making subsection (1) subject to subsections (4) through (7) and triggering the stay on filing of a motion.",
-    "origin_span_ids": [],
+    "summary": "The descendant opens with a lead-in making the stay apply on the filing of a motion under its section 3, subject to exceptions in subsections (4) through (7); the origin has only a section label.",
+    "origin_span_ids": [
+     "s0"
+    ],
     "descendant_span_ids": [
      "s1"
     ]
    },
    {
-    "kind": "removed",
-    "summary": "The origin cites specific numbered code sections (e.g., 78B-25-103, -107, -109, -110); the descendant has only bracketed placeholder section references.",
+    "kind": "changed",
+    "summary": "The origin cross-references codified sections (78B-25-103, -107(1), -109, -110); the descendant uses bracketed placeholder references ([section 3], [section 7(1)], [section 9], [section 10]).",
     "origin_span_ids": [
      "s3",
      "s9",
@@ -284,12 +286,24 @@
      "s28",
      "s40"
     ],
-    "descendant_span_ids": []
+    "descendant_span_ids": [
+     "s4",
+     "s10",
+     "s13",
+     "s18",
+     "s26",
+     "s29",
+     "s41"
+    ]
    },
    {
-    "kind": "added",
-    "summary": "The descendant refers to voluntarily dismissing or severing a \"civil action\"; the origin refers to a \"cause of action\" instead.",
-    "origin_span_ids": [],
+    "kind": "changed",
+    "summary": "On voluntary dismissal and severance, the origin refers to a \"cause of action\"; the descendant refers to a \"civil action\".",
+    "origin_span_ids": [
+     "s31",
+     "s34",
+     "s37"
+    ],
     "descendant_span_ids": [
      "s32",
      "s35",
@@ -298,13 +312,15 @@
    },
    {
     "kind": "changed",
-    "summary": "The origin splits subsection (3) into lettered parts with a stay lasting until the day the appeal concludes; the descendant uses one paragraph and ties the stay to conclusion of the appeal.",
+    "summary": "The origin splits the appeal stay into (3)(a) and (b) and ends it on the day the appeal concludes; the descendant uses one paragraph ending the stay at the conclusion of the appeal.",
     "origin_span_ids": [
      "s15",
+     "s20",
      "s23"
     ],
     "descendant_span_ids": [
      "s15",
+     "s21",
      "s23"
     ]
    }
@@ -320,15 +336,77 @@
   ],
   "dropped": []
  },
- "attempts": 2,
- "unusable_attempts": [
-  "a claim fails grounding (claim 1: s3 is on one side only, so it shows text one side lacks, not a change; claim 3: s31 is on one side only, so it shows text one side lacks, not a change; claim 4: s6 is on one side only, so it shows text one side lacks, not a change)"
- ],
+ "attempts": 1,
+ "unusable_attempts": [],
  "earlier": [
   {
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant opens with a section heading and an introductory clause making subsection (1) subject to subsections (4) through (7) and triggering the stay on filing of a motion.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin cites specific numbered code sections (e.g., 78B-25-103, -107, -109, -110); the descendant has only bracketed placeholder section references.",
+      "origin_span_ids": [
+       "s3",
+       "s9",
+       "s12",
+       "s17",
+       "s25",
+       "s28",
+       "s40"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant refers to voluntarily dismissing or severing a \"civil action\"; the origin refers to a \"cause of action\" instead.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s32",
+       "s35",
+       "s38"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin splits subsection (3) into lettered parts with a stay lasting until the day the appeal concludes; the descendant uses one paragraph and ties the stay to conclusion of the appeal.",
+      "origin_span_ids": [
+       "s15",
+       "s23"
+      ],
+      "descendant_span_ids": [
+       "s15",
+       "s23"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "a claim fails grounding (claim 1: s3 is on one side only, so it shows text one side lacks, not a change; claim 3: s31 is on one side only, so it shows text one side lacks, not a change; claim 4: s6 is on one side only, so it shows text one side lacks, not a change)"
+   ],
+   "attempts": 2
   }
  ]
 }

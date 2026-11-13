@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -110,34 +110,39 @@
   "claims": [
    {
     "kind": "changed",
-    "summary": "The descendant titles the section an order to show cause, with the bracketed special-motion title; the origin titles it a special motion for expedited relief.",
+    "summary": "The descendant lets a party file an application for an order to show cause to dismiss; the origin provides for a special motion for expedited relief.",
     "origin_span_ids": [
-     "s2"
+     "s2",
+     "s11"
     ],
     "descendant_span_ids": [
-     "s2"
-    ]
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant lets a party file an application for an order to show cause with the court to dismiss, alongside bracketed special-motion wording.",
-    "origin_span_ids": [],
-    "descendant_span_ids": [
+     "s2",
      "s12",
      "s14"
     ]
    },
    {
     "kind": "added",
-    "summary": "The descendant includes a petition among the served pleadings that start the 60-day period.",
+    "summary": "The descendant includes a petition among the pleadings whose service starts the 60-day filing period; the origin lists only complaints, crossclaims, counterclaims and similar pleadings.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s6"
     ]
    },
    {
+    "kind": "changed",
+    "summary": "The descendant refers to causes of action to which this act applies; the origin refers to this chapter and carries a section number, 78B-25-103.",
+    "origin_span_ids": [
+     "s8",
+     "s0"
+    ],
+    "descendant_span_ids": [
+     "s9"
+    ]
+   },
+   {
     "kind": "added",
-    "summary": "The descendant adds a stay provision under which filing an application lets the court stay other proceedings, discovery and related actions between the parties.",
+    "summary": "The descendant adds a stay provision letting the court stay other proceedings and discovery between the parties once an application for an order to show cause is filed.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s16"
@@ -155,8 +160,10 @@
   ],
   "dropped": []
  },
- "attempts": 1,
- "unusable_attempts": [],
+ "attempts": 2,
+ "unusable_attempts": [
+  "a claim fails grounding (claim 3: a changed claim cites no span on the origin's side)"
+ ],
  "earlier": [
   {
    "explanation": {
@@ -219,6 +226,59 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant titles the section an order to show cause, with the bracketed special-motion title; the origin titles it a special motion for expedited relief.",
+      "origin_span_ids": [
+       "s2"
+      ],
+      "descendant_span_ids": [
+       "s2"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant lets a party file an application for an order to show cause with the court to dismiss, alongside bracketed special-motion wording.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s12",
+       "s14"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant includes a petition among the served pleadings that start the 60-day period.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s6"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant adds a stay provision under which filing an application lets the court stay other proceedings, discovery and related actions between the parties.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s16"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [],
+   "attempts": 1
   }
  ]
 }

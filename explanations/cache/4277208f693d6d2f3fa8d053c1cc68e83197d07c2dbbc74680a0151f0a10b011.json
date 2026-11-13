@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -194,38 +194,41 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant defines a 'deceptive and fraudulent deepfake' and bars distributing one within 90 days before an election unless it carries a manipulation disclosure.",
+    "summary": "The descendant defines \"deceptive and fraudulent deepfake\" and bars distributing one about a candidate or party within 90 days before an election, unless a disclosure is included.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s3",
-     "s8",
+     "s8"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant gives the disclosure as an exception to its ban; the origin makes it an affirmative defense and also places the burden of proof (clear and convincing) on the plaintiff and urges speed.",
+    "origin_span_ids": [
+     "s7",
+     "s29"
+    ],
+    "descendant_span_ids": [
+     "s8"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant's disclosure states the media \"has been manipulated by technical means and depicts speech or conduct that did not occur\"; the origin's says only it \"has been manipulated.\"",
+    "origin_span_ids": [
+     "s10"
+    ],
+    "descendant_span_ids": [
      "s11"
     ]
    },
    {
     "kind": "added",
-    "summary": "The descendant exempts news broadcasts, paid broadcasts made in good faith, news websites and periodicals with disclaimers, and satire or parody.",
+    "summary": "The descendant exempts broadcasters covering news or paid in good faith, news websites and periodicals with disclaimers, and satire or parody; the origin has no exemptions.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s30"
     ]
-   },
-   {
-    "kind": "removed",
-    "summary": "The origin lets a candidate altered in an electioneering communication seek relief or damages from the sponsor, and makes a proper disclosure an affirmative defense.",
-    "origin_span_ids": [
-     "s7",
-     "s10"
-    ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "removed",
-    "summary": "The origin requires the plaintiff to prove synthetic media use by clear and convincing evidence and encourages courts to decide such matters expediently.",
-    "origin_span_ids": [
-     "s29"
-    ],
-    "descendant_span_ids": []
    }
   ]
  },
@@ -306,6 +309,59 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant defines a 'deceptive and fraudulent deepfake' and bars distributing one within 90 days before an election unless it carries a manipulation disclosure.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s3",
+       "s8",
+       "s11"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant exempts news broadcasts, paid broadcasts made in good faith, news websites and periodicals with disclaimers, and satire or parody.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s30"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin lets a candidate altered in an electioneering communication seek relief or damages from the sponsor, and makes a proper disclosure an affirmative defense.",
+      "origin_span_ids": [
+       "s7",
+       "s10"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin requires the plaintiff to prove synthetic media use by clear and convincing evidence and encourages courts to decide such matters expediently.",
+      "origin_span_ids": [
+       "s29"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [],
+   "attempts": 1
   }
  ]
 }

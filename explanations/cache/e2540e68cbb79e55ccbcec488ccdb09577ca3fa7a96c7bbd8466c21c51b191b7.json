@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -562,63 +562,12 @@
    "descendant": "72c219b1e8cd7ffdb17d2a00a4e643a664f832b689a1a7b961322ef39b14e929"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "changed",
-    "summary": "The descendant defines a minor as under 18 and neither emancipated nor married; the origin defines a minor as a state resident known or reasonably believed by a platform to be under 16.",
-    "origin_span_ids": [
-     "s3"
-    ],
-    "descendant_span_ids": [
-     "s4"
-    ]
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant defines 'social media company' as an interactive computer service whose platform has at least 5,000,000 account holders worldwide, and it ties the platform definition to such companies.",
-    "origin_span_ids": [
-     "s9"
-    ],
-    "descendant_span_ids": [
-     "s1",
-     "s7",
-     "s10"
-    ]
-   },
-   {
-    "kind": "removed",
-    "summary": "The origin also excludes adults-only services with age assurance, internet access and broadband, and peer-to-peer payments. The descendant has none of these exclusions.",
-    "origin_span_ids": [
-     "s16",
-     "s81",
-     "s87"
-    ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant excludes private direct messaging and professional creative networks for non-pornographic artistic content. The origin has neither exclusion.",
-    "origin_span_ids": [],
-    "descendant_span_ids": [
-     "s17",
-     "s47"
-    ]
-   }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1,
-   2,
-   3
-  ],
-  "dropped": []
- },
- "attempts": 1,
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "attempts": 2,
  "unusable_attempts": [
+  "off the schema: claims.3.summary: String should have at most 200 characters",
   "off the schema: claims.2.summary: String should have at most 200 characters"
  ],
  "earlier": [
@@ -682,6 +631,67 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The descendant defines a minor as under 18 and neither emancipated nor married; the origin defines a minor as a state resident known or reasonably believed by a platform to be under 16.",
+      "origin_span_ids": [
+       "s3"
+      ],
+      "descendant_span_ids": [
+       "s4"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant defines 'social media company' as an interactive computer service whose platform has at least 5,000,000 account holders worldwide, and it ties the platform definition to such companies.",
+      "origin_span_ids": [
+       "s9"
+      ],
+      "descendant_span_ids": [
+       "s1",
+       "s7",
+       "s10"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin also excludes adults-only services with age assurance, internet access and broadband, and peer-to-peer payments. The descendant has none of these exclusions.",
+      "origin_span_ids": [
+       "s16",
+       "s81",
+       "s87"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant excludes private direct messaging and professional creative networks for non-pornographic artistic content. The origin has neither exclusion.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s17",
+       "s47"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "off the schema: claims.2.summary: String should have at most 200 characters"
+   ],
+   "attempts": 1
   }
  ]
 }

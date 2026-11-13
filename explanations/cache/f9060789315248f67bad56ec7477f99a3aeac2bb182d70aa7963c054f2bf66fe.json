@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -124,71 +124,81 @@
    "descendant": "982a5eff4e645845227db318ce74687b25b98ef76aa1d2e956b8867b12a08241"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "changed",
-    "summary": "The origin's goods-or-services exclusion covers the creation, dissemination, exhibition, or promotion of expressive works; the descendant's covers only the works themselves.",
-    "origin_span_ids": [
-     "s3"
-    ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "changed",
-    "summary": "The descendant defines governmental unit as a city, county, or political subdivision of the state or its agencies; the origin uses a general public corporation/government/instrumentality definition.",
-    "origin_span_ids": [
-     "s5"
-    ],
-    "descendant_span_ids": [
-     "s6"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The origin protects rights under the U.S. or Utah Constitution; the descendant refers to the U.S. or Missouri Constitution.",
-    "origin_span_ids": [
-     "s13"
-    ],
-    "descendant_span_ids": [
-     "s14"
-    ]
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant adds a short title plus full procedure: special motion to dismiss, stays, hearing and ruling deadlines, appeal rights, fee awards, construction, effective date, and repeal of 537.528.",
-    "origin_span_ids": [],
-    "descendant_span_ids": [
-     "s1",
-     "s19"
-    ]
-   }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   1,
-   2,
-   3
-  ],
-  "dropped": [
-   [
-    0,
-    "a changed claim cites no span on the descendant's side"
-   ]
-  ]
- },
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
  "attempts": 2,
  "unusable_attempts": [
-  "a claim fails grounding (claim 1: s3 is on one side only, so it shows text one side lacks, not a change; claim 2: s5 is on one side only, so it shows text one side lacks, not a change; claim 3: s13 is on one side only, so it shows text one side lacks, not a change)",
-  "off the schema: claims.3.summary: String should have at most 200 characters"
+  "off the schema: claims.0.summary: String should have at most 200 characters",
+  "off the schema: claims.0.summary: String should have at most 200 characters"
  ],
  "earlier": [
   {
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "changed",
+      "summary": "The origin's goods-or-services exclusion covers the creation, dissemination, exhibition, or promotion of expressive works; the descendant's covers only the works themselves.",
+      "origin_span_ids": [
+       "s3"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant defines governmental unit as a city, county, or political subdivision of the state or its agencies; the origin uses a general public corporation/government/instrumentality definition.",
+      "origin_span_ids": [
+       "s5"
+      ],
+      "descendant_span_ids": [
+       "s6"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin protects rights under the U.S. or Utah Constitution; the descendant refers to the U.S. or Missouri Constitution.",
+      "origin_span_ids": [
+       "s13"
+      ],
+      "descendant_span_ids": [
+       "s14"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant adds a short title plus full procedure: special motion to dismiss, stays, hearing and ruling deadlines, appeal rights, fee awards, construction, effective date, and repeal of 537.528.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s19"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     1,
+     2,
+     3
+    ],
+    "dropped": [
+     [
+      0,
+      "a changed claim cites no span on the descendant's side"
+     ]
+    ]
+   },
+   "unusable_attempts": [
+    "a claim fails grounding (claim 1: s3 is on one side only, so it shows text one side lacks, not a change; claim 2: s5 is on one side only, so it shows text one side lacks, not a change; claim 3: s13 is on one side only, so it shows text one side lacks, not a change)",
+    "off the schema: claims.3.summary: String should have at most 200 characters"
+   ],
+   "attempts": 2
   }
  ]
 }

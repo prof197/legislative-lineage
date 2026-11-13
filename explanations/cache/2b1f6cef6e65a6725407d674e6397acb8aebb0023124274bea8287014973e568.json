@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -85,39 +85,23 @@
  "explanation": {
   "claims": [
    {
-    "kind": "removed",
-    "summary": "The origin bases the motion on Section 78B-25-103; the descendant has no reference to that section.",
+    "kind": "changed",
+    "summary": "The descendant cross-references the motion provision as section 554.09; the origin cites Section 78B-25-103.",
     "origin_span_ids": [
      "s5"
     ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant bases the motion on section 554.09, a cross-reference that does not appear in the origin.",
-    "origin_span_ids": [],
     "descendant_span_ids": [
      "s6"
     ]
    },
    {
-    "kind": "removed",
-    "summary": "The origin carries the section number 78B-25-110, which the descendant lacks.",
+    "kind": "changed",
+    "summary": "The descendant numbers the section as Sec. 10 [554.16]; the origin numbers it 78B-25-110.",
     "origin_span_ids": [
      "s0"
     ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant is labeled Sec. 10 with section number [554.16] and marks its provisions as new text; the origin has neither.",
-    "origin_span_ids": [],
     "descendant_span_ids": [
-     "s1",
-     "s3",
-     "s8",
-     "s10",
-     "s12"
+     "s1"
     ]
    }
   ]
@@ -126,16 +110,12 @@
  "grounded": {
   "kept": [
    0,
-   1,
-   2,
-   3
+   1
   ],
   "dropped": []
  },
- "attempts": 2,
- "unusable_attempts": [
-  "no claim cites spans that exist and differ (claim 1: s5 is on one side only, so it shows text one side lacks, not a change; claim 2: s0 is on one side only, so it shows text one side lacks, not a change)"
- ],
+ "attempts": 1,
+ "unusable_attempts": [],
  "earlier": [
   {
    "explanation": {
@@ -166,6 +146,62 @@
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin bases the motion on Section 78B-25-103; the descendant has no reference to that section.",
+      "origin_span_ids": [
+       "s5"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant bases the motion on section 554.09, a cross-reference that does not appear in the origin.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s6"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin carries the section number 78B-25-110, which the descendant lacks.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant is labeled Sec. 10 with section number [554.16] and marks its provisions as new text; the origin has neither.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s3",
+       "s8",
+       "s10",
+       "s12"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "no claim cites spans that exist and differ (claim 1: s5 is on one side only, so it shows text one side lacks, not a change; claim 2: s0 is on one side only, so it shows text one side lacks, not a change)"
+   ],
+   "attempts": 2
   }
  ]
 }

@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -217,37 +218,38 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant defines a \"deceptive and fraudulent deepfake\" as synthetic media depicting a candidate with intent to injure or deceive, meeting either of two prongs; the origin requires both prongs.",
-    "origin_span_ids": [
-     "s7",
-     "s11"
-    ],
-    "descendant_span_ids": [
-     "s8",
-     "s12"
-    ]
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant bars distributing a known deceptive deepfake of a candidate within ninety days of an election unless disclosed; the origin makes disclosure an affirmative defense to civil actions.",
+    "summary": "The descendant bars distributing a known deceptive and fraudulent deepfake of a ballot candidate within ninety days of an election, unless it carries the disclosure.",
     "origin_span_ids": [
      "s14"
     ],
     "descendant_span_ids": [
+     "s8",
      "s15"
     ]
    },
    {
     "kind": "added",
-    "summary": "The descendant makes violations a misdemeanor (up to 90 days or $500) and a repeat offense within five years a felony, and exempts news broadcasters, publications, and satire or parody.",
+    "summary": "The descendant makes a violation a misdemeanor (up to 90 days or $500) and a repeat offense within five years a felony; it also exempts certain broadcasters, publications, and satire or parody.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s34"
     ]
    },
    {
+    "kind": "changed",
+    "summary": "The origin treats the disclosure as an affirmative defense to civil suits over altered candidates; the descendant uses it as an exception to the distribution ban.",
+    "origin_span_ids": [
+     "s14",
+     "s17"
+    ],
+    "descendant_span_ids": [
+     "s15",
+     "s18"
+    ]
+   },
+   {
     "kind": "removed",
-    "summary": "The origin places a clear and convincing evidence burden on the plaintiff and encourages expedient court decisions; the descendant has neither provision.",
+    "summary": "The origin requires plaintiffs to prove synthetic media use by clear and convincing evidence and urges courts to act expediently; the descendant has neither provision.",
     "origin_span_ids": [
      "s33"
     ],
@@ -264,5 +266,63 @@
    3
   ],
   "dropped": []
- }
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant defines a \"deceptive and fraudulent deepfake\" as synthetic media depicting a candidate with intent to injure or deceive, meeting either of two prongs; the origin requires both prongs.",
+      "origin_span_ids": [
+       "s7",
+       "s11"
+      ],
+      "descendant_span_ids": [
+       "s8",
+       "s12"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant bars distributing a known deceptive deepfake of a candidate within ninety days of an election unless disclosed; the origin makes disclosure an affirmative defense to civil actions.",
+      "origin_span_ids": [
+       "s14"
+      ],
+      "descendant_span_ids": [
+       "s15"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant makes violations a misdemeanor (up to 90 days or $500) and a repeat offense within five years a felony, and exempts news broadcasters, publications, and satire or parody.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s34"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin places a clear and convincing evidence burden on the plaintiff and encourages expedient court decisions; the descendant has neither provision.",
+      "origin_span_ids": [
+       "s33"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   }
+  }
+ ]
 }

@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -44,7 +44,7 @@
   "claims": [
    {
     "kind": "removed",
-    "summary": "The origin limits liability for electioneering communications to the sponsor, with exceptions for media that strip disclosures or create synthetic media; the descendant has no such provisions.",
+    "summary": "The origin limits liability for electioneering communications to the sponsor, with medium liability only for removing disclosures or creating synthetic media; the descendant has no such provision.",
     "origin_span_ids": [
      "s0"
     ],
@@ -52,7 +52,7 @@
    },
    {
     "kind": "added",
-    "summary": "The descendant defines \"depicted individual,\" \"digital depiction,\" and \"intimate digital depiction,\" including consent induced by force, duress, or deception; the origin has none of these.",
+    "summary": "The descendant defines terms for intimate digital depictions, including consent conditions, \"depicted individual,\" \"digital depiction,\" and \"intimate digital depiction.\"",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s1",
@@ -61,7 +61,17 @@
    },
    {
     "kind": "changed",
-    "summary": "The descendant lists \"interactive computer service\" as numbered definition (5) without \"means\"; the origin lists it as lettered paragraph (b) using \"means.\"",
+    "summary": "The descendant places its \"information content providers\" definition in a numbered list before interactive computer service; the origin defines \"information content provider\" afterward as (c).",
+    "origin_span_ids": [
+     "s4"
+    ],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant numbers the interactive computer service definition as (5) in a general definitions list; the origin labels it (b) under its liability-exemption subsection.",
     "origin_span_ids": [
      "s2"
     ],
@@ -76,19 +86,64 @@
   "kept": [
    0,
    1,
-   2
+   2,
+   3
   ],
   "dropped": []
  },
- "attempts": 2,
- "unusable_attempts": [
-  "a claim fails grounding (claim 3: s4 is on one side only, so it shows text one side lacks, not a change)"
- ],
+ "attempts": 1,
+ "unusable_attempts": [],
  "earlier": [
   {
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin limits liability for electioneering communications to the sponsor, with exceptions for media that strip disclosures or create synthetic media; the descendant has no such provisions.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant defines \"depicted individual,\" \"digital depiction,\" and \"intimate digital depiction,\" including consent induced by force, duress, or deception; the origin has none of these.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s5"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant lists \"interactive computer service\" as numbered definition (5) without \"means\"; the origin lists it as lettered paragraph (b) using \"means.\"",
+      "origin_span_ids": [
+       "s2"
+      ],
+      "descendant_span_ids": [
+       "s2"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "a claim fails grounding (claim 3: s4 is on one side only, so it shows text one side lacks, not a change)"
+   ],
+   "attempts": 2
   }
  ]
 }

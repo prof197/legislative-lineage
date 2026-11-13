@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -217,16 +217,8 @@
  "explanation": {
   "claims": [
    {
-    "kind": "added",
-    "summary": "The descendant bars distributing materially deceptive media with actual malice within 90 days of an election, unless disclosed; the origin sets no such prohibition, only civil remedies.",
-    "origin_span_ids": [],
-    "descendant_span_ids": [
-     "s7"
-    ]
-   },
-   {
     "kind": "changed",
-    "summary": "The descendant covers media fabricated or manipulated to appear authentic, including about election operations; the origin defines synthetic media made with generative adversarial network techniques.",
+    "summary": "The origin defines \"synthetic media\" made with generative adversarial network or other digital technology; the descendant defines materially deceptive media, including election-operation content.",
     "origin_span_ids": [
      "s0",
      "s3"
@@ -238,20 +230,32 @@
    },
    {
     "kind": "added",
-    "summary": "The descendant exempts interactive service providers, broadcasters, news publications and satire or parody; the origin has no such exemptions.",
-    "origin_span_ids": [],
+    "summary": "The descendant bars distributing deceptive media with actual malice within 90 days of an election unless disclosed; the origin sets no such prohibition, only remedies and a disclosure defense.",
+    "origin_span_ids": [
+     "s6"
+    ],
     "descendant_span_ids": [
-     "s34"
+     "s7"
     ]
    },
    {
     "kind": "changed",
-    "summary": "The descendant lets the attorney general also seek injunctions and allows damages against any distributor; the origin limits relief to candidates and damages to the sponsor.",
+    "summary": "The descendant lets the attorney general also seek injunctions and allows damages against any distributor; the origin gives remedies to the candidate only, with damages against the sponsor.",
     "origin_span_ids": [
      "s6"
     ],
     "descendant_span_ids": [
      "s31"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant exempts interactive service providers, news broadcasts, paid broadcasts, periodicals and satire or parody; the origin instead urges courts to decide matters expediently.",
+    "origin_span_ids": [
+     "s33"
+    ],
+    "descendant_span_ids": [
+     "s34"
     ]
    }
   ]
@@ -268,14 +272,72 @@
  },
  "attempts": 2,
  "unusable_attempts": [
-  "off the schema: claims.1.summary: String should have at most 200 characters",
-  "a claim fails grounding (claim 2: s0 is on one side only, so it shows text one side lacks, not a change; claim 4: s6 is on one side only, so it shows text one side lacks, not a change)"
+  "off the schema: claims.1.summary: String should have at most 200 characters"
  ],
  "earlier": [
   {
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant bars distributing materially deceptive media with actual malice within 90 days of an election, unless disclosed; the origin sets no such prohibition, only civil remedies.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s7"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant covers media fabricated or manipulated to appear authentic, including about election operations; the origin defines synthetic media made with generative adversarial network techniques.",
+      "origin_span_ids": [
+       "s0",
+       "s3"
+      ],
+      "descendant_span_ids": [
+       "s1",
+       "s4"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant exempts interactive service providers, broadcasters, news publications and satire or parody; the origin has no such exemptions.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s34"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant lets the attorney general also seek injunctions and allows damages against any distributor; the origin limits relief to candidates and damages to the sponsor.",
+      "origin_span_ids": [
+       "s6"
+      ],
+      "descendant_span_ids": [
+       "s31"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "off the schema: claims.1.summary: String should have at most 200 characters",
+    "a claim fails grounding (claim 2: s0 is on one side only, so it shows text one side lacks, not a change; claim 4: s6 is on one side only, so it shows text one side lacks, not a change)"
+   ],
+   "attempts": 2
   }
  ]
 }

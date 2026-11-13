@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -217,36 +217,46 @@
  "explanation": {
   "claims": [
    {
-    "kind": "added",
-    "summary": "The descendant keeps the stay until thirty days after the ruling on the motion or the end of any appeal, whichever is later.",
-    "origin_span_ids": [],
+    "kind": "changed",
+    "summary": "The descendant keeps the stay until 30 days after the ruling or the end of any appeal, whichever is later; the origin keeps it until the order and appeal time expire, with a separate appeal stay.",
+    "origin_span_ids": [
+     "s9",
+     "s12"
+    ],
     "descendant_span_ids": [
      "s10"
     ]
    },
    {
-    "kind": "removed",
-    "summary": "The origin ends the stay when the order is entered and the appeal deadline expires, and has a separate stay during appeal that lasts until the appeal concludes.",
+    "kind": "changed",
+    "summary": "The descendant allows limited discovery only if the party seeking it shows information cannot be obtained otherwise; the origin lets any party show it is not reasonably available.",
     "origin_span_ids": [
-     "s9",
-     "s12"
+     "s15",
+     "s18"
     ],
-    "descendant_span_ids": []
+    "descendant_span_ids": [
+     "s16",
+     "s19"
+    ]
    },
    {
-    "kind": "removed",
-    "summary": "The origin preserves a party's ability to voluntarily dismiss part of a cause of action during a stay; the descendant does not mention partial dismissal.",
+    "kind": "changed",
+    "summary": "The origin preserves voluntary dismissal of part of a cause of action; the descendant omits this and instead preserves a motion to sever a cause of action for a separate trial.",
     "origin_span_ids": [
      "s24"
     ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant specifies that the preserved motion to sever a cause of action is one for a separate trial.",
-    "origin_span_ids": [],
     "descendant_span_ids": [
      "s27"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "During a stay, the descendant lets the court hear motions for a temporary or preliminary injunction; the origin refers to a special or preliminary injunction.",
+    "origin_span_ids": [
+     "s32"
+    ],
+    "descendant_span_ids": [
+     "s33"
     ]
    }
   ]
@@ -261,10 +271,8 @@
   ],
   "dropped": []
  },
- "attempts": 2,
- "unusable_attempts": [
-  "off the schema: claims.0.summary: String should have at most 200 characters; claims.1.summary: String should have at most 200 characters"
- ],
+ "attempts": 1,
+ "unusable_attempts": [],
  "earlier": [
   {
    "explanation": {
@@ -329,6 +337,59 @@
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant keeps the stay until thirty days after the ruling on the motion or the end of any appeal, whichever is later.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s10"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin ends the stay when the order is entered and the appeal deadline expires, and has a separate stay during appeal that lasts until the appeal concludes.",
+      "origin_span_ids": [
+       "s9",
+       "s12"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin preserves a party's ability to voluntarily dismiss part of a cause of action during a stay; the descendant does not mention partial dismissal.",
+      "origin_span_ids": [
+       "s24"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant specifies that the preserved motion to sever a cause of action is one for a separate trial.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s27"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "off the schema: claims.0.summary: String should have at most 200 characters; claims.1.summary: String should have at most 200 characters"
+   ],
+   "attempts": 2
   }
  ]
 }

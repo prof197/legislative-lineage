@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -94,19 +94,74 @@
    "descendant": "dfc8c5f81fd68ea6be58572c94a6bd41ab1d1bfabde875a90f5bacb2bd6328f1"
   }
  ],
- "explanation": null,
- "served_by": null,
- "grounded": null,
- "attempts": 2,
- "unusable_attempts": [
-  "off the schema: claims.0.summary: String should have at most 200 characters",
-  "off the schema: claims.3.summary: String should have at most 200 characters"
- ],
+ "explanation": {
+  "claims": [
+   {
+    "kind": "removed",
+    "summary": "The origin makes the sponsor of an electioneering communication liable, not the disseminating medium, except where the medium strips disclosures or alters content into synthetic media.",
+    "origin_span_ids": [
+     "s3"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin bars treating an interactive computer service provider or user as publisher of others' content, except as liable under its synthetic media rule; the descendant lacks this.",
+    "origin_span_ids": [
+     "s3"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant defines terms for pornographic images on covered platforms: consent, coerced consent, covered platform, eligible person, intimate visual depiction, sexually explicit conduct.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1",
+     "s4",
+     "s11",
+     "s14"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant defines authorized representative, computer, user and visual depiction, and limits users on covered platforms to those creating hosted pornographic images.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s1",
+     "s4",
+     "s14"
+    ]
+   }
+  ]
+ },
+ "served_by": "claude-opus-5-5",
+ "grounded": {
+  "kept": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "dropped": []
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
  "earlier": [
   {
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": null,
+   "served_by": null,
+   "grounded": null,
+   "unusable_attempts": [
+    "off the schema: claims.0.summary: String should have at most 200 characters",
+    "off the schema: claims.3.summary: String should have at most 200 characters"
+   ],
+   "attempts": 2
   }
  ]
 }

@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -176,7 +176,7 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant titles itself the \"Freedom From AI-Rigged (FAIR) Elections Act\" and defines synthetic media; the origin's section has no title or synthetic media definition.",
+    "summary": "The descendant has a short title, defines synthetic media, and grants candidates injunctive relief, damages, and attorney's fees against the sponsor.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s1"
@@ -184,24 +184,35 @@
    },
    {
     "kind": "added",
-    "summary": "The descendant lets a depicted candidate seek injunctive relief or general and special damages against the sponsor, with attorney's fees and costs to a prevailing party.",
+    "summary": "The descendant sets an affirmative defense for a \"manipulated\" disclosure with visual and audio format rules, a clear and convincing burden on plaintiffs, and urges expedient rulings.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s1"
     ]
    },
    {
-    "kind": "added",
-    "summary": "The descendant makes a \"This (image/video/audio) has been manipulated\" disclosure an affirmative defense, with size and duration rules for visual media and timing rules for audio.",
-    "origin_span_ids": [],
+    "kind": "changed",
+    "summary": "The origin's liability rules apply to actions under a separate section 2; the descendant's apply to actions under the same section and cite its own disclosure subsection.",
+    "origin_span_ids": [
+     "s0",
+     "s14",
+     "s17",
+     "s20",
+     "s23"
+    ],
     "descendant_span_ids": [
-     "s1"
+     "s1",
+     "s15",
+     "s18",
+     "s21"
     ]
    },
    {
-    "kind": "added",
-    "summary": "The descendant requires the plaintiff to prove synthetic media use by clear and convincing evidence and encourages courts to decide these matters expediently.",
-    "origin_span_ids": [],
+    "kind": "changed",
+    "summary": "The origin defines interactive computer service and information content provider after the immunity clause; the descendant defines them at the start of the section.",
+    "origin_span_ids": [
+     "s26"
+    ],
     "descendant_span_ids": [
      "s1"
     ]
@@ -220,13 +231,65 @@
  },
  "attempts": 2,
  "unusable_attempts": [
-  "off the schema: claims.1.summary: String should have at most 200 characters"
+  "off the schema: claims.0.summary: String should have at most 200 characters; claims.1.summary: String should have at most 200 characters"
  ],
  "earlier": [
   {
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant titles itself the \"Freedom From AI-Rigged (FAIR) Elections Act\" and defines synthetic media; the origin's section has no title or synthetic media definition.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant lets a depicted candidate seek injunctive relief or general and special damages against the sponsor, with attorney's fees and costs to a prevailing party.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant makes a \"This (image/video/audio) has been manipulated\" disclosure an affirmative defense, with size and duration rules for visual media and timing rules for audio.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant requires the plaintiff to prove synthetic media use by clear and convincing evidence and encourages courts to decide these matters expediently.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "off the schema: claims.1.summary: String should have at most 200 characters"
+   ],
+   "attempts": 2
   }
  ]
 }

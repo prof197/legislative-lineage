@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -230,7 +230,7 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant exempts many more causes of action, including crime-victim suits, real property, bodily injury, insurance, fraud, protection orders, employment, consumer protection and federal claims.",
+    "summary": "The descendant excludes many more causes of action: crime-victim suits, real property, bodily injury/wrongful death, insurance, fraud, protection orders, employment, consumer protection, federal law.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s36"
@@ -238,27 +238,35 @@
    },
    {
     "kind": "added",
-    "summary": "The descendant restores coverage for causes of action under the commercial-speech, fraud and consumer-protection exemptions when they concern media works or consumer reviews and opinions.",
+    "summary": "The descendant restores coverage for excluded commercial-speech, fraud, and consumer-protection claims when they target media/artistic works or consumer reviews and opinions.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s36"
     ]
    },
    {
-    "kind": "added",
-    "summary": "The descendant names its state constitution (Minnesota) as a source of protected speech, petition and association rights.",
-    "origin_span_ids": [],
+    "kind": "changed",
+    "summary": "The descendant protects rights guaranteed by the U.S. or Minnesota Constitution; the origin refers to the U.S. or Utah Constitution.",
+    "origin_span_ids": [
+     "s21"
+    ],
     "descendant_span_ids": [
      "s22"
     ]
    },
    {
-    "kind": "removed",
-    "summary": "The origin names the Utah Constitution as a source of protected speech, petition and association rights; the descendant lacks this reference.",
+    "kind": "changed",
+    "summary": "The descendant applies its definitions and scope to sections 554.07 to 554.19; the origin applies them to this chapter (78B-25-102).",
     "origin_span_ids": [
-     "s21"
+     "s0",
+     "s9",
+     "s24"
     ],
-    "descendant_span_ids": []
+    "descendant_span_ids": [
+     "s1",
+     "s10",
+     "s25"
+    ]
    }
   ]
  },
@@ -337,6 +345,56 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant exempts many more causes of action, including crime-victim suits, real property, bodily injury, insurance, fraud, protection orders, employment, consumer protection and federal claims.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s36"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant restores coverage for causes of action under the commercial-speech, fraud and consumer-protection exemptions when they concern media works or consumer reviews and opinions.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s36"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant names its state constitution (Minnesota) as a source of protected speech, petition and association rights.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s22"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin names the Utah Constitution as a source of protected speech, petition and association rights; the descendant lacks this reference.",
+      "origin_span_ids": [
+       "s21"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [],
+   "attempts": 1
   }
  ]
 }

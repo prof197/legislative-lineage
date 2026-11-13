@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -62,7 +62,7 @@
   "claims": [
    {
     "kind": "removed",
-    "summary": "The origin assigns civil liability for electioneering communications to the sponsor rather than the disseminating medium, with exceptions for removing disclosures or creating synthetic media.",
+    "summary": "The origin makes sponsors of electioneering communications liable and limits a medium's liability to removing disclosures or altering content into synthetic media; the descendant lacks this.",
     "origin_span_ids": [
      "s0"
     ],
@@ -70,15 +70,7 @@
    },
    {
     "kind": "added",
-    "summary": "The descendant creates a criminal offense of disclosing or threatening to disclose an intimate digital depiction, a class E felony that rises to class C in aggravated cases.",
-    "origin_span_ids": [],
-    "descendant_span_ids": [
-     "s5"
-    ]
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant defines depicted individual, digital depiction, intimate digital depiction and sexually explicit conduct, and states that a disclaimer is not a defense.",
+    "summary": "The descendant defines depicted individual, digital depiction, intimate digital depiction and sexually explicit conduct; the origin has none of these definitions.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s1",
@@ -86,16 +78,24 @@
     ]
    },
    {
+    "kind": "added",
+    "summary": "The descendant makes disclosing or threatening to disclose an intimate digital depiction a class E felony, or class C for repeat or election- or violence-related cases; disclaimers are no defense.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s5",
+     "s8"
+    ]
+   },
+   {
     "kind": "changed",
-    "summary": "The origin shields interactive computer services from being treated as publishers of others' content; the descendant exempts providers for good-faith actions restricting access to intimate depictions.",
+    "summary": "The origin bars treating interactive computer services as publishers of others' content; the descendant shields them only for good-faith actions restricting access to intimate depictions.",
     "origin_span_ids": [
      "s0",
      "s4",
      "s7"
     ],
     "descendant_span_ids": [
-     "s8",
-     "s2"
+     "s8"
     ]
    }
   ]
@@ -110,9 +110,9 @@
   ],
   "dropped": []
  },
- "attempts": 1,
+ "attempts": 2,
  "unusable_attempts": [
-  "off the schema: claims.0.summary: String should have at most 200 characters"
+  "off the schema: claims.0.summary: String should have at most 200 characters; claims.1.summary: String should have at most 200 characters; claims.2.summary: String should have at most 200 characters; claims.3.summary: String should have at most 200 characters"
  ],
  "earlier": [
   {
@@ -172,6 +172,64 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin assigns civil liability for electioneering communications to the sponsor rather than the disseminating medium, with exceptions for removing disclosures or creating synthetic media.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant creates a criminal offense of disclosing or threatening to disclose an intimate digital depiction, a class E felony that rises to class C in aggravated cases.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s5"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant defines depicted individual, digital depiction, intimate digital depiction and sexually explicit conduct, and states that a disclaimer is not a defense.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s5"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin shields interactive computer services from being treated as publishers of others' content; the descendant exempts providers for good-faith actions restricting access to intimate depictions.",
+      "origin_span_ids": [
+       "s0",
+       "s4",
+       "s7"
+      ],
+      "descendant_span_ids": [
+       "s8",
+       "s2"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "off the schema: claims.0.summary: String should have at most 200 characters"
+   ],
+   "attempts": 1
   }
  ]
 }

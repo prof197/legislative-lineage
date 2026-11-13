@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -158,35 +158,46 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant contains a full standalone section: a short title (FAIR Elections Act), definitions of synthetic media, injunctive relief, damages and fees, a disclosure defense, and burden of proof.",
+    "summary": "The descendant is a self-contained section with a short title, definitions of synthetic media, and its own injunctive relief, damages, disclosure defense, burden of proof and expedition rules.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s1"
     ]
    },
    {
-    "kind": "added",
-    "summary": "The descendant makes the information content provider the liable party; the origin's surviving text names the sponsor of the communication instead.",
-    "origin_span_ids": [],
-    "descendant_span_ids": [
-     "s1"
-    ]
-   },
-   {
-    "kind": "removed",
-    "summary": "The origin opens by naming the sponsor of the electioneering communication as the party liable in an action brought under section 2 of the act.",
+    "kind": "changed",
+    "summary": "The descendant makes the information content provider liable; the origin makes the sponsor of the electioneering communication liable.",
     "origin_span_ids": [
      "s0"
     ],
-    "descendant_span_ids": []
+    "descendant_span_ids": [
+     "s1"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant cross-references subsections within the same section; the origin cross-references a separate section 2 for actions, disclosures, defenses and the synthetic media definition.",
+    "origin_span_ids": [
+     "s11",
+     "s14",
+     "s17",
+     "s20"
+    ],
+    "descendant_span_ids": [
+     "s12",
+     "s15",
+     "s18"
+    ]
    },
    {
     "kind": "removed",
-    "summary": "The origin defines \"interactive computer service\" and \"information content provider\" at the end of the liability section, after the publisher immunity clause.",
+    "summary": "The origin defines \"interactive computer service\" and \"information content provider\" at the end of the liability section; the descendant defines them in its opening definitions instead.",
     "origin_span_ids": [
      "s23"
     ],
-    "descendant_span_ids": []
+    "descendant_span_ids": [
+     "s1"
+    ]
    }
   ]
  },
@@ -261,6 +272,56 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant contains a full standalone section: a short title (FAIR Elections Act), definitions of synthetic media, injunctive relief, damages and fees, a disclosure defense, and burden of proof.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant makes the information content provider the liable party; the origin's surviving text names the sponsor of the communication instead.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin opens by naming the sponsor of the electioneering communication as the party liable in an action brought under section 2 of the act.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin defines \"interactive computer service\" and \"information content provider\" at the end of the liability section, after the publisher immunity clause.",
+      "origin_span_ids": [
+       "s23"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [],
+   "attempts": 1
   }
  ]
 }

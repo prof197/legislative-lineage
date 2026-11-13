@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -242,15 +242,17 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant contains a full anti-SLAPP framework in one section: title, definitions, scope and exemptions, a 60-day filing deadline, stays, hearing timing, and evidence considered.",
-    "origin_span_ids": [],
+    "summary": "The descendant is a single section that also contains the act's title, definitions, scope and exclusions, filing deadline, stays, hearing timing, and evidence the court considers.",
+    "origin_span_ids": [
+     "s0"
+    ],
     "descendant_span_ids": [
      "s1"
     ]
    },
    {
     "kind": "added",
-    "summary": "The descendant also includes a 60-day ruling deadline, a 21-day appeal right, cost and fee awards, broad construction, uniformity, an August 28, 2026 effective date, and bracketed repealed text.",
+    "summary": "The descendant adds a 60-day ruling deadline, a 21-day appeal right on denial, mandatory cost and fee awards, broad construction, uniformity, and an August 28, 2026 applicability date.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s38"
@@ -258,7 +260,7 @@
    },
    {
     "kind": "changed",
-    "summary": "The descendant refers to recoverable 'reasonable attorney's fees, and reasonable litigation expenses'; the origin refers to 'attorney fees, and expenses' without the reasonableness qualifier.",
+    "summary": "The descendant lets a moving party seek reasonable attorney's fees and reasonable litigation expenses; the origin says attorney fees and expenses without the reasonableness qualifier.",
     "origin_span_ids": [
      "s29"
     ],
@@ -267,8 +269,8 @@
     ]
    },
    {
-    "kind": "removed",
-    "summary": "In the summary-judgment ground, the origin says the 'moving party' is entitled to judgment; the descendant says only 'the party'.",
+    "kind": "changed",
+    "summary": "In the summary-judgment-style ground, the origin requires the moving party to be entitled to judgment; the descendant says only that 'the party' is entitled to judgment.",
     "origin_span_ids": [
      "s24"
     ],
@@ -281,14 +283,19 @@
   "kept": [
    0,
    1,
-   2,
-   3
+   2
   ],
-  "dropped": []
+  "dropped": [
+   [
+    3,
+    "a changed claim cites no span on the descendant's side"
+   ]
+  ]
  },
- "attempts": 1,
+ "attempts": 2,
  "unusable_attempts": [
-  "off the schema: claims.0.summary: String should have at most 200 characters"
+  "a claim fails grounding (claim 4: a changed claim cites no span on the descendant's side)",
+  "off the schema: claims.1.summary: String should have at most 200 characters"
  ],
  "earlier": [
   {
@@ -344,6 +351,60 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant contains a full anti-SLAPP framework in one section: title, definitions, scope and exemptions, a 60-day filing deadline, stays, hearing timing, and evidence considered.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant also includes a 60-day ruling deadline, a 21-day appeal right, cost and fee awards, broad construction, uniformity, an August 28, 2026 effective date, and bracketed repealed text.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s38"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant refers to recoverable 'reasonable attorney's fees, and reasonable litigation expenses'; the origin refers to 'attorney fees, and expenses' without the reasonableness qualifier.",
+      "origin_span_ids": [
+       "s29"
+      ],
+      "descendant_span_ids": [
+       "s30"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "In the summary-judgment ground, the origin says the 'moving party' is entitled to judgment; the descendant says only 'the party'.",
+      "origin_span_ids": [
+       "s24"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "off the schema: claims.0.summary: String should have at most 200 characters"
+   ],
+   "attempts": 1
   }
  ]
 }

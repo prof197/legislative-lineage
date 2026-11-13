@@ -1,8 +1,8 @@
 {
  "budget": 55.0,
- "metered": 11.6124,
+ "metered": 19.2985,
  "bounded": 11.3094,
- "spent": 22.9218,
+ "spent": 30.6079,
  "runs": [
   {
    "run": "explain-2026-11-12-1",
@@ -93,6 +93,38 @@
    "input_tokens": 410598,
    "output_tokens": 50115,
    "dollars": 2.6447,
+   "at": "2026-11-12"
+  },
+  {
+   "run": "explain-2026-11-12-7",
+   "purpose": "explain",
+   "model": "claude-opus-5-5",
+   "prompt": "v1",
+   "projected": 22.8847,
+   "metered": true,
+   "calls": 152,
+   "served_by": {
+    "claude-opus-5-5": 152
+   },
+   "input_tokens": 677279,
+   "output_tokens": 57037,
+   "dollars": 3.8499,
+   "at": "2026-11-12"
+  },
+  {
+   "run": "judge-2026-11-12-8",
+   "purpose": "judge",
+   "model": "claude-opus-5-5",
+   "prompt": "judge-v2",
+   "projected": 19.7982,
+   "metered": true,
+   "calls": 359,
+   "served_by": {
+    "claude-opus-5-5": 359
+   },
+   "input_tokens": 638852,
+   "output_tokens": 64042,
+   "dollars": 3.8362,
    "at": "2026-11-12"
   }
  ]
