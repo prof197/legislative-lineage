@@ -62,6 +62,10 @@ from lineage.explain import MODEL as EXPLAIN_MODEL
 from lineage.explain import PROMPT_VERSION as EXPLAIN_PROMPT
 from lineage.explain import cache_path as explanation_cache_path
 from lineage.explain import projected_cost as projected_explain_cost
+from lineage.export import EXPORT_DIR, ExportError, build_export
+from lineage.export import REPORT as EXPORT_REPORT
+from lineage.export import SCHEMA as EXPORT_SCHEMA
+from lineage.export import schema_text as export_schema_text
 from lineage.faithfulness import (
     JUDGE_MODEL,
     JUDGE_PROMPT,
@@ -1179,6 +1183,76 @@ def featured_command(
             f"{story['section_pairs_out_of_scope']} out of the story's sections"
         )
     typer.echo(f"{len(rows)} pairs -> {out}, {report}")
+
+
+@app.command("export")
+def export_command(
+    state: Annotated[
+        str, typer.Option("--state", help="The state to host, by its postal code.")
+    ] = "GA",
+    tables: TablesOption = Path("data/tables"),
+    out: Annotated[
+        Path | None,
+        typer.Option("--out", help="Where the site data goes (local); default data/export/<ST>."),
+    ] = None,
+    cache: Annotated[
+        Path, typer.Option("--cache", help="Cached explanations (committed).")
+    ] = EXPLAIN_CACHE,
+    paraphrase: Annotated[
+        bool,
+        typer.Option(
+            "--paraphrase/--no-paraphrase",
+            help="Mark paraphrased sentences, with the semantic stage's model (local).",
+        ),
+    ] = True,
+    models_dir: Annotated[
+        Path, typer.Option("--models", help="Directory of model files (local).")
+    ] = MODELS_DIR,
+    report: Annotated[
+        Path, typer.Option("--report", help="The export's sizes and counts (committed).")
+    ] = EXPORT_REPORT,
+    featured_pairs: Annotated[
+        Path, typer.Option("--featured-pairs", help="The featured pairs (committed).")
+    ] = FEATURED_PAIRS,
+    featured_report: Annotated[
+        Path, typer.Option("--featured-report", help="Each story's relatives (committed).")
+    ] = FEATURED_REPORT,
+    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+    schema_only: Annotated[
+        bool,
+        typer.Option("--schema", help="Write the export's JSON Schema (committed) and stop."),
+    ] = False,
+) -> None:
+    """The static site's JSON for one state's bills, with the stories and the data stamp."""
+    if schema_only:
+        EXPORT_SCHEMA.parent.mkdir(parents=True, exist_ok=True)
+        EXPORT_SCHEMA.write_text(export_schema_text())
+        typer.echo(f"-> {EXPORT_SCHEMA}")
+        return
+    state = state.upper()
+    target = out if out is not None else EXPORT_DIR / state
+    try:
+        embed = _model_embedder(models_dir) if paraphrase else None
+        doc = build_export(
+            tables,
+            state=state,
+            out=target,
+            embed=embed,
+            cache=cache,
+            featured_pairs=featured_pairs,
+            featured_report=featured_report,
+            results=results,
+            progress=typer.echo,
+        )
+    except (ExportError, NotCachedError, SemanticPairsError, StateBoilerplateError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    report.write_text(json.dumps(doc, indent=1) + "\n")
+    typer.echo(
+        f"{doc['hosted_bills']} bills, {doc['comparisons']} comparisons, "
+        f"{doc['total_bytes'] / 1e6:.1f} MB ({doc['share_of_site_limit']:.1%} of the site limit) "
+        f"-> {target}, {report}"
+    )
 
 
 def _pair_alignments(

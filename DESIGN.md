@@ -25,6 +25,7 @@ Sections marked **To be measured** fill in as the build reaches them. Every numb
 - [Precision sample](#precision-sample)
 - [Cost and runtime](#cost-and-runtime)
 - [Explanations](#explanations)
+- [Export](#export)
 - [Alternatives considered](#alternatives-considered)
 - [Scaling limits](#scaling-limits)
 - [Known failure modes](#known-failure-modes)
@@ -73,7 +74,7 @@ Open States snapshot ─► ingest ─► text layer ─► sections ─┬─�
 5. **Semantic stage.** A local sentence-embedding model and an approximate nearest-neighbor index generate candidates that share meaning but not wording. This is a second candidate generator over every section, not a reranker of the first stage's output, so it can find pairs the first stage never proposed.
 6. **Merge and score.** Each match records which stage found it. A bill's score against another bill is the share of the *query* bill's text that falls in matched sections, so a provision inside a large omnibus still scores high.
 7. **Alignment.** Word-level alignment marks the spans that were copied exactly, the spans that were paraphrased, and the unmatched text.
-8. **Explanations.** For featured matches, a model summarizes what changed, citing span ids. The citations are validated in code.
+8. **Explanations.** For featured matches, a model summarizes how the two texts differ, citing span ids. The citations are validated in code.
 9. **Export.** Per-bill and per-story JSON for the static site ([DR-1](#dr-1), [DR-2](#dr-2)).
 
 ## Data snapshot
@@ -552,6 +553,23 @@ The three runs are kept side by side (`earlier_runs`):
 | `grounding-rules-3` | text cited from both texts | each cited span marked in 300 characters of aligned text either way | 359 on 121 pairs | 0.87 [0.83, 0.90] |
 
 They are not one sample measured three times. The scope narrowed between the first and second runs, the claims were rewritten for each, and the third changed what the judge sees. The judge's view changed because the comparison panel shows each difference inside its aligned text, and a claim is read there. Judged on the bare spans, a claim citing a short fragment could be true of the passage a reader sees and still be counted wrong. The marked window gives the judge the reader's view and keeps the claim answerable to the marked text alone: a claim resting on unmarked text is still counted incorrect. The same model writes and judges, so self-preference remains a known risk to every row. This is the last faithfulness round in v1; the published figure is 0.87 [0.83, 0.90], model-judged.
+
+## Export
+
+`uv run lineage export --state GA` writes the static site's JSON for one state's bills to `data/export/GA/`, which stays local like all data (`lineage.export`). Every file is an instance of a Pydantic model in `lineage.export_schema`, validated as it is written. The models emit the JSON Schema the site's TypeScript types are generated from, `schema/export.schema.json`, committed; `uv run lineage export --schema` regenerates it, and a test fails when it drifts from the models ([DR-1](#dr-1)).
+
+**What it writes.** The hosted bills are the state's records the document-type rules match ([DR-5](#dr-5)).
+- `meta.json` carries the data stamp, each hosted archive's Generated At ([Data snapshot](#data-snapshot)), the stories, and the validation page's figures, read from `reports/results.json`.
+- `bills.json` lists every hosted bill for the browse page's filter.
+- `bills/<slug>.json` is a bill's page: its record and status, the source of the text matching read, its sections, and its relatives as a page lists them ([Bill scoring](#bill-scoring)), each with the section pairs it shares with the bill and which stage found each.
+- `compare/<a>--<b>.json` holds each listed relative's matched sections aligned ([Alignment](#alignment)), and each featured story pair's, with a featured pair's explanation read from the cache; the export never calls a model. The first bill is the hosted bill, or a story's anchor, whose text the comparison starts from.
+- `texts/<slug>.json` holds the display text of every section some comparison shows, once per bill, and `stories/<slug>.json` each featured story's anchor and relatives (`reports/featured_pairs.json`).
+
+**Facts, not wording.** The export carries what the pipeline knows and leaves its display to the site: the status as derived ([Bill status](#bill-status)), whether a bill's text is a Georgia local notice or an amendment alone (tested on the text matching read, by the patterns `lineage stats` counts with), and whether a relative's matched text names an interstate compact. How the site words a `passed_legislature` bill, shows notice-only and amendment-only bills, groups compact clauses, and heads the list of relatives found by meaning alone is decided with the site.
+
+**Text kept out of the comparisons.** A section is shown beside each of its relatives, so a comparison carrying both texts would repeat a section's text once for every relative it matches. A comparison therefore holds only span offsets, and the site reads both texts from the bills' `texts/` files, where each section's text is written once (a test checks it).
+
+**Georgia, 2026-11-12.** Of the 4,561 hosted bills, 750 have relatives in other states, 4,540 relatives in all are listed, and 4,595 comparisons align 15,905 section pairs; the 121 featured pairs carry their explanations, 10 of them withheld (`uv run lineage export --state GA` → `reports/export.json`). The export is 111.7 MB in 12,781 files: 53.2 MB of section text, 48.1 MB of comparisons, 8.9 MB of bill pages and a 1.6 MB bill list. That is 11.2% of GitHub Pages' 1 GB limit, well under the half at which [DR-2](#dr-2) reverses. It took 9,060 seconds, nearly all of it aligning the section pairs, whose paraphrase marking embeds every sentence of their unmatched stretches. A rerun recomputes every alignment; it runs once per build, so that is not yet worth a cache.
 
 ## Alternatives considered
 

@@ -54,6 +54,8 @@ uv run lineage eval precision  # precision per stratum, stage and overall, peopl
 uv run lineage text inventory  # version to fetch per record, by host, robots.txt read -> data/text/plan.parquet, reports/text_inventory.json
 uv run lineage text sample   # quality test: fetch a seeded sample per state and format -> data/text/sample/, reports/text_quality.json
 uv run lineage text fetch    # fetch every planned record as rules/text_layer.toml says, California from its bulk download; resumable -> data/text/full/, reports/text_fetch.json
+uv run lineage export --state GA  # the static site's JSON for one state -> data/export/GA/ (local), reports/export.json
+uv run lineage export --schema   # the export's JSON Schema, the site's contract -> schema/export.schema.json
 uv run python -m evals.fixture  # rebuild tests/fixtures/commission/ from the local snapshot, dev only
 uv run python -m benchmarks.minhash  # NumPy vs datasketch: signing and LSH index time and memory (DR-3), dev only
 uv run lineage model fetch   # the pinned embedding models' files, hash-checked -> data/models/<name>/
@@ -141,6 +143,8 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   embed.py        unit-length vectors from a pinned model, offline (fastembed, ONNX), batched by token count
   vectors.py      `lineage embed`: plan the distinct windows, embed them in shards by worker processes, resume where it stopped
   ann.py          nearest neighbors over unit vectors: exact search, and faiss indexes (build extra), typed
+  export_schema.py  the site's data contract: every exported file as a Pydantic model, which emits the JSON Schema
+  export.py       `lineage export`: bill pages, comparisons, section texts, stories and the data stamp for one state
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
 tools/            dev and CI checks
   leak_check.py   local paths and deny-listed terms in tracked files and every commit
@@ -153,6 +157,7 @@ snapshot/manifest.json  the pinned snapshot: per-archive size, SHA-256, Generate
 snapshot/sessions.csv   session start/end dates and carryover, from a pinned scrapers commit
 rules/document_types.csv  which document types are matched, per state; first fitting rule wins
 rules/text_layer.toml  the text layer's rules: usable bar, per-state format and PDF reading, content elements, replacement
+schema/export.schema.json  the export's JSON Schema, generated from lineage.export_schema; a test fails when it drifts
 reports/          committed outputs of pipeline commands; README and DESIGN numbers cite them
   results.json    eval results, one section per eval; the README results table reads it
   results_exported_only.json  commission recall on the export's text alone, for the comparison in DR-6
@@ -174,6 +179,7 @@ data/             local snapshots and derived tables; gitignored, never committe
   tables/semantic/  the semantic stage's windows (units/), distinct texts (texts/), and each model's float16 vector shards
   pair_data/      the labeled pair dataset's split files, from `lineage pair-data fetch`; never committed
   models/<name>/  embedding model files at their pinned revision, from `lineage model fetch`
+  export/<ST>/    the static site's JSON for one state, from `lineage export`
 ```
 
 ## Conventions
