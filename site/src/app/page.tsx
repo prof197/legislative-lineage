@@ -43,11 +43,11 @@ export default function Home() {
               one&apos;s text differs.
             </p>
             <form action="bills/" method="get" style={{ marginTop: 44, maxWidth: 680 }}>
-              <label htmlFor="find" style={{ display: "block", fontSize: 16.5, fontWeight: 600, marginBottom: 8 }}>
+              <label htmlFor="find" style={{ display: "block", fontSize: 14, fontWeight: 600, marginBottom: 8 }}>
                 Find a {state} bill
               </label>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
-                <input id="find" name="q" type="search" className="input" placeholder="Bill number or title words, e.g. SB 120 or deepfake" style={{ flex: "1 1 320px", minWidth: 0, height: 52, fontSize: 17 }} />
+                <input id="find" name="q" type="search" className="input" placeholder="Bill number or title words, e.g. SB 120 or deepfake" style={{ flex: "1 1 320px", minWidth: 0, height: 52, fontSize: 16.5 }} />
                 <button type="submit" className="button solid" style={{ height: 52 }}>
                   Browse {state} bills
                   <Arrow />
