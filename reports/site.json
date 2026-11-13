@@ -1,29 +1,29 @@
 {
  "command": "cd site && npm run build && npm run size",
- "total_bytes": 353717434,
+ "total_bytes": 351586371,
  "files": 35673,
- "share_of_pages_limit": 0.3537,
+ "share_of_pages_limit": 0.3516,
  "parts": {
   "bill_pages": {
-   "bytes": 238403580,
+   "bytes": 236267414,
    "files": 22810,
    "html": 4562,
-   "share_of_site": 0.674
+   "share_of_site": 0.672
   },
   "data": {
    "bytes": 113535102,
    "files": 12782,
    "html": 0,
-   "share_of_site": 0.321
+   "share_of_site": 0.3229
   },
   "scripts_and_styles": {
-   "bytes": 1066216,
+   "bytes": 1072076,
    "files": 39,
    "html": 0,
    "share_of_site": 0.003
   },
   "other": {
-   "bytes": 712536,
+   "bytes": 711779,
    "files": 42,
    "html": 10,
    "share_of_site": 0.002
