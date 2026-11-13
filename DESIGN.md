@@ -565,7 +565,12 @@ They are not one sample measured three times. The scope narrowed between the fir
 - `compare/<a>--<b>.json` holds each listed relative's matched sections aligned ([Alignment](#alignment)), and each featured story pair's, with a featured pair's explanation read from the cache; the export never calls a model. The first bill is the hosted bill, or a story's anchor, whose text the comparison starts from.
 - `texts/<slug>.json` holds the display text of every section some comparison shows, once per bill, and `stories/<slug>.json` each featured story's anchor and relatives (`reports/featured_pairs.json`).
 
-**Facts, not wording.** The export carries what the pipeline knows and leaves its display to the site: the status as derived ([Bill status](#bill-status)), whether a bill's text is a Georgia local notice or an amendment alone (tested on the text matching read, by the patterns `lineage stats` counts with), and whether a relative's matched text names an interstate compact. How the site words a `passed_legislature` bill, shows notice-only and amendment-only bills, groups compact clauses, and heads the list of relatives found by meaning alone is decided with the site.
+**Facts, not wording.** The export carries what the pipeline knows and leaves its display to the site: the status as derived ([Bill status](#bill-status)), whether a bill's text is a Georgia local notice or an amendment alone (tested on the text matching read, by the patterns `lineage stats` counts with), and whether a relative's matched text names an interstate compact. How the site shows them was ruled on 2026-11-12:
+- A `passed_legislature` bill reads "Passed the legislature; outcome not recorded".
+- A notice-only bill has a page with one line saying that only the notice of intent to introduce the bill is in the source data, so it was not compared, and no relatives.
+- Relatives whose matched text names an interstate compact form their own group, listed after the others, with one line saying states adopt interstate compacts word for word.
+- The two lists of relatives are headed "Shares wording" and "Similar in meaning". The second does not say "no shared wording", since its comparisons can still mark exact spans.
+- A bill with none reads "No related bills found in other states' 2023–2026 sessions", linking to the validation page for what the search can miss: "found", never that none exist.
 
 **Text kept out of the comparisons.** A section is shown beside each of its relatives, so a comparison carrying both texts would repeat a section's text once for every relative it matches. A comparison therefore holds only span offsets, and the site reads both texts from the bills' `texts/` files, where each section's text is written once (a test checks it).
 
@@ -698,6 +703,7 @@ The build plan is the plan. Ideas that arise along the way are recorded here wit
 | A wider neighbor cap for single queries | Pennsylvania's development enactment is lost to the cap: SB 972's window is above the threshold but outside the act window's 20 nearest ([Stage ablation](#stage-ablation)). Development misses do not tune matching | The final evaluation misses an enactment whose bill's best cosine is above the threshold |
 | Further tuning of the semantic threshold | 0.94 is the last threshold change in v1. Each change needs a fresh sample to report from, and two samples have already become tuning data ([Choosing the threshold](#choosing-the-threshold)) | A user reports misleading relatives found by meaning alone |
 | Bracketed placeholders in the act texts | The act parser keeps an act's placeholders and optional bracketed text as written, which a state may fill in or drop; a test pins what reaches the query (`tests/test_acts.py`) | After the final evaluation, a miss traces to a placeholder the state filled in |
+| A baseline page against plain web search | Dropped from v1 (ruled 2026-11-12): the stage ablation already shows what each stage adds ([Stage ablation](#stage-ablation)), and a precomputed baseline needs a search API whose terms commonly restrict storing and republishing its results | A user or reviewer asks how the tool compares with plain web search |
 
 ## Decision records
 
