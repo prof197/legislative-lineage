@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -163,39 +163,44 @@
  "explanation": {
   "claims": [
    {
-    "kind": "removed",
-    "summary": "The origin defines synthetic media as content manipulated with generative adversarial network or other digital techniques, and lets a candidate sue the sponsor of an electioneering communication.",
+    "kind": "changed",
+    "summary": "The origin defines \"synthetic media\" of any individual made with GAN or digital tech; the descendant defines \"materially deceptive media\" of a candidate, used for campaigns, made by AI systems.",
     "origin_span_ids": [
      "s0",
-     "s3",
-     "s6"
+     "s3"
     ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant covers AI-made deceptive media of a candidate used for campaign purposes, allows suits against knowing disseminators, punitive damages, a 3-year limit and expedited proceedings.",
-    "origin_span_ids": [],
     "descendant_span_ids": [
      "s1",
      "s4"
     ]
    },
    {
-    "kind": "added",
-    "summary": "The descendant requires the visual, video and audio disclosures to appear in the same language as the media itself.",
-    "origin_span_ids": [],
+    "kind": "changed",
+    "summary": "The origin lets a candidate seek injunctions and damages against the sponsor; the descendant sues knowing disseminators, allows punitive damages, and sets a three-year filing limit.",
+    "origin_span_ids": [
+     "s3"
+    ],
     "descendant_span_ids": [
-     "s11",
-     "s19",
-     "s25"
+     "s4"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The origin merely encourages expedient rulings; the descendant mandates expedited proceedings, automatic calendar preference, and a set standard for preliminary election relief.",
+    "origin_span_ids": [
+     "s24"
+    ],
+    "descendant_span_ids": [
+     "s4"
     ]
    },
    {
     "kind": "added",
-    "summary": "The descendant exempts broadcasters, news publications and websites that acknowledge the falsity, satire or parody, and preserves 47 U.S.C. § 230 protections.",
+    "summary": "The descendant requires disclosures in the media's own language and exempts news broadcasters, paid broadcasts, publications, and satire or parody, and preserves 47 U.S.C. 230 protections.",
     "origin_span_ids": [],
     "descendant_span_ids": [
+     "s11",
+     "s19",
      "s25"
     ]
    }
@@ -213,13 +218,70 @@
  },
  "attempts": 2,
  "unusable_attempts": [
-  "off the schema: claims.0.summary: String should have at most 200 characters; claims.1.summary: String should have at most 200 characters"
+  "off the schema: claims.0.summary: String should have at most 200 characters"
  ],
  "earlier": [
   {
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin defines synthetic media as content manipulated with generative adversarial network or other digital techniques, and lets a candidate sue the sponsor of an electioneering communication.",
+      "origin_span_ids": [
+       "s0",
+       "s3",
+       "s6"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant covers AI-made deceptive media of a candidate used for campaign purposes, allows suits against knowing disseminators, punitive damages, a 3-year limit and expedited proceedings.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s4"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant requires the visual, video and audio disclosures to appear in the same language as the media itself.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s11",
+       "s19",
+       "s25"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant exempts broadcasters, news publications and websites that acknowledge the falsity, satire or parody, and preserves 47 U.S.C. § 230 protections.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s25"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "off the schema: claims.0.summary: String should have at most 200 characters; claims.1.summary: String should have at most 200 characters"
+   ],
+   "attempts": 2
   }
  ]
 }

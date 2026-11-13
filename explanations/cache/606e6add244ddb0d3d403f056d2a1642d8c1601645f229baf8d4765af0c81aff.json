@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -80,7 +80,7 @@
   "claims": [
    {
     "kind": "removed",
-    "summary": "The origin limits liability for electioneering communications to the sponsor, with exceptions for media that remove disclosures or alter content into synthetic media; the descendant has no such text.",
+    "summary": "The origin limits liability for electioneering communications to the sponsor, with exceptions for media that remove disclosures or alter content into synthetic media; the descendant lacks this.",
     "origin_span_ids": [
      "s5"
     ],
@@ -88,17 +88,18 @@
    },
    {
     "kind": "added",
-    "summary": "The descendant defines abortion-related terms such as abortion fund, abortion-inducing drug, abortion provider, elective abortion, attempt, and aiding or abetting; the origin has none.",
+    "summary": "The descendant defines abortion-related terms, including abortion fund, abortion-inducing drug, abortion provider, elective abortion, attempt, and medical emergency.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s3",
      "s6",
-     "s8"
+     "s8",
+     "s11"
     ]
    },
    {
     "kind": "added",
-    "summary": "The descendant defines affiliate, governmental entity, taxpayer resource transaction, medical emergency, unborn child, woman, and related terms; the origin lacks these definitions.",
+    "summary": "The descendant defines affiliate, governmental entity, policy, political subdivision, and taxpayer resource transaction, with exclusions for basic public services and legislative testimony.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s6",
@@ -107,12 +108,14 @@
     ]
    },
    {
-    "kind": "removed",
-    "summary": "The origin defines information content provider as any person or entity responsible for creating online content in a separate lettered subsection; the descendant has no such subsection.",
+    "kind": "changed",
+    "summary": "The descendant defines information content provider as \"a person\"; the origin says \"any person or entity\" and places the definition after interactive computer service.",
     "origin_span_ids": [
      "s10"
     ],
-    "descendant_span_ids": []
+    "descendant_span_ids": [
+     "s8"
+    ]
    }
   ]
  },
@@ -185,6 +188,60 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin limits liability for electioneering communications to the sponsor, with exceptions for media that remove disclosures or alter content into synthetic media; the descendant has no such text.",
+      "origin_span_ids": [
+       "s5"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant defines abortion-related terms such as abortion fund, abortion-inducing drug, abortion provider, elective abortion, attempt, and aiding or abetting; the origin has none.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s3",
+       "s6",
+       "s8"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant defines affiliate, governmental entity, taxpayer resource transaction, medical emergency, unborn child, woman, and related terms; the origin lacks these definitions.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s6",
+       "s8",
+       "s11"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin defines information content provider as any person or entity responsible for creating online content in a separate lettered subsection; the descendant has no such subsection.",
+      "origin_span_ids": [
+       "s10"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [],
+   "attempts": 1
   }
  ]
 }

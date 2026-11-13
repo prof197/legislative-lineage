@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -92,7 +92,7 @@
   "claims": [
    {
     "kind": "removed",
-    "summary": "The origin makes the sponsor of an electioneering communication liable and lets a medium be liable if it strips disclosures or alters content into synthetic media; the descendant has no such rule.",
+    "summary": "The origin limits liability for electioneering communications to the sponsor and makes a medium liable if it strips disclosures or alters content into synthetic media; the descendant has none of this.",
     "origin_span_ids": [
      "s0",
      "s7"
@@ -101,15 +101,7 @@
    },
    {
     "kind": "added",
-    "summary": "The descendant shields providers and users from liability for good-faith actions restricting obscene, harassing, or hate-inciting material, and for providing tools to restrict access.",
-    "origin_span_ids": [],
-    "descendant_span_ids": [
-     "s8"
-    ]
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant titles the section as liability for defamatory material on the Internet and limits the immunity to information provided to a service on the Internet.",
+    "summary": "The descendant is titled as a section on liability for defamatory material on the Internet and frames the immunity as covering information provided to the service on the Internet.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s1",
@@ -119,7 +111,15 @@
    },
    {
     "kind": "added",
-    "summary": "The descendant defines \"disability\" and \"Internet\" (the international network of interoperable packet-switched data networks); the origin defines neither term.",
+    "summary": "The descendant shields providers and users from liability for good-faith actions restricting obscene, harassing or hate-inciting material, and for enabling technical means to restrict access.",
+    "origin_span_ids": [],
+    "descendant_span_ids": [
+     "s8"
+    ]
+   },
+   {
+    "kind": "added",
+    "summary": "The descendant defines \"disability\" and \"Internet\"; the origin defines neither.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s10",
@@ -138,15 +138,69 @@
   ],
   "dropped": []
  },
- "attempts": 2,
- "unusable_attempts": [
-  "a claim fails grounding (claim 2: s7 is on one side only, so it shows text one side lacks, not a change)"
- ],
+ "attempts": 1,
+ "unusable_attempts": [],
  "earlier": [
   {
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin makes the sponsor of an electioneering communication liable and lets a medium be liable if it strips disclosures or alters content into synthetic media; the descendant has no such rule.",
+      "origin_span_ids": [
+       "s0",
+       "s7"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant shields providers and users from liability for good-faith actions restricting obscene, harassing, or hate-inciting material, and for providing tools to restrict access.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s8"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant titles the section as liability for defamatory material on the Internet and limits the immunity to information provided to a service on the Internet.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s3",
+       "s5"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant defines \"disability\" and \"Internet\" (the international network of interoperable packet-switched data networks); the origin defines neither term.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s10",
+       "s13"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "a claim fails grounding (claim 2: s7 is on one side only, so it shows text one side lacks, not a change)"
+   ],
+   "attempts": 2
   }
  ]
 }

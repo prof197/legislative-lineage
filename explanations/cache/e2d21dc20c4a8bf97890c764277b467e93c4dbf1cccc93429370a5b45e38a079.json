@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -242,7 +242,7 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant includes a full social media regulation article: definitions, age verification, parental consent, minor account protections, Attorney General enforcement and a private right of action.",
+    "summary": "The descendant includes a full social media regulation article: definitions, age verification, parental consent for minors, minor account restrictions, AG enforcement and a private right of action.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s1",
@@ -250,29 +250,31 @@
     ]
    },
    {
-    "kind": "removed",
-    "summary": "The origin's curriculum covers social, emotional and physical effects of social media, effects particularly on teenagers, and disinformation and misinformation; the descendant lacks these topics.",
+    "kind": "changed",
+    "summary": "The descendant's curriculum covers negative mental health effects including addiction and social media's ability to manipulate; the origin lists social, emotional, physical effects and disinformation.",
     "origin_span_ids": [
      "s14",
-     "s17"
-    ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "changed",
-    "summary": "The descendant addresses social media's ability to manipulate and influence thoughts and behaviors; the origin covers how social media influences them.",
-    "origin_span_ids": [
+     "s17",
      "s19"
     ],
     "descendant_span_ids": [
+     "s15",
+     "s18",
      "s19"
     ]
    },
    {
     "kind": "removed",
-    "summary": "The origin permits instruction on benefits of social media and requires the Department to give technical assistance to local boards; the descendant has neither.",
+    "summary": "The origin allows the programs to include information on benefits of social media use, such as career readiness and safely connecting with others; the descendant has no such provision.",
     "origin_span_ids": [
-     "s28",
+     "s28"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin requires the Department of Education to provide technical assistance to local boards and publish materials as periodically updated; the descendant lacks this.",
+    "origin_span_ids": [
      "s34"
     ],
     "descendant_span_ids": []
@@ -348,6 +350,61 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant includes a full social media regulation article: definitions, age verification, parental consent, minor account protections, Attorney General enforcement and a private right of action.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s38"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin's curriculum covers social, emotional and physical effects of social media, effects particularly on teenagers, and disinformation and misinformation; the descendant lacks these topics.",
+      "origin_span_ids": [
+       "s14",
+       "s17"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant addresses social media's ability to manipulate and influence thoughts and behaviors; the origin covers how social media influences them.",
+      "origin_span_ids": [
+       "s19"
+      ],
+      "descendant_span_ids": [
+       "s19"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin permits instruction on benefits of social media and requires the Department to give technical assistance to local boards; the descendant has neither.",
+      "origin_span_ids": [
+       "s28",
+       "s34"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [],
+   "attempts": 1
   }
  ]
 }

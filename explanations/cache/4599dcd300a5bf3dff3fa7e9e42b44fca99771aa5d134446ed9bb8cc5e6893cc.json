@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -103,19 +103,13 @@
  "explanation": {
   "claims": [
    {
-    "kind": "removed",
-    "summary": "The origin frames the motion around a 'cause of action' to which 'this chapter' applies and allows dismissal of the cause of action or part of it; the descendant lacks this wording.",
+    "kind": "changed",
+    "summary": "The descendant lets a party move to dismiss a \"civil action\" or part of it; the origin refers to dismissing a \"cause of action\" or part of it.",
     "origin_span_ids": [
      "s8",
      "s11",
      "s14"
     ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant frames the motion around a 'civil action' to which [sections 1 through 12] apply and allows dismissal of the civil action or part of it.",
-    "origin_span_ids": [],
     "descendant_span_ids": [
      "s9",
      "s12",
@@ -123,20 +117,32 @@
     ]
    },
    {
-    "kind": "removed",
-    "summary": "The origin's list of triggering pleadings includes a 'third-party claim'; the descendant's list does not.",
+    "kind": "changed",
+    "summary": "The descendant's motion applies to pleadings asserting a civil action covered by sections 1 through 12; the origin's applies to a cause of action covered by this chapter.",
+    "origin_span_ids": [
+     "s8"
+    ],
+    "descendant_span_ids": [
+     "s9"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The origin lists a third-party claim among triggering pleadings; the descendant lists a third-party complaint instead.",
     "origin_span_ids": [
      "s5"
     ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant's list of triggering pleadings includes a 'third-party complaint', which the origin's list does not name.",
-    "origin_span_ids": [],
     "descendant_span_ids": [
      "s6"
     ]
+   },
+   {
+    "kind": "removed",
+    "summary": "The origin counts the 60 days from \"the day on which\" a party is served; the descendant counts from when a party is served, without that phrase.",
+    "origin_span_ids": [
+     "s3"
+    ],
+    "descendant_span_ids": []
    }
   ]
  },
@@ -150,10 +156,8 @@
   ],
   "dropped": []
  },
- "attempts": 2,
- "unusable_attempts": [
-  "no claim cites spans that exist and differ (claim 1: s8 is on one side only, so it shows text one side lacks, not a change; claim 2: s5 is on one side only, so it shows text one side lacks, not a change; claim 3: s8 is on one side only, so it shows text one side lacks, not a change; claim 4: s3 is on one side only, so it shows text one side lacks, not a change)"
- ],
+ "attempts": 1,
+ "unusable_attempts": [],
  "earlier": [
   {
    "explanation": {
@@ -210,6 +214,62 @@
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin frames the motion around a 'cause of action' to which 'this chapter' applies and allows dismissal of the cause of action or part of it; the descendant lacks this wording.",
+      "origin_span_ids": [
+       "s8",
+       "s11",
+       "s14"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant frames the motion around a 'civil action' to which [sections 1 through 12] apply and allows dismissal of the civil action or part of it.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s9",
+       "s12",
+       "s15"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin's list of triggering pleadings includes a 'third-party claim'; the descendant's list does not.",
+      "origin_span_ids": [
+       "s5"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant's list of triggering pleadings includes a 'third-party complaint', which the origin's list does not name.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s6"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "no claim cites spans that exist and differ (claim 1: s8 is on one side only, so it shows text one side lacks, not a change; claim 2: s5 is on one side only, so it shows text one side lacks, not a change; claim 3: s8 is on one side only, so it shows text one side lacks, not a change; claim 4: s3 is on one side only, so it shows text one side lacks, not a change)"
+   ],
+   "attempts": 2
   }
  ]
 }

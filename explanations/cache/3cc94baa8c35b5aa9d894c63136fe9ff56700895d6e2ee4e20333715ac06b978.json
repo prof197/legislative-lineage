@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -52,5 +53,19 @@
  "grounded": {
   "kept": [],
   "dropped": []
- }
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": []
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [],
+    "dropped": []
+   }
+  }
+ ]
 }

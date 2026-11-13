@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -188,31 +188,25 @@
   "claims": [
    {
     "kind": "removed",
-    "summary": "The origin defines \"goods or services,\" \"governmental unit,\" and \"person\"; the descendant has no definitions in this section.",
+    "summary": "The origin defines \"goods or services\" (excluding creative, political and journalistic works), \"governmental unit\" and \"person\"; the descendant contains no such definitions.",
     "origin_span_ids": [
      "s0"
     ],
     "descendant_span_ids": []
    },
    {
-    "kind": "removed",
-    "summary": "The origin protects rights guaranteed by the United States Constitution or Utah Constitution; the descendant's text lacks the reference to the Utah Constitution.",
+    "kind": "changed",
+    "summary": "The origin protects rights guaranteed by the U.S. Constitution or Utah Constitution; the descendant refers to the United State[s] Constitution or the New Jersey Constitution.",
     "origin_span_ids": [
      "s14"
     ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant protects rights guaranteed by the United State Constitution or the New Jersey Constitution, a state constitution the origin does not name.",
-    "origin_span_ids": [],
     "descendant_span_ids": [
      "s15"
     ]
    },
    {
     "kind": "removed",
-    "summary": "The origin's commercial-speech exclusion ends with \"goods or services\"; the descendant's text stops at \"sale or lease of the\" without naming the object.",
+    "summary": "The origin's commercial-speech exception ends \"sale or lease of the goods or services\"; the descendant's text stops at \"sale or lease of the\" without naming the object.",
     "origin_span_ids": [
      "s29"
     ],
@@ -225,8 +219,7 @@
   "kept": [
    0,
    1,
-   2,
-   3
+   2
   ],
   "dropped": []
  },
@@ -296,6 +289,56 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin defines \"goods or services,\" \"governmental unit,\" and \"person\"; the descendant has no definitions in this section.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin protects rights guaranteed by the United States Constitution or Utah Constitution; the descendant's text lacks the reference to the Utah Constitution.",
+      "origin_span_ids": [
+       "s14"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant protects rights guaranteed by the United State Constitution or the New Jersey Constitution, a state constitution the origin does not name.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s15"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin's commercial-speech exclusion ends with \"goods or services\"; the descendant's text stops at \"sale or lease of the\" without naming the object.",
+      "origin_span_ids": [
+       "s29"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [],
+   "attempts": 1
   }
  ]
 }

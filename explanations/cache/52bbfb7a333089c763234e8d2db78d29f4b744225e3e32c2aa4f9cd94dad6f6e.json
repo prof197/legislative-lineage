@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -170,25 +170,16 @@
   "claims": [
    {
     "kind": "removed",
-    "summary": "The origin includes definitions (account holder, educational entity, minor, post, social media platform, user) and exclusions for email and adult-only services; the descendant lacks these.",
+    "summary": "The origin includes definitions (account holder, educational entity, minor, post, social media platform, user) and many exclusions (photo editing, cloud, payments, etc.); the descendant lacks them.",
     "origin_span_ids": [
-     "s0"
+     "s0",
+     "s25"
     ],
     "descendant_span_ids": []
    },
    {
-    "kind": "removed",
-    "summary": "The origin lists many further exclusions (photo editing, cloud storage, teleconferencing, payments, educational and career services, etc.) and a 'user' definition; the descendant lacks them.",
-    "origin_span_ids": [
-     "s25"
-    ],
-    "descendant_span_ids": [
-     "s26"
-    ]
-   },
-   {
     "kind": "added",
-    "summary": "The descendant includes a provision on communications that are shared only between sender and recipient, visible only to them, and not posted publicly; the origin has no such text.",
+    "summary": "The descendant has a fragment describing communications shared between sender and recipient, visible only to them, and not posted publicly; the origin has no such text.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s1"
@@ -196,13 +187,21 @@
    },
    {
     "kind": "changed",
-    "summary": "The descendant's streaming exclusion covers 'licensed media' without the origin's 'not user generated' limit; its news exclusion covers functions 'dependent upon' content, not 'indirectly related.'",
+    "summary": "The origin's streaming exclusion requires licensed media that is not user generated; the descendant requires only licensed media.",
     "origin_span_ids": [
-     "s4",
+     "s4"
+    ],
+    "descendant_span_ids": [
+     "s4"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The origin covers chat incidental to or directly or indirectly related to content; the descendant covers chat incidental to, directly related to, or dependent upon provision of the content.",
+    "origin_span_ids": [
      "s8"
     ],
     "descendant_span_ids": [
-     "s4",
      "s9"
     ]
    }
@@ -213,18 +212,14 @@
   "kept": [
    0,
    1,
-   2
+   2,
+   3
   ],
-  "dropped": [
-   [
-    3,
-    "s8 is on one side only, so it shows text one side lacks, not a change"
-   ]
-  ]
+  "dropped": []
  },
- "attempts": 1,
+ "attempts": 2,
  "unusable_attempts": [
-  "off the schema: claims.1.summary: String should have at most 200 characters"
+  "off the schema: claims.0.summary: String should have at most 200 characters"
  ],
  "earlier": [
   {
@@ -284,6 +279,64 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin includes definitions (account holder, educational entity, minor, post, social media platform, user) and exclusions for email and adult-only services; the descendant lacks these.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin lists many further exclusions (photo editing, cloud storage, teleconferencing, payments, educational and career services, etc.) and a 'user' definition; the descendant lacks them.",
+      "origin_span_ids": [
+       "s25"
+      ],
+      "descendant_span_ids": [
+       "s26"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant includes a provision on communications that are shared only between sender and recipient, visible only to them, and not posted publicly; the origin has no such text.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant's streaming exclusion covers 'licensed media' without the origin's 'not user generated' limit; its news exclusion covers functions 'dependent upon' content, not 'indirectly related.'",
+      "origin_span_ids": [
+       "s4",
+       "s8"
+      ],
+      "descendant_span_ids": [
+       "s4",
+       "s9"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "off the schema: claims.1.summary: String should have at most 200 characters"
+   ],
+   "attempts": 1
   }
  ]
 }

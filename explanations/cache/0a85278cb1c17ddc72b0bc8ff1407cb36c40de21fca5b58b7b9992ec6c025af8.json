@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -284,7 +284,7 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant contains a full anti-SLAPP framework: title, definitions, scope and exceptions, motion deadline, hearing, dismissal standard, appeal, fees, construction and a 2026 effective date.",
+    "summary": "The descendant sets out the full act: title, definitions, scope and exclusions, a 60-day motion deadline, hearing and ruling timelines, dismissal standards, appeal and fee rules.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s1",
@@ -292,27 +292,32 @@
     ]
    },
    {
-    "kind": "added",
-    "summary": "The descendant specifies that the stay of proceedings between the moving and responding parties takes effect on the filing of the special motion to dismiss.",
-    "origin_span_ids": [],
+    "kind": "changed",
+    "summary": "The descendant splits the discretionary stay: a hearing is stayed if its ruling would decide a material issue, and discovery if it relates to one; the origin applies one test to both.",
+    "origin_span_ids": [
+     "s9",
+     "s12"
+    ],
     "descendant_span_ids": [
-     "s3",
-     "s5"
+     "s10",
+     "s13"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant's fee motion exempt from the stay covers costs and expenses under subsection 12; the origin's covers costs, attorney fees and expenses under Section 78B-25-110.",
+    "origin_span_ids": [
+     "s36"
+    ],
+    "descendant_span_ids": [
+     "s37"
     ]
    },
    {
     "kind": "removed",
-    "summary": "The origin opens the appeal-stay provision by excepting Subsections (5), (6) and (7); the descendant's appeal stay has no such express exception clause.",
+    "summary": "The origin makes the appeal stay subject to exceptions in Subsections (5), (6) and (7); the descendant states the appeal stay with no such exceptions.",
     "origin_span_ids": [
      "s22"
-    ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "removed",
-    "summary": "The origin expressly names attorney fees among the items in a motion that is not subject to the stay; the descendant's corresponding text names only costs and expenses.",
-    "origin_span_ids": [
-     "s36"
     ],
     "descendant_span_ids": []
    }
@@ -328,8 +333,10 @@
   ],
   "dropped": []
  },
- "attempts": 1,
- "unusable_attempts": [],
+ "attempts": 2,
+ "unusable_attempts": [
+  "off the schema: claims.0.summary: String should have at most 200 characters; claims.1.summary: String should have at most 200 characters"
+ ],
  "earlier": [
   {
    "explanation": {
@@ -395,6 +402,58 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant contains a full anti-SLAPP framework: title, definitions, scope and exceptions, motion deadline, hearing, dismissal standard, appeal, fees, construction and a 2026 effective date.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s45"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant specifies that the stay of proceedings between the moving and responding parties takes effect on the filing of the special motion to dismiss.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s3",
+       "s5"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin opens the appeal-stay provision by excepting Subsections (5), (6) and (7); the descendant's appeal stay has no such express exception clause.",
+      "origin_span_ids": [
+       "s22"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin expressly names attorney fees among the items in a motion that is not subject to the stay; the descendant's corresponding text names only costs and expenses.",
+      "origin_span_ids": [
+       "s36"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [],
+   "attempts": 1
   }
  ]
 }

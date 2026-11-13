@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -76,62 +76,12 @@
    "descendant": "167d5dd9b4e0950a46d1c32a002b4829ed7ead04c3601a39c0c9c6aff87fb0dc"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "removed",
-    "summary": "The origin limits sponsor vs. medium liability, makes media liable only for removing disclosures or creating synthetic media, and shields interactive services; the descendant lacks this.",
-    "origin_span_ids": [
-     "s0"
-    ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant's interactive computer service definition is non-exhaustive (\"but not limited to\") and covers educational entities and social media platforms; the origin names educational institutions.",
-    "origin_span_ids": [
-     "s2",
-     "s5"
-    ],
-    "descendant_span_ids": [
-     "s3",
-     "s6"
-    ]
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant extends information content provider to anyone materially contributing to illegal content and to social media platforms; the origin has no such extension.",
-    "origin_span_ids": [],
-    "descendant_span_ids": [
-     "s11"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The descendant defines information content provider as an individual or entity using any interactive computer service; the origin says person or entity and any other interactive computer service.",
-    "origin_span_ids": [
-     "s8",
-     "s10"
-    ],
-    "descendant_span_ids": [
-     "s8",
-     "s10"
-    ]
-   }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1,
-   2,
-   3
-  ],
-  "dropped": []
- },
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
  "attempts": 2,
  "unusable_attempts": [
+  "off the schema: claims.1.summary: String should have at most 200 characters",
   "off the schema: claims.1.summary: String should have at most 200 characters"
  ],
  "earlier": [
@@ -139,6 +89,66 @@
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin limits sponsor vs. medium liability, makes media liable only for removing disclosures or creating synthetic media, and shields interactive services; the descendant lacks this.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant's interactive computer service definition is non-exhaustive (\"but not limited to\") and covers educational entities and social media platforms; the origin names educational institutions.",
+      "origin_span_ids": [
+       "s2",
+       "s5"
+      ],
+      "descendant_span_ids": [
+       "s3",
+       "s6"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant extends information content provider to anyone materially contributing to illegal content and to social media platforms; the origin has no such extension.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s11"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The descendant defines information content provider as an individual or entity using any interactive computer service; the origin says person or entity and any other interactive computer service.",
+      "origin_span_ids": [
+       "s8",
+       "s10"
+      ],
+      "descendant_span_ids": [
+       "s8",
+       "s10"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "off the schema: claims.1.summary: String should have at most 200 characters"
+   ],
+   "attempts": 2
   }
  ]
 }

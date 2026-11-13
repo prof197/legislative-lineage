@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -637,8 +637,18 @@
  "explanation": {
   "claims": [
    {
+    "kind": "changed",
+    "summary": "The descendant defines a minor as under 18 and not emancipated or married; the origin defines a minor as a state resident known or believed by the platform to be under 16.",
+    "origin_span_ids": [
+     "s11"
+    ],
+    "descendant_span_ids": [
+     "s12"
+    ]
+   },
+   {
     "kind": "added",
-    "summary": "The descendant defines addiction, Secretary, Department, interactive computer service, reasonable age verification methods, and social media company (5,000,000+ account holders).",
+    "summary": "The descendant adds definitions of addiction, Secretary, Department, interactive computer service, reasonable age verification methods, and social media company (5,000,000+ account holders).",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s9",
@@ -647,29 +657,24 @@
    },
    {
     "kind": "removed",
-    "summary": "The origin defines 'educational entity' as a list of public and private schools, university and technical college system units, and private colleges; the descendant has no such definition.",
+    "summary": "The origin defines 'educational entity' by listing Georgia schools and college systems; the descendant has no such definition.",
     "origin_span_ids": [
      "s8"
     ],
     "descendant_span_ids": []
    },
    {
-    "kind": "added",
-    "summary": "The descendant defines a minor as an individual under 18 who has not been emancipated or has not been married.",
-    "origin_span_ids": [],
-    "descendant_span_ids": [
-     "s12"
-    ]
-   },
-   {
-    "kind": "removed",
-    "summary": "The origin also excludes from 'social media platform' services barring minors with age assurance, internet access and broadband, and peer-to-peer payment services.",
+    "kind": "changed",
+    "summary": "The origin's exclusions include age-restricted services, broadband, and peer-to-peer payments; the descendant drops these and adds direct messaging and professional creative networks.",
     "origin_span_ids": [
      "s26",
      "s94",
      "s100"
     ],
-    "descendant_span_ids": []
+    "descendant_span_ids": [
+     "s27",
+     "s61"
+    ]
    }
   ]
  },
@@ -749,6 +754,59 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant defines addiction, Secretary, Department, interactive computer service, reasonable age verification methods, and social media company (5,000,000+ account holders).",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s9",
+       "s15"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin defines 'educational entity' as a list of public and private schools, university and technical college system units, and private colleges; the descendant has no such definition.",
+      "origin_span_ids": [
+       "s8"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant defines a minor as an individual under 18 who has not been emancipated or has not been married.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s12"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin also excludes from 'social media platform' services barring minors with age assurance, internet access and broadband, and peer-to-peer payment services.",
+      "origin_span_ids": [
+       "s26",
+       "s94",
+       "s100"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [],
+   "attempts": 1
   }
  ]
 }

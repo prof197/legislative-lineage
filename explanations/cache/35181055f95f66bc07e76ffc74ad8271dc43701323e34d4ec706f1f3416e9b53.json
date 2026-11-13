@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -194,16 +194,28 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant has its own short title, synthetic media definitions, injunctive relief and damages for candidates, a disclosure-based affirmative defense, and a clear-and-convincing burden.",
+    "summary": "The descendant is a self-contained section titled the FAIR Elections Act that defines synthetic media, grants candidates injunctive relief and damages, and sets a disclosure-based affirmative defense.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s1"
     ]
    },
    {
-    "kind": "added",
-    "summary": "The descendant applies the medium-liability rules to expenditures by a candidate and independent expenditures, not only electioneering communications.",
-    "origin_span_ids": [],
+    "kind": "changed",
+    "summary": "The descendant places liability on the information content provider; the origin places it on the sponsor of the electioneering communication.",
+    "origin_span_ids": [
+     "s0"
+    ],
+    "descendant_span_ids": [
+     "s1"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant applies the medium-liability rules to expenditures by a candidate and independent expenditures as well; the origin covers only electioneering communications.",
+    "origin_span_ids": [
+     "s18"
+    ],
     "descendant_span_ids": [
      "s3",
      "s11",
@@ -212,23 +224,14 @@
     ]
    },
    {
-    "kind": "removed",
-    "summary": "The origin makes the sponsor of the electioneering communication the party who may be held liable; the descendant has no such sponsor language.",
+    "kind": "changed",
+    "summary": "The descendant defines interactive computer service and information content provider at the start of the section; the origin defines them at the end, in subsections (3)(b) and (c).",
     "origin_span_ids": [
-     "s0"
+     "s29"
     ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "removed",
-    "summary": "The origin refers to a separate section 2 for the cause of action, disclosure requirements, affirmative defenses and the synthetic media definition; the descendant has no such references.",
-    "origin_span_ids": [
-     "s15",
-     "s18",
-     "s21",
-     "s26"
-    ],
-    "descendant_span_ids": []
+    "descendant_span_ids": [
+     "s1"
+    ]
    }
   ]
  },
@@ -242,15 +245,71 @@
   ],
   "dropped": []
  },
- "attempts": 2,
- "unusable_attempts": [
-  "a claim fails grounding (claim 3: s0 is on one side only, so it shows text one side lacks, not a change; claim 4: s18 is on one side only, so it shows text one side lacks, not a change)"
- ],
+ "attempts": 1,
+ "unusable_attempts": [],
  "earlier": [
   {
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant has its own short title, synthetic media definitions, injunctive relief and damages for candidates, a disclosure-based affirmative defense, and a clear-and-convincing burden.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant applies the medium-liability rules to expenditures by a candidate and independent expenditures, not only electioneering communications.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s3",
+       "s11",
+       "s19",
+       "s24"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin makes the sponsor of the electioneering communication the party who may be held liable; the descendant has no such sponsor language.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin refers to a separate section 2 for the cause of action, disclosure requirements, affirmative defenses and the synthetic media definition; the descendant has no such references.",
+      "origin_span_ids": [
+       "s15",
+       "s18",
+       "s21",
+       "s26"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "a claim fails grounding (claim 3: s0 is on one side only, so it shows text one side lacks, not a change; claim 4: s18 is on one side only, so it shows text one side lacks, not a change)"
+   ],
+   "attempts": 2
   }
  ]
 }

@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -182,7 +182,7 @@
   "claims": [
    {
     "kind": "removed",
-    "summary": "The origin exempts causes of action against governmental units or their agents acting officially, and those by governmental units enforcing laws against imminent public health or safety threats.",
+    "summary": "The origin exempts causes of action against governmental units or their agents and certain enforcement actions by governmental units; the descendant has no such exemptions.",
     "origin_span_ids": [
      "s25"
     ],
@@ -190,25 +190,31 @@
    },
    {
     "kind": "added",
-    "summary": "The descendant excludes claims by individuals under listed civil rights, employment, whistleblower, workers' compensation, and freedom of information statutes.",
+    "summary": "The descendant excludes claims by individuals under listed civil rights, whistleblower, disability, labor, and information laws; the origin has no such exclusion.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s28"
     ]
    },
    {
-    "kind": "added",
-    "summary": "The descendant covers only causes of action asserted after the act's effective date.",
-    "origin_span_ids": [],
+    "kind": "changed",
+    "summary": "The descendant defines an \"eligible cause of action\" limited to ones asserted after the act's effective date; the origin states the chapter applies to such causes of action without a date limit.",
+    "origin_span_ids": [
+     "s6"
+    ],
     "descendant_span_ids": [
+     "s7",
      "s9"
     ]
    },
    {
-    "kind": "added",
-    "summary": "The descendant refers to rights guaranteed by the state constitution of 1963.",
-    "origin_span_ids": [],
+    "kind": "changed",
+    "summary": "The descendant cites the state constitution of 1963 and the right to petition the government for redress of grievances; the origin cites the Utah Constitution and the right to petition.",
+    "origin_span_ids": [
+     "s22"
+    ],
     "descendant_span_ids": [
+     "s20",
      "s23"
     ]
    }
@@ -224,8 +230,10 @@
   ],
   "dropped": []
  },
- "attempts": 1,
- "unusable_attempts": [],
+ "attempts": 2,
+ "unusable_attempts": [
+  "off the schema: claims.0.summary: String should have at most 200 characters"
+ ],
  "earlier": [
   {
    "explanation": {
@@ -289,6 +297,56 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin exempts causes of action against governmental units or their agents acting officially, and those by governmental units enforcing laws against imminent public health or safety threats.",
+      "origin_span_ids": [
+       "s25"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant excludes claims by individuals under listed civil rights, employment, whistleblower, workers' compensation, and freedom of information statutes.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s28"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant covers only causes of action asserted after the act's effective date.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s9"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant refers to rights guaranteed by the state constitution of 1963.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s23"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [],
+   "attempts": 1
   }
  ]
 }

@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -214,58 +214,14 @@
    "descendant": "fa106c166437a37e73a2eb078d010a0d22dc5f8bd3e07e77d8152b39c7af2b5f"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "added",
-    "summary": "The descendant bars distributing materially deceptive media with actual malice within 90 days of an election, covering candidate depictions and election operations.",
-    "origin_span_ids": [],
-    "descendant_span_ids": [
-     "s1",
-     "s4",
-     "s7"
-    ]
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant exempts bona fide news broadcasts, paid broadcasts, news publications, and satire or parody, and preserves 47 U.S.C. 230 protections.",
-    "origin_span_ids": [],
-    "descendant_span_ids": [
-     "s34"
-    ]
-   },
-   {
-    "kind": "removed",
-    "summary": "The origin defines synthetic media as content manipulated with generative adversarial network techniques or other digital technology to create a realistic false depiction.",
-    "origin_span_ids": [
-     "s0",
-     "s3"
-    ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "removed",
-    "summary": "The origin treats the disclosure as an affirmative defense, allows damages against the sponsor, and encourages courts to decide matters expediently.",
-    "origin_span_ids": [
-     "s6",
-     "s33"
-    ],
-    "descendant_span_ids": []
-   }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1,
-   2,
-   3
-  ],
-  "dropped": []
- },
- "attempts": 1,
- "unusable_attempts": [],
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
+ "attempts": 2,
+ "unusable_attempts": [
+  "off the schema: claims.0.summary: String should have at most 200 characters; claims.1.summary: String should have at most 200 characters",
+  "off the schema: claims.0.summary: String should have at most 200 characters"
+ ],
  "earlier": [
   {
    "explanation": {
@@ -333,6 +289,60 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant bars distributing materially deceptive media with actual malice within 90 days of an election, covering candidate depictions and election operations.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s4",
+       "s7"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant exempts bona fide news broadcasts, paid broadcasts, news publications, and satire or parody, and preserves 47 U.S.C. 230 protections.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s34"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin defines synthetic media as content manipulated with generative adversarial network techniques or other digital technology to create a realistic false depiction.",
+      "origin_span_ids": [
+       "s0",
+       "s3"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin treats the disclosure as an affirmative defense, allows damages against the sponsor, and encourages courts to decide matters expediently.",
+      "origin_span_ids": [
+       "s6",
+       "s33"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [],
+   "attempts": 1
   }
  ]
 }

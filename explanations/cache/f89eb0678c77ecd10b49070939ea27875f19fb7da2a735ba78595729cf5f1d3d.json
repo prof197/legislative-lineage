@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -589,24 +589,18 @@
  "explanation": {
   "claims": [
    {
-    "kind": "added",
-    "summary": "The descendant defines a minor as an individual under eighteen who has not been emancipated or has not been married.",
-    "origin_span_ids": [],
+    "kind": "changed",
+    "summary": "The descendant defines a minor as under 18 and not emancipated or married; the origin defines a minor as a state resident known or reasonably believed by a platform to be under 16.",
+    "origin_span_ids": [
+     "s11"
+    ],
     "descendant_span_ids": [
      "s12"
     ]
    },
    {
-    "kind": "removed",
-    "summary": "The origin defines a minor as a state resident known or reasonably believed by a platform to be under 16, and defines a minor account holder; the descendant lacks this wording.",
-    "origin_span_ids": [
-     "s11"
-    ],
-    "descendant_span_ids": []
-   },
-   {
     "kind": "added",
-    "summary": "The descendant defines 'social media company' (a platform with at least five million account holders that is an interactive computer service), plus 'interactive computer service' and 'division'.",
+    "summary": "The descendant defines \"division\", \"interactive computer service\" and \"social media company\" (a platform with at least five million account holders worldwide); the origin has none of these.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s7",
@@ -615,14 +609,29 @@
     ]
    },
    {
-    "kind": "removed",
-    "summary": "The origin exempts services that bar minors through age assurance, internet access and broadband service, and peer-to-peer payment services; the descendant has no such exemptions.",
+    "kind": "changed",
+    "summary": "The origin requires an account holder to be a state resident; the descendant does not, and instead has separate definitions for New York state account holders and minor account holders.",
+    "origin_span_ids": [
+     "s3",
+     "s11"
+    ],
+    "descendant_span_ids": [
+     "s4",
+     "s96"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The origin's exclusions include age-restricted services, internet access/broadband and peer-to-peer payments; the descendant instead excludes direct messaging and creative portfolio networks.",
     "origin_span_ids": [
      "s24",
      "s85",
      "s91"
     ],
-    "descendant_span_ids": []
+    "descendant_span_ids": [
+     "s25",
+     "s54"
+    ]
    }
   ]
  },
@@ -636,8 +645,10 @@
   ],
   "dropped": []
  },
- "attempts": 1,
- "unusable_attempts": [],
+ "attempts": 2,
+ "unusable_attempts": [
+  "off the schema: claims.3.summary: String should have at most 200 characters"
+ ],
  "earlier": [
   {
    "explanation": {
@@ -708,6 +719,60 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant defines a minor as an individual under eighteen who has not been emancipated or has not been married.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s12"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin defines a minor as a state resident known or reasonably believed by a platform to be under 16, and defines a minor account holder; the descendant lacks this wording.",
+      "origin_span_ids": [
+       "s11"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant defines 'social media company' (a platform with at least five million account holders that is an interactive computer service), plus 'interactive computer service' and 'division'.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s7",
+       "s9",
+       "s15"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin exempts services that bar minors through age assurance, internet access and broadband service, and peer-to-peer payment services; the descendant has no such exemptions.",
+      "origin_span_ids": [
+       "s24",
+       "s85",
+       "s91"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [],
+   "attempts": 1
   }
  ]
 }

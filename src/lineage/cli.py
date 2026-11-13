@@ -66,12 +66,14 @@ from lineage.faithfulness import (
     JUDGE_MODEL,
     JUDGE_PROMPT,
     JUDGMENTS,
+    PairView,
     anthropic_judge,
     claims_to_judge,
     faithfulness,
     judge_claims,
     judge_name,
     load_judgments,
+    pair_view,
 )
 from lineage.faithfulness import pending as pending_claims
 from lineage.faithfulness import projected_cost as projected_judge_cost
@@ -1179,16 +1181,30 @@ def featured_command(
     typer.echo(f"{len(rows)} pairs -> {out}, {report}")
 
 
+def _pair_alignments(
+    todo: Sequence[PairToExplain], tables: Path, models_dir: Path | None
+) -> list[tuple[list[dict[str, Any]], PairView]]:
+    """Each pair's aligned spans as the explanation prompt gives them, and its texts as a
+    reader sees them, paraphrase marked with the semantic stage's model unless `models_dir`
+    is None."""
+    embedder = _model_embedder(models_dir) if models_dir is not None else None
+    out: list[tuple[list[dict[str, Any]], PairView]] = []
+    for o, d in pair_texts(tables, todo):
+        spans = align(o, d, embed=embedder).spans
+        out.append(
+            (
+                prompt_spans(spans, o, d, origin_side="a"),
+                pair_view(spans, o, d, origin_side="a"),
+            )
+        )
+    return out
+
+
 def _pair_prompts(
     todo: Sequence[PairToExplain], tables: Path, models_dir: Path | None
 ) -> list[list[dict[str, Any]]]:
-    """Each pair's aligned spans as the explanation prompt gives them, paraphrase marked with
-    the semantic stage's model unless `models_dir` is None."""
-    embedder = _model_embedder(models_dir) if models_dir is not None else None
-    return [
-        prompt_spans(align(o, d, embed=embedder).spans, o, d, origin_side="a")
-        for o, d in pair_texts(tables, todo)
-    ]
+    """Each pair's aligned spans as the explanation prompt gives them."""
+    return [prompt for prompt, _ in _pair_alignments(todo, tables, models_dir)]
 
 
 @app.command("explain")
@@ -1229,6 +1245,14 @@ def explain_command(
             "grounding rules: withheld ones, and ones keeping a claim the rules now drop.",
         ),
     ] = False,
+    afresh: Annotated[
+        bool,
+        typer.Option(
+            "--afresh",
+            help="With --live --again, give every cached explanation written under earlier "
+            "grounding rules a new round of its own, whatever it held.",
+        ),
+    ] = False,
     reground: Annotated[
         bool,
         typer.Option(
@@ -1246,28 +1270,45 @@ def explain_command(
         todo = load_pairs(pairs)
         prompts = _pair_prompts(todo, tables, models_dir if paraphrase else None)
         uncached = [p for p in prompts if not explanation_cache_path(p, cache).exists()]
-        asks = [asks_needed(p, cache, again=again) for p in prompts]
-        due = [(p, n) for p, n in zip(prompts, asks, strict=True) if n]
+        asks = [asks_needed(p, cache, again=again, afresh=afresh) for p in prompts]
+        # Pairs with the same spans share one cache file, asked for once.
+        due = list(
+            {
+                explanation_cache_path(p, cache): (p, n)
+                for p, n in zip(prompts, asks, strict=True)
+                if n
+            }.values()
+        )
         projected = projected_explain_cost([p for p, _ in due], [n for _, n in due])
+        again_files = sum(explanation_cache_path(p, cache).exists() for p, _ in due)
         typer.echo(
             f"{len(prompts)} pairs, {len(uncached)} not cached, "
-            f"{len(due) - len(uncached)} to ask again, projected at most "
+            f"{again_files} cache files to ask again, projected at most "
             f"${projected:.2f}; ${spent_on_calls(spend):.2f} of ${CALL_BUDGET:.2f} spent"
         )
         if uncached and not live:
             raise NotCachedError(f"{len(uncached)} pairs not cached; run with --live to ask")
         if again and not live:
             raise NotCachedError("--again asks the model; run with --live")
+        if afresh and not again:
+            raise NotCachedError("--afresh is a way of asking again; run with --live --again")
         meter = None
         ask = None
         if due:
             check_projection(projected, spend)
             meter = Meter(
-                spend, "explain", EXPLAIN_MODEL, EXPLAIN_PROMPT, datetime.date.today().isoformat()
+                spend,
+                "explain",
+                EXPLAIN_MODEL,
+                EXPLAIN_PROMPT,
+                datetime.date.today().isoformat(),
+                projected=projected,
             )
             ask = anthropic_ask()
         for pair, for_prompt in zip(todo, prompts, strict=True):
-            outcome = explain(for_prompt, ask=ask, cache=cache, meter=meter, again=again)
+            outcome = explain(
+                for_prompt, ask=ask, cache=cache, meter=meter, again=again, afresh=afresh
+            )
             (ob, oo), (db, do) = pair.origin, pair.descendant
             typer.echo(f"\n{ob} section {oo} -> {db} section {do}")
             if outcome.withheld:
@@ -1931,8 +1972,9 @@ def eval_faithfulness(
     """Faithfulness, model-judged: the share of kept claims that describe their cited spans
     correctly, beside the hard check that every kept claim cites spans that exist and differ."""
     try:
-        prompts = _pair_prompts(load_pairs(pairs), tables, models_dir if paraphrase else None)
-        claims, counts = claims_to_judge(prompts, cache=cache)
+        aligned = _pair_alignments(load_pairs(pairs), tables, models_dir if paraphrase else None)
+        prompts = [prompt for prompt, _ in aligned]
+        claims, counts = claims_to_judge(prompts, [view for _, view in aligned], cache=cache)
         todo = pending_claims(claims, load_judgments(judgments), judge_name())
         projected = projected_judge_cost(todo)
         typer.echo(
@@ -1942,7 +1984,7 @@ def eval_faithfulness(
         if todo and live:
             check_projection(projected, spend)
             today = datetime.date.today().isoformat()
-            meter = Meter(spend, "judge", JUDGE_MODEL, JUDGE_PROMPT, today)
+            meter = Meter(spend, "judge", JUDGE_MODEL, JUDGE_PROMPT, today, projected=projected)
             judge_claims(todo, ask=anthropic_judge(), path=judgments, meter=meter, today=today)
     except (ValueError, NotCachedError, ModelError, BudgetError) as e:
         typer.echo(f"error: {e}", err=True)

@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -68,16 +68,17 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant defines \"consent,\" \"deep fake,\" and \"depicted individual\" for deep fakes of any individual; the origin's section has no such definitions.",
+    "summary": "The descendant defines consent, deep fake, and depicted individual, and bars natural persons from willfully disseminating a deep fake without the depicted person's written consent.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s1",
-     "s4"
+     "s4",
+     "s9"
     ]
    },
    {
     "kind": "added",
-    "summary": "The descendant bars willful dissemination of a deep fake without the depicted individual's written consent, with injunctive relief, actual and punitive damages, costs, and attorney's fees.",
+    "summary": "The descendant makes violators liable for injunctive relief, actual and punitive damages, costs and attorney's fees, with exemptions for investigations, news, research, parody and similar uses.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s9"
@@ -85,16 +86,18 @@
    },
    {
     "kind": "removed",
-    "summary": "The origin makes the sponsor of an electioneering communication liable, and a medium liable only if it removes a required disclosure or alters content into synthetic media.",
+    "summary": "The origin makes the sponsor of an electioneering communication liable, not the medium, unless the medium strips required disclosures or alters content into synthetic media.",
     "origin_span_ids": [
      "s3"
     ],
     "descendant_span_ids": []
    },
    {
-    "kind": "added",
-    "summary": "The descendant lists exemptions for parody with disclosure, news broadcasts, paid broadcasts, publications, research, and legal proceedings, and keeps 47 U.S.C. 230 immunities intact.",
-    "origin_span_ids": [],
+    "kind": "changed",
+    "summary": "The origin lets an interactive computer service be liable under its medium rules; the descendant imposes no liability on such services and preserves 47 U.S.C. 230 protections.",
+    "origin_span_ids": [
+     "s3"
+    ],
     "descendant_span_ids": [
      "s9"
     ]
@@ -111,8 +114,10 @@
   ],
   "dropped": []
  },
- "attempts": 1,
- "unusable_attempts": [],
+ "attempts": 2,
+ "unusable_attempts": [
+  "off the schema: claims.3.summary: String should have at most 200 characters"
+ ],
  "earlier": [
   {
    "explanation": {
@@ -169,6 +174,57 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant defines \"consent,\" \"deep fake,\" and \"depicted individual\" for deep fakes of any individual; the origin's section has no such definitions.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s4"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant bars willful dissemination of a deep fake without the depicted individual's written consent, with injunctive relief, actual and punitive damages, costs, and attorney's fees.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s9"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin makes the sponsor of an electioneering communication liable, and a medium liable only if it removes a required disclosure or alters content into synthetic media.",
+      "origin_span_ids": [
+       "s3"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant lists exemptions for parody with disclosure, news broadcasts, paid broadcasts, publications, research, and legal proceedings, and keeps 47 U.S.C. 230 immunities intact.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s9"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [],
+   "attempts": 1
   }
  ]
 }

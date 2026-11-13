@@ -1,6 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -229,7 +230,7 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant bars a digital service provider from creating an account unless the person has registered their age; the origin has no such registration requirement.",
+    "summary": "The descendant bars a digital service provider from creating an account with a person unless the person has registered their age with the provider; the origin has no such registration rule.",
     "origin_span_ids": [
      "s0"
     ],
@@ -239,7 +240,7 @@
    },
    {
     "kind": "removed",
-    "summary": "The origin lets a provider instead apply minor protections to all account holders and treats verified under-16 users as minors; the descendant has neither provision.",
+    "summary": "The origin lets a provider instead apply minors' special conditions to all account holders and treats anyone verified under 16 as a minor; the descendant lacks both provisions.",
     "origin_span_ids": [
      "s6"
     ],
@@ -249,17 +250,19 @@
    },
    {
     "kind": "changed",
-    "summary": "The origin's ID-based consent method also accepts financial or payment card information; the descendant's accepts only government-issued identification.",
+    "summary": "The origin allows consent forms returned by email and ID or payment card verification; the descendant omits email return and limits verification to government-issued ID.",
     "origin_span_ids": [
+     "s17",
      "s26"
     ],
     "descendant_span_ids": [
+     "s18",
      "s26"
     ]
    },
    {
     "kind": "removed",
-    "summary": "The origin bars accounts for minors ineligible under other state or federal law and requires a list of content moderation features on parental request; the descendant has neither.",
+    "summary": "The origin bars accounts for minors ineligible under other law and requires providers to give parents, on request, a list of content moderation features; the descendant has neither.",
     "origin_span_ids": [
      "s36"
     ],
@@ -276,5 +279,63 @@
    3
   ],
   "dropped": []
- }
+ },
+ "attempts": 1,
+ "unusable_attempts": [],
+ "earlier": [
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant bars a digital service provider from creating an account unless the person has registered their age; the origin has no such registration requirement.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin lets a provider instead apply minor protections to all account holders and treats verified under-16 users as minors; the descendant has neither provision.",
+      "origin_span_ids": [
+       "s6"
+      ],
+      "descendant_span_ids": [
+       "s7"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin's ID-based consent method also accepts financial or payment card information; the descendant's accepts only government-issued identification.",
+      "origin_span_ids": [
+       "s26"
+      ],
+      "descendant_span_ids": [
+       "s26"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin bars accounts for minors ineligible under other state or federal law and requires a list of content moderation features on parental request; the descendant has neither.",
+      "origin_span_ids": [
+       "s36"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   }
+  }
+ ]
 }

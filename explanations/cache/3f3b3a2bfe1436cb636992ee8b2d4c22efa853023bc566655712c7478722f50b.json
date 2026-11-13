@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -134,7 +134,7 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant requires large online platforms to identify and remove reported materially deceptive content about candidates and election officials within 72 hours, and remove reposts.",
+    "summary": "The descendant requires large online platforms to identify and remove reported materially deceptive election content about candidates and officials, within 72 hours of a report.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s2"
@@ -142,24 +142,28 @@
    },
    {
     "kind": "removed",
-    "summary": "The origin defines synthetic media and lets a depicted candidate seek injunctive relief, damages, and attorneys' fees against the sponsor of an electioneering communication.",
+    "summary": "The origin defines synthetic media and lets a depicted candidate seek injunctive relief, damages and attorneys' fees against the sponsor; the descendant has no such remedies.",
     "origin_span_ids": [
      "s4"
     ],
     "descendant_span_ids": []
    },
    {
-    "kind": "removed",
-    "summary": "The origin places a clear and convincing evidence burden on the plaintiff and encourages courts to decide such matters expediently; the descendant has no such provisions.",
+    "kind": "changed",
+    "summary": "The origin makes the manipulation disclosure an affirmative defense to suits; the descendant uses it to exempt candidates' own self-portrayals from the platform removal duty.",
+    "origin_span_ids": [
+     "s4"
+    ],
+    "descendant_span_ids": [
+     "s2"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant sets time windows (120 days before an election, to 60 days after for officials); the origin instead puts a clear-and-convincing burden on plaintiffs and urges speedy rulings.",
     "origin_span_ids": [
      "s19"
     ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant limits duties to a window from 120 days before a California election through election day, extended to 60 days after for content about elections officials.",
-    "origin_span_ids": [],
     "descendant_span_ids": [
      "s20"
     ]
@@ -178,13 +182,65 @@
  },
  "attempts": 2,
  "unusable_attempts": [
-  "off the schema: claims.0.summary: String should have at most 200 characters"
+  "off the schema: claims.1.summary: String should have at most 200 characters; claims.3.summary: String should have at most 200 characters"
  ],
  "earlier": [
   {
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant requires large online platforms to identify and remove reported materially deceptive content about candidates and election officials within 72 hours, and remove reposts.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s2"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin defines synthetic media and lets a depicted candidate seek injunctive relief, damages, and attorneys' fees against the sponsor of an electioneering communication.",
+      "origin_span_ids": [
+       "s4"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin places a clear and convincing evidence burden on the plaintiff and encourages courts to decide such matters expediently; the descendant has no such provisions.",
+      "origin_span_ids": [
+       "s19"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant limits duties to a window from 120 days before a California election through election day, extended to 60 days after for content about elections officials.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s20"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "off the schema: claims.0.summary: String should have at most 200 characters"
+   ],
+   "attempts": 2
   }
  ]
 }

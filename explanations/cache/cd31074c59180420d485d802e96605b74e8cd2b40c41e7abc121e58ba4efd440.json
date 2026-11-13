@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -97,41 +97,48 @@
  "explanation": {
   "claims": [
    {
-    "kind": "added",
-    "summary": "The descendant covers speech protected by the Montana constitution, alongside the United States constitution.",
-    "origin_span_ids": [],
+    "kind": "changed",
+    "summary": "The descendant protects speech and association rights guaranteed by the Montana constitution; the origin refers to the Utah Constitution.",
+    "origin_span_ids": [
+     "s5"
+    ],
     "descendant_span_ids": [
      "s6"
     ]
    },
    {
-    "kind": "removed",
-    "summary": "The origin covers speech protected by the Utah Constitution, alongside the United States Constitution; the descendant has no reference to Utah.",
+    "kind": "changed",
+    "summary": "The descendant applies to and exempts a \"claim for relief\"; the origin uses \"cause of action\" throughout.",
     "origin_span_ids": [
-     "s5"
+     "s8",
+     "s11"
     ],
-    "descendant_span_ids": []
+    "descendant_span_ids": [
+     "s9",
+     "s12"
+    ]
    },
    {
-    "kind": "added",
-    "summary": "The descendant applies to and excludes a \"claim for relief\" under sections 1 through 12, and places the definitions in a closing subsection (3).",
-    "origin_span_ids": [],
+    "kind": "changed",
+    "summary": "The descendant places the definitions of goods or services, governmental unit and person at the end of the section; the origin places them first.",
+    "origin_span_ids": [
+     "s0"
+    ],
     "descendant_span_ids": [
-     "s1",
-     "s9",
-     "s12",
      "s14"
     ]
    },
    {
-    "kind": "removed",
-    "summary": "The origin applies to and excludes a \"cause of action\" under \"this chapter,\" and places the definitions in an opening subsection (1).",
+    "kind": "changed",
+    "summary": "The descendant's scope covers \"sections 1 through 12\"; the origin's scope covers \"this chapter.\"",
     "origin_span_ids": [
      "s0",
-     "s8",
-     "s11"
+     "s8"
     ],
-    "descendant_span_ids": []
+    "descendant_span_ids": [
+     "s1",
+     "s9"
+    ]
    }
   ]
  },
@@ -145,10 +152,8 @@
   ],
   "dropped": []
  },
- "attempts": 2,
- "unusable_attempts": [
-  "no claim cites spans that exist and differ (claim 1: s5 is on one side only, so it shows text one side lacks, not a change; claim 2: s0 is on one side only, so it shows text one side lacks, not a change; claim 3: s0 is on one side only, so it shows text one side lacks, not a change)"
- ],
+ "attempts": 1,
+ "unusable_attempts": [],
  "earlier": [
   {
    "explanation": {
@@ -203,6 +208,63 @@
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant covers speech protected by the Montana constitution, alongside the United States constitution.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s6"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin covers speech protected by the Utah Constitution, alongside the United States Constitution; the descendant has no reference to Utah.",
+      "origin_span_ids": [
+       "s5"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant applies to and excludes a \"claim for relief\" under sections 1 through 12, and places the definitions in a closing subsection (3).",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s9",
+       "s12",
+       "s14"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin applies to and excludes a \"cause of action\" under \"this chapter,\" and places the definitions in an opening subsection (1).",
+      "origin_span_ids": [
+       "s0",
+       "s8",
+       "s11"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "no claim cites spans that exist and differ (claim 1: s5 is on one side only, so it shows text one side lacks, not a change; claim 2: s0 is on one side only, so it shows text one side lacks, not a change; claim 3: s0 is on one side only, so it shows text one side lacks, not a change)"
+   ],
+   "attempts": 2
   }
  ]
 }

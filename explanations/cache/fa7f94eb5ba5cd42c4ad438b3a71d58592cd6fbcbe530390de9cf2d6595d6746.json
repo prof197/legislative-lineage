@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -205,36 +205,40 @@
  "explanation": {
   "claims": [
    {
-    "kind": "removed",
-    "summary": "The origin defines educational entity (public and private schools, colleges, universities), minor as under 16, minor account holder, and post; the descendant has none of these.",
+    "kind": "changed",
+    "summary": "The descendant defines a minor as anyone under 18; the origin defines a minor as a state resident known or reasonably believed by a platform to be under 16.",
     "origin_span_ids": [
-     "s3",
-     "s27"
+     "s3"
     ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant defines minor as any individual under 18 and adds definitions of obscene material, parent, and school equipment.",
-    "origin_span_ids": [],
     "descendant_span_ids": [
      "s6"
     ]
    },
    {
     "kind": "added",
-    "summary": "The descendant defines acceptable-use policy, child pornography, harmful to minors, identifiable minor, and technology protection measure; the origin has no such terms.",
+    "summary": "The descendant adds definitions of acceptable-use policy, child pornography, harmful to minors, identifiable minor, obscene material, parent, school equipment and technology protection measure.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s1",
      "s4",
+     "s6",
      "s31"
     ]
    },
    {
-    "kind": "added",
-    "summary": "The descendant excludes from 'social media platform' services used by or under the direction of a public school district or charter school in the state.",
-    "origin_span_ids": [],
+    "kind": "removed",
+    "summary": "The origin defines educational entity, minor account holder and post, and includes minor account holders in the account holder definition; the descendant lacks these.",
+    "origin_span_ids": [
+     "s3"
+    ],
+    "descendant_span_ids": []
+   },
+   {
+    "kind": "changed",
+    "summary": "The descendant exempts services used by a public school district or charter school in the state; the origin exempts services used by any educational entity, including private schools and colleges.",
+    "origin_span_ids": [
+     "s27"
+    ],
     "descendant_span_ids": [
      "s28"
     ]
@@ -315,6 +319,59 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin defines educational entity (public and private schools, colleges, universities), minor as under 16, minor account holder, and post; the descendant has none of these.",
+      "origin_span_ids": [
+       "s3",
+       "s27"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant defines minor as any individual under 18 and adds definitions of obscene material, parent, and school equipment.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s6"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant defines acceptable-use policy, child pornography, harmful to minors, identifiable minor, and technology protection measure; the origin has no such terms.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1",
+       "s4",
+       "s31"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant excludes from 'social media platform' services used by or under the direction of a public school district or charter school in the state.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s28"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [],
+   "attempts": 1
   }
  ]
 }

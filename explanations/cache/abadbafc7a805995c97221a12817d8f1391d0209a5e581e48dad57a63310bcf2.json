@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -296,10 +296,57 @@
   "claims": [
    {
     "kind": "added",
-    "summary": "The descendant includes a proof provision: in ruling on the motion, the court considers the pleadings, the motion, any reply or response, and evidence usable on summary judgment.",
+    "summary": "The descendant includes a separate proof provision directing the court to consider the pleadings, motion, any reply or response, and evidence usable on summary judgment; the origin has no such text.",
     "origin_span_ids": [],
     "descendant_span_ids": [
      "s1"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "Cross-references differ: the origin cites Sections 78B-25-102, -103 and -110; the descendant cites §§ 6002, 6003 and 6010 of this title.",
+    "origin_span_ids": [
+     "s6",
+     "s12",
+     "s15",
+     "s34",
+     "s39",
+     "s42",
+     "s45"
+    ],
+    "descendant_span_ids": [
+     "s7",
+     "s13",
+     "s16",
+     "s35",
+     "s40",
+     "s43",
+     "s46"
+    ]
+   },
+   {
+    "kind": "changed",
+    "summary": "Subdivision labeling differs: the origin uses (1), (a), (i), (A); the descendant uses (a), (1), a., 1.",
+    "origin_span_ids": [
+     "s0",
+     "s3",
+     "s9",
+     "s18",
+     "s19",
+     "s22",
+     "s25",
+     "s28",
+     "s31"
+    ],
+    "descendant_span_ids": [
+     "s4",
+     "s10",
+     "s18",
+     "s20",
+     "s23",
+     "s26",
+     "s29",
+     "s32"
     ]
    }
   ]
@@ -307,7 +354,9 @@
  "served_by": "claude-opus-5-5",
  "grounded": {
   "kept": [
-   0
+   0,
+   1,
+   2
   ],
   "dropped": []
  },
@@ -390,6 +439,29 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "added",
+      "summary": "The descendant includes a proof provision: in ruling on the motion, the court considers the pleadings, the motion, any reply or response, and evidence usable on summary judgment.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [],
+   "attempts": 1
   }
  ]
 }

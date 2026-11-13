@@ -7,7 +7,10 @@ as it returns, so a run stopped part way still records what it spent. A run is p
 anything is sent, every prompt's tokens from its characters and every reply at its token limit,
 each asked as often as it may be retried, and refused when what is spent and what is projected
 together pass BUDGET. Before each call the same bound is checked again for that call alone, so
-the ledger cannot pass the cap however the run goes. See DESIGN.md#explanations.
+the ledger cannot pass the cap however the run goes. The ledger keeps bounds and actual spend
+apart: each run's row records the bound it was projected at beside the dollars its recorded
+usage comes to, and the totals give what usage records (metered) apart from the bound counted
+for calls whose usage was lost (bounded); the cap counts both. See DESIGN.md#explanations.
 """
 
 import json
@@ -20,9 +23,10 @@ from lineage.model_labels import CHARS_PER_TOKEN, PRICES
 
 SPEND = Path("reports/explanation_spend.json")
 # Dollars every M6 model call may cost together, explanations and judge, spent and projected,
-# for the featured scope only: the M5 review set $30, and the M6 review raised it to $40 to ask
-# again for the withheld explanations and the changed claims the grounding rules now drop.
-BUDGET = 40.0
+# for the featured scope only: the M5 review set $30, the M6 review raised it to $40 to ask
+# again for the withheld explanations and the changed claims the grounding rules now drop, and
+# the faithfulness ruling raised it to $55 so the last re-ask and judge run fit their bounds.
+BUDGET = 55.0
 
 
 class BudgetError(Exception):
@@ -70,9 +74,13 @@ def check_projection(projected: float, path: Path = SPEND, budget: float = BUDGE
 
 
 def _write(path: Path, runs: list[dict[str, Any]]) -> None:
+    metered = sum(float(r["dollars"]) for r in runs if r.get("metered", True))
+    bounded = sum(float(r["dollars"]) for r in runs if not r.get("metered", True))
     doc = {
         "budget": BUDGET,
-        "spent": round(sum(float(r["dollars"]) for r in runs), 4),
+        "metered": round(metered, 4),
+        "bounded": round(bounded, 4),
+        "spent": round(metered + bounded, 4),
         "runs": runs,
     }
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -88,6 +96,7 @@ class Meter:
     model: str
     prompt: str
     today: str
+    projected: float | None = None  # the run's bound before anything was sent
     run: str = ""
     calls: int = 0
     input_tokens: int = 0
@@ -112,6 +121,8 @@ class Meter:
             "purpose": self.purpose,
             "model": self.model,
             "prompt": self.prompt,
+            "projected": None if self.projected is None else round(self.projected, 4),
+            "metered": True,
             "calls": self.calls,
             "served_by": dict(sorted(self.served_by.items())),
             "input_tokens": self.input_tokens,

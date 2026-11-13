@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -55,29 +55,13 @@
  "explanation": {
   "claims": [
    {
-    "kind": "removed",
-    "summary": "The origin lists a complaint among the pleadings that trigger the motion deadline; the descendant does not list a complaint.",
+    "kind": "changed",
+    "summary": "The descendant lists a \"petition\" among the pleadings that start the motion deadline; the origin lists a \"complaint\" instead.",
     "origin_span_ids": [
      "s5"
     ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant lists a petition among the pleadings that trigger the motion deadline; the origin does not list a petition.",
-    "origin_span_ids": [],
     "descendant_span_ids": [
      "s6"
-    ]
-   },
-   {
-    "kind": "changed",
-    "summary": "The origin counts 60 days after the day on which a party is served; the descendant counts sixty days after service, without the 'day on which' phrasing.",
-    "origin_span_ids": [
-     "s3"
-    ],
-    "descendant_span_ids": [
-     "s3"
     ]
    }
   ]
@@ -85,9 +69,7 @@
  "served_by": "claude-opus-5-5",
  "grounded": {
   "kept": [
-   0,
-   1,
-   2
+   0
   ],
   "dropped": []
  },
@@ -145,6 +127,49 @@
      ]
     ]
    }
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin lists a complaint among the pleadings that trigger the motion deadline; the descendant does not list a complaint.",
+      "origin_span_ids": [
+       "s5"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant lists a petition among the pleadings that trigger the motion deadline; the origin does not list a petition.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s6"
+      ]
+     },
+     {
+      "kind": "changed",
+      "summary": "The origin counts 60 days after the day on which a party is served; the descendant counts sixty days after service, without the 'day on which' phrasing.",
+      "origin_span_ids": [
+       "s3"
+      ],
+      "descendant_span_ids": [
+       "s3"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [],
+   "attempts": 1
   }
  ]
 }

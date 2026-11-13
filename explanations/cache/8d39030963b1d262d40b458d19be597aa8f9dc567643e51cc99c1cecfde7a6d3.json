@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -154,56 +154,13 @@
    "descendant": "52ee9d206df487949984ba417e8ce27f1371a3d9d88e7bf7084a411e40a5e583"
   }
  ],
- "explanation": {
-  "claims": [
-   {
-    "kind": "removed",
-    "summary": "The origin automatically stays proceedings between the moving and responding parties, lets the court stay other parties' matters, and stays all proceedings on appeal.",
-    "origin_span_ids": [
-     "s0"
-    ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant says proceedings may be stayed by the court until the appeal concludes, making the stay on appeal discretionary.",
-    "origin_span_ids": [],
-    "descendant_span_ids": [
-     "s1"
-    ]
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant lets the court rule on good-cause motions if it issues a stay, and covers motions unrelated to an order to show cause under section 3 of the bill.",
-    "origin_span_ids": [],
-    "descendant_span_ids": [
-     "s21",
-     "s24"
-    ]
-   },
-   {
-    "kind": "removed",
-    "summary": "The origin describes the injunction motion as protecting against an imminent threat to public health or safety; the descendant's text stops at 'a motion seeking a'.",
-    "origin_span_ids": [
-     "s23"
-    ],
-    "descendant_span_ids": []
-   }
-  ]
- },
- "served_by": "claude-opus-5-5",
- "grounded": {
-  "kept": [
-   0,
-   1,
-   2,
-   3
-  ],
-  "dropped": []
- },
+ "explanation": null,
+ "served_by": null,
+ "grounded": null,
  "attempts": 2,
  "unusable_attempts": [
-  "a claim fails grounding (claim 2: s0 is on one side only, so it shows text one side lacks, not a change; claim 3: s17 is on one side only, so it shows text one side lacks, not a change; claim 4: s20 is on one side only, so it shows text one side lacks, not a change)"
+  "off the schema: claims.0.summary: String should have at most 200 characters",
+  "off the schema: claims.2.summary: String should have at most 200 characters"
  ],
  "earlier": [
   {
@@ -257,6 +214,59 @@
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin automatically stays proceedings between the moving and responding parties, lets the court stay other parties' matters, and stays all proceedings on appeal.",
+      "origin_span_ids": [
+       "s0"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant says proceedings may be stayed by the court until the appeal concludes, making the stay on appeal discretionary.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s1"
+      ]
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant lets the court rule on good-cause motions if it issues a stay, and covers motions unrelated to an order to show cause under section 3 of the bill.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s21",
+       "s24"
+      ]
+     },
+     {
+      "kind": "removed",
+      "summary": "The origin describes the injunction motion as protecting against an imminent threat to public health or safety; the descendant's text stops at 'a motion seeking a'.",
+      "origin_span_ids": [
+       "s23"
+      ],
+      "descendant_span_ids": []
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "a claim fails grounding (claim 2: s0 is on one side only, so it shows text one side lacks, not a change; claim 3: s17 is on one side only, so it shows text one side lacks, not a change; claim 4: s20 is on one side only, so it shows text one side lacks, not a change)"
+   ],
+   "attempts": 2
   }
  ]
 }

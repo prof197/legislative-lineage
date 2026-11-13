@@ -1,7 +1,7 @@
 {
  "model": "claude-opus-5-5",
  "prompt_version": "v1",
- "grounding_rules": 2,
+ "grounding_rules": 3,
  "spans": [
   {
    "id": "s0",
@@ -55,17 +55,11 @@
  "explanation": {
   "claims": [
    {
-    "kind": "removed",
-    "summary": "The origin applies the chapter to civil actions filed or causes of action asserted on or after May 3, 2023; the descendant has no such date.",
+    "kind": "changed",
+    "summary": "The descendant applies the chapter to civil actions filed or causes asserted on or after January 1, 2026; the origin uses May 3, 2023.",
     "origin_span_ids": [
      "s6"
     ],
-    "descendant_span_ids": []
-   },
-   {
-    "kind": "added",
-    "summary": "The descendant applies the chapter to civil actions filed or causes of action asserted on or after January 1, 2026; the origin has no such date.",
-    "origin_span_ids": [],
     "descendant_span_ids": [
      "s7"
     ]
@@ -75,15 +69,12 @@
  "served_by": "claude-opus-5-5",
  "grounded": {
   "kept": [
-   0,
-   1
+   0
   ],
   "dropped": []
  },
- "attempts": 2,
- "unusable_attempts": [
-  "no claim cites spans that exist and differ (claim 1: s6 is on one side only, so it shows text one side lacks, not a change)"
- ],
+ "attempts": 1,
+ "unusable_attempts": [],
  "earlier": [
   {
    "explanation": {
@@ -112,6 +103,40 @@
    "explanation": null,
    "served_by": null,
    "grounded": null
+  },
+  {
+   "explanation": {
+    "claims": [
+     {
+      "kind": "removed",
+      "summary": "The origin applies the chapter to civil actions filed or causes of action asserted on or after May 3, 2023; the descendant has no such date.",
+      "origin_span_ids": [
+       "s6"
+      ],
+      "descendant_span_ids": []
+     },
+     {
+      "kind": "added",
+      "summary": "The descendant applies the chapter to civil actions filed or causes of action asserted on or after January 1, 2026; the origin has no such date.",
+      "origin_span_ids": [],
+      "descendant_span_ids": [
+       "s7"
+      ]
+     }
+    ]
+   },
+   "served_by": "claude-opus-5-5",
+   "grounded": {
+    "kept": [
+     0,
+     1
+    ],
+    "dropped": []
+   },
+   "unusable_attempts": [
+    "no claim cites spans that exist and differ (claim 1: s6 is on one side only, so it shows text one side lacks, not a change)"
+   ],
+   "attempts": 2
   }
  ]
 }
