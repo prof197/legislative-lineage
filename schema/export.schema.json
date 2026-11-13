@@ -374,11 +374,43 @@
      },
      "title": "Pairs",
      "type": "array"
+    },
+    "sections_a": {
+     "title": "Sections A",
+     "type": "integer"
+    },
+    "sections_b": {
+     "title": "Sections B",
+     "type": "integer"
+    },
+    "text_a": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/TextInfo"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "text_b": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/TextInfo"
+      },
+      {
+       "type": "null"
+      }
+     ]
     }
    },
    "required": [
     "a",
     "b",
+    "sections_a",
+    "sections_b",
+    "text_a",
+    "text_b",
     "pairs"
    ],
    "title": "Comparison",
@@ -410,6 +442,17 @@
      ],
      "title": "Miss Reason"
     },
+    "share": {
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Share"
+    },
     "state": {
      "title": "State",
      "type": "string"
@@ -430,9 +473,40 @@
     "bill_cell",
     "stratum",
     "found",
+    "share",
     "miss_reason"
    ],
    "title": "Enactment",
+   "type": "object"
+  },
+  "Excluded": {
+   "additionalProperties": false,
+   "description": "A listed enactment the eval does not count, and why.",
+   "properties": {
+    "act": {
+     "title": "Act",
+     "type": "string"
+    },
+    "jurisdiction": {
+     "title": "Jurisdiction",
+     "type": "string"
+    },
+    "why": {
+     "title": "Why",
+     "type": "string"
+    },
+    "year": {
+     "title": "Year",
+     "type": "integer"
+    }
+   },
+   "required": [
+    "act",
+    "jurisdiction",
+    "year",
+    "why"
+   ],
+   "title": "Excluded",
    "type": "object"
   },
   "Explanation": {
@@ -943,10 +1017,22 @@
     "section_pairs": {
      "title": "Section Pairs",
      "type": "integer"
+    },
+    "share": {
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Share"
     }
    },
    "required": [
     "bill",
+    "share",
     "section_pairs",
     "comparison"
    ],
@@ -1018,6 +1104,13 @@
      "title": "Development Enactments",
      "type": "array"
     },
+    "development_excluded": {
+     "items": {
+      "$ref": "#/$defs/Excluded"
+     },
+     "title": "Development Excluded",
+     "type": "array"
+    },
     "development_recall": {
      "$ref": "#/$defs/Recall"
     },
@@ -1026,6 +1119,13 @@
       "$ref": "#/$defs/Recall"
      },
      "title": "Development Recall By Act",
+     "type": "object"
+    },
+    "development_recall_by_stage": {
+     "additionalProperties": {
+      "$ref": "#/$defs/Recall"
+     },
+     "title": "Development Recall By Stage",
      "type": "object"
     },
     "faithfulness": {
@@ -1044,12 +1144,19 @@
     "relatives_precision_labeler": {
      "title": "Relatives Precision Labeler",
      "type": "string"
+    },
+    "semantic_threshold": {
+     "title": "Semantic Threshold",
+     "type": "number"
     }
    },
    "required": [
     "development_recall",
     "development_recall_by_act",
+    "development_recall_by_stage",
+    "semantic_threshold",
     "development_enactments",
+    "development_excluded",
     "held_out_recall",
     "relatives_precision",
     "relatives_precision_labeler",

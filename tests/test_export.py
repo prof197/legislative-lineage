@@ -18,6 +18,7 @@ from lineage.export import (
     RESULTS,
     SCHEMA,
     ExportError,
+    align_all,
     build_export,
     comparison_slug,
     package,
@@ -68,7 +69,7 @@ def _export(tables: Path, out: Path, **kw: Any) -> dict[str, Any]:
         tables,
         state=state,
         out=out,
-        embed=None,
+        models_dir=None,
         cache=kw.pop("cache", out.parent / "no-cache"),
         featured_pairs=kw.pop("featured_pairs", out.parent / "none.jsonl"),
         featured_report=out.parent / "none.json",
@@ -256,3 +257,15 @@ def test_the_release_asset_is_reproducible_and_carries_its_checksum(tmp_path: Pa
         assert tar.getnames() == ["bills/ga-1.json", "meta.json"]
     with pytest.raises(ExportError, match="no export"):
         package(tmp_path / "empty", state="GA", tag="t", out_dir=tmp_path / "c")
+
+
+def test_aligning_in_worker_processes_gives_what_one_process_does() -> None:
+    texts = [
+        ("The fee is set each fiscal year by the board.", "The fee is set every biennium."),
+        ("Records are kept for five years.", "Records are kept for five years by the clerk."),
+    ] * 70  # more than one task's worth
+
+    serial = align_all(texts, models_dir=None, workers=1)
+    parallel = align_all(texts, models_dir=None, workers=2)
+
+    assert parallel == serial == [align(a, b) for a, b in texts]

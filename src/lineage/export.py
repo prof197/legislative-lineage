@@ -27,12 +27,14 @@ import gzip
 import hashlib
 import io
 import json
+import multiprocessing
 import re
 import shutil
 import tarfile
 import time
 from collections import defaultdict
 from collections.abc import Callable, Iterable, Mapping, Sequence
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -43,8 +45,10 @@ from pydantic import BaseModel
 from pydantic.json_schema import models_json_schema
 
 from lineage import queries
-from lineage.align import Embedder, align
+from lineage.align import Alignment, Embedder, align
 from lineage.disk import DEFAULT_FLOOR_BYTES, require_free_space
+from lineage.embed import embed as embed_texts
+from lineage.embed import load_model
 from lineage.explain import CACHE_DIR, explain, prompt_spans
 from lineage.explain import MODEL as EXPLAIN_MODEL
 from lineage.export_schema import (
@@ -60,6 +64,7 @@ from lineage.export_schema import (
     Closest,
     Comparison,
     Enactment,
+    Excluded,
     Explanation,
     Meta,
     Recall,
@@ -77,6 +82,7 @@ from lineage.export_schema import (
 )
 from lineage.listing import ListedPairs, listed_pairs, shipped_flag
 from lineage.minhash import NUM_PERM
+from lineage.pairs import load_families
 from lineage.relatives import bill_relatives
 from lineage.semantic import MODEL
 from lineage.semantic_pairs import section_keys
@@ -99,6 +105,59 @@ COMMAND = "uv run lineage export --state GA"
 # GitHub Pages' limit on a published site; DR-2 reverses at half of it.
 SITE_LIMIT = 1_000_000_000
 _COMPACT = re.compile("|".join(re.escape(p) for p in COMPACT_PHRASES))
+_SPAWN = multiprocessing.get_context("spawn")
+CHUNK = 64  # section pairs a worker aligns per task
+# One process per performance core of the reference machine, each embedding on one thread.
+WORKERS = 8
+_embed: Embedder | None = None  # each worker's, set by _start
+
+
+def _start(models_dir: Path | None) -> None:
+    """Load the paraphrase embedder once per process: the semantic stage's model, one thread
+    each, since the workers already fill the cores. None marks no paraphrase."""
+    global _embed
+    if models_dir is None:
+        _embed = None
+        return
+    model = load_model(MODEL, models_dir, threads=1)
+
+    def embed(texts: Sequence[str]) -> NDArray[np.float32]:
+        return embed_texts(model, texts)
+
+    _embed = embed
+
+
+def _align_chunk(texts: list[tuple[str, str]]) -> list[Alignment]:
+    return [align(a, b, embed=_embed) for a, b in texts]
+
+
+def align_all(
+    texts: Sequence[tuple[str, str]],
+    *,
+    models_dir: Path | None,
+    workers: int,
+    progress: Callable[[str], None] = lambda _: None,
+) -> list[Alignment]:
+    """Each pair of section texts aligned, in order, by `workers` processes (in this one when
+    1), paraphrase marked with the semantic stage's model from `models_dir` unless None."""
+    chunks = [list(texts[i : i + CHUNK]) for i in range(0, len(texts), CHUNK)]
+    out: list[Alignment] = []
+    if workers <= 1:
+        _start(models_dir)
+        results: Iterable[list[Alignment]] = map(_align_chunk, chunks)
+        for done, got in enumerate(results, start=1):
+            out.extend(got)
+            if done % 50 == 0:
+                progress(f"aligned {len(out)} of {len(texts)} section pairs")
+        return out
+    with ProcessPoolExecutor(
+        max_workers=workers, mp_context=_SPAWN, initializer=_start, initargs=(models_dir,)
+    ) as pool:
+        for done, got in enumerate(pool.map(_align_chunk, chunks), start=1):
+            out.extend(got)
+            if done % 50 == 0:
+                progress(f"aligned {len(out)} of {len(texts)} section pairs")
+    return out
 
 
 class ExportError(Exception):
@@ -183,11 +242,18 @@ def validation_from(results: Mapping[str, Any]) -> Validation:
         return Recall(enactments=r["enactments"], found=r["found"], recall=r["recall"])
 
     dev, held = results["commission"], results["commission_held_out"]
+    stages = dev["stage_ablation"]
     precision = results["relatives_precision"]["provisional_model"]
     faith = results["faithfulness"]
     return Validation(
         development_recall=recall(dev["recall"]["pooled"]["all"]),
         development_recall_by_act={a: recall(r["all"]) for a, r in dev["recall"]["by_act"].items()},
+        development_recall_by_stage={
+            "near_duplicate": recall(stages["near_duplicate"]["pooled"]["all"]),
+            "semantic": recall(stages["semantic"]["pooled"]["all"]),
+            "both": recall(dev["recall"]["pooled"]["all"]),
+        },
+        semantic_threshold=dev["semantic_threshold"],
         development_enactments=[
             Enactment(
                 act=e["act"],
@@ -196,9 +262,14 @@ def validation_from(results: Mapping[str, Any]) -> Validation:
                 bill_cell=e["bill_cell"],
                 stratum=e["stratum"],
                 found=e["found"],
+                share=e["share"],
                 miss_reason=e["miss_reason"],
             )
             for e in dev["enactments"]
+        ],
+        development_excluded=[
+            Excluded(act=x["act"], jurisdiction=x["jurisdiction"], year=x["year"], why=x["why"])
+            for x in dev["excluded"]
         ],
         held_out_recall=recall(held["recall"]["pooled"]["all"]),
         relatives_precision=Share(
@@ -324,7 +395,8 @@ def build_export(
     *,
     state: str,
     out: Path,
-    embed: Embedder | None,
+    models_dir: Path | None,
+    workers: int = 1,
     cache: Path = CACHE_DIR,
     featured_pairs: Path = FEATURED_PAIRS,
     featured_report: Path = FEATURED_REPORT,
@@ -375,7 +447,7 @@ def build_export(
     with queries.connect_quiet() as con:
         refs, text_infos = _refs(con, tables, ids)
         section_rows = queries.section_infos(
-            con, sections_glob=str(tables / "sections" / "*.parquet"), ids=hosted
+            con, sections_glob=str(tables / "sections" / "*.parquet"), ids=ids
         )
         shown = queries.sections_at(
             con, sections_glob=str(tables / "sections" / "*.parquet"), keys=keys
@@ -389,38 +461,61 @@ def build_export(
     files: dict[str, BaseModel] = {}
     featured_explained = 0
     withheld = 0
-    for done, ((a, b), pairs) in enumerate(sorted(found.items()), start=1):
-        aligned: list[AlignedPair] = []
-        for (oa, ob), pf in sorted(pairs.items()):
+    ordered = [
+        ((a, b), (oa, ob), pf)
+        for (a, b), ps in sorted(found.items())
+        for (oa, ob), pf in sorted(ps.items())
+    ]
+    alignments = align_all(
+        [(shown[(a, oa)][1], shown[(b, ob)][1]) for (a, b), (oa, ob), _ in ordered],
+        models_dir=models_dir,
+        workers=workers,
+        progress=progress,
+    )
+    sections_of: dict[str, list[tuple[int, str | None, int, str | None]]] = defaultdict(list)
+    for bill_id, ordinal, heading, words, boilerplate in section_rows:
+        sections_of[bill_id].append((ordinal, heading, words, boilerplate))
+
+    def matchable(bill_id: str) -> int:
+        return sum(1 for *_, bp in sections_of[bill_id] if bp is None)
+
+    by_comparison: dict[BillPair, list[AlignedPair]] = defaultdict(list)
+    for ((a, b), (oa, ob), pf), alignment in zip(ordered, alignments, strict=True):
+        explanation = None
+        if (a, oa, b, ob) in featured:
             ta, tb = shown[(a, oa)][1], shown[(b, ob)][1]
-            alignment = align(ta, tb, embed=embed)
-            explanation = None
-            if (a, oa, b, ob) in featured:
-                outcome = explain(
-                    prompt_spans(alignment.spans, ta, tb, origin_side="a"), ask=None, cache=cache
-                )
-                explanation = Explanation(
-                    model=EXPLAIN_MODEL,
-                    withheld=outcome.withheld,
-                    claims=[Claim.model_validate(c.model_dump()) for c in outcome.claims],
-                )
-                featured_explained += 1
-                withheld += outcome.withheld
-            aligned.append(
-                AlignedPair(
-                    ordinal_a=oa,
-                    ordinal_b=ob,
-                    stages=_stages(pf),
-                    spans=[Span(id=s.id, kind=s.kind, a=s.a, b=s.b) for s in alignment.spans],
-                    copied_share_a=round(alignment.copied_share_a, 4),
-                    copied_share_b=round(alignment.copied_share_b, 4),
-                    explanation=explanation,
-                )
+            outcome = explain(
+                prompt_spans(alignment.spans, ta, tb, origin_side="a"), ask=None, cache=cache
             )
+            explanation = Explanation(
+                model=EXPLAIN_MODEL,
+                withheld=outcome.withheld,
+                claims=[Claim.model_validate(c.model_dump()) for c in outcome.claims],
+            )
+            featured_explained += 1
+            withheld += outcome.withheld
+        by_comparison[(a, b)].append(
+            AlignedPair(
+                ordinal_a=oa,
+                ordinal_b=ob,
+                stages=_stages(pf),
+                spans=[Span(id=x.id, kind=x.kind, a=x.a, b=x.b) for x in alignment.spans],
+                copied_share_a=round(alignment.copied_share_a, 4),
+                copied_share_b=round(alignment.copied_share_b, 4),
+                explanation=explanation,
+            )
+        )
+    for (a, b), aligned in by_comparison.items():
         name = comparison_slug(refs[a].slug, refs[b].slug)
-        files[f"compare/{name}.json"] = Comparison(a=refs[a], b=refs[b], pairs=aligned)
-        if done % 500 == 0:
-            progress(f"aligned {done} of {len(found)} comparisons")
+        files[f"compare/{name}.json"] = Comparison(
+            a=refs[a],
+            b=refs[b],
+            sections_a=matchable(a),
+            sections_b=matchable(b),
+            text_a=text_infos.get(a),
+            text_b=text_infos.get(b),
+            pairs=aligned,
+        )
 
     by_bill: dict[str, list[SectionText]] = defaultdict(list)
     for (bill_id, ordinal), (heading, text, _) in sorted(shown.items()):
@@ -429,9 +524,6 @@ def build_export(
         name = refs[bill_id].slug
         files[f"texts/{name}.json"] = BillTexts(bill=name, sections=sections)
 
-    sections_of: dict[str, list[tuple[int, str | None, int, str | None]]] = defaultdict(list)
-    for bill_id, ordinal, heading, words, boilerplate in section_rows:
-        sections_of[bill_id].append((ordinal, heading, words, boilerplate))
     entries: list[BillListEntry] = []
     for bill_id in hosted:
         r = relatives[bill_id]
@@ -503,12 +595,25 @@ def build_export(
         )
     files["bills.json"] = BillList(bills=entries)
 
+    anchors = sorted({str(st["anchor"]["bill_id"]) for st in stories_doc.values()})
+    anchor_scores: dict[str, dict[str, float]] = {}
+    family_of: dict[str, str] = {}
+    if anchors:
+        listed_for = bill_relatives(tables, anchors, model=model, listed=listed, shown=len(bills))
+        family_of = load_families(tables)
+        anchor_scores = {x: {m.family: m.share for m in r.matches} for x, r in listed_for.items()}
+
+    def story_share(anchor: str, bill_id: str) -> float | None:
+        score = anchor_scores.get(anchor, {}).get(family_of.get(bill_id, bill_id))
+        return None if score is None else round(score, 4)
+
     story_slugs: list[str] = []
     for key, s in sorted(stories_doc.items()):
         anchor = str(s["anchor"]["bill_id"])
         story_relatives = [
             StoryRelative(
                 bill=refs[str(rel["bill_id"])],
+                share=story_share(anchor, str(rel["bill_id"])),
                 section_pairs=int(rel["section_pairs"]),
                 comparison=comparison_slug(refs[anchor].slug, refs[str(rel["bill_id"])].slug)
                 if int(rel["section_pairs"])

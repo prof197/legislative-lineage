@@ -153,6 +153,10 @@ class Comparison(_Model):
 
     a: BillRef
     b: BillRef
+    sections_a: int  # the first bill's matchable sections, matched or not
+    sections_b: int
+    text_a: TextInfo | None  # which text of each bill the alignment read
+    text_b: TextInfo | None
     pairs: list[AlignedPair]
 
 
@@ -171,6 +175,8 @@ class BillTexts(_Model):
 
 class StoryRelative(_Model):
     bill: BillRef
+    # The relative's family's score as the anchor's page lists it; None when it is not listed
+    share: float | None
     section_pairs: int  # featured pairs with the anchor
     comparison: str | None  # None when the bill has no featured pair with the anchor
 
@@ -203,7 +209,17 @@ class Enactment(_Model):
     bill_cell: str
     stratum: str
     found: bool
+    share: float | None  # the found family's score against the act's text
     miss_reason: str | None
+
+
+class Excluded(_Model):
+    """A listed enactment the eval does not count, and why."""
+
+    act: str
+    jurisdiction: str
+    year: int
+    why: str
 
 
 class Share(_Model):
@@ -218,7 +234,10 @@ class Validation(_Model):
 
     development_recall: Recall
     development_recall_by_act: dict[str, Recall]
+    development_recall_by_stage: dict[str, Recall]  # near_duplicate, semantic, and both
+    semantic_threshold: float
     development_enactments: list[Enactment]
+    development_excluded: list[Excluded]
     held_out_recall: Recall
     relatives_precision: Share  # model-judged
     relatives_precision_labeler: str

@@ -65,6 +65,7 @@ from lineage.explain import projected_cost as projected_explain_cost
 from lineage.export import EXPORT_DIR, ExportError, build_export
 from lineage.export import REPORT as EXPORT_REPORT
 from lineage.export import SCHEMA as EXPORT_SCHEMA
+from lineage.export import WORKERS as EXPORT_WORKERS
 from lineage.export import package as package_export
 from lineage.export import schema_text as export_schema_text
 from lineage.faithfulness import (
@@ -1223,6 +1224,9 @@ def export_command(
         bool,
         typer.Option("--schema", help="Write the export's JSON Schema (committed) and stop."),
     ] = False,
+    workers: Annotated[
+        int, typer.Option("--workers", help="Processes aligning section pairs.")
+    ] = EXPORT_WORKERS,
     package_tag: Annotated[
         str | None,
         typer.Option(
@@ -1253,12 +1257,12 @@ def export_command(
         )
         return
     try:
-        embed = _model_embedder(models_dir) if paraphrase else None
         doc = build_export(
             tables,
             state=state,
             out=target,
-            embed=embed,
+            models_dir=models_dir if paraphrase else None,
+            workers=workers,
             cache=cache,
             featured_pairs=featured_pairs,
             featured_report=featured_report,
