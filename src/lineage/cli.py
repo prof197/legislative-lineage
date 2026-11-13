@@ -62,6 +62,18 @@ from lineage.explain import MODEL as EXPLAIN_MODEL
 from lineage.explain import PROMPT_VERSION as EXPLAIN_PROMPT
 from lineage.explain import cache_path as explanation_cache_path
 from lineage.explain import projected_cost as projected_explain_cost
+from lineage.export import (
+    EXPORT_DIR,
+    RELEASE_MANIFEST,
+    ExportError,
+    build_export,
+    write_release_manifest,
+)
+from lineage.export import REPORT as EXPORT_REPORT
+from lineage.export import SCHEMA as EXPORT_SCHEMA
+from lineage.export import WORKERS as EXPORT_WORKERS
+from lineage.export import package as package_export
+from lineage.export import schema_text as export_schema_text
 from lineage.faithfulness import (
     JUDGE_MODEL,
     JUDGE_PROMPT,
@@ -1179,6 +1191,108 @@ def featured_command(
             f"{story['section_pairs_out_of_scope']} out of the story's sections"
         )
     typer.echo(f"{len(rows)} pairs -> {out}, {report}")
+
+
+@app.command("export")
+def export_command(
+    state: Annotated[
+        str, typer.Option("--state", help="The state to host, by its postal code.")
+    ] = "GA",
+    tables: TablesOption = Path("data/tables"),
+    out: Annotated[
+        Path | None,
+        typer.Option("--out", help="Where the site data goes (local); default data/export/<ST>."),
+    ] = None,
+    cache: Annotated[
+        Path, typer.Option("--cache", help="Cached explanations (committed).")
+    ] = EXPLAIN_CACHE,
+    paraphrase: Annotated[
+        bool,
+        typer.Option(
+            "--paraphrase/--no-paraphrase",
+            help="Mark paraphrased sentences, with the semantic stage's model (local).",
+        ),
+    ] = True,
+    models_dir: Annotated[
+        Path, typer.Option("--models", help="Directory of model files (local).")
+    ] = MODELS_DIR,
+    report: Annotated[
+        Path, typer.Option("--report", help="The export's sizes and counts (committed).")
+    ] = EXPORT_REPORT,
+    featured_pairs: Annotated[
+        Path, typer.Option("--featured-pairs", help="The featured pairs (committed).")
+    ] = FEATURED_PAIRS,
+    featured_report: Annotated[
+        Path, typer.Option("--featured-report", help="Each story's relatives (committed).")
+    ] = FEATURED_REPORT,
+    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+    schema_only: Annotated[
+        bool,
+        typer.Option("--schema", help="Write the export's JSON Schema (committed) and stop."),
+    ] = False,
+    workers: Annotated[
+        int, typer.Option("--workers", help="Processes aligning section pairs.")
+    ] = EXPORT_WORKERS,
+    package_tag: Annotated[
+        str | None,
+        typer.Option(
+            "--package",
+            help="Package the existing export as a release asset under this tag, with its "
+            "SHA-256, pin it in the release manifest, and stop.",
+        ),
+    ] = None,
+    release_manifest: Annotated[
+        Path,
+        typer.Option(
+            "--release-manifest",
+            help="The data release the deploy builds from (committed), written by --package.",
+        ),
+    ] = RELEASE_MANIFEST,
+) -> None:
+    """The static site's JSON for one state's bills, with the stories and the data stamp."""
+    if schema_only:
+        EXPORT_SCHEMA.parent.mkdir(parents=True, exist_ok=True)
+        EXPORT_SCHEMA.write_text(export_schema_text())
+        typer.echo(f"-> {EXPORT_SCHEMA}")
+        return
+    state = state.upper()
+    target = out if out is not None else EXPORT_DIR / state
+    if package_tag is not None:
+        try:
+            asset, checksum = package_export(
+                target, state=state, tag=package_tag, out_dir=target.parent
+            )
+        except ExportError as e:
+            typer.echo(f"error: {e}", err=True)
+            raise typer.Exit(1) from e
+        write_release_manifest(asset, tag=package_tag, path=release_manifest)
+        typer.echo(
+            f"{checksum.read_text().strip()} ({asset.stat().st_size / 1e6:.1f} MB) -> {asset}"
+        )
+        typer.echo(f"pinned -> {release_manifest}; commit it to deploy this release")
+        return
+    try:
+        doc = build_export(
+            tables,
+            state=state,
+            out=target,
+            models_dir=models_dir if paraphrase else None,
+            workers=workers,
+            cache=cache,
+            featured_pairs=featured_pairs,
+            featured_report=featured_report,
+            results=results,
+            progress=typer.echo,
+        )
+    except (ExportError, NotCachedError, SemanticPairsError, StateBoilerplateError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    report.write_text(json.dumps(doc, indent=1) + "\n")
+    typer.echo(
+        f"{doc['hosted_bills']} bills, {doc['comparisons']} comparisons, "
+        f"{doc['total_bytes'] / 1e6:.1f} MB ({doc['share_of_site_limit']:.1%} of the site limit) "
+        f"-> {target}, {report}"
+    )
 
 
 def _pair_alignments(

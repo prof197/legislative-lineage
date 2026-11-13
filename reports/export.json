@@ -1,0 +1,35 @@
+{
+ "command": "uv run lineage export --state GA",
+ "state": "GA",
+ "schema": "schema/export.schema.json",
+ "hosted_bills": 4561,
+ "bills_with_relatives": 750,
+ "relatives_listed": 4540,
+ "comparisons": 4595,
+ "section_pairs_aligned": 15905,
+ "featured_pairs_explained": 121,
+ "featured_pairs_withheld": 10,
+ "files": {
+  "bills": 4561,
+  "bills.json": 1,
+  "compare": 4595,
+  "meta.json": 1,
+  "stories": 3,
+  "texts": 3620
+ },
+ "bytes": {
+  "bills": 8908569,
+  "bills.json": 1570449,
+  "compare": 49843880,
+  "meta.json": 7497,
+  "stories": 35660,
+  "texts": 53168886
+ },
+ "total_bytes": 113534941,
+ "share_of_site_limit": 0.1135,
+ "largest_file": {
+  "path": "bills.json",
+  "bytes": 1570449
+ },
+ "seconds": 6579
+}

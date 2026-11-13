@@ -1,0 +1,1171 @@
+{
+ "$defs": {
+  "AlignedPair": {
+   "additionalProperties": false,
+   "properties": {
+    "copied_share_a": {
+     "title": "Copied Share A",
+     "type": "number"
+    },
+    "copied_share_b": {
+     "title": "Copied Share B",
+     "type": "number"
+    },
+    "explanation": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Explanation"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "ordinal_a": {
+     "title": "Ordinal A",
+     "type": "integer"
+    },
+    "ordinal_b": {
+     "title": "Ordinal B",
+     "type": "integer"
+    },
+    "spans": {
+     "items": {
+      "$ref": "#/$defs/Span"
+     },
+     "title": "Spans",
+     "type": "array"
+    },
+    "stages": {
+     "items": {
+      "enum": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "type": "string"
+     },
+     "title": "Stages",
+     "type": "array"
+    }
+   },
+   "required": [
+    "ordinal_a",
+    "ordinal_b",
+    "stages",
+    "spans",
+    "copied_share_a",
+    "copied_share_b",
+    "explanation"
+   ],
+   "title": "AlignedPair",
+   "type": "object"
+  },
+  "ArchiveStamp": {
+   "additionalProperties": false,
+   "properties": {
+    "generated_at": {
+     "title": "Generated At",
+     "type": "string"
+    },
+    "session": {
+     "title": "Session",
+     "type": "string"
+    }
+   },
+   "required": [
+    "session",
+    "generated_at"
+   ],
+   "title": "ArchiveStamp",
+   "type": "object"
+  },
+  "BillList": {
+   "additionalProperties": false,
+   "description": "`bills.json`: every hosted bill, for the browse page's filter.",
+   "properties": {
+    "bills": {
+     "items": {
+      "$ref": "#/$defs/BillListEntry"
+     },
+     "title": "Bills",
+     "type": "array"
+    }
+   },
+   "required": [
+    "bills"
+   ],
+   "title": "BillList",
+   "type": "object"
+  },
+  "BillListEntry": {
+   "additionalProperties": false,
+   "properties": {
+    "bill": {
+     "$ref": "#/$defs/BillRef"
+    },
+    "closest": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Closest"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "families": {
+     "title": "Families",
+     "type": "integer"
+    }
+   },
+   "required": [
+    "bill",
+    "families",
+    "closest"
+   ],
+   "title": "BillListEntry",
+   "type": "object"
+  },
+  "BillPage": {
+   "additionalProperties": false,
+   "description": "`bills/<slug>.json`: a hosted bill's page.",
+   "properties": {
+    "bill": {
+     "$ref": "#/$defs/BillRef"
+    },
+    "families": {
+     "title": "Families",
+     "type": "integer"
+    },
+    "relatives": {
+     "items": {
+      "$ref": "#/$defs/Relative"
+     },
+     "title": "Relatives",
+     "type": "array"
+    },
+    "sections": {
+     "items": {
+      "$ref": "#/$defs/SectionInfo"
+     },
+     "title": "Sections",
+     "type": "array"
+    },
+    "text": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/TextInfo"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "words_searched": {
+     "title": "Words Searched",
+     "type": "integer"
+    }
+   },
+   "required": [
+    "bill",
+    "text",
+    "sections",
+    "words_searched",
+    "families",
+    "relatives"
+   ],
+   "title": "BillPage",
+   "type": "object"
+  },
+  "BillRef": {
+   "additionalProperties": false,
+   "description": "A bill as any page names it.",
+   "properties": {
+    "first_action": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "First Action"
+    },
+    "identifier": {
+     "title": "Identifier",
+     "type": "string"
+    },
+    "session": {
+     "title": "Session",
+     "type": "string"
+    },
+    "slug": {
+     "title": "Slug",
+     "type": "string"
+    },
+    "state": {
+     "title": "State",
+     "type": "string"
+    },
+    "status": {
+     "anyOf": [
+      {
+       "enum": [
+        "passed",
+        "died",
+        "introduced",
+        "passed_legislature"
+       ],
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Status"
+    },
+    "status_date": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Status Date"
+    },
+    "status_reason": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Status Reason"
+    },
+    "title": {
+     "title": "Title",
+     "type": "string"
+    }
+   },
+   "required": [
+    "slug",
+    "state",
+    "session",
+    "identifier",
+    "title",
+    "status",
+    "status_reason",
+    "status_date",
+    "first_action"
+   ],
+   "title": "BillRef",
+   "type": "object"
+  },
+  "BillTexts": {
+   "additionalProperties": false,
+   "description": "`texts/<slug>.json`: a bill's sections that some comparison shows, each once.",
+   "properties": {
+    "bill": {
+     "title": "Bill",
+     "type": "string"
+    },
+    "sections": {
+     "items": {
+      "$ref": "#/$defs/SectionText"
+     },
+     "title": "Sections",
+     "type": "array"
+    }
+   },
+   "required": [
+    "bill",
+    "sections"
+   ],
+   "title": "BillTexts",
+   "type": "object"
+  },
+  "Claim": {
+   "additionalProperties": false,
+   "properties": {
+    "descendant_span_ids": {
+     "items": {
+      "type": "string"
+     },
+     "title": "Descendant Span Ids",
+     "type": "array"
+    },
+    "kind": {
+     "enum": [
+      "added",
+      "removed",
+      "changed"
+     ],
+     "title": "Kind",
+     "type": "string"
+    },
+    "origin_span_ids": {
+     "items": {
+      "type": "string"
+     },
+     "title": "Origin Span Ids",
+     "type": "array"
+    },
+    "summary": {
+     "title": "Summary",
+     "type": "string"
+    }
+   },
+   "required": [
+    "kind",
+    "summary",
+    "origin_span_ids",
+    "descendant_span_ids"
+   ],
+   "title": "Claim",
+   "type": "object"
+  },
+  "Closest": {
+   "additionalProperties": false,
+   "properties": {
+    "identifier": {
+     "title": "Identifier",
+     "type": "string"
+    },
+    "share": {
+     "title": "Share",
+     "type": "number"
+    },
+    "slug": {
+     "title": "Slug",
+     "type": "string"
+    },
+    "state": {
+     "title": "State",
+     "type": "string"
+    }
+   },
+   "required": [
+    "slug",
+    "state",
+    "identifier",
+    "share"
+   ],
+   "title": "Closest",
+   "type": "object"
+  },
+  "Comparison": {
+   "additionalProperties": false,
+   "description": "`compare/<slug>.json`: two bills' matched sections, aligned. The first bill is the\nhosted bill, or a featured story's anchor, whose text the comparison starts from.",
+   "properties": {
+    "a": {
+     "$ref": "#/$defs/BillRef"
+    },
+    "b": {
+     "$ref": "#/$defs/BillRef"
+    },
+    "pairs": {
+     "items": {
+      "$ref": "#/$defs/AlignedPair"
+     },
+     "title": "Pairs",
+     "type": "array"
+    },
+    "sections_a": {
+     "title": "Sections A",
+     "type": "integer"
+    },
+    "sections_b": {
+     "title": "Sections B",
+     "type": "integer"
+    },
+    "text_a": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/TextInfo"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "text_b": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/TextInfo"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   },
+   "required": [
+    "a",
+    "b",
+    "sections_a",
+    "sections_b",
+    "text_a",
+    "text_b",
+    "pairs"
+   ],
+   "title": "Comparison",
+   "type": "object"
+  },
+  "Enactment": {
+   "additionalProperties": false,
+   "properties": {
+    "act": {
+     "title": "Act",
+     "type": "string"
+    },
+    "bill_cell": {
+     "title": "Bill Cell",
+     "type": "string"
+    },
+    "found": {
+     "title": "Found",
+     "type": "boolean"
+    },
+    "miss_reason": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Miss Reason"
+    },
+    "share": {
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Share"
+    },
+    "state": {
+     "title": "State",
+     "type": "string"
+    },
+    "stratum": {
+     "title": "Stratum",
+     "type": "string"
+    },
+    "year": {
+     "title": "Year",
+     "type": "integer"
+    }
+   },
+   "required": [
+    "act",
+    "state",
+    "year",
+    "bill_cell",
+    "stratum",
+    "found",
+    "share",
+    "miss_reason"
+   ],
+   "title": "Enactment",
+   "type": "object"
+  },
+  "Excluded": {
+   "additionalProperties": false,
+   "description": "A listed enactment the eval does not count, and why.",
+   "properties": {
+    "act": {
+     "title": "Act",
+     "type": "string"
+    },
+    "jurisdiction": {
+     "title": "Jurisdiction",
+     "type": "string"
+    },
+    "why": {
+     "title": "Why",
+     "type": "string"
+    },
+    "year": {
+     "title": "Year",
+     "type": "integer"
+    }
+   },
+   "required": [
+    "act",
+    "jurisdiction",
+    "year",
+    "why"
+   ],
+   "title": "Excluded",
+   "type": "object"
+  },
+  "Explanation": {
+   "additionalProperties": false,
+   "description": "A model's account of how the second text differs from the first, grounded in the\nalignment's spans; only for featured pairs (DESIGN.md#explanations).",
+   "properties": {
+    "claims": {
+     "items": {
+      "$ref": "#/$defs/Claim"
+     },
+     "title": "Claims",
+     "type": "array"
+    },
+    "model": {
+     "title": "Model",
+     "type": "string"
+    },
+    "withheld": {
+     "title": "Withheld",
+     "type": "boolean"
+    }
+   },
+   "required": [
+    "model",
+    "withheld",
+    "claims"
+   ],
+   "title": "Explanation",
+   "type": "object"
+  },
+  "Meta": {
+   "additionalProperties": false,
+   "description": "`meta.json`: the data stamp every page carries.",
+   "properties": {
+    "archives": {
+     "items": {
+      "$ref": "#/$defs/ArchiveStamp"
+     },
+     "title": "Archives",
+     "type": "array"
+    },
+    "hosted_bills": {
+     "title": "Hosted Bills",
+     "type": "integer"
+    },
+    "schema_version": {
+     "default": 1,
+     "title": "Schema Version",
+     "type": "integer"
+    },
+    "state": {
+     "title": "State",
+     "type": "string"
+    },
+    "states_indexed": {
+     "title": "States Indexed",
+     "type": "integer"
+    },
+    "stories": {
+     "items": {
+      "type": "string"
+     },
+     "title": "Stories",
+     "type": "array"
+    },
+    "validation": {
+     "$ref": "#/$defs/Validation"
+    }
+   },
+   "required": [
+    "state",
+    "archives",
+    "states_indexed",
+    "hosted_bills",
+    "stories",
+    "validation"
+   ],
+   "title": "Meta",
+   "type": "object"
+  },
+  "Recall": {
+   "additionalProperties": false,
+   "properties": {
+    "enactments": {
+     "title": "Enactments",
+     "type": "integer"
+    },
+    "found": {
+     "title": "Found",
+     "type": "integer"
+    },
+    "recall": {
+     "title": "Recall",
+     "type": "number"
+    }
+   },
+   "required": [
+    "enactments",
+    "found",
+    "recall"
+   ],
+   "title": "Recall",
+   "type": "object"
+  },
+  "Relative": {
+   "additionalProperties": false,
+   "description": "A related family in another state, shown through its best bill.",
+   "properties": {
+    "best_cosine": {
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Best Cosine"
+    },
+    "best_estimate": {
+     "title": "Best Estimate",
+     "type": "number"
+    },
+    "bill": {
+     "$ref": "#/$defs/BillRef"
+    },
+    "comparison": {
+     "title": "Comparison",
+     "type": "string"
+    },
+    "family_bills": {
+     "title": "Family Bills",
+     "type": "integer"
+    },
+    "found_by": {
+     "enum": [
+      "wording",
+      "meaning"
+     ],
+     "title": "Found By",
+     "type": "string"
+    },
+    "names_compact": {
+     "title": "Names Compact",
+     "type": "boolean"
+    },
+    "pairs": {
+     "items": {
+      "$ref": "#/$defs/SectionPair"
+     },
+     "title": "Pairs",
+     "type": "array"
+    },
+    "share": {
+     "title": "Share",
+     "type": "number"
+    }
+   },
+   "required": [
+    "bill",
+    "family_bills",
+    "share",
+    "best_estimate",
+    "best_cosine",
+    "found_by",
+    "pairs",
+    "names_compact",
+    "comparison"
+   ],
+   "title": "Relative",
+   "type": "object"
+  },
+  "Release": {
+   "additionalProperties": false,
+   "description": "`release.json`, written by the site build when it fetches the export: the release the\ndata came from and the checksum it was verified against, for the data stamp.",
+   "properties": {
+    "asset": {
+     "title": "Asset",
+     "type": "string"
+    },
+    "sha256": {
+     "title": "Sha256",
+     "type": "string"
+    },
+    "tag": {
+     "title": "Tag",
+     "type": "string"
+    }
+   },
+   "required": [
+    "tag",
+    "asset",
+    "sha256"
+   ],
+   "title": "Release",
+   "type": "object"
+  },
+  "SectionInfo": {
+   "additionalProperties": false,
+   "properties": {
+    "boilerplate": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Boilerplate"
+    },
+    "heading": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Heading"
+    },
+    "ordinal": {
+     "title": "Ordinal",
+     "type": "integer"
+    },
+    "with_relatives": {
+     "title": "With Relatives",
+     "type": "integer"
+    },
+    "words": {
+     "title": "Words",
+     "type": "integer"
+    }
+   },
+   "required": [
+    "ordinal",
+    "heading",
+    "words",
+    "boilerplate",
+    "with_relatives"
+   ],
+   "title": "SectionInfo",
+   "type": "object"
+  },
+  "SectionPair": {
+   "additionalProperties": false,
+   "description": "One listed match between a section of this bill and one of the relative's.",
+   "properties": {
+    "cosine": {
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Cosine"
+    },
+    "estimate": {
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Estimate"
+    },
+    "ordinal": {
+     "title": "Ordinal",
+     "type": "integer"
+    },
+    "other_ordinal": {
+     "title": "Other Ordinal",
+     "type": "integer"
+    },
+    "stages": {
+     "items": {
+      "enum": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "type": "string"
+     },
+     "title": "Stages",
+     "type": "array"
+    }
+   },
+   "required": [
+    "ordinal",
+    "other_ordinal",
+    "stages",
+    "estimate",
+    "cosine"
+   ],
+   "title": "SectionPair",
+   "type": "object"
+  },
+  "SectionText": {
+   "additionalProperties": false,
+   "properties": {
+    "heading": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Heading"
+    },
+    "ordinal": {
+     "title": "Ordinal",
+     "type": "integer"
+    },
+    "text": {
+     "title": "Text",
+     "type": "string"
+    }
+   },
+   "required": [
+    "ordinal",
+    "heading",
+    "text"
+   ],
+   "title": "SectionText",
+   "type": "object"
+  },
+  "Share": {
+   "additionalProperties": false,
+   "properties": {
+    "correct": {
+     "title": "Correct",
+     "type": "integer"
+    },
+    "interval_95": {
+     "maxItems": 2,
+     "minItems": 2,
+     "prefixItems": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "number"
+      }
+     ],
+     "title": "Interval 95",
+     "type": "array"
+    },
+    "labeled": {
+     "title": "Labeled",
+     "type": "integer"
+    },
+    "share": {
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Share"
+    }
+   },
+   "required": [
+    "labeled",
+    "correct",
+    "share",
+    "interval_95"
+   ],
+   "title": "Share",
+   "type": "object"
+  },
+  "Span": {
+   "additionalProperties": false,
+   "properties": {
+    "a": {
+     "anyOf": [
+      {
+       "maxItems": 2,
+       "minItems": 2,
+       "prefixItems": [
+        {
+         "type": "integer"
+        },
+        {
+         "type": "integer"
+        }
+       ],
+       "type": "array"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "A"
+    },
+    "b": {
+     "anyOf": [
+      {
+       "maxItems": 2,
+       "minItems": 2,
+       "prefixItems": [
+        {
+         "type": "integer"
+        },
+        {
+         "type": "integer"
+        }
+       ],
+       "type": "array"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "B"
+    },
+    "id": {
+     "title": "Id",
+     "type": "string"
+    },
+    "kind": {
+     "enum": [
+      "copied",
+      "paraphrased",
+      "unmatched"
+     ],
+     "title": "Kind",
+     "type": "string"
+    }
+   },
+   "required": [
+    "id",
+    "kind",
+    "a",
+    "b"
+   ],
+   "title": "Span",
+   "type": "object"
+  },
+  "Story": {
+   "additionalProperties": false,
+   "description": "`stories/<slug>.json`: a featured story.",
+   "properties": {
+    "anchor": {
+     "$ref": "#/$defs/BillRef"
+    },
+    "relatives": {
+     "items": {
+      "$ref": "#/$defs/StoryRelative"
+     },
+     "title": "Relatives",
+     "type": "array"
+    },
+    "relatives_rule": {
+     "title": "Relatives Rule",
+     "type": "string"
+    },
+    "scope_note": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Scope Note"
+    },
+    "slug": {
+     "title": "Slug",
+     "type": "string"
+    }
+   },
+   "required": [
+    "slug",
+    "anchor",
+    "relatives_rule",
+    "scope_note",
+    "relatives"
+   ],
+   "title": "Story",
+   "type": "object"
+  },
+  "StoryRelative": {
+   "additionalProperties": false,
+   "properties": {
+    "bill": {
+     "$ref": "#/$defs/BillRef"
+    },
+    "comparison": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Comparison"
+    },
+    "section_pairs": {
+     "title": "Section Pairs",
+     "type": "integer"
+    },
+    "share": {
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Share"
+    }
+   },
+   "required": [
+    "bill",
+    "share",
+    "section_pairs",
+    "comparison"
+   ],
+   "title": "StoryRelative",
+   "type": "object"
+  },
+  "TextInfo": {
+   "additionalProperties": false,
+   "description": "Which text of a bill the matching read.",
+   "properties": {
+    "amendment_only": {
+     "title": "Amendment Only",
+     "type": "boolean"
+    },
+    "notice_only": {
+     "title": "Notice Only",
+     "type": "boolean"
+    },
+    "source": {
+     "enum": [
+      "openstates",
+      "legislature",
+      "ca_bulk"
+     ],
+     "title": "Source",
+     "type": "string"
+    },
+    "url": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Url"
+    },
+    "version": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Version"
+    }
+   },
+   "required": [
+    "source",
+    "version",
+    "url",
+    "notice_only",
+    "amendment_only"
+   ],
+   "title": "TextInfo",
+   "type": "object"
+  },
+  "Validation": {
+   "additionalProperties": false,
+   "description": "The validation page's figures, from the committed results (reports/results.json).",
+   "properties": {
+    "development_enactments": {
+     "items": {
+      "$ref": "#/$defs/Enactment"
+     },
+     "title": "Development Enactments",
+     "type": "array"
+    },
+    "development_excluded": {
+     "items": {
+      "$ref": "#/$defs/Excluded"
+     },
+     "title": "Development Excluded",
+     "type": "array"
+    },
+    "development_recall": {
+     "$ref": "#/$defs/Recall"
+    },
+    "development_recall_by_act": {
+     "additionalProperties": {
+      "$ref": "#/$defs/Recall"
+     },
+     "title": "Development Recall By Act",
+     "type": "object"
+    },
+    "development_recall_by_stage": {
+     "additionalProperties": {
+      "$ref": "#/$defs/Recall"
+     },
+     "title": "Development Recall By Stage",
+     "type": "object"
+    },
+    "faithfulness": {
+     "$ref": "#/$defs/Share"
+    },
+    "faithfulness_judge": {
+     "title": "Faithfulness Judge",
+     "type": "string"
+    },
+    "held_out_recall": {
+     "$ref": "#/$defs/Recall"
+    },
+    "relatives_precision": {
+     "$ref": "#/$defs/Share"
+    },
+    "relatives_precision_labeler": {
+     "title": "Relatives Precision Labeler",
+     "type": "string"
+    },
+    "semantic_threshold": {
+     "title": "Semantic Threshold",
+     "type": "number"
+    }
+   },
+   "required": [
+    "development_recall",
+    "development_recall_by_act",
+    "development_recall_by_stage",
+    "semantic_threshold",
+    "development_enactments",
+    "development_excluded",
+    "held_out_recall",
+    "relatives_precision",
+    "relatives_precision_labeler",
+    "faithfulness",
+    "faithfulness_judge"
+   ],
+   "title": "Validation",
+   "type": "object"
+  }
+ },
+ "title": "Legislative Lineage export"
+}
