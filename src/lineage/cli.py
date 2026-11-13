@@ -62,7 +62,13 @@ from lineage.explain import MODEL as EXPLAIN_MODEL
 from lineage.explain import PROMPT_VERSION as EXPLAIN_PROMPT
 from lineage.explain import cache_path as explanation_cache_path
 from lineage.explain import projected_cost as projected_explain_cost
-from lineage.export import EXPORT_DIR, ExportError, build_export
+from lineage.export import (
+    EXPORT_DIR,
+    RELEASE_MANIFEST,
+    ExportError,
+    build_export,
+    write_release_manifest,
+)
 from lineage.export import REPORT as EXPORT_REPORT
 from lineage.export import SCHEMA as EXPORT_SCHEMA
 from lineage.export import WORKERS as EXPORT_WORKERS
@@ -1232,9 +1238,16 @@ def export_command(
         typer.Option(
             "--package",
             help="Package the existing export as a release asset under this tag, with its "
-            "SHA-256, and stop.",
+            "SHA-256, pin it in the release manifest, and stop.",
         ),
     ] = None,
+    release_manifest: Annotated[
+        Path,
+        typer.Option(
+            "--release-manifest",
+            help="The data release the deploy builds from (committed), written by --package.",
+        ),
+    ] = RELEASE_MANIFEST,
 ) -> None:
     """The static site's JSON for one state's bills, with the stories and the data stamp."""
     if schema_only:
@@ -1252,9 +1265,11 @@ def export_command(
         except ExportError as e:
             typer.echo(f"error: {e}", err=True)
             raise typer.Exit(1) from e
+        write_release_manifest(asset, tag=package_tag, path=release_manifest)
         typer.echo(
             f"{checksum.read_text().strip()} ({asset.stat().st_size / 1e6:.1f} MB) -> {asset}"
         )
+        typer.echo(f"pinned -> {release_manifest}; commit it to deploy this release")
         return
     try:
         doc = build_export(

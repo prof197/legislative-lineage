@@ -25,8 +25,9 @@ from lineage.export import (
     schema_text,
     slug,
     validation_from,
+    write_release_manifest,
 )
-from lineage.export_schema import BillList, BillPage, BillTexts, Comparison, Meta
+from lineage.export_schema import BillList, BillPage, BillTexts, Comparison, Meta, Release
 from lineage.semantic_pairs import build_semantic_pairs
 from tests.conftest import FAKE_MODEL
 from tests.test_explain import scripted
@@ -257,6 +258,21 @@ def test_the_release_asset_is_reproducible_and_carries_its_checksum(tmp_path: Pa
         assert tar.getnames() == ["bills/ga-1.json", "meta.json"]
     with pytest.raises(ExportError, match="no export"):
         package(tmp_path / "empty", state="GA", tag="t", out_dir=tmp_path / "c")
+
+
+def test_the_release_manifest_pins_the_assets_own_digest(tmp_path: Path) -> None:
+    export = tmp_path / "GA"
+    export.mkdir()
+    (export / "meta.json").write_text("{}")
+    asset, checksum = package(export, state="GA", tag="data-ga-1", out_dir=tmp_path / "a")
+    manifest = tmp_path / "site" / "data-release.json"
+
+    write_release_manifest(asset, tag="data-ga-1", path=manifest)
+
+    pinned = Release.model_validate_json(manifest.read_text())
+    assert pinned == Release(
+        tag="data-ga-1", asset=asset.name, sha256=checksum.read_text().split()[0]
+    )
 
 
 def test_aligning_in_worker_processes_gives_what_one_process_does() -> None:

@@ -69,6 +69,7 @@ from lineage.export_schema import (
     Meta,
     Recall,
     Relative,
+    Release,
     SectionInfo,
     SectionPair,
     SectionText,
@@ -96,6 +97,9 @@ from lineage.stats import (
 )
 
 EXPORT_DIR = Path("data/export")
+# The data release the deploy builds from, committed: its tag and the asset's expected SHA-256.
+# A data change reaches the site only as a reviewed commit to this file.
+RELEASE_MANIFEST = Path("site/data-release.json")
 REPORT = Path("reports/export.json")
 SCHEMA = Path("schema/export.schema.json")
 FEATURED_PAIRS = Path("evals/featured_pairs.jsonl")
@@ -693,3 +697,16 @@ def package(export: Path, *, state: str, tag: str, out_dir: Path) -> tuple[Path,
     checksum = out_dir / f"{name}.sha256"
     checksum.write_text(f"{hashlib.sha256(data).hexdigest()}  {name}\n")
     return asset, checksum
+
+
+def write_release_manifest(asset: Path, *, tag: str, path: Path = RELEASE_MANIFEST) -> Release:
+    """Pin `asset` as the release the deploy builds from: the tag, the asset's name and its
+    SHA-256, computed from the asset itself. The deploy checks the download against this
+    committed digest, not against a checksum file published beside the asset, which anyone able
+    to replace the asset could replace too."""
+    release = Release(
+        tag=tag, asset=asset.name, sha256=hashlib.sha256(asset.read_bytes()).hexdigest()
+    )
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(release.model_dump(), indent=1) + "\n")
+    return release

@@ -1,13 +1,9 @@
 name: Pages
 
-# Builds the site from a data release and deploys it to GitHub Pages (DR-2). It runs only by
-# hand, naming the release to build from.
+# Builds the site from the data release site/data-release.json pins and deploys it to GitHub
+# Pages (DR-2). It runs only by hand; the release and its digest come from the reviewed commit.
 on:
   workflow_dispatch:
-    inputs:
-      tag:
-        description: "The data release to build from (e.g. data-ga-2026-11-12)"
-        required: true
 
 permissions:
   contents: read
@@ -32,12 +28,10 @@ jobs:
           cache-dependency-path: site/package-lock.json
       - run: npm ci
       - run: npm run types:check
-      # Downloads the release's export, verifies its SHA-256, and records both for the stamp.
-      # The tag is passed through the environment, never spliced into the script.
-      - run: scripts/fetch-data.sh "$TAG"
+      # Downloads the pinned release's export and fails unless it matches the committed digest.
+      - run: scripts/fetch-data.sh
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ inputs.tag }}
       - run: npm run build
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
