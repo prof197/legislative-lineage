@@ -24,7 +24,7 @@
 }
 
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 96px; }
 body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); }
 a { color: var(--ink); }
 a:hover { color: var(--ink-3); }
@@ -40,7 +40,8 @@ mark { background: var(--mark); color: var(--ink); border-bottom: 2px solid var(
 .stamp p { margin: 0; display: flex; align-items: center; gap: 6px; }
 .stamp code { font-family: var(--mono); font-size: 12px; }
 
-.site-header { border-bottom: 2px solid var(--ink); }
+/* The header stays in view on every page; anchors land below it. */
+.site-header { position: sticky; top: 0; z-index: 20; background: var(--paper); border-bottom: 2px solid var(--ink); }
 .site-header .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 40px; padding-top: 14px; padding-bottom: 14px; }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; padding: 8px 0; }
 .brand-name { font-family: var(--serif); font-weight: 600; font-size: 24px; letter-spacing: -0.01em; }
@@ -48,6 +49,15 @@ mark { background: var(--mark); color: var(--ink); border-bottom: 2px solid var(
 .nav { display: flex; flex-wrap: wrap; gap: 0 28px; font-size: 15px; font-weight: 500; }
 .nav a { text-decoration: none; padding: 12px 0; }
 .nav a[aria-current="page"] { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+/* On a phone the sticky header stays two short rows: the name, then the links in one line that
+   scrolls sideways if it must, so it never takes a fifth of the screen. */
+@media (max-width: 640px) {
+  .site-header .wrap { gap: 0; padding-top: 6px; padding-bottom: 4px; }
+  .brand { padding: 4px 0; }
+  .brand-name { font-size: 20px; }
+  .nav { flex-wrap: nowrap; gap: 0 18px; width: 100%; overflow-x: auto; font-size: 14px; white-space: nowrap; scrollbar-width: none; }
+  .nav a { padding: 8px 0; }
+}
 
 .site-footer { margin-top: 96px; border-top: 1px solid var(--line); }
 .site-footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px 48px; padding-top: 40px; padding-bottom: 56px; font-size: 14px; line-height: 1.6; color: var(--ink-3); }
@@ -239,3 +249,11 @@ table.data tbody tr:hover { background: var(--paper-2); }
 .shares summary { cursor: pointer; white-space: nowrap; }
 .shares ul { list-style: none; margin: 6px 0 0; padding: 0; font-size: 13px; color: var(--ink-3); }
 .shares li { padding: 2px 0; }
+.infotip { position: relative; display: inline-flex; vertical-align: middle; margin-left: 4px; }
+.infotip-btn { display: inline-flex; padding: 4px; border: 0; background: none; color: var(--muted); cursor: help; }
+.infotip-btn:hover, .infotip-btn[aria-expanded="true"] { color: var(--ink-3); }
+.infotip-body { position: fixed; z-index: 30; padding: 10px 12px; letter-spacing: normal; white-space: normal; line-height: 1.45; border-radius: 3px; background: var(--ink); color: var(--paper); font-family: var(--sans); font-size: 14px; font-weight: 400; line-height: 1.45; }
+/* Side by side, the filter sits level with the map's title, which names what it filters; stacked
+   under the map on a narrow screen, it keeps its label. */
+.where { container-type: inline-size; }
+@container (min-width: 828px) { .filter-label { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } }

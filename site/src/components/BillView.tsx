@@ -2,12 +2,24 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { STANDING, StatusBadge } from "@/components/Status";
+import { InfoTip } from "@/components/InfoTip";
 import { TileMap } from "@/components/Tiles";
 import { bestByState, fills } from "@/lib/facts";
 import { relatedCount, sectionLabels, session, similarity, stateName, STATUS_LABEL } from "@/lib/format";
 import type { BillPage, Relative } from "@/types/export";
 
 const SHOWN = 10;
+
+function mostRelated(relatives: Relative[]): string | null {
+  const by = new Map<string, { n: number; best: number }>();
+  for (const r of relatives) {
+    const x = by.get(r.bill.state) ?? { n: 0, best: 0 };
+    by.set(r.bill.state, { n: x.n + 1, best: Math.max(x.best, r.share) });
+  }
+  let top: [string, { n: number; best: number }] | null = null;
+  for (const e of by) if (!top || e[1].n > top[1].n || (e[1].n === top[1].n && e[1].best > top[1].best)) top = e;
+  return top?.[0] ?? null;
+}
 
 const count = (n: number) => `${n.toLocaleString("en-US")} ${n === 1 ? "bill" : "bills"}`;
 
@@ -27,7 +39,9 @@ function Shares({ ordinals, total, label, order }: { ordinals: number[]; total: 
 export function BillView({ page }: { page: BillPage }) {
   const b = page.bill;
   const [sec, setSec] = useState<number | null>(null);
-  const [picked, setSel] = useState<string | null>(null);
+  // The map opens on the state with the most related bills, the closer match breaking a tie, so
+  // the panel beside it shows bills rather than a prompt.
+  const [picked, setSel] = useState<string | null>(() => mostRelated(page.relatives));
   const [hovered, setHover] = useState<string | null>(null);
   const sel = hovered ?? picked;
   const [all, setAll] = useState(false);
@@ -55,9 +69,18 @@ export function BillView({ page }: { page: BillPage }) {
 
   return (
     <>
-      <section aria-labelledby="where" style={{ marginTop: 48, display: "flex", flexWrap: "wrap", gap: "24px 48px" }}>
+      <section aria-label="Where the related bills are" className="where" style={{ marginTop: 48, display: "flex", flexWrap: "wrap", gap: "24px 48px" }}>
         <div style={{ flex: "1 1 480px", minWidth: 0 }}>
-          <h2 id="where" className="section">Where the related bills are</h2>
+          {/* The icon is bound to the title's last word, so it never wraps onto a line alone. */}
+          <h2 className="section">
+            Where the related bills{" "}
+            <span style={{ whiteSpace: "nowrap" }}>
+              are
+              <InfoTip label="How related bills are counted">
+                Matching runs section by section. Counts are bills, not states; one bill can share several sections.
+              </InfoTip>
+            </span>
+          </h2>
           <p className="note" style={{ marginTop: 8 }}>
             {sec === null ? `${states} states with a related bill.` : `${states} states with a bill that shares ${label(sec)}.`}
           </p>
@@ -82,15 +105,14 @@ export function BillView({ page }: { page: BillPage }) {
         </div>
         <div style={{ flex: "1 1 300px", minWidth: 0 }}>
           <div className="field" style={{ maxWidth: 420, marginBottom: 28 }}>
-            <label htmlFor="section">Related bills that share</label>
+            <label htmlFor="section" className="filter-label">Related bills that share</label>
             <select id="section" className="select" value={sec ?? ""} onChange={(e) => { setSec(e.target.value === "" ? null : Number(e.target.value)); }}>
               <option value="">Any section · {count(page.relatives.length)}</option>
               {withRelatives.map((s) => (
                 <option key={s.ordinal} value={s.ordinal}>{label(s.ordinal)} · {count(s.with_relatives)}</option>
               ))}
             </select>
-            <p className="note" style={{ margin: 0 }}>Matching runs section by section. Counts are bills, not states; one bill can share several sections.</p>
-          </div>
+              </div>
           <div aria-live="polite">
           <p className="eyebrow">Selected state</p>
           {sel === null ? (
