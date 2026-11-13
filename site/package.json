@@ -8,6 +8,7 @@
     "data:fixture": "node scripts/fixture-data.mjs",
     "typecheck": "tsc --noEmit",
     "build": "next build",
+    "size": "node scripts/size.mjs",
     "test": "node --experimental-strip-types --test src/lib/*.test.ts",
     "dev": "next dev"
   },
