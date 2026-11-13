@@ -1,0 +1,11 @@
+node_modules/
+.next/
+out/
+next-env.d.ts
+# The export is data: fetched from its release (scripts/fetch-data.sh) or copied from the
+# fixture (npm run data:fixture), never committed here.
+public/data/
+# Written by the tools on each run: TypeScript's build cache, and the agent notes `next dev`
+# regenerates (node_modules/next/dist/server/lib/generate-agent-files.js).
+tsconfig.tsbuildinfo
+AGENTS.md
