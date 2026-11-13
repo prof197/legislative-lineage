@@ -4,10 +4,24 @@ import { useMemo, useState } from "react";
 import { STANDING, StatusBadge } from "@/components/Status";
 import { TileMap } from "@/components/Tiles";
 import { bestByState, fills } from "@/lib/facts";
-import { sectionLabel, session, similarity, stateName, STATUS_LABEL } from "@/lib/format";
+import { relatedCount, sectionLabels, session, similarity, stateName, STATUS_LABEL } from "@/lib/format";
 import type { BillPage, Relative } from "@/types/export";
 
 const SHOWN = 10;
+
+const count = (n: number) => `${n.toLocaleString("en-US")} ${n === 1 ? "bill" : "bills"}`;
+
+// The sections a relative shares: "All N sections" or "K of N sections", the list behind it.
+function Shares({ ordinals, total, label, order }: { ordinals: number[]; total: number; label: (o: number) => string; order: Map<number, number> }) {
+  const shared = [...new Set(ordinals)].sort((a, b) => (order.get(a) ?? a) - (order.get(b) ?? b));
+  const head = shared.length === total ? `All ${total} sections` : `${shared.length} of ${total} ${total === 1 ? "section" : "sections"}`;
+  return (
+    <details className="shares">
+      <summary>{head}</summary>
+      <ul>{shared.map((o) => <li key={o}>{label(o)}</li>)}</ul>
+    </details>
+  );
+}
 
 // A bill page's sections, map and relatives, filtered by a selected section.
 export function BillView({ page }: { page: BillPage }) {
@@ -15,8 +29,10 @@ export function BillView({ page }: { page: BillPage }) {
   const [sec, setSec] = useState<number | null>(null);
   const [sel, setSel] = useState<string | null>(null);
   const [all, setAll] = useState(false);
-  const heading = new Map(page.sections.map((s) => [s.ordinal, s.heading]));
-  const label = (o: number) => sectionLabel(heading.get(o), o);
+  const labels = useMemo(() => sectionLabels(page.sections), [page.sections]);
+  const label = (o: number) => labels.get(o) ?? `Section ${o}`;
+  const total = page.sections.length;
+  const order = useMemo(() => new Map(page.sections.map((x, i) => [x.ordinal, i])), [page.sections]);
 
   const list = useMemo(
     () => page.relatives.filter((r) => sec === null || r.pairs.some((p) => p.ordinal === sec)),
@@ -32,46 +48,23 @@ export function BillView({ page }: { page: BillPage }) {
     ["Interstate compacts", "States adopt interstate compacts word for word.", list.filter((r) => r.names_compact)],
   ];
   const withRelatives = page.sections.filter((s) => s.with_relatives > 0);
-  const others = page.sections.filter((s) => s.with_relatives === 0);
+  const unmatched = page.sections.filter((s) => s.with_relatives === 0 && s.boilerplate === null);
+  const boiler = page.sections.filter((s) => s.with_relatives === 0 && s.boilerplate !== null);
 
   return (
     <>
-      <section aria-labelledby="secs" style={{ marginTop: 48 }}>
-        <h2 id="secs" className="section">Which sections have relatives</h2>
-        <p className="note" style={{ marginTop: 8 }}>Matching runs section by section. Select a section to filter the map and list.</p>
-        <ul style={{ listStyle: "none", margin: "16px 0 0", padding: 0, borderTop: "1.5px solid var(--ink)" }}>
-          <li>
-            <button type="button" className="claim" aria-pressed={sec === null} onClick={() => setSec(null)} style={{ gridTemplateColumns: "1fr auto" }}>
-              <span>All · Any section</span><span style={{ fontWeight: 600 }}>{page.relatives.length}</span>
-            </button>
-          </li>
+      <div className="field" style={{ marginTop: 40, maxWidth: 420 }}>
+        <label htmlFor="section">Related bills that share</label>
+        <select id="section" className="select" value={sec ?? ""} onChange={(e) => { setSec(e.target.value === "" ? null : Number(e.target.value)); setSel(null); }}>
+          <option value="">Any section · {count(page.relatives.length)}</option>
           {withRelatives.map((s) => (
-            <li key={s.ordinal}>
-              <button type="button" className="claim" aria-pressed={sec === s.ordinal} onClick={() => setSec(sec === s.ordinal ? null : s.ordinal)} style={{ gridTemplateColumns: "1fr auto" }}>
-                <span>{label(s.ordinal)}</span>
-                <span style={{ fontWeight: 600 }}>{s.with_relatives}</span>
-              </button>
-            </li>
+            <option key={s.ordinal} value={s.ordinal}>{label(s.ordinal)} · {count(s.with_relatives)}</option>
           ))}
-        </ul>
-        {others.length > 0 && (
-          <details style={{ marginTop: 8 }}>
-            <summary className="link-button" style={{ display: "inline-flex", alignItems: "center" }}>
-              {others.length} {others.length === 1 ? "section has" : "sections have"} no relatives
-            </summary>
-            <ul style={{ listStyle: "none", margin: "8px 0 0", padding: 0 }}>
-              {others.map((s) => (
-                <li key={s.ordinal} className="small" style={{ padding: "6px 0", borderTop: "1px solid var(--line-2)" }}>
-                  {label(s.ordinal)}{s.boilerplate !== null ? " · boilerplate, not matched" : ""}
-                </li>
-              ))}
-            </ul>
-          </details>
-        )}
-        <p className="note" style={{ marginTop: 8 }}>Counts are bills, not states. One bill can share several sections.</p>
-      </section>
+        </select>
+        <p className="note" style={{ margin: 0 }}>Matching runs section by section. Counts are bills, not states; one bill can share several sections.</p>
+      </div>
 
-      <section aria-labelledby="where" style={{ marginTop: 56, display: "flex", flexWrap: "wrap", gap: "24px 48px" }}>
+      <section aria-labelledby="where" style={{ marginTop: 32, display: "flex", flexWrap: "wrap", gap: "24px 48px" }}>
         <div style={{ flex: "1 1 480px", minWidth: 0 }}>
           <h2 id="where" className="section">Where the related bills are</h2>
           <p className="note" style={{ marginTop: 8 }}>
@@ -146,7 +139,7 @@ export function BillView({ page }: { page: BillPage }) {
                       <td style={{ fontWeight: 600 }}>{r.bill.identifier}</td>
                       <td>{session(r.bill.session)}</td>
                       <td><StatusBadge status={r.bill.status} /></td>
-                      <td>{[...new Set(r.pairs.map((p) => p.ordinal))].map(label).join(", ")}</td>
+                      <td><Shares ordinals={r.pairs.map((p) => p.ordinal)} total={total} label={label} order={order} /></td>
                       <td>{similarity(r.share)}</td>
                       <td><Link href={`/compare/?c=${r.comparison}`}>Compare</Link></td>
                     </tr>
@@ -163,9 +156,16 @@ export function BillView({ page }: { page: BillPage }) {
             </button>
           </p>
         )}
-        {page.families > page.relatives.length && (
-          <p className="note">
-            {page.families} related families in all; the {page.relatives.length} closest are listed.
+        <p className="note">
+          {relatedCount(page.families)}
+          {page.families > page.relatives.length ? `; the ${page.relatives.length} closest are listed.` : "."}
+        </p>
+        {(unmatched.length > 0 || boiler.length > 0) && (
+          <p className="note" style={{ marginTop: 20 }}>
+            {unmatched.length > 0 && (
+              <>{page.families > page.relatives.length ? "None of the listed bills share: " : "No related bills found for: "}{unmatched.map((x) => label(x.ordinal)).join(", ")}. </>
+            )}
+            {boiler.length > 0 && <>Not matched, as boilerplate: {boiler.map((x) => `${label(x.ordinal)} (${x.boilerplate})`).join(", ")}.</>}
           </p>
         )}
       </section>

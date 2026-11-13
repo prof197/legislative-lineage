@@ -4,7 +4,7 @@ import { BillView } from "@/components/BillView";
 import { Footer, Header } from "@/components/Chrome";
 import { StatusBadge } from "@/components/Status";
 import { billList, billPage } from "@/lib/data";
-import { billName, count, session, stateName } from "@/lib/format";
+import { billName, count, relatedCount, session, stateName } from "@/lib/format";
 
 export const dynamicParams = false;
 
@@ -54,8 +54,10 @@ export default async function BillPageView({ params }: Props) {
         ) : (
           <>
             <p className="body-serif" style={{ marginTop: 32, maxWidth: "40em", fontSize: 20 }}>
-              {count(page.families, "bill", "bills")} in {count(states, "other state", "other states")} share
-              at least one provision with {b.identifier}.
+              {relatedCount(page.families)}, share at least one provision with {b.identifier}.{" "}
+              {page.families > page.relatives.length
+                ? `The ${page.relatives.length} closest, listed below, are in ${count(states, "other state", "other states")}.`
+                : `They are in ${count(states, "other state", "other states")}.`}
               {earliest && ` The earliest enacted version in this corpus is ${billName(earliest.bill)}, ${earliest.bill.status_date?.slice(0, 4)}.`}
             </p>
             <BillView page={page} />

@@ -63,12 +63,38 @@ export const similarity = (share: number): string => share.toFixed(2);
 
 export const billName = (b: BillRef): string => `${stateName(b.state)} ${b.identifier}`;
 
-// A section by its own heading, which carries its number; text before the first heading is the
-// bill's opening (its title and preamble), and a section split into windows has no heading.
+// A section by its own heading, which carries its number, written one way for display: "SECTION
+// 2:" and "Section 2." both read "Section 2", and a bare code citation such as "37-1-130." reads
+// "Code section 37-1-130". Text before the first heading is the bill's opening (its title and
+// preamble), and a section split into windows has no heading.
 export function sectionLabel(heading: string | null | undefined, ordinal: number): string {
-  const h = heading?.trim().replace(/\.$/, "");
-  if (h) return h;
+  const h = heading?.trim().replace(/\s*[.:]+$/, "").trim();
+  if (h) {
+    const numbered = /^(?:section|sec\.)\s*(.+)$/i.exec(h);
+    if (numbered) return `Section ${numbered[1]}`;
+    if (/^\d[\w.-]*$/.test(h)) return `Code section ${h}`;
+    return h;
+  }
   return ordinal === 0 ? "Opening text" : `Unheaded text, part ${ordinal + 1}`;
+}
+
+const ORDINAL = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth"];
+
+// Every section's label in the bill's own order, a repeated label told apart by its position
+// among the sections that carry it: "Section 1 (first)", "Section 1 (second)".
+export function sectionLabels(sections: { ordinal: number; heading: string | null }[]): Map<number, string> {
+  const plain = sections.map((s) => [s.ordinal, sectionLabel(s.heading, s.ordinal)] as const);
+  const total = new Map<string, number>();
+  for (const [, l] of plain) total.set(l, (total.get(l) ?? 0) + 1);
+  const seen = new Map<string, number>();
+  return new Map(
+    plain.map(([o, l]) => {
+      if (total.get(l)! < 2) return [o, l];
+      const k = (seen.get(l) ?? 0) + 1;
+      seen.set(l, k);
+      return [o, `${l} (${ORDINAL[k - 1] ?? `${k}th`})`];
+    }),
+  );
 }
 
 export const count = (n: number, one: string, many: string): string =>
@@ -82,3 +108,7 @@ export function asOf(iso: string): string {
     timeZone: "UTC",
   });
 }
+
+// The one unit a bill page counts its relatives in, said the same way in its summary and its list.
+export const relatedCount = (n: number): string =>
+  `${count(n, "related bill", "related bills")}, counting versions of the same bill once`;
