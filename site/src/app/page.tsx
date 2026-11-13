@@ -47,7 +47,7 @@ export default function Home() {
                 Find a {state} bill
               </label>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
-                <input id="find" name="q" type="search" className="input" placeholder="Bill number or title words, e.g. SB 120 or deepfake" style={{ flex: "1 1 320px", minWidth: 0, height: 52, fontSize: 17 }} />
+                <input id="find" name="q" type="search" className="input" placeholder="Bill number or title words, e.g. SB 120 or deepfake" style={{ flex: "1 1 320px", minWidth: 0, height: 52, fontSize: 16.5 }} />
                 <button type="submit" className="button solid" style={{ height: 52 }}>
                   Browse {state} bills
                   <Arrow />
