@@ -2,7 +2,9 @@
 site's types come from, every comparison's spans indexing the section texts written beside it,
 and featured pairs carrying their cached explanation (DESIGN.md#export)."""
 
+import hashlib
 import json
+import tarfile
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +20,7 @@ from lineage.export import (
     ExportError,
     build_export,
     comparison_slug,
+    package,
     schema_text,
     slug,
     validation_from,
@@ -232,3 +235,24 @@ def test_a_featured_pair_the_build_does_not_list_is_refused(tables: Path, tmp_pa
 
     with pytest.raises(ExportError, match="not listed"):
         _export(tables, tmp_path / "site", featured_pairs=featured)
+
+
+def test_the_release_asset_is_reproducible_and_carries_its_checksum(tmp_path: Path) -> None:
+    export = tmp_path / "GA"
+    (export / "bills").mkdir(parents=True)
+    (export / "meta.json").write_text("{}")
+    (export / "bills" / "ga-1.json").write_text('{"a": 1}')
+
+    asset, checksum = package(export, state="GA", tag="data-ga-1", out_dir=tmp_path / "a")
+    (export / "meta.json").touch()  # a newer timestamp changes nothing
+    again, _ = package(export, state="GA", tag="data-ga-1", out_dir=tmp_path / "b")
+
+    assert asset.name == "export-GA-data-ga-1.tar.gz"
+    assert asset.read_bytes() == again.read_bytes()
+    digest, name = checksum.read_text().split()
+    assert name == asset.name
+    assert digest == hashlib.sha256(asset.read_bytes()).hexdigest()
+    with tarfile.open(asset) as tar:
+        assert tar.getnames() == ["bills/ga-1.json", "meta.json"]
+    with pytest.raises(ExportError, match="no export"):
+        package(tmp_path / "empty", state="GA", tag="t", out_dir=tmp_path / "c")

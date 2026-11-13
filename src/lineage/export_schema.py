@@ -238,8 +238,18 @@ class Meta(_Model):
     validation: Validation
 
 
+class Release(_Model):
+    """`release.json`, written by the site build when it fetches the export: the release the
+    data came from and the checksum it was verified against, for the data stamp."""
+
+    tag: str
+    asset: str
+    sha256: str
+
+
 TOP_LEVEL: tuple[type[BaseModel], ...] = (
     Meta,
+    Release,
     BillList,
     BillPage,
     Comparison,

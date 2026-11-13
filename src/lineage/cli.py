@@ -65,6 +65,7 @@ from lineage.explain import projected_cost as projected_explain_cost
 from lineage.export import EXPORT_DIR, ExportError, build_export
 from lineage.export import REPORT as EXPORT_REPORT
 from lineage.export import SCHEMA as EXPORT_SCHEMA
+from lineage.export import package as package_export
 from lineage.export import schema_text as export_schema_text
 from lineage.faithfulness import (
     JUDGE_MODEL,
@@ -1222,6 +1223,14 @@ def export_command(
         bool,
         typer.Option("--schema", help="Write the export's JSON Schema (committed) and stop."),
     ] = False,
+    package_tag: Annotated[
+        str | None,
+        typer.Option(
+            "--package",
+            help="Package the existing export as a release asset under this tag, with its "
+            "SHA-256, and stop.",
+        ),
+    ] = None,
 ) -> None:
     """The static site's JSON for one state's bills, with the stories and the data stamp."""
     if schema_only:
@@ -1231,6 +1240,18 @@ def export_command(
         return
     state = state.upper()
     target = out if out is not None else EXPORT_DIR / state
+    if package_tag is not None:
+        try:
+            asset, checksum = package_export(
+                target, state=state, tag=package_tag, out_dir=target.parent
+            )
+        except ExportError as e:
+            typer.echo(f"error: {e}", err=True)
+            raise typer.Exit(1) from e
+        typer.echo(
+            f"{checksum.read_text().strip()} ({asset.stat().st_size / 1e6:.1f} MB) -> {asset}"
+        )
+        return
     try:
         embed = _model_embedder(models_dir) if paraphrase else None
         doc = build_export(

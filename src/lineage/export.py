@@ -23,9 +23,13 @@ output is written to a fresh directory and swapped in whole, so a failed export 
 mix of two builds.
 """
 
+import gzip
+import hashlib
+import io
 import json
 import re
 import shutil
+import tarfile
 import time
 from collections import defaultdict
 from collections.abc import Callable, Iterable, Mapping, Sequence
@@ -559,3 +563,28 @@ def build_export(
         "largest_file": {"path": written.largest[0], "bytes": written.largest[1]},
         "seconds": round(time.monotonic() - started),
     }
+
+
+def package(export: Path, *, state: str, tag: str, out_dir: Path) -> tuple[Path, Path]:
+    """The export as one release asset, `export-<ST>-<tag>.tar.gz`, and its SHA-256 in the
+    form `sha256sum -c` reads. The archive is byte-for-byte reproducible: names sorted, every
+    timestamp and owner zeroed, so the same export always gives the same checksum."""
+    if not (export / "meta.json").exists():
+        raise ExportError(f"{export} holds no export; run `uv run lineage export` first")
+    name = f"export-{state}-{tag}.tar.gz"
+    buffer = io.BytesIO()
+    with tarfile.open(fileobj=buffer, mode="w", format=tarfile.PAX_FORMAT) as tar:
+        for path in sorted(p for p in export.rglob("*") if p.is_file()):
+            info = tarfile.TarInfo(path.relative_to(export).as_posix())
+            info.size = path.stat().st_size
+            info.mtime = 0
+            info.mode = 0o644
+            with path.open("rb") as f:
+                tar.addfile(info, f)
+    data = gzip.compress(buffer.getvalue(), mtime=0)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    asset = out_dir / name
+    asset.write_bytes(data)
+    checksum = out_dir / f"{name}.sha256"
+    checksum.write_text(f"{hashlib.sha256(data).hexdigest()}  {name}\n")
+    return asset, checksum

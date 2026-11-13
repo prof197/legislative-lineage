@@ -605,6 +605,31 @@
    "title": "Relative",
    "type": "object"
   },
+  "Release": {
+   "additionalProperties": false,
+   "description": "`release.json`, written by the site build when it fetches the export: the release the\ndata came from and the checksum it was verified against, for the data stamp.",
+   "properties": {
+    "asset": {
+     "title": "Asset",
+     "type": "string"
+    },
+    "sha256": {
+     "title": "Sha256",
+     "type": "string"
+    },
+    "tag": {
+     "title": "Tag",
+     "type": "string"
+    }
+   },
+   "required": [
+    "tag",
+    "asset",
+    "sha256"
+   ],
+   "title": "Release",
+   "type": "object"
+  },
   "SectionInfo": {
    "additionalProperties": false,
    "properties": {
