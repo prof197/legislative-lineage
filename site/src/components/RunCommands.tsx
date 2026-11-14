@@ -8,7 +8,7 @@ export function RunCommands({ repository, initial }: { repository: string; initi
   const [code, setCode] = useState(initial);
   const [copied, setCopied] = useState(-1);
   // Only commands that exist today: the tool builds from source. A packaged install and a
-  // download of the prebuilt index join this list when they ship (M8).
+  // download of the prebuilt index join this list when they ship (M13).
   const commands: [string, string[]][] = [
     ["Get the code and its pinned environment. Needs git, uv and Python 3.13.", [`git clone ${repository}.git`, "cd legislative-lineage", "uv sync"]],
     ["Download the pinned Open States archives and load them.", ["uv run lineage fetch-raw", "uv run lineage ingest"]],
