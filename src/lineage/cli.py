@@ -162,7 +162,13 @@ from lineage.relatives_sample import (
 )
 from lineage.relatives_sample import estimate as relatives_estimate
 from lineage.relatives_sample import write_sample as write_relatives_sample
-from lineage.results_table import EXPORTED_ONLY, README, ResultsTableError, rendered_readme
+from lineage.results_table import (
+    EXPORTED_ONLY,
+    README,
+    SAMPLED_STATE_REPORT,
+    ResultsTableError,
+    rendered_readme,
+)
 from lineage.sectioning import SectioningError, build_sections
 from lineage.semantic import MODEL as SEMANTIC_MODEL
 from lineage.semantic import THRESHOLD as THRESHOLD_STAGE
@@ -1640,6 +1646,7 @@ def eval_readme(
             readme.read_text(),
             json.loads(results.read_text()),
             json.loads(exported_only.read_text()),
+            json.loads(SAMPLED_STATE_REPORT.read_text())["state"],
         )
     except ResultsTableError as e:
         typer.echo(str(e), err=True)

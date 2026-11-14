@@ -12,6 +12,8 @@ from lineage.results_table import (
     HELD_OUT_END,
     HELD_OUT_START,
     START,
+    SUMMARY_END,
+    SUMMARY_START,
     ResultsTableError,
     rendered_readme,
 )
@@ -49,7 +51,11 @@ def test_the_committed_readme_shows_the_committed_results() -> None:
     results = json.loads((ROOT / "reports" / "results.json").read_text())
     exported = json.loads((ROOT / "reports" / "results_exported_only.json").read_text())
 
-    assert readme == rendered_readme(readme, results, exported), "run `uv run lineage eval readme`"
+    state = json.loads((ROOT / "reports" / "relatives_reporting.json").read_text())["state"]
+
+    assert readme == rendered_readme(readme, results, exported, state), (
+        "run `uv run lineage eval readme`"
+    )
 
 
 def test_renders_counts_and_shares_from_the_results() -> None:
@@ -167,3 +173,19 @@ def test_the_held_out_run_is_shown_by_stage_once_the_readme_has_its_section() ->
     assert "--held-out --final" in out
     with pytest.raises(ResultsTableError, match="held-out run has no results"):
         rendered_readme(readme, {"commission": _merged(3, 2, 4)}, {"commission": _section(1, 4)})
+
+
+def test_the_summary_answers_each_question_from_the_results() -> None:
+    results = json.loads((ROOT / "reports" / "results.json").read_text())
+    readme = f"# Title\n\n{SUMMARY_START}\nstale\n{SUMMARY_END}\n\n{START}\n{END}\n"
+    exported = json.loads((ROOT / "reports" / "results_exported_only.json").read_text())
+
+    out = rendered_readme(readme, results, exported, "GA")
+
+    dev = results["commission"]["recall"]["pooled"]["all"]
+    assert f"| {dev['found']} of {dev['enactments']} (" in out
+    assert "sampled from Georgia's pages" in out
+    assert "`uv run lineage eval faithfulness`" in out
+    assert "stale" not in out
+    with pytest.raises(ResultsTableError, match="precision sample"):
+        rendered_readme(readme, results, exported)
