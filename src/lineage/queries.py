@@ -1497,6 +1497,20 @@ def states_indexed(con: duckdb.DuckDBPyConnection, *, bills_glob: str) -> int:
 
 # --- lane C: matching ---
 
+
+def matchable_sections_of(
+    con: duckdb.DuckDBPyConnection, *, sections_glob: str, eligible_path: Path, ids: list[str]
+) -> list[tuple[str, int, str, str]]:
+    """(bill id, ordinal, display text, normalized text) of the wanted bills' matchable
+    sections, in key order: what an origin match's spans and bill share are read from."""
+    rows: list[tuple[str, int, str, str]] = con.execute(
+        f"SELECT s.bill_id, s.ordinal, s.text, s.normalized {_MATCHABLE} "
+        "AND s.bill_id IN (SELECT unnest($ids)) ORDER BY s.bill_id, s.ordinal",
+        {"sections": sections_glob, "eligible": str(eligible_path), "ids": ids},
+    ).fetchall()
+    return rows
+
+
 # --- lane D: evals ---
 
 # --- lane L1: incremental core ---
