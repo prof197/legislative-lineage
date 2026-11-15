@@ -1,0 +1,267 @@
+{
+ "_note": "CONSTRUCTED, NOT RECORDED. Open States API v3 bills in the shape its OpenAPI document gives (https://v3.openstates.org/docs, GET /bills, Bill with sponsorships, actions, sources, documents and versions included), written by hand because the API is not called in tests. Every bill, id, sponsor, URL and text here is synthetic; the hosts are reserved example domains. `days` gives what the API holds on each day: a later day's bill replaces the same id's earlier one. `documents` holds the bill texts the version links lead to.",
+ "days": {
+  "2026-01-12": [
+   {
+    "id": "ocd-bill/fixture-de-0001",
+    "session": "153",
+    "jurisdiction": {"id": "ocd-jurisdiction/country:us/state:de/government", "name": "Delaware", "classification": "state"},
+    "from_organization": {"id": "ocd-organization/fixture-de-house", "name": "House", "classification": "lower"},
+    "identifier": "HB 1",
+    "title": "Fixture Water Quality Act",
+    "classification": ["bill"],
+    "subject": ["Environment"],
+    "extras": {},
+    "created_at": "2026-01-12T09:00:00.000001+00:00",
+    "updated_at": "2026-01-12T09:00:00.000001+00:00",
+    "openstates_url": "https://openstates.example/de/bills/153/HB1/",
+    "first_action_date": "2026-01-12",
+    "latest_action_date": "2026-01-12",
+    "latest_action_description": "Introduced and Assigned to Natural Resources Committee in House",
+    "latest_passage_date": "",
+    "abstracts": [{"abstract": "Sets water quality standards (fixture).", "note": ""}],
+    "other_titles": [],
+    "sponsorships": [
+     {"id": "00000000-0000-4000-8000-000000000001", "name": "Fixture Sponsor One", "entity_type": "person", "organization": null, "person": null, "primary": true, "classification": "primary"}
+    ],
+    "actions": [
+     {"id": "00000000-0000-4000-8000-000000000011", "organization": {"id": "ocd-organization/fixture-de-house", "name": "House", "classification": "lower"}, "description": "Introduced and Assigned to Natural Resources Committee in House", "date": "2026-01-12", "classification": ["introduction", "referral-committee"], "order": 1, "related_entities": []}
+    ],
+    "sources": [{"url": "https://legis.example/de/hb1", "note": ""}],
+    "documents": [
+     {"id": "00000000-0000-4000-8000-000000000021", "note": "Fiscal Note", "date": "", "classification": "", "links": [{"url": "https://legis.example/de/hb1-fiscal.pdf", "media_type": "application/pdf"}]}
+    ],
+    "versions": [
+     {"id": "00000000-0000-4000-8000-000000000031", "note": "Introduced", "date": "2026-01-12", "classification": "", "links": [{"url": "https://legis.example/de/hb1.pdf", "media_type": "application/pdf"}, {"url": "https://legis.example/de/hb1.html", "media_type": "text/html"}]}
+    ]
+   },
+   {
+    "id": "ocd-bill/fixture-de-0002",
+    "session": "153",
+    "jurisdiction": {"id": "ocd-jurisdiction/country:us/state:de/government", "name": "Delaware", "classification": "state"},
+    "from_organization": {"id": "ocd-organization/fixture-de-senate", "name": "Senate", "classification": "upper"},
+    "identifier": "SB 2",
+    "title": "Fixture Records Act",
+    "classification": ["bill"],
+    "subject": [],
+    "extras": {},
+    "created_at": "2026-01-12T10:00:00.000002+00:00",
+    "updated_at": "2026-01-12T10:00:00.000002+00:00",
+    "openstates_url": "https://openstates.example/de/bills/153/SB2/",
+    "first_action_date": "2026-01-12",
+    "latest_action_date": "2026-01-12",
+    "latest_action_description": "Introduced and Assigned to Judiciary Committee in Senate",
+    "latest_passage_date": "",
+    "abstracts": [],
+    "other_titles": [],
+    "sponsorships": [
+     {"id": "00000000-0000-4000-8000-000000000002", "name": "Fixture Sponsor Two", "entity_type": "person", "organization": null, "person": null, "primary": true, "classification": "primary"}
+    ],
+    "actions": [
+     {"id": "00000000-0000-4000-8000-000000000012", "organization": {"id": "ocd-organization/fixture-de-senate", "name": "Senate", "classification": "upper"}, "description": "Introduced and Assigned to Judiciary Committee in Senate", "date": "2026-01-12", "classification": ["introduction"], "order": 1, "related_entities": []}
+    ],
+    "sources": [{"url": "https://legis.example/de/sb2", "note": ""}],
+    "documents": [],
+    "versions": [
+     {"id": "00000000-0000-4000-8000-000000000032", "note": "Introduced", "date": "", "classification": "", "links": [{"url": "https://legis.example/private/sb2.html", "media_type": "text/html"}]}
+    ]
+   },
+   {
+    "id": "ocd-bill/fixture-mi-0001",
+    "session": "2025-2026",
+    "jurisdiction": {"id": "ocd-jurisdiction/country:us/state:mi/government", "name": "Michigan", "classification": "state"},
+    "from_organization": {"id": "ocd-organization/fixture-mi-senate", "name": "Senate", "classification": "upper"},
+    "identifier": "SB 1",
+    "title": "Fixture Library Access Act",
+    "classification": ["bill"],
+    "subject": [],
+    "extras": {},
+    "created_at": "2026-01-12T11:00:00.000003+00:00",
+    "updated_at": "2026-01-12T11:00:00.000003+00:00",
+    "openstates_url": "https://openstates.example/mi/bills/2025-2026/SB1/",
+    "first_action_date": "2026-01-12",
+    "latest_action_date": "2026-01-12",
+    "latest_action_description": "Introduced By Senator Fixture Sponsor Three",
+    "latest_passage_date": "",
+    "abstracts": [],
+    "other_titles": [{"title": "Library access", "note": "short title"}],
+    "sponsorships": [
+     {"id": "00000000-0000-4000-8000-000000000003", "name": "Fixture Sponsor Three", "entity_type": "person", "organization": null, "person": null, "primary": true, "classification": "primary"}
+    ],
+    "actions": [
+     {"id": "00000000-0000-4000-8000-000000000013", "organization": {"id": "ocd-organization/fixture-mi-senate", "name": "Senate", "classification": "upper"}, "description": "Introduced By Senator Fixture Sponsor Three", "date": "2026-01-12T00:00:00-05:00", "classification": ["introduction"], "order": 1, "related_entities": []}
+    ],
+    "sources": [{"url": "https://mi.example/sb1", "note": ""}],
+    "documents": [],
+    "versions": [
+     {"id": "00000000-0000-4000-8000-000000000033", "note": "Introduced", "date": "", "classification": "", "links": [{"url": "https://mi.example/sb1.htm", "media_type": "text/html"}]}
+    ]
+   },
+   {
+    "id": "ocd-bill/fixture-ca-0001",
+    "session": "20252026",
+    "jurisdiction": {"id": "ocd-jurisdiction/country:us/state:ca/government", "name": "California", "classification": "state"},
+    "from_organization": {"id": "ocd-organization/fixture-ca-assembly", "name": "Assembly", "classification": "lower"},
+    "identifier": "AB 1",
+    "title": "Fixture Parks Act",
+    "classification": ["bill"],
+    "subject": [],
+    "extras": {},
+    "created_at": "2026-01-12T12:00:00.000004+00:00",
+    "updated_at": "2026-01-12T12:00:00.000004+00:00",
+    "openstates_url": "https://openstates.example/ca/bills/20252026/AB1/",
+    "first_action_date": "2026-01-12",
+    "latest_action_date": "2026-01-12",
+    "latest_action_description": "Introduced",
+    "latest_passage_date": "",
+    "abstracts": [],
+    "other_titles": [],
+    "sponsorships": [],
+    "actions": [
+     {"id": "00000000-0000-4000-8000-000000000014", "organization": {"id": "ocd-organization/fixture-ca-assembly", "name": "Assembly", "classification": "lower"}, "description": "Introduced", "date": "2026-01-12", "classification": ["introduction"], "order": 1, "related_entities": []}
+    ],
+    "sources": [],
+    "documents": [],
+    "versions": [
+     {"id": "00000000-0000-4000-8000-000000000034", "note": "Introduced", "date": "2026-01-12", "classification": "", "links": [{"url": "https://ca.example/ab1.html", "media_type": "text/html"}]}
+    ]
+   },
+   {
+    "id": "ocd-bill/fixture-in-0001",
+    "session": "2026",
+    "jurisdiction": {"id": "ocd-jurisdiction/country:us/state:in/government", "name": "Indiana", "classification": "state"},
+    "from_organization": {"id": "ocd-organization/fixture-in-house", "name": "House", "classification": "lower"},
+    "identifier": "HB 1001",
+    "title": "Fixture Roads Act",
+    "classification": ["bill"],
+    "subject": [],
+    "extras": {},
+    "created_at": "2026-01-12T13:00:00.000005+00:00",
+    "updated_at": "2026-01-12T13:00:00.000005+00:00",
+    "openstates_url": "https://openstates.example/in/bills/2026/HB1001/",
+    "first_action_date": "2026-01-12",
+    "latest_action_date": "2026-01-12",
+    "latest_action_description": "First reading: referred to Committee on Roads and Transportation",
+    "latest_passage_date": "",
+    "abstracts": [],
+    "other_titles": [],
+    "sponsorships": [],
+    "actions": [
+     {"id": "00000000-0000-4000-8000-000000000015", "organization": {"id": "ocd-organization/fixture-in-house", "name": "House", "classification": "lower"}, "description": "First reading: referred to Committee on Roads and Transportation", "date": "2026-01-12", "classification": ["introduction", "reading-1"], "order": 1, "related_entities": []}
+    ],
+    "sources": [],
+    "documents": [],
+    "versions": [
+     {"id": "00000000-0000-4000-8000-000000000035", "note": "Introduced House Bill (H)", "date": "2026-01-12", "classification": "", "links": [{"url": "https://in.example/hb1001.pdf", "media_type": "application/pdf"}]}
+    ]
+   }
+  ],
+  "2026-01-13": [
+   {
+    "id": "ocd-bill/fixture-de-0001",
+    "session": "153",
+    "jurisdiction": {"id": "ocd-jurisdiction/country:us/state:de/government", "name": "Delaware", "classification": "state"},
+    "from_organization": {"id": "ocd-organization/fixture-de-house", "name": "House", "classification": "lower"},
+    "identifier": "HB 1",
+    "title": "Fixture Water Quality Act",
+    "classification": ["bill"],
+    "subject": ["Environment"],
+    "extras": {},
+    "created_at": "2026-01-12T09:00:00.000001+00:00",
+    "updated_at": "2026-01-13T09:30:00.000006+00:00",
+    "openstates_url": "https://openstates.example/de/bills/153/HB1/",
+    "first_action_date": "2026-01-12",
+    "latest_action_date": "2026-01-13",
+    "latest_action_description": "Passed In House",
+    "latest_passage_date": "2026-01-13",
+    "abstracts": [{"abstract": "Sets water quality standards (fixture).", "note": ""}],
+    "other_titles": [],
+    "sponsorships": [
+     {"id": "00000000-0000-4000-8000-000000000001", "name": "Fixture Sponsor One", "entity_type": "person", "organization": null, "person": null, "primary": true, "classification": "primary"}
+    ],
+    "actions": [
+     {"id": "00000000-0000-4000-8000-000000000011", "organization": {"id": "ocd-organization/fixture-de-house", "name": "House", "classification": "lower"}, "description": "Introduced and Assigned to Natural Resources Committee in House", "date": "2026-01-12", "classification": ["introduction", "referral-committee"], "order": 1, "related_entities": []},
+     {"id": "00000000-0000-4000-8000-000000000016", "organization": {"id": "ocd-organization/fixture-de-house", "name": "House", "classification": "lower"}, "description": "Passed In House", "date": "2026-01-13", "classification": ["passage"], "order": 2, "related_entities": []}
+    ],
+    "sources": [{"url": "https://legis.example/de/hb1", "note": ""}],
+    "documents": [
+     {"id": "00000000-0000-4000-8000-000000000021", "note": "Fiscal Note", "date": "", "classification": "", "links": [{"url": "https://legis.example/de/hb1-fiscal.pdf", "media_type": "application/pdf"}]}
+    ],
+    "versions": [
+     {"id": "00000000-0000-4000-8000-000000000031", "note": "Introduced", "date": "2026-01-12", "classification": "", "links": [{"url": "https://legis.example/de/hb1.pdf", "media_type": "application/pdf"}, {"url": "https://legis.example/de/hb1.html", "media_type": "text/html"}]},
+     {"id": "00000000-0000-4000-8000-000000000036", "note": "Engrossed", "date": "2026-01-13", "classification": "", "links": [{"url": "https://legis.example/de/hb1-eng.html", "media_type": "text/html"}]}
+    ]
+   },
+   {
+    "id": "ocd-bill/fixture-mi-0001",
+    "session": "2025-2026",
+    "jurisdiction": {"id": "ocd-jurisdiction/country:us/state:mi/government", "name": "Michigan", "classification": "state"},
+    "from_organization": {"id": "ocd-organization/fixture-mi-senate", "name": "Senate", "classification": "upper"},
+    "identifier": "SB 1",
+    "title": "Fixture Library Access Act",
+    "classification": ["bill"],
+    "subject": [],
+    "extras": {},
+    "created_at": "2026-01-12T11:00:00.000003+00:00",
+    "updated_at": "2026-01-13T11:00:00.000007+00:00",
+    "openstates_url": "https://openstates.example/mi/bills/2025-2026/SB1/",
+    "first_action_date": "2026-01-12",
+    "latest_action_date": "2026-01-13",
+    "latest_action_description": "Referred To Committee On Education",
+    "latest_passage_date": "",
+    "abstracts": [],
+    "other_titles": [{"title": "Library access", "note": "short title"}],
+    "sponsorships": [
+     {"id": "00000000-0000-4000-8000-000000000003", "name": "Fixture Sponsor Three", "entity_type": "person", "organization": null, "person": null, "primary": true, "classification": "primary"}
+    ],
+    "actions": [
+     {"id": "00000000-0000-4000-8000-000000000013", "organization": {"id": "ocd-organization/fixture-mi-senate", "name": "Senate", "classification": "upper"}, "description": "Introduced By Senator Fixture Sponsor Three", "date": "2026-01-12T00:00:00-05:00", "classification": ["introduction"], "order": 1, "related_entities": []},
+     {"id": "00000000-0000-4000-8000-000000000017", "organization": {"id": "ocd-organization/fixture-mi-senate", "name": "Senate", "classification": "upper"}, "description": "Referred To Committee On Education", "date": "2026-01-13T00:00:00-05:00", "classification": ["referral-committee"], "order": 2, "related_entities": []}
+    ],
+    "sources": [{"url": "https://mi.example/sb1", "note": ""}],
+    "documents": [],
+    "versions": [
+     {"id": "00000000-0000-4000-8000-000000000033", "note": "Introduced", "date": "", "classification": "", "links": [{"url": "https://mi.example/sb1.htm", "media_type": "text/html"}]}
+    ]
+   },
+   {
+    "id": "ocd-bill/fixture-mi-0002",
+    "session": "2025-2026",
+    "jurisdiction": {"id": "ocd-jurisdiction/country:us/state:mi/government", "name": "Michigan", "classification": "state"},
+    "from_organization": {"id": "ocd-organization/fixture-mi-house", "name": "House", "classification": "lower"},
+    "identifier": "HB 4001",
+    "title": "Fixture Water Quality Act",
+    "classification": ["bill"],
+    "subject": [],
+    "extras": {},
+    "created_at": "2026-01-13T12:00:00.000008+00:00",
+    "updated_at": "2026-01-13T12:00:00.000008+00:00",
+    "openstates_url": "https://openstates.example/mi/bills/2025-2026/HB4001/",
+    "first_action_date": "2026-01-13",
+    "latest_action_date": "2026-01-13",
+    "latest_action_description": "Introduced By Representative Fixture Sponsor Four",
+    "latest_passage_date": "",
+    "abstracts": [],
+    "other_titles": [],
+    "sponsorships": [
+     {"id": "00000000-0000-4000-8000-000000000004", "name": "Fixture Sponsor Four", "entity_type": "person", "organization": null, "person": null, "primary": true, "classification": "primary"}
+    ],
+    "actions": [
+     {"id": "00000000-0000-4000-8000-000000000018", "organization": {"id": "ocd-organization/fixture-mi-house", "name": "House", "classification": "lower"}, "description": "Introduced By Representative Fixture Sponsor Four", "date": "2026-01-13T00:00:00-05:00", "classification": ["introduction"], "order": 1, "related_entities": []}
+    ],
+    "sources": [{"url": "https://mi.example/hb4001", "note": ""}],
+    "documents": [],
+    "versions": [
+     {"id": "00000000-0000-4000-8000-000000000037", "note": "Introduced", "date": "", "classification": "", "links": [{"url": "https://mi.example/hb4001.htm", "media_type": "text/html"}]}
+    ]
+   }
+  ]
+ },
+ "documents": {
+  "https://legis.example/de/hb1.html": "<html><body><h1>House Bill 1</h1><p>AN ACT relating to water quality (fixture).</p><p>Section 1. Short title. This act may be cited as the Fixture Water Quality Act, and it sets the standards that public water systems in the state shall meet.</p><p>Section 2. Standards. The department shall adopt rules setting the largest amount of each listed contaminant that a public water system may deliver, and shall review those rules every five years.</p></body></html>",
+  "https://legis.example/de/hb1-eng.html": "<html><body><h1>House Bill 1, as engrossed</h1><p>AN ACT relating to water quality (fixture).</p><p>Section 1. Short title. This act may be cited as the Fixture Water Quality Act, and it sets the standards that public water systems in the state shall meet.</p><p>Section 2. Standards. The department shall adopt rules setting the largest amount of each listed contaminant that a public water system may deliver, and shall review those rules every three years after a public hearing.</p><p>Section 3. Reports. Each system shall publish an annual report of its test results.</p></body></html>",
+  "https://legis.example/private/sb2.html": "<html><body><p>Section 1. Not to be fetched: robots.txt disallows this path for every agent, so the text layer never asks for it.</p></body></html>",
+  "https://mi.example/sb1.htm": "<html><body><h1>Senate Bill 1</h1><p>A bill to provide for library access (fixture).</p><p>Sec. 1. This act shall be known and may be cited as the fixture library access act, and it applies to every public library that receives state aid in any fiscal year.</p><p>Sec. 2. A public library shall keep its main reading room open to the public for at least forty hours each week.</p></body></html>",
+  "https://mi.example/hb4001.htm": "<html><body><h1>House Bill 4001</h1><p>A bill relating to water quality (fixture).</p><p>Sec. 1. This act may be cited as the Fixture Water Quality Act, and it sets the standards that public water systems in the state shall meet.</p><p>Sec. 2. The department shall adopt rules setting the largest amount of each listed contaminant that a public water system may deliver, and shall review those rules every five years.</p></body></html>"
+ }
+}
