@@ -270,3 +270,106 @@ def cap_sweep(
         cap: CapEffect(over[cap], multi[cap], most[cap], int(np.count_nonzero(smallest > cap)))
         for cap in caps
     }
+
+
+# Updates (DESIGN.md#updates, DR-7): the index after a day equals the index a build over the same
+# signatures writes, and the pairs whose candidacy a day can change are found from the buckets it
+# touches, the bucket cap applied exactly.
+
+
+def merge_band(
+    keys: NDArray[np.uint64],
+    rows: NDArray[np.uint32],
+    row_map: NDArray[np.int64],
+    new_keys: NDArray[np.uint64],
+    new_rows: NDArray[np.int64],
+) -> tuple[NDArray[np.uint64], NDArray[np.uint32]]:
+    """One band after an update: the surviving rows renumbered by `row_map` (each old row's new
+    number, -1 where it was retired) and the new rows' keys inserted, ordered by key and then
+    row, the order `fill_band_index` leaves a band in."""
+    mapped = row_map[np.asarray(rows, dtype=np.int64)]
+    keep = mapped >= 0
+    all_keys = np.concatenate([np.asarray(keys, dtype=np.uint64)[keep], new_keys])
+    all_rows = np.concatenate([mapped[keep], new_rows.astype(np.int64)])
+    order = np.lexsort((all_rows, all_keys))
+    return all_keys[order], all_rows[order].astype(np.uint32)
+
+
+def bucket_sizes(sorted_keys: NDArray[np.uint64], keys: NDArray[np.uint64]) -> NDArray[np.int64]:
+    """How many rows of a band, whose keys are `sorted_keys`, share each of `keys`."""
+    lo = np.searchsorted(sorted_keys, keys, side="left")
+    hi = np.searchsorted(sorted_keys, keys, side="right")
+    return (hi - lo).astype(np.int64)
+
+
+def touched_pairs(
+    before_keys: NDArray[np.uint64],
+    after_keys: NDArray[np.uint64],
+    after_rows: NDArray[np.uint32],
+    fresh: NDArray[np.bool_],
+    touched: NDArray[np.uint64],
+    *,
+    cap: int = BUCKET_CAP,
+) -> NDArray[np.uint64]:
+    """The window pairs, as sorted distinct codes over the new row numbers, whose candidacy one
+    band may have changed: every pair with a `fresh` row in a bucket within the cap, and every
+    pair of surviving rows in a bucket that crossed the cap, either way.
+
+    `touched` holds the keys the day put rows into or took rows out of. A bucket untouched, or
+    touched without crossing the cap, forms the same pairs of surviving rows as before, so no
+    other pair's candidacy can have changed in this band."""
+    keys = np.unique(touched)
+    before = bucket_sizes(np.asarray(before_keys), keys)
+    lo = np.searchsorted(after_keys, keys, side="left")
+    hi = np.searchsorted(after_keys, keys, side="right")
+    after = hi - lo
+    parts: list[NDArray[np.uint64]] = []
+    # A fresh row's partners in its bucket, when the bucket is within the cap: a ragged
+    # expansion of each fresh member against every member of its bucket.
+    within = (after >= 2) & (after <= cap)
+    starts, sizes = lo[within], after[within]
+    members = np.asarray(after_rows, dtype=np.uint32)
+    if sizes.size:
+        bucket_of = np.repeat(np.arange(sizes.size), sizes)
+        position = np.repeat(starts, sizes) + _ragged_arange(sizes)
+        rows = members[position]
+        is_fresh = fresh[rows]
+        mine = np.flatnonzero(is_fresh)
+        own_bucket = bucket_of[mine]
+        counts = sizes[own_bucket]
+        partner = np.repeat(starts[own_bucket], counts) + _ragged_arange(counts)
+        a = np.repeat(rows[mine], counts)
+        b = members[partner]
+        apart = a != b
+        a, b = a[apart], b[apart]
+        parts.append(_codes(np.minimum(a, b), np.maximum(a, b)))
+    crossed = (before <= cap) != (after <= cap)
+    for start, size in zip(lo[crossed].tolist(), after[crossed].tolist(), strict=True):
+        survivors = members[start : start + size]
+        survivors = survivors[~fresh[survivors]]
+        if survivors.size >= 2:
+            left, right = _pairs_of_size(survivors, np.array([0]), int(survivors.size))
+            parts.append(_codes(left, right))
+    return _distinct(np.concatenate(parts) if parts else np.empty(0, dtype=np.uint64))
+
+
+def _ragged_arange(sizes: NDArray[np.int64]) -> NDArray[np.int64]:
+    """0..n-1 for each n in `sizes`, concatenated."""
+    total = int(sizes.sum())
+    if not total:
+        return np.empty(0, dtype=np.int64)
+    ends = np.cumsum(sizes)
+    return np.arange(total, dtype=np.int64) - np.repeat(ends - sizes, sizes)
+
+
+def candidates_by_band(
+    left_keys: NDArray[np.uint64],
+    right_keys: NDArray[np.uint64],
+    left_sizes: NDArray[np.int64],
+    *,
+    cap: int = BUCKET_CAP,
+) -> NDArray[np.bool_]:
+    """Which window pairs are candidates: given each pair's band keys, (pairs, BANDS) on either
+    side, and the size of the left row's bucket in each band, whether some band puts both in
+    one bucket within the cap."""
+    return ((left_keys == right_keys) & (left_sizes <= cap)).any(axis=1)
