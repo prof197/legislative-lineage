@@ -149,7 +149,21 @@ from lineage.neighbors import REPORT as NEIGHBORS_REPORT
 from lineage.neighbors import check_at as check_neighbors_at
 from lineage.neighbors import write_report as write_neighbors_report
 from lineage.origin_matching import match_models
-from lineage.origins import write_origin_matches
+from lineage.origin_precision import PARTS as ORIGIN_PARTS
+from lineage.origin_precision import (
+    OriginPrecisionError,
+    doc_chars,
+    draw_part,
+    excluded_keys,
+    plan_labels,
+    prompt_chars,
+    refuse_over_cap,
+    section_chars,
+    write_part,
+)
+from lineage.origin_recall import KEYS as ORIGIN_KEYS
+from lineage.origin_recall import OriginRecallError, load_key, origin_recall, same_slug
+from lineage.origins import read_origin_matches, write_origin_matches
 from lineage.pair_data import PAIR_DATA_DIR, PairDataError, fetch_pair_data
 from lineage.pair_eval import REPORT as PAIR_REPORT
 from lineage.pair_eval import evaluate as evaluate_pairs
@@ -702,6 +716,57 @@ def origins_command(
         raise typer.Exit(1) from e
     path = write_origin_matches(tables, matches)
     typer.echo(f"{len(matches)} matches from {len(docs)} documents -> {path}")
+
+
+@app.command("origin-sample")
+def origin_sample_command(
+    part: Annotated[
+        str, typer.Option("--part", help="tuning, or reporting (once matching is final).")
+    ] = "tuning",
+    tables: TablesOption = DATA / "tables",
+    root: Annotated[
+        Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
+    ] = MODELDOCS_DIR,
+    final: Annotated[
+        bool, typer.Option("--final", help="Matching is final: the reporting sample may be drawn.")
+    ] = False,
+    batch: Annotated[
+        bool, typer.Option("--batch", help="Project at the Batches API's half price.")
+    ] = False,
+) -> None:
+    """Draw an origin precision sample and project what labeling it would cost; asks nothing
+    (DESIGN.md#origin-matches)."""
+    if part not in ORIGIN_PARTS:
+        typer.echo(f"error: no part {part!r}; one of {', '.join(ORIGIN_PARTS)}", err=True)
+        raise typer.Exit(1)
+    chosen = ORIGIN_PARTS[part]
+    try:
+        rows, report = draw_part(
+            read_origin_matches(tables), chosen, excluded=excluded_keys(chosen), final=final
+        )
+        if not rows:
+            raise OriginPrecisionError(
+                f"no origin matches in {tables}; run `lineage origins` first"
+            )
+        wanted = {r["doc_id"] for r in rows}
+        docs = [
+            d for c in collectors().values() for d in read_docs(c.source, root) if d.id in wanted
+        ]
+        chars = prompt_chars(
+            rows,
+            sections=section_chars(tables, [r["bill_id"] for r in rows]),
+            docs=doc_chars(docs, root),
+        )
+        plan = plan_labels(chars, batch=batch)
+        path = write_part(rows, report | {"label_plan": plan.as_dict()}, chosen)
+        refuse_over_cap(plan)
+    except (OriginPrecisionError, ModelDocError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    typer.echo(
+        f"{len(rows)} matches -> {path}; labels projected at most ${plan.projected:,.2f}, "
+        f"${plan.spent:,.2f} of ${plan.budget:,.2f} spent"
+    )
 
 
 @app.command("state-boilerplate")
@@ -1575,6 +1640,50 @@ def stats(
         samples_report.parent.mkdir(parents=True, exist_ok=True)
         samples_report.write_text(json.dumps(found, indent=1, ensure_ascii=False) + "\n")
         typer.echo(f"sample titles for {len(found['rules'])} rules -> {samples_report}")
+
+
+@eval_app.command("origins")
+def eval_origins(
+    tables: TablesOption = DATA / "tables",
+    key: Annotated[
+        str,
+        typer.Option("--key", help="The answer key: development, or held_out (with --final)."),
+    ] = "development",
+    source: Annotated[
+        str, typer.Option("--source", help="The source whose documents are named by act slug.")
+    ] = "commission",
+    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+    final: Annotated[
+        bool, typer.Option("--final", help="The one run of a sealed key per configuration.")
+    ] = False,
+) -> None:
+    """Origin recall: what share of each model's enactments its origin matches name
+    (DESIGN.md#origin-matches)."""
+    if key not in ORIGIN_KEYS:
+        typer.echo(f"error: no answer key {key!r}; one of {', '.join(ORIGIN_KEYS)}", err=True)
+        raise typer.Exit(1)
+    answer_key = ORIGIN_KEYS[key]
+    name = f"origins_{answer_key.name}"
+    previous = json.loads(results.read_text()).get(name) if results.exists() else None
+    try:
+        acts = {e.act for e in load_key(answer_key.path).enactments}
+        section = origin_recall(
+            read_origin_matches(tables),
+            answer_key,
+            same_slug(acts, source),
+            final=final,
+            # v1's listing configuration stands in until origin matching names its own settings
+            configuration=run_configuration(True, flagged_sections(tables))
+            if answer_key.sealed and final
+            else None,
+            previous=previous,
+        )
+    except OriginRecallError as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    write_results(results, name, section)
+    r = section["recall"]["pooled"]
+    typer.echo(f"origin recall: {r['found']}/{r['enactments']} {r['interval_95']} -> {results}")
 
 
 @eval_app.command("commission")

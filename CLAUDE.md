@@ -53,6 +53,8 @@ uv run lineage label-model SAMPLE  # provisional labels from a model, kept apart
 uv run lineage eval precision  # precision per stratum, stage and overall, people's and the model's apart -> reports/results.json
 uv run lineage collect-models SOURCE  # one source's model legislation -> data/modeldocs/<source>/, reports/modeldocs/<source>.json
 uv run lineage origins       # collected model documents against the corpus -> data/tables/origins/matches.jsonl (lane C; not built yet)
+uv run lineage eval origins  # origin recall on the development answer key -> reports/results.json (origins_development); --key held_out --final: the sealed key, once per configuration
+uv run lineage origin-sample  # seeded origin precision sample (--part tuning), label cost projected, nothing asked -> evals/origin_precision_tuning.jsonl, reports/origin_precision_sample.json; --part reporting --final once matching is final
 uv run lineage update --day DIR  # apply one day's new and changed records -> data/changes/<as_of>.jsonl (lane L1; not built yet)
 uv run lineage text inventory  # version to fetch per record, by host, robots.txt read -> data/text/plan.parquet, reports/text_inventory.json
 uv run lineage text sample   # quality test: fetch a seeded sample per state and format -> data/text/sample/, reports/text_quality.json
@@ -156,6 +158,8 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   collectors/     one collector module per source of model legislation, each owned by the lane that builds it
   origins.py      OriginMatch, both shares and the bill's spans, and the origins table
   origin_matching.py  `lineage origins`' body: model documents queried against the corpus (lane C, M10; a stub until then)
+  origin_recall.py  `lineage eval origins`: model-to-bill recall from the resolved answer keys; a sealed key only with --final
+  origin_precision.py  `lineage origin-sample`: seeded tuning and reporting samples of origin matches, the label cost projection and its cap
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
 tools/            dev and CI checks
   leak_check.py   local paths and deny-listed terms in tracked files and every commit
