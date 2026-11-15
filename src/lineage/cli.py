@@ -65,6 +65,7 @@ from lineage.explain import projected_cost as projected_explain_cost
 from lineage.export import (
     EXPORT_DIR,
     RELEASE_MANIFEST,
+    STORIES_RULES,
     ExportError,
     build_export,
     write_release_manifest,
@@ -162,7 +163,13 @@ from lineage.relatives_sample import (
 )
 from lineage.relatives_sample import estimate as relatives_estimate
 from lineage.relatives_sample import write_sample as write_relatives_sample
-from lineage.results_table import EXPORTED_ONLY, README, ResultsTableError, rendered_readme
+from lineage.results_table import (
+    EXPORTED_ONLY,
+    README,
+    SAMPLED_STATE_REPORT,
+    ResultsTableError,
+    rendered_readme,
+)
 from lineage.sectioning import SectioningError, build_sections
 from lineage.semantic import MODEL as SEMANTIC_MODEL
 from lineage.semantic import THRESHOLD as THRESHOLD_STAGE
@@ -1225,6 +1232,9 @@ def export_command(
     featured_report: Annotated[
         Path, typer.Option("--featured-report", help="Each story's relatives (committed).")
     ] = FEATURED_REPORT,
+    stories_rules: Annotated[
+        Path, typer.Option("--stories", help="Which stories each state's site carries (committed).")
+    ] = STORIES_RULES,
     results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
     schema_only: Annotated[
         bool,
@@ -1281,6 +1291,7 @@ def export_command(
             cache=cache,
             featured_pairs=featured_pairs,
             featured_report=featured_report,
+            stories_rules=stories_rules,
             results=results,
             progress=typer.echo,
         )
@@ -1640,6 +1651,7 @@ def eval_readme(
             readme.read_text(),
             json.loads(results.read_text()),
             json.loads(exported_only.read_text()),
+            json.loads(SAMPLED_STATE_REPORT.read_text())["state"],
         )
     except ResultsTableError as e:
         typer.echo(str(e), err=True)

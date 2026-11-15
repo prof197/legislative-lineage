@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { STANDING, StatusBadge } from "@/components/Status";
 import { nameRoles } from "@/lib/claims";
 import { fetchData } from "@/lib/fetch";
-import { billName, sectionLabel, session, similarity, STATUS_LABEL } from "@/lib/format";
+import { billName, sectionLabel, session, sessionPhrase, similarity, STATUS_LABEL } from "@/lib/format";
 import { revisorMarks, segments, type Revisor } from "@/lib/revisor";
 import { previewEnd, rows, shown, type Kind, type Piece, type Row } from "@/lib/rows";
 import type { AlignedPair, BillPage, BillRef, BillTexts, Claim, Comparison, Relative } from "@/types/export";
@@ -109,7 +109,7 @@ function Picker({ name, current, relatives }: { name: string; current: string; r
                     </span>
                     <span className="picker-name">
                       <span>{billName(r.bill)}</span>
-                      <span className="small">{session(r.bill.session)} · {r.bill.status ? STATUS_LABEL[r.bill.status] : "Status not recorded"} · {r.found_by === "wording" ? "Shares wording" : "Similar in meaning"}</span>
+                      <span className="small">{session(r.bill.state, r.bill.session)} · {r.bill.status ? STATUS_LABEL[r.bill.status] : "Status not recorded"} · {r.found_by === "wording" ? "Shares wording" : "Similar in meaning"}</span>
                     </span>
                     <span className="picker-sim">{similarity(r.share)}</span>
                   </Link>
@@ -129,7 +129,7 @@ function Column({ bill, version, children }: { bill: BillRef; version: string | 
       <p>
         <span className="col-name">{billName(bill)}</span>
         <span className="col-sub">
-          {[`${session(bill.session)} session`, bill.status ? STATUS_LABEL[bill.status] : null, version].filter(Boolean).join(" · ")}
+          {[sessionPhrase(bill.state, bill.session), bill.status ? STATUS_LABEL[bill.status] : null, version].filter(Boolean).join(" · ")}
         </span>
       </p>
       {children}
@@ -235,7 +235,7 @@ export function CompareView({ hosted, issues, footer, act }: { hosted: string; i
         <div className="cmp-wrap">
           <div className="cmp-meta">
             <StatusBadge status={c.b.status} />
-            <span>{session(c.b.session)} session</span>
+            <span>{sessionPhrase(c.b.state, c.b.session)}</span>
             {share !== undefined && <span>Similarity <strong>{similarity(share)}</strong></span>}
             <span>{matchedA} of {c.sections_a} {c.a.identifier} sections have a match</span>
           </div>

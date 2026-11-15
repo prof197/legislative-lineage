@@ -1,5 +1,6 @@
 // Display helpers: names, status labels, sessions and numbers, shared by every page.
 import type { BillRef } from "@/types/export";
+import SESSION_LIST from "./sessions.json" with { type: "json" };
 
 export type Status = NonNullable<BillRef["status"]>;
 
@@ -37,6 +38,10 @@ export const STATE_NAME: Record<string, string> = Object.fromEntries(
 
 export const stateName = (code: string): string => STATE_NAME[code] ?? code;
 
+// "an Alaska bill", "a Georgia bill": every state name that starts with a vowel letter starts
+// with a vowel sound, and Utah, the one U, starts with a "y" sound.
+export const aState = (name: string): string => `${/^[AEIO]/.test(name) ? "an" : "a"} ${name}`;
+
 // How far a status went, so a state with several bills shows the one that went furthest.
 export const STATUS_RANK: Record<Status, number> = {
   passed: 4,
@@ -45,12 +50,35 @@ export const STATUS_RANK: Record<Status, number> = {
   died: 1,
 };
 
-export function session(s: string): string {
-  const special = /^(\d{4})_ss$/.exec(s);
-  if (special) return `${special[1]} special session`;
-  const two = /^(\d{4})[_-](\d{2})(\d{2})?$/.exec(s);
-  if (two) return `${two[1]}–${two[3] ?? two[2]}`;
-  return s;
+type SessionInfo = { label: string; special: boolean; start: string };
+const SESSIONS = SESSION_LIST as Record<string, Record<string, SessionInfo>>;
+
+// A session's label, from the pinned session list (scripts/sessions.mjs): its years, "2023–24",
+// or a special session's own name. An id the list lacks shows as it is.
+export function session(state: string, id: string): string {
+  return SESSIONS[state]?.[id]?.label ?? id;
+}
+
+// The same, as a phrase: "2023–24 session", or a special session's name, which already says so.
+export function sessionPhrase(state: string, id: string): string {
+  const s = SESSIONS[state]?.[id];
+  return s?.special ? s.label : `${s?.label ?? id} session`;
+}
+
+export const sessionStart = (state: string, id: string): string => SESSIONS[state]?.[id]?.start ?? id;
+
+// The session a state's site leads with: of the hosted sessions that began within two years of
+// the latest, the one with the most bills, so a short special session does not displace the
+// regular session it falls inside.
+export function leadSession(state: string, counts: Map<string, number>): string | null {
+  const start = (id: string) => SESSIONS[state]?.[id]?.start ?? "";
+  const ids = [...counts.keys()];
+  if (!ids.length) return null;
+  const latest = ids.map(start).sort().at(-1)!;
+  const cutoff = `${Number(latest.slice(0, 4)) - 2}${latest.slice(4)}`;
+  return ids
+    .filter((id) => start(id) >= cutoff)
+    .sort((x, y) => counts.get(y)! - counts.get(x)! || start(y).localeCompare(start(x)))[0]!;
 }
 
 // The year a bill's session began, read from its first action, for the stories' timelines.

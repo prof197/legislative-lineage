@@ -4,7 +4,7 @@ import { BillView } from "@/components/BillView";
 import { Footer, Header } from "@/components/Chrome";
 import { StatusBadge } from "@/components/Status";
 import { billList, billPage } from "@/lib/data";
-import { billName, count, relatedCount, session, stateName } from "@/lib/format";
+import { billName, count, relatedCount, sessionPhrase, stateName } from "@/lib/format";
 
 export const dynamicParams = false;
 
@@ -33,13 +33,13 @@ export default async function BillPageView({ params }: Props) {
       <Header current="bills" />
       <main className="wrap" style={{ paddingTop: 40 }}>
         <p className="crumbs"><Link href="/bills/">{state} bills</Link><span aria-hidden="true">/</span><span>{b.identifier}</span></p>
-        <p className="eyebrow" style={{ marginTop: 28 }}>{state} · {session(b.session)} session</p>
+        <p className="eyebrow" style={{ marginTop: 28 }}>{state} · {sessionPhrase(b.state, b.session)}</p>
         <h1 className="display" style={{ marginTop: 8 }}>{b.identifier}</h1>
         <p className="lede" style={{ marginTop: 10 }}>{b.title}</p>
         <div style={{ marginTop: 16, display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px 20px", fontSize: 14, color: "var(--ink-3)" }}>
           <StatusBadge status={b.status} />
           {page.text?.version && <span>Text stored: {page.text.version}</span>}
-          {page.text?.url && <a href={page.text.url}>Bill on the {state} General Assembly site</a>}
+          {page.text?.url && <a href={page.text.url}>The bill on the legislature&apos;s site</a>}
         </div>
 
         {notice ? (

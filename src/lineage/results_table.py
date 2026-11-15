@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from lineage.acts import ACT_NAMES
+from lineage.ulc import ULC_STATES
 
 README = Path("README.md")
 EXPORTED_ONLY = Path("reports/results_exported_only.json")
@@ -25,6 +26,10 @@ END = "<!-- /results:commission -->"
 HELD_OUT_START = "<!-- results:held-out -->"
 HELD_OUT_END = "<!-- /results:held-out -->"
 HELD_OUT_COMMAND = "uv run lineage eval commission --held-out --final"
+SUMMARY_START = "<!-- results:summary -->"
+SUMMARY_END = "<!-- /results:summary -->"
+# The precision sample's report, which names the state whose pages were sampled.
+SAMPLED_STATE_REPORT = Path("reports/relatives_reporting.json")
 _COUNTS = {3: "three", 4: "four"}
 
 _REASONS = {
@@ -158,6 +163,55 @@ def render_held_out(section: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def _share(x: dict[str, Any], key: str) -> str:
+    low, high = x["interval_95"]
+    return f"{x[key]:.2f} [{low:.2f}, {high:.2f}]"
+
+
+def render_summary(results: dict[str, Any], sampled_state: str) -> str:
+    """The README's opening table: one line per question the evals answer, each with the
+    command that reproduces it. The detail is in the sections below it."""
+    dev = results["commission"]["recall"]["pooled"]["all"]
+    held = results["commission_held_out"]["recall"]["pooled"]["all"]
+    precision = results["relatives_precision"]["provisional_model"]["overall"]
+    faith = results["faithfulness"]["overall"]
+    acts = len(results["commission"]["recall"]["by_act"])
+    held_acts = len(results["commission_held_out"]["recall"]["by_act"])
+    state = next(
+        (name for name, code in ULC_STATES.items() if code == sampled_state), sampled_state
+    )
+    rows = [
+        (
+            f"Does it find the bills that enacted a uniform act? ({_COUNTS.get(acts, acts)} acts)",
+            f"{dev['found']} of {dev['enactments']} ({dev['found'] / dev['enactments']:.1%})",
+            "uv run lineage eval commission",
+        ),
+        (
+            f"The same, on {_COUNTS.get(held_acts, held_acts)} acts never used while tuning",
+            f"{held['found']} of {held['enactments']} ({held['found'] / held['enactments']:.1%})",
+            HELD_OUT_COMMAND,
+        ),
+        (
+            f"Judged by a model: do the related bills a page lists share the provision? "
+            f"({precision['labeled']} sampled from {state}'s pages)",
+            _share(precision, "precision"),
+            "uv run lineage eval relatives",
+        ),
+        (
+            f"Judged by a model: do the explanations describe the text they cite? "
+            f"({faith['judged']} claims)",
+            _share(faith, "share"),
+            "uv run lineage eval faithfulness",
+        ),
+    ]
+    lines = [
+        "| Question | Result | Reproduce |",
+        "|---|---|---|",
+        *(f"| {q} | {r} | `{c}` |" for q, r, c in rows),
+    ]
+    return "\n".join(lines)
+
+
 def _replaced(readme: str, start_mark: str, end_mark: str, body: str) -> str:
     start, end = readme.find(start_mark), readme.find(end_mark)
     if start < 0 or end < start:
@@ -165,13 +219,23 @@ def _replaced(readme: str, start_mark: str, end_mark: str, body: str) -> str:
     return readme[: start + len(start_mark)] + "\n" + body + "\n" + readme[end:]
 
 
-def rendered_readme(readme: str, results: dict[str, Any], exported: dict[str, Any]) -> str:
+def rendered_readme(
+    readme: str,
+    results: dict[str, Any],
+    exported: dict[str, Any],
+    sampled_state: str | None = None,
+) -> str:
     """The README with its results section replaced by one rendered from `results`, and from
-    `exported`, the results on the export's text alone; and its held-out section, when it has
-    one, from the held-out run's results, which must then exist."""
+    `exported`, the results on the export's text alone; its opening summary, when it has one,
+    from `results` and the state the precision sample was drawn from; and its held-out section,
+    when it has one, from the held-out run's results, which must then exist."""
     out = _replaced(
         readme, START, END, render_commission(results["commission"], exported["commission"])
     )
+    if SUMMARY_START in out:
+        if sampled_state is None:
+            raise ResultsTableError("README has a summary but no precision sample state was given")
+        out = _replaced(out, SUMMARY_START, SUMMARY_END, render_summary(results, sampled_state))
     if HELD_OUT_START not in out:
         return out
     if "commission_held_out" not in results:

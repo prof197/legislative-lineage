@@ -80,6 +80,7 @@ jobs:
           cache-dependency-path: site/package-lock.json
       - run: npm ci
       - run: npm run types:check
+      - run: npm run sessions:check
       - run: npm run data:fixture
       - run: npm run typecheck
       - run: npm test

@@ -1,0 +1,1202 @@
+{
+ "AK": {
+  "33": {
+   "label": "2023–24",
+   "special": false,
+   "start": "2023-01-17"
+  },
+  "34": {
+   "label": "2025–26",
+   "special": false,
+   "start": "2025-01-21"
+  }
+ },
+ "AL": {
+  "2023rs": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-03-07"
+  },
+  "2024rs": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-02-06"
+  },
+  "2025rs": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-02-04"
+  },
+  "2026rs": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-01-13"
+  }
+ },
+ "AR": {
+  "2023": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-09"
+  },
+  "2025": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-13"
+  },
+  "2023S1": {
+   "label": "2023 First Extraordinary Session",
+   "special": true,
+   "start": "2023-08-08"
+  },
+  "2024F": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-04-10"
+  },
+  "2024S2": {
+   "label": "2024 Second Extraordinary Session",
+   "special": true,
+   "start": "2024-06-17"
+  },
+  "2026F": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-04-08"
+  },
+  "2026S1": {
+   "label": "2026 First Extraordinary Session",
+   "special": true,
+   "start": "2026-05-04"
+  }
+ },
+ "AZ": {
+  "56th-1st-regular": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-09"
+  },
+  "56th-2nd-regular": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-01-08"
+  },
+  "57th-1st-regular": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-13"
+  },
+  "57th-2nd-regular": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-01-12"
+  }
+ },
+ "CA": {
+  "20232024": {
+   "label": "2023–24",
+   "special": false,
+   "start": "2022-12-05"
+  },
+  "20252026": {
+   "label": "2025–26",
+   "special": false,
+   "start": "2024-12-02"
+  },
+  "20232024 Special Session 1": {
+   "label": "2023-2024, Special Session 1",
+   "special": true,
+   "start": "2022-12-05"
+  },
+  "20232024 Special Session 2": {
+   "label": "2023-2024, Special Session 2",
+   "special": true,
+   "start": "2024-09-01"
+  },
+  "20252026 Special Session 1": {
+   "label": "2025-2026, Special Session 1",
+   "special": true,
+   "start": "2024-12-02"
+  }
+ },
+ "CO": {
+  "2023A": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-09"
+  },
+  "2023B": {
+   "label": "2023 First Extraordinary Session",
+   "special": true,
+   "start": "2023-11-18"
+  },
+  "2024A": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-01-10"
+  },
+  "2024B": {
+   "label": "2024 First Extraordinary Session",
+   "special": true,
+   "start": "2024-08-26"
+  },
+  "2025A": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-08"
+  },
+  "2025B": {
+   "label": "2025 First Extraordinary Session",
+   "special": true,
+   "start": "2025-08-26"
+  },
+  "2026A": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-01-14"
+  }
+ },
+ "CT": {
+  "2023": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-04"
+  },
+  "2024": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-01-04"
+  },
+  "2025": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-08"
+  },
+  "2026": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-02-04"
+  }
+ },
+ "DE": {
+  "152": {
+   "label": "2023–24",
+   "special": false,
+   "start": "2022-01-10"
+  },
+  "153": {
+   "label": "2025–26",
+   "special": false,
+   "start": "2025-01-14"
+  }
+ },
+ "FL": {
+  "2023": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-03-07"
+  },
+  "2024": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-01-09"
+  },
+  "2025": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-03-04"
+  },
+  "2026": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-01-13"
+  },
+  "2023B": {
+   "label": "2023 Special Session B",
+   "special": true,
+   "start": "2023-02-06"
+  },
+  "2023C": {
+   "label": "2023 Special Session C",
+   "special": true,
+   "start": "2023-11-06"
+  },
+  "2025A": {
+   "label": "2025 Special Session A",
+   "special": true,
+   "start": "2025-01-27"
+  },
+  "2025B": {
+   "label": "2025 Special Session B",
+   "special": true,
+   "start": "2025-01-27"
+  },
+  "2025C": {
+   "label": "2025 Special Session C",
+   "special": true,
+   "start": "2025-02-11"
+  },
+  "2026D": {
+   "label": "2026 Special Session D",
+   "special": true,
+   "start": "2026-04-28"
+  },
+  "2026E": {
+   "label": "2026 Special Session E",
+   "special": true,
+   "start": "2026-05-12"
+  },
+  "2026F": {
+   "label": "2026 Special Session F",
+   "special": true,
+   "start": "2026-06-01"
+  }
+ },
+ "GA": {
+  "2023_24": {
+   "label": "2023–24",
+   "special": false,
+   "start": "2023-01-09"
+  },
+  "2023_ss": {
+   "label": "2023 Special Session",
+   "special": true,
+   "start": "2023-11-29"
+  },
+  "2025_26": {
+   "label": "2025–26",
+   "special": false,
+   "start": "2025-01-13"
+  },
+  "2026_ss": {
+   "label": "2026 Special Session",
+   "special": true,
+   "start": "2026-06-17"
+  }
+ },
+ "HI": {
+  "2024": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-01-17"
+  },
+  "2025": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-17"
+  },
+  "2026": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-01-21"
+  },
+  "2023 Regular Session": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-18"
+  }
+ },
+ "IA": {
+  "2023-2024": {
+   "label": "2023–24",
+   "special": false,
+   "start": "2023-01-09"
+  },
+  "2025-2026": {
+   "label": "2025–26",
+   "special": false,
+   "start": "2025-01-13"
+  }
+ },
+ "ID": {
+  "2023": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-09"
+  },
+  "2024": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-01-08"
+  },
+  "2025": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-06"
+  },
+  "2026": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-01-05"
+  }
+ },
+ "IL": {
+  "103rd": {
+   "label": "2023–24",
+   "special": false,
+   "start": "2023-01-11"
+  },
+  "104th": {
+   "label": "2025–27",
+   "special": false,
+   "start": "2025-01-08"
+  }
+ },
+ "IN": {
+  "2023": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-10"
+  },
+  "2024": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-01-08"
+  },
+  "2025": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-09"
+  },
+  "2026": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-01-09"
+  }
+ },
+ "KS": {
+  "2023-2024": {
+   "label": "2023–24",
+   "special": false,
+   "start": "2023-01-09"
+  },
+  "2025-2026": {
+   "label": "2025–26",
+   "special": false,
+   "start": "2025-01-13"
+  }
+ },
+ "KY": {
+  "2023RS": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-03"
+  },
+  "2024RS": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-01-02"
+  },
+  "2025RS": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-07"
+  },
+  "2026RS": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-01-06"
+  }
+ },
+ "LA": {
+  "2023": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-04-10"
+  },
+  "2024": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-03-11"
+  },
+  "2025": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-04-14"
+  },
+  "2026": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-03-09"
+  },
+  "2023s1": {
+   "label": "2023 First Extraordinary Session",
+   "special": true,
+   "start": "2023-01-30"
+  },
+  "2024s1": {
+   "label": "2024 First Extraordinary Session",
+   "special": true,
+   "start": "2024-01-15"
+  },
+  "2024s2": {
+   "label": "2024 Second Extraordinary Session",
+   "special": true,
+   "start": "2024-02-19"
+  },
+  "2024s3": {
+   "label": "2024 Third Extraordinary Session",
+   "special": true,
+   "start": "2024-11-01"
+  },
+  "2025s1": {
+   "label": "2025 First Extraordinary Session",
+   "special": true,
+   "start": "2025-10-23"
+  }
+ },
+ "MA": {
+  "193rd": {
+   "label": "2023–24",
+   "special": false,
+   "start": "2023-01-04"
+  },
+  "194th": {
+   "label": "2025–26",
+   "special": false,
+   "start": "2025-01-01"
+  }
+ },
+ "MD": {
+  "2023": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-11"
+  },
+  "2024": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-01-10"
+  },
+  "2025": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-08"
+  },
+  "2026": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-01-14"
+  }
+ },
+ "ME": {
+  "131": {
+   "label": "2023–24",
+   "special": false,
+   "start": "2022-12-07"
+  },
+  "132": {
+   "label": "2025–26",
+   "special": false,
+   "start": "2024-12-04"
+  }
+ },
+ "MI": {
+  "2023-2024": {
+   "label": "2023–24",
+   "special": false,
+   "start": "2023-01-11"
+  },
+  "2025-2026": {
+   "label": "2025–26",
+   "special": false,
+   "start": "2025-01-08"
+  }
+ },
+ "MN": {
+  "2023-2024": {
+   "label": "2023–24",
+   "special": false,
+   "start": "2023-01-03"
+  },
+  "2025-2026": {
+   "label": "2025–26",
+   "special": false,
+   "start": "2025-01-14"
+  },
+  "2025s1": {
+   "label": "2025, First Special Session",
+   "special": true,
+   "start": "2025-06-08"
+  }
+ },
+ "MO": {
+  "2023": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-04"
+  },
+  "2024": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-01-03"
+  },
+  "2025": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-08"
+  },
+  "2026": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-01-07"
+  },
+  "2025S1": {
+   "label": "2025 1st Extraordinary Session",
+   "special": true,
+   "start": "2025-06-02"
+  },
+  "2025S2": {
+   "label": "2025 2nd Extraordinary Session",
+   "special": true,
+   "start": "2025-09-03"
+  }
+ },
+ "MS": {
+  "2023": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-03"
+  },
+  "2024": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-01-02"
+  },
+  "2025": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-07"
+  },
+  "2026": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-01-06"
+  },
+  "20241E": {
+   "label": "2024 First Extraordinary Session",
+   "special": true,
+   "start": "2024-01-19"
+  },
+  "20242E": {
+   "label": "2024 Second Extraordinary Session",
+   "special": true,
+   "start": "2024-02-01"
+  },
+  "20251E": {
+   "label": "2025 First Extraordinary Session",
+   "special": true,
+   "start": "2025-05-28"
+  },
+  "20261E": {
+   "label": "2026 1st Extraordinary Session",
+   "special": true,
+   "start": "2026-07-14"
+  }
+ },
+ "MT": {
+  "2023": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-04"
+  },
+  "2025": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-06"
+  }
+ },
+ "NC": {
+  "2023": {
+   "label": "2023–24",
+   "special": false,
+   "start": "2023-01-11"
+  },
+  "2025": {
+   "label": "2025–26",
+   "special": false,
+   "start": "2025-01-11"
+  },
+  "2025E1": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-10-07"
+  }
+ },
+ "ND": {
+  "68": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-03"
+  },
+  "69": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-07"
+  }
+ },
+ "NE": {
+  "108": {
+   "label": "2023–24",
+   "special": false,
+   "start": "2023-01-04"
+  },
+  "109": {
+   "label": "2025–26",
+   "special": false,
+   "start": "2025-01-08"
+  },
+  "108S1": {
+   "label": "108th Legislature First Special Session",
+   "special": true,
+   "start": "2024-07-25"
+  }
+ },
+ "NH": {
+  "2023": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-04"
+  },
+  "2024": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-01-03"
+  },
+  "2025": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-08"
+  },
+  "2026": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-01-08"
+  }
+ },
+ "NJ": {
+  "220": {
+   "label": "2022–23",
+   "special": false,
+   "start": "2022-01-11"
+  },
+  "221": {
+   "label": "2024–25",
+   "special": false,
+   "start": "2024-01-09"
+  },
+  "222": {
+   "label": "2026–27",
+   "special": false,
+   "start": "2026-01-13"
+  }
+ },
+ "NM": {
+  "2023": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-17"
+  },
+  "2024": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-01-16"
+  },
+  "2025": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-21"
+  },
+  "2026": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-01-20"
+  },
+  "2024S1": {
+   "label": "2024 First Special Session",
+   "special": true,
+   "start": "2024-07-18"
+  },
+  "2025S1": {
+   "label": "2025 First Special Session",
+   "special": true,
+   "start": "2025-10-01"
+  },
+  "2025S2": {
+   "label": "2025 Second Special Session",
+   "special": true,
+   "start": "2025-11-10"
+  }
+ },
+ "NV": {
+  "82": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-02-01"
+  },
+  "83": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-02-01"
+  },
+  "2023Special34": {
+   "label": "34th (2023) Special Session",
+   "special": true,
+   "start": "2023-06-06"
+  },
+  "2023Special35": {
+   "label": "35th (2023) Special Session",
+   "special": true,
+   "start": "2023-06-07"
+  },
+  "2025Special36": {
+   "label": "36th (2026) Special Session",
+   "special": true,
+   "start": "2025-11-13"
+  }
+ },
+ "NY": {
+  "2023-2024": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-04"
+  },
+  "2025-2026": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-08"
+  }
+ },
+ "OH": {
+  "135": {
+   "label": "2023–24",
+   "special": false,
+   "start": "2023-01-02"
+  },
+  "136": {
+   "label": "2025–26",
+   "special": false,
+   "start": "2025-01-06"
+  },
+  "135S1": {
+   "label": "135th Legislature, First Special Session",
+   "special": true,
+   "start": "2024-05-28"
+  }
+ },
+ "OK": {
+  "2023": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-02-06"
+  },
+  "2024": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-02-05"
+  },
+  "2025": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-02-03"
+  },
+  "2026": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-02-02"
+  },
+  "2023S1": {
+   "label": "2023 First Special Session",
+   "special": true,
+   "start": "2023-05-17"
+  },
+  "2023S2": {
+   "label": "2023 Second Special Session",
+   "special": true,
+   "start": "2023-10-03"
+  },
+  "2024S3": {
+   "label": "2024 Third Special Session",
+   "special": true,
+   "start": "2024-01-29"
+  },
+  "2024S4": {
+   "label": "2024 Fourth Special Session",
+   "special": true,
+   "start": "2024-06-12"
+  }
+ },
+ "OR": {
+  "2023R1": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-09"
+  },
+  "2024R1": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-02-05"
+  },
+  "2024S1": {
+   "label": "2024 Special Session",
+   "special": true,
+   "start": "2024-12-12"
+  },
+  "2025R1": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-21"
+  },
+  "2025S1": {
+   "label": "2025 Special Session",
+   "special": true,
+   "start": "2025-08-29"
+  },
+  "2026R1": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-02-02"
+  }
+ },
+ "PA": {
+  "2023-2024": {
+   "label": "2023–24",
+   "special": false,
+   "start": "2023-01-03"
+  },
+  "2023-2024S1": {
+   "label": "2023-2024 Special Session #1",
+   "special": true,
+   "start": "2023-01-09"
+  },
+  "2025-2026": {
+   "label": "2025–26",
+   "special": false,
+   "start": "2025-01-07"
+  }
+ },
+ "RI": {
+  "2023": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-03"
+  },
+  "2024": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-01-02"
+  },
+  "2025": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-02"
+  },
+  "2026": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-01-02"
+  }
+ },
+ "SC": {
+  "2023-2024": {
+   "label": "2023–24",
+   "special": false,
+   "start": "2023-01-10"
+  },
+  "2025-2026": {
+   "label": "2025–26",
+   "special": false,
+   "start": "2025-01-14"
+  }
+ },
+ "SD": {
+  "2023": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-10"
+  },
+  "2024": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-01-09"
+  },
+  "2025": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-14"
+  },
+  "2026": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-01-14"
+  },
+  "2025s": {
+   "label": "2025 First Special Session",
+   "special": true,
+   "start": "2025-09-03"
+  }
+ },
+ "TN": {
+  "113": {
+   "label": "2023–24",
+   "special": false,
+   "start": "2023-01-10"
+  },
+  "114": {
+   "label": "2025–26",
+   "special": false,
+   "start": "2025-01-14"
+  },
+  "113S1": {
+   "label": "113th First Extraordinary Session (August 2023)",
+   "special": true,
+   "start": "2023-08-09"
+  },
+  "114S1": {
+   "label": "114th First Extraordinary Session (January 2025)",
+   "special": true,
+   "start": "2025-01-27"
+  },
+  "114S2": {
+   "label": "114th Second Extraordinary Session (May 2026)",
+   "special": true,
+   "start": "2026-05-05"
+  }
+ },
+ "TX": {
+  "88": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-10"
+  },
+  "881": {
+   "label": "88th Legislature, 1st Called Session (2023)",
+   "special": true,
+   "start": "2023-05-29"
+  },
+  "882": {
+   "label": "88th Legislature, 2nd Called Session (2023)",
+   "special": true,
+   "start": "2023-06-27"
+  },
+  "883": {
+   "label": "88th Legislature, 3rd Called Session (2023)",
+   "special": true,
+   "start": "2023-10-09"
+  },
+  "884": {
+   "label": "88th Legislature, 4th Called Session (2023)",
+   "special": true,
+   "start": "2023-11-08"
+  },
+  "891": {
+   "label": "89th Legislature, 1st Called Session (2025)",
+   "special": true,
+   "start": "2025-07-21"
+  },
+  "892": {
+   "label": "89th Legislature, 2nd Called Session (2025)",
+   "special": true,
+   "start": "2025-08-18"
+  },
+  "89R": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-10"
+  }
+ },
+ "UT": {
+  "2023": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-17"
+  },
+  "2024": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-01-16"
+  },
+  "2025": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-21"
+  },
+  "2026": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-01-20"
+  },
+  "2023S1": {
+   "label": "2023 First Special Session",
+   "special": true,
+   "start": "2023-05-17"
+  },
+  "2023S2": {
+   "label": "2023 Second Special Session",
+   "special": true,
+   "start": "2023-06-14"
+  },
+  "2024S3": {
+   "label": "2024 Third Special Session",
+   "special": true,
+   "start": "2024-06-19"
+  },
+  "2024S4": {
+   "label": "2024 Fourth Special Session",
+   "special": true,
+   "start": "2024-08-21"
+  },
+  "2025S1": {
+   "label": "2025 First Special Session",
+   "special": true,
+   "start": "2025-10-06"
+  },
+  "2025S2": {
+   "label": "2025 Second Special Session",
+   "special": true,
+   "start": "2025-12-09"
+  }
+ },
+ "VA": {
+  "2023": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-11"
+  },
+  "2024": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-01-10"
+  },
+  "2025": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-08"
+  },
+  "2026": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-01-14"
+  },
+  "2023S1": {
+   "label": "2023, 1st Special Session",
+   "special": true,
+   "start": "2023-08-05"
+  },
+  "2024S1": {
+   "label": "2024, 1st Special Session",
+   "special": true,
+   "start": "2024-05-13"
+  },
+  "2026S1": {
+   "label": "2026, 1st Special Session",
+   "special": true,
+   "start": "2026-04-23"
+  }
+ },
+ "VT": {
+  "2023-2024": {
+   "label": "2023–24",
+   "special": false,
+   "start": "2023-01-04"
+  },
+  "2025-2026": {
+   "label": "2025–26",
+   "special": false,
+   "start": "2025-01-08"
+  }
+ },
+ "WA": {
+  "2023-2024": {
+   "label": "2023–24",
+   "special": false,
+   "start": "2023-01-09"
+  },
+  "2025-2026": {
+   "label": "2025–26",
+   "special": false,
+   "start": "2025-01-13"
+  }
+ },
+ "WI": {
+  "2023": {
+   "label": "2023–24",
+   "special": false,
+   "start": "2023-01-03"
+  },
+  "2025": {
+   "label": "2025–26",
+   "special": false,
+   "start": "2025-01-06"
+  },
+  "2023S1": {
+   "label": "September 2023 Special Session",
+   "special": true,
+   "start": "2023-09-20"
+  },
+  "2026S1": {
+   "label": "May 2026 Special Session",
+   "special": true,
+   "start": "2026-05-13"
+  }
+ },
+ "WV": {
+  "2023": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-11"
+  },
+  "2024": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-01-11"
+  },
+  "2025": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-02-12"
+  },
+  "2026": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-01-14"
+  },
+  "20231S": {
+   "label": "2023 First Special Session",
+   "special": true,
+   "start": "2023-08-06"
+  },
+  "20241S": {
+   "label": "2024 First Special Session",
+   "special": true,
+   "start": "2024-05-21"
+  },
+  "20242S": {
+   "label": "2024 Second Special Session",
+   "special": true,
+   "start": "2024-09-30"
+  }
+ },
+ "WY": {
+  "2023": {
+   "label": "2023",
+   "special": false,
+   "start": "2023-01-10"
+  },
+  "2024": {
+   "label": "2024",
+   "special": false,
+   "start": "2024-02-12"
+  },
+  "2025": {
+   "label": "2025",
+   "special": false,
+   "start": "2025-01-14"
+  },
+  "2026": {
+   "label": "2026",
+   "special": false,
+   "start": "2026-02-09"
+  }
+ }
+}

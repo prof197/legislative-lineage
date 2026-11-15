@@ -1,4 +1,4 @@
-"""`lineage export --state GA`: the static site's JSON for one state's bills (DESIGN.md#export).
+"""`lineage export --state ST`: the static site's JSON for one state's bills (DESIGN.md#export).
 
 Every file is an instance of a model in lineage.export_schema, validated as it is written, and
 the JSON Schema those models emit is the site's contract (DR-1). One build writes:
@@ -32,6 +32,7 @@ import re
 import shutil
 import tarfile
 import time
+import tomllib
 from collections import defaultdict
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from concurrent.futures import ProcessPoolExecutor
@@ -103,9 +104,10 @@ RELEASE_MANIFEST = Path("site/data-release.json")
 REPORT = Path("reports/export.json")
 SCHEMA = Path("schema/export.schema.json")
 FEATURED_PAIRS = Path("evals/featured_pairs.jsonl")
+STORIES_RULES = Path("rules/stories.toml")
 FEATURED_REPORT = Path("reports/featured_pairs.json")
 RESULTS = Path("reports/results.json")
-COMMAND = "uv run lineage export --state GA"
+COMMAND = "uv run lineage export --state {state}"
 # GitHub Pages' limit on a published site; DR-2 reverses at half of it.
 SITE_LIMIT = 1_000_000_000
 _COMPACT = re.compile("|".join(re.escape(p) for p in COMPACT_PHRASES))
@@ -358,15 +360,33 @@ def _refs(con: Any, tables: Path, ids: list[str]) -> tuple[dict[str, BillRef], d
     return refs, texts
 
 
-def _load_featured(path: Path) -> set[tuple[str, int, str, int]]:
-    out: set[tuple[str, int, str, int]] = set()
-    if not path.exists():
-        return out
+def stories_for(state: str, stories: Iterable[str], rules: Path = STORIES_RULES) -> set[str]:
+    """The featured stories `state`'s site carries, by `rules`: a story listed for "all" states,
+    or for this one. A story the rules do not list is an error, so a new story is placed
+    deliberately rather than shown on every state's site by default."""
+    listed: dict[str, Any] = tomllib.loads(rules.read_text()).get("stories", {})
+    unlisted = sorted(set(stories) - set(listed))
+    if unlisted:
+        raise ExportError(
+            f"stories not in {rules}: {', '.join(unlisted)}; say which states carry them"
+        )
+    out: set[str] = set()
+    for key in stories:
+        states = listed[key].get("states")
+        if states == "all" or (isinstance(states, list) and state in states):
+            out.add(key)
+    return out
+
+
+def _load_featured(path: Path) -> dict[str, set[tuple[str, int, str, int]]]:
+    """The featured pairs, by story."""
+    out: dict[str, set[tuple[str, int, str, int]]] = defaultdict(set)
     for line in path.read_text().splitlines():
         if line.strip():
             row = json.loads(line)
             o, d = row["origin"], row["descendant"]
-            out.add((str(o["bill_id"]), int(o["ordinal"]), str(d["bill_id"]), int(d["ordinal"])))
+            pair = (str(o["bill_id"]), int(o["ordinal"]), str(d["bill_id"]), int(d["ordinal"]))
+            out[str(row["story"])].add(pair)
     return out
 
 
@@ -404,6 +424,7 @@ def build_export(
     cache: Path = CACHE_DIR,
     featured_pairs: Path = FEATURED_PAIRS,
     featured_report: Path = FEATURED_REPORT,
+    stories_rules: Path = STORIES_RULES,
     results: Path = RESULTS,
     model: str = MODEL,
     require_flag: bool = True,
@@ -412,6 +433,17 @@ def build_export(
 ) -> dict[str, Any]:
     """Write `state`'s site data to `out`, replacing what was there; returns the report."""
     started = time.monotonic()
+    # Committed inputs are read before the alignment, which takes hours for a large state: a
+    # checkout whose reports are older than this code fails here, not at the last step, and a
+    # missing stories file is an error rather than a site built without its stories.
+    inputs = (featured_pairs, featured_report, stories_rules, results)
+    missing = [str(p) for p in inputs if not p.exists()]
+    if missing:
+        raise ExportError(f"committed inputs not found: {', '.join(missing)}")
+    try:
+        validation = validation_from(json.loads(results.read_text()))
+    except KeyError as e:
+        raise ExportError(f"{results} lacks {e}; is it older than this code?") from e
     bills_glob = str(tables / "bills" / "*.parquet")
     flag = shipped_flag(tables)
     if flag is None and require_flag:
@@ -428,10 +460,12 @@ def build_export(
     listed = listed_pairs(tables, model=model, flag=flag)
     relatives = bill_relatives(tables, hosted, model=model, listed=listed)
 
-    featured = _load_featured(featured_pairs)
-    stories_doc: dict[str, Any] = (
-        json.loads(featured_report.read_text())["stories"] if featured_report.exists() else {}
-    )
+    all_stories: dict[str, Any] = json.loads(featured_report.read_text())["stories"]
+    by_story = _load_featured(featured_pairs)
+    keys = set(all_stories) | set(by_story)
+    carried: set[str] = stories_for(state, keys, stories_rules) if keys else set()
+    stories_doc = {k: v for k, v in all_stories.items() if k in carried}
+    featured = {pair for key in carried for pair in by_story.get(key, set())}
     wanted: set[BillPair] = {(b, m.bill_id) for b, r in relatives.items() for m in r.matches}
     wanted |= {(a, b) for a, _, b, _ in featured}
     bills, ordinals = section_keys(tables)
@@ -642,7 +676,7 @@ def build_export(
         states_indexed=indexed,
         hosted_bills=len(hosted),
         stories=story_slugs,
-        validation=validation_from(json.loads(results.read_text())),
+        validation=validation,
     )
 
     partial = out.with_name(out.name + ".partial")
@@ -655,7 +689,7 @@ def build_export(
     total = sum(written.bytes.values())
     with_relatives = sum(1 for r in relatives.values() if r.matches)
     return {
-        "command": COMMAND,
+        "command": COMMAND.format(state=state),
         "state": state,
         "schema": str(SCHEMA),
         "hosted_bills": len(hosted),

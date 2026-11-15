@@ -34,7 +34,7 @@ uv run lineage eval threshold  # each semantic threshold option's page precision
 uv run lineage eval answer-key  # each commission list row and the bills it resolved to -> reports/answer_key.csv
 uv run lineage eval answer-key --held-out  # the held-out lists resolved, development-set bills skipped -> reports/answer_key_heldout.csv
 uv run lineage eval commission --held-out --final  # held-out recall: run at the end of M5 (2026-11-12), at 0.93 and then at the final configuration; refuses a configuration already run
-uv run lineage eval readme   # regenerate README.md's results table from reports/results.json and results_exported_only.json
+uv run lineage eval readme   # regenerate README.md's summary and results tables from reports/results.json, results_exported_only.json and relatives_reporting.json
 uv run lineage label SAMPLE --labeler HANDLE  # label sampled matches by hand, 0 unrelated to 4 identical, blind to the stage, resumable -> evals/precision_labels.jsonl
 uv run lineage label-page SAMPLE --labeler HANDLE  # the same labeling as a phone page: pending pairs, aligned, blind -> data/label_page/ (local), published as a private artifact
 uv run lineage label-import SAVED --sample SAMPLE --labeler HANDLE  # the page's saved labels, checked against the sample -> evals/precision_labels.jsonl
@@ -100,7 +100,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   answer_key.py   `lineage eval answer-key`: the resolved list rows, for checking by eye
   commission.py   `lineage eval commission`: recall, a miss reason per enactment, the results JSON
   threshold.py    `lineage eval threshold`: a page's precision under each threshold option and with the flag; the pair-level diagnostic at the stage's threshold
-  results_table.py  the README results table, rendered from reports/results.json
+  results_table.py  the README's summary and results tables, rendered from the committed reports
   pair_data.py    the labeled pair dataset (Kim et al., EMNLP 2021): pinned files, fetch, load; no license, so local only
   pair_eval.py    `lineage eval pair-data`: the stages scored on labeled pairs, metrics only
   semantic.py     the semantic stage: its model, the build's threshold (the pair evaluation's) and the stage's (the tuning sample's), and a query's search by meaning
@@ -157,6 +157,7 @@ snapshot/manifest.json  the pinned snapshot: per-archive size, SHA-256, Generate
 snapshot/sessions.csv   session start/end dates and carryover, from a pinned scrapers commit
 rules/document_types.csv  which document types are matched, per state; first fitting rule wins
 rules/text_layer.toml  the text layer's rules: usable bar, per-state format and PDF reading, content elements, replacement
+rules/stories.toml  which featured stories each hosted state's site carries
 schema/export.schema.json  the export's JSON Schema, generated from lineage.export_schema; a test fails when it drifts
 reports/          committed outputs of pipeline commands; README and DESIGN numbers cite them
   results.json    eval results, one section per eval; the README results table reads it
@@ -170,6 +171,7 @@ reports/          committed outputs of pipeline commands; README and DESIGN numb
 explanations/cache/  model replies, one JSON file per (model, prompt version, spans) hash; replayed without a key
 DESIGN.md         design, alternatives, scaling limits, failure modes, decision records
 CONTRIBUTING.md   the checks to run before a commit and a push, and the leak check
+OUTCOMES.md       where the tool has been used on real work, with permission
 data/             local snapshots and derived tables; gitignored, never committed
   raw/<ST>/*.zip  Open States session archives, never edited
   acts/<act>.txt  uniform act texts, downloaded from the ULC under its terms; never committed

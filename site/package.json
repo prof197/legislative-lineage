@@ -5,6 +5,8 @@
   "scripts": {
     "types": "node scripts/types.mjs",
     "types:check": "node scripts/types.mjs --check",
+    "sessions": "node scripts/sessions.mjs",
+    "sessions:check": "node scripts/sessions.mjs --check",
     "data:fixture": "node scripts/fixture-data.mjs",
     "typecheck": "tsc --noEmit",
     "build": "next build",

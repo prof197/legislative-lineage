@@ -24,6 +24,7 @@ from lineage.export import (
     package,
     schema_text,
     slug,
+    stories_for,
     validation_from,
     write_release_manifest,
 )
@@ -66,15 +67,21 @@ def tables(embedded_commission: Path) -> Path:
 
 def _export(tables: Path, out: Path, **kw: Any) -> dict[str, Any]:
     state = bill_of(tables, most_related(tables))[0]
+    rules = out.parent / "stories.toml"
+    rules.write_text('[stories.s]\nstates = "all"\n')
+    no_pairs, no_stories = out.parent / "none.jsonl", out.parent / "none.json"
+    no_pairs.touch()
+    no_stories.write_text('{"stories": {}}')
     return build_export(
         tables,
         state=state,
         out=out,
         models_dir=None,
         cache=kw.pop("cache", out.parent / "no-cache"),
-        featured_pairs=kw.pop("featured_pairs", out.parent / "none.jsonl"),
-        featured_report=out.parent / "none.json",
-        results=REPO / RESULTS,
+        featured_pairs=kw.pop("featured_pairs", no_pairs),
+        featured_report=kw.pop("featured_report", no_stories),
+        stories_rules=rules,
+        results=kw.pop("results", REPO / RESULTS),
         model=FAKE_MODEL,
         require_flag=False,
         floor=0,
@@ -95,6 +102,7 @@ def test_every_hosted_bill_gets_a_page_and_every_relative_a_comparison(
     meta = Meta.model_validate_json((out / "meta.json").read_text())
     listing = BillList.model_validate_json((out / "bills.json").read_text())
     assert meta.hosted_bills == len(listing.bills) == report["hosted_bills"]
+    assert report["command"].endswith(f"--state {meta.state}")
     assert report["files"]["bills"] == len(listing.bills)
     assert all(b.bill.state == meta.state for b in listing.bills)
     relatives = 0
@@ -239,6 +247,29 @@ def test_a_featured_pair_the_build_does_not_list_is_refused(tables: Path, tmp_pa
         _export(tables, tmp_path / "site", featured_pairs=featured)
 
 
+def test_a_missing_or_stale_committed_input_fails_before_any_alignment(
+    tables: Path, tmp_path: Path
+) -> None:
+    # Run from a checkout whose committed files are older than the code, the export once
+    # aligned for hours and then failed on the results; with the stories' files missing it
+    # would have built a site without stories and said nothing.
+    stale = tmp_path / "results.json"
+    stale.write_text(json.dumps({"commission": {}}))
+    aligned: list[int] = []
+
+    def watch(line: str) -> None:
+        if "align" in line:
+            aligned.append(1)
+
+    with pytest.raises(ExportError, match="results"):
+        _export(tables, tmp_path / "stale", results=stale, progress=watch)
+    with pytest.raises(ExportError, match=r"missing\.json"):
+        _export(tables, tmp_path / "gone", featured_report=tmp_path / "missing.json")
+    assert not aligned
+    assert not (tmp_path / "stale").exists()
+    assert not (tmp_path / "gone").exists()
+
+
 def test_the_release_asset_is_reproducible_and_carries_its_checksum(tmp_path: Path) -> None:
     export = tmp_path / "GA"
     (export / "bills").mkdir(parents=True)
@@ -285,3 +316,20 @@ def test_aligning_in_worker_processes_gives_what_one_process_does() -> None:
     parallel = align_all(texts, models_dir=None, workers=2)
 
     assert parallel == serial == [align(a, b) for a, b in texts]
+
+
+def test_a_state_carries_the_stories_the_rules_give_it(tmp_path: Path) -> None:
+    rules = tmp_path / "stories.toml"
+    rules.write_text('[stories.shared]\nstates = "all"\n\n[stories.local]\nstates = ["GA"]\n')
+
+    assert stories_for("GA", ["shared", "local"], rules) == {"shared", "local"}
+    assert stories_for("AK", ["shared", "local"], rules) == {"shared"}
+    with pytest.raises(ExportError, match="new-story"):
+        stories_for("AK", ["shared", "new-story"], rules)
+
+
+def test_the_committed_rules_place_every_committed_story() -> None:
+    stories = json.loads((REPO / "reports" / "featured_pairs.json").read_text())["stories"]
+
+    assert stories_for("GA", stories, REPO / "rules" / "stories.toml") == set(stories)
+    assert "georgia-social-media" not in stories_for("AK", stories, REPO / "rules" / "stories.toml")

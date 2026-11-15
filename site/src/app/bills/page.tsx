@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { Footer, Header } from "@/components/Chrome";
 import { Browse } from "@/components/Browse";
 import { billList, meta } from "@/lib/data";
-import { session, stateName } from "@/lib/format";
+import { sessionPhrase, sessionStart, stateName } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Browse bills" };
 
@@ -11,7 +11,7 @@ export default function BillsPage() {
   const m = meta();
   const state = stateName(m.state);
   const bills = billList().bills;
-  const sessions = [...new Set(bills.map((b) => b.bill.session))].sort();
+  const sessions = [...new Set(bills.map((b) => b.bill.session))].sort((x, y) => sessionStart(m.state, x).localeCompare(sessionStart(m.state, y)));
   return (
     <>
       <Header current="bills" />
@@ -19,12 +19,12 @@ export default function BillsPage() {
         <h1 className="display">{state} bills, 2023–2026</h1>
         <p className="lede">
           All {bills.length.toLocaleString("en-US")} bills from the{" "}
-          {sessions.map(session).join(", ").replace(/, ([^,]*)$/, " and $1")} sessions, with the number of
+          {sessions.map((s) => sessionPhrase(m.state, s)).join(", ").replace(/, ([^,]*)$/, " and $1")}, with the number of
           bills in other states that share at least one of its provisions. Open a bill to see which of
           its sections have relatives, and where.
         </p>
         <Suspense fallback={<p className="note">Loading the bill list…</p>}>
-          <Browse sessions={sessions} total={bills.length} state={state} />
+          <Browse sessions={sessions} total={bills.length} state={state} code={m.state} />
         </Suspense>
         <p className="note" style={{ marginTop: 20 }}>
           <strong style={{ color: "var(--ink)" }}>Related bills</strong> are bills in other states with

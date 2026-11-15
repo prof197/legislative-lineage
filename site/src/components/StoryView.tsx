@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { STANDING, StatusBadge } from "@/components/Status";
 import { TileMap } from "@/components/Tiles";
 import { fills, storyBest, tally } from "@/lib/facts";
-import { session, similarity, stateName, STATUS_LABEL, year } from "@/lib/format";
+import { session, sessionPhrase, similarity, stateName, STATUS_LABEL, year } from "@/lib/format";
 import type { Story, StoryRelative } from "@/types/export";
 
 type SortKey = "state" | "yr" | "sim";
@@ -58,7 +58,7 @@ export function StoryView({ story, slug, compareLabel, listNoun, listHeading }: 
               label="Matching bills by state"
               aria={(code, name, fill) => {
                 const r = best.get(code);
-                return r ? `${name}: ${STATUS_LABEL[fill as keyof typeof STATUS_LABEL]}, ${r.bill.identifier}, ${session(r.bill.session)} session` : `${name}: no matching bill`;
+                return r ? `${name}: ${STATUS_LABEL[fill as keyof typeof STATUS_LABEL]}, ${r.bill.identifier}, ${sessionPhrase(r.bill.state, r.bill.session)}` : `${name}: no matching bill`;
               }}
             />
           </div>
@@ -73,7 +73,7 @@ export function StoryView({ story, slug, compareLabel, listNoun, listHeading }: 
               {d ? (
                 <div className="stack" style={{ marginTop: 10 }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-                    <span><strong>{d.bill.identifier}</strong> <span className="small">{session(d.bill.session)}</span></span>
+                    <span><strong>{d.bill.identifier}</strong> <span className="small">{session(d.bill.state, d.bill.session)}</span></span>
                     <StatusBadge status={d.bill.status} />
                   </div>
                   {d.share !== null && <p style={{ margin: 0 }}>Similarity <strong>{similarity(d.share)}</strong></p>}
@@ -141,7 +141,7 @@ export function StoryView({ story, slug, compareLabel, listNoun, listHeading }: 
                 <tr key={r.bill.slug}>
                   <td>{stateName(r.bill.state)}</td>
                   <td style={{ fontWeight: 600 }}>{r.bill.identifier}</td>
-                  <td>{session(r.bill.session)}</td>
+                  <td>{session(r.bill.state, r.bill.session)}</td>
                   <td><StatusBadge status={r.bill.status} /></td>
                   <td>{r.share === null ? "–" : similarity(r.share)}</td>
                   <td>{r.comparison ? <Link href={`/compare/?c=${r.comparison}`}>Compare</Link> : <span className="small">No paired section</span>}</td>
