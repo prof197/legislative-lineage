@@ -23,7 +23,7 @@ function byBill(a: BillListEntry, b: BillListEntry): number {
 }
 
 // The browse page's filter, over every hosted bill, run in the browser (DESIGN.md#dr-1).
-export function Browse({ sessions, total, state }: { sessions: string[]; total: number; state: string }) {
+export function Browse({ sessions, total, state, code }: { sessions: string[]; total: number; state: string; code: string }) {
   const params = useSearchParams();
   const [bills, setBills] = useState<BillListEntry[] | null>(null);
   const [failed, setFailed] = useState(false);
@@ -82,7 +82,7 @@ export function Browse({ sessions, total, state }: { sessions: string[]; total: 
           <label htmlFor="sess">Session</label>
           <select id="sess" className="select" value={sess} onChange={(e) => setSess(e.target.value)}>
             <option value="all">All sessions</option>
-            {sessions.map((s) => <option key={s} value={s}>{session(s)}</option>)}
+            {sessions.map((s) => <option key={s} value={s}>{session(code, s)}</option>)}
           </select>
         </div>
         <div className="field" style={{ flex: "1 1 150px" }}>
@@ -138,7 +138,7 @@ export function Browse({ sessions, total, state }: { sessions: string[]; total: 
               <tr key={b.bill.slug}>
                 <td><Link href={`/bills/${b.bill.slug}/`} style={{ fontWeight: 600, whiteSpace: "nowrap" }}>{b.bill.identifier}</Link></td>
                 <td style={{ fontFamily: "var(--serif)", fontSize: 17, lineHeight: 1.4 }}>{b.bill.title}</td>
-                <td>{session(b.bill.session)}</td>
+                <td>{session(b.bill.state, b.bill.session)}</td>
                 <td style={{ paddingTop: 12 }}><StatusBadge status={b.bill.status} /></td>
                 <td>
                   <span style={{ display: "flex", alignItems: "center", gap: 10 }}>

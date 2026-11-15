@@ -1,0 +1,13 @@
+# Which featured stories each hosted state's site carries (DESIGN.md#export). A story about a law
+# many states share is every state's; a story about one state's bill is that state's alone. The
+# export carries only these stories' files and pairs, so another state's site holds none of the
+# rest. A story in reports/featured_pairs.json that is not listed here stops the export.
+
+[stories.anti-slapp]
+states = "all"
+
+[stories.deepfakes]
+states = "all"
+
+[stories.georgia-social-media]
+states = ["GA"]

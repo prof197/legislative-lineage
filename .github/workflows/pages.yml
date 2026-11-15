@@ -28,6 +28,7 @@ jobs:
           cache-dependency-path: site/package-lock.json
       - run: npm ci
       - run: npm run types:check
+      - run: npm run sessions:check
       # Downloads the pinned release's export and fails unless it matches the committed digest.
       - run: scripts/fetch-data.sh
         env:

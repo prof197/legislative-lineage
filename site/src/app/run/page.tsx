@@ -38,8 +38,8 @@ export default function RunPage() {
         <p className="lede">
           This site shows {stateName(m.state)}. The open-source tool that built it runs on your own
           computer: it builds the 50-state index from Open States&apos; archives and the legislatures&apos;
-          published text, then writes a state&apos;s pages. It has built {stateName(m.state)}&apos;s site;
-          building the site for other states is being tested. For now it builds everything from source.
+          published text, then writes these pages for the state you choose. For now it builds
+          everything from source.
         </p>
         <section aria-labelledby="quick" style={{ marginTop: 48 }}>
           <h2 id="quick" className="section">Build it from source</h2>

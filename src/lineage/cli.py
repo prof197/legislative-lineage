@@ -65,6 +65,7 @@ from lineage.explain import projected_cost as projected_explain_cost
 from lineage.export import (
     EXPORT_DIR,
     RELEASE_MANIFEST,
+    STORIES_RULES,
     ExportError,
     build_export,
     write_release_manifest,
@@ -1231,6 +1232,9 @@ def export_command(
     featured_report: Annotated[
         Path, typer.Option("--featured-report", help="Each story's relatives (committed).")
     ] = FEATURED_REPORT,
+    stories_rules: Annotated[
+        Path, typer.Option("--stories", help="Which stories each state's site carries (committed).")
+    ] = STORIES_RULES,
     results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
     schema_only: Annotated[
         bool,
@@ -1287,6 +1291,7 @@ def export_command(
             cache=cache,
             featured_pairs=featured_pairs,
             featured_report=featured_report,
+            stories_rules=stories_rules,
             results=results,
             progress=typer.echo,
         )

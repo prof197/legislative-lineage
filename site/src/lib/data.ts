@@ -66,3 +66,10 @@ export function runFigures(): RunFigures {
     machineMemoryBytes: index.build.machine.memory_bytes,
   };
 }
+
+// The state whose bill pages the precision sample was drawn from, from the sample's committed
+// report, so a site for another state says whose pages were measured.
+export function precisionSampleState(): string {
+  const file = path.join(process.cwd(), "..", "reports", "relatives_reporting.json");
+  return (JSON.parse(readFileSync(file, "utf8")) as { state: string }).state;
+}

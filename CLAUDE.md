@@ -157,6 +157,7 @@ snapshot/manifest.json  the pinned snapshot: per-archive size, SHA-256, Generate
 snapshot/sessions.csv   session start/end dates and carryover, from a pinned scrapers commit
 rules/document_types.csv  which document types are matched, per state; first fitting rule wins
 rules/text_layer.toml  the text layer's rules: usable bar, per-state format and PDF reading, content elements, replacement
+rules/stories.toml  which featured stories each hosted state's site carries
 schema/export.schema.json  the export's JSON Schema, generated from lineage.export_schema; a test fails when it drifts
 reports/          committed outputs of pipeline commands; README and DESIGN numbers cite them
   results.json    eval results, one section per eval; the README results table reads it

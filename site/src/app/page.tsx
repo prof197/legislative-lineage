@@ -3,7 +3,7 @@ import { Footer, Header } from "@/components/Chrome";
 import { MiniMap } from "@/components/Tiles";
 import { billList, meta, story } from "@/lib/data";
 import { fills, storyBest, tally } from "@/lib/facts";
-import { STATUS_LABEL, stateName } from "@/lib/format";
+import { aState, leadSession, sessionPhrase, STATUS_LABEL, stateName } from "@/lib/format";
 import { STORY_COPY, STORY_ORDER } from "@/lib/stories";
 
 function Arrow() {
@@ -18,7 +18,11 @@ export default function Home() {
   const m = meta();
   const v = m.validation;
   const state = stateName(m.state);
-  const latest = billList().bills.filter((b) => b.bill.session === "2025_26");
+  const all = billList().bills;
+  const counts = new Map<string, number>();
+  for (const b of all) counts.set(b.bill.session, (counts.get(b.bill.session) ?? 0) + 1);
+  const lead = leadSession(m.state, counts);
+  const latest = all.filter((b) => b.bill.session === lead);
   const related = latest.filter((b) => b.families > 0).length;
   return (
     <>
@@ -39,12 +43,12 @@ export default function Home() {
                 v1 states no direction or authorship, so it reads as below. */}
             <h1 className="hero">Why does that {state} bill look so familiar?</h1>
             <p className="lede" style={{ marginTop: 28, fontSize: 21, maxWidth: "34em", color: "var(--ink-3)" }}>
-              Find bills in other states that share provisions with a {state} bill, and see how each
+              Find bills in other states that share provisions with {aState(state)} bill, and see how each
               one&apos;s text differs.
             </p>
             <form action="bills/" method="get" style={{ marginTop: 44, maxWidth: 680 }}>
               <label htmlFor="find" style={{ display: "block", fontSize: 14, fontWeight: 600, marginBottom: 8 }}>
-                Find a {state} bill
+                Find {aState(state)} bill
               </label>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
                 <input id="find" name="q" type="search" className="input" placeholder="Bill number or title words, e.g. SB 120 or deepfake" style={{ flex: "1 1 320px", minWidth: 0, height: 52, fontSize: 16.5 }} />
@@ -88,7 +92,7 @@ export default function Home() {
                 <mark style={{ padding: "0 10px", borderBottomWidth: 3 }}>{related.toLocaleString("en-US")}</mark> of {latest.length.toLocaleString("en-US")}
               </span>
               <span style={{ display: "block", marginTop: 12, maxWidth: "30em", fontFamily: "var(--serif)", fontSize: "clamp(20px, 2.2vw, 26px)", lineHeight: 1.35 }}>
-                {state} bills from the 2025–26 session share provisions with bills in other states.
+                {state} bills from the {lead ? sessionPhrase(m.state, lead) : ""} share provisions with bills in other states.
               </span>
             </h2>
             <Link href="/bills/?related=1" className="button">See those bills<Arrow /></Link>

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Footer, Header } from "@/components/Chrome";
 import { Enactments } from "@/components/Enactments";
-import { meta } from "@/lib/data";
+import { meta, precisionSampleState } from "@/lib/data";
+import { stateName } from "@/lib/format";
 
 export const metadata: Metadata = { title: "How we checked" };
 
@@ -90,7 +91,7 @@ export default function ValidationPage() {
           </div>
           <p className="note">
             Recall is measured against the {r.enactments} listed enactments. Precision comes from a sample of{" "}
-            {p.labeled} relatives that Georgia bill pages list, each judged by a model on the matched
+            {p.labeled} relatives that {stateName(precisionSampleState())} bill pages list, each judged by a model on the matched
             passages: {p.correct} of {p.labeled} share the provision ({p.share === null ? "–" : pct(p.share)},
             95% interval {pct(p.interval_95[0])}–{pct(p.interval_95[1])}). Matches to bills the Commission
             does not list, such as non-uniform anti-SLAPP bills, are not counted as wrong if the provision

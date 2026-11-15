@@ -129,7 +129,7 @@ export function BillView({ page }: { page: BillPage }) {
                   {shown.map((r) => (
                     <li key={r.bill.slug} style={{ borderTop: "1px solid var(--line)", padding: "10px 0" }}>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-                        <span><strong>{r.bill.identifier}</strong> <span className="small">{session(r.bill.session)}</span></span>
+                        <span><strong>{r.bill.identifier}</strong> <span className="small">{session(r.bill.state, r.bill.session)}</span></span>
                         <StatusBadge status={r.bill.status} />
                       </div>
                       <div className="small" style={{ marginTop: 4 }}>{[...new Set(r.pairs.map((p) => p.ordinal))].sort((x, y) => (order.get(x) ?? x) - (order.get(y) ?? y)).map(label).join(", ")}</div>
@@ -166,7 +166,7 @@ export function BillView({ page }: { page: BillPage }) {
                     <tr key={r.bill.slug}>
                       <td>{stateName(r.bill.state)}</td>
                       <td style={{ fontWeight: 600 }}>{r.bill.identifier}</td>
-                      <td>{session(r.bill.session)}</td>
+                      <td>{session(r.bill.state, r.bill.session)}</td>
                       <td><StatusBadge status={r.bill.status} /></td>
                       <td><Shares ordinals={r.pairs.map((p) => p.ordinal)} total={total} label={label} order={order} /></td>
                       <td>{similarity(r.share)}</td>
