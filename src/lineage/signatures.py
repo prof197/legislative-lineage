@@ -328,3 +328,9 @@ def signature_sections(files: SignatureFiles, rows: NDArray[np.int64]) -> list[t
             for position, row in zip(positions.tolist(), local, strict=True):
                 out[position] = keys[row]
     return out
+
+
+def sign_part(part: Path, eligible: Path, stoplist: NDArray[np.uint32], dest: Path) -> PartCounts:
+    """Sign one sections file into `dest`, as `build_signatures` signs each: an update signs
+    only the sections file it adds (DESIGN.md#updates)."""
+    return _sign_part(part, eligible, stoplist, permutations(), dest)
