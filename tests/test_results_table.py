@@ -185,6 +185,9 @@ def test_the_summary_answers_each_question_from_the_results() -> None:
     dev = results["commission"]["recall"]["pooled"]["all"]
     assert f"| {dev['found']} of {dev['enactments']} (" in out
     assert "sampled from Georgia's pages" in out
+    judged = [line for line in out.splitlines() if "judged by a model" in line.lower()]
+    assert len(judged) == 2  # precision and faithfulness, said in the row itself
+    assert all(line.startswith("| Judged by a model:") for line in judged)
     assert "`uv run lineage eval faithfulness`" in out
     assert "stale" not in out
     with pytest.raises(ResultsTableError, match="precision sample"):

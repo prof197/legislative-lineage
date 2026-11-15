@@ -192,14 +192,15 @@ def render_summary(results: dict[str, Any], sampled_state: str) -> str:
             HELD_OUT_COMMAND,
         ),
         (
-            f"Do the related bills a page lists share the provision? ({precision['labeled']} "
-            f"sampled from {state}'s pages)",
-            f"{_share(precision, 'precision')}, model-judged",
+            f"Judged by a model: do the related bills a page lists share the provision? "
+            f"({precision['labeled']} sampled from {state}'s pages)",
+            _share(precision, "precision"),
             "uv run lineage eval relatives",
         ),
         (
-            f"Do the explanations describe the text they cite? ({faith['judged']} claims)",
-            f"{_share(faith, 'share')}, model-judged",
+            f"Judged by a model: do the explanations describe the text they cite? "
+            f"({faith['judged']} claims)",
+            _share(faith, "share"),
             "uv run lineage eval faithfulness",
         ),
     ]

@@ -11,15 +11,23 @@ Find bills in other states that share provisions with a state bill, matched sect
 |---|---|---|
 | Does it find the bills that enacted a uniform act? (three acts) | 33 of 36 (91.7%) | `uv run lineage eval commission` |
 | The same, on four acts never used while tuning | 17 of 19 (89.5%) | `uv run lineage eval commission --held-out --final` |
-| Do the related bills a page lists share the provision? (100 sampled from Georgia's pages) | 0.83 [0.74, 0.89], model-judged | `uv run lineage eval relatives` |
-| Do the explanations describe the text they cite? (359 claims) | 0.87 [0.83, 0.90], model-judged | `uv run lineage eval faithfulness` |
+| Judged by a model: do the related bills a page lists share the provision? (100 sampled from Georgia's pages) | 0.83 [0.74, 0.89] | `uv run lineage eval relatives` |
+| Judged by a model: do the explanations describe the text they cite? (359 claims) | 0.87 [0.83, 0.90] | `uv run lineage eval faithfulness` |
 <!-- /results:summary -->
+
+**Where it falls short.**
+
+- **It misses three of the development enactments.** Pennsylvania's and Oregon's put the act in their own words, and neither stage scores them close enough to it; Oregon's is listed as substantially similar, not enacted. Maine's is missed because the text stored is the bill as first printed ([DESIGN.md](DESIGN.md#stage-ablation)).
+- **Maine's amended bills are not in the corpus as amended.** For a bill of Maine's 131st Legislature rewritten in committee, the enacted wording is in a separate document of adopted amendments, which the text layer does not fetch ([DESIGN.md](DESIGN.md#parked)).
+- **Minnesota's text includes the language a bill deletes.** Comparisons strike it through, but it is still matched as if it were law the bill makes ([DESIGN.md](DESIGN.md#known-failure-modes)).
+- **It covers the 2023–2026 sessions only.** A relative introduced before 2023 is not found ([DESIGN.md](DESIGN.md#data-snapshot)).
+- **No evaluation has expert labels.** Precision and faithfulness are a model's judgments. A person checked a sample of the model's precision labels, but not with legal training, which labels that settle the question would need ([DESIGN.md](DESIGN.md#precision-sample)).
 
 [Results](#results) has the detail and [DESIGN.md](DESIGN.md) how each figure was measured.
 
 **Run it.** Everything builds from source on a laptop with no API key: [Building it](#building-it). A packaged install and a download of the prebuilt index are not available yet.
 
-**Limits.** [Known failure modes](#known-failure-modes), in short.
+**Other limits.** [Known failure modes](#known-failure-modes) lists the rest.
 
 **Used it on real work?** [OUTCOMES.md](OUTCOMES.md) records where it has been used.
 
