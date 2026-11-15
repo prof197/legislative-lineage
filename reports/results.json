@@ -6640,6 +6640,1661 @@
    "passes": false
   }
  },
+ "origins_development": {
+  "command": "uv run lineage eval origins",
+  "answer_key": {
+   "name": "development",
+   "path": "reports/answer_key.csv",
+   "read": "uv run lineage eval answer-key; ULC Bill List, read 2026-11-06"
+  },
+  "sealed": false,
+  "configuration": null,
+  "threshold": {
+   "score": "share of the model's words in the sections the bill matches",
+   "min_share": 0.0,
+   "found_when": "score above min_share"
+  },
+  "documents": {
+   "electronic-estate-planning-documents": [
+    "commission/electronic-estate-planning-documents"
+   ],
+   "public-expression-protection": [
+    "commission/public-expression-protection"
+   ],
+   "special-deposits": [
+    "commission/special-deposits"
+   ]
+  },
+  "recall": {
+   "pooled": {
+    "enactments": 36,
+    "found": 33,
+    "recall": 0.9167,
+    "interval_95": [
+     0.7817,
+     0.9713
+    ]
+   },
+   "by_act": {
+    "electronic-estate-planning-documents": {
+     "enactments": 9,
+     "found": 9,
+     "recall": 1.0,
+     "interval_95": [
+      0.7009,
+      1.0
+     ]
+    },
+    "public-expression-protection": {
+     "enactments": 14,
+     "found": 11,
+     "recall": 0.7857,
+     "interval_95": [
+      0.5241,
+      0.9243
+     ]
+    },
+    "special-deposits": {
+     "enactments": 13,
+     "found": 13,
+     "recall": 1.0,
+     "interval_95": [
+      0.7719,
+      1.0
+     ]
+    }
+   },
+   "by_stratum": {
+    "enacted": {
+     "enactments": 35,
+     "found": 33,
+     "recall": 0.9429,
+     "interval_95": [
+      0.8139,
+      0.9842
+     ]
+    },
+    "substantially_similar": {
+     "enactments": 1,
+     "found": 0,
+     "recall": 0.0,
+     "interval_95": [
+      0.0,
+      0.7935
+     ]
+    }
+   }
+  },
+  "stage_ablation": {
+   "near_duplicate": {
+    "pooled": {
+     "enactments": 36,
+     "found": 31,
+     "recall": 0.8611,
+     "interval_95": [
+      0.7134,
+      0.9392
+     ]
+    },
+    "by_act": {
+     "electronic-estate-planning-documents": {
+      "enactments": 9,
+      "found": 8,
+      "recall": 0.8889,
+      "interval_95": [
+       0.565,
+       0.9801
+      ]
+     },
+     "public-expression-protection": {
+      "enactments": 14,
+      "found": 10,
+      "recall": 0.7143,
+      "interval_95": [
+       0.4535,
+       0.8828
+      ]
+     },
+     "special-deposits": {
+      "enactments": 13,
+      "found": 13,
+      "recall": 1.0,
+      "interval_95": [
+       0.7719,
+       1.0
+      ]
+     }
+    },
+    "by_stratum": {
+     "enacted": {
+      "enactments": 35,
+      "found": 31,
+      "recall": 0.8857,
+      "interval_95": [
+       0.7405,
+       0.9546
+      ]
+     },
+     "substantially_similar": {
+      "enactments": 1,
+      "found": 0,
+      "recall": 0.0,
+      "interval_95": [
+       0.0,
+       0.7935
+      ]
+     }
+    }
+   },
+   "semantic": {
+    "pooled": {
+     "enactments": 36,
+     "found": 33,
+     "recall": 0.9167,
+     "interval_95": [
+      0.7817,
+      0.9713
+     ]
+    },
+    "by_act": {
+     "electronic-estate-planning-documents": {
+      "enactments": 9,
+      "found": 9,
+      "recall": 1.0,
+      "interval_95": [
+       0.7009,
+       1.0
+      ]
+     },
+     "public-expression-protection": {
+      "enactments": 14,
+      "found": 11,
+      "recall": 0.7857,
+      "interval_95": [
+       0.5241,
+       0.9243
+      ]
+     },
+     "special-deposits": {
+      "enactments": 13,
+      "found": 13,
+      "recall": 1.0,
+      "interval_95": [
+       0.7719,
+       1.0
+      ]
+     }
+    },
+    "by_stratum": {
+     "enacted": {
+      "enactments": 35,
+      "found": 33,
+      "recall": 0.9429,
+      "interval_95": [
+       0.8139,
+       0.9842
+      ]
+     },
+     "substantially_similar": {
+      "enactments": 1,
+      "found": 0,
+      "recall": 0.0,
+      "interval_95": [
+       0.0,
+       0.7935
+      ]
+     }
+    }
+   },
+   "both": {
+    "pooled": {
+     "enactments": 36,
+     "found": 33,
+     "recall": 0.9167,
+     "interval_95": [
+      0.7817,
+      0.9713
+     ]
+    },
+    "by_act": {
+     "electronic-estate-planning-documents": {
+      "enactments": 9,
+      "found": 9,
+      "recall": 1.0,
+      "interval_95": [
+       0.7009,
+       1.0
+      ]
+     },
+     "public-expression-protection": {
+      "enactments": 14,
+      "found": 11,
+      "recall": 0.7857,
+      "interval_95": [
+       0.5241,
+       0.9243
+      ]
+     },
+     "special-deposits": {
+      "enactments": 13,
+      "found": 13,
+      "recall": 1.0,
+      "interval_95": [
+       0.7719,
+       1.0
+      ]
+     }
+    },
+    "by_stratum": {
+     "enacted": {
+      "enactments": 35,
+      "found": 33,
+      "recall": 0.9429,
+      "interval_95": [
+       0.8139,
+       0.9842
+      ]
+     },
+     "substantially_similar": {
+      "enactments": 1,
+      "found": 0,
+      "recall": 0.0,
+      "interval_95": [
+       0.0,
+       0.7935
+      ]
+     }
+    }
+   }
+  },
+  "recall_by_min_share": [
+   {
+    "min_share": 0.0,
+    "found": 33
+   },
+   {
+    "min_share": 0.1,
+    "found": 32
+   },
+   {
+    "min_share": 0.25,
+    "found": 31
+   },
+   {
+    "min_share": 0.5,
+    "found": 27
+   }
+  ],
+  "miss_reasons": {
+   "not_matched": 3
+  },
+  "excluded": [
+   {
+    "act": "public-expression-protection",
+    "jurisdiction": "Maryland",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "public-expression-protection",
+    "jurisdiction": "Mississippi",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "public-expression-protection",
+    "jurisdiction": "Nebraska",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "public-expression-protection",
+    "jurisdiction": "South Carolina",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "public-expression-protection",
+    "jurisdiction": "Wisconsin",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "public-expression-protection",
+    "jurisdiction": "Hawaii",
+    "year": 2022,
+    "why": "listed year 2022 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "public-expression-protection",
+    "jurisdiction": "Kentucky",
+    "year": 2022,
+    "why": "listed year 2022 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "public-expression-protection",
+    "jurisdiction": "Washington",
+    "year": 2021,
+    "why": "listed year 2021 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "special-deposits",
+    "jurisdiction": "District of Columbia",
+    "year": 2026,
+    "why": "District of Columbia: the corpus is the 50 states"
+   },
+   {
+    "act": "special-deposits",
+    "jurisdiction": "Illinois",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "special-deposits",
+    "jurisdiction": "Massachusetts",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "special-deposits",
+    "jurisdiction": "Minnesota",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "electronic-estate-planning-documents",
+    "jurisdiction": "District of Columbia",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "electronic-estate-planning-documents",
+    "jurisdiction": "Pennsylvania",
+    "year": 2026,
+    "why": "listed as introduced"
+   }
+  ],
+  "enactments": [
+   {
+    "act": "public-expression-protection",
+    "jurisdiction": "Michigan",
+    "state": "MI",
+    "year": 2026,
+    "listed": "HB 4045",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/466153a5-6ac0-4a17-b061-aecda47f1135",
+    "model_share": 0.6195,
+    "bill_share": 0.49,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/466153a5-6ac0-4a17-b061-aecda47f1135",
+      "doc_id": "commission/public-expression-protection",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.6195,
+      "bill_share": 0.49,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "public-expression-protection",
+    "jurisdiction": "Missouri",
+    "state": "MO",
+    "year": 2026,
+    "listed": "HB 2666/SB 1067/SB 835",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/46682e76-7ccf-4157-962d-63fff9eecebe",
+    "model_share": 0.618,
+    "bill_share": 0.9553,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/46682e76-7ccf-4157-962d-63fff9eecebe",
+      "doc_id": "commission/public-expression-protection",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.618,
+      "bill_share": 0.9553,
+      "found": true
+     },
+     {
+      "id": "ocd-bill/844e1d51-48ed-4db2-95c3-82255c3c677f",
+      "doc_id": null,
+      "stages": [],
+      "model_share": null,
+      "bill_share": null,
+      "found": false
+     },
+     {
+      "id": "ocd-bill/e07348b0-513f-4fda-9f17-57bcc5fb3b76",
+      "doc_id": "commission/public-expression-protection",
+      "stages": [
+       "near_duplicate"
+      ],
+      "model_share": 0.1953,
+      "bill_share": 0.9426,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "public-expression-protection",
+    "jurisdiction": "South Dakota",
+    "state": "SD",
+    "year": 2026,
+    "listed": "SB 137",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/26a84ccf-f59b-4813-9757-8e12e1bf471b",
+    "model_share": 0.3813,
+    "bill_share": 0.2693,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/26a84ccf-f59b-4813-9757-8e12e1bf471b",
+      "doc_id": "commission/public-expression-protection",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.3813,
+      "bill_share": 0.2693,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "public-expression-protection",
+    "jurisdiction": "Delaware",
+    "state": "DE",
+    "year": 2025,
+    "listed": "SB 80",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/75aaddc4-4261-47f5-977b-fc6618d7df33",
+    "model_share": 0.7883,
+    "bill_share": 0.4869,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/75aaddc4-4261-47f5-977b-fc6618d7df33",
+      "doc_id": "commission/public-expression-protection",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.7883,
+      "bill_share": 0.4869,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "public-expression-protection",
+    "jurisdiction": "Idaho",
+    "state": "ID",
+    "year": 2025,
+    "listed": "S 1001",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/8bd05268-df20-4e80-8ea6-fee765d633f9",
+    "model_share": 0.5215,
+    "bill_share": 0.4729,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/8bd05268-df20-4e80-8ea6-fee765d633f9",
+      "doc_id": "commission/public-expression-protection",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.5215,
+      "bill_share": 0.4729,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "public-expression-protection",
+    "jurisdiction": "Iowa",
+    "state": "IA",
+    "year": 2025,
+    "listed": "SF 47/HF 472",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/a61fad3c-ce0d-44b6-b046-0fab3413357b",
+    "model_share": 0.6323,
+    "bill_share": 0.4336,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/4420bcca-8120-49af-bb03-17de3cc1da1f",
+      "doc_id": null,
+      "stages": [],
+      "model_share": null,
+      "bill_share": null,
+      "found": false
+     },
+     {
+      "id": "ocd-bill/a61fad3c-ce0d-44b6-b046-0fab3413357b",
+      "doc_id": "commission/public-expression-protection",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.6323,
+      "bill_share": 0.4336,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "public-expression-protection",
+    "jurisdiction": "Montana",
+    "state": "MT",
+    "year": 2025,
+    "listed": "HB 292",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/6f42fae2-b316-4da2-b4c8-c8ee43443091",
+    "model_share": 0.7031,
+    "bill_share": 0.6645,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/6f42fae2-b316-4da2-b4c8-c8ee43443091",
+      "doc_id": "commission/public-expression-protection",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.7031,
+      "bill_share": 0.6645,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "public-expression-protection",
+    "jurisdiction": "Ohio",
+    "state": "OH",
+    "year": 2025,
+    "listed": "SB 237",
+    "stratum": "enacted",
+    "match_rule": "prior_session",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": false,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/ac8be703-90ff-46ce-a145-1871e12e3c89",
+    "model_share": 0.2368,
+    "bill_share": 0.0809,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/ac8be703-90ff-46ce-a145-1871e12e3c89",
+      "doc_id": "commission/public-expression-protection",
+      "stages": [
+       "semantic"
+      ],
+      "model_share": 0.2368,
+      "bill_share": 0.0809,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "public-expression-protection",
+    "jurisdiction": "Maine",
+    "state": "ME",
+    "year": 2024,
+    "listed": "LD 870",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": false,
+    "found_by_stage": {
+     "near_duplicate": false,
+     "semantic": false
+    },
+    "found_by": null,
+    "model_share": null,
+    "bill_share": null,
+    "miss_reason": "not_matched",
+    "bills": [
+     {
+      "id": "ocd-bill/2d79a7ee-4ea4-41db-9049-ab45b0f27bfd",
+      "doc_id": null,
+      "stages": [],
+      "model_share": null,
+      "bill_share": null,
+      "found": false
+     }
+    ]
+   },
+   {
+    "act": "public-expression-protection",
+    "jurisdiction": "Minnesota",
+    "state": "MN",
+    "year": 2024,
+    "listed": "HF 5216/HF 3309/SF 3317/SF 4271",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/2a51f739-82fd-4614-8ded-9eaca8a19b9a",
+    "model_share": 0.4635,
+    "bill_share": 0.3901,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/2a51f739-82fd-4614-8ded-9eaca8a19b9a",
+      "doc_id": "commission/public-expression-protection",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.4635,
+      "bill_share": 0.3901,
+      "found": true
+     },
+     {
+      "id": "ocd-bill/904a6e6b-5831-4983-acee-72147889a52a",
+      "doc_id": "commission/public-expression-protection",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.4635,
+      "bill_share": 0.0109,
+      "found": true
+     },
+     {
+      "id": "ocd-bill/e6bd0d36-1585-4734-a53c-36b895270fc6",
+      "doc_id": "commission/public-expression-protection",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.4635,
+      "bill_share": 0.3901,
+      "found": true
+     },
+     {
+      "id": "ocd-bill/f9e78d0c-7e60-46db-acf1-fd75a1fcf5c5",
+      "doc_id": "commission/public-expression-protection",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.4635,
+      "bill_share": 0.0176,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "public-expression-protection",
+    "jurisdiction": "Pennsylvania",
+    "state": "PA",
+    "year": 2024,
+    "listed": "HB 1466/SB 972",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": false,
+    "found_by_stage": {
+     "near_duplicate": false,
+     "semantic": false
+    },
+    "found_by": null,
+    "model_share": null,
+    "bill_share": null,
+    "miss_reason": "not_matched",
+    "bills": [
+     {
+      "id": "ocd-bill/10a37090-8929-4998-98bd-8825b751aee2",
+      "doc_id": null,
+      "stages": [],
+      "model_share": null,
+      "bill_share": null,
+      "found": false
+     },
+     {
+      "id": "ocd-bill/6a995153-2637-4501-b3f6-8b5046e6f974",
+      "doc_id": null,
+      "stages": [],
+      "model_share": null,
+      "bill_share": null,
+      "found": false
+     }
+    ]
+   },
+   {
+    "act": "public-expression-protection",
+    "jurisdiction": "New Jersey",
+    "state": "NJ",
+    "year": 2023,
+    "listed": "S 2802/A 4393",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/115d9931-94b4-40d4-b822-9eda98f1ae4e",
+    "model_share": 0.4349,
+    "bill_share": 0.3966,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/115d9931-94b4-40d4-b822-9eda98f1ae4e",
+      "doc_id": "commission/public-expression-protection",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.4349,
+      "bill_share": 0.3966,
+      "found": true
+     },
+     {
+      "id": "ocd-bill/a12b77a8-9804-4cf9-9b98-6d510f466d34",
+      "doc_id": "commission/public-expression-protection",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.432,
+      "bill_share": 0.1943,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "public-expression-protection",
+    "jurisdiction": "Oregon",
+    "state": "OR",
+    "year": 2023,
+    "listed": "SB 305",
+    "stratum": "substantially_similar",
+    "match_rule": "in_year",
+    "found": false,
+    "found_by_stage": {
+     "near_duplicate": false,
+     "semantic": false
+    },
+    "found_by": null,
+    "model_share": null,
+    "bill_share": null,
+    "miss_reason": "not_matched",
+    "bills": [
+     {
+      "id": "ocd-bill/a12c65b0-db31-4d30-8a3c-8ff188086e20",
+      "doc_id": null,
+      "stages": [],
+      "model_share": null,
+      "bill_share": null,
+      "found": false
+     }
+    ]
+   },
+   {
+    "act": "public-expression-protection",
+    "jurisdiction": "Utah",
+    "state": "UT",
+    "year": 2023,
+    "listed": "SB 18",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/7968b9d9-25ee-4684-a92e-c76167d6f917",
+    "model_share": 0.8183,
+    "bill_share": 0.6047,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/7968b9d9-25ee-4684-a92e-c76167d6f917",
+      "doc_id": "commission/public-expression-protection",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.8183,
+      "bill_share": 0.6047,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "special-deposits",
+    "jurisdiction": "New Hampshire",
+    "state": "NH",
+    "year": 2026,
+    "listed": "HB 1502",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/97b9eec9-c325-456e-b254-044c9c114bae",
+    "model_share": 0.9285,
+    "bill_share": 0.8702,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/97b9eec9-c325-456e-b254-044c9c114bae",
+      "doc_id": "commission/special-deposits",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9285,
+      "bill_share": 0.8702,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "special-deposits",
+    "jurisdiction": "New York",
+    "state": "NY",
+    "year": 2026,
+    "listed": "A 5345",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/8d9dff64-7011-4962-90c3-a1a28a3370d4",
+    "model_share": 0.9027,
+    "bill_share": 0.8367,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/8d9dff64-7011-4962-90c3-a1a28a3370d4",
+      "doc_id": "commission/special-deposits",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9027,
+      "bill_share": 0.8367,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "special-deposits",
+    "jurisdiction": "Rhode Island",
+    "state": "RI",
+    "year": 2026,
+    "listed": "HB 7265/SB 2519",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/36bad521-9e60-4a20-a39f-aa6a9c7216a0",
+    "model_share": 0.9285,
+    "bill_share": 0.9047,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/36bad521-9e60-4a20-a39f-aa6a9c7216a0",
+      "doc_id": "commission/special-deposits",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9285,
+      "bill_share": 0.9047,
+      "found": true
+     },
+     {
+      "id": "ocd-bill/b2babde4-079b-4895-8bf9-0ce02047df0b",
+      "doc_id": "commission/special-deposits",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9285,
+      "bill_share": 0.9047,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "special-deposits",
+    "jurisdiction": "Arizona",
+    "state": "AZ",
+    "year": 2025,
+    "listed": "SB 1206",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/96704f52-935a-45e6-9313-f9e85eddae71",
+    "model_share": 0.9947,
+    "bill_share": 0.972,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/96704f52-935a-45e6-9313-f9e85eddae71",
+      "doc_id": "commission/special-deposits",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9947,
+      "bill_share": 0.972,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "special-deposits",
+    "jurisdiction": "Nebraska",
+    "state": "NE",
+    "year": 2025,
+    "listed": "LB 231",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/c923a345-667d-443b-b897-7157c0767529",
+    "model_share": 0.9947,
+    "bill_share": 0.966,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/c923a345-667d-443b-b897-7157c0767529",
+      "doc_id": "commission/special-deposits",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9947,
+      "bill_share": 0.966,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "special-deposits",
+    "jurisdiction": "North Carolina",
+    "state": "NC",
+    "year": 2025,
+    "listed": "H 40",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/3cc60328-ce7c-4672-822d-83d1702cfff9",
+    "model_share": 0.9285,
+    "bill_share": 0.0217,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/3cc60328-ce7c-4672-822d-83d1702cfff9",
+      "doc_id": "commission/special-deposits",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9285,
+      "bill_share": 0.0217,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "special-deposits",
+    "jurisdiction": "North Dakota",
+    "state": "ND",
+    "year": 2025,
+    "listed": "SB 2123",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/bb0205d7-bfe0-4789-99cb-0b8712f6a7f8",
+    "model_share": 0.951,
+    "bill_share": 0.9117,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/bb0205d7-bfe0-4789-99cb-0b8712f6a7f8",
+      "doc_id": "commission/special-deposits",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.951,
+      "bill_share": 0.9117,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "special-deposits",
+    "jurisdiction": "Utah",
+    "state": "UT",
+    "year": 2025,
+    "listed": "SB 294",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/a5394b24-d0b3-4cbb-b5fc-380f6e525e31",
+    "model_share": 0.951,
+    "bill_share": 0.5758,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/a5394b24-d0b3-4cbb-b5fc-380f6e525e31",
+      "doc_id": "commission/special-deposits",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.951,
+      "bill_share": 0.5758,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "special-deposits",
+    "jurisdiction": "West Virginia",
+    "state": "WV",
+    "year": 2025,
+    "listed": "HB 2745/SB 39/SB 561",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/171b2484-52fb-4dda-b3e3-0baa57ed5099",
+    "model_share": 0.951,
+    "bill_share": 0.8582,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/171b2484-52fb-4dda-b3e3-0baa57ed5099",
+      "doc_id": "commission/special-deposits",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.951,
+      "bill_share": 0.8582,
+      "found": true
+     },
+     {
+      "id": "ocd-bill/2f6e1810-6119-44f6-83b3-d27d28e18c78",
+      "doc_id": "commission/special-deposits",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.951,
+      "bill_share": 0.8593,
+      "found": true
+     },
+     {
+      "id": "ocd-bill/987cd5b1-60d8-47e0-b04f-56bba3cf528e",
+      "doc_id": "commission/special-deposits",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.951,
+      "bill_share": 0.8803,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "special-deposits",
+    "jurisdiction": "Colorado",
+    "state": "CO",
+    "year": 2024,
+    "listed": "HB 1232",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/340d147a-1e99-4b53-81e2-d9e760e63757",
+    "model_share": 0.951,
+    "bill_share": 0.8806,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/340d147a-1e99-4b53-81e2-d9e760e63757",
+      "doc_id": "commission/special-deposits",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.951,
+      "bill_share": 0.8806,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "special-deposits",
+    "jurisdiction": "Delaware",
+    "state": "DE",
+    "year": 2024,
+    "listed": "SB 308",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/8af10a38-1f43-49ed-8f32-44856e9b4f2c",
+    "model_share": 0.9947,
+    "bill_share": 0.8795,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/8af10a38-1f43-49ed-8f32-44856e9b4f2c",
+      "doc_id": "commission/special-deposits",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9947,
+      "bill_share": 0.8795,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "special-deposits",
+    "jurisdiction": "Oklahoma",
+    "state": "OK",
+    "year": 2024,
+    "listed": "SB 1819",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/30eb426e-5e8c-4be3-ba3b-9b3ec2f479a1",
+    "model_share": 0.9285,
+    "bill_share": 0.8644,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/30eb426e-5e8c-4be3-ba3b-9b3ec2f479a1",
+      "doc_id": "commission/special-deposits",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9285,
+      "bill_share": 0.8644,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "special-deposits",
+    "jurisdiction": "Washington",
+    "state": "WA",
+    "year": 2024,
+    "listed": "SB 5801",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/a3bec6ea-4c68-4251-b36c-60f0e4053031",
+    "model_share": 0.9947,
+    "bill_share": 0.9118,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/a3bec6ea-4c68-4251-b36c-60f0e4053031",
+      "doc_id": "commission/special-deposits",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9947,
+      "bill_share": 0.9118,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "electronic-estate-planning-documents",
+    "jurisdiction": "Kentucky",
+    "state": "KY",
+    "year": 2026,
+    "listed": "SB 50",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/6f465d45-da9a-4770-b4f3-81c6fb0dd2f3",
+    "model_share": 0.2914,
+    "bill_share": 0.0163,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/6f465d45-da9a-4770-b4f3-81c6fb0dd2f3",
+      "doc_id": "commission/electronic-estate-planning-documents",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.2914,
+      "bill_share": 0.0163,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "electronic-estate-planning-documents",
+    "jurisdiction": "Minnesota",
+    "state": "MN",
+    "year": 2026,
+    "listed": "HF 3560/SF 3602",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/213a3799-0793-474f-9bbe-94a3ece4fe1a",
+    "model_share": 0.6398,
+    "bill_share": 0.687,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/213a3799-0793-474f-9bbe-94a3ece4fe1a",
+      "doc_id": "commission/electronic-estate-planning-documents",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.6398,
+      "bill_share": 0.687,
+      "found": true
+     },
+     {
+      "id": "ocd-bill/236fbbea-57f9-4062-9d01-eaad8a386762",
+      "doc_id": "commission/electronic-estate-planning-documents",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.6398,
+      "bill_share": 0.687,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "electronic-estate-planning-documents",
+    "jurisdiction": "Utah",
+    "state": "UT",
+    "year": 2026,
+    "listed": "HB 181",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/370e175f-246b-4076-a6b8-62312800299c",
+    "model_share": 0.7958,
+    "bill_share": 0.674,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/370e175f-246b-4076-a6b8-62312800299c",
+      "doc_id": "commission/electronic-estate-planning-documents",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.7958,
+      "bill_share": 0.674,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "electronic-estate-planning-documents",
+    "jurisdiction": "Missouri",
+    "state": "MO",
+    "year": 2025,
+    "listed": "HB 754/SB 289/SB 428/HB 176/HB 180/HB 83",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": false,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/f16c85d9-9f6e-49ec-81c3-dcad51fa9377",
+    "model_share": 0.0634,
+    "bill_share": 0.0044,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/453ce620-242c-473e-bafc-4ec119d07b64",
+      "doc_id": null,
+      "stages": [],
+      "model_share": null,
+      "bill_share": null,
+      "found": false
+     },
+     {
+      "id": "ocd-bill/4fd0e1e4-dc69-421b-ad2c-2cd7ee463564",
+      "doc_id": null,
+      "stages": [],
+      "model_share": null,
+      "bill_share": null,
+      "found": false
+     },
+     {
+      "id": "ocd-bill/6122d3cd-dbc5-4244-9c1a-a5ca2d827776",
+      "doc_id": null,
+      "stages": [],
+      "model_share": null,
+      "bill_share": null,
+      "found": false
+     },
+     {
+      "id": "ocd-bill/af02c054-7f7c-4cce-a942-018ba41fb795",
+      "doc_id": null,
+      "stages": [],
+      "model_share": null,
+      "bill_share": null,
+      "found": false
+     },
+     {
+      "id": "ocd-bill/b2113327-194b-408d-bca8-b8d48445317a",
+      "doc_id": null,
+      "stages": [],
+      "model_share": null,
+      "bill_share": null,
+      "found": false
+     },
+     {
+      "id": "ocd-bill/f16c85d9-9f6e-49ec-81c3-dcad51fa9377",
+      "doc_id": "commission/electronic-estate-planning-documents",
+      "stages": [
+       "semantic"
+      ],
+      "model_share": 0.0634,
+      "bill_share": 0.0044,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "electronic-estate-planning-documents",
+    "jurisdiction": "North Dakota",
+    "state": "ND",
+    "year": 2025,
+    "listed": "SB 2127",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/463214e4-c47a-4c4b-8819-2eb952e28bdc",
+    "model_share": 0.9339,
+    "bill_share": 0.8874,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/463214e4-c47a-4c4b-8819-2eb952e28bdc",
+      "doc_id": "commission/electronic-estate-planning-documents",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9339,
+      "bill_share": 0.8874,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "electronic-estate-planning-documents",
+    "jurisdiction": "Colorado",
+    "state": "CO",
+    "year": 2024,
+    "listed": "HB 1248",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/a328ce17-079d-4d27-b601-52705b04bbf5",
+    "model_share": 0.7909,
+    "bill_share": 0.6842,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/a328ce17-079d-4d27-b601-52705b04bbf5",
+      "doc_id": "commission/electronic-estate-planning-documents",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.7909,
+      "bill_share": 0.6842,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "electronic-estate-planning-documents",
+    "jurisdiction": "Oklahoma",
+    "state": "OK",
+    "year": 2024,
+    "listed": "SB 468",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/fa4c5f9a-465f-40ec-810f-191e625fa9fd",
+    "model_share": 0.8164,
+    "bill_share": 0.6717,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/fa4c5f9a-465f-40ec-810f-191e625fa9fd",
+      "doc_id": "commission/electronic-estate-planning-documents",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.8164,
+      "bill_share": 0.6717,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "electronic-estate-planning-documents",
+    "jurisdiction": "Washington",
+    "state": "WA",
+    "year": 2024,
+    "listed": "SB 5787",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/37e5a984-c884-486f-b704-52ac2badf061",
+    "model_share": 0.8889,
+    "bill_share": 0.7643,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/37e5a984-c884-486f-b704-52ac2badf061",
+      "doc_id": "commission/electronic-estate-planning-documents",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.8889,
+      "bill_share": 0.7643,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "electronic-estate-planning-documents",
+    "jurisdiction": "Illinois",
+    "state": "IL",
+    "year": 2023,
+    "listed": "HB 2269/SB 1930",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/a87f9d8e-1e55-43bb-a5b2-f599862f89b4",
+    "model_share": 0.864,
+    "bill_share": 0.4936,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/a87f9d8e-1e55-43bb-a5b2-f599862f89b4",
+      "doc_id": "commission/electronic-estate-planning-documents",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.864,
+      "bill_share": 0.4936,
+      "found": true
+     },
+     {
+      "id": "ocd-bill/fcf5bbbf-1572-4766-af1a-47649b26178a",
+      "doc_id": "commission/electronic-estate-planning-documents",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.864,
+      "bill_share": 0.4936,
+      "found": true
+     }
+    ]
+   }
+  ]
+ },
  "precision": {
   "command": "uv run lineage eval precision",
   "correct_from": 2,
