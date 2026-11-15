@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="//statesproject.org/wp-content/plugins/wordpress-seo/css/main-sitemap.xsl"?>
+<!-- Synthetic, in the shape of the site's Yoast policy sitemap; every policy is invented. -->
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd http://www.google.com/schemas/sitemap-image/1.1 http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+	<url>
+		<loc>https://statesproject.org/policy/lantern-registry/</loc>
+		<lastmod>2026-02-16T23:07:45+00:00</lastmod>
+		<image:image><image:loc>https://statesproject.org/wp-content/uploads/2025/01/lantern.jpg</image:loc></image:image>
+	</url>
+	<url>
+		<loc>https://statesproject.org/policy/harbor-lights/</loc>
+		<lastmod>2026-03-20T14:56:18+00:00</lastmod>
+	</url>
+	<url>
+		<loc>https://statesproject.org/policy/kettle-tools/</loc>
+		<lastmod>2026-04-06T15:06:05+00:00</lastmod>
+	</url>
+	<url>
+		<loc>https://statesproject.org/policy/withheld-wick/</loc>
+		<lastmod>2026-05-14T13:31:17+00:00</lastmod>
+	</url>
+	<url>
+		<loc>https://statesproject.org/policy/snuffed-candle/</loc>
+		<lastmod>2026-08-12T18:03:27+00:00</lastmod>
+	</url>
+</urlset>
