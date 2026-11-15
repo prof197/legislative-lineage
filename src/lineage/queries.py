@@ -1516,3 +1516,37 @@ def matchable_sections_of(
 # --- lane L1: incremental core ---
 
 # --- lane L2: intake ---
+
+
+def bills_acted_per_day(
+    con: duckdb.DuckDBPyConnection, *, bills_glob: str, month: str
+) -> list[tuple[str, str, int]]:
+    """(day, state, bills) for each day of `month` (YYYY-MM): the distinct bills with an action
+    that day, the intake's proxy for the bills the API reports updated."""
+    rows: list[tuple[str, str, int]] = con.execute(
+        """
+        WITH acted AS (
+            SELECT DISTINCT state, id, left(a.date, 10) AS day
+            FROM (SELECT state, id, unnest(actions) AS a FROM read_parquet($bills))
+            WHERE left(a.date, 7) = $month
+        )
+        SELECT day, state, count(*)::INTEGER FROM acted GROUP BY day, state ORDER BY day, state
+        """,
+        {"bills": bills_glob, "month": month},
+    ).fetchall()
+    return rows
+
+
+def bills_first_acted(con: duckdb.DuckDBPyConnection, *, bills_glob: str, month: str) -> int:
+    """Bills whose first action falls in `month` (YYYY-MM): the month's new bills."""
+    row: tuple[int] | None = con.execute(
+        """
+        SELECT count(*)::INTEGER FROM (
+            SELECT min(left(a.date, 10)) AS first
+            FROM (SELECT state, id, unnest(actions) AS a FROM read_parquet($bills))
+            GROUP BY state, id
+        ) WHERE left(first, 7) = $month
+        """,
+        {"bills": bills_glob, "month": month},
+    ).fetchone()
+    return 0 if row is None else row[0]
