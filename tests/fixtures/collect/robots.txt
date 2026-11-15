@@ -1,0 +1,8 @@
+# Synthetic, in the shape of the commission site's: the download handler is allowed before the
+# directory that holds it is disallowed, and Python's parser applies the first rule that fits.
+User-agent: *
+Allow: /HigherLogic/System/DownloadDocumentFile.ashx
+Allow: /higherlogic/system/downloaddocumentfile.ashx
+Disallow: /HigherLogic/
+Disallow: /higherlogic/
+Disallow: /viewdocument/withheld
