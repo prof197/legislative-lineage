@@ -99,7 +99,12 @@ def _invoke(*args: str) -> None:
 
 def build_tables(root: Path, fixtures: Path, sessions: Path) -> Path:
     """Fixture archives taken through every pipeline command; returns the tables dir."""
-    raw, manifest, tables = build_raw_dir(root, fixtures), root / "manifest.json", root / "tables"
+    return tables_from_raw(root, build_raw_dir(root, fixtures), sessions)
+
+
+def tables_from_raw(root: Path, raw: Path, sessions: Path) -> Path:
+    """Archives under `raw` taken through every pipeline command; returns the tables dir."""
+    manifest, tables = root / "manifest.json", root / "tables"
     reports = root / "reports"
     no_floor = ("--min-free-gib", "0")
     _invoke("snapshot", "--raw", str(raw), "--manifest", str(manifest))
@@ -140,9 +145,13 @@ FAKE_MODEL = "fake"
 @pytest.fixture
 def embedded_commission(commission_corpus: Path, tmp_path: Path) -> Path:
     """The commission fixture's tables, its windows embedded by the stand-in, neighbors built."""
-    out = tmp_path / "tables"
+    return embed_with_stand_in(commission_corpus, tmp_path / "tables")
+
+
+def embed_with_stand_in(built: Path, out: Path) -> Path:
+    """`built`'s tables linked into `out`, its windows embedded by the stand-in, neighbors built."""
     out.mkdir()
-    for table in commission_corpus.iterdir():
+    for table in built.iterdir():
         if table.name != "semantic":  # the stand-in's windows and vectors are built here
             (out / table.name).symlink_to(table)
     plan = build_plan(out, floor_bytes=0)

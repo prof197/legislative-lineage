@@ -26,10 +26,11 @@ from typing import Any
 from lineage.align import Embedder, align
 from lineage.labels import PERSON, SCALE, Item, LabelError, person
 from lineage.pair_data import LABELS
+from lineage.paths import DATA
 
 TEMPLATE = Path(__file__).parent / "pages" / "label.html"
-OUT = Path("data/label_page")
-DATA = "pairs.json"
+OUT = DATA / "label_page"
+PAIRS_FILE = "pairs.json"
 PAGE = "index.html"
 _ROW_KEYS = ("query", "match", "label", "labeler", "at")
 
@@ -71,7 +72,7 @@ def page_data(
 def write_page(data: Mapping[str, Any], out: Path = OUT) -> Path:
     """The page and its data in `out`; returns the page's path."""
     out.mkdir(parents=True, exist_ok=True)
-    (out / DATA).write_text(json.dumps(data, separators=(",", ":")) + "\n")
+    (out / PAIRS_FILE).write_text(json.dumps(data, separators=(",", ":")) + "\n")
     page = out / PAGE
     shutil.copyfile(TEMPLATE, page)
     return page

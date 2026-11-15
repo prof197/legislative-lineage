@@ -14,6 +14,8 @@ See DESIGN.md#commission-recall.
 import re
 from pathlib import Path
 
+from lineage.paths import DATA
+
 ACTS = (
     "public-expression-protection",
     "special-deposits",
@@ -36,7 +38,7 @@ ACT_NAMES = {
     "mortgage-modification": "Mortgage Modification",
     "directed-trust": "Directed Trust",
 }
-ACTS_DIR = Path("data/acts")
+ACTS_DIR = DATA / "acts"
 HELD_OUT_DIR = ACTS_DIR / "held-out"
 
 # "Section 1. Short Title", or "[Section 3. Registration" for an optional section. Acts

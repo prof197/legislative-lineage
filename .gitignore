@@ -1,9 +1,10 @@
 # Data: raw snapshots, derived tables and indexes never go in git.
 data/
 
-# Secrets
+# Secrets, and per-machine settings such as LINEAGE_DATA's absolute path
 .env
 .env.*
+.claude/settings.local.json
 
 # Python
 __pycache__/

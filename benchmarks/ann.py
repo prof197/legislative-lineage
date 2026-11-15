@@ -47,12 +47,13 @@ from lineage.ann import (
     train_index,
 )
 from lineage.memory import peak_bytes
+from lineage.paths import DATA
 from lineage.semantic import BUILD_THRESHOLD as THRESHOLD
 from lineage.semantic import MODEL
 from lineage.vectors import embedded_shards, load_plan, rows_of
 
 SEED = 20261110
-TABLES = Path("data/tables")
+TABLES = DATA / "tables"
 REPORT = Path("reports/ann_benchmark.json")
 SAMPLE = 1_000_000
 QUERIES = 2000

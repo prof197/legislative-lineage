@@ -10,8 +10,8 @@ from typer.testing import CliRunner
 from lineage import queries
 from lineage.cli import app
 from lineage.label_page import (
-    DATA,
     PAGE,
+    PAIRS_FILE,
     TEMPLATE,
     imported_rows,
     load_saved,
@@ -96,7 +96,7 @@ def test_the_page_is_written_beside_its_data(tmp_path: Path) -> None:
 
     assert page == tmp_path / "out" / PAGE
     assert page.read_text() == TEMPLATE.read_text()
-    assert json.loads((tmp_path / "out" / DATA).read_text()) == data
+    assert json.loads((tmp_path / "out" / PAIRS_FILE).read_text()) == data
 
 
 def test_a_name_is_refused_for_the_page() -> None:
@@ -185,7 +185,7 @@ def test_the_commands_write_the_page_and_import_what_it_saved(corpus: Path, tmp_
     )  # fmt: skip
 
     assert built.exit_code == 0, built.output
-    [pair] = json.loads((out / DATA).read_text())["pairs"]
+    [pair] = json.loads((out / PAIRS_FILE).read_text())["pairs"]
     doc = {
         "pair": pair["pair"],
         "query": {k: v for k, v in pair["query"].items() if k != "text"},

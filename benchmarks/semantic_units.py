@@ -45,12 +45,13 @@ from lineage.boilerplate import boilerplate_kind
 from lineage.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.embed import embed, load_model
 from lineage.models import MODELS, require_model
+from lineage.paths import DATA
 from lineage.sections import normalize, split_sections
 from lineage.windows import WINDOW_STRIDE, WINDOW_WORDS, display_windows, window_counts
 
 COMMAND = "uv run python -m benchmarks.semantic_units"
 REPORT = Path("reports/semantic_sizing.json")
-TABLES = Path("data/tables")
+TABLES = DATA / "tables"
 RESULTS = Path("reports/results.json")
 SEED = 20261108
 CACHE = TABLES / "semantic_probe"

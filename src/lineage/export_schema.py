@@ -14,7 +14,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2  # 2: origins, sources and the live track's dates
 
 Status = Literal["passed", "died", "introduced", "passed_legislature"]
 Stage = Literal["near_duplicate", "semantic"]
@@ -84,6 +84,28 @@ class Relative(_Model):
     comparison: str  # the comparison file's slug
 
 
+class ModelDocRef(_Model):
+    """A published model document as a page names it. Its text is never exported."""
+
+    id: str
+    source: str  # its entry in sources.json
+    organization: str
+    title: str
+    url: str
+    published: str | None  # as the organization dates it, ISO 8601
+    leaked: bool
+
+
+class Origin(_Model):
+    """A published model document this bill shares wording with (DESIGN.md#origin-matches)."""
+
+    doc: ModelDocRef
+    stages: list[Stage]
+    bill_share: float  # of the bill's words, the share from the model
+    model_share: float  # of the model's words, the share found in the bill
+    sections: list[int]  # the bill's sections that match it
+
+
 class BillPage(_Model):
     """`bills/<slug>.json`: a hosted bill's page."""
 
@@ -93,6 +115,8 @@ class BillPage(_Model):
     words_searched: int
     families: int  # every related family, however many are listed
     relatives: list[Relative]  # the best ones, best first, up to the display cap
+    origins: list[Origin] = Field(default_factory=list[Origin])  # most of the bill's words first
+    updated_on: str | None = None  # the day its relatives or origins last changed (live track)
 
 
 class Closest(_Model):
@@ -255,6 +279,29 @@ class Meta(_Model):
     hosted_bills: int
     stories: list[str]
     validation: Validation
+    as_of: str | None = None  # the last day the live track applied, ISO 8601 (DESIGN.md#updates)
+
+
+class SourceEntry(_Model):
+    """A library of model legislation, as the sources page lists it (DESIGN.md#model-documents)."""
+
+    key: str
+    organization: str
+    descriptor: str  # what kind of organization it is, from public filings
+    library_url: str
+    terms_url: str | None
+    terms_note: str
+    terms_read_on: str  # ISO 8601
+    leaked: bool
+    leak_note: str | None
+    documents: int  # collected
+    collected_on: str | None  # the latest collection, ISO 8601
+
+
+class Sources(_Model):
+    """`sources.json`: every library the matching reads, whether or not any bill matches it."""
+
+    sources: list[SourceEntry]
 
 
 class Release(_Model):
@@ -274,4 +321,5 @@ TOP_LEVEL: tuple[type[BaseModel], ...] = (
     Comparison,
     BillTexts,
     Story,
+    Sources,
 )

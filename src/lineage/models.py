@@ -15,8 +15,9 @@ from pathlib import Path
 
 from lineage.disk import DEFAULT_FLOOR_BYTES
 from lineage.fetch import FetchError, download
+from lineage.paths import DATA
 
-MODELS_DIR = Path("data/models")
+MODELS_DIR = DATA / "models"
 
 
 @dataclass(frozen=True, slots=True)

@@ -22,11 +22,12 @@ from typing import Any
 
 from lineage import queries
 from lineage.commission import FIRST_YEAR
+from lineage.paths import DATA
 from lineage.sessions import load_sessions
 from lineage.stats import AMENDMENT_CHARS, AMENDMENT_OPENING, AMENDMENT_SUBSTITUTE
 from lineage.ulc import BillRecord, find_bills, load_enactments
 
-TABLES = Path("data/tables")
+TABLES = DATA / "tables"
 SESSIONS = Path("snapshot/sessions.csv")
 OUT = Path("tests/fixtures/commission")
 MAX_TARGET_CHARS = 40_000

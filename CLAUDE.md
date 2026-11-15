@@ -51,6 +51,9 @@ uv run lineage agreement-sample  # 50 of the precision sample's pairs, stratifie
 uv run lineage eval agreement  # a person's labels against the model's on that subsample: weighted kappa, cutoff agreement -> reports/results.json
 uv run lineage label-model SAMPLE  # provisional labels from a model, kept apart from people's; asks nothing without --live
 uv run lineage eval precision  # precision per stratum, stage and overall, people's and the model's apart -> reports/results.json
+uv run lineage collect-models SOURCE  # one source's model legislation -> data/modeldocs/<source>/, reports/modeldocs/<source>.json
+uv run lineage origins       # collected model documents against the corpus -> data/tables/origins/matches.jsonl (lane C; not built yet)
+uv run lineage update --day DIR  # apply one day's new and changed records -> data/changes/<as_of>.jsonl (lane L1; not built yet)
 uv run lineage text inventory  # version to fetch per record, by host, robots.txt read -> data/text/plan.parquet, reports/text_inventory.json
 uv run lineage text sample   # quality test: fetch a seeded sample per state and format -> data/text/sample/, reports/text_quality.json
 uv run lineage text fetch    # fetch every planned record as rules/text_layer.toml says, California from its bulk download; resumable -> data/text/full/, reports/text_fetch.json
@@ -138,6 +141,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   text_merge.py   `lineage text merge`: the texts table, each record's text and its source; later stages read text only from it
   queries.py      every SQL query the pipeline runs (DR-4)
   disk.py         free-space floor checked before large writes
+  paths.py        DATA: LINEAGE_DATA or data/, the root of every default local path (worktrees share it)
   memory.py       current and peak memory as the OS charges it (macOS physical footprint)
   models.py       the embedding models: pinned repository revision and file hashes; fetched through fetch.download
   embed.py        unit-length vectors from a pinned model, offline (fastembed, ONNX), batched by token count
@@ -145,6 +149,13 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   ann.py          nearest neighbors over unit vectors: exact search, and faiss indexes (build extra), typed
   export_schema.py  the site's data contract: every exported file as a Pydantic model, which emits the JSON Schema
   export.py       `lineage export`: bill pages, comparisons, section texts, stories and the data stamp for one state
+  updates.py      the live track's contracts (DR-7): days, records over time, the change log, the snapshot an update must equal
+  incremental.py  `lineage update`'s body, one day applied in both directions (lane L1, M10; a stub until then)
+  modeldocs.py    model legislation: each source's entry, each collected document, texts per version under data/modeldocs/
+  collect.py      the collector registry: one module per source under collectors/, found by name; the coverage report
+  collectors/     one collector module per source of model legislation, each owned by the lane that builds it
+  origins.py      OriginMatch, both shares and the bill's spans, and the origins table
+  origin_matching.py  `lineage origins`' body: model documents queried against the corpus (lane C, M10; a stub until then)
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
 tools/            dev and CI checks
   leak_check.py   local paths and deny-listed terms in tracked files and every commit
@@ -153,6 +164,10 @@ evals/            eval inputs: ulc_enactments.csv (hand copy of the commission's
 tests/            pytest; small committed fixtures only
   fixtures/openstates/  trimmed real records in archive layout (README + *_bills.json)
   fixtures/commission/  enacting bills among uniform-act distractors, same layout, + sessions.csv
+  days.py         recorded days for the live track, built at test time from fixtures/commission/, and the reference rebuild
+  fixture_export.py  builds fixtures/export/: Utah's bills, synthetic model documents, hand-made origins (LINEAGE_REGENERATE=1 rewrites it)
+  fixtures/export/  the fixture export every v2 lane builds and tests against (committed, generated)
+  collector_fixtures/  two synthetic sources, one leaked, for the registry and the fixture export
 snapshot/manifest.json  the pinned snapshot: per-archive size, SHA-256, Generated At
 snapshot/sessions.csv   session start/end dates and carryover, from a pinned scrapers commit
 rules/document_types.csv  which document types are matched, per state; first fitting rule wins
@@ -178,6 +193,8 @@ data/             local snapshots and derived tables; gitignored, never committe
   acts/held-out/<act>.txt  the held-out acts' texts, read only by the parser check and the final run
   tables/         Parquet tables written by the pipeline; bills/ holds the source's records under the project's names, texts/ each record's chosen text; signatures/, bands/, pairs/ and same_state_pairs/ hold .npy arrays
   text/           the text layer's fetch plan and fetched text (JSON lines per host)
+  changes/        the live track's change log, one JSON-lines file per day
+  modeldocs/<source>/  model legislation as collected: docs.jsonl, versions.jsonl, raw/ and texts/ by SHA-256; never committed
   tables/semantic/  the semantic stage's windows (units/), distinct texts (texts/), and each model's float16 vector shards
   pair_data/      the labeled pair dataset's split files, from `lineage pair-data fetch`; never committed
   models/<name>/  embedding model files at their pinned revision, from `lineage model fetch`
@@ -200,5 +217,7 @@ data/             local snapshots and derived tables; gitignored, never committe
 - Every HTTP request goes through `fetch.open_url`, which waits for the host's turn in `lineage.pace`. Never pace requests any other way.
 - Open DuckDB only through `queries.connect_quiet` or `queries.connect`, which cap a query's spill to disk at the same floor. This holds for tests and one-off probes too; a test fails on any other `duckdb.*()` call.
 - Secrets come only from environment variables. `.env` is gitignored.
+- Default paths to local data start at `lineage.paths.DATA`, never a literal `data/...`. Set `LINEAGE_DATA` to an absolute directory in `.claude/settings.local.json` (gitignored) so worktrees share the data.
+- In v2 lanes, edit only the files your lane owns (DESIGN.md#lanes); add SQL only in your lane's region of `queries.py`.
 - Model calls happen only in the explanation step and the provisional precision labels. Retrieval runs with no API key.
 - Commits use conventional messages, one build step per commit. The body gives the engineering reason: the tradeoff, the measurement, the alternative rejected.

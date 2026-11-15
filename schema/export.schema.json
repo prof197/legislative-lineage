@@ -137,6 +137,13 @@
      "title": "Families",
      "type": "integer"
     },
+    "origins": {
+     "items": {
+      "$ref": "#/$defs/Origin"
+     },
+     "title": "Origins",
+     "type": "array"
+    },
     "relatives": {
      "items": {
       "$ref": "#/$defs/Relative"
@@ -160,6 +167,18 @@
        "type": "null"
       }
      ]
+    },
+    "updated_on": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Updated On"
     },
     "words_searched": {
      "title": "Words Searched",
@@ -548,12 +567,24 @@
      "title": "Archives",
      "type": "array"
     },
+    "as_of": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "As Of"
+    },
     "hosted_bills": {
      "title": "Hosted Bills",
      "type": "integer"
     },
     "schema_version": {
-     "default": 1,
+     "default": 2,
      "title": "Schema Version",
      "type": "integer"
     },
@@ -585,6 +616,102 @@
     "validation"
    ],
    "title": "Meta",
+   "type": "object"
+  },
+  "ModelDocRef": {
+   "additionalProperties": false,
+   "description": "A published model document as a page names it. Its text is never exported.",
+   "properties": {
+    "id": {
+     "title": "Id",
+     "type": "string"
+    },
+    "leaked": {
+     "title": "Leaked",
+     "type": "boolean"
+    },
+    "organization": {
+     "title": "Organization",
+     "type": "string"
+    },
+    "published": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Published"
+    },
+    "source": {
+     "title": "Source",
+     "type": "string"
+    },
+    "title": {
+     "title": "Title",
+     "type": "string"
+    },
+    "url": {
+     "title": "Url",
+     "type": "string"
+    }
+   },
+   "required": [
+    "id",
+    "source",
+    "organization",
+    "title",
+    "url",
+    "published",
+    "leaked"
+   ],
+   "title": "ModelDocRef",
+   "type": "object"
+  },
+  "Origin": {
+   "additionalProperties": false,
+   "description": "A published model document this bill shares wording with (DESIGN.md#origin-matches).",
+   "properties": {
+    "bill_share": {
+     "title": "Bill Share",
+     "type": "number"
+    },
+    "doc": {
+     "$ref": "#/$defs/ModelDocRef"
+    },
+    "model_share": {
+     "title": "Model Share",
+     "type": "number"
+    },
+    "sections": {
+     "items": {
+      "type": "integer"
+     },
+     "title": "Sections",
+     "type": "array"
+    },
+    "stages": {
+     "items": {
+      "enum": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "type": "string"
+     },
+     "title": "Stages",
+     "type": "array"
+    }
+   },
+   "required": [
+    "doc",
+    "stages",
+    "bill_share",
+    "model_share",
+    "sections"
+   ],
+   "title": "Origin",
    "type": "object"
   },
   "Recall": {
@@ -883,6 +1010,110 @@
     "interval_95"
    ],
    "title": "Share",
+   "type": "object"
+  },
+  "SourceEntry": {
+   "additionalProperties": false,
+   "description": "A library of model legislation, as the sources page lists it (DESIGN.md#model-documents).",
+   "properties": {
+    "collected_on": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Collected On"
+    },
+    "descriptor": {
+     "title": "Descriptor",
+     "type": "string"
+    },
+    "documents": {
+     "title": "Documents",
+     "type": "integer"
+    },
+    "key": {
+     "title": "Key",
+     "type": "string"
+    },
+    "leak_note": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Leak Note"
+    },
+    "leaked": {
+     "title": "Leaked",
+     "type": "boolean"
+    },
+    "library_url": {
+     "title": "Library Url",
+     "type": "string"
+    },
+    "organization": {
+     "title": "Organization",
+     "type": "string"
+    },
+    "terms_note": {
+     "title": "Terms Note",
+     "type": "string"
+    },
+    "terms_read_on": {
+     "title": "Terms Read On",
+     "type": "string"
+    },
+    "terms_url": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Terms Url"
+    }
+   },
+   "required": [
+    "key",
+    "organization",
+    "descriptor",
+    "library_url",
+    "terms_url",
+    "terms_note",
+    "terms_read_on",
+    "leaked",
+    "leak_note",
+    "documents",
+    "collected_on"
+   ],
+   "title": "SourceEntry",
+   "type": "object"
+  },
+  "Sources": {
+   "additionalProperties": false,
+   "description": "`sources.json`: every library the matching reads, whether or not any bill matches it.",
+   "properties": {
+    "sources": {
+     "items": {
+      "$ref": "#/$defs/SourceEntry"
+     },
+     "title": "Sources",
+     "type": "array"
+    }
+   },
+   "required": [
+    "sources"
+   ],
+   "title": "Sources",
    "type": "object"
   },
   "Span": {

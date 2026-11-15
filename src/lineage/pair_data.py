@@ -17,8 +17,9 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from lineage.fetch import FetchError, download
+from lineage.paths import DATA
 
-PAIR_DATA_DIR = Path("data/pair_data")
+PAIR_DATA_DIR = DATA / "pair_data"
 REPO = "hikoseon12/learning-bill-similarity"
 COMMIT = "e11e4f4aae8447b3f71fc49d47def1f8ce33d529"
 _PREFIX = "data/subsection_pairs/human_annotated_pairs"

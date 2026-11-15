@@ -707,6 +707,14 @@ def bill_states(con: duckdb.DuckDBPyConnection, *, bills_glob: str) -> dict[str,
     return dict(rows)
 
 
+def bill_statuses(con: duckdb.DuckDBPyConnection, *, bills_glob: str) -> dict[str, str | None]:
+    """Every bill's status, by bill id."""
+    rows: list[tuple[str, str | None]] = con.execute(
+        "SELECT id, status FROM read_parquet($bills)", {"bills": bills_glob}
+    ).fetchall()
+    return dict(rows)
+
+
 def read_stoplist(con: duckdb.DuckDBPyConnection, *, parquet_path: Path) -> list[int]:
     rows: list[tuple[int]] = con.execute(
         "SELECT hash FROM read_parquet($p) ORDER BY hash", {"p": str(parquet_path)}
@@ -1480,3 +1488,17 @@ def states_indexed(con: duckdb.DuckDBPyConnection, *, bills_glob: str) -> int:
         "SELECT count(DISTINCT state) FROM read_parquet($bills)", {"bills": bills_glob}
     ).fetchone()
     return 0 if row is None else row[0]
+
+
+# v2 lanes add their SQL in their own region below, never editing a function above or another
+# lane's region, so lanes merged in any order do not conflict (DESIGN.md#lanes).
+
+# --- lane B: collection ---
+
+# --- lane C: matching ---
+
+# --- lane D: evals ---
+
+# --- lane L1: incremental core ---
+
+# --- lane L2: intake ---

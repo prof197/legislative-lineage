@@ -16,15 +16,16 @@ from typing import Any
 from lineage import queries
 from lineage.ca_bulk import fetch_california
 from lineage.disk import DEFAULT_FLOOR_BYTES
+from lineage.paths import DATA
 from lineage.text_fetch import Job, fetch_all, host_of
 from lineage.text_inventory import load_plan
 from lineage.text_rules import RULES, TextRules, load_rules, replaced_states, usable
 
 COMMAND = "uv run lineage text fetch"
-STORE = Path("data/text/full")
+STORE = DATA / "text/full"
 REPORT = Path("reports/text_fetch.json")
 QUALITY = Path("reports/text_quality.json")
-RAW = Path("data/raw/ca-bulk")
+RAW = DATA / "raw/ca-bulk"
 
 
 def plan_jobs(

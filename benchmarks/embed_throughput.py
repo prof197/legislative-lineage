@@ -36,10 +36,11 @@ from benchmarks.minhash import machine
 from lineage import queries
 from lineage.embed import BATCH_SIZE, embed, load_model
 from lineage.models import MODELS
+from lineage.paths import DATA
 from lineage.windows import WINDOW_WORDS, display_windows
 
 SEED = 20261109
-TABLES = Path("data/tables")
+TABLES = DATA / "tables"
 SIZING = Path("reports/semantic_sizing.json")
 REPORT = Path("reports/embed_throughput.json")
 SAMPLE_BILLS = 4000
