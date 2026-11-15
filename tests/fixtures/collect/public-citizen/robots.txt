@@ -1,0 +1,8 @@
+# Synthetic, in the shape of citizen.org's robots.txt: a Crawl-delay before the first User-agent
+# line, where Python's parser does not read it. The real file disallows nothing; the Disallow
+# line here exists to exercise a blocked document.
+Crawl-delay: 10
+User-agent: *
+Disallow: /article/withheld-
+
+Sitemap: https://www.citizen.org/sitemap_index.xml
