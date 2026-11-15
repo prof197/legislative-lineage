@@ -44,6 +44,18 @@ def _doc(text: str, on: date, raw: bytes = b"%PDF") -> ModelDoc:
     )
 
 
+def test_a_members_line_comes_with_its_source() -> None:
+    line = "Commissioners appointed by each state."
+    with pytest.raises(ValidationError, match="members line"):
+        Source.model_validate({**SOURCE.model_dump(), "members": line})
+    with pytest.raises(ValidationError):
+        Source.model_validate(
+            {**SOURCE.model_dump(), "members": line, "members_source": "http://example.org"}
+        )
+    sourced = {**SOURCE.model_dump(), "members": line, "members_source": "https://example.org/a"}
+    assert Source.model_validate(sourced).members == line
+
+
 def test_a_leaked_source_says_how_it_became_public() -> None:
     with pytest.raises(ValidationError, match="leak_note"):
         Source.model_validate({**SOURCE.model_dump(), "leaked": True})

@@ -288,6 +288,8 @@ class SourceEntry(_Model):
     key: str
     organization: str
     descriptor: str  # what kind of organization it is, from public filings
+    members: str | None  # for a membership organization, who its members are
+    members_source: str | None  # the page that line comes from
     library_url: str
     terms_url: str | None
     terms_note: str

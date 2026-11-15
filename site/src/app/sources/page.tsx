@@ -1,19 +1,10 @@
 import type { Metadata } from "next";
-import { existsSync, readFileSync } from "node:fs";
-import path from "node:path";
 import { Footer, Header } from "@/components/Chrome";
+import { sources } from "@/lib/data";
 import { bySource, documents, INCLUSION_RULE, isoDate, LEAKED_LABEL } from "@/lib/origins";
-import type { SourceEntry, Sources } from "@/types/export";
+import type { SourceEntry } from "@/types/export";
 
 export const metadata: Metadata = { title: "Sources" };
-
-// sources.json lists every library the matching reads (DESIGN.md#model-documents). Data from
-// before export schema version 2 has none, and the page says so rather than failing the build.
-function sources(): SourceEntry[] | null {
-  const file = path.join(process.cwd(), "public", "data", "sources.json");
-  if (!existsSync(file)) return null;
-  return bySource((JSON.parse(readFileSync(file, "utf8")) as Sources).sources);
-}
 
 // A note from the source's entry, ended as a sentence.
 const sentence = (s: string): string => (/[.!?]$/.test(s.trim()) ? s.trim() : `${s.trim()}.`);
@@ -35,6 +26,11 @@ function Source({ s }: { s: SourceEntry }) {
         {s.leaked && <span className="chip-dashed">{LEAKED_LABEL}</span>}
       </div>
       <p className="body-serif" style={{ marginTop: 8, overflowWrap: "anywhere" }}>{s.descriptor}</p>
+      {s.members && s.members_source && (
+        <p className="note" style={{ marginTop: 8, overflowWrap: "anywhere" }}>
+          {sentence(s.members)} <a href={s.members_source}>Source</a>
+        </p>
+      )}
       {s.leaked && (
         <p className="note" style={{ marginTop: 8, overflowWrap: "anywhere" }}>
           <strong style={{ color: "var(--ink)" }}>{LEAKED_LABEL} archive:</strong> {sentence(s.leak_note ?? "its documents became public through a leak")}
@@ -57,11 +53,12 @@ function Source({ s }: { s: SourceEntry }) {
 }
 
 export default function SourcesPage() {
-  const list = sources();
+  // Data from before export schema version 2 lists no libraries, and the page says so.
+  const found = sources();
+  const list = found ? bySource(found.sources) : null;
   return (
     <>
-      {/* The header's sections name no sources page yet, so no nav link is marked current here. */}
-      <Header current={"sources" as never} />
+      <Header current="sources" />
       <main className="wrap" style={{ paddingTop: 56 }}>
         <p className="eyebrow">Model legislation</p>
         <h1 className="display" style={{ marginTop: 10 }}>Sources</h1>

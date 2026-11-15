@@ -1058,6 +1058,28 @@
      "title": "Library Url",
      "type": "string"
     },
+    "members": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Members"
+    },
+    "members_source": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Members Source"
+    },
     "organization": {
      "title": "Organization",
      "type": "string"
@@ -1086,6 +1108,8 @@
     "key",
     "organization",
     "descriptor",
+    "members",
+    "members_source",
     "library_url",
     "terms_url",
     "terms_note",

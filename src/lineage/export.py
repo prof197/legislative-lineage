@@ -467,6 +467,8 @@ def sources_doc(sources: Sequence[Source], docs: Mapping[str, tuple[ModelDoc, So
                 key=src.key,
                 organization=src.organization,
                 descriptor=src.descriptor,
+                members=src.members,
+                members_source=src.members_source,
                 library_url=src.library_url,
                 terms_url=src.terms_url,
                 terms_note=src.terms_note,

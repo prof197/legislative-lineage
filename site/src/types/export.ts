@@ -348,6 +348,8 @@ key: string
 leak_note: (string | null)
 leaked: boolean
 library_url: string
+members: (string | null)
+members_source: (string | null)
 organization: string
 terms_note: string
 terms_read_on: string

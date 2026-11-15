@@ -39,6 +39,10 @@ class Source(BaseModel):
     # What kind of organization it is, from public filings: "nonprofit membership organization
     # of state legislators, 501(c)(3)". Never a political label.
     descriptor: str = Field(min_length=1)
+    # For a membership organization, one line on who its members are, and the public page it
+    # comes from; both or neither.
+    members: str | None = Field(default=None, min_length=1)
+    members_source: str | None = Field(default=None, pattern=r"^https://")
     library_url: str = Field(pattern=r"^https://")
     terms_url: str | None = None
     terms_note: str = Field(min_length=1)  # what the terms allow, as read on `terms_read_on`
@@ -50,6 +54,8 @@ class Source(BaseModel):
     def _a_leaked_source_says_how(self) -> Self:
         if self.leaked != (self.leak_note is not None):
             raise ValueError("a leaked source needs a leak_note, and only a leaked one has one")
+        if (self.members is None) != (self.members_source is None):
+            raise ValueError("a members line needs its source, and a source its line")
         return self
 
 
