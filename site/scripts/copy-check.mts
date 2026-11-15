@@ -87,6 +87,21 @@ for (const f of files(path.join(OUT, "data", "compare"), (f) => f.endsWith(".jso
   if (shown.length) scan(f, shown.join(" · "));
 }
 
+// The data credit, on every page but the not-found page: it travels in the shared footer, and a
+// page built without that footer would drop it silently.
+const CREDIT = "Bill data from Open States, by Plural Policy (public domain); bill text from each legislature's website.";
+const uncredited = files(OUT, (f) => f.endsWith(".html"))
+  .filter((f) => !/(^|\/)(404|_not-found)(\/index)?\.html$/.test(path.relative(OUT, f)))
+  .filter((f) => {
+    const html = readFileSync(f, "utf8").replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " ");
+    return !decode(html.replace(/<[^>]+>/g, "")).replace(/\s+/g, " ").includes(CREDIT);
+  });
+if (uncredited.length) {
+  for (const f of uncredited.slice(0, 20)) console.error(`${path.relative(OUT, f)}: no data credit`);
+  console.error(`\n${uncredited.length} pages without the data credit; render <Footer /> on them`);
+  process.exit(1);
+}
+
 const byPhrase = new Map<string, number>();
 for (const h of hits) byPhrase.set(h.phrase, (byPhrase.get(h.phrase) ?? 0) + 1);
 if (hits.length) {
@@ -100,4 +115,4 @@ if (hits.length) {
   console.error(`\n${hits.length} uses of banned phrases (${[...byPhrase].map(([p, n]) => `${p} ${n}`).join(", ")}); fix the copy or allow the use in scripts/copy-check.ts`);
   process.exit(1);
 }
-console.log("copy rules: no banned phrase in the built site");
+console.log("copy rules: no banned phrase in the built site, and the data credit on every page");

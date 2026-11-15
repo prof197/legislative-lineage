@@ -199,8 +199,9 @@ export function CompareView({ hosted, issues, footer, act }: { hosted: string; i
 
   useEffect(() => setSelected(built?.claims[0]?.n ?? null), [built]);
 
-  if (error) return <main className="cmp-main"><div className="cmp-wrap"><p className="body-serif" style={{ marginTop: 32 }}>{error}</p></div></main>;
-  if (!data || !built) return <main className="cmp-main"><div className="cmp-wrap"><p className="note" aria-live="polite" style={{ marginTop: 32 }}>Loading the comparison…</p></div></main>;
+  // The footer carries the data credit, so every state of the page shows it, not only a loaded one.
+  if (error) return <main className="cmp-main"><div className="cmp-wrap"><p className="body-serif" style={{ marginTop: 32 }}>{error}</p></div>{footer}</main>;
+  if (!data || !built) return <main className="cmp-main"><div className="cmp-wrap"><p className="note" aria-live="polite" style={{ marginTop: 32 }}>Loading the comparison…</p></div>{footer}</main>;
   const { c } = data;
   const matchedA = new Set(c.pairs.map((p) => p.ordinal_a)).size;
   const version = c.text_b?.version;
