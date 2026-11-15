@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { STANDING, StatusBadge } from "@/components/Status";
 import { InfoTip } from "@/components/InfoTip";
+import { Origins } from "@/components/Origins";
 import { TileMap } from "@/components/Tiles";
 import { bestByState, fills } from "@/lib/facts";
 import { relatedCount, sectionLabels, session, similarity, stateName, STATUS_LABEL } from "@/lib/format";
@@ -198,6 +199,8 @@ export function BillView({ page }: { page: BillPage }) {
           </p>
         )}
       </section>
+
+      <Origins origins={page.origins} identifier={b.identifier} label={label} order={order} />
     </>
   );
 }
