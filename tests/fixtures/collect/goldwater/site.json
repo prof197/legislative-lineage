@@ -1,0 +1,37 @@
+{
+ "_note": "Recorded responses for the goldwater collector, synthetic: the handbook page keeps the institute's shape (policy sections, each ending in a VIEW MODEL LEGISLATION link to a file in the site's uploads, one section with two qualified links, one without a link, a link to a legislature's bill on another host, a newsletter form) with invented policies, files and texts. A body is inline HTML; build makes a Word or PDF file from the text fixture named by file. A URL not listed answers 404.",
+ "https://www.goldwaterinstitute.org/the-freedom-agenda-goldwater-state-policy-handbook/": {
+  "content_type": "text/html; charset=UTF-8",
+  "body": "<!doctype html><html><body><nav><a href=\"/\">Home</a> <a href=\"/policy-reports/\">Policy Reports</a> <a href=\"/model-legislation-faq/\">About our work</a></nav><div class=\"entry-content\"><h1>An Invented State Policy Handbook</h1><p>This synthetic handbook gathers invented solutions and provides model legislation that state leaders can put into action, with research and testimony. <a href=\"/wp-content/uploads/2025/10/Invented-Handbook-FINAL.pdf\">Download</a></p><h2>LIGHTING THE WAY</h2><h3><a href=\"#\">Lanterns For All: Promote Fair Lantern Permits</a></h3><p><strong>ISSUE OVERVIEW</strong></p><p>Invented permit delays keep lanterns dark.</p><p><strong>POLICY RECOMMENDATION</strong></p><p>States should decide lantern permits on time.</p><p><a href=\"/wp-content/uploads/2026/11/Lantern_Permit_Act-2026.pdf\"><strong>VIEW MODEL LEGISLATION.</strong></a></p><h3><a href=\"#\">Safe Harbors: Protect Mooring Ownership</a></h3><p>Invented takings of moorings, by tide works and by rule.</p><p><strong>VIEW <a href=\"/wp-content/uploads/2026/11/Harbor_Fairness_Act-2026.pdf\">TIDE</a> MODEL LEGISLATION</strong></p><p><a href=\"/wp-content/uploads/2026/11/Harbor_Fairness_Act-2025.docx\"><strong>VIEW MOORING MODEL LEGISLATION</strong></a></p><h3><a href=\"#\">Lamps For Patients: Protect The Right To Reach A Lamp</a></h3><p><a href=\"/wp-content/uploads/2025/09/3.0-FAQ-and-Bill.pdf\">VIEW MODEL LEGISLATION.</a></p><h3><a href=\"#\">Closing Offices: Abolish Lantern Bureaucracies</a></h3><p><a href=\"https://www.goldwaterinstitute.org/wp-content/uploads/2026/11/Lamp_Model_Package-2026.pdf\">VIEW MODEL LEGISLATION.</a> <a href=\"/wp-content/uploads/2026/11/Lamp_Model_Package-2026.pdf\">VIEW MODEL LEGISLATION.</a></p><h3><a href=\"#\">Quiet Lamps: Withheld For Review</a></h3><p><a href=\"/wp-content/uploads/withheld/Withheld_Lamp_Act-2026.pdf\">VIEW MODEL LEGISLATION.</a></p><h3><a href=\"#\">Lost Lamps: A Moved File</a></h3><p><a href=\"/wp-content/uploads/2026/11/Lost_Lamp_Act-2026.pdf\">VIEW MODEL LEGISLATION.</a></p><h3><a href=\"#\">Choosing Lamps: Support Lamp Choice</a></h3><p><a href=\"https://www.example-legislature.gov/bills/hb0001p.pdf\">VIEW MODEL LEGISLATION.</a></p><h3><a href=\"#\">Counting Lamps: Hold Lamp Districts Accountable</a></h3><p>States should publish lamp budgets; no model legislation yet.</p><ol><li>An invented lamp study, 2024. <a href=\"/wp-content/uploads/2024/01/Lamp-Study.pdf\">Lamp-Study.pdf</a></li></ol></div><footer><form><input name=\"email\"><button>Subscribe</button></form><a href=\"/terms-and-conditions/\">Terms</a></footer></body></html>"
+ },
+ "https://www.goldwaterinstitute.org/wp-content/uploads/2026/11/Lantern_Permit_Act-2026.pdf": {
+  "content_type": "application/pdf",
+  "build": "pdf",
+  "file": "lantern_permit.txt"
+ },
+ "https://www.goldwaterinstitute.org/wp-content/uploads/2026/11/Harbor_Fairness_Act-2026.pdf": {
+  "content_type": "application/pdf",
+  "build": "pdf",
+  "file": "harbor_tide.txt"
+ },
+ "https://www.goldwaterinstitute.org/wp-content/uploads/2026/11/Harbor_Fairness_Act-2025.docx": {
+  "content_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "build": "docx",
+  "file": "harbor_mooring.txt"
+ },
+ "https://www.goldwaterinstitute.org/wp-content/uploads/2025/09/3.0-FAQ-and-Bill.pdf": {
+  "content_type": "application/pdf",
+  "build": "pdf",
+  "file": "lamp_faq_and_bill.txt"
+ },
+ "https://www.goldwaterinstitute.org/wp-content/uploads/2026/11/Lamp_Model_Package-2026.pdf": {
+  "content_type": "application/pdf",
+  "build": "pdf",
+  "file": "lamp_package.txt"
+ },
+ "https://www.goldwaterinstitute.org/wp-content/uploads/withheld/Withheld_Lamp_Act-2026.pdf": {
+  "content_type": "application/pdf",
+  "build": "pdf",
+  "file": "lantern_permit.txt"
+ }
+}
