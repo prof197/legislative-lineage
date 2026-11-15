@@ -1,0 +1,37 @@
+SYNTHETIC MODEL ACT
+(invented for tests; not a commission text)
+
+Drafted by an invented committee
+
+Copyright 2026 Example Drafting Body
+
+TABLE OF CONTENTS
+Section 1. Short Title	1
+Section 2. Definitions	1
+
+Prefatory Note
+This invented act exists only to exercise the cleaning of model texts.
+
+Section 1. Short Title
+This [act] may be cited as the Synthetic Lantern Registry Act.
+
+Section 2. Definitions
+In this [act]:
+(1) "Lantern" means a portable lamp kept under [cite to this state's lamp code].
+(2) "Registry" means the list kept by [the secretary of state][the registrar].
+[Drafting Note: a state may rename the registry.]
+
+Comment
+The definitions follow an invented convention. This comment runs on
+for two lines and is not law.
+
+Section 3. Registration
+A keeper shall register each lantern within [60] days, before the [specify the court in the enacting state] or the registrar [ . . . ].
+Legislative Note: A state that has no registrar should name another office here.
+The note continues for a second paragraph.
+
+[Section 4. Optional Fees
+The registrar may charge a fee not less than [[insert a number not less than 5 and not more than 20] dollars.]
+
+Section 5. Effective Date
+This [act] takes effect [the effective date of this [act]].
