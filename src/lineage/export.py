@@ -47,6 +47,8 @@ from pydantic.json_schema import models_json_schema
 
 from lineage import queries
 from lineage.align import Alignment, Embedder, align
+from lineage.collect import PACKAGE as COLLECT_PACKAGE
+from lineage.collect import collectors
 from lineage.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.embed import embed as embed_texts
 from lineage.embed import load_model
@@ -68,6 +70,8 @@ from lineage.export_schema import (
     Excluded,
     Explanation,
     Meta,
+    ModelDocRef,
+    Origin,
     Recall,
     Relative,
     Release,
@@ -75,6 +79,8 @@ from lineage.export_schema import (
     SectionPair,
     SectionText,
     Share,
+    SourceEntry,
+    Sources,
     Span,
     Stage,
     Story,
@@ -84,6 +90,8 @@ from lineage.export_schema import (
 )
 from lineage.listing import ListedPairs, listed_pairs, shipped_flag
 from lineage.minhash import NUM_PERM
+from lineage.modeldocs import MODELDOCS_DIR, ModelDoc, Source, read_docs
+from lineage.origins import OriginMatch, read_origin_matches
 from lineage.pairs import load_families
 from lineage.relatives import bill_relatives
 from lineage.semantic import MODEL
@@ -414,6 +422,63 @@ def _write(root: Path, files: Mapping[str, BaseModel]) -> _Written:
     return _Written(dict(sorted(count.items())), dict(sorted(size.items())), largest)
 
 
+def origins_by_bill(
+    matches: Sequence[OriginMatch], docs: Mapping[str, tuple[ModelDoc, Source]], hosted: set[str]
+) -> dict[str, list[Origin]]:
+    """Each hosted bill's origins, the most of its words first. A match whose document no source
+    holds is an error: the page would name a model the sources page does not list."""
+    out: dict[str, list[Origin]] = defaultdict(list)
+    for m in matches:
+        if m.bill_id not in hosted:
+            continue
+        if m.doc_id not in docs:
+            raise ExportError(f"origin match names {m.doc_id}, which no collected source holds")
+        doc, source = docs[m.doc_id]
+        ref = ModelDocRef(
+            id=doc.id,
+            source=source.key,
+            organization=source.organization,
+            title=doc.title,
+            url=doc.url,
+            published=None if doc.published is None else doc.published.isoformat(),
+            leaked=doc.leaked,
+        )
+        out[m.bill_id].append(
+            Origin(
+                doc=ref,
+                stages=list(m.stages),
+                bill_share=round(m.bill_share, 4),
+                model_share=round(m.model_share, 4),
+                sections=sorted({s.ordinal for s in m.spans}),
+            )
+        )
+    return {b: sorted(os, key=lambda o: (-o.bill_share, o.doc.id)) for b, os in out.items()}
+
+
+def sources_doc(sources: Sequence[Source], docs: Mapping[str, tuple[ModelDoc, Source]]) -> Sources:
+    """The sources page: every library, with how many documents were collected and when."""
+    entries: list[SourceEntry] = []
+    for src in sorted(sources, key=lambda s: s.key):
+        held = [d for d, s in docs.values() if s.key == src.key]
+        latest = max((d.collected_on for d in held), default=None)
+        entries.append(
+            SourceEntry(
+                key=src.key,
+                organization=src.organization,
+                descriptor=src.descriptor,
+                library_url=src.library_url,
+                terms_url=src.terms_url,
+                terms_note=src.terms_note,
+                terms_read_on=src.terms_read_on.isoformat(),
+                leaked=src.leaked,
+                leak_note=src.leak_note,
+                documents=len(held),
+                collected_on=None if latest is None else latest.isoformat(),
+            )
+        )
+    return Sources(sources=entries)
+
+
 def build_export(
     tables: Path,
     *,
@@ -426,6 +491,8 @@ def build_export(
     featured_report: Path = FEATURED_REPORT,
     stories_rules: Path = STORIES_RULES,
     results: Path = RESULTS,
+    modeldocs_root: Path = MODELDOCS_DIR,
+    collector_package: str = COLLECT_PACKAGE,
     model: str = MODEL,
     require_flag: bool = True,
     floor: int = DEFAULT_FLOOR_BYTES,
@@ -444,6 +511,8 @@ def build_export(
         validation = validation_from(json.loads(results.read_text()))
     except KeyError as e:
         raise ExportError(f"{results} lacks {e}; is it older than this code?") from e
+    sources = [c.source for c in collectors(collector_package).values()]
+    docs = {d.id: (d, src) for src in sources for d in read_docs(src, modeldocs_root)}
     bills_glob = str(tables / "bills" / "*.parquet")
     flag = shipped_flag(tables)
     if flag is None and require_flag:
@@ -497,6 +566,7 @@ def build_export(
     progress(f"{len(found)} comparisons, {n_pairs} section pairs to align")
 
     files: dict[str, BaseModel] = {}
+    origins = origins_by_bill(read_origin_matches(tables), docs, set(hosted))
     featured_explained = 0
     withheld = 0
     ordered = [
@@ -614,6 +684,7 @@ def build_export(
             words_searched=r.words_searched,
             families=r.families,
             relatives=listed_here,
+            origins=origins.get(bill_id, []),
         )
         files[f"bills/{refs[bill_id].slug}.json"] = page
         best = listed_here[0] if listed_here else None
@@ -668,6 +739,7 @@ def build_export(
         )
         story_slugs.append(key)
 
+    files["sources.json"] = sources_doc(sources, docs)
     files["meta.json"] = Meta(
         state=state,
         archives=[

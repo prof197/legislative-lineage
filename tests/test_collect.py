@@ -24,7 +24,8 @@ FIXTURES = "tests.collector_fixtures"
 def test_a_source_is_a_module_found_by_its_name() -> None:
     found = collectors(FIXTURES)
 
-    assert list(found) == ["example-library"]
+    assert list(found) == ["example-archive", "example-library"]
+    assert found["example-archive"].source.leaked
     assert found["example-library"].source.organization == "Example Council"
 
 

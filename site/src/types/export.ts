@@ -110,10 +110,40 @@ state: string
 export interface BillPage {
 bill: BillRef
 families: number
+origins?: Origin[]
 relatives: Relative[]
 sections: SectionInfo[]
 text: (TextInfo | null)
+updated_on?: (string | null)
 words_searched: number
+}
+/**
+ * A published model document this bill shares wording with (DESIGN.md#origin-matches).
+ * 
+ * This interface was referenced by `LegislativeLineageExport`'s JSON-Schema
+ * via the `definition` "Origin".
+ */
+export interface Origin {
+bill_share: number
+doc: ModelDocRef
+model_share: number
+sections: number[]
+stages: ("near_duplicate" | "semantic")[]
+}
+/**
+ * A published model document as a page names it. Its text is never exported.
+ * 
+ * This interface was referenced by `LegislativeLineageExport`'s JSON-Schema
+ * via the `definition` "ModelDocRef".
+ */
+export interface ModelDocRef {
+id: string
+leaked: boolean
+organization: string
+published: (string | null)
+source: string
+title: string
+url: string
 }
 /**
  * A related family in another state, shown through its best bill.
@@ -238,6 +268,7 @@ year: number
  */
 export interface Meta {
 archives: ArchiveStamp[]
+as_of?: (string | null)
 hosted_bills: number
 schema_version?: number
 state: string
@@ -302,6 +333,34 @@ export interface Release {
 asset: string
 sha256: string
 tag: string
+}
+/**
+ * A library of model legislation, as the sources page lists it (DESIGN.md#model-documents).
+ * 
+ * This interface was referenced by `LegislativeLineageExport`'s JSON-Schema
+ * via the `definition` "SourceEntry".
+ */
+export interface SourceEntry {
+collected_on: (string | null)
+descriptor: string
+documents: number
+key: string
+leak_note: (string | null)
+leaked: boolean
+library_url: string
+organization: string
+terms_note: string
+terms_read_on: string
+terms_url: (string | null)
+}
+/**
+ * `sources.json`: every library the matching reads, whether or not any bill matches it.
+ * 
+ * This interface was referenced by `LegislativeLineageExport`'s JSON-Schema
+ * via the `definition` "Sources".
+ */
+export interface Sources {
+sources: SourceEntry[]
 }
 /**
  * `stories/<slug>.json`: a featured story.

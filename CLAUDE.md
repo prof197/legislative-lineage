@@ -164,6 +164,9 @@ tests/            pytest; small committed fixtures only
   fixtures/openstates/  trimmed real records in archive layout (README + *_bills.json)
   fixtures/commission/  enacting bills among uniform-act distractors, same layout, + sessions.csv
   days.py         recorded days for the live track, built at test time from fixtures/commission/, and the reference rebuild
+  fixture_export.py  builds fixtures/export/: Utah's bills, synthetic model documents, hand-made origins (LINEAGE_REGENERATE=1 rewrites it)
+  fixtures/export/  the fixture export every v2 lane builds and tests against (committed, generated)
+  collector_fixtures/  two synthetic sources, one leaked, for the registry and the fixture export
 snapshot/manifest.json  the pinned snapshot: per-archive size, SHA-256, Generated At
 snapshot/sessions.csv   session start/end dates and carryover, from a pinned scrapers commit
 rules/document_types.csv  which document types are matched, per state; first fitting rule wins

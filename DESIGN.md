@@ -624,6 +624,8 @@ v2 shows, for a bill, the published model documents it shares wording with (`lin
 
 - **Two shares.** A match gives the share of the model's words found in the bill and the share of the bill's words that come from the model. A bill that borrows one section of a long model and a bill that copies a short model whole read differently, and one share alone would make them look alike.
 - **Spans on the bill's side only.** A model's text is never shown, so a match keeps only the characters of the bill's sections that match it, copied or paraphrased.
+- **On the site.** A bill page lists its origins, the most of its words first, each naming the document, its organization and whether it is leaked; `sources.json` lists every library the matching reads, whether or not any bill matches it, with what kind of organization it is, its terms and how many documents were collected (export schema version 2). A match naming a document no source holds stops the export. The fields are optional, so the pinned v1 data still validates.
+- **The fixture export** (`tests/fixtures/export/`, 43 files) is what every lane builds and tests against: Utah's three bills from the commission fixture, two synthetic model documents drawn from their own sections, one of them in a source marked leaked, and hand-made matches. A test rebuilds it and fails when it differs from the committed copy (`tests/fixture_export.py`).
 - **Updates.** A bill gaining or losing a match is logged like a relative (`origin_gained`, `origin_lost`), and the snapshot an update must equal includes each bill's matches ([Updates](#updates)). A model document added to the collection is matched against every bill.
 
 ## Alternatives considered
