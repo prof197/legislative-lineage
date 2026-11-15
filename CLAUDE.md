@@ -158,6 +158,9 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   collectors/     one collector module per source of model legislation, each owned by the lane that builds it
   origins.py      OriginMatch, both shares and the bill's spans, and the origins table
   origin_matching.py  `lineage origins`' body: each model document queried as `lineage query` queries a bill, through both stages and the page listing rule
+  collect_base.py  what collectors share: robots.txt per host, paced requests, provenance, storing, the report
+  modeltext.py    model texts as matching reads them: sections kept, commentary and drafting instructions dropped; Word text
+  collectors/commission.py  the commission's acts: those on disk, then its site's (off, SITE_FETCH, until its terms are ruled)
   origin_recall.py  `lineage eval origins`: model-to-bill recall from the resolved answer keys; a sealed key only with --final
   origin_precision.py  `lineage origin-sample`: seeded tuning and reporting samples of origin matches, the label cost projection and its cap
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
@@ -168,6 +171,7 @@ evals/            eval inputs: ulc_enactments.csv (hand copy of the commission's
 tests/            pytest; small committed fixtures only
   fixtures/openstates/  trimmed real records in archive layout (README + *_bills.json)
   fixtures/commission/  enacting bills among uniform-act distractors, same layout, + sessions.csv
+  fixtures/collect/  synthetic responses in the commission site's shape, for its collector's tests
   days.py         recorded days for the live track, built at test time from fixtures/commission/, and the reference rebuild
   fixture_export.py  builds fixtures/export/: Utah's bills, synthetic model documents, hand-made origins (LINEAGE_REGENERATE=1 rewrites it)
   fixtures/export/  the fixture export every v2 lane builds and tests against (committed, generated)

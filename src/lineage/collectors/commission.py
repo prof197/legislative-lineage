@@ -61,9 +61,14 @@ SOURCE = Source(
     key="commission",
     organization="Uniform Law Commission (National Conference of Commissioners on Uniform "
     "State Laws)",
+    # Type: uniformlaws.org/aboutulc/overview. IRS: no exemption filing under its own names in
+    # ProPublica's Nonprofit Explorer; the affiliate is EIN 36-3761561 there.
     descriptor="nonprofit unincorporated association of the states' commissions on uniform "
-    "laws, funded mainly by state appropriations; no IRS exemption filing of its own found, "
-    "while its affiliate, the Uniform Law Foundation, files as a 501(c)(3)",
+    "laws; no IRS exemption filing of its own found, while its affiliate, the Uniform Law "
+    "Foundation, files as a 501(c)(3)",
+    members="Commissioners are lawyers appointed by their state governments; each jurisdiction "
+    "decides how they are appointed",
+    members_source="https://www.uniformlaws.org/aboutulc/overview",
     library_url=CATALOG,
     terms_url=f"{SITE}/termsofuse",
     terms_note="TERMS NOTE PENDING (main agent)",
