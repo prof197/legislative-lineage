@@ -548,9 +548,8 @@ def server() -> Iterator[Server]:
 def _through_open_url(
     url: str, pause: float, *, interval: float = 1.0, headers: Mapping[str, str] | None = None
 ) -> HTTPResponse:
-    # open_url sends no headers but its User-Agent yet (the handoff adds `headers`); the pacing
-    # and backoff under test are its own.
-    return open_url(url, pause, interval=interval)
+    # The pacing and backoff under test are open_url's own.
+    return open_url(url, pause, interval=interval, headers=headers)
 
 
 def _waits(monkeypatch: pytest.MonkeyPatch) -> list[float]:
@@ -637,3 +636,18 @@ def test_the_january_estimate_counts_each_bill_once_a_day_it_acts(
     assert estimate["bills_updated"] == sum(len(v) for v in expected.values()) > 0
     assert estimate["requests"] == sum(estimate["per_day"].values()) >= 50 * 31
     assert estimate["days_over"] == {"250/day": 0}
+
+
+def test_the_command_needs_the_key_and_says_so_without_writing(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    from typer.testing import CliRunner
+
+    from lineage.cli import app
+
+    monkeypatch.delenv("OPENSTATES_API_KEY", raising=False)
+    run = CliRunner().invoke(app, ["intake", "--day", "2026-01-12", "--days", str(tmp_path / "d")])
+
+    assert run.exit_code == 1
+    assert "OPENSTATES_API_KEY is not set" in run.output
+    assert not (tmp_path / "d").exists()

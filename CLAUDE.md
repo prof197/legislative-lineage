@@ -55,6 +55,8 @@ uv run lineage collect-models SOURCE  # one source's model legislation -> data/m
 uv run lineage origins       # collected model documents against the corpus -> data/tables/origins/matches.jsonl (needs the built index and semantic vectors)
 uv run lineage eval origins  # origin recall on the development answer key -> reports/results.json (origins_development); --key held_out --final: the sealed key, once per configuration
 uv run lineage origin-sample  # seeded origin precision sample (--part tuning), label cost projected, nothing asked -> evals/origin_precision_tuning.jsonl, reports/origin_precision_sample.json; --part reporting --final once matching is final
+uv run lineage intake       # one day of new and changed bills from Open States' API v3 (key from OPENSTATES_API_KEY), text through the text layer -> data/days/<day>/, data/intake/; --tier default|bronze|silver
+uv run lineage intake-estimate  # the API requests a January day needs, against each tier, from the snapshot; no network -> reports/intake_estimate.json
 uv run lineage update --day DIR  # apply one day's new and changed records -> data/changes/<as_of>.jsonl (lane L1; not built yet)
 uv run lineage text inventory  # version to fetch per record, by host, robots.txt read -> data/text/plan.parquet, reports/text_inventory.json
 uv run lineage text sample   # quality test: fetch a seeded sample per state and format -> data/text/sample/, reports/text_quality.json
@@ -161,6 +163,8 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   collect_base.py  what collectors share: robots.txt per host, paced requests, provenance, storing, the report
   modeltext.py    model texts as matching reads them: sections kept, commentary and drafting instructions dropped; Word text
   collectors/commission.py  the commission's acts: those on disk, then its site's (off, SITE_FETCH, until its terms are ruled)
+  openstates_api.py  API v3's bills request and its bills mapped into the bulk archive's record shape
+  intake.py       `lineage intake`: paged by updated_at, pages recorded, text through the text layer, days written once; the January estimate
   origin_recall.py  `lineage eval origins`: model-to-bill recall from the resolved answer keys; a sealed key only with --final
   origin_precision.py  `lineage origin-sample`: seeded tuning and reporting samples of origin matches, the label cost projection and its cap
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
@@ -172,6 +176,7 @@ tests/            pytest; small committed fixtures only
   fixtures/openstates/  trimmed real records in archive layout (README + *_bills.json)
   fixtures/commission/  enacting bills among uniform-act distractors, same layout, + sessions.csv
   fixtures/collect/  synthetic responses in the commission site's shape, for its collector's tests
+  fixtures/intake/  API v3 responses constructed in the documented shape, synthetic bills and sponsors
   days.py         recorded days for the live track, built at test time from fixtures/commission/, and the reference rebuild
   fixture_export.py  builds fixtures/export/: Utah's bills, synthetic model documents, hand-made origins (LINEAGE_REGENERATE=1 rewrites it)
   fixtures/export/  the fixture export every v2 lane builds and tests against (committed, generated)

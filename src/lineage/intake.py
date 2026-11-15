@@ -95,6 +95,14 @@ class Tier:
 
 
 DEFAULT_TIER = Tier(per_minute=10, per_day=250)
+# The tiers the API's source sets (api/auth.py, api/rate_limiter.py); which one a key gets is
+# known only once it is registered.
+TIERS = {
+    "default": DEFAULT_TIER,
+    "bronze": Tier(per_minute=40, per_day=1_000),
+    "silver": Tier(per_minute=80, per_day=50_000),
+}
+ESTIMATE = Path("reports/intake_estimate.json")
 
 
 class Opener(Protocol):

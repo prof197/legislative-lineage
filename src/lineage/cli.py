@@ -98,9 +98,19 @@ from lineage.faithfulness import with_earlier_runs as with_earlier_faithfulness
 from lineage.featured import PAIRS as FEATURED_PAIRS
 from lineage.featured import REPORT as FEATURED_REPORT
 from lineage.featured import FeaturedError, build_featured, write_featured
-from lineage.fetch import SOURCE, FetchError, fetch_raw
+from lineage.fetch import SOURCE, FetchError, fetch_raw, open_url
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
+from lineage.intake import (
+    DAYS,
+    ESTIMATE,
+    TIERS,
+    IntakeError,
+    Tier,
+    api_key,
+    january_estimate,
+    run_intake,
+)
 from lineage.label_page import OUT as LABEL_PAGE_OUT
 from lineage.label_page import PAIRS_FILE as LABEL_PAGE_DATA
 from lineage.label_page import append_rows as append_label_rows
@@ -771,6 +781,88 @@ def origin_sample_command(
         f"{len(rows)} matches -> {path}; labels projected at most ${plan.projected:,.2f}, "
         f"${plan.spent:,.2f} of ${plan.budget:,.2f} spent"
     )
+
+
+@app.command("intake")
+def intake_command(
+    as_of: Annotated[
+        str | None, typer.Option("--day", help="The day's date, YYYY-MM-DD [default: today, UTC].")
+    ] = None,
+    start: Annotated[
+        str | None,
+        typer.Option(
+            "--start",
+            help="Where a state with no recorded page starts, ISO 8601 with an offset "
+            "[default: the start of the day before].",
+        ),
+    ] = None,
+    tier: Annotated[
+        str, typer.Option("--tier", help=f"The key's limits: {', '.join(TIERS)}.")
+    ] = "default",
+    days: Annotated[Path, typer.Option("--days", help="Days directory (local).")] = DAYS,
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """Take in one day of new and changed bills from Open States' API v3, with their text
+    -> <days>/<day>/ and <data>/intake/reports/<day>.json (DESIGN.md#updates). The key comes
+    from OPENSTATES_API_KEY."""
+    if tier not in TIERS:
+        typer.echo(f"error: no tier {tier!r}; one of {', '.join(TIERS)}", err=True)
+        raise typer.Exit(1)
+    day = (
+        datetime.date.fromisoformat(as_of) if as_of else datetime.datetime.now(datetime.UTC).date()
+    )
+    begin = (
+        datetime.datetime.fromisoformat(start)
+        if start
+        else datetime.datetime.combine(
+            day - datetime.timedelta(days=1), datetime.time.min, datetime.UTC
+        )
+    )
+    try:
+        report = run_intake(
+            day,
+            opener=open_url,
+            key=api_key(),
+            start=begin,
+            days=days,
+            tier=TIERS[tier],
+            floor_bytes=int(min_free_gib * GiB),
+        )
+    except (IntakeError, InsufficientDiskSpaceError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    outcomes = ", ".join(f"{k} {v}" for k, v in report.get("outcomes", {}).items())
+    typer.echo(f"{report['as_of']}: day {report['day']}" + (f"; {outcomes}" if outcomes else ""))
+
+
+@app.command("intake-estimate")
+def intake_estimate_command(
+    tables: TablesOption = DATA / "tables",
+    years: Annotated[
+        list[int] | None, typer.Option("--year", help="A January to estimate; repeatable.")
+    ] = None,
+    out: Annotated[Path, typer.Option("--out", help="Report (committed).")] = ESTIMATE,
+) -> None:
+    """The API requests a January day needs, from the snapshot's actions, against each tier's
+    limit; no network (DESIGN.md#updates)."""
+    chosen = years or [2023, 2024, 2025, 2026]
+    tiers: list[Tier] = list(TIERS.values())
+    estimates = [january_estimate(tables, y, tiers) for y in chosen]
+    report = {
+        "command": "uv run lineage intake-estimate",
+        "method": "a bill counts as updated on each day it has an action, a lower bound on what "
+        "the API reports as updated; a state with nothing new still costs one request",
+        "tiers": {k: {"per_minute": t.per_minute, "per_day": t.per_day} for k, t in TIERS.items()},
+        "januaries": estimates,
+    }
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(report, indent=1) + "\n")
+    for e in estimates:
+        typer.echo(
+            f"January {e['year']}: {e['requests']:,} requests, mean {e['mean_per_day']}/day, "
+            f"peak {e['peak']['requests']} on {e['peak']['day']}; days over {e['days_over']}"
+        )
+    typer.echo(f"-> {out}")
 
 
 @app.command("state-boilerplate")

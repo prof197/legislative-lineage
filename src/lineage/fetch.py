@@ -13,6 +13,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import zipfile
+from collections.abc import Mapping
 from dataclasses import dataclass, field, replace
 from http.client import HTTPResponse
 from pathlib import Path
@@ -103,13 +104,22 @@ def _retry_after(error: urllib.error.HTTPError, default: float) -> float:
     return float(value) if value.isdigit() else default
 
 
-def open_url(url: str, pause: float, *, interval: float = MIN_INTERVAL_SECONDS) -> HTTPResponse:
+def open_url(
+    url: str,
+    pause: float,
+    *,
+    interval: float = MIN_INTERVAL_SECONDS,
+    headers: Mapping[str, str] | None = None,
+) -> HTTPResponse:
     """GET `url` as this project, retrying overload and server errors with backoff `pause`.
 
     Every attempt waits for the host's turn (lineage.pace), at least `interval` after the last
-    request any process sent it.
+    request any process sent it. `headers` go with the User-Agent, which they cannot replace:
+    an API key travels this way, never in a URL that could be logged.
     """
-    request = urllib.request.Request(request_url(url), headers={"User-Agent": USER_AGENT})
+    request = urllib.request.Request(
+        request_url(url), headers={**(headers or {}), "User-Agent": USER_AGENT}
+    )
     host = urllib.parse.urlsplit(url).hostname or ""
     for attempt in range(_ATTEMPTS):
         try:
