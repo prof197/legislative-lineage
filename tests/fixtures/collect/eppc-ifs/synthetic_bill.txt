@@ -1,0 +1,32 @@
+invented project name
+Model Legislation
+for a Synthetic Lantern Registry
+(invented for tests; not a text either organization published)
+A. Drafter, Example Policy Center
+B. Drafter, Example Family Institute
+Endorsed by an Example Coalition
+Part 1. General Requirements
+Section 101. Definitions.
+(1) "Lantern" means a portable lamp sold in [State].
+(2) "Registrar" means the office named under [insert state code].
+Section 102. Registration of lanterns.
+(1) Beginning [insert date], a seller shall register each lantern.
+(2) A seller shall keep the record for [two] years.1
+OR ANOTHER MORE LIMITED OPTION THAN REGISTRATION
+Section 102. Notice of sale.
+A seller shall give the registrar notice of each sale.
+1 An invented footnote that explains the choice of years.
+2 ethics and public policy center · www.eppc.org
+Part 2. Enforcement
+Section 201. Enforcement by the attorney general.
+The attorney general may bring an action under this [act].
+[Drafting Note: an invented note to the drafter.]
+Commentary
+An invented paragraph of commentary that no state would enact.
+Section 202. Severability.
+If any provision of this [act] is held invalid, the rest stands.
+3
+Effective date.
+This [act] takes effect on [insert date].
+About the Authors
+A. Drafter is an invented fellow at an example center.

@@ -1,0 +1,8 @@
+# Synthetic, in the shape of the organizations' robots.txt: named training crawlers are barred,
+# any crawler not named may read every path but one invented directory, kept to test a block.
+User-agent: ExampleTrainingBot
+Disallow: /
+
+User-agent: *
+Disallow: /withheld/
+Allow: /
