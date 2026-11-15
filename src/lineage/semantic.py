@@ -30,7 +30,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lineage import queries
-from lineage.ann import exact_search
+from lineage.ann import Neighbors, exact_search
 from lineage.vectors import EmbedError, load_plan, load_vectors, rows_of, semantic_dir
 from lineage.windows import WINDOW_WORDS, display_windows
 
@@ -42,6 +42,8 @@ CORROBORATING = BUILD_THRESHOLD
 # The M5 review's choice, on the 0.93 sample's band above 0.93 (DESIGN.md#choosing-the-threshold)
 THRESHOLD = 0.94
 K = 20  # nearest corpus texts each query window keeps
+# Query windows scored per pass over the vectors: 2,000 hold 262 MB of scores (lineage.ann).
+WINDOWS_PER_PASS = 2_000
 
 Embedder = Callable[[Sequence[str]], NDArray[np.float32]]
 
@@ -85,6 +87,22 @@ def query_windows(sections: Sequence[str]) -> tuple[list[str], NDArray[np.int64]
     return windows, np.array(owner, dtype=np.int64)
 
 
+def _searched(windows: Sequence[str], search: SemanticSearch, k: int) -> Neighbors:
+    """Each window's k nearest corpus texts, WINDOWS_PER_PASS windows per pass over the
+    vectors: a collection of model documents is searched at once, and its scores matrix would
+    otherwise grow with every document. Each window's neighbors do not depend on the others
+    searched with it, but for rounding: a matrix product's last bits can depend on its shape."""
+    passes = [
+        exact_search(search.vectors, search.embed(windows[at : at + WINDOWS_PER_PASS]), k)
+        for at in range(0, len(windows), WINDOWS_PER_PASS)
+    ]
+    if len(passes) == 1:
+        return passes[0]
+    return Neighbors(
+        np.concatenate([p.ids for p in passes]), np.concatenate([p.scores for p in passes])
+    )
+
+
 def search_sections(
     sections: Sequence[str],
     search: SemanticSearch,
@@ -97,7 +115,7 @@ def search_sections(
     windows, owner = query_windows(sections)
     if not windows:
         return []
-    found = exact_search(search.vectors, search.embed(windows), k)
+    found = _searched(windows, search, k)
     keep = (found.ids >= 0) & (found.scores >= threshold)
     rows, cols = np.nonzero(keep)
     if not rows.size:
