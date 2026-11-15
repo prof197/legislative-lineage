@@ -23,6 +23,7 @@ import duckdb
 
 from lineage import doctypes, queries
 from lineage.fetch import HOST_MOVES, moved
+from lineage.paths import DATA
 from lineage.robots import Robots, read_robots
 from lineage.sections import split_sections
 from lineage.stats import (
@@ -37,7 +38,7 @@ from lineage.versions import Link, Version, choose_version
 
 COMMAND = "uv run lineage text inventory"
 REPORT = Path("reports/text_inventory.json")
-PLAN = Path("data/text/plan.parquet")
+PLAN = DATA / "text/plan.parquet"
 MANIFEST = Path(__file__).parents[2] / "snapshot" / "manifest.json"
 PATTERNS = queries.TextPatterns(
     blank=BLANK_PATTERN,

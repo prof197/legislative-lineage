@@ -93,6 +93,7 @@ from lineage.minhash import NUM_PERM
 from lineage.modeldocs import MODELDOCS_DIR, ModelDoc, Source, read_docs
 from lineage.origins import OriginMatch, read_origin_matches
 from lineage.pairs import load_families
+from lineage.paths import DATA
 from lineage.relatives import bill_relatives
 from lineage.semantic import MODEL
 from lineage.semantic_pairs import section_keys
@@ -105,7 +106,7 @@ from lineage.stats import (
     GEORGIA_NOTICE,
 )
 
-EXPORT_DIR = Path("data/export")
+EXPORT_DIR = DATA / "export"
 # The data release the deploy builds from, committed: its tag and the asset's expected SHA-256.
 # A data change reaches the site only as a reviewed commit to this file.
 RELEASE_MANIFEST = Path("site/data-release.json")

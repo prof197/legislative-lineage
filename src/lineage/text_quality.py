@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any
 
 from lineage import queries
+from lineage.paths import DATA
 from lineage.sections import clean, normalize, split_sections
 from lineage.text_fetch import Job, fetch_all, host_of
 from lineage.text_inventory import load_plan
@@ -25,7 +26,7 @@ from lineage.text_rules import RULES, TextRules, load_rules, usable
 
 COMMAND = "uv run lineage text sample"
 REPORT = Path("reports/text_quality.json")
-STORE = Path("data/text/sample")
+STORE = DATA / "text/sample"
 SEED = 42
 PER_CELL = 50
 WITH_TEXT = 20  # of each cell, records that already have Open States text

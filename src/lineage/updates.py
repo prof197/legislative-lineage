@@ -25,12 +25,13 @@ from lineage.disk import DEFAULT_FLOOR_BYTES
 from lineage.listing import shipped_flag
 from lineage.origins import read_origin_matches
 from lineage.pairs import load_families
+from lineage.paths import DATA
 from lineage.relatives import bill_relatives
 from lineage.semantic import MODEL
 
 DAY_FILE = "day.json"
 BILLS_SUFFIX = "_bills.json"
-CHANGES_DIR = Path("data/changes")
+CHANGES_DIR = DATA / "changes"
 
 
 class UpdateError(Exception):

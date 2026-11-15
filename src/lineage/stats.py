@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from lineage import queries
+from lineage.paths import DATA
 from lineage.sessions import CARRYOVER, load_sessions, status_end_date
 from lineage.status import ENACTED_IN_WORDS, Status
 from lineage.stoplist import file_sha256
@@ -113,7 +114,7 @@ def coverage(
     *,
     sessions_path: Path,
     manifest_path: Path,
-    plan_path: Path = Path("data/text/plan.parquet"),
+    plan_path: Path = DATA / "text/plan.parquet",
 ) -> dict[str, Any]:
     bills = str(tables_dir / "bills" / "*.parquet")
     texts = str(tables_dir / "texts" / "*.parquet")

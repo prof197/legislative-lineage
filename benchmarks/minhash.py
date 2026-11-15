@@ -48,6 +48,7 @@ from lineage import memory, queries
 from lineage.disk import DEFAULT_FLOOR_BYTES, GiB
 from lineage.lsh import BANDS, ROWS, build_band_index
 from lineage.minhash import NUM_PERM, permutations, signatures
+from lineage.paths import DATA
 from lineage.shingles import section_shingles
 from lineage.signatures import load_signatures
 from lineage.stoplist import apply_stoplist, load_stoplist
@@ -282,7 +283,7 @@ def benchmark(tables_dir: Path, *, parts: int | None = None) -> dict[str, Any]:
 
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="MinHash engine benchmark (DESIGN.md#dr-3).")
-    parser.add_argument("--tables", type=Path, default=Path("data/tables"))
+    parser.add_argument("--tables", type=Path, default=DATA / "tables")
     parser.add_argument("--report", type=Path, default=Path("reports/minhash_benchmark.json"))
     parser.add_argument("--parts", type=int, help="Only the first N sections files (a trial).")
     args = parser.parse_args(argv)

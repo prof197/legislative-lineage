@@ -141,6 +141,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   text_merge.py   `lineage text merge`: the texts table, each record's text and its source; later stages read text only from it
   queries.py      every SQL query the pipeline runs (DR-4)
   disk.py         free-space floor checked before large writes
+  paths.py        DATA: LINEAGE_DATA or data/, the root of every default local path (worktrees share it)
   memory.py       current and peak memory as the OS charges it (macOS physical footprint)
   models.py       the embedding models: pinned repository revision and file hashes; fetched through fetch.download
   embed.py        unit-length vectors from a pinned model, offline (fastembed, ONNX), batched by token count
@@ -216,5 +217,7 @@ data/             local snapshots and derived tables; gitignored, never committe
 - Every HTTP request goes through `fetch.open_url`, which waits for the host's turn in `lineage.pace`. Never pace requests any other way.
 - Open DuckDB only through `queries.connect_quiet` or `queries.connect`, which cap a query's spill to disk at the same floor. This holds for tests and one-off probes too; a test fails on any other `duckdb.*()` call.
 - Secrets come only from environment variables. `.env` is gitignored.
+- Default paths to local data start at `lineage.paths.DATA`, never a literal `data/...`. Set `LINEAGE_DATA` to an absolute directory in `.claude/settings.local.json` (gitignored) so worktrees share the data.
+- In v2 lanes, edit only the files your lane owns (DESIGN.md#lanes); add SQL only in your lane's region of `queries.py`.
 - Model calls happen only in the explanation step and the provisional precision labels. Retrieval runs with no API key.
 - Commits use conventional messages, one build step per commit. The body gives the engineering reason: the tradeoff, the measurement, the alternative rejected.

@@ -18,7 +18,9 @@ from typing import Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-MODELDOCS_DIR = Path("data/modeldocs")
+from lineage.paths import DATA
+
+MODELDOCS_DIR = DATA / "modeldocs"
 SLUG = r"^[a-z0-9]+(-[a-z0-9]+)*$"
 DOCS_FILE = "docs.jsonl"
 VERSIONS_FILE = "versions.jsonl"

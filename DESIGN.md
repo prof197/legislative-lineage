@@ -29,6 +29,7 @@ Sections marked **To be measured** fill in as the build reaches them. Every numb
 - [Updates](#updates)
 - [Model documents](#model-documents)
 - [Origin matches](#origin-matches)
+- [Lanes](#lanes)
 - [Alternatives considered](#alternatives-considered)
 - [Scaling limits](#scaling-limits)
 - [Known failure modes](#known-failure-modes)
@@ -627,6 +628,27 @@ v2 shows, for a bill, the published model documents it shares wording with (`lin
 - **On the site.** A bill page lists its origins, the most of its words first, each naming the document, its organization and whether it is leaked; `sources.json` lists every library the matching reads, whether or not any bill matches it, with what kind of organization it is, its terms and how many documents were collected (export schema version 2). A match naming a document no source holds stops the export. The fields are optional, so the pinned v1 data still validates.
 - **The fixture export** (`tests/fixtures/export/`, 43 files) is what every lane builds and tests against: Utah's three bills from the commission fixture, two synthetic model documents drawn from their own sections, one of them in a source marked leaked, and hand-made matches. A test rebuilds it and fails when it differs from the committed copy (`tests/fixture_export.py`).
 - **Updates.** A bill gaining or losing a match is logged like a relative (`origin_gained`, `origin_lost`), and the snapshot an update must equal includes each bill's matches ([Updates](#updates)). A model document added to the collection is matched against every bill.
+
+## Lanes
+
+v2's milestones run as lanes: each builds in its own git worktree, branched from the integration branch, and the main agent merges them. The contracts above (Updates, Model documents, Origin matches) are what lets them work apart.
+
+**Who owns what.** A lane edits only the files it owns; a change it needs elsewhere goes in its handoff, and the main agent makes it.
+
+| Lane | Owns |
+|---|---|
+| B · Collection, and the commission source | `lineage/collectors/commission.py`, `lineage/collect_base.py` (robots, pacing and provenance for collectors), `lineage/modeltext.py` (cleaning model texts), their tests and recorded fixtures under `tests/fixtures/collect/` |
+| C · Matching | `lineage/origin_matching.py`, any new module it needs for the model collection's windows and signatures, edits to `lineage/query.py` and `lineage/semantic.py` for searching a second collection, their tests |
+| D · Evals | `lineage/origin_recall.py`, `lineage/origin_precision.py`, their tests and fixtures |
+| E · Site | `site/src/components/Origins.tsx`, `site/src/app/sources/`, `site/src/lib/origins.ts`, the Origins block's place in `site/src/components/BillView.tsx`, additions to the copy check's allow-list, a script that copies the fixture export into `site/public/data` |
+| L1 · Incremental core | `lineage/incremental.py`, incremental additions to the index modules (`lsh.py`, `bands.py`, `signatures.py`, `pairs.py`, `families.py`, `vectors.py`, `neighbors.py`, `semantic_pairs.py`), their tests |
+| L2 · Intake | `lineage/intake.py` and the modules it needs, their tests and recorded fixtures; its sources are open |
+
+The main agent owns every shared file: `pyproject.toml`, `uv.lock`, `schema/`, `lineage/export_schema.py`, the contracts (`updates.py`, `modeldocs.py`, `collect.py`, `origins.py`), `lineage/cli.py`, `lineage/export.py`, `site/src/types/`, `site/package.json`, DESIGN.md, CLAUDE.md, README.md and CI. SQL stays in `lineage/queries.py` ([DR-4](#dr-4)); each lane adds functions only in its own marked region there, so lanes merged in any order do not conflict.
+
+**Setup.** `.claude/settings.json` sets `worktree.baseRef` to `head`, so a lane's worktree branches from the checkout it was started from, the integration branch, rather than from main. A worktree is a fresh checkout without the gitignored data, so every default path to local data goes through `lineage.paths.DATA`: `LINEAGE_DATA` set to one absolute directory, in each machine's `.claude/settings.local.json` (gitignored, since the path is local), makes every worktree read and write the same data. Request pacing is already shared across checkouts (`lineage.pace`). Each lane runs `uv sync`, and `npm ci` in `site/` for site work, before it starts.
+
+**Dependencies.** M10's lanes need none beyond what is locked: collection uses the fetch path and pypdf, matching and the incremental core use NumPy and faiss, the site its current packages. A lane that finds it needs one stops and reports it. Validating the feed in M12 may want a parser; that is settled then.
 
 ## Alternatives considered
 

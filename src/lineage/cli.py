@@ -101,8 +101,8 @@ from lineage.featured import FeaturedError, build_featured, write_featured
 from lineage.fetch import SOURCE, FetchError, fetch_raw
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
-from lineage.label_page import DATA as LABEL_PAGE_DATA
 from lineage.label_page import OUT as LABEL_PAGE_OUT
+from lineage.label_page import PAIRS_FILE as LABEL_PAGE_DATA
 from lineage.label_page import append_rows as append_label_rows
 from lineage.label_page import imported_rows as imported_label_rows
 from lineage.label_page import load_saved as load_saved_labels
@@ -154,6 +154,7 @@ from lineage.pair_data import PAIR_DATA_DIR, PairDataError, fetch_pair_data
 from lineage.pair_eval import REPORT as PAIR_REPORT
 from lineage.pair_eval import evaluate as evaluate_pairs
 from lineage.pair_eval import write_report as write_pair_report
+from lineage.paths import DATA
 from lineage.precision import SAMPLE as PRECISION_SAMPLE
 from lineage.precision import SAMPLE_REPORT as PRECISION_SAMPLE_REPORT
 from lineage.precision import PrecisionError, build_sample, estimate, load_sizes, write_sample
@@ -308,7 +309,7 @@ def main(
 
 @app.command()
 def snapshot(
-    raw: RawOption = Path("data/raw"),
+    raw: RawOption = DATA / "raw",
     manifest: ManifestOption = Path("snapshot/manifest.json"),
 ) -> None:
     """Pin the archives in RAW: write each one's size, SHA-256 and Generated At to the manifest."""
@@ -326,7 +327,7 @@ def snapshot(
 
 @app.command("fetch-raw")
 def fetch_raw_command(
-    raw: RawOption = Path("data/raw"),
+    raw: RawOption = DATA / "raw",
     manifest: ManifestOption = Path("snapshot/manifest.json"),
     repin: Annotated[
         bool,
@@ -389,11 +390,10 @@ def sessions(
 
 @app.command()
 def ingest(
-    raw: RawOption = Path("data/raw"),
+    raw: RawOption = DATA / "raw",
     manifest: ManifestOption = Path("snapshot/manifest.json"),
-    out: Annotated[Path, typer.Option("--out", help="Directory for Parquet tables.")] = Path(
-        "data/tables"
-    ),
+    out: Annotated[Path, typer.Option("--out", help="Directory for Parquet tables.")] = DATA
+    / "tables",
     sessions: Annotated[
         Path, typer.Option("--sessions", help="Session dates CSV (committed).")
     ] = Path("snapshot/sessions.csv"),
@@ -413,7 +413,7 @@ def ingest(
 
 @app.command()
 def split(
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     workers: Annotated[int, typer.Option("--workers", help="Worker processes.")] = (
         os.cpu_count() or 1
     ),
@@ -434,7 +434,7 @@ def split(
 
 @app.command()
 def eligible(
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     rules: RulesOption = RULES,
     report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = Path(
         "reports/document_types.json"
@@ -456,7 +456,7 @@ def eligible(
 
 @app.command()
 def boilerplate(
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     manifest: ManifestOption = Path("snapshot/manifest.json"),
     rules: RulesOption = RULES,
     max_share: Annotated[
@@ -495,7 +495,7 @@ def boilerplate(
 
 @app.command("embed")
 def embed_command(
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     model: Annotated[
         str, typer.Option("--model", help=f"Embedding model: {', '.join(MODELS)}.")
     ] = SEMANTIC_MODEL,
@@ -537,7 +537,7 @@ def embed_command(
 
 @app.command("neighbors")
 def neighbors_command(
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     min_free_gib: MinFreeOption = 20.0,
     report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = (
         NEIGHBORS_REPORT
@@ -602,7 +602,7 @@ def neighbors_command(
 
 @app.command("semantic-pairs")
 def semantic_pairs_command(
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     min_free_gib: MinFreeOption = 20.0,
     report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = (
         SEMANTIC_PAIRS_REPORT
@@ -628,7 +628,7 @@ def update_command(
     day: Annotated[
         Path, typer.Option("--day", help="A day's directory: day.json and its records (local).")
     ],
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     changes: Annotated[
         Path, typer.Option("--changes", help="The change log, one file per day (local).")
     ] = CHANGES_DIR,
@@ -677,7 +677,7 @@ def collect_models_command(
 
 @app.command("origins")
 def origins_command(
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     root: Annotated[
         Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
     ] = MODELDOCS_DIR,
@@ -706,7 +706,7 @@ def origins_command(
 
 @app.command("state-boilerplate")
 def state_boilerplate_command(
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     min_free_gib: MinFreeOption = 20.0,
     report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = (
         STATE_BOILERPLATE_REPORT
@@ -736,7 +736,7 @@ def state_boilerplate_command(
 
 @app.command()
 def index(
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     workers: Annotated[int, typer.Option("--workers", help="Worker processes.")] = (
         os.cpu_count() or 1
     ),
@@ -780,7 +780,7 @@ def query(
         Path,
         typer.Argument(help="The bill's text, as a plain-text file.", exists=True, dir_okay=False),
     ],
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     limit: Annotated[int, typer.Option("--limit", help="Families to show.")] = 20,
     semantic: SemanticOption = True,
 ) -> None:
@@ -844,7 +844,7 @@ def label(
     labeler: Annotated[
         str, typer.Option("--labeler", help="Your GitHub handle; labels are never kept by name.")
     ],
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     labels: Annotated[
         Path, typer.Option("--labels", help="Labels file, appended to (committed).")
     ] = LABELS_PATH,
@@ -899,7 +899,7 @@ def label_page(
     labeler: Annotated[
         str, typer.Option("--labeler", help="Your GitHub handle; labels are never kept by name.")
     ],
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     labels: Annotated[
         Path, typer.Option("--labels", help="Labels file; pairs a person labeled are left out.")
     ] = LABELS_PATH,
@@ -944,7 +944,7 @@ def label_import(
     labeler: Annotated[
         str, typer.Option("--labeler", help="The GitHub handle the page was written for.")
     ],
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     labels: Annotated[
         Path, typer.Option("--labels", help="Labels file, appended to (committed).")
     ] = LABELS_PATH,
@@ -977,7 +977,7 @@ def _current_items(
 
 @app.command("precision-sample")
 def precision_sample(
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     sample: Annotated[
         Path, typer.Option("--sample", help="The sample file, one pair per line (committed).")
     ] = PRECISION_SAMPLE,
@@ -1035,7 +1035,7 @@ def agreement_sample(
 
 @app.command("relatives-sample")
 def relatives_sample(
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     part: Annotated[
         str,
         typer.Option(
@@ -1099,7 +1099,7 @@ def label_model(
             help="The precision sample, one pair per line.", exists=True, dir_okay=False
         ),
     ] = PRECISION_SAMPLE,
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     labels: Annotated[
         Path, typer.Option("--labels", help="Labels file, appended to (committed).")
     ] = LABELS_PATH,
@@ -1261,7 +1261,7 @@ def label_spend(
 
 @app.command("featured")
 def featured_command(
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     answer_key: Annotated[
         Path, typer.Option("--answer-key", help="The commission's lists resolved (committed).")
     ] = ANSWER_KEY,
@@ -1293,7 +1293,7 @@ def export_command(
     state: Annotated[
         str, typer.Option("--state", help="The state to host, by its postal code.")
     ] = "GA",
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     out: Annotated[
         Path | None,
         typer.Option("--out", help="Where the site data goes (local); default data/export/<ST>."),
@@ -1430,7 +1430,7 @@ def explain_command(
             dir_okay=False,
         ),
     ],
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     live: Annotated[
         bool, typer.Option("--live", help="Ask the model for pairs not in the cache (costs money).")
     ] = False,
@@ -1538,7 +1538,7 @@ def explain_command(
 
 @app.command()
 def stats(
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     manifest: ManifestOption = Path("snapshot/manifest.json"),
     sessions: Annotated[
         Path, typer.Option("--sessions", help="Session dates CSV (committed).")
@@ -1556,7 +1556,7 @@ def stats(
     ] = False,
     samples_report: Annotated[
         Path, typer.Option("--samples-report", help="Sample titles JSON (local, gitignored).")
-    ] = Path("data/reports/document_type_samples.json"),
+    ] = DATA / "reports/document_type_samples.json",
 ) -> None:
     """Measure text coverage, sections, document types and status per state and session."""
     doc = write_coverage(tables, sessions_path=sessions, manifest_path=manifest, report_path=report)
@@ -1579,7 +1579,7 @@ def stats(
 
 @eval_app.command("commission")
 def eval_commission(
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     acts: Annotated[
         Path | None,
         typer.Option(
@@ -1674,7 +1674,7 @@ def eval_commission(
 
 @eval_app.command("answer-key")
 def eval_answer_key(
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     enactments: Annotated[
         Path | None,
         typer.Option(
@@ -1750,7 +1750,7 @@ def eval_readme(
 
 @text_app.command("inventory")
 def text_inventory(
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     plan: Annotated[Path, typer.Option("--plan", help="Fetch plan Parquet (local).")] = PLAN,
     out: Annotated[Path, typer.Option("--out", help="Inventory JSON (committed).")] = REPORT,
 ) -> None:
@@ -1767,7 +1767,7 @@ def text_inventory(
 
 @text_app.command("sample")
 def text_sample(
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     plan: Annotated[Path, typer.Option("--plan", help="Fetch plan Parquet (local).")] = PLAN,
     store: Annotated[Path, typer.Option("--store", help="Fetched sample (local).")] = STORE,
     out: Annotated[Path, typer.Option("--out", help="Quality report JSON (committed).")] = QUALITY,
@@ -1787,7 +1787,7 @@ def text_sample(
 
 @text_app.command("fetch")
 def text_fetch(
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     plan: Annotated[Path, typer.Option("--plan", help="Fetch plan Parquet (local).")] = PLAN,
     out: Annotated[Path, typer.Option("--out", help="Fetch report JSON (committed).")] = (
         FETCH_REPORT
@@ -1809,7 +1809,7 @@ def text_fetch(
 
 @text_app.command("merge")
 def text_merge(
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     plan: Annotated[Path, typer.Option("--plan", help="Fetch plan Parquet (local).")] = PLAN,
     exported_only: Annotated[
         bool, typer.Option(help="Use only the exported text, to measure without the fetch.")
@@ -1881,7 +1881,7 @@ def eval_agreement(
             help="The agreement subsample, one pair per line.", exists=True, dir_okay=False
         ),
     ] = AGREEMENT_SAMPLE,
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     labels: Annotated[
         Path, typer.Option("--labels", help="Labels file (committed).")
     ] = LABELS_PATH,
@@ -1933,7 +1933,7 @@ def eval_relatives(
             help="The sample read: reporting, or a tuning part (lineage.relatives_sample.PARTS).",
         ),
     ] = "reporting",
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     labels: Annotated[
         Path, typer.Option("--labels", help="Labels file (committed).")
     ] = RELATIVES_LABELS,
@@ -2006,7 +2006,7 @@ def eval_threshold(
         Path,
         typer.Argument(help="The tuning sample of relatives.", exists=True, dir_okay=False),
     ] = RELATIVES_SAMPLE,
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     labels: Annotated[
         Path, typer.Option("--labels", help="Labels file (committed).")
     ] = RELATIVES_LABELS,
@@ -2062,7 +2062,7 @@ def eval_precision(
             help="The precision sample, one pair per line.", exists=True, dir_okay=False
         ),
     ] = PRECISION_SAMPLE,
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     labels: Annotated[
         Path, typer.Option("--labels", help="Labels file (committed).")
     ] = LABELS_PATH,
@@ -2157,7 +2157,7 @@ def eval_faithfulness(
             dir_okay=False,
         ),
     ],
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     live: Annotated[
         bool,
         typer.Option("--live", help="Ask the judge about unjudged claims (costs money)."),
@@ -2233,7 +2233,7 @@ def eval_faithfulness(
 
 @eval_app.command("cost")
 def eval_cost(
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     acts: Annotated[
         Path, typer.Option("--acts", help="Directory of the development act texts (local).")
     ] = ACTS_DIR,
@@ -2268,7 +2268,7 @@ def eval_pair_data(
             "--model", help=f"Embedding models to score; all when none: {', '.join(MODELS)}."
         ),
     ] = None,
-    tables: TablesOption = Path("data/tables"),
+    tables: TablesOption = DATA / "tables",
     directory: Annotated[
         Path, typer.Option("--dir", help="Directory of the dataset's files (local).")
     ] = PAIR_DATA_DIR,

@@ -1488,3 +1488,17 @@ def states_indexed(con: duckdb.DuckDBPyConnection, *, bills_glob: str) -> int:
         "SELECT count(DISTINCT state) FROM read_parquet($bills)", {"bills": bills_glob}
     ).fetchone()
     return 0 if row is None else row[0]
+
+
+# v2 lanes add their SQL in their own region below, never editing a function above or another
+# lane's region, so lanes merged in any order do not conflict (DESIGN.md#lanes).
+
+# --- lane B: collection ---
+
+# --- lane C: matching ---
+
+# --- lane D: evals ---
+
+# --- lane L1: incremental core ---
+
+# --- lane L2: intake ---
