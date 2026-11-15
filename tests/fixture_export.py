@@ -49,7 +49,9 @@ DRAWN_FROM = {
 SECTIONS_DRAWN = 2
 
 
-def _origins(tables: Path, modeldocs: Path, sources: dict[str, Source]) -> list[OriginMatch]:
+def hand_made_origins(
+    tables: Path, modeldocs: Path, sources: dict[str, Source]
+) -> list[OriginMatch]:
     ids = [bill for bill, _ in DRAWN_FROM.values()]
     with queries.connect_quiet() as con:
         rows = queries.matchable_section_texts(
@@ -103,7 +105,7 @@ def build_fixture_export(root: Path) -> Path:
     build_semantic_pairs(tables, model=FAKE_MODEL, floor_bytes=0)
     sources = {c.source.key: c.source for c in collectors(PACKAGE).values()}
     modeldocs = root / "modeldocs"
-    write_origin_matches(tables, _origins(tables, modeldocs, sources))
+    write_origin_matches(tables, hand_made_origins(tables, modeldocs, sources))
     no_pairs, no_stories, rules = root / "none.jsonl", root / "none.json", root / "stories.toml"
     no_pairs.touch()
     no_stories.write_text('{"stories": {}}')

@@ -26,7 +26,7 @@ from lineage.ulc import ENACTMENTS, load_enactments
 from tests.conftest import COMMISSION, FAKE_MODEL
 from tests.fakes import MARK, bag_of_words
 from tests.fixture_export import PACKAGE
-from tests.fixture_export import _origins as hand_made  # pyright: ignore[reportPrivateUsage]
+from tests.fixture_export import hand_made_origins as hand_made
 
 
 def _sources() -> dict[str, Source]:

@@ -708,11 +708,15 @@ def origins_command(
             model=SEMANTIC_MODEL,
             floor_bytes=int(min_free_gib * GiB),
         )
-    except (ModelDocError, InsufficientDiskSpaceError) as e:
+    except (
+        ModelDocError,
+        InsufficientDiskSpaceError,
+        IndexMissingError,
+        StoplistError,
+        EmbedError,
+        ModelError,
+    ) as e:
         typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
-    except NotImplementedError as e:
-        typer.echo(f"error: not built yet: {e}", err=True)
         raise typer.Exit(1) from e
     path = write_origin_matches(tables, matches)
     typer.echo(f"{len(matches)} matches from {len(docs)} documents -> {path}")

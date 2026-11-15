@@ -52,7 +52,7 @@ uv run lineage eval agreement  # a person's labels against the model's on that s
 uv run lineage label-model SAMPLE  # provisional labels from a model, kept apart from people's; asks nothing without --live
 uv run lineage eval precision  # precision per stratum, stage and overall, people's and the model's apart -> reports/results.json
 uv run lineage collect-models SOURCE  # one source's model legislation -> data/modeldocs/<source>/, reports/modeldocs/<source>.json
-uv run lineage origins       # collected model documents against the corpus -> data/tables/origins/matches.jsonl (lane C; not built yet)
+uv run lineage origins       # collected model documents against the corpus -> data/tables/origins/matches.jsonl (needs the built index and semantic vectors)
 uv run lineage eval origins  # origin recall on the development answer key -> reports/results.json (origins_development); --key held_out --final: the sealed key, once per configuration
 uv run lineage origin-sample  # seeded origin precision sample (--part tuning), label cost projected, nothing asked -> evals/origin_precision_tuning.jsonl, reports/origin_precision_sample.json; --part reporting --final once matching is final
 uv run lineage update --day DIR  # apply one day's new and changed records -> data/changes/<as_of>.jsonl (lane L1; not built yet)
@@ -157,7 +157,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   collect.py      the collector registry: one module per source under collectors/, found by name; the coverage report
   collectors/     one collector module per source of model legislation, each owned by the lane that builds it
   origins.py      OriginMatch, both shares and the bill's spans, and the origins table
-  origin_matching.py  `lineage origins`' body: model documents queried against the corpus (lane C, M10; a stub until then)
+  origin_matching.py  `lineage origins`' body: each model document queried as `lineage query` queries a bill, through both stages and the page listing rule
   origin_recall.py  `lineage eval origins`: model-to-bill recall from the resolved answer keys; a sealed key only with --final
   origin_precision.py  `lineage origin-sample`: seeded tuning and reporting samples of origin matches, the label cost projection and its cap
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
