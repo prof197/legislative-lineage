@@ -224,6 +224,7 @@ from lineage.threshold import by_band as threshold_by_band
 from lineage.threshold import proposal as threshold_proposal
 from lineage.threshold import sample_inputs as threshold_sample_inputs
 from lineage.ulc import ENACTMENTS, HELD_OUT_ENACTMENTS, UlcError
+from lineage.updates import CHANGES_DIR, UpdateError, load_day, update
 from lineage.vectors import PROCESSES as EMBED_PROCESSES
 from lineage.vectors import REPORT as EMBED_REPORT
 from lineage.vectors import THREADS as EMBED_THREADS
@@ -614,6 +615,32 @@ def semantic_pairs_command(
         f"{doc['windows_left_out']:,} windows of unsigned sections left out; peak "
         f"{doc['peak_memory_bytes'] / GiB:.2f} GiB; {doc['seconds']}s -> {report}"
     )
+
+
+@app.command("update")
+def update_command(
+    day: Annotated[
+        Path, typer.Option("--day", help="A day's directory: day.json and its records (local).")
+    ],
+    tables: TablesOption = Path("data/tables"),
+    changes: Annotated[
+        Path, typer.Option("--changes", help="The change log, one file per day (local).")
+    ] = CHANGES_DIR,
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """Apply one day's new and changed records to the built corpus, matching in both
+    directions, and log what changed -> <changes>/<as_of>.jsonl (DESIGN.md#updates)."""
+    try:
+        logged = update(
+            tables, load_day(day), changes_dir=changes, floor_bytes=int(min_free_gib * GiB)
+        )
+    except (UpdateError, InsufficientDiskSpaceError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    except NotImplementedError as e:
+        typer.echo(f"error: not built yet: {e}", err=True)
+        raise typer.Exit(1) from e
+    typer.echo(f"{len(logged)} changes -> {changes}")
 
 
 @app.command("state-boilerplate")

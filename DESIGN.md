@@ -26,6 +26,7 @@ Sections marked **To be measured** fill in as the build reaches them. Every numb
 - [Cost and runtime](#cost-and-runtime)
 - [Explanations](#explanations)
 - [Export](#export)
+- [Updates](#updates)
 - [Alternatives considered](#alternatives-considered)
 - [Scaling limits](#scaling-limits)
 - [Known failure modes](#known-failure-modes)
@@ -595,6 +596,17 @@ They are not one sample measured three times. The scope narrowed between the fir
 
 **Georgia, 2026-11-12.** Of the 4,561 hosted bills, 750 have relatives in other states, 4,540 relatives in all are listed, and 4,595 comparisons align 15,905 section pairs; the 121 featured pairs carry their explanations, 10 of them withheld (`uv run lineage export --state GA` → `reports/export.json`). The export is 113.5 MB in 12,781 files: 53.2 MB of section text, 49.8 MB of comparisons, 8.9 MB of bill pages and a 1.6 MB bill list. That is 11.4% of GitHub Pages' 1 GB limit, well under the half at which [DR-2](#dr-2) reverses. It took 6,579 seconds with eight worker processes, nearly all of it aligning the section pairs, whose paraphrase marking embeds every sentence of their unmatched stretches. A rerun recomputes every alignment; it runs once per build, so that is not yet worth a cache.
 
+## Updates
+
+The live track reads bills as they are introduced and surfaces their matches within a day. This section is its contract, set in M9 before any lane builds it ([DR-7](#dr-7)); `lineage update` is lane L1's to build, and the intake that writes days is lane L2's.
+
+- **A day** is a directory: `day.json` gives its as-of date and sources, and one `<ST>_<session>_bills.json` per state and session holds the records an intake run saw new or changed, in Open States' bill shape. A record seen twice in a day is refused, since which copy stood would depend on file order (`lineage.updates.load_day`). How a text the layer fetched joins a day is left to L2, whose sources wait on the verify-first research.
+- **Records change over time.** The corpus after day N is the fold of days 1 to N: each record as last seen, stamped as of day N, so a status such as "died when its session ended" is judged on that day. A record seen again with the same text is updated; with a different text it is replaced, and the earlier text stays as a version with the days it stood (`RecordVersion`, `lineage.updates.fold`).
+- **An update gives what a rebuild gives.** After `lineage update` applies day N, the tables give the same snapshot as a full rebuild over days 1 to N: every bill's status, the same-state families as sets of bills, and every matchable bill's relatives with the stages that found them, its sections matched and its share, to nine places (`lineage.updates.snapshot`). The check runs on recorded days built from the commission fixture, with exact neighbor search, since a build's approximate index is not itself reproducible (`tests/test_updates.py`). It is an expected failure until L1 lands, and fails the run once it passes, so the marker cannot be forgotten.
+- **Both directions.** Each new text is matched against the whole corpus, and every existing bill it matches gains it as a relative. In the recorded days a Georgia record arrives first, with no relative in another state; on day 2 Utah's version arrives and the Georgia page gains it; on day 3 its text is replaced and both lose each other. The Georgia record is synthetic, labelled as such, because no Georgia bill enacts these acts.
+- **The change log** is append-only, one JSON-lines file per day under `data/changes/`: each record added, updated or replaced, then each relative gained or lost, directed so that a page gaining a relative is one entry whichever bill arrived (`lineage.updates.write_changes`). A day may be written again only with the same changes. The feed of events (lane L3) is derived from it.
+- **Pinned corpus statistics.** The stoplist and the state boilerplate flag are counted over the whole corpus, so a new bill would move them and every signature and listing with them. An update keeps the base build's, and the rebuild it must equal uses the same; a full rebuild refreshes them. The bucket cap and the semantic stage's neighbor cap are not statistics but rules, and an update applies them exactly: a new window can push an existing pair out of a bucket or a nearest-neighbor list, which the log records as a relative lost.
+
 ## Alternatives considered
 
 | Alternative | Reason rejected | Evidence |
@@ -938,3 +950,24 @@ The filter does not bias the recall eval. It selects on what kind of document a 
 **Result.** What failed upstream was extraction, not the bills: the records were present with their version links, and their text was blank, absent or an amendment. Fetching those versions gives usable text to 147,874 of 151,426 planned records (`reports/text_fetch.json`). Of 447,389 eligible records, Open States' text is usable for 301,442; with the fetched text, 430,900 yield sections, 145,480 of them from fetched text and 2,394 from California's download (`uv run lineage stats` → `reports/coverage.json`, `text_layer`). Commission recall over all 36 enactments rises from 22 to 31. The export-only run is `uv run lineage text merge --exported-only`, then the pipeline through `uv run lineage eval commission --results reports/results_exported_only.json`; the same commands without those options give `reports/results.json`. Eight enactments without exported text are found once their text is fetched, and one in Delaware, whose export stored an amendment in place of the bill, once its text is replaced. Every enactment now has text, so the 5 still missed are lost at the near-duplicate stage: 2 never proposed and 3 at verification ([Commission recall](#commission-recall)).
 
 **Would reverse it.** If a snapshot of the export has usable text for nearly every eligible record, measured the same way, the fetch is retired for those states. If the quality test finds the fetched text no cleaner than the export's where both exist, the project keeps the export's text and discloses the gap. A legislature that asks not to be fetched is removed whatever its robots.txt says.
+
+<a id="dr-7"></a>
+### DR-7 · Updates equal a rebuild
+
+**Status:** proposed, 2026-11-15 (M9). Lane L1 builds to it in M10.
+
+**Context.** v1 is a batch build over a pinned snapshot. The live track (ruled 2026-11-14) reads each day's new bills and versions and must update the bills they match in both directions, since a bill introduced first looks new until other states introduce theirs. Every stage was written for a whole corpus: signatures, buckets, neighbors, families and listings.
+
+**Options.**
+- Rebuild nightly. Simple and always right, but the build takes hours, measured in [Cost and runtime](#cost-and-runtime), and it says nothing about what changed, which the feed needs.
+- Update incrementally with no reference. Fast, but nothing shows when an update drifts from what a build would give, and drift compounds over a session.
+- Update incrementally, held to a rebuild: each update must give the snapshot a full build over the same days gives, checked on recorded days in CI, with a full rebuild as the periodic reset.
+
+**Decision.** The third. The contract is a canonical snapshot (statuses, families as sets, relatives with stages, sections matched and share), compared exactly at fixture scale with exact search. Corpus statistics, the stoplist and the state boilerplate flag, are pinned at the base build and refreshed only by a full rebuild, because letting a day move them would turn every update into a rebuild. Days are folded with the last observation standing and earlier texts kept as versions. The change log is derived from what the update did and must equal the difference between the snapshots before and after the day.
+
+**Consequences.**
+- L1 has a test to pass from its first commit, and every later change to matching has to keep updates and rebuilds equal.
+- A new kind of boilerplate that appears mid-session is not stoplisted until the next full rebuild. The rebuild's cadence is L3's to set.
+- At full scale the index's approximate search means an update and a rebuild can differ in the last neighbors; the guarantee is at fixture scale, and the full rebuild bounds the drift.
+
+**Would reverse it.** If an update cannot meet the snapshot on the recorded days without recomputing most of the corpus, the live track rebuilds nightly instead and derives the change log by comparing snapshots.
