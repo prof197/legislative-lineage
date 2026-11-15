@@ -57,7 +57,7 @@ uv run lineage eval origins  # origin recall on the development answer key -> re
 uv run lineage origin-sample  # seeded origin precision sample (--part tuning), label cost projected, nothing asked -> evals/origin_precision_tuning.jsonl, reports/origin_precision_sample.json; --part reporting --final once matching is final
 uv run lineage intake       # one day of new and changed bills from Open States' API v3 (key from OPENSTATES_API_KEY), text through the text layer -> data/days/<day>/, data/intake/; --tier default|bronze|silver
 uv run lineage intake-estimate  # the API requests a January day needs, against each tier, from the snapshot; no network -> reports/intake_estimate.json
-uv run lineage update --day DIR  # apply one day's new and changed records -> data/changes/<as_of>.jsonl (lane L1; not built yet)
+uv run lineage update --day DIR  # apply one day's new and changed records -> data/changes/<as_of>.jsonl and the tables in place, held to a full rebuild over the same days
 uv run lineage text inventory  # version to fetch per record, by host, robots.txt read -> data/text/plan.parquet, reports/text_inventory.json
 uv run lineage text sample   # quality test: fetch a seeded sample per state and format -> data/text/sample/, reports/text_quality.json
 uv run lineage text fetch    # fetch every planned record as rules/text_layer.toml says, California from its bulk download; resumable -> data/text/full/, reports/text_fetch.json
@@ -154,7 +154,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   export_schema.py  the site's data contract: every exported file as a Pydantic model, which emits the JSON Schema
   export.py       `lineage export`: bill pages, comparisons, section texts, stories and the data stamp for one state
   updates.py      the live track's contracts (DR-7): days, records over time, the change log, the snapshot an update must equal
-  incremental.py  `lineage update`'s body, one day applied in both directions (lane L1, M10; a stub until then)
+  incremental.py  `lineage update`'s body, one day applied in both directions in a staging view, journaled per day
   modeldocs.py    model legislation: each source's entry, each collected document, texts per version under data/modeldocs/
   collect.py      the collector registry: one module per source under collectors/, found by name; the coverage report
   collectors/     one collector module per source of model legislation, each owned by the lane that builds it

@@ -13,6 +13,7 @@ from typer.testing import CliRunner
 
 from lineage import queries
 from lineage.cli import app
+from lineage.incremental import register_embedder
 from lineage.neighbors import build_neighbors
 from lineage.vectors import build_plan, semantic_dir, shard_name, vectors_dir
 from tests.fakes import bag_of_words
@@ -140,6 +141,8 @@ def commission_corpus(tmp_path_factory: pytest.TempPathFactory) -> Path:
 
 
 FAKE_MODEL = "fake"
+# `lineage update` embeds a day's new windows with the stand-in the tables were embedded with.
+register_embedder(FAKE_MODEL, bag_of_words)
 
 
 @pytest.fixture
