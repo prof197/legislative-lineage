@@ -176,8 +176,9 @@ def require_index(tables_dir: Path) -> None:
         raise IndexMissingError(f"no index in {tables_dir}; run `lineage index` first")
 
 
-def _near_duplicate_hits(query: SignedQuery, tables_dir: Path) -> list[NearHit]:
-    """(query section, bill id, ordinal, agreements) for every verified window pair."""
+def near_duplicate_hits(query: SignedQuery, tables_dir: Path) -> list[NearHit]:
+    """(query section, bill id, ordinal, agreements) for every verified window pair. Model
+    documents are matched through it too (lineage.origin_matching)."""
     if not query.signed:
         return []
     query_rows, rows = _candidates(band_keys(query.values), tables_dir)
@@ -280,7 +281,7 @@ def query_text(
     seconds: dict[str, float] = {}
     started = time.perf_counter()
     query = sign_query(raw, tables_dir)
-    near = _near_duplicate_hits(query, tables_dir)
+    near = near_duplicate_hits(query, tables_dir)
     seconds["near_duplicate"] = time.perf_counter() - started
     searched: set[int] = set(query.section.tolist())
     _, matchable = matchable_sections(raw)

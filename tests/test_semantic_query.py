@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from lineage import queries
+from lineage import queries, semantic
 from lineage.query import query_text, regrouped
 from lineage.semantic import CORROBORATING, THRESHOLD, SemanticSearch, search_sections
 from tests.fakes import MARK, bag_of_words_search
@@ -107,3 +107,28 @@ def test_a_query_keeps_its_hits_by_meaning_down_to_the_cosine_that_corroborates(
     assert strict.hits.by_meaning == result.hits.by_meaning
     assert min(h[3] for h in result.hits.by_meaning) >= CORROBORATING
     assert regrouped(result, corpus, 0.999) == strict.matches
+
+
+def test_searching_in_passes_finds_what_one_pass_finds(
+    corpus: Path, search: SemanticSearch, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # A collection of model documents is searched at once, a pass over the vectors per
+    # WINDOWS_PER_PASS windows (lineage.origin_matching).
+    with queries.connect_quiet() as con:
+        rows = con.execute(
+            "SELECT text FROM read_parquet($p) ORDER BY bill_id, ordinal LIMIT 40",
+            {"p": str(corpus / "sections" / "*.parquet")},
+        ).fetchall()
+    sections = [str(text) for (text,) in rows]
+
+    whole = search_sections(sections, search, threshold=CORROBORATING)
+    monkeypatch.setattr(semantic, "WINDOWS_PER_PASS", 3)
+    in_passes = search_sections(sections, search, threshold=CORROBORATING)
+
+    # The same hits; a cosine may move in its last float bits, since a matrix product's
+    # rounding can depend on how many rows it multiplies.
+    assert whole
+    assert [(h.query_section, h.bill_id, h.ordinal) for h in in_passes] == [
+        (h.query_section, h.bill_id, h.ordinal) for h in whole
+    ]
+    assert [h.cosine for h in in_passes] == pytest.approx([h.cosine for h in whole], abs=1e-6)
