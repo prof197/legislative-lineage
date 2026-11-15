@@ -8,6 +8,7 @@
     "sessions": "node scripts/sessions.mjs",
     "sessions:check": "node scripts/sessions.mjs --check",
     "data:fixture": "node scripts/fixture-data.mjs",
+    "data:fixture-export": "node scripts/fixture-export.mjs",
     "typecheck": "tsc --noEmit",
     "build": "next build",
     "size": "node scripts/size.mjs",

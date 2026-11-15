@@ -8,7 +8,10 @@ import path from "node:path";
 import { nameRoles } from "../src/lib/claims.ts";
 
 const OUT = path.resolve("out");
-const BANNED = ["descendant", "the origin", "changed", "copied", "copying", "written by", "who is really writing"];
+const BANNED = [
+  "descendant", "the origin", "changed", "copied", "copying", "written by", "who is really writing",
+  "wrote", "drafted by", "authored",
+];
 const PATTERN = new RegExp(`\\b(${BANNED.map((b) => b.replace(/ /g, "\\s+")).join("|")})\\b`, "gi");
 
 // Legitimate uses: where the phrase appears (a file name pattern) and the words around it.
@@ -17,6 +20,11 @@ const ALLOWED: { where: RegExp; context: RegExp; why: string }[] = [
     where: /^_next\//,
     context: /Written by a language model from the aligned text/,
     why: "the claims panel discloses that a model wrote the claims; it names no author of a bill",
+  },
+  {
+    where: /./,
+    context: /not who wrote (them|either one)/,
+    why: "denies authorship: the site shows shared language, not who wrote a bill",
   },
 ];
 

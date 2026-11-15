@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { Footer, Header } from "@/components/Chrome";
 import { StoryView } from "@/components/StoryView";
 import { meta, story } from "@/lib/data";
@@ -10,7 +11,9 @@ import { STORY_COPY } from "@/lib/stories";
 export const dynamicParams = false;
 
 export function generateStaticParams(): { slug: string }[] {
-  return meta().stories.map((slug) => ({ slug }));
+  // A static export must render at least one route; data with no stories renders a not-found page.
+  const slugs = meta().stories;
+  return (slugs.length ? slugs : ["none"]).map((slug) => ({ slug }));
 }
 
 type Props = { params: Promise<{ slug: string }> };
@@ -21,6 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function StoryPage({ params }: Props) {
   const slug = (await params).slug;
+  if (!meta().stories.includes(slug)) notFound();
   const s = story(slug);
   const copy = STORY_COPY[slug]!;
   const m = meta();
