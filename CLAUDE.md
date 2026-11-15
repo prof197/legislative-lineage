@@ -148,6 +148,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   export.py       `lineage export`: bill pages, comparisons, section texts, stories and the data stamp for one state
   updates.py      the live track's contracts (DR-7): days, records over time, the change log, the snapshot an update must equal
   incremental.py  `lineage update`'s body, one day applied in both directions (lane L1, M10; a stub until then)
+  modeldocs.py    model legislation: each source's entry, each collected document, texts per version under data/modeldocs/
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
 tools/            dev and CI checks
   leak_check.py   local paths and deny-listed terms in tracked files and every commit
@@ -183,6 +184,7 @@ data/             local snapshots and derived tables; gitignored, never committe
   tables/         Parquet tables written by the pipeline; bills/ holds the source's records under the project's names, texts/ each record's chosen text; signatures/, bands/, pairs/ and same_state_pairs/ hold .npy arrays
   text/           the text layer's fetch plan and fetched text (JSON lines per host)
   changes/        the live track's change log, one JSON-lines file per day
+  modeldocs/<source>/  model legislation as collected: docs.jsonl, versions.jsonl, raw/ and texts/ by SHA-256; never committed
   tables/semantic/  the semantic stage's windows (units/), distinct texts (texts/), and each model's float16 vector shards
   pair_data/      the labeled pair dataset's split files, from `lineage pair-data fetch`; never committed
   models/<name>/  embedding model files at their pinned revision, from `lineage model fetch`

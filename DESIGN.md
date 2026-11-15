@@ -27,6 +27,7 @@ Sections marked **To be measured** fill in as the build reaches them. Every numb
 - [Explanations](#explanations)
 - [Export](#export)
 - [Updates](#updates)
+- [Model documents](#model-documents)
 - [Alternatives considered](#alternatives-considered)
 - [Scaling limits](#scaling-limits)
 - [Known failure modes](#known-failure-modes)
@@ -606,6 +607,14 @@ The live track reads bills as they are introduced and surfaces their matches wit
 - **Both directions.** Each new text is matched against the whole corpus, and every existing bill it matches gains it as a relative. In the recorded days a Georgia record arrives first, with no relative in another state; on day 2 Utah's version arrives and the Georgia page gains it; on day 3 its text is replaced and both lose each other. The Georgia record is synthetic, labelled as such, because no Georgia bill enacts these acts.
 - **The change log** is append-only, one JSON-lines file per day under `data/changes/`: each record added, updated or replaced, then each relative gained or lost, directed so that a page gaining a relative is one entry whichever bill arrived (`lineage.updates.write_changes`). A day may be written again only with the same changes. The feed of events (lane L3) is derived from it.
 - **Pinned corpus statistics.** The stoplist and the state boilerplate flag are counted over the whole corpus, so a new bill would move them and every signature and listing with them. An update keeps the base build's, and the rebuild it must equal uses the same; a full rebuild refreshes them. The bucket cap and the semantic stage's neighbor cap are not statistics but rules, and an update applies them exactly: a new window can push an existing pair out of a bucket or a nearest-neighbor list, which the log records as a relative lost.
+
+## Model documents
+
+v2 matches bills against published model legislation. A model act or bill is a `ModelDoc` in the code, to keep it apart from the embedding model and the model calls (`lineage.modeldocs`).
+
+- **A source** is an organization's public library of model legislation. Its entry names the organization, says what kind of organization it is from public filings (its type and tax status, never a political label), and records what its terms allow and the day they were read. A leaked archive is marked leaked and says how its documents became public. Each source's entry lives in its collector's module, so adding a source edits no shared file.
+- **A document** records its source, title, URL, the organization's own date where it gives one, the day it was collected, what robots.txt said, whether it is leaked (always as its source is), and two SHA-256 digests: of the bytes as fetched and of the cleaned text that matching reads. A URL robots.txt disallows is never collected; a collector reports it instead.
+- **Texts stay local**, under `data/modeldocs/<source>/`, never committed, redistributed or shown, as the commission's act texts are today. Bytes and texts are stored once each under their digests, so a revised text becomes the current version and the earlier one stays on disk with the days it stood, as a bill record's versions do ([Updates](#updates)). Collecting an unchanged text again changes nothing, not even its date.
 
 ## Alternatives considered
 
