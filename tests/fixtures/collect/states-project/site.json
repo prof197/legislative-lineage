@@ -1,0 +1,11 @@
+{
+ "_note": "Recorded responses for the states-project collector, synthetic: the files beside this one keep the site's shape (a Yoast sitemap index, the policy sitemap, the library's cards, policy pages with the model bill under MODEL POLICY) with invented policies and no text from the site. A URL not listed answers 404.",
+ "https://statesproject.org/sitemap_index.xml": {"content_type": "text/xml; charset=UTF-8", "file": "sitemap_index.xml"},
+ "https://statesproject.org/policy-sitemap.xml": {"content_type": "text/xml; charset=UTF-8", "file": "policy-sitemap.xml"},
+ "https://statesproject.org/policywork/policy-library/": {"content_type": "text/html; charset=UTF-8", "file": "policy-library.html"},
+ "https://statesproject.org/policy/lantern-registry/": {"content_type": "text/html; charset=UTF-8", "file": "lantern-registry.html"},
+ "https://statesproject.org/policy/harbor-lights/": {"content_type": "text/html; charset=UTF-8", "file": "harbor-lights.html"},
+ "https://statesproject.org/policy/kettle-tools/": {"content_type": "text/html; charset=UTF-8", "file": "kettle-tools.html"},
+ "https://statesproject.org/policy/pewter-lamp/": {"content_type": "text/html; charset=UTF-8", "file": "pewter-lamp.html"},
+ "https://statesproject.org/policy/withheld-wick/": {"content_type": "text/html; charset=UTF-8", "file": "pewter-lamp.html"}
+}

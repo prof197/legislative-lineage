@@ -1,0 +1,6 @@
+# Synthetic, in the shape of the site's Yoast block. The real file (read 2026-11-15) disallows
+# nothing; this one disallows one invented policy page so a blocked document can be tested.
+User-agent: *
+Disallow: /policy/withheld-
+
+Sitemap: https://statesproject.org/sitemap_index.xml
