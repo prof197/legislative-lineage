@@ -22,6 +22,8 @@ found, and the command stops below RECALL_FLOOR. See DESIGN.md#semantic-stage.
 
 import json
 import time
+from collections.abc import Sequence
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -228,3 +230,146 @@ def build_neighbors(
 
 def write_report(doc: dict[str, Any], path: Path = REPORT) -> None:
     path.write_text(json.dumps(doc, indent=1) + "\n")
+
+
+# Updates (DESIGN.md#updates, DR-7): new texts searched exactly against every stored vector, and
+# the stored lists they enter, or that lose a retired text, brought to what a build keeps. A
+# list is each text's K nearest others at or above the threshold, best first, ties to the lower
+# id; the stored float16 score of a neighbor already kept is kept as it was.
+
+# Corpus rows scored per matrix product: 4,096 queries hold 512 MB of scores.
+_SCAN_ROWS = 1 << 15
+
+
+@dataclass(frozen=True, slots=True)
+class Hits:
+    """Every (query, text) pair at or above a threshold, the query's own text left out."""
+
+    query: NDArray[np.int64]  # position among the queries
+    text: NDArray[np.int64]
+    score: NDArray[np.float32]
+
+
+def scan(
+    blocks: Sequence[NDArray[Any]], queries: NDArray[Any], own: NDArray[np.int64], threshold: float
+) -> Hits:
+    """Exact search: every stored text whose cosine with a query reaches `threshold`. `blocks`
+    are the vectors in text id order, memory-mapped shards say; `own` is each query's own id."""
+    q = np.ascontiguousarray(queries, dtype=np.float32)
+    found: list[tuple[NDArray[np.int64], NDArray[np.int64], NDArray[np.float32]]] = []
+    offset = 0
+    for block in blocks:
+        for start in range(0, block.shape[0], _SCAN_ROWS):
+            rows = np.ascontiguousarray(block[start : start + _SCAN_ROWS], dtype=np.float32)
+            scores = q @ rows.T
+            qi, xi = np.nonzero(scores >= threshold)
+            ids = xi.astype(np.int64) + offset + start
+            mine = ids != own[qi]
+            found.append((qi[mine].astype(np.int64), ids[mine], scores[qi[mine], xi[mine]]))
+        offset += block.shape[0]
+    if not found:
+        empty = np.empty(0, dtype=np.int64)
+        return Hits(empty, empty.copy(), np.empty(0, dtype=np.float32))
+    return Hits(*(np.concatenate(parts) for parts in zip(*found, strict=True)))
+
+
+def best_of(
+    owner: NDArray[np.int64], ids: NDArray[np.int64], scores: NDArray[np.float32], k: int
+) -> tuple[NDArray[np.int64], NDArray[np.int64], NDArray[np.intp]]:
+    """Each owner's k best candidates, best first, ties to the lower id: (owner, id, the
+    position of each kept candidate in the arrays given)."""
+    order = np.lexsort((ids, -scores, owner))
+    owner_sorted = owner[order]
+    first = np.r_[True, owner_sorted[1:] != owner_sorted[:-1]] if owner.size else owner > 0
+    starts = np.flatnonzero(first)
+    rank = np.arange(owner.size) - np.repeat(starts, np.diff(np.r_[starts, owner.size]))
+    kept = order[rank < k]
+    return owner[kept], ids[kept], kept
+
+
+def update_neighbors(
+    blocks: Sequence[NDArray[Any]],
+    ids: NDArray[np.int32],
+    scores: NDArray[np.float16],
+    *,
+    fresh: NDArray[np.int64],
+    retired: NDArray[np.int64],
+    k: int = K,
+    threshold: float = THRESHOLD,
+) -> tuple[NDArray[np.int32], NDArray[np.float16], NDArray[np.int64]]:
+    """The neighbor lists after an update, and the texts whose lists changed.
+
+    `blocks` hold every vector after the update, `fresh` texts added and `retired` texts
+    zeroed (no window carries them any more); `ids` and `scores` are the lists before, one row
+    per text then stored. A fresh text's list comes from an exact search. A stored list keeps
+    its entries and takes in each fresh text at or above the threshold, the best k kept. A full
+    list that loses a retired text is searched again, since the text it had pushed out comes
+    back; a list with room only loses it."""
+    n = sum(int(b.shape[0]) for b in blocks)
+    old_n = ids.shape[0]
+    out_ids = np.full((n, k), -1, dtype=np.int32)
+    out_scores = np.zeros((n, k), dtype=np.float16)
+    out_ids[:old_n] = ids
+    out_scores[:old_n] = scores
+    gone = np.zeros(n, dtype=bool)
+    gone[retired] = True
+    out_ids[retired] = -1
+    out_scores[retired] = 0
+    holds_retired = (out_ids >= 0) & gone[np.maximum(out_ids, 0)]
+    lost = holds_retired.any(axis=1)
+    full = (np.asarray(ids) >= 0).all(axis=1) if old_n else np.zeros(0, dtype=bool)
+    research = np.flatnonzero(lost[:old_n] & full)
+    for row in np.flatnonzero(lost[:old_n] & ~full).tolist():
+        keep = ~holds_retired[row] & (out_ids[row] >= 0)
+        m = int(keep.sum())
+        out_ids[row, :m], out_scores[row, :m] = out_ids[row, keep], out_scores[row, keep]
+        out_ids[row, m:], out_scores[row, m:] = -1, 0
+
+    searched = np.concatenate([fresh, research]).astype(np.int64)
+    hits = scan(blocks, rows_of(blocks, searched), searched, threshold) if searched.size else None
+    if hits is not None:
+        hits = Hits(hits.query, hits.text, hits.score)
+        live = ~gone[hits.text]
+        owner, text, at = best_of(searched[hits.query[live]], hits.text[live], hits.score[live], k)
+        out_ids[searched] = -1
+        out_scores[searched] = 0
+        slot = np.arange(owner.size) - np.searchsorted(owner, owner)
+        out_ids[owner, slot] = text
+        out_scores[owner, slot] = hits.score[live][at].astype(np.float16)
+
+    changed = {
+        *fresh.tolist(),
+        *research.tolist(),
+        *retired.tolist(),
+        *np.flatnonzero(lost).tolist(),
+    }
+    if hits is not None and fresh.size:
+        # The stored lists each fresh text enters: from the fresh queries' own hits, since a
+        # cosine is the same both ways.
+        from_fresh = hits.query < fresh.size
+        target = hits.text[from_fresh]
+        entering = fresh[hits.query[from_fresh]]
+        score = hits.score[from_fresh]
+        stored = ~np.isin(target, searched) & ~gone[target]
+        target, entering, score = target[stored], entering[stored], score[stored]
+        order = np.argsort(target, kind="stable")
+        target, entering, score = target[order], entering[order], score[order]
+        bounds = np.flatnonzero(np.r_[True, target[1:] != target[:-1], True])
+        for lo, hi in zip(bounds[:-1].tolist(), bounds[1:].tolist(), strict=True):
+            row = int(target[lo])
+            have = out_ids[row][out_ids[row] >= 0].astype(np.int64)
+            candidates = np.concatenate([have, entering[lo:hi]])
+            vector = rows_of(blocks, np.array([row], dtype=np.int64))[0]
+            # Rescored together, so the stored and the entering candidates are ordered by one
+            # computation; the stored ones keep their stored scores.
+            exact = rows_of(blocks, candidates) @ vector
+            _, chosen, at = best_of(np.zeros(candidates.size, dtype=np.int64), candidates, exact, k)
+            stored_score = np.concatenate(
+                [out_scores[row][: have.size], score[lo:hi].astype(np.float16)]
+            )
+            out_ids[row] = -1
+            out_scores[row] = 0
+            out_ids[row, : chosen.size] = chosen
+            out_scores[row, : chosen.size] = stored_score[at]
+            changed.add(row)
+    return out_ids, out_scores, np.array(sorted(changed), dtype=np.int64)

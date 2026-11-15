@@ -10,6 +10,8 @@ keeps an omnibus bill from absorbing every small bill it contains. Families are 
 components of the links. See DESIGN.md#near-duplicate-stage.
 """
 
+from collections import defaultdict
+from collections.abc import Collection, Mapping
 from dataclasses import dataclass
 
 import numpy as np
@@ -99,3 +101,44 @@ def families(
     pairs = bill_pairs(bill_of_section, left, right)
     keep = linked(pairs, share)
     return components(n_bills, pairs.first[keep], pairs.second[keep])
+
+
+def update_families(
+    old: Mapping[str, str],
+    bills: NDArray[np.str_],
+    bill_of_section: NDArray[np.int32],
+    left: NDArray[np.uint32],
+    right: NDArray[np.uint32],
+    affected: Collection[str],
+    share: float = FAMILY_SHARE,
+) -> dict[str, str]:
+    """Each signed bill's family after an update, named by its first bill id in sort order, as
+    `families` over every same-state pair would give it, recomputed only where it can change.
+
+    `old` maps each bill signed before to its family; `bills` are the bills signed after,
+    sorted, numbered as `bill_of_section` numbers them; `left` and `right` are the same-state
+    section pairs after. `affected` holds every bill whose sections, or whose same-state pairs,
+    the update changed. A link can change only between two affected bills, or where an
+    affected bill's sections changed, which changes all its pairs and so affects every bill it
+    pairs with; so the families of the affected bills before, with the affected bills, hold
+    every link that can form or break, and are regrouped together. Families can merge there and
+    split, and every other family stands as it was."""
+    members: dict[str, list[str]] = defaultdict(list)
+    for bill, family in old.items():
+        members[family].append(bill)
+    regrouped = set(affected)
+    for bill in affected:
+        if bill in old:
+            regrouped.update(members[old[bill]])
+    number = {str(b): i for i, b in enumerate(bills.tolist())}
+    inside = np.zeros(bills.size, dtype=bool)
+    inside[[number[b] for b in regrouped if b in number]] = True
+    a, b = bill_of_section[np.asarray(left)], bill_of_section[np.asarray(right)]
+    touching = inside[a] | inside[b]
+    pairs = bill_pairs(bill_of_section, np.asarray(left)[touching], np.asarray(right)[touching])
+    keep = linked(pairs, share)
+    labels = components(bills.size, pairs.first[keep], pairs.second[keep])
+    out = {bill: old[bill] for bill in number if not inside[number[bill]]}
+    for i in np.flatnonzero(inside).tolist():
+        out[str(bills[i])] = str(bills[labels[i]])
+    return dict(sorted(out.items()))
