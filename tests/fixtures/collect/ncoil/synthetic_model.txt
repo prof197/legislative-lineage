@@ -1,0 +1,38 @@
+1
+National Council of Insurance Legislators (NCOIL)
+Synthetic Lantern Coverage Model Act
+(invented for tests; not an NCOIL text)
+*Sponsored by an invented legislator
+*Adopted by an invented committee on January 2, 2026.
+
+Table of Contents
+Section 1. Title and Purpose
+Section 2. Definitions
+
+Section 3. Lantern Coverage
+Section 4. Severability
+
+Section 1. Title and Purpose
+A. This Act shall be known as the Synthetic Lantern Coverage Act.
+Drafting Note: A state may choose another title for this invented Act.
+
+Section 2. Definitions
+As used in this Act:
+A. "Commissioner" means the commissioner of insurance of this state.
+Drafting Note: Insert the title of the invented official here. This note runs
+on for a second line and is not law.
+B. "Lantern" means a portable lamp insured under [insert citation to lamp code].
+(1) A lantern kept under [citation to specific statute] is covered.
+2
+National Council of Insurance Legislators (NCOIL)
+(2) A lantern kept in [this state] is covered.
+
+Section 3. Lantern Coverage
+An insurer [shall][may] cover a lantern for [60] days.
+Legislative Note: An invented note on coverage, which runs
+over two lines.
+
+The commissioner may adopt rules to carry out this section.
+
+Section 4. Severability
+If any provision of this Act is held invalid, the remainder is not affected.
