@@ -1,0 +1,6 @@
+# Synthetic, in the shape of the NCOIL site's: WordPress's admin is disallowed and its AJAX
+# endpoint allowed. The last rule is invented, so a test can see a document page blocked.
+User-agent: *
+Disallow: /wp-admin/
+Allow: /wp-admin/admin-ajax.php
+Disallow: /resource/withheld-
