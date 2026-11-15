@@ -71,14 +71,33 @@ export function Header({ current }: { current: Section }) {
 
 export const REPOSITORY = "https://github.com/prof197/legislative-lineage";
 
+export const OPEN_STATES = "https://open.pluralpolicy.com/";
+export const PLURAL_POLICY = "https://pluralpolicy.com/";
+
+// Where the bills come from, on every page: the corpus is Open States' archives, and the text it
+// lacked was fetched from the legislatures. A credit, not a claim of affiliation.
+export function DataCredit() {
+  return (
+    <>
+      Bill data from <a href={OPEN_STATES}>Open States</a>, by <a href={PLURAL_POLICY}>Plural Policy</a> (public
+      domain); bill text from each legislature&apos;s website.
+    </>
+  );
+}
+
 export function Footer() {
   return (
     <footer className="site-footer">
       <div className="wrap">
-        <p>
-          <strong style={{ color: "var(--ink)" }}>Legislative Lineage</strong> is open source. It
-          shows where state bills share language and when each appeared, not who wrote them or why.
-        </p>
+        <div style={{ maxWidth: 460 }}>
+          <p>
+            <strong style={{ color: "var(--ink)" }}>Legislative Lineage</strong> is open source. It
+            shows where state bills share language and when each appeared, not who wrote them or why.
+          </p>
+          <p style={{ marginTop: 10 }}>
+            <DataCredit />
+          </p>
+        </div>
         <nav aria-label="Footer">
           <a href={REPOSITORY}>Source code</a>
           <Link href="/validation/">How we checked</Link>

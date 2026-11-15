@@ -17,7 +17,7 @@ export default function ComparePage() {
   return (
     <div className="cmp-shell">
       <Header current="bills" />
-      <Suspense fallback={<main className="cmp-main"><p className="note cmp-wrap">Loading the comparison…</p></main>}>
+      <Suspense fallback={<main className="cmp-main"><p className="note cmp-wrap">Loading the comparison…</p><Footer /></main>}>
         <CompareView hosted={meta().state} issues={`${REPOSITORY}/issues`} footer={<Footer />} act={actAnchor ? { anchor: actAnchor, page: ACT_PAGE } : null} />
       </Suspense>
     </div>

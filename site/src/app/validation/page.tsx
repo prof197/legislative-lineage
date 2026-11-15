@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Footer, Header } from "@/components/Chrome";
+import { DataCredit, Footer, Header } from "@/components/Chrome";
 import { Enactments } from "@/components/Enactments";
 import { meta, precisionSampleState } from "@/lib/data";
 import { stateName } from "@/lib/format";
@@ -107,6 +107,17 @@ export default function ValidationPage() {
             Found means the enacted bill appears among the tool&apos;s matches for the act&apos;s text, by
             either stage, the similar-meaning stage at a cosine of at least {v.semantic_threshold}. The answer
             key is the Commission&apos;s enactment lists as of the snapshot date.
+          </p>
+        </section>
+
+        <section aria-labelledby="data" style={{ marginTop: 48 }}>
+          <h2 id="data" className="section" style={{ fontSize: 24 }}>The data</h2>
+          <p className="body-serif" style={{ marginTop: 12, maxWidth: "40em" }}>
+            <DataCredit />
+          </p>
+          <p className="note">
+            The Uniform Law Commission&apos;s act texts are the starting text for this check. They are read
+            when the check runs, on our own machine, and are not shown on this site.
           </p>
         </section>
       </main>

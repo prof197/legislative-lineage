@@ -31,6 +31,8 @@ Find bills in other states that share provisions with a state bill, matched sect
 
 **Used it on real work?** [OUTCOMES.md](OUTCOMES.md) records where it has been used.
 
+**Data.** Bill data from [Open States](https://open.pluralpolicy.com/), by [Plural Policy](https://pluralpolicy.com/) (public domain); bill text from each legislature's website.
+
 ## Results
 
 <!-- results:commission -->
@@ -87,7 +89,7 @@ Each has a mitigation or a plain disclosure; [DESIGN.md](DESIGN.md#known-failure
 
 ### The data
 
-The corpus is Open States' per-session JSON archives for the 50 states, 2023–2026. `snapshot/manifest.json` pins each archive by size and SHA-256.
+The corpus is the per-session JSON archives that [Open States](https://open.pluralpolicy.com/) publishes for the 50 states ([Session JSON Archives](https://open.pluralpolicy.com/data/session-json/)), 2023–2026. `snapshot/manifest.json` pins each archive by size and SHA-256.
 
 ```sh
 uv run lineage fetch-raw   # download the pinned archives into data/raw/
