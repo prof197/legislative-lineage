@@ -10,6 +10,8 @@ from pathlib import Path
 import pytest
 
 from lineage.updates import (
+    OriginGained,
+    OriginLost,
     RecordAdded,
     RecordReplaced,
     RecordUpdated,
@@ -20,6 +22,7 @@ from lineage.updates import (
     fold,
     load_day,
     load_days,
+    origin_changes,
     read_changes,
     record_changes,
     relative_changes,
@@ -144,8 +147,24 @@ def test_an_update_gives_what_a_rebuild_gives(
     assert snapshot(tables, model=FAKE_MODEL) == snapshots[n]
     expected = record_changes(fold(all_days[: n - 1]), all_days[n - 1])
     expected += relative_changes(snapshots[n - 1], snapshots[n], all_days[n - 1].as_of)
+    expected += origin_changes(snapshots[n - 1], snapshots[n], all_days[n - 1].as_of)
     assert changes == expected
     assert read_changes(log) == expected
     again = update(tables, all_days[n - 1], model=FAKE_MODEL, changes_dir=log, floor_bytes=0)
     assert again == []  # applied already
     assert snapshot(tables, model=FAKE_MODEL) == snapshots[n]
+
+
+def test_a_bill_gains_and_loses_published_models_as_it_does_relatives() -> None:
+    def snap(origins: dict[str, tuple[tuple[str, tuple[str, ...], float, float], ...]]) -> Snapshot:
+        return Snapshot(statuses={}, families=frozenset(), relatives={}, origins=origins)
+
+    before = snap({"b1": (("commission/x", ("near_duplicate",), 0.4, 0.9),)})
+    after = snap({"b1": (("commission/y", ("semantic",), 0.2, 0.3),)})
+
+    assert origin_changes(before, after, D3) == [
+        OriginGained(
+            as_of=D3, bill_id="b1", doc_id="commission/y", stages=["semantic"], bill_share=0.3
+        ),
+        OriginLost(as_of=D3, bill_id="b1", doc_id="commission/x"),
+    ]

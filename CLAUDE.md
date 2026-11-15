@@ -51,6 +51,8 @@ uv run lineage agreement-sample  # 50 of the precision sample's pairs, stratifie
 uv run lineage eval agreement  # a person's labels against the model's on that subsample: weighted kappa, cutoff agreement -> reports/results.json
 uv run lineage label-model SAMPLE  # provisional labels from a model, kept apart from people's; asks nothing without --live
 uv run lineage eval precision  # precision per stratum, stage and overall, people's and the model's apart -> reports/results.json
+uv run lineage collect-models SOURCE  # one source's model legislation -> data/modeldocs/<source>/, reports/modeldocs/<source>.json
+uv run lineage origins       # collected model documents against the corpus -> data/tables/origins/matches.jsonl (lane C; not built yet)
 uv run lineage update --day DIR  # apply one day's new and changed records -> data/changes/<as_of>.jsonl (lane L1; not built yet)
 uv run lineage text inventory  # version to fetch per record, by host, robots.txt read -> data/text/plan.parquet, reports/text_inventory.json
 uv run lineage text sample   # quality test: fetch a seeded sample per state and format -> data/text/sample/, reports/text_quality.json
@@ -149,6 +151,10 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   updates.py      the live track's contracts (DR-7): days, records over time, the change log, the snapshot an update must equal
   incremental.py  `lineage update`'s body, one day applied in both directions (lane L1, M10; a stub until then)
   modeldocs.py    model legislation: each source's entry, each collected document, texts per version under data/modeldocs/
+  collect.py      the collector registry: one module per source under collectors/, found by name; the coverage report
+  collectors/     one collector module per source of model legislation, each owned by the lane that builds it
+  origins.py      OriginMatch, both shares and the bill's spans, and the origins table
+  origin_matching.py  `lineage origins`' body: model documents queried against the corpus (lane C, M10; a stub until then)
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
 tools/            dev and CI checks
   leak_check.py   local paths and deny-listed terms in tracked files and every commit

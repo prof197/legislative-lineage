@@ -23,6 +23,7 @@ from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
 from lineage import queries
 from lineage.disk import DEFAULT_FLOOR_BYTES
 from lineage.listing import shipped_flag
+from lineage.origins import read_origin_matches
 from lineage.pairs import load_families
 from lineage.relatives import bill_relatives
 from lineage.semantic import MODEL
@@ -208,8 +209,28 @@ class RelativeLost(_Change):
     relative_id: str
 
 
+class OriginGained(_Change):
+    """A bill found to share wording with a published model document (lineage.origins)."""
+
+    kind: Literal["origin_gained"] = "origin_gained"
+    doc_id: str
+    stages: list[str]
+    bill_share: float
+
+
+class OriginLost(_Change):
+    kind: Literal["origin_lost"] = "origin_lost"
+    doc_id: str
+
+
 Change = Annotated[
-    RecordAdded | RecordUpdated | RecordReplaced | RelativeGained | RelativeLost,
+    RecordAdded
+    | RecordUpdated
+    | RecordReplaced
+    | RelativeGained
+    | RelativeLost
+    | OriginGained
+    | OriginLost,
     Field(discriminator="kind"),
 ]
 _CHANGE: TypeAdapter[Change] = TypeAdapter(Change)
@@ -273,6 +294,7 @@ def record_changes(before: Folded | None, day: Day) -> list[Change]:
 # What an update must reproduce.
 
 Relative = tuple[str, tuple[str, ...], int, float]  # (bill, stages, sections matched, share)
+Origin = tuple[str, tuple[str, ...], float, float]  # (document, stages, model share, bill share)
 
 
 @dataclass(frozen=True, slots=True)
@@ -285,6 +307,7 @@ class Snapshot:
     statuses: Mapping[str, str | None]
     families: frozenset[frozenset[str]]
     relatives: Mapping[str, tuple[Relative, ...]]
+    origins: Mapping[str, tuple[Origin, ...]] = field(default_factory=dict[str, tuple[Origin, ...]])
 
 
 SHARE_PLACES = 9
@@ -319,10 +342,21 @@ def snapshot(tables_dir: Path, *, model: str = MODEL) -> Snapshot:
         )
         for bill_id, r in found.items()
     }
+    origins: dict[str, list[Origin]] = defaultdict(list)
+    for o in read_origin_matches(tables_dir):
+        origins[o.bill_id].append(
+            (
+                o.doc_id,
+                tuple(sorted(o.stages)),
+                round(o.model_share, SHARE_PLACES),
+                round(o.bill_share, SHARE_PLACES),
+            )
+        )
     return Snapshot(
         statuses=statuses,
         families=frozenset(frozenset(m) for m in members.values()),
         relatives=relatives,
+        origins={b: tuple(sorted(os)) for b, os in origins.items()},
     )
 
 
@@ -344,6 +378,28 @@ def relative_changes(before: Snapshot | None, after: Snapshot, as_of: date) -> l
     return out
 
 
+def origin_changes(before: Snapshot | None, after: Snapshot, as_of: date) -> list[Change]:
+    """Every published model a bill gained or lost a match with, by bill then document."""
+    out: list[Change] = []
+    was: Mapping[str, tuple[Origin, ...]] = before.origins if before else {}
+    for bill_id in sorted(set(was) | set(after.origins)):
+        old = {o[0]: o for o in was.get(bill_id, ())}
+        new = {o[0]: o for o in after.origins.get(bill_id, ())}
+        for doc in sorted(set(new) - set(old)):
+            out.append(
+                OriginGained(
+                    as_of=as_of,
+                    bill_id=bill_id,
+                    doc_id=doc,
+                    stages=list(new[doc][1]),
+                    bill_share=new[doc][3],
+                )
+            )
+        for doc in sorted(set(old) - set(new)):
+            out.append(OriginLost(as_of=as_of, bill_id=bill_id, doc_id=doc))
+    return out
+
+
 def update(
     tables_dir: Path,
     day: Day,
@@ -356,10 +412,11 @@ def update(
 
     The contract lane L1 builds to (DESIGN.md#updates): the tables afterwards give the same
     `snapshot` as a full rebuild over every day so far with the same pinned corpus statistics;
-    the log holds `record_changes` for the day, then `relative_changes` between the snapshots
-    before and after it; each new text is matched against the whole corpus, and every existing
-    bill it matches gains it as a relative; a day already applied changes nothing and returns
-    no changes; every large write first checks `floor_bytes` of free space."""
+    the log holds `record_changes` for the day, then `relative_changes` and `origin_changes`
+    between the snapshots before and after it; each new text is matched against the whole corpus
+    and the model documents, and every existing bill it matches gains it as a relative; a day
+    already applied changes nothing and returns no changes; every large write first checks
+    `floor_bytes` of free space."""
     from lineage.incremental import apply_day  # lane L1's module; it imports these contracts
 
     return apply_day(tables_dir, day, model=model, changes_dir=changes_dir, floor_bytes=floor_bytes)

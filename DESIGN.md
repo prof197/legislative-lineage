@@ -28,6 +28,7 @@ Sections marked **To be measured** fill in as the build reaches them. Every numb
 - [Export](#export)
 - [Updates](#updates)
 - [Model documents](#model-documents)
+- [Origin matches](#origin-matches)
 - [Alternatives considered](#alternatives-considered)
 - [Scaling limits](#scaling-limits)
 - [Known failure modes](#known-failure-modes)
@@ -615,6 +616,15 @@ v2 matches bills against published model legislation. A model act or bill is a `
 - **A source** is an organization's public library of model legislation. Its entry names the organization, says what kind of organization it is from public filings (its type and tax status, never a political label), and records what its terms allow and the day they were read. A leaked archive is marked leaked and says how its documents became public. Each source's entry lives in its collector's module, so adding a source edits no shared file.
 - **A document** records its source, title, URL, the organization's own date where it gives one, the day it was collected, what robots.txt said, whether it is leaked (always as its source is), and two SHA-256 digests: of the bytes as fetched and of the cleaned text that matching reads. A URL robots.txt disallows is never collected; a collector reports it instead.
 - **Texts stay local**, under `data/modeldocs/<source>/`, never committed, redistributed or shown, as the commission's act texts are today. Bytes and texts are stored once each under their digests, so a revised text becomes the current version and the earlier one stays on disk with the days it stood, as a bill record's versions do ([Updates](#updates)). Collecting an unchanged text again changes nothing, not even its date.
+- **Collectors** are modules under `lineage/collectors/`, one per source, each declaring its `SOURCE` and a `collect` function; the registry finds them by name, so a new source edits no shared file (`lineage.collect`). `uv run lineage collect-models <source>` runs one and writes its coverage report, `reports/modeldocs/<source>.json`, in which every document found is collected, unchanged, blocked by robots.txt or failed.
+
+## Origin matches
+
+v2 shows, for a bill, the published model documents it shares wording with (`lineage.origins`). `uv run lineage origins` matches every collected document against the corpus, through the existing sections, windows and both stages, without changing the bill index (lane C), and writes `<tables>/origins/matches.jsonl`.
+
+- **Two shares.** A match gives the share of the model's words found in the bill and the share of the bill's words that come from the model. A bill that borrows one section of a long model and a bill that copies a short model whole read differently, and one share alone would make them look alike.
+- **Spans on the bill's side only.** A model's text is never shown, so a match keeps only the characters of the bill's sections that match it, copied or paraphrased.
+- **Updates.** A bill gaining or losing a match is logged like a relative (`origin_gained`, `origin_lost`), and the snapshot an update must equal includes each bill's matches ([Updates](#updates)). A model document added to the collection is matched against every bill.
 
 ## Alternatives considered
 

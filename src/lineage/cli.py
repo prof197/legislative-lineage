@@ -28,6 +28,9 @@ from lineage.agreement import (
 )
 from lineage.align import Embedder, align
 from lineage.answer_key import ANSWER_KEY, HELD_OUT_KEY, build_answer_key, render_answer_key
+from lineage.collect import REPORTS_DIR as COLLECT_REPORTS
+from lineage.collect import CollectContext, CollectError, collectors, run_collector
+from lineage.collect import write_report as write_collect_report
 from lineage.commission import (
     RESULTS,
     CommissionError,
@@ -139,11 +142,14 @@ from lineage.model_labels import (
 )
 from lineage.model_labels import record_spend as record_label_spend
 from lineage.model_labels import spent as label_spent
+from lineage.modeldocs import MODELDOCS_DIR, ModelDocError, read_docs
 from lineage.models import MODELS, MODELS_DIR, ModelError, fetch_model
 from lineage.neighbors import EF_SEARCH, RECALL_FLOOR, build_neighbors
 from lineage.neighbors import REPORT as NEIGHBORS_REPORT
 from lineage.neighbors import check_at as check_neighbors_at
 from lineage.neighbors import write_report as write_neighbors_report
+from lineage.origin_matching import match_models
+from lineage.origins import write_origin_matches
 from lineage.pair_data import PAIR_DATA_DIR, PairDataError, fetch_pair_data
 from lineage.pair_eval import REPORT as PAIR_REPORT
 from lineage.pair_eval import evaluate as evaluate_pairs
@@ -641,6 +647,61 @@ def update_command(
         typer.echo(f"error: not built yet: {e}", err=True)
         raise typer.Exit(1) from e
     typer.echo(f"{len(logged)} changes -> {changes}")
+
+
+@app.command("collect-models")
+def collect_models_command(
+    source: Annotated[str, typer.Argument(help="The source's key, as its collector declares it.")],
+    root: Annotated[
+        Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
+    ] = MODELDOCS_DIR,
+    reports: Annotated[
+        Path, typer.Option("--reports", help="Each source's coverage report (committed).")
+    ] = COLLECT_REPORTS,
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """Collect one source's model legislation through its collector, honoring robots.txt ->
+    <modeldocs>/<source>/, <reports>/<source>.json (DESIGN.md#model-documents)."""
+    context = CollectContext(root=root, floor_bytes=int(min_free_gib * GiB))
+    try:
+        report = run_collector(source, context)
+    except (CollectError, ModelDocError, InsufficientDiskSpaceError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    path = write_collect_report(report, reports)
+    typer.echo(
+        f"{report.found} found: {report.collected} collected, {report.unchanged} unchanged, "
+        f"{len(report.blocked)} blocked by robots.txt, {len(report.failed)} failed -> {path}"
+    )
+
+
+@app.command("origins")
+def origins_command(
+    tables: TablesOption = Path("data/tables"),
+    root: Annotated[
+        Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
+    ] = MODELDOCS_DIR,
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """Match every collected model document against the corpus -> <tables>/origins/matches.jsonl
+    (DESIGN.md#origin-matches)."""
+    docs = [d for c in collectors().values() for d in read_docs(c.source, root)]
+    try:
+        matches = match_models(
+            tables,
+            docs,
+            modeldocs_root=root,
+            model=SEMANTIC_MODEL,
+            floor_bytes=int(min_free_gib * GiB),
+        )
+    except (ModelDocError, InsufficientDiskSpaceError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    except NotImplementedError as e:
+        typer.echo(f"error: not built yet: {e}", err=True)
+        raise typer.Exit(1) from e
+    path = write_origin_matches(tables, matches)
+    typer.echo(f"{len(matches)} matches from {len(docs)} documents -> {path}")
 
 
 @app.command("state-boilerplate")
