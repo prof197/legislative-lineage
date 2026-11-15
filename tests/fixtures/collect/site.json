@@ -1,0 +1,53 @@
+{
+ "_note": "Recorded responses for the commission collector, synthetic: the pages keep the site's shape (catalog by letter, act page, Final Act library document, attachments) with invented acts and keys. A body is inline HTML; a file names a fixture beside this one; build makes a Word or PDF file from one. A URL not listed answers 404.",
+ "https://www.uniformlaws.org/acts/catalog/current": {
+  "content_type": "text/html; charset=utf-8",
+  "body": "<!doctype html><html><body><nav><a href=\"/acts/catalog/current\">ALL</a> <a href=\"/acts/catalog/current/a\">A</a> <a href=\"/acts/catalog/current/h\">H</a> <a href=\"/acts/catalog/current/p\">P</a> K Q</nav><h3><a href=\"/committees/community-home?CommunityKey=00000000-0000-4000-8000-0000000000a1\">Abandoned Lantern Act</a></h3><a href=\"javascript:__doPostBack('pager','2')\">2</a></body></html>"
+ },
+ "https://www.uniformlaws.org/acts/catalog/current/a": {
+  "content_type": "text/html; charset=utf-8",
+  "body": "<!doctype html><html><body><p>3 total</p><h3><a href=\"/committees/community-home?CommunityKey=00000000-0000-4000-8000-0000000000a1\">Abandoned Lantern Act</a></h3><h3><a href=\"/committees/community-home?CommunityKey=00000000-0000-4000-8000-0000000000a2\">Antitrust Pre-Merger Notification Act</a></h3><h3><a href=\"https://www.uniformlaws.org/committees/community-home?CommunityKey=b7e5e644-b4b2-44eb-acbc-019859883add\">Assignment for Benefit of Creditors Act</a></h3><p>See <a href=\"/committees/community-home?CommunityKey=00000000-0000-4000-8000-0000000000ff\">a related committee</a>, not an act heading.</p></body></html>"
+ },
+ "https://www.uniformlaws.org/acts/catalog/current/h": {
+  "content_type": "text/html; charset=utf-8",
+  "body": "<!doctype html><html><body><h3><a href=\"/committees/community-home?CommunityKey=00000000-0000-4000-8000-0000000000b1\">Health-Care Decisions Act</a></h3><h3><a href=\"/committees/community-home?CommunityKey=00000000-0000-4000-8000-0000000000b2\">Harbor Lights Act</a></h3></body></html>"
+ },
+ "https://www.uniformlaws.org/acts/catalog/current/p": {
+  "content_type": "text/html; charset=utf-8",
+  "body": "<!doctype html><html><body><h3><a href=\"/communities/partition-of-lantern-property-act\">Partition of Lantern Property Act</a></h3><h3><a href=\"/committees/community-home?CommunityKey=00000000-0000-4000-8000-0000000000d1\">Pewter Lamp Act</a></h3></body></html>"
+ },
+ "https://www.uniformlaws.org/committees/community-home?CommunityKey=00000000-0000-4000-8000-0000000000b1": {
+  "content_type": "text/html; charset=utf-8",
+  "body": "<!doctype html><html><body><h1>Health-Care Decisions Act</h1><ul><li><a href=\"/viewdocument/enactment-kit-9?CommunityKey=00000000-0000-4000-8000-0000000000b1&amp;tab=librarydocuments\" title=\"Download\">Enactment Kit</a></li><li><a href=\"/viewdocument/final-act-31?CommunityKey=00000000-0000-4000-8000-0000000000b1&amp;tab=librarydocuments\" title=\"Download\">Final Act Documents</a></li></ul><a href=\"#LegBillTrackingAnchor\">Legislative Bill Tracking</a></body></html>"
+ },
+ "https://www.uniformlaws.org/viewdocument/final-act-31?CommunityKey=00000000-0000-4000-8000-0000000000b1&tab=librarydocuments": {
+  "content_type": "text/html; charset=utf-8",
+  "body": "<!doctype html><html><body><h1>Health-Care Decisions Act</h1><h2>Final Act</h2><h3>Attachment(s)</h3><a href=\"/HigherLogic/System/DownloadDocumentFile.ashx?DocumentFileKey=00000000-0000-4000-8000-00000000c001&amp;forceDialog=0\">UHCDA_Final_2026.pdf</a> Uploaded - 01-02-2026 <a href=\"/HigherLogic/System/DownloadDocumentFile.ashx?DocumentFileKey=00000000-0000-4000-8000-00000000c002&amp;forceDialog=0\">UHCDA_Final_NC_2026.docx</a> Uploaded - 01-02-2026 <a href=\"/HigherLogic/System/DownloadDocumentFile.ashx?DocumentFileKey=00000000-0000-4000-8000-00000000c003&amp;forceDialog=0\">UHCDA_Summary.xlsx</a></body></html>"
+ },
+ "https://www.uniformlaws.org/HigherLogic/System/DownloadDocumentFile.ashx?DocumentFileKey=00000000-0000-4000-8000-00000000c002&forceDialog=0": {
+  "content_type": "application/octet-stream",
+  "build": "docx",
+  "file": "synthetic_act.txt"
+ },
+ "https://www.uniformlaws.org/committees/community-home?CommunityKey=00000000-0000-4000-8000-0000000000a2": {
+  "content_type": "text/html; charset=utf-8",
+  "body": "<!doctype html><html><body><h1>Antitrust Pre-Merger Notification Act</h1><a href=\"/viewdocument/withheld-final-act?CommunityKey=00000000-0000-4000-8000-0000000000a2&amp;tab=librarydocuments\">Final Act</a></body></html>"
+ },
+ "https://www.uniformlaws.org/communities/partition-of-lantern-property-act": {
+  "content_type": "text/html; charset=utf-8",
+  "body": "<!doctype html><html><body><h1>Partition of Lantern Property Act</h1><a href=\"/viewdocument/final-act-7?CommunityKey=00000000-0000-4000-8000-0000000000c1&amp;tab=librarydocuments\">Final Act</a></body></html>"
+ },
+ "https://www.uniformlaws.org/viewdocument/final-act-7?CommunityKey=00000000-0000-4000-8000-0000000000c1&tab=librarydocuments": {
+  "content_type": "text/html; charset=utf-8",
+  "body": "<!doctype html><html><body><h2>Final Act</h2><a href=\"/HigherLogic/System/DownloadDocumentFile.ashx?DocumentFileKey=00000000-0000-4000-8000-00000000c101&amp;forceDialog=0\">UPLPA_Final_2025.pdf</a></body></html>"
+ },
+ "https://www.uniformlaws.org/HigherLogic/System/DownloadDocumentFile.ashx?DocumentFileKey=00000000-0000-4000-8000-00000000c101&forceDialog=0": {
+  "content_type": "application/pdf",
+  "build": "pdf",
+  "file": "synthetic_act.txt"
+ },
+ "https://www.uniformlaws.org/committees/community-home?CommunityKey=00000000-0000-4000-8000-0000000000b2": {
+  "content_type": "text/html; charset=utf-8",
+  "body": "<!doctype html><html><body><h1>Harbor Lights Act</h1><a href=\"/viewdocument/enactment-kit-2?CommunityKey=00000000-0000-4000-8000-0000000000b2\">Enactment Kit</a></body></html>"
+ }
+}
