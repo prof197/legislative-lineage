@@ -30,6 +30,7 @@ from lineage.collectors.states_project import (
 )
 from lineage.modeldocs import (
     MODELDOCS_DIR,
+    ModelDoc,
     ModelDocError,
     load_text,
     raw_path,
@@ -71,6 +72,8 @@ HARBOR_TEXT = (
     "i) The [STATE] harbor master shall review each beacon every [X MONTHS].\n"
     "ii) A beacon found dark shall be relit within days.\n"
     "The harbor master shall train each keeper before the season opens.\n"
+    "The harbor master shall keep a record of each lamp.\n"
+    "A record shall be kept for [X YEARS].\n"
 )
 
 
@@ -258,7 +261,14 @@ def test_cleaning_keeps_the_sections_and_drops_the_pages_asides() -> None:
     # The summary section, each approach's description, the language labels, the examples
     # line and the instruction to the drafter go; enacted placeholders stay as written.
     assert harbor.text == HARBOR_TEXT
-    for gone in ("summary", "Beacon Review", "Sample language", "Examples include", "specify"):
+    for gone in (
+        "summary",
+        "Beacon Review",
+        "Lamp Records",
+        "Sample language",
+        "Examples",
+        "specify",
+    ):
         assert gone not in harbor.text
     # Only the model bill is read: nothing before its heading, after "Related Policies", or
     # in a script that names both.
@@ -284,6 +294,7 @@ def test_the_cleaned_headings_are_where_sections_split() -> None:
          "Section 3. Provisions\na) Law."),
         (["1) (Label) A description.", "Sample language:", "i) Law."], "i) Law."),
         (["a) Model language: Law."], "Law."),
+        (["Sample language: Sample Language: Law."], "Law."),
         (["Example includes: a link"], ""),
         (["i) Filed with [insert office] by [DATE]."], "i) Filed with by [DATE]."),
     ],
@@ -337,11 +348,17 @@ def test_the_command_collects_through_the_registry(
     assert "6 found: 0 collected, 3 unchanged" in again.output
 
 
-# Real samples: the texts integration collected, under the data directory.
+# Real samples: the pages integration collected, under the data directory, cleaned as this
+# collector cleans them now, so a fix to the cleaning is tested before the next collection.
+def _cleaned(doc: ModelDoc) -> str:
+    page = Fetched(doc.url, doc.media_type, raw_path(doc, MODELDOCS_DIR).read_bytes())
+    policy = model_policy(page)
+    return "" if policy is None else policy.text
+
+
 def _collected() -> list[tuple[str, str]]:
     try:
-        docs = read_docs(SOURCE, MODELDOCS_DIR)
-        return [(d.id, load_text(d, MODELDOCS_DIR)) for d in docs]
+        return [(d.id, _cleaned(d)) for d in read_docs(SOURCE, MODELDOCS_DIR)]
     except (OSError, ValueError, ModelDocError):
         return []
 
