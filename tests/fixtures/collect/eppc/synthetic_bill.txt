@@ -1,7 +1,7 @@
 invented project name
 Model Legislation
 for a Synthetic Lantern Registry
-(invented for tests; not a text either organization published)
+(invented for tests; not a text the organization published)
 A. Drafter, Example Policy Center
 B. Drafter, Example Family Institute
 Endorsed by an Example Coalition

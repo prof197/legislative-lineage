@@ -1,0 +1,5 @@
+# Synthetic, in the shape of the organization's robots.txt: one report directory is barred to
+# every crawler, an invented one here, and the rest is open. (The real rule ends in "/*", which
+# Python's parser reads as a literal path; the directory form here is the one it applies.)
+User-agent: *
+Disallow: /reports/synthetic-map/
