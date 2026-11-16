@@ -186,6 +186,26 @@ def store(
     return True
 
 
+def withdraw(source: Source, doc_id: str, *, on: date, root: Path = MODELDOCS_DIR) -> bool:
+    """Take a document its collector now finds out of scope off the current list, as of `on`;
+    returns whether it was there. Its version closes that day and its text stays on disk, as a
+    replaced version's does, so what was matched before stays traceable."""
+    current = {d.id: d for d in read_docs(source, root)}
+    if doc_id not in current:
+        return False
+    del current[doc_id]
+    versions = [
+        v.model_copy(update={"replaced_on": on})
+        if v.doc_id == doc_id and v.replaced_on is None
+        else v
+        for v in read_versions(source, root)
+    ]
+    directory = source_dir(source.key, root)
+    _write_lines(directory / VERSIONS_FILE, versions)
+    _write_lines(directory / DOCS_FILE, [current[k] for k in sorted(current)])
+    return True
+
+
 def load_text(doc: ModelDoc, root: Path = MODELDOCS_DIR) -> str:
     """A document's cleaned text, checked against its recorded hash."""
     data = text_path(doc, root).read_bytes()

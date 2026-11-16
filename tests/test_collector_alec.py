@@ -16,7 +16,7 @@ from typer.testing import CliRunner
 
 from lineage.cli import app
 from lineage.collect import CollectContext, CollectReport, collectors
-from lineage.collect_base import Fetched
+from lineage.collect_base import Fetched, provenance
 from lineage.collectors import alec
 from lineage.collectors.alec import (
     DOCX,
@@ -41,6 +41,7 @@ from lineage.modeldocs import (
     read_docs,
     read_versions,
     sha256,
+    store,
 )
 from lineage.modeltext import ModelTextError, docx_text
 from lineage.robots import Robots, parse_robots
@@ -215,6 +216,25 @@ def test_older_layouts_are_read_by_what_their_pages_and_bodies_give(tmp_path: Pa
     for slug in ("lamp-policies-annual-meeting", "statement-of-principles-on-wicks"):
         assert api(slug) in asked
     assert not any("draft-wick-act" in url and "wp-json" in url for url in asked)
+
+
+def test_a_policy_stored_before_and_now_out_of_scope_is_withdrawn(tmp_path: Path) -> None:
+    root = tmp_path / "modeldocs"
+    slug = "lamp-lighting-ordinance"  # its page types it a model policy; its text is local
+    text = "Section 1. A lamp.\n"
+    earlier = provenance(
+        SOURCE, slug=slug, title="Lamp Lighting Ordinance", url=policy(slug), raw=b"raw",
+        media_type="application/json", text=text, robots="allowed", collected_on=date(2026, 11, 1),
+    )  # fmt: skip
+    store(SOURCE, earlier, raw=b"raw", text=text, root=root)
+
+    report = _run(tmp_path, recorded())
+
+    assert report.withdrawn == [f"alec/{slug}"]
+    assert f"alec/{slug}" not in {d.id for d in read_docs(SOURCE, root)}
+    (version,) = [v for v in read_versions(SOURCE, root) if v.doc_id == f"alec/{slug}"]
+    assert version.replaced_on == DAY  # closed, its text kept
+    assert _run(tmp_path, recorded()).withdrawn == []
 
 
 def test_a_rerun_changes_nothing(tmp_path: Path) -> None:

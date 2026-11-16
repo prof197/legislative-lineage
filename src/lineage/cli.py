@@ -693,9 +693,11 @@ def collect_models_command(
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
     path = write_collect_report(report, reports)
+    withdrawn = f", {len(report.withdrawn)} withdrawn" if report.withdrawn else ""
     typer.echo(
         f"{report.found} found: {report.collected} collected, {report.unchanged} unchanged, "
-        f"{len(report.blocked)} blocked by robots.txt, {len(report.failed)} failed -> {path}"
+        f"{len(report.blocked)} blocked by robots.txt, {len(report.failed)} failed{withdrawn} "
+        f"-> {path}"
     )
 
 

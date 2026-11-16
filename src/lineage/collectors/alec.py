@@ -430,14 +430,21 @@ def _collect_policy(
     except (CollectFetchError, ExtractError) as e:
         c.fail(url, str(e))
         return
+    match = _POLICY_PAGE.match(url)
+    slug = urllib.parse.unquote(match.group(1)) if match is not None else None
+
+    def out_of_scope() -> None:
+        # Read and found not to be model state legislation: withdrawn if stored before.
+        if slug is not None:
+            c.out_of_scope(slug)
+
     if page.status.lower() not in statuses:
-        return
+        return out_of_scope()
     if page.kind is not None and page.kind.lower() not in types:
-        return
-    if (match := _POLICY_PAGE.match(url)) is None:
+        return out_of_scope()
+    if slug is None:
         c.fail(url, "not a policy page")
         return
-    slug = urllib.parse.unquote(match.group(1))
     api = api_url(slug)
     if (robots := c.check(api)) is None:
         return
@@ -453,9 +460,9 @@ def _collect_policy(
     if page.kind is None:
         kind = body_kind(_title(policy.title), body, policy.content)
         if kind is None or kind.lower() not in types:
-            return
+            return out_of_scope()
     if local_measure(_title(policy.title), body):
-        return
+        return out_of_scope()
     raw, media_type = response.body, "application/json"
     try:
         if not has_law(body) and (file_url := attachment(policy.content)) is not None:

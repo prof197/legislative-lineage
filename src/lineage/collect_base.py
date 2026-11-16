@@ -22,7 +22,7 @@ from lineage import robots as robots_txt
 from lineage.collect import CollectContext, CollectFailure, CollectReport
 from lineage.disk import require_free_space
 from lineage.fetch import open_url
-from lineage.modeldocs import ModelDoc, Source, sha256, store
+from lineage.modeldocs import ModelDoc, Source, sha256, store, withdraw
 from lineage.pace import MIN_INTERVAL_SECONDS
 from lineage.robots import Robots
 
@@ -123,6 +123,7 @@ class Collection:
     unchanged: int = 0
     blocked: list[str] = field(default_factory=list[str])
     failed: list[CollectFailure] = field(default_factory=list[CollectFailure])
+    withdrawn: list[str] = field(default_factory=list[str])
     _robots: dict[tuple[str, str], Robots] = field(default_factory=dict[tuple[str, str], Robots])
 
     def robots_for(self, url: str) -> Robots:
@@ -186,6 +187,15 @@ class Collection:
             self.unchanged += 1
         return changed
 
+    def out_of_scope(self, slug: str) -> None:
+        """A document this run read and found not to be the source's model state legislation:
+        not counted as found, and withdrawn from the current list if an earlier run stored it.
+        Only a collector that has read the document says so; a document a run could not read
+        is failed, never withdrawn."""
+        doc_id = f"{self.source.key}/{slug}"
+        if withdraw(self.source, doc_id, on=self.context.on, root=self.context.root):
+            self.withdrawn.append(doc_id)
+
     def report(self) -> CollectReport:
         return CollectReport(
             source=self.source.key,
@@ -195,4 +205,5 @@ class Collection:
             unchanged=self.unchanged,
             blocked=sorted(self.blocked),
             failed=sorted(self.failed, key=lambda f: f.url),
+            withdrawn=sorted(self.withdrawn),
         )

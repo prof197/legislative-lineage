@@ -53,6 +53,9 @@ class CollectReport(BaseModel):
     unchanged: int = Field(ge=0)
     blocked: list[str]  # URLs robots.txt disallows for this project
     failed: list[CollectFailure]
+    # Documents stored before that this run read and found out of scope: no longer current,
+    # and not among those found.
+    withdrawn: list[str] = Field(default_factory=list[str])
 
     @model_validator(mode="after")
     def _every_document_is_accounted_for(self) -> Self:
