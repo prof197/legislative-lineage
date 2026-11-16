@@ -25,12 +25,17 @@ from lineage.collectors.alec import (
     ApiPolicy,
     api_policy,
     attachment,
+    body_kind,
     clean_policy,
     collect_from,
+    has_law,
+    local_measure,
+    policy_start,
 )
 from lineage.extract import html_text, pdf_text
 from lineage.modeldocs import (
     MODELDOCS_DIR,
+    ModelDoc,
     load_text,
     raw_path,
     read_docs,
@@ -49,6 +54,7 @@ FILE = f"{SITE}/wp-content/uploads/2026/01/Synthetic-Lantern-Amendments.docx"
 WITHHELD = f"{SITE}/model-policy/withheld-lamp-act/"
 
 LANTERN = (
+    "BE IT ENACTED BY THE LEGISLATURE OF THE STATE OF\n"
     "Section 1. {Title}\n"
     "This Act may be cited as the Synthetic Lantern Registry Act.\n"
     "Section 2. {Definitions}\n"
@@ -107,26 +113,27 @@ def test_the_library_is_collected_with_provenance_and_every_policy_found_account
     site = recorded()
     report = _run(tmp_path, site)
 
-    # Seven policies of the kinds collected; the statement, the ordinance and the draft are not
-    # model state legislation, so they are neither collected nor counted.
-    assert (report.found, report.collected, report.unchanged) == (7, 3, 0)
+    # Ten policies of the kinds collected. The statements, the ordinances, the drafts and the
+    # list of a meeting's policies are not model state legislation: neither collected nor
+    # counted, whether the page's Type says so or, on an older page without one, its body does.
+    assert (report.found, report.collected, report.unchanged) == (10, 6, 0)
     assert report.blocked == [WITHHELD]
     failed = {f.url: f.reason for f in report.failed}
     assert failed == {
         policy("hollow-lamp-act"): "the API lists no policy hollow-lamp-act",
         policy("missing-lamp-act"): "HTTP 404",
-        policy("unlabeled-lamp-act"): "no Type or Status on the policy's page",
+        policy("renamed-lamp-act"): "no section, clause or provision in the body",
     }
 
     asked = [url for url, _ in site.requests]
-    # robots.txt first: the disallowed page is never asked for. A policy outside the kinds
-    # collected costs its page only; the archive's own page and its pages of cards are skipped.
+    # robots.txt first: the disallowed page is never asked for. A policy its page rules out
+    # costs that page only; the archive's own page and its pages of cards are skipped.
     assert WITHHELD not in asked
     assert policy("statement-of-principles-on-lanterns") in asked
     assert not any(
         slug in url and "wp-json" in url
         for url in asked
-        for slug in ("statement-of", "draft-lamp", "lamp-post")
+        for slug in ("statement-of-principles-on-lanterns", "draft-", "lamp-post")
     )
     assert f"{SITE}/model-policy/" not in asked
     assert f"{SITE}/model-policy/page/2/" not in asked
@@ -138,7 +145,10 @@ def test_the_library_is_collected_with_provenance_and_every_policy_found_account
     docs = {d.id: d for d in read_docs(SOURCE, root)}
     assert sorted(docs) == [
         "alec/amendments-to-lantern-registry-act",
+        "alec/headed-lamp-act",
+        "alec/lamp-keepers-recital",
         "alec/lantern-registry-act",
+        "alec/older-lamp-act",
         "alec/resolution-in-support-of-lamp-week",
     ]
     lantern = docs["alec/lantern-registry-act"]
@@ -165,9 +175,46 @@ def test_the_library_is_collected_with_provenance_and_every_policy_found_account
     assert (amendment.media_type, amendment.published) == (DOCX, date(2026, 3, 3))
     assert amendment.raw_sha256 == sha256(docx_bytes(AMENDMENT.read_text()))
     assert load_text(amendment, root) == (
+        "Amendments to the Synthetic Lantern Registry Act\n"
         "Section 3. {Registration}\nA keeper shall register each lantern within [90] days with.\n"
     )
     assert FILE in asked
+
+
+def test_older_layouts_are_read_by_what_their_pages_and_bodies_give(tmp_path: Path) -> None:
+    site = recorded()
+    _run(tmp_path, site)
+    root = tmp_path / "modeldocs"
+    docs = {d.id: d for d in read_docs(SOURCE, root)}
+
+    # A Type and a Date Amended but no Status: final. Its summary, the label that ends it, the
+    # drafter's placeholders, unpaired brackets and the source line go.
+    older = docs["alec/older-lamp-act"]
+    assert older.published == date(2013, 1, 29)
+    assert load_text(older, root) == (
+        "Sec 1. {Short Title.} This Act may be cited as the Older Lamp Act.\n"
+        "Section 2. {Registry.} The shall keep the registry of lamps under.\n"
+    )
+    # No Type: its body's label makes it a resolution, read from the first recital.
+    recital = docs["alec/lamp-keepers-recital"]
+    assert recital.published is None
+    assert load_text(recital, root) == (
+        "WHERAS, invented keepers tend invented lamps; and\n"
+        "THEREFORE BE IT RESOLVED, that the legislature of thanks them.\n"
+    )
+    # No section numbers: the body is the policy from its first line.
+    assert load_text(docs["alec/headed-lamp-act"], root) == (
+        "Definitions\n"
+        "(1) “Lamp” means an invented light.\n"
+        "Keeper Operations\n"
+        "A keeper shall trim each lamp.\n"
+        "A keeper may not sell oil.\n"
+    )
+    # A page ruled out by what its body is still cost the API request that told it.
+    asked = [url for url, _ in site.requests]
+    for slug in ("lamp-policies-annual-meeting", "statement-of-principles-on-wicks"):
+        assert api(slug) in asked
+    assert not any("draft-wick-act" in url and "wp-json" in url for url in asked)
 
 
 def test_a_rerun_changes_nothing(tmp_path: Path) -> None:
@@ -187,7 +234,7 @@ def test_a_revised_text_becomes_a_new_version(tmp_path: Path) -> None:
     site.overrides[FILE] = docx_bytes(AMENDMENT.read_text().replace("[90]", "[120]"))
     report = _run(tmp_path, site, on=date(2026, 12, 1))
 
-    assert (report.collected, report.unchanged) == (1, 2)
+    assert (report.collected, report.unchanged) == (1, 5)
     versions = [
         v
         for v in read_versions(SOURCE, tmp_path / "modeldocs")
@@ -204,7 +251,7 @@ def test_an_unreadable_file_fails_its_policy_only(tmp_path: Path) -> None:
     site.overrides[FILE] = b"not a Word file"
     report = _run(tmp_path, site)
 
-    assert (report.found, report.collected) == (7, 2)
+    assert (report.found, report.collected) == (10, 5)
     reason = {f.url: f.reason for f in report.failed}[policy("amendments-to-lantern-registry-act")]
     assert "unreadable Word document" in reason
 
@@ -340,9 +387,148 @@ def test_enacted_text_stays_as_written(kept: str) -> None:
     assert clean_policy(f"Section 1. {{Title}}\n{kept}\n") == f"Section 1. {{Title}}\n{kept}\n"
 
 
-def test_a_text_with_no_section_or_clause_is_refused() -> None:
-    with pytest.raises(ModelTextError, match="no numbered section"):
-        clean_policy("(See Amendments Here)\n")
+def test_a_text_with_no_section_clause_or_provision_is_refused() -> None:
+    for notice in ("(See Amendments Here)\n", "The Lamp Act is now called the Wick Act.\n"):
+        with pytest.raises(ModelTextError, match="no section, clause or provision"):
+            clean_policy(notice)
+
+
+@pytest.mark.parametrize(
+    ("given", "cleaned"),
+    [
+        ("The [insert department} shall act.", "The shall act."),
+        ("under {insert code reference]; or", "under; or"),
+        ("the chamber of [INSERT STATE/COMMONWEALTH) urges", "the chamber of urges"),
+        ("posted on the {insert appropriate board website and", "posted on the"),
+        (
+            "kept in the [Insert state} Treasury account [60] days",
+            "kept in the Treasury account [60] days",
+        ),
+    ],
+)
+def test_an_instruction_whose_brackets_do_not_pair_goes_and_no_more(
+    given: str, cleaned: str
+) -> None:
+    assert clean_policy(f"Section 1. {{Title}}\n{given}\nSection 2. {{Effective date.}}\n") == (
+        f"Section 1. {{Title}}\n{cleaned}\nSection 2. {{Effective date.}}\n"
+    )
+
+
+@pytest.mark.parametrize(
+    "line",
+    [
+        "Renewed by the Task Forces on Invented Affairs on July 16-17, 2020",
+        "Renewal approved by the Board of Directors on August 9, 2020",
+        "Amended by the ALEC Board of Directors on August 30, 2024.",
+        "Source Book of American State Legislation 1987-88",
+        "{Title, enacting clause, etc.}",
+        "Model Legislation",
+        "Model Resolution:",
+    ],
+)
+def test_the_older_policies_marks_go(line: str) -> None:
+    assert clean_policy(f"Sec 1. {{Title}} A rule shall stand.\n{line}\n") == (
+        "Sec 1. {Title} A rule shall stand.\n"
+    )
+
+
+@pytest.mark.parametrize(
+    ("given", "cleaned"),
+    [
+        # A summary, ended by its label; numbered points in it are not provisions.
+        (
+            "An Invented Act\nSummary\nThis Act would light lamps.\n1. It lights them.\n"
+            "Model Legislation\n(A) A keeper shall light each lamp.\n",
+            "(A) A keeper shall light each lamp.\n",
+        ),
+        # No label: the summary runs to the first section or clause.
+        (
+            "Summary: This Act would light lamps.\nBe it enacted by the Legislature:\n"
+            "A keeper shall light each lamp.\n",
+            "Be it enacted by the Legislature:\nA keeper shall light each lamp.\n",
+        ),
+        # A one-paragraph summary after the enacting clause.
+        (
+            "BE IT ENACTED BY THE LEGISLATURE:\nSummary: This bill would light lamps.\n"
+            "100.01 Definitions.\n",
+            "BE IT ENACTED BY THE LEGISLATURE:\n100.01 Definitions.\n",
+        ),
+        # A label first, then the summary.
+        (
+            "Model Legislation\nSummary\nAn invented summary.\nSection 1. {Title}\nA rule.\n",
+            "Section 1. {Title}\nA rule.\n",
+        ),
+        # No summary: everything from the top is the policy, sections or not.
+        (
+            "All fees collected by the State shall fund roads.\n(A) Maintenance;\n"
+            "Section 2 {Severability clause.}\n",
+            "All fees collected by the State shall fund roads.\n(A) Maintenance;\n"
+            "Section 2 {Severability clause.}\n",
+        ),
+        (
+            "An Act concerning lamps.\nBe it enacted by the Legislature of this state:\n"
+            "Sec 1. (a) A keeper shall light each lamp.\nSec. 2. This act takes effect.\n",
+            "An Act concerning lamps.\nBe it enacted by the Legislature of this state:\n"
+            "Sec 1. (a) A keeper shall light each lamp.\nSec. 2. This act takes effect.\n",
+        ),
+        (
+            "WHEREAS, lamps are invented; and\nNOW, THEREFORE, the State amends its code.\n"
+            "Section 1. A keeper shall light each lamp.\n",
+            "WHEREAS, lamps are invented; and\nNOW, THEREFORE, the State amends its code.\n"
+            "Section 1. A keeper shall light each lamp.\n",
+        ),
+    ],
+)
+def test_a_policy_begins_after_its_summary_or_at_its_top(given: str, cleaned: str) -> None:
+    assert clean_policy(given) == cleaned
+
+
+@pytest.mark.parametrize(
+    ("title", "body", "kind"),
+    [
+        ("Statement of Principles on Wicks", "Wicks shall be trimmed.", "Statement of Principle"),
+        ("Lamp Lighting Ordinance", "Section 1. Lamps shall be lit.", "Model Ordinance"),
+        ("Lamp Keepers Recital", "Summary\nModel Resolution\nWHEREAS, lamps", "Model Resolution"),
+        ("Older Lamp Act", "Summary\nModel Legislation\nSection 1.", "Model Policy"),
+        ("Resolution on Wicks", "WHEREAS, wicks burn;", "Model Resolution"),
+        ("Headed Lamp Act", "Definitions\n(1) Lamp means a light.", "Model Policy"),
+        ("Lamp Policies Annual Meeting", "Members met.\nLantern Registry Act", None),
+    ],
+)
+def test_an_older_page_without_a_type_is_told_by_its_body(
+    title: str, body: str, kind: str | None
+) -> None:
+    assert body_kind(title, body) == kind
+
+
+def test_a_list_of_other_policies_is_not_one_though_its_summaries_say_shall() -> None:
+    content = (
+        '<p><a href="https://alec.org/model-policy/lantern-registry-act/">Lantern Act</a></p>'
+        "<p>Keepers shall register lanterns.</p>"
+        "<p><a href='/model-policy/wick-act/'>Wick Act</a></p><p>Wicks shall be trimmed.</p>"
+    )
+    body = html_text(content.encode(), "utf-8")
+    assert has_law(body)
+    assert body_kind("Lamp Policies Annual Meeting", body, content) is None
+
+
+@pytest.mark.parametrize(
+    ("title", "body", "local"),
+    [
+        ("Lamp Lighting Ordinance", "Section 1. Lamps shall be lit.", True),
+        ("Proclamation Recognizing Lamp Day", "I do hereby proclaim it.", True),
+        ("Wick Act", "NOW, THEREFORE, BE IT ORDAINED BY THE COUNCIL:", True),
+        ("Wick Resolution", "THE [Insert Governing Body] OF THE [Insert Jurisdiction]", True),
+        (
+            "Prohibition on Local Ordinances Restricting Lamps Act",
+            "No city shall ban lamps.",
+            False,
+        ),
+        ("Wick Act", "The county commission shall report to the state.", False),
+    ],
+)
+def test_a_local_measure_is_told_by_its_title_or_text(title: str, body: str, local: bool) -> None:
+    assert local_measure(title, body) is local
 
 
 def test_an_amendment_is_read_from_the_file_it_links() -> None:
@@ -360,53 +546,100 @@ def test_an_amendment_is_read_from_the_file_it_links() -> None:
 
 
 # ---- real samples, local only ---------------------------------------------------------------
+#
+# Each reads the collected policies' stored raw files (the API's answer, or an attached file)
+# and asserts counts only, so a failure never prints a policy's text. The first compares the
+# stored texts with a fresh cleaning, so it fails until integration collects again after the
+# cleaning changes; the others check a fresh cleaning of each raw file, so they hold either way.
 
-_INSTRUCTION_LEFT = re.compile(r"[\[{]\s*(?:cite|insert|specify|reference)\b", re.IGNORECASE)
-_LAW = re.compile(
-    r"^\s*\[?(?:section|sec\.)\s+\d+|^\s*(?:whereas|be\s+it|now,?\s+therefore|resolved)\b", re.I
+# Measured independently of the collector's own rules.
+_INSTRUCTION_LEFT = re.compile(
+    r"[\[{]\s*(?:cite|citation|insert|specify|reference)\b|\{\s*title,\s*enacting", re.I
+)
+_NOTE_LEFT = re.compile(r"^\s*[\[{(]?\s*(?:(?:drafting|legislative)\s+notes?\b|notes?\s*:)", re.I)
+_APPROVAL_LEFT = re.compile(
+    r"^\s*\(?\s*(?:re-?)?(?:approved|adopted|renewed|renewal\s+approved)\s+by\b.{0,80}"
+    r"\b(?:board\s+of\s+directors|task\s+forces?)\b",
+    re.IGNORECASE,
+)
+# A summary's heading, and a Utah bill's descriptions that stand where a summary would.
+_SUMMARY_LEFT = re.compile(
+    r"^\s*(?:(?:model\s+policy\s+)?summary\b|general\s+description\s*:|highlighted\s+provisions"
+    r"\s*:?\s*$|the\s+problem\s*$)",
+    re.IGNORECASE,
+)
+_LABEL_LEFT = re.compile(r"^\s*model\s+(?:legislation|policy|resolution)\s*:?\s*$", re.I)
+_SECTION_OR_CLAUSE = re.compile(
+    r"^\s*[\[“\"]?(?:new\s+section\.?\s*)?(?:section|sec\.?)\s+(?:\d|[ivx]+\b|x+\b|_)"
+    r"|^\s*(?:where?as\b|(?:now,?\s+)?(?:therefore,?\s+)?be\s+it\s+(?:enacted|resolved))",
+    re.IGNORECASE,
 )
 
 
-def _collected() -> list[Path]:
-    docs = read_docs(SOURCE, MODELDOCS_DIR)
-    return [raw_path(d) for d in docs if raw_path(d).exists()]
+def _collected() -> list[ModelDoc]:
+    try:
+        docs = read_docs(SOURCE, MODELDOCS_DIR)
+    except (OSError, ValueError):
+        return []
+    return [d for d in docs if raw_path(d).exists()]
+
+
+def _body(doc: ModelDoc) -> str:
+    """A collected policy's stored raw file, read as the collector reads it."""
+    raw = raw_path(doc).read_bytes()
+    if doc.media_type == "application/json":
+        return html_text(json.loads(raw)[0]["content"]["rendered"].encode(), "utf-8")
+    return docx_text(raw) if doc.media_type == DOCX else pdf_text(raw)
 
 
 @pytest.mark.skipif(not _collected(), reason="no ALEC policies under the data directory")
-def test_every_collected_policy_rereads_to_its_stored_text_and_keeps_its_law() -> None:
-    # Counts only, so a failure never prints a policy's text.
-    rereads = heads = instructions = notes = approvals = 0
-    docs = read_docs(SOURCE, MODELDOCS_DIR)
-    for doc in docs:
-        raw = raw_path(doc).read_bytes()
-        if doc.media_type == "application/json":
-            content = json.loads(raw)[0]["content"]["rendered"]
-            body = html_text(content.encode(), "utf-8")
-        elif doc.media_type == DOCX:
-            body = docx_text(raw)
-        else:
-            body = pdf_text(raw)
-        stored = load_text(doc)
-        rereads += clean_policy(body) == stored and clean_policy(stored) == stored
-        heads += bool(_LAW.match(stored.split("\n")[0]))
-        instructions += len(_INSTRUCTION_LEFT.findall(stored))
-        notes += sum(1 for line in stored.split("\n") if alec._NOTE_LINE.match(line))  # pyright: ignore[reportPrivateUsage]
-        approvals += sum(1 for line in stored.split("\n") if alec._APPROVAL.match(line))  # pyright: ignore[reportPrivateUsage]
-    assert rereads == len(docs)
-    assert heads == len(docs)
-    assert (instructions, notes, approvals) == (0, 0, 0)
+def test_every_collected_policys_stored_text_is_its_cleaning_and_in_scope() -> None:
+    docs = _collected()
+    rereads = sum(clean_policy(_body(d)) == load_text(d) for d in docs)
+    local = sum(local_measure(d.title, _body(d)) for d in docs)
+    assert (rereads, local) == (len(docs), 0)
+
+
+@pytest.mark.skipif(not _collected(), reason="no ALEC policies under the data directory")
+def test_every_collected_policy_cleans_to_its_law_and_nothing_else() -> None:
+    texts = [clean_policy(_body(d)) for d in _collected()]
+    lines = [line for text in texts for line in text.split("\n") if line]
+
+    assert sum(has_law(text) for text in texts) == len(texts)
+    assert sum(clean_policy(text) == text for text in texts) == len(texts)
+    assert len([m for text in texts for m in _INSTRUCTION_LEFT.finditer(text)]) == 0
+    assert sum(1 for line in lines if _NOTE_LEFT.match(line)) == 0
+    assert sum(1 for line in lines if _APPROVAL_LEFT.match(line)) == 0
+    assert sum(1 for line in lines if _SUMMARY_LEFT.match(line) or _LABEL_LEFT.match(line)) == 0
+
+
+@pytest.mark.skipif(not _collected(), reason="no ALEC policies under the data directory")
+def test_only_a_summary_is_cut_from_the_front_of_a_policy() -> None:
+    cut = with_law = without_summary = 0
+    for doc in _collected():
+        lines = [line.strip() for line in _body(doc).split("\n") if line.strip()]
+        front = lines[: policy_start(lines)]
+        if front:
+            cut += 1
+            with_law += any(_SECTION_OR_CLAUSE.match(line) for line in front)
+            without_summary += not any(_SUMMARY_LEFT.match(line) for line in front)
+    # The front cut is an older body's summary, never a section or clause.
+    assert (with_law, without_summary) == (0, 0)
+    assert cut <= 0.1 * len(_collected())
 
 
 @pytest.mark.skipif(not _collected(), reason="no ALEC policies under the data directory")
 def test_cleaning_keeps_most_of_each_collected_policys_words() -> None:
-    low = 0
-    docs = read_docs(SOURCE, MODELDOCS_DIR)
+    docs = _collected()
+    low_of_body = low_of_policy = 0
     for doc in docs:
-        if doc.media_type != "application/json":
-            continue
-        content = json.loads(raw_path(doc).read_bytes())[0]["content"]["rendered"]
-        before = len(html_text(content.encode(), "utf-8").split())
-        kept = len(load_text(doc).split())
-        # Labels, approval lines and instructions are a few words; losing more is losing law.
-        low += kept < 0.8 * before
-    assert low <= 0.05 * len(docs)
+        lines = [line.strip() for line in _body(doc).split("\n") if line.strip()]
+        kept = len(clean_policy(_body(doc)).split())
+        # Labels, notes, approval lines and instructions are a few words; losing more is
+        # losing law. Measured against the whole body, and again from where the policy
+        # begins, where a lost word of law weighs more: an older body's summary, up to 1,400
+        # words, is not law, and the test above holds that only a summary is cut from the front.
+        low_of_body += kept < 0.8 * sum(len(line.split()) for line in lines)
+        low_of_policy += kept < 0.8 * sum(len(x.split()) for x in lines[policy_start(lines) :])
+    assert low_of_body <= 0.05 * len(docs)
+    assert low_of_policy <= 0.05 * len(docs)

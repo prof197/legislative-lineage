@@ -10,7 +10,7 @@
  },
  "https://alec.org/model-policy-sitemap2.xml": {
   "content_type": "text/xml; charset=UTF-8",
-  "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><?xml-stylesheet type=\"text/xsl\" href=\"//alec.org/main-sitemap.xsl\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><url><loc>https://alec.org/model-policy/amendments-to-lantern-registry-act/</loc><lastmod>2026-11-10T20:18:45+00:00</lastmod></url><url><loc>https://alec.org/model-policy/lamp-post-ordinance/</loc><lastmod>2026-11-10T20:18:45+00:00</lastmod></url><url><loc>https://alec.org/model-policy/missing-lamp-act/</loc><lastmod>2026-11-10T20:18:45+00:00</lastmod></url><url><loc>https://alec.org/model-policy/hollow-lamp-act/</loc><lastmod>2026-11-10T20:18:45+00:00</lastmod></url><url><loc>https://alec.org/model-policy/unlabeled-lamp-act/</loc><lastmod>2026-11-10T20:18:45+00:00</lastmod></url><url><loc>https://alec.org/model-policy/page/2/</loc><lastmod>2026-11-10T20:18:45+00:00</lastmod></url></urlset>"
+  "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><?xml-stylesheet type=\"text/xsl\" href=\"//alec.org/main-sitemap.xsl\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><url><loc>https://alec.org/model-policy/amendments-to-lantern-registry-act/</loc><lastmod>2026-11-10T20:18:45+00:00</lastmod></url><url><loc>https://alec.org/model-policy/lamp-post-ordinance/</loc><lastmod>2026-11-10T20:18:45+00:00</lastmod></url><url><loc>https://alec.org/model-policy/missing-lamp-act/</loc><lastmod>2026-11-10T20:18:45+00:00</lastmod></url><url><loc>https://alec.org/model-policy/hollow-lamp-act/</loc><lastmod>2026-11-10T20:18:45+00:00</lastmod></url><url><loc>https://alec.org/model-policy/lamp-policies-annual-meeting/</loc><lastmod>2026-11-10T20:18:45+00:00</lastmod></url><url><loc>https://alec.org/model-policy/older-lamp-act/</loc><lastmod>2026-11-10T20:18:45+00:00</lastmod></url><url><loc>https://alec.org/model-policy/lamp-keepers-recital/</loc><lastmod>2026-11-10T20:18:45+00:00</lastmod></url><url><loc>https://alec.org/model-policy/headed-lamp-act/</loc><lastmod>2026-11-10T20:18:45+00:00</lastmod></url><url><loc>https://alec.org/model-policy/renamed-lamp-act/</loc><lastmod>2026-11-10T20:18:45+00:00</lastmod></url><url><loc>https://alec.org/model-policy/lamp-lighting-ordinance/</loc><lastmod>2026-11-10T20:18:45+00:00</lastmod></url><url><loc>https://alec.org/model-policy/statement-of-principles-on-wicks/</loc><lastmod>2026-11-10T20:18:45+00:00</lastmod></url><url><loc>https://alec.org/model-policy/draft-wick-act/</loc><lastmod>2026-11-10T20:18:45+00:00</lastmod></url><url><loc>https://alec.org/model-policy/page/2/</loc><lastmod>2026-11-10T20:18:45+00:00</lastmod></url></urlset>"
  },
  "https://alec.org/model-policy/lantern-registry-act/": {
   "content_type": "text/html; charset=UTF-8",
@@ -104,8 +104,155 @@
   "content_type": "application/json; charset=UTF-8",
   "json": []
  },
- "https://alec.org/model-policy/unlabeled-lamp-act/": {
+ "https://alec.org/model-policy/lamp-policies-annual-meeting/": {
   "content_type": "text/html; charset=UTF-8",
-  "body": "<!doctype html><html><head><title>Unlabeled Lamp Act - Synthetic</title></head><body><header><a href=\"https://connect.alec.org/\">Login</a><nav><a href=\"/model-policy/\">Model Policies</a></nav></header><main><h1>Unlabeled Lamp Act</h1><p><strong>Task Forces:</strong> <a href=\"/task-force/invented/\">Invented Task Force</a></p><h3>Additional Details</h3><p><strong>Tags:</strong> <a href=\"/tag/invented/\">Invented</a></p><h3>Summary</h3><p>An invented summary, not law.</p><h3>Model Policy</h3><div><p>The page repeats the body here.</p></div><h3>Sign up to get updates</h3><form><label>Email(Required)</label><input name=\"email\"></form></main></body></html>"
+  "body": "<!doctype html><html><head><title>Lamp Policies Annual Meeting - Synthetic</title></head><body><header><a href=\"https://connect.alec.org/\">Login</a><nav><a href=\"/model-policy/\">Model Policies</a></nav></header><main><h1>Lamp Policies Annual Meeting</h1><p><strong>Task Forces:</strong> <a href=\"/task-force/invented/\">Invented Task Force</a></p><h3>Policy Status</h3><dl><dt>Date Amended:</dt><dd>August 1, 2013</dd></dl><h3>Additional Details</h3><p><strong>Tags:</strong> <a href=\"/tag/invented/\">Invented</a></p><h3>Summary</h3><p>An invented summary, not law.</p><h3>Model Policy</h3><div><p>The page repeats the body here.</p></div><h3>Sign up to get updates</h3><form><label>Email(Required)</label><input name=\"email\"></form></main></body></html>"
+ },
+ "https://alec.org/wp-json/wp/v2/model-policy?slug=lamp-policies-annual-meeting&_fields=id%2Cslug%2Clink%2Ctitle%2Ccontent": {
+  "content_type": "application/json; charset=UTF-8",
+  "json": [
+   {
+    "id": 104,
+    "slug": "lamp-policies-annual-meeting",
+    "link": "https://alec.org/model-policy/lamp-policies-annual-meeting/",
+    "title": {
+     "rendered": "Lamp Policies Annual Meeting"
+    },
+    "content": {
+     "rendered": "<p>Members met at an invented meeting to debate new policies.</p><h3>Invented Task Force</h3><p><strong><a href=\"https://alec.org/model-policy/lantern-registry-act/\">Lantern Registry Act</a></strong></p><p>An invented summary of it.</p>",
+     "protected": false
+    }
+   }
+  ]
+ },
+ "https://alec.org/model-policy/older-lamp-act/": {
+  "content_type": "text/html; charset=UTF-8",
+  "body": "<!doctype html><html><head><title>Older Lamp Act - Synthetic</title></head><body><header><a href=\"https://connect.alec.org/\">Login</a><nav><a href=\"/model-policy/\">Model Policies</a></nav></header><main><h1>Older Lamp Act</h1><p><strong>Task Forces:</strong> <a href=\"/task-force/invented/\">Invented Task Force</a></p><h3>Policy Status</h3><ul><li><strong>Type:</strong> Model Policy</li><li><strong>Date Amended:</strong> January 29, 2013</li></ul><h3>Additional Details</h3><p><strong>Tags:</strong> <a href=\"/tag/invented/\">Invented</a></p><h3>Summary</h3><p>An invented summary, not law.</p><h3>Model Policy</h3><div><p>The page repeats the body here.</p></div><h3>Sign up to get updates</h3><form><label>Email(Required)</label><input name=\"email\"></form></main></body></html>"
+ },
+ "https://alec.org/wp-json/wp/v2/model-policy?slug=older-lamp-act&_fields=id%2Cslug%2Clink%2Ctitle%2Ccontent": {
+  "content_type": "application/json; charset=UTF-8",
+  "json": [
+   {
+    "id": 105,
+    "slug": "older-lamp-act",
+    "link": "https://alec.org/model-policy/older-lamp-act/",
+    "title": {
+     "rendered": "Older Lamp Act"
+    },
+    "content": {
+     "rendered": "<p><strong>Older Lamp Act</strong></p><p><strong><em>Summary</em></strong></p><p>This invented Act would register lamps. It shall be read as a summary, not law.</p><p>1. The Act registers lamps.</p><p><strong><em>Model Legislation</em></strong></p><p>{Title, enacting clause, etc.}</p><p><strong>Sec 1. {Short Title.}</strong> This Act may be cited as the Older Lamp Act.</p><p><strong>Section 2. {Registry.}</strong> The [insert department} shall keep the registry of lamps under {insert code reference].</p><p>Source Book of American State Legislation 1987-88</p><p style=\"text-align: center;\"><em>Reapproved by ALEC Board of Directors on January 29, 2013.</em></p>",
+     "protected": false
+    }
+   }
+  ]
+ },
+ "https://alec.org/model-policy/lamp-keepers-recital/": {
+  "content_type": "text/html; charset=UTF-8",
+  "body": "<!doctype html><html><head><title>Lamp Keepers Recital - Synthetic</title></head><body><header><a href=\"https://connect.alec.org/\">Login</a><nav><a href=\"/model-policy/\">Model Policies</a></nav></header><main><h1>Lamp Keepers Recital</h1><p><strong>Task Forces:</strong> <a href=\"/task-force/invented/\">Invented Task Force</a></p><h3>Policy Status</h3><ul><li><strong>Status:</strong> Final</li></ul><h3>Additional Details</h3><p><strong>Tags:</strong> <a href=\"/tag/invented/\">Invented</a></p><h3>Summary</h3><p>An invented summary, not law.</p><h3>Model Policy</h3><div><p>The page repeats the body here.</p></div><h3>Sign up to get updates</h3><form><label>Email(Required)</label><input name=\"email\"></form></main></body></html>"
+ },
+ "https://alec.org/wp-json/wp/v2/model-policy?slug=lamp-keepers-recital&_fields=id%2Cslug%2Clink%2Ctitle%2Ccontent": {
+  "content_type": "application/json; charset=UTF-8",
+  "json": [
+   {
+    "id": 106,
+    "slug": "lamp-keepers-recital",
+    "link": "https://alec.org/model-policy/lamp-keepers-recital/",
+    "title": {
+     "rendered": "Lamp Keepers Recital"
+    },
+    "content": {
+     "rendered": "<p>Summary</p><p>An invented summary of the recital.</p><p>Model Resolution</p><p>WHERAS, invented keepers tend invented lamps; and</p><p>THEREFORE BE IT RESOLVED, that the legislature of [INSERT STATE) thanks them.</p><p style=\"text-align: center;\"><em>Renewal approved by the Board of Directors on August 9, 2020</em></p>",
+     "protected": false
+    }
+   }
+  ]
+ },
+ "https://alec.org/model-policy/headed-lamp-act/": {
+  "content_type": "text/html; charset=UTF-8",
+  "body": "<!doctype html><html><head><title>Headed Lamp Act - Synthetic</title></head><body><header><a href=\"https://connect.alec.org/\">Login</a><nav><a href=\"/model-policy/\">Model Policies</a></nav></header><main><h1>Headed Lamp Act</h1><p><strong>Task Forces:</strong> <a href=\"/task-force/invented/\">Invented Task Force</a></p><h3>Policy Status</h3><ul><li><strong>Type:</strong> Model Policy</li><li><strong>Status:</strong> Final</li><li><strong>Date Finalized:</strong> August 30, 2024</li></ul><h3>Additional Details</h3><p><strong>Tags:</strong> <a href=\"/tag/invented/\">Invented</a></p><h3>Summary</h3><p>An invented summary, not law.</p><h3>Model Policy</h3><div><p>The page repeats the body here.</p></div><h3>Sign up to get updates</h3><form><label>Email(Required)</label><input name=\"email\"></form></main></body></html>"
+ },
+ "https://alec.org/wp-json/wp/v2/model-policy?slug=headed-lamp-act&_fields=id%2Cslug%2Clink%2Ctitle%2Ccontent": {
+  "content_type": "application/json; charset=UTF-8",
+  "json": [
+   {
+    "id": 107,
+    "slug": "headed-lamp-act",
+    "link": "https://alec.org/model-policy/headed-lamp-act/",
+    "title": {
+     "rendered": "Headed Lamp Act"
+    },
+    "content": {
+     "rendered": "<p><strong>Definitions</strong></p><p>(1) &#8220;Lamp&#8221; means an invented light.</p><p><strong>Keeper Operations</strong></p><ol><li>A keeper shall trim each lamp.</li><li>A keeper may not sell oil.</li></ol><p style=\"text-align: center;\"><em>Amended by the ALEC Board of Directors on August 30, 2024.</em></p>",
+     "protected": false
+    }
+   }
+  ]
+ },
+ "https://alec.org/model-policy/renamed-lamp-act/": {
+  "content_type": "text/html; charset=UTF-8",
+  "body": "<!doctype html><html><head><title>Renamed Lamp Act - Synthetic</title></head><body><header><a href=\"https://connect.alec.org/\">Login</a><nav><a href=\"/model-policy/\">Model Policies</a></nav></header><main><h1>Renamed Lamp Act</h1><p><strong>Task Forces:</strong> <a href=\"/task-force/invented/\">Invented Task Force</a></p><h3>Policy Status</h3><ul><li><strong>Type:</strong> Model Policy</li><li><strong>Status:</strong> Final</li></ul><h3>Additional Details</h3><p><strong>Tags:</strong> <a href=\"/tag/invented/\">Invented</a></p><h3>Summary</h3><p>An invented summary, not law.</p><h3>Model Policy</h3><div><p>The page repeats the body here.</p></div><h3>Sign up to get updates</h3><form><label>Email(Required)</label><input name=\"email\"></form></main></body></html>"
+ },
+ "https://alec.org/wp-json/wp/v2/model-policy?slug=renamed-lamp-act&_fields=id%2Cslug%2Clink%2Ctitle%2Ccontent": {
+  "content_type": "application/json; charset=UTF-8",
+  "json": [
+   {
+    "id": 108,
+    "slug": "renamed-lamp-act",
+    "link": "https://alec.org/model-policy/renamed-lamp-act/",
+    "title": {
+     "rendered": "Renamed Lamp Act"
+    },
+    "content": {
+     "rendered": "<p>The invented model formerly called the Lamp Act is now called the Wick Act.</p>",
+     "protected": false
+    }
+   }
+  ]
+ },
+ "https://alec.org/model-policy/lamp-lighting-ordinance/": {
+  "content_type": "text/html; charset=UTF-8",
+  "body": "<!doctype html><html><head><title>Lamp Lighting Ordinance - Synthetic</title></head><body><header><a href=\"https://connect.alec.org/\">Login</a><nav><a href=\"/model-policy/\">Model Policies</a></nav></header><main><h1>Lamp Lighting Ordinance</h1><p><strong>Task Forces:</strong> <a href=\"/task-force/invented/\">Invented Task Force</a></p><h3>Policy Status</h3><ul><li><strong>Type:</strong> Model Policy</li><li><strong>Status:</strong> Final</li></ul><h3>Additional Details</h3><p><strong>Tags:</strong> <a href=\"/tag/invented/\">Invented</a></p><h3>Summary</h3><p>An invented summary, not law.</p><h3>Model Policy</h3><div><p>The page repeats the body here.</p></div><h3>Sign up to get updates</h3><form><label>Email(Required)</label><input name=\"email\"></form></main></body></html>"
+ },
+ "https://alec.org/wp-json/wp/v2/model-policy?slug=lamp-lighting-ordinance&_fields=id%2Cslug%2Clink%2Ctitle%2Ccontent": {
+  "content_type": "application/json; charset=UTF-8",
+  "json": [
+   {
+    "id": 109,
+    "slug": "lamp-lighting-ordinance",
+    "link": "https://alec.org/model-policy/lamp-lighting-ordinance/",
+    "title": {
+     "rendered": "Lamp Lighting Ordinance"
+    },
+    "content": {
+     "rendered": "<p>NOW, THEREFORE, BE IT ORDAINED BY THE COUNCIL OF [INSERT JURISDICTION]:</p><p>Section 1. Lamps shall be lit at dusk.</p>",
+     "protected": false
+    }
+   }
+  ]
+ },
+ "https://alec.org/model-policy/statement-of-principles-on-wicks/": {
+  "content_type": "text/html; charset=UTF-8",
+  "body": "<!doctype html><html><head><title>Statement of Principles on Wicks - Synthetic</title></head><body><header><a href=\"https://connect.alec.org/\">Login</a><nav><a href=\"/model-policy/\">Model Policies</a></nav></header><main><h1>Statement of Principles on Wicks</h1><p><strong>Task Forces:</strong> <a href=\"/task-force/invented/\">Invented Task Force</a></p><h3>Additional Details</h3><p><strong>Tags:</strong> <a href=\"/tag/invented/\">Invented</a></p><h3>Summary</h3><p>An invented summary, not law.</p><h3>Model Policy</h3><div><p>The page repeats the body here.</p></div><h3>Sign up to get updates</h3><form><label>Email(Required)</label><input name=\"email\"></form></main></body></html>"
+ },
+ "https://alec.org/wp-json/wp/v2/model-policy?slug=statement-of-principles-on-wicks&_fields=id%2Cslug%2Clink%2Ctitle%2Ccontent": {
+  "content_type": "application/json; charset=UTF-8",
+  "json": [
+   {
+    "id": 110,
+    "slug": "statement-of-principles-on-wicks",
+    "link": "https://alec.org/model-policy/statement-of-principles-on-wicks/",
+    "title": {
+     "rendered": "Statement of Principles on Wicks"
+    },
+    "content": {
+     "rendered": "<p>Wicks shall be trimmed, the invented statement holds.</p>",
+     "protected": false
+    }
+   }
+  ]
+ },
+ "https://alec.org/model-policy/draft-wick-act/": {
+  "content_type": "text/html; charset=UTF-8",
+  "body": "<!doctype html><html><head><title>Wick Act - Synthetic</title></head><body><header><a href=\"https://connect.alec.org/\">Login</a><nav><a href=\"/model-policy/\">Model Policies</a></nav></header><main><h1>Wick Act</h1><p><strong>Task Forces:</strong> <a href=\"/task-force/invented/\">Invented Task Force</a></p><h3>Policy Status</h3><ul><li><strong>Type:</strong> Model Policy</li></ul><h3>Additional Details</h3><p><strong>Tags:</strong> <a href=\"/tag/invented/\">Invented</a></p><h3>Draft Disclaimer</h3><p>An invented disclaimer.</p><h3>Summary</h3><p>An invented summary, not law.</p><h3>Model Policy</h3><div><p>The page repeats the body here.</p></div><h3>Sign up to get updates</h3><form><label>Email(Required)</label><input name=\"email\"></form></main></body></html>"
  }
 }
