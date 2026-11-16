@@ -13,11 +13,21 @@ from typing import Any
 
 import pytest
 
+from lineage import origin_matching
 from lineage.acts import ACTS, ACTS_DIR, enacted_text
 from lineage.collect import collectors
 from lineage.commission import evaluate
 from lineage.listing import listed_hits
-from lineage.modeldocs import ModelDoc, ModelDocError, Source, read_docs, sha256, store
+from lineage.modeldocs import (
+    ModelDoc,
+    ModelDocError,
+    Source,
+    load_text,
+    read_docs,
+    sha256,
+    store,
+    text_path,
+)
 from lineage.origin_matching import bill_spans, listed, match_models
 from lineage.origins import BillSpan, OriginMatch, read_origin_matches, write_origin_matches
 from lineage.semantic import CORROBORATING, THRESHOLD, open_search
@@ -126,6 +136,35 @@ def test_a_document_listed_twice_is_refused(
 
     with pytest.raises(ModelDocError, match="twice"):
         _match(tables, [doc, doc], root)
+
+
+def test_a_model_two_sources_hold_is_matched_once_and_credited_to_each(
+    synthetic: tuple[Path, Path, list[OriginMatch]], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    tables, root, _ = synthetic
+    original = _docs(root)[0]
+    copy = original.model_copy(
+        update={"id": f"second-library/{original.id.partition('/')[2]}", "source": "second-library"}
+    )
+    held = text_path(copy, root)
+    held.parent.mkdir(parents=True)
+    held.write_text(load_text(original, root))
+    seen: list[int] = []
+    real = origin_matching.match_texts
+
+    def counted(*args: Any, **kwargs: Any) -> list[OriginMatch]:
+        seen.append(len(args[1]))
+        return real(*args, **kwargs)
+
+    monkeypatch.setattr(origin_matching, "match_texts", counted)
+    matches = _match(tables, [original, copy], root)
+
+    assert seen == [1]  # one text, matched once
+    by_doc = {d: [m for m in matches if m.doc_id == d] for d in (original.id, copy.id)}
+    assert by_doc[original.id]
+    strip = [m.model_copy(update={"doc_id": ""}) for m in by_doc[copy.id]]
+    assert strip == [m.model_copy(update={"doc_id": ""}) for m in by_doc[original.id]]
+    assert matches == sorted(matches, key=lambda m: (m.bill_id, m.doc_id))
 
 
 def test_no_documents_no_matches(embedded_commission: Path, tmp_path: Path) -> None:

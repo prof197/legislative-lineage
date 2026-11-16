@@ -272,17 +272,30 @@ def match_models(
     if len(set(ids)) != len(ids):
         raise ModelDocError("a document is listed twice; which text stands would depend on order")
     require_index(tables_dir)
+    # A model several sources hold is one text: it is matched once, under the first of its
+    # documents by id, and each document holding it gets the same matches, so every source's
+    # provenance is kept and none is matched twice.
+    holders: dict[str, list[str]] = defaultdict(list)
+    for d in sorted(docs, key=lambda d: d.id):
+        holders[d.text_sha256].append(d.id)
+    first = {ids[0]: ids for ids in holders.values()}
     texts = [
-        model_text(d.id, load_text(d, modeldocs_root)) for d in sorted(docs, key=lambda d: d.id)
+        model_text(d.id, load_text(d, modeldocs_root))
+        for d in sorted(docs, key=lambda d: d.id)
+        if d.id in first
     ]
     if not texts:
         return []
-    matches = match_texts(
+    matched = match_texts(
         tables_dir,
         texts,
         embed if embed is not None else _embedder(model, models_dir),
         model=model,
         flagged=flagged_sections(tables_dir),
+    )
+    matches = sorted(
+        (m.model_copy(update={"doc_id": held}) for m in matched for held in first[m.doc_id]),
+        key=lambda m: (m.bill_id, m.doc_id),
     )
     # The caller writes them (lineage.origins.write_origin_matches); this bounds that write.
     needed = sum(len(m.model_dump_json()) + 1 for m in matches)
