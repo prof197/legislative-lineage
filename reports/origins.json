@@ -1,12 +1,12 @@
 {
- "documents": 1197,
- "distinct_texts": 1195,
- "matches": 5765,
- "bills": 4881,
+ "documents": 1199,
+ "distinct_texts": 1197,
+ "matches": 5827,
+ "bills": 4926,
  "by_stage": {
-  "near_duplicate": 1250,
-  "semantic": 1714,
-  "both": 2801
+  "near_duplicate": 1268,
+  "semantic": 1725,
+  "both": 2834
  },
  "by_source": {
   "alec": {
@@ -15,9 +15,9 @@
    "matches": 3806
   },
   "commission": {
-   "documents": 7,
-   "documents_matched": 7,
-   "matches": 243
+   "documents": 9,
+   "documents_matched": 9,
+   "matches": 305
   },
   "eppc": {
    "documents": 5,
@@ -50,5 +50,5 @@
    "matches": 383
   }
  },
- "seconds": 5831.5
+ "seconds": 5773.2
 }

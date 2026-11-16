@@ -6648,6 +6648,7 @@
    "read": "uv run lineage eval answer-key; ULC Bill List, read 2026-11-06"
   },
   "sealed": false,
+  "status": null,
   "configuration": null,
   "threshold": {
    "score": "share of the model's words in the sections the bill matches",
@@ -8380,6 +8381,2047 @@
       ],
       "model_share": 0.864,
       "bill_share": 0.4936,
+      "listed": true,
+      "found": true
+     }
+    ]
+   }
+  ]
+ },
+ "origins_held_out": {
+  "command": "uv run lineage eval origins",
+  "answer_key": {
+   "name": "held_out",
+   "path": "reports/answer_key_origins_heldout.csv",
+   "read": "uv run lineage eval answer-key; ULC Bill List, read 2026-11-07"
+  },
+  "sealed": true,
+  "status": null,
+  "configuration": {
+   "semantic_threshold": 0.94,
+   "state_boilerplate_flag": {
+    "sections": 96339,
+    "both_stages_exempt_from": 0.8905
+   },
+   "origin_floor": 0.25
+  },
+  "threshold": {
+   "score": "share of the model's words in the sections the bill matches",
+   "min_share": 0.0,
+   "floor": 0.25,
+   "found_when": "score above min_share, and the larger share at floor or above"
+  },
+  "documents": {
+   "antitrust-pre-merger-notification": [
+    "commission/antitrust-pre-merger-notification"
+   ],
+   "health-care-decisions": [
+    "commission/health-care-decisions"
+   ]
+  },
+  "recall": {
+   "pooled": {
+    "enactments": 6,
+    "found": 6,
+    "recall": 1.0,
+    "interval_95": [
+     0.6097,
+     1.0
+    ]
+   },
+   "by_act": {
+    "antitrust-pre-merger-notification": {
+     "enactments": 3,
+     "found": 3,
+     "recall": 1.0,
+     "interval_95": [
+      0.4385,
+      1.0
+     ]
+    },
+    "health-care-decisions": {
+     "enactments": 3,
+     "found": 3,
+     "recall": 1.0,
+     "interval_95": [
+      0.4385,
+      1.0
+     ]
+    }
+   },
+   "by_stratum": {
+    "enacted": {
+     "enactments": 6,
+     "found": 6,
+     "recall": 1.0,
+     "interval_95": [
+      0.6097,
+      1.0
+     ]
+    },
+    "substantially_similar": {
+     "enactments": 0,
+     "found": 0,
+     "recall": null,
+     "interval_95": [
+      0.0,
+      1.0
+     ]
+    }
+   }
+  },
+  "stage_ablation": {
+   "near_duplicate": {
+    "pooled": {
+     "enactments": 6,
+     "found": 6,
+     "recall": 1.0,
+     "interval_95": [
+      0.6097,
+      1.0
+     ]
+    },
+    "by_act": {
+     "antitrust-pre-merger-notification": {
+      "enactments": 3,
+      "found": 3,
+      "recall": 1.0,
+      "interval_95": [
+       0.4385,
+       1.0
+      ]
+     },
+     "health-care-decisions": {
+      "enactments": 3,
+      "found": 3,
+      "recall": 1.0,
+      "interval_95": [
+       0.4385,
+       1.0
+      ]
+     }
+    },
+    "by_stratum": {
+     "enacted": {
+      "enactments": 6,
+      "found": 6,
+      "recall": 1.0,
+      "interval_95": [
+       0.6097,
+       1.0
+      ]
+     },
+     "substantially_similar": {
+      "enactments": 0,
+      "found": 0,
+      "recall": null,
+      "interval_95": [
+       0.0,
+       1.0
+      ]
+     }
+    }
+   },
+   "semantic": {
+    "pooled": {
+     "enactments": 6,
+     "found": 6,
+     "recall": 1.0,
+     "interval_95": [
+      0.6097,
+      1.0
+     ]
+    },
+    "by_act": {
+     "antitrust-pre-merger-notification": {
+      "enactments": 3,
+      "found": 3,
+      "recall": 1.0,
+      "interval_95": [
+       0.4385,
+       1.0
+      ]
+     },
+     "health-care-decisions": {
+      "enactments": 3,
+      "found": 3,
+      "recall": 1.0,
+      "interval_95": [
+       0.4385,
+       1.0
+      ]
+     }
+    },
+    "by_stratum": {
+     "enacted": {
+      "enactments": 6,
+      "found": 6,
+      "recall": 1.0,
+      "interval_95": [
+       0.6097,
+       1.0
+      ]
+     },
+     "substantially_similar": {
+      "enactments": 0,
+      "found": 0,
+      "recall": null,
+      "interval_95": [
+       0.0,
+       1.0
+      ]
+     }
+    }
+   },
+   "both": {
+    "pooled": {
+     "enactments": 6,
+     "found": 6,
+     "recall": 1.0,
+     "interval_95": [
+      0.6097,
+      1.0
+     ]
+    },
+    "by_act": {
+     "antitrust-pre-merger-notification": {
+      "enactments": 3,
+      "found": 3,
+      "recall": 1.0,
+      "interval_95": [
+       0.4385,
+       1.0
+      ]
+     },
+     "health-care-decisions": {
+      "enactments": 3,
+      "found": 3,
+      "recall": 1.0,
+      "interval_95": [
+       0.4385,
+       1.0
+      ]
+     }
+    },
+    "by_stratum": {
+     "enacted": {
+      "enactments": 6,
+      "found": 6,
+      "recall": 1.0,
+      "interval_95": [
+       0.6097,
+       1.0
+      ]
+     },
+     "substantially_similar": {
+      "enactments": 0,
+      "found": 0,
+      "recall": null,
+      "interval_95": [
+       0.0,
+       1.0
+      ]
+     }
+    }
+   }
+  },
+  "recall_by_min_share": [
+   {
+    "min_share": 0.0,
+    "found": 6
+   },
+   {
+    "min_share": 0.1,
+    "found": 6
+   },
+   {
+    "min_share": 0.25,
+    "found": 6
+   },
+   {
+    "min_share": 0.5,
+    "found": 6
+   }
+  ],
+  "miss_reasons": {},
+  "excluded": [
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "jurisdiction": "Alabama",
+    "year": 2026,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "jurisdiction": "Arizona",
+    "year": 2026,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "jurisdiction": "Colorado",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "jurisdiction": "Delaware",
+    "year": 2026,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "jurisdiction": "Iowa",
+    "year": 2026,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "jurisdiction": "Nebraska",
+    "year": 2026,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "jurisdiction": "Oklahoma",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "jurisdiction": "Utah",
+    "year": 2026,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "jurisdiction": "West Virginia",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "easement-relocation",
+    "jurisdiction": "Virginia",
+    "year": 2026,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "easement-relocation",
+    "jurisdiction": "Nevada",
+    "year": 2025,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "easement-relocation",
+    "jurisdiction": "Oklahoma",
+    "year": 2025,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "easement-relocation",
+    "jurisdiction": "Arkansas",
+    "year": 2023,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "easement-relocation",
+    "jurisdiction": "Washington",
+    "year": 2023,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "easement-relocation",
+    "jurisdiction": "Utah",
+    "year": 2022,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "easement-relocation",
+    "jurisdiction": "Nebraska",
+    "year": 2021,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "mortgage-modification",
+    "jurisdiction": "Colorado",
+    "year": 2026,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "mortgage-modification",
+    "jurisdiction": "District of Columbia",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "mortgage-modification",
+    "jurisdiction": "Missouri",
+    "year": 2026,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "mortgage-modification",
+    "jurisdiction": "Oklahoma",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "mortgage-modification",
+    "jurisdiction": "Washington",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "mortgage-modification",
+    "jurisdiction": "West Virginia",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "mortgage-modification",
+    "jurisdiction": "Wyoming",
+    "year": 2026,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "mortgage-modification",
+    "jurisdiction": "Nevada",
+    "year": 2025,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "mortgage-modification",
+    "jurisdiction": "Utah",
+    "year": 2025,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Kentucky",
+    "year": 2026,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "District of Columbia",
+    "year": 2025,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "California",
+    "year": 2024,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Oklahoma",
+    "year": 2024,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Pennsylvania",
+    "year": 2024,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Vermont",
+    "year": 2024,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Kansas",
+    "year": 2022,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Florida",
+    "year": 2021,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Montana",
+    "year": 2021,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Virginia",
+    "year": 2020,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Washington",
+    "year": 2020,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "West Virginia",
+    "year": 2020,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Arkansas",
+    "year": 2019,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Colorado",
+    "year": 2019,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Connecticut",
+    "year": 2019,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Indiana",
+    "year": 2019,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Maine",
+    "year": 2019,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Michigan",
+    "year": 2019,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Nebraska",
+    "year": 2019,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Utah",
+    "year": 2019,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Georgia",
+    "year": 2018,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "New Mexico",
+    "year": 2018,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "health-care-decisions",
+    "jurisdiction": "Hawaii",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "health-care-decisions",
+    "jurisdiction": "Nebraska",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "health-care-decisions",
+    "jurisdiction": "Virginia",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "antitrust-pre-merger-notification",
+    "jurisdiction": "District of Columbia",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "antitrust-pre-merger-notification",
+    "jurisdiction": "Hawaii",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "antitrust-pre-merger-notification",
+    "jurisdiction": "Indiana",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "antitrust-pre-merger-notification",
+    "jurisdiction": "West Virginia",
+    "year": 2026,
+    "why": "listed as introduced"
+   }
+  ],
+  "enactments": [
+   {
+    "act": "health-care-decisions",
+    "jurisdiction": "Oklahoma",
+    "state": "OK",
+    "year": 2026,
+    "listed": "HB 1687/SB 937",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/c01935fb-2a63-421f-9632-3330060676fa",
+    "model_share": 0.9707,
+    "bill_share": 0.8613,
+    "best_share": 0.9707,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/00062e26-3bb5-4a30-96ae-c5c9927b9fe6",
+      "doc_id": "commission/health-care-decisions",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.1446,
+      "bill_share": 0.8717,
+      "listed": true,
+      "found": true
+     },
+     {
+      "id": "ocd-bill/c01935fb-2a63-421f-9632-3330060676fa",
+      "doc_id": "commission/health-care-decisions",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9707,
+      "bill_share": 0.8613,
+      "listed": true,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "health-care-decisions",
+    "jurisdiction": "Utah",
+    "state": "UT",
+    "year": 2025,
+    "listed": "SB 134",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/5b7cd9ef-835a-4d07-82e3-1eb6fdd109d4",
+    "model_share": 0.939,
+    "bill_share": 0.717,
+    "best_share": 0.939,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/5b7cd9ef-835a-4d07-82e3-1eb6fdd109d4",
+      "doc_id": "commission/health-care-decisions",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.939,
+      "bill_share": 0.717,
+      "listed": true,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "health-care-decisions",
+    "jurisdiction": "Delaware",
+    "state": "DE",
+    "year": 2024,
+    "listed": "SB 309",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/19486a2b-aba1-4cce-a051-7dcf372ed7fc",
+    "model_share": 0.9739,
+    "bill_share": 0.7637,
+    "best_share": 0.9739,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/19486a2b-aba1-4cce-a051-7dcf372ed7fc",
+      "doc_id": "commission/health-care-decisions",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9739,
+      "bill_share": 0.7637,
+      "listed": true,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "antitrust-pre-merger-notification",
+    "jurisdiction": "California",
+    "state": "CA",
+    "year": 2026,
+    "listed": "SB 25",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/64ae97c0-edda-459d-af36-81f94d6e1377",
+    "model_share": 0.8919,
+    "bill_share": 0.8784,
+    "best_share": 0.8919,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/64ae97c0-edda-459d-af36-81f94d6e1377",
+      "doc_id": "commission/antitrust-pre-merger-notification",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.8919,
+      "bill_share": 0.8784,
+      "listed": true,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "antitrust-pre-merger-notification",
+    "jurisdiction": "Colorado",
+    "state": "CO",
+    "year": 2025,
+    "listed": "SB 126",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/2a900b91-5963-40e9-9f25-de3ad60b1551",
+    "model_share": 0.8919,
+    "bill_share": 0.6515,
+    "best_share": 0.8919,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/2a900b91-5963-40e9-9f25-de3ad60b1551",
+      "doc_id": "commission/antitrust-pre-merger-notification",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.8919,
+      "bill_share": 0.6515,
+      "listed": true,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "antitrust-pre-merger-notification",
+    "jurisdiction": "Washington",
+    "state": "WA",
+    "year": 2025,
+    "listed": "SB 5122",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/eeb8efc8-95e7-43dd-9e2c-34d3c9da24e7",
+    "model_share": 0.9624,
+    "bill_share": 0.7511,
+    "best_share": 0.9624,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/eeb8efc8-95e7-43dd-9e2c-34d3c9da24e7",
+      "doc_id": "commission/antitrust-pre-merger-notification",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9624,
+      "bill_share": 0.7511,
+      "listed": true,
+      "found": true
+     }
+    ]
+   }
+  ],
+  "earlier_runs": []
+ },
+ "origins_v1_held_out": {
+  "command": "uv run lineage eval origins",
+  "answer_key": {
+   "name": "v1_held_out",
+   "path": "reports/answer_key_heldout.csv",
+   "read": "uv run lineage eval answer-key; ULC Bill List, read 2026-11-07"
+  },
+  "sealed": false,
+  "status": "opened in v1; not a sealed test",
+  "configuration": null,
+  "threshold": {
+   "score": "share of the model's words in the sections the bill matches",
+   "min_share": 0.0,
+   "floor": 0.25,
+   "found_when": "score above min_share, and the larger share at floor or above"
+  },
+  "documents": {
+   "assignment-for-benefit-of-creditors": [
+    "commission/assignment-for-benefit-of-creditors"
+   ],
+   "directed-trust": [
+    "commission/directed-trust"
+   ],
+   "easement-relocation": [
+    "commission/easement-relocation"
+   ],
+   "mortgage-modification": [
+    "commission/mortgage-modification"
+   ]
+  },
+  "recall": {
+   "pooled": {
+    "enactments": 19,
+    "found": 16,
+    "recall": 0.8421,
+    "interval_95": [
+     0.6243,
+     0.9448
+    ]
+   },
+   "by_act": {
+    "assignment-for-benefit-of-creditors": {
+     "enactments": 6,
+     "found": 5,
+     "recall": 0.8333,
+     "interval_95": [
+      0.4365,
+      0.9699
+     ]
+    },
+    "directed-trust": {
+     "enactments": 4,
+     "found": 3,
+     "recall": 0.75,
+     "interval_95": [
+      0.3006,
+      0.9544
+     ]
+    },
+    "easement-relocation": {
+     "enactments": 5,
+     "found": 4,
+     "recall": 0.8,
+     "interval_95": [
+      0.3755,
+      0.9638
+     ]
+    },
+    "mortgage-modification": {
+     "enactments": 4,
+     "found": 4,
+     "recall": 1.0,
+     "interval_95": [
+      0.5101,
+      1.0
+     ]
+    }
+   },
+   "by_stratum": {
+    "enacted": {
+     "enactments": 18,
+     "found": 16,
+     "recall": 0.8889,
+     "interval_95": [
+      0.672,
+      0.969
+     ]
+    },
+    "substantially_similar": {
+     "enactments": 1,
+     "found": 0,
+     "recall": 0.0,
+     "interval_95": [
+      0.0,
+      0.7935
+     ]
+    }
+   }
+  },
+  "stage_ablation": {
+   "near_duplicate": {
+    "pooled": {
+     "enactments": 19,
+     "found": 15,
+     "recall": 0.7895,
+     "interval_95": [
+      0.5667,
+      0.9149
+     ]
+    },
+    "by_act": {
+     "assignment-for-benefit-of-creditors": {
+      "enactments": 6,
+      "found": 5,
+      "recall": 0.8333,
+      "interval_95": [
+       0.4365,
+       0.9699
+      ]
+     },
+     "directed-trust": {
+      "enactments": 4,
+      "found": 3,
+      "recall": 0.75,
+      "interval_95": [
+       0.3006,
+       0.9544
+      ]
+     },
+     "easement-relocation": {
+      "enactments": 5,
+      "found": 4,
+      "recall": 0.8,
+      "interval_95": [
+       0.3755,
+       0.9638
+      ]
+     },
+     "mortgage-modification": {
+      "enactments": 4,
+      "found": 3,
+      "recall": 0.75,
+      "interval_95": [
+       0.3006,
+       0.9544
+      ]
+     }
+    },
+    "by_stratum": {
+     "enacted": {
+      "enactments": 18,
+      "found": 15,
+      "recall": 0.8333,
+      "interval_95": [
+       0.6078,
+       0.9416
+      ]
+     },
+     "substantially_similar": {
+      "enactments": 1,
+      "found": 0,
+      "recall": 0.0,
+      "interval_95": [
+       0.0,
+       0.7935
+      ]
+     }
+    }
+   },
+   "semantic": {
+    "pooled": {
+     "enactments": 19,
+     "found": 16,
+     "recall": 0.8421,
+     "interval_95": [
+      0.6243,
+      0.9448
+     ]
+    },
+    "by_act": {
+     "assignment-for-benefit-of-creditors": {
+      "enactments": 6,
+      "found": 5,
+      "recall": 0.8333,
+      "interval_95": [
+       0.4365,
+       0.9699
+      ]
+     },
+     "directed-trust": {
+      "enactments": 4,
+      "found": 3,
+      "recall": 0.75,
+      "interval_95": [
+       0.3006,
+       0.9544
+      ]
+     },
+     "easement-relocation": {
+      "enactments": 5,
+      "found": 4,
+      "recall": 0.8,
+      "interval_95": [
+       0.3755,
+       0.9638
+      ]
+     },
+     "mortgage-modification": {
+      "enactments": 4,
+      "found": 4,
+      "recall": 1.0,
+      "interval_95": [
+       0.5101,
+       1.0
+      ]
+     }
+    },
+    "by_stratum": {
+     "enacted": {
+      "enactments": 18,
+      "found": 16,
+      "recall": 0.8889,
+      "interval_95": [
+       0.672,
+       0.969
+      ]
+     },
+     "substantially_similar": {
+      "enactments": 1,
+      "found": 0,
+      "recall": 0.0,
+      "interval_95": [
+       0.0,
+       0.7935
+      ]
+     }
+    }
+   },
+   "both": {
+    "pooled": {
+     "enactments": 19,
+     "found": 16,
+     "recall": 0.8421,
+     "interval_95": [
+      0.6243,
+      0.9448
+     ]
+    },
+    "by_act": {
+     "assignment-for-benefit-of-creditors": {
+      "enactments": 6,
+      "found": 5,
+      "recall": 0.8333,
+      "interval_95": [
+       0.4365,
+       0.9699
+      ]
+     },
+     "directed-trust": {
+      "enactments": 4,
+      "found": 3,
+      "recall": 0.75,
+      "interval_95": [
+       0.3006,
+       0.9544
+      ]
+     },
+     "easement-relocation": {
+      "enactments": 5,
+      "found": 4,
+      "recall": 0.8,
+      "interval_95": [
+       0.3755,
+       0.9638
+      ]
+     },
+     "mortgage-modification": {
+      "enactments": 4,
+      "found": 4,
+      "recall": 1.0,
+      "interval_95": [
+       0.5101,
+       1.0
+      ]
+     }
+    },
+    "by_stratum": {
+     "enacted": {
+      "enactments": 18,
+      "found": 16,
+      "recall": 0.8889,
+      "interval_95": [
+       0.672,
+       0.969
+      ]
+     },
+     "substantially_similar": {
+      "enactments": 1,
+      "found": 0,
+      "recall": 0.0,
+      "interval_95": [
+       0.0,
+       0.7935
+      ]
+     }
+    }
+   }
+  },
+  "recall_by_min_share": [
+   {
+    "min_share": 0.0,
+    "found": 16
+   },
+   {
+    "min_share": 0.1,
+    "found": 16
+   },
+   {
+    "min_share": 0.25,
+    "found": 16
+   },
+   {
+    "min_share": 0.5,
+    "found": 15
+   }
+  ],
+  "miss_reasons": {
+   "not_matched": 2,
+   "below_threshold": 1
+  },
+  "excluded": [
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "jurisdiction": "Colorado",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "jurisdiction": "Oklahoma",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "jurisdiction": "West Virginia",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "easement-relocation",
+    "jurisdiction": "Utah",
+    "year": 2022,
+    "why": "listed year 2022 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "easement-relocation",
+    "jurisdiction": "Nebraska",
+    "year": 2021,
+    "why": "listed year 2021 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "mortgage-modification",
+    "jurisdiction": "District of Columbia",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "mortgage-modification",
+    "jurisdiction": "Oklahoma",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "mortgage-modification",
+    "jurisdiction": "Washington",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "mortgage-modification",
+    "jurisdiction": "West Virginia",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "mortgage-modification",
+    "jurisdiction": "Utah",
+    "year": 2025,
+    "why": "names a bill of the development set"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Kentucky",
+    "year": 2026,
+    "why": "names a bill of the development set"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "District of Columbia",
+    "year": 2025,
+    "why": "District of Columbia: the corpus is the 50 states"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Kansas",
+    "year": 2022,
+    "why": "listed year 2022 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Florida",
+    "year": 2021,
+    "why": "listed year 2021 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Montana",
+    "year": 2021,
+    "why": "listed year 2021 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Virginia",
+    "year": 2020,
+    "why": "listed year 2020 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Washington",
+    "year": 2020,
+    "why": "listed year 2020 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "West Virginia",
+    "year": 2020,
+    "why": "listed year 2020 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Arkansas",
+    "year": 2019,
+    "why": "listed year 2019 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Colorado",
+    "year": 2019,
+    "why": "listed year 2019 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Connecticut",
+    "year": 2019,
+    "why": "listed year 2019 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Indiana",
+    "year": 2019,
+    "why": "listed year 2019 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Maine",
+    "year": 2019,
+    "why": "listed year 2019 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Michigan",
+    "year": 2019,
+    "why": "listed year 2019 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Nebraska",
+    "year": 2019,
+    "why": "listed year 2019 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Utah",
+    "year": 2019,
+    "why": "listed year 2019 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Georgia",
+    "year": 2018,
+    "why": "listed year 2018 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "New Mexico",
+    "year": 2018,
+    "why": "listed year 2018 is before the corpus (2023-2026)"
+   },
+   {
+    "act": "health-care-decisions",
+    "jurisdiction": "Hawaii",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "health-care-decisions",
+    "jurisdiction": "Nebraska",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "health-care-decisions",
+    "jurisdiction": "Oklahoma",
+    "year": 2026,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "health-care-decisions",
+    "jurisdiction": "Virginia",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "health-care-decisions",
+    "jurisdiction": "Utah",
+    "year": 2025,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "health-care-decisions",
+    "jurisdiction": "Delaware",
+    "year": 2024,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "antitrust-pre-merger-notification",
+    "jurisdiction": "California",
+    "year": 2026,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "antitrust-pre-merger-notification",
+    "jurisdiction": "District of Columbia",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "antitrust-pre-merger-notification",
+    "jurisdiction": "Hawaii",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "antitrust-pre-merger-notification",
+    "jurisdiction": "Indiana",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "antitrust-pre-merger-notification",
+    "jurisdiction": "West Virginia",
+    "year": 2026,
+    "why": "listed as introduced"
+   },
+   {
+    "act": "antitrust-pre-merger-notification",
+    "jurisdiction": "Colorado",
+    "year": 2025,
+    "why": "a reserve act, not selected"
+   },
+   {
+    "act": "antitrust-pre-merger-notification",
+    "jurisdiction": "Washington",
+    "year": 2025,
+    "why": "a reserve act, not selected"
+   }
+  ],
+  "enactments": [
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "jurisdiction": "Alabama",
+    "state": "AL",
+    "year": 2026,
+    "listed": "SB 15",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/d56fd42c-c1d6-4d76-a9f0-eeb0cc123f31",
+    "model_share": 0.9909,
+    "bill_share": 0.9612,
+    "best_share": 0.9909,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/d56fd42c-c1d6-4d76-a9f0-eeb0cc123f31",
+      "doc_id": "commission/assignment-for-benefit-of-creditors",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9909,
+      "bill_share": 0.9612,
+      "listed": true,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "jurisdiction": "Arizona",
+    "state": "AZ",
+    "year": 2026,
+    "listed": "SB 1252",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/6a187ab7-1011-451b-a54a-b9268f1d9668",
+    "model_share": 0.9886,
+    "bill_share": 0.9935,
+    "best_share": 0.9935,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/6a187ab7-1011-451b-a54a-b9268f1d9668",
+      "doc_id": "commission/assignment-for-benefit-of-creditors",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9886,
+      "bill_share": 0.9935,
+      "listed": true,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "jurisdiction": "Delaware",
+    "state": "DE",
+    "year": 2026,
+    "listed": "SB 267",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/9ea2f016-2a27-45bc-a51c-d4d14c24d951",
+    "model_share": 0.9475,
+    "bill_share": 0.7308,
+    "best_share": 0.9475,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/9ea2f016-2a27-45bc-a51c-d4d14c24d951",
+      "doc_id": "commission/assignment-for-benefit-of-creditors",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9475,
+      "bill_share": 0.7308,
+      "listed": true,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "jurisdiction": "Iowa",
+    "state": "IA",
+    "year": 2026,
+    "listed": "SF 2497",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": false,
+    "found_by_stage": {
+     "near_duplicate": false,
+     "semantic": false
+    },
+    "found_by": null,
+    "model_share": null,
+    "bill_share": null,
+    "best_share": null,
+    "miss_reason": "not_matched",
+    "bills": [
+     {
+      "id": "ocd-bill/315e546a-f419-46f8-b541-52e0989abb38",
+      "doc_id": null,
+      "stages": [],
+      "model_share": null,
+      "bill_share": null,
+      "listed": false,
+      "found": false
+     }
+    ]
+   },
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "jurisdiction": "Nebraska",
+    "state": "NE",
+    "year": 2026,
+    "listed": "LB 783",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/01dd3cc3-3af2-4963-9970-fb1c82c655c2",
+    "model_share": 0.9886,
+    "bill_share": 0.8716,
+    "best_share": 0.9886,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/01dd3cc3-3af2-4963-9970-fb1c82c655c2",
+      "doc_id": "commission/assignment-for-benefit-of-creditors",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9886,
+      "bill_share": 0.8716,
+      "listed": true,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "assignment-for-benefit-of-creditors",
+    "jurisdiction": "Utah",
+    "state": "UT",
+    "year": 2026,
+    "listed": "HB 382",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/66018717-08d9-4c8b-827e-98661c3a98b0",
+    "model_share": 0.9663,
+    "bill_share": 0.8651,
+    "best_share": 0.9663,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/66018717-08d9-4c8b-827e-98661c3a98b0",
+      "doc_id": "commission/assignment-for-benefit-of-creditors",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9663,
+      "bill_share": 0.8651,
+      "listed": true,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "easement-relocation",
+    "jurisdiction": "Virginia",
+    "state": "VA",
+    "year": 2026,
+    "listed": "HB 252",
+    "stratum": "substantially_similar",
+    "match_rule": "in_year",
+    "found": false,
+    "found_by_stage": {
+     "near_duplicate": false,
+     "semantic": false
+    },
+    "found_by": null,
+    "model_share": null,
+    "bill_share": null,
+    "best_share": null,
+    "miss_reason": "not_matched",
+    "bills": [
+     {
+      "id": "ocd-bill/3e325b4f-e332-425e-8f0a-8327738d8544",
+      "doc_id": null,
+      "stages": [],
+      "model_share": null,
+      "bill_share": null,
+      "listed": false,
+      "found": false
+     }
+    ]
+   },
+   {
+    "act": "easement-relocation",
+    "jurisdiction": "Nevada",
+    "state": "NV",
+    "year": 2025,
+    "listed": "AB 192",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/7a3f76bd-979e-49d3-8f74-ad9c7b98aba7",
+    "model_share": 0.858,
+    "bill_share": 0.3834,
+    "best_share": 0.858,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/7a3f76bd-979e-49d3-8f74-ad9c7b98aba7",
+      "doc_id": "commission/easement-relocation",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.858,
+      "bill_share": 0.3834,
+      "listed": true,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "easement-relocation",
+    "jurisdiction": "Oklahoma",
+    "state": "OK",
+    "year": 2025,
+    "listed": "HB 1060/HB 2119",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/498bff4c-ee76-4ac0-bb0e-57ee960c740d",
+    "model_share": 0.9622,
+    "bill_share": 0.8738,
+    "best_share": 0.9622,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/498bff4c-ee76-4ac0-bb0e-57ee960c740d",
+      "doc_id": "commission/easement-relocation",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9622,
+      "bill_share": 0.8738,
+      "listed": true,
+      "found": true
+     },
+     {
+      "id": "ocd-bill/8bd69b45-1904-4387-b4f5-68215d5399a2",
+      "doc_id": "commission/easement-relocation",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9622,
+      "bill_share": 0.8194,
+      "listed": true,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "easement-relocation",
+    "jurisdiction": "Arkansas",
+    "state": "AR",
+    "year": 2023,
+    "listed": "HB 1408",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/a5575133-1b36-4125-8b8d-239f5e5fa0a9",
+    "model_share": 0.9622,
+    "bill_share": 0.9125,
+    "best_share": 0.9622,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/a5575133-1b36-4125-8b8d-239f5e5fa0a9",
+      "doc_id": "commission/easement-relocation",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9622,
+      "bill_share": 0.9125,
+      "listed": true,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "easement-relocation",
+    "jurisdiction": "Washington",
+    "state": "WA",
+    "year": 2023,
+    "listed": "SB 5005",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/fe9a38e0-5fe9-4b49-9271-b641c88f8c8b",
+    "model_share": 0.9622,
+    "bill_share": 0.4313,
+    "best_share": 0.9622,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/fe9a38e0-5fe9-4b49-9271-b641c88f8c8b",
+      "doc_id": "commission/easement-relocation",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9622,
+      "bill_share": 0.4313,
+      "listed": true,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "mortgage-modification",
+    "jurisdiction": "Colorado",
+    "state": "CO",
+    "year": 2026,
+    "listed": "HB 26-1089",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/0769a612-51fc-4ed4-8d38-92faecb7abe1",
+    "model_share": 0.9094,
+    "bill_share": 0.7619,
+    "best_share": 0.9094,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/0769a612-51fc-4ed4-8d38-92faecb7abe1",
+      "doc_id": "commission/mortgage-modification",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9094,
+      "bill_share": 0.7619,
+      "listed": true,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "mortgage-modification",
+    "jurisdiction": "Missouri",
+    "state": "MO",
+    "year": 2026,
+    "listed": "HB 2636/SB 834",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/6d7af944-1fbd-45e3-9a5a-9ab186a99271",
+    "model_share": 0.9094,
+    "bill_share": 0.5062,
+    "best_share": 0.9094,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/6d7af944-1fbd-45e3-9a5a-9ab186a99271",
+      "doc_id": "commission/mortgage-modification",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9094,
+      "bill_share": 0.5062,
+      "listed": true,
+      "found": true
+     },
+     {
+      "id": "ocd-bill/d2a4351c-e574-4442-ae19-ecb61744a51c",
+      "doc_id": "commission/mortgage-modification",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.75,
+      "bill_share": 0.3549,
+      "listed": true,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "mortgage-modification",
+    "jurisdiction": "Wyoming",
+    "state": "WY",
+    "year": 2026,
+    "listed": "SF 31",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/196c9c66-69ff-4502-9613-63a4aee17f74",
+    "model_share": 0.9094,
+    "bill_share": 0.8426,
+    "best_share": 0.9094,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/196c9c66-69ff-4502-9613-63a4aee17f74",
+      "doc_id": "commission/mortgage-modification",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9094,
+      "bill_share": 0.8426,
+      "listed": true,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "mortgage-modification",
+    "jurisdiction": "Nevada",
+    "state": "NV",
+    "year": 2025,
+    "listed": "AB 192",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": false,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/7a3f76bd-979e-49d3-8f74-ad9c7b98aba7",
+    "model_share": 0.3406,
+    "bill_share": 0.0615,
+    "best_share": 0.3406,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/7a3f76bd-979e-49d3-8f74-ad9c7b98aba7",
+      "doc_id": "commission/mortgage-modification",
+      "stages": [
+       "semantic"
+      ],
+      "model_share": 0.3406,
+      "bill_share": 0.0615,
+      "listed": true,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "California",
+    "state": "CA",
+    "year": 2024,
+    "listed": "SB 801",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/25f6ce26-e9b6-4720-8058-0007a62361e4",
+    "model_share": 0.7018,
+    "bill_share": 0.8117,
+    "best_share": 0.8117,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/25f6ce26-e9b6-4720-8058-0007a62361e4",
+      "doc_id": "commission/directed-trust",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.7018,
+      "bill_share": 0.8117,
+      "listed": true,
+      "found": true
+     },
+     {
+      "id": "ocd-bill/eb9dea8b-b6f3-4230-8a53-219319532a4d",
+      "doc_id": null,
+      "stages": [],
+      "model_share": null,
+      "bill_share": null,
+      "listed": false,
+      "found": false
+     }
+    ]
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Oklahoma",
+    "state": "OK",
+    "year": 2024,
+    "listed": "HB 2978/HB 3962",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/c8e28bad-3818-4f32-a10f-2b8bba334a85",
+    "model_share": 0.9361,
+    "bill_share": 0.2075,
+    "best_share": 0.9361,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/08ee6ffd-f572-4a2e-a353-1db3d37b2e85",
+      "doc_id": "commission/directed-trust",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9067,
+      "bill_share": 0.8128,
+      "listed": true,
+      "found": true
+     },
+     {
+      "id": "ocd-bill/c8e28bad-3818-4f32-a10f-2b8bba334a85",
+      "doc_id": "commission/directed-trust",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9361,
+      "bill_share": 0.2075,
+      "listed": true,
+      "found": true
+     }
+    ]
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Pennsylvania",
+    "state": "PA",
+    "year": 2024,
+    "listed": "SB 1231",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": false,
+    "found_by_stage": {
+     "near_duplicate": false,
+     "semantic": false
+    },
+    "found_by": null,
+    "model_share": null,
+    "bill_share": null,
+    "best_share": 0.0924,
+    "miss_reason": "below_threshold",
+    "bills": [
+     {
+      "id": "ocd-bill/9ed813cc-57c7-4753-9f80-ac022232a799",
+      "doc_id": "commission/directed-trust",
+      "stages": [
+       "semantic"
+      ],
+      "model_share": 0.0924,
+      "bill_share": 0.0327,
+      "listed": false,
+      "found": false
+     }
+    ]
+   },
+   {
+    "act": "directed-trust",
+    "jurisdiction": "Vermont",
+    "state": "VT",
+    "year": 2024,
+    "listed": "H 350",
+    "stratum": "enacted",
+    "match_rule": "in_year",
+    "found": true,
+    "found_by_stage": {
+     "near_duplicate": true,
+     "semantic": true
+    },
+    "found_by": "ocd-bill/c8ddb361-4aa3-4764-b2de-0ae27686fc34",
+    "model_share": 0.9899,
+    "bill_share": 0.9742,
+    "best_share": 0.9899,
+    "miss_reason": null,
+    "bills": [
+     {
+      "id": "ocd-bill/c8ddb361-4aa3-4764-b2de-0ae27686fc34",
+      "doc_id": "commission/directed-trust",
+      "stages": [
+       "near_duplicate",
+       "semantic"
+      ],
+      "model_share": 0.9899,
+      "bill_share": 0.9742,
       "listed": true,
       "found": true
      }
