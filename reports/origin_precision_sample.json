@@ -1,0 +1,41 @@
+{
+ "tuning": {
+  "command": "uv run lineage origin-sample --part tuning",
+  "seed": 20261118,
+  "per_stratum": 50,
+  "strata": {
+   "share_from_0.00": 597,
+   "share_from_0.05": 674,
+   "share_from_0.10": 1035,
+   "share_from_0.25": 3459
+  },
+  "excluded": {
+   "share_from_0.00": 0,
+   "share_from_0.05": 0,
+   "share_from_0.10": 0,
+   "share_from_0.25": 0
+  },
+  "drawn": {
+   "share_from_0.00": 50,
+   "share_from_0.05": 50,
+   "share_from_0.10": 50,
+   "share_from_0.25": 50
+  },
+  "floors": [
+   0.0,
+   0.05,
+   0.1,
+   0.25
+  ],
+  "label_plan": {
+   "pairs": 200,
+   "model": "claude-opus-5-5",
+   "prompt": "passages-v1-high",
+   "batch": true,
+   "projected": 7.6672,
+   "spent": 0,
+   "max_cost": 10.0,
+   "budget": 25.0
+  }
+ }
+}
