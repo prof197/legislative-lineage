@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { byBillShare, docDate, foundBy, LEAKED_LABEL, modelShareLine, originLead } from "@/lib/origins";
+import { byBillShare, docDate, foundBy, LEAKED_LABEL, modelShareLine, originLead, publishers } from "@/lib/origins";
 import type { Origin } from "@/types/export";
 
 // A bill page's published model documents, the most of the bill's words first
@@ -35,7 +35,7 @@ export function Origins({
               {originLead(o)} <a href={o.doc.url}>{o.doc.title}</a>.
             </p>
             <p style={{ margin: "8px 0 0", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "6px 16px", fontSize: 14, color: "var(--ink-3)" }}>
-              <span style={{ overflowWrap: "anywhere" }}>{o.doc.organization}</span>
+              <span style={{ overflowWrap: "anywhere" }}>{publishers(o)}</span>
               {o.doc.leaked && (
                 <Link href={`/sources/#${o.doc.source}`} className="chip-dashed" style={{ textDecoration: "none" }} aria-label={`${LEAKED_LABEL}: about this source`}>
                   {LEAKED_LABEL}

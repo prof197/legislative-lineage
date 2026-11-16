@@ -137,6 +137,7 @@ stages: ("near_duplicate" | "semantic")[]
  * via the `definition` "ModelDocRef".
  */
 export interface ModelDocRef {
+co_publishers?: string[]
 id: string
 leaked: boolean
 organization: string

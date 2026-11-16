@@ -443,6 +443,7 @@ def origins_by_bill(
             url=doc.url,
             published=None if doc.published is None else doc.published.isoformat(),
             leaked=doc.leaked,
+            co_publishers=list(doc.co_publishers),
         )
         out[m.bill_id].append(
             Origin(

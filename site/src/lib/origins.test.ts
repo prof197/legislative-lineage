@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { Origin, SourceEntry } from "@/types/export";
-import { byBillShare, bySource, docDate, documents, foundBy, isoDate, modelShareLine, originLead, percent } from "./origins.ts";
+import { byBillShare, bySource, docDate, documents, foundBy, isoDate, modelShareLine, originLead, percent, publishers } from "./origins.ts";
 
 function origin(title: string, bill_share: number, model_share: number, published: string | null = null): Origin {
   return {
@@ -55,4 +55,13 @@ test("stages and counts", () => {
 test("sources by organization", () => {
   const s = (key: string, organization: string) => ({ key, organization }) as SourceEntry;
   assert.deepEqual(bySource([s("b", "Beta"), s("a2", "Alpha"), s("a1", "Alpha")]).map((x) => x.key), ["a1", "a2", "b"]);
+});
+
+test("a joint document names every publisher, its library's first", () => {
+  const solo = origin("joint", 0.5, 0.4);
+  assert.equal(publishers(solo), solo.doc.organization);
+  const one = { ...solo, doc: { ...solo.doc, co_publishers: ["Second Institute"] } };
+  assert.equal(publishers(one), `${solo.doc.organization}, with Second Institute`);
+  const two = { ...solo, doc: { ...solo.doc, co_publishers: ["Second Institute", "Third Center"] } };
+  assert.equal(publishers(two), `${solo.doc.organization}, with Second Institute and Third Center`);
 });

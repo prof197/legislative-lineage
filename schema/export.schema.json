@@ -622,6 +622,13 @@
    "additionalProperties": false,
    "description": "A published model document as a page names it. Its text is never exported.",
    "properties": {
+    "co_publishers": {
+     "items": {
+      "type": "string"
+     },
+     "title": "Co Publishers",
+     "type": "array"
+    },
     "id": {
      "title": "Id",
      "type": "string"

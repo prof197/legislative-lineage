@@ -74,11 +74,18 @@ class ModelDoc(BaseModel):
     raw_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")  # the bytes as fetched
     media_type: str
     text_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")  # the cleaned text matching reads
+    # Other organizations the document names as publishing it with its source's, as they are
+    # named there: a page credits a joint bill to each, though only one library holds it.
+    co_publishers: tuple[str, ...] = ()
 
     @model_validator(mode="after")
     def _its_id_names_its_source(self) -> Self:
         if self.id.partition("/")[0] != self.source:
             raise ValueError(f"{self.id} is not in source {self.source}")
+        if any(not name.strip() for name in self.co_publishers):
+            raise ValueError("a co-publisher is named, never blank")
+        if len(set(self.co_publishers)) != len(self.co_publishers):
+            raise ValueError("a co-publisher is named once")
         return self
 
 

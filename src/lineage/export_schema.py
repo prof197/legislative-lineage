@@ -94,6 +94,8 @@ class ModelDocRef(_Model):
     url: str
     published: str | None  # as the organization dates it, ISO 8601
     leaked: bool
+    # Organizations that published it with `organization`, as the document names them.
+    co_publishers: list[str] = Field(default_factory=list[str])
 
 
 class Origin(_Model):

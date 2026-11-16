@@ -61,6 +61,15 @@ export function isoDate(iso: string): string {
 }
 
 // The document's own date, as its organization gives it, or that it gives none.
+// The organizations a document names as its publishers: its library's, then any it was
+// published with, so a joint bill credits each though one library holds it.
+export function publishers(o: Origin): string {
+  const others = o.doc.co_publishers ?? [];
+  if (others.length === 0) return o.doc.organization;
+  const tail = others.length === 1 ? others[0] : `${others.slice(0, -1).join(", ")} and ${others.at(-1)}`;
+  return `${o.doc.organization}, with ${tail}`;
+}
+
 export const docDate = (o: Origin): string => (o.doc.published ? `Dated ${isoDate(o.doc.published)}` : "Undated");
 
 export const documents = (n: number): string => `${n.toLocaleString("en-US")} ${n === 1 ? "document" : "documents"}`;

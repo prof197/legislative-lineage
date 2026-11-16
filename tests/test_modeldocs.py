@@ -66,6 +66,16 @@ def test_a_leaked_source_says_how_it_became_public() -> None:
         store(leaked, _doc("text", date(2026, 11, 15)), raw=b"%PDF", text="text", root=Path())
 
 
+def test_a_joint_document_names_its_co_publishers_and_older_records_have_none() -> None:
+    doc = _doc("t", date(2026, 11, 15))
+    assert doc.co_publishers == ()  # a record stored before the field reads as it did
+    joint = ModelDoc.model_validate({**doc.model_dump(), "co_publishers": ["Second Institute"]})
+    assert joint.co_publishers == ("Second Institute",)
+    for names in (["  "], ["Second Institute", "Second Institute"]):
+        with pytest.raises(ValidationError, match="co-publisher"):
+            ModelDoc.model_validate({**doc.model_dump(), "co_publishers": names})
+
+
 def test_a_document_belongs_to_the_source_its_id_names() -> None:
     with pytest.raises(ValidationError, match="not in source"):
         ModelDoc.model_validate(
