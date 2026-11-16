@@ -10,8 +10,10 @@ from typing import Any
 
 import anthropic
 import pytest
+from typer.testing import CliRunner
 
 from lineage import model_labels
+from lineage.cli import app
 from lineage.modeldocs import ModelDoc, Source, sha256, store
 from lineage.origin_precision import (
     FLOORS,
@@ -27,6 +29,7 @@ from lineage.origin_precision import (
     plan_labels,
     projected_cost,
     prompt_chars,
+    reading,
     refuse_over_cap,
     section_chars,
     write_part,
@@ -309,3 +312,58 @@ def test_lengths_are_read_from_the_tables_and_the_document_store(
     )  # fmt: skip
     store(source, doc, raw=text.encode(), text=text, root=tmp_path)
     assert doc_chars([doc], tmp_path) == {"lib/a": len(text)}
+
+
+def test_the_reporting_reading_weights_each_source_by_stage_and_compares_one_with_the_rest() -> (
+    None
+):
+    """Each source's precision is weighted by its own matches per stage, so a source whose few
+    sampled near-duplicates are wrong is not hidden by the rest; nothing is read until every
+    sampled match is labeled."""
+    report = {
+        "floor": FLOOR,
+        "seed": 1,
+        "strata": {"near_duplicate_only": 100, "semantic_only": 300, "both": 0},
+        "by_source": {
+            "alec": {"near_duplicate_only": 80, "semantic_only": 20, "both": 0},
+            "ncoil": {"near_duplicate_only": 20, "semantic_only": 200, "both": 0},
+            "eppc": {"near_duplicate_only": 0, "semantic_only": 80, "both": 0},
+        },
+    }
+    rows = [
+        {"pair": "o1", "stratum": "near_duplicate_only", "doc_id": "alec/a"},
+        {"pair": "o2", "stratum": "near_duplicate_only", "doc_id": "alec/a"},
+        {"pair": "o3", "stratum": "semantic_only", "doc_id": "alec/b"},
+        {"pair": "o4", "stratum": "near_duplicate_only", "doc_id": "ncoil/c"},
+        {"pair": "o5", "stratum": "semantic_only", "doc_id": "ncoil/c"},
+        {"pair": "o6", "stratum": "semantic_only", "doc_id": "eppc/d"},
+    ]
+    correct = {"o1": False, "o2": True, "o3": True, "o4": True, "o5": True, "o6": False}
+
+    with pytest.raises(OriginPrecisionError, match="read once"):
+        reading(rows, {k: v for k, v in correct.items() if k != "o6"}, report)
+    read = reading(rows, correct, report)
+
+    alec = read["compared"]["alec"]
+    assert (alec["matches"], alec["labeled"], alec["correct"]) == (100, 3, 2)
+    # 80 near-duplicates at 1 of 2, 20 by meaning at 1 of 1.
+    assert alec["precision"]["precision"] == round(0.8 * 0.5 + 0.2 * 1.0, 4)
+    rest = read["compared"]["rest"]
+    assert rest["sources"] == ["eppc", "ncoil"]
+    assert (rest["matches"], rest["labeled"], rest["correct"]) == (300, 3, 2)
+    # 20 near-duplicates at 1 of 1, 280 by meaning at 1 of 2.
+    assert rest["precision"]["precision"] == round(20 / 300 * 1.0 + 280 / 300 * 0.5, 4)
+    assert read["by_source"]["eppc"]["precision"]["precision"] == 0.0
+    assert read["overall"]["matches"] == 400
+    assert read["floor"] == FLOOR
+
+
+def test_the_reporting_sample_is_read_once(tmp_path: Path) -> None:
+    results = tmp_path / "results.json"
+    results.write_text(json.dumps({"origins_precision": {"overall": {}}}))
+
+    run = CliRunner().invoke(app, ["eval", "origin-precision", "--results", str(results)])
+
+    assert run.exit_code == 1
+    assert "read once already" in run.output
+    assert json.loads(results.read_text()) == {"origins_precision": {"overall": {}}}

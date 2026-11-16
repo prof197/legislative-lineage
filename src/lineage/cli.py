@@ -4,7 +4,7 @@ import datetime
 import json
 import os
 import time
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import replace
 from pathlib import Path
 from typing import Annotated, Any
@@ -170,6 +170,7 @@ from lineage.origin_labels import record as record_origin_spend
 from lineage.origin_matching import match_models
 from lineage.origin_precision import PARTS as ORIGIN_PARTS
 from lineage.origin_precision import REPORT as ORIGIN_SAMPLE_REPORT
+from lineage.origin_precision import RESULTS_SECTION as ORIGIN_PRECISION_SECTION
 from lineage.origin_precision import SPEND as ORIGIN_SPEND
 from lineage.origin_precision import (
     OriginPrecisionError,
@@ -183,9 +184,11 @@ from lineage.origin_precision import (
     write_part,
 )
 from lineage.origin_precision import load_sample as load_origin_sample
+from lineage.origin_precision import reading as origin_precision_reading
 from lineage.origin_recall import KEYS as ORIGIN_KEYS
 from lineage.origin_recall import OriginRecallError, load_key, origin_recall, same_slug
 from lineage.origin_threshold import REPORT as ORIGIN_THRESHOLD_REPORT
+from lineage.origin_threshold import correct_by_pair as origin_correct_by_pair
 from lineage.origin_threshold import proposal as origin_threshold_proposal
 from lineage.origins import REPORT as ORIGINS_REPORT
 from lineage.origins import (
@@ -1939,6 +1942,55 @@ def eval_origin_threshold(
             f"recall {r['found']}/{r['enactments']}"
         )
     typer.echo(f"-> {report}")
+
+
+@eval_app.command("origin-precision")
+def eval_origin_precision(
+    labels: Annotated[
+        Path, typer.Option("--labels", help="The origin labels (committed).")
+    ] = ORIGIN_LABELS,
+    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+) -> None:
+    """Origin precision on the reporting sample, read once: overall, by stage, by source, and
+    ALEC's against the rest (DESIGN.md#origin-matches)."""
+    reporting = ORIGIN_PARTS["reporting"]
+    try:
+        doc: dict[str, Any] = json.loads(results.read_text()) if results.exists() else {}
+        if ORIGIN_PRECISION_SECTION in doc:
+            raise OriginPrecisionError(
+                f"the reporting sample was read once already ({results}, "
+                f"{ORIGIN_PRECISION_SECTION}); a second reading could be chosen"
+            )
+        if not reporting.sample.exists():
+            raise OriginPrecisionError(
+                f"no {reporting.sample}; run `lineage origin-sample --part reporting --final`"
+            )
+        rows = load_origin_sample(reporting.sample)
+        read = origin_precision_reading(
+            rows,
+            origin_correct_by_pair(load_origin_labels(labels)),
+            json.loads(ORIGIN_SAMPLE_REPORT.read_text())["reporting"],
+        )
+    except (OriginPrecisionError, ValueError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    section = {
+        "command": "uv run lineage eval origin-precision",
+        "sample": str(reporting.sample),
+        "labels": str(labels),
+        "prompt": ORIGIN_PROMPT.version,
+    } | read
+    write_results(results, ORIGIN_PRECISION_SECTION, section)
+
+    def line(name: str, g: Mapping[str, Any]) -> str:
+        p = g["precision"]
+        shown = "too few labels" if p is None else f"{p['precision']:.2f} {p['interval_95']}"
+        return f"{name}: {shown}, {g['correct']}/{g['labeled']} of {g['matches']:,} listed"
+
+    typer.echo(line("overall", read["overall"]))
+    for name, g in read["compared"].items():
+        typer.echo(line(name, g))
+    typer.echo(f"-> {results}")
 
 
 @eval_app.command("commission")

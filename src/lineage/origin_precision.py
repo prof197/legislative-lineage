@@ -30,7 +30,11 @@ limit, and as the message the whole model document beside every bill section the
 touch, or every matchable section of the bill when it has none, which errs high. A run projected
 over MAX_COST, or over v2's BUDGET together with what v2's ledger records as spent, is refused.
 The exact projection, from the prompts as they would be sent, is lineage.origin_labels'.
-See DESIGN.md#precision-sample.
+
+The reporting part draws only what a page lists, the matches at lineage.origins.FLOOR, and is
+read once (`reading`): overall, by stage, each source's, and one source's against the rest,
+each weighted by that source's matches per stage, since errors concentrated on one
+organization would be unfair to it whatever the overall figure. See DESIGN.md#precision-sample.
 """
 
 import json
@@ -403,3 +407,54 @@ def estimate(
         }
         parts.append((sizes.get(name, 0), n, x))
     return {"strata": per, "overall": stratified(parts)}
+
+
+# The reporting reading's comparison: errors concentrated on one organization would be unfair
+# to it, whatever the overall figure, so its precision is read against every other source's.
+COMPARED = "alec"
+RESULTS_SECTION = "origins_precision"
+
+
+def reading(
+    rows: Sequence[Mapping[str, Any]],
+    correct: Mapping[str, bool],
+    report: Mapping[str, Any],
+    *,
+    compared: str = COMPARED,
+) -> dict[str, Any]:
+    """The reporting sample read: precision overall and by stage, each source's, and one
+    source's against the rest, every figure weighted by stage as the table holds it (the
+    report's `strata` and `by_source`), with its Wilson interval. Refused until every row has a
+    label, since the sample is read once."""
+    unlabeled = [r["pair"] for r in rows if r["pair"] not in correct]
+    if unlabeled:
+        raise OriginPrecisionError(
+            f"{len(unlabeled)} of the {len(rows)} sampled matches have no label yet, "
+            f"{unlabeled[0]} first; the reporting sample is read once, when all are labeled"
+        )
+    by_source: Mapping[str, Mapping[str, int]] = report["by_source"]
+    if compared not in by_source:
+        raise OriginPrecisionError(f"no match of {compared} is listed, so none can be compared")
+
+    def group(sources: Collection[str]) -> dict[str, Any]:
+        sizes = {name: sum(by_source[s][name] for s in sources) for name in STRATA}
+        kept = [r for r in rows if source_of(str(r["doc_id"])) in sources]
+        est = estimate(kept, correct, sizes)
+        return {
+            "sources": sorted(sources),
+            "matches": sum(sizes.values()),
+            "labeled": len(kept),
+            "correct": sum(correct[r["pair"]] for r in kept),
+            "precision": est["overall"],
+            "by_stage": est["strata"],
+        }
+
+    rest = [s for s in by_source if s != compared]
+    overall = group(list(by_source))
+    return {
+        "floor": report["floor"],
+        "seed": report["seed"],
+        "overall": overall,
+        "by_source": {s: group([s]) for s in by_source},
+        "compared": {compared: group([compared]), "rest": group(rest)},
+    }
