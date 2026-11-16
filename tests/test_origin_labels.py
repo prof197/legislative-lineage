@@ -135,3 +135,16 @@ def test_the_plan_counts_v2s_own_ledger_and_refuses_over_its_cap(tmp_path: Path)
     assert over.refusal() is not None
     assert "over v2's" in str(over.refusal())
     assert plan(items, spend_path=ledger, max_cost=0.0).refusal() is not None
+
+
+def test_the_command_caps_a_run_at_v1s_cap_unless_raised_explicitly() -> None:
+    """The reporting sample's projection, every reply at its token limit, came to $11.22, over
+    the $10 cap; the M11 review allowed that one run over it, by an explicit --max-cost, with
+    v2's budget still checked."""
+    import inspect
+
+    from lineage.cli import origin_label_command
+    from lineage.model_labels import MAX_COST
+
+    default = inspect.signature(origin_label_command).parameters["max_cost"].default
+    assert default == MAX_COST == 10.0

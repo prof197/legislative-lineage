@@ -860,6 +860,13 @@ def origin_label_command(
     models_dir: Annotated[
         Path, typer.Option("--models", help="Directory of model files (local), for alignment.")
     ] = MODELS_DIR,
+    max_cost: Annotated[
+        float,
+        typer.Option(
+            "--max-cost",
+            help="Dollars the run may be projected to cost; v2's budget still applies.",
+        ),
+    ] = LABEL_MAX_COST,
 ) -> None:
     """Label an origin sample's matches by a model on each one's strongest section pair; asks
     only with --live (DESIGN.md#origin-matches)."""
@@ -884,7 +891,7 @@ def origin_label_command(
                 strict=True,
             )
         ]
-        planned = plan_origin_labels(items, spend_path=spend)
+        planned = plan_origin_labels(items, spend_path=spend, max_cost=max_cost)
     except (OriginPrecisionError, ModelDocError, ModelError) as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
