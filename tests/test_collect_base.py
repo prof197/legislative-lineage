@@ -136,6 +136,20 @@ def test_provenance_records_the_digests_and_robots(tmp_path: Path) -> None:
     assert doc.robots == "no_robots_txt"
     assert doc.leaked is False
     assert slugify("Health-Care Decisions Act (2026)") == "health-care-decisions-act-2026"
+    assert doc.co_publishers == ()
+    joint = provenance(
+        SOURCE,
+        slug="joint-act",
+        title="Joint Act",
+        url="https://example.org/models/joint",
+        raw=b"raw",
+        media_type="text/plain",
+        text="text\n",
+        robots="allowed",
+        collected_on=DAY,
+        co_publishers=("Second Institute",),
+    )
+    assert joint.co_publishers == ("Second Institute",)
 
 
 def test_the_disk_floor_is_checked_before_storing(tmp_path: Path) -> None:

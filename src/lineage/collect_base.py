@@ -90,9 +90,11 @@ def provenance(
     robots: RobotsStatus,
     collected_on: date,
     published: date | None = None,
+    co_publishers: tuple[str, ...] = (),
 ) -> ModelDoc:
-    """The record of one collected document: where it came from, what robots.txt said, and the
-    digests of its bytes as fetched and of the cleaned text."""
+    """The record of one collected document: where it came from, what robots.txt said, the
+    organizations it names as publishing it with the source's, and the digests of its bytes as
+    fetched and of the cleaned text."""
     return ModelDoc(
         id=f"{source.key}/{slug}",
         source=source.key,
@@ -105,6 +107,7 @@ def provenance(
         raw_sha256=sha256(raw),
         media_type=media_type,
         text_sha256=sha256(text.encode()),
+        co_publishers=co_publishers,
     )
 
 
