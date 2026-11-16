@@ -244,7 +244,7 @@ def test_with_fetching_off_nothing_is_asked_and_the_library_is_reported_unread(
 
 def test_the_source_entry() -> None:
     assert collectors()["alec"].source == SOURCE
-    assert alec.SITE_FETCH is False
+    assert alec.SITE_FETCH is True
     assert SOURCE.library_url == "https://alec.org/model-policy/"
     assert SOURCE.members_source == "https://alec.org/about/"
     assert SOURCE.terms_url == "https://alec.org/terms-of-use/"
@@ -261,6 +261,7 @@ def test_the_command_reports_the_library_unread_without_fetching(
 
     monkeypatch.setattr(alec, "fetch_url", no_fetch)
     monkeypatch.setattr(alec, "read_robots", recorded().read_robots)
+    monkeypatch.setattr(alec, "SITE_FETCH", False)
     args = ["collect-models", "alec", "--modeldocs", str(tmp_path / "modeldocs"),
             "--reports", str(tmp_path / "reports"), "--min-free-gib", "0"]  # fmt: skip
     result = CliRunner().invoke(app, args)

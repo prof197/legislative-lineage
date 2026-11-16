@@ -63,19 +63,18 @@ HOSTS = frozenset({"www.citizen.org", "citizen.org"})
 #   Their FY2024 returns, as the site posts them (https://www.citizen.org/about/annual-report/):
 #   https://www.citizen.org/wp-content/uploads/2024_0930_PUBLIC-CITIZEN_TAX-RETURN_PUBLIC-DISCLOSURE.pdf
 #   https://www.citizen.org/wp-content/uploads/2024_0930_PUBLIC-CITIZEN-FOUNDATION_TAX-RETURN_PUBLIC-DISCLOSURE.pdf
-# - which entity: no model page names one. The library offers state lawmakers help "to pass this
-#   legislation", which the about page assigns to Public Citizen, Inc., whose return describes
-#   programs that champion legislation and lobby; the Foundation's describes public education.
+# - which entity: no model page names one, so the entry names neither as the publisher and
+#   gives both (ruled 2026-11-15).
 # - terms: https://www.citizen.org/terms-of-use/ has a heading and no text; every page's footer
 #   permits non-commercial use of the text with attribution under CC BY-NC-ND 3.0 US, the
 #   license below; https://www.citizen.org/robots.txt disallows nothing.
 SOURCE = Source(
     key="public-citizen",
-    organization="Public Citizen (Public Citizen, Inc.)",
-    descriptor="nonprofit membership organization, 501(c)(4) (Public Citizen, Inc., EIN "
-    "23-7104508), which by its own account lobbies and organizes; it shares its website with "
-    "its affiliate Public Citizen Foundation, Inc., a 501(c)(3) (EIN 52-1263996) for research "
-    "and public education",
+    organization="Public Citizen",
+    descriptor="nonprofit organization in two parts that share its website: Public Citizen, "
+    "Inc., a 501(c)(4) membership organization (EIN 23-7104508) that by its own account lobbies "
+    "and organizes, and Public Citizen Foundation, Inc., a 501(c)(3) (EIN 52-1263996) for "
+    "research and public education",
     members="People who contribute to Public Citizen, Inc. become its members",
     members_source="https://www.citizen.org/donate/pc-v-pc-foundation/",
     library_url=LIBRARY,

@@ -16,10 +16,12 @@ neither is counted as found. Drafts are not collected either: a draft page says 
 before its task force has considered it and is taken down if not adopted, so it is not yet a
 model the organization presents, and a later run collects it once it is final.
 
-Fetching is off (`SITE_FETCH`). Read on 2026-11-15, the site's terms of use say that using the
-site is agreeing to them, and they forbid copying or reproducing any of its material, which
-keeping a local copy of each text does; robots.txt allows every path. The fetch path is built and
-tested against synthetic responses (tests/fixtures/collect/alec/). See DESIGN.md#model-documents.
+Fetching is on (`SITE_FETCH`). Read on 2026-11-15, the site's terms of use say that using the
+site is agreeing to them, with nothing to accept first, and they forbid copying or reproducing
+any of its material; robots.txt allows every path. A text is kept only on the machine that runs
+the matching, is never shown or published, and a page gives only the share of wording and a
+link, so collecting it was ruled acceptable (2026-11-15), and the sources page states the terms
+as read. See DESIGN.md#model-documents.
 """
 
 import html
@@ -52,8 +54,8 @@ from lineage.modeltext import ModelTextError, docx_text, drop_instructions
 SITE = "https://alec.org"
 LIBRARY = f"{SITE}/model-policy/"
 SITEMAP_INDEX = f"{SITE}/sitemap_index.xml"
-# Off until the terms are ruled on for this use (see the module docstring); tests pass `site=True`.
-SITE_FETCH = False
+# On: local copies for matching were ruled acceptable under the terms (see the module docstring).
+SITE_FETCH = True
 # The library's model state legislation, by the page's "Type:" and "Status:" (see the docstring).
 TYPES = frozenset({"model policy", "model resolution"})
 STATUSES = frozenset({"final"})
