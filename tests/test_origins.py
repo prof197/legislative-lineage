@@ -1,12 +1,20 @@
 """Origin matches (DESIGN.md#origin-matches): both shares, spans on the bill's side only, and a
 table that is empty until matching has run."""
 
+from datetime import date
 from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
 
-from lineage.origins import BillSpan, OriginMatch, read_origin_matches, write_origin_matches
+from lineage.modeldocs import ModelDoc
+from lineage.origins import (
+    BillSpan,
+    OriginMatch,
+    origins_report,
+    read_origin_matches,
+    write_origin_matches,
+)
 
 
 def _match(bill: str, doc: str, model_share: float = 0.4, bill_share: float = 0.9) -> OriginMatch:
@@ -36,3 +44,44 @@ def test_a_match_has_a_stage_and_shares_between_zero_and_one() -> None:
         _match("b", "d", model_share=1.2)
     with pytest.raises(ValidationError):  # the model's text is never shown, so no span points in
         BillSpan.model_validate({"ordinal": 0, "start": 0, "end": 5, "kind": "exact", "side": "a"})
+
+
+def _doc(doc_id: str, text: str) -> ModelDoc:
+    return ModelDoc(
+        id=doc_id,
+        source=doc_id.partition("/")[0],
+        title="Model Act",
+        url="https://example.org/act",
+        collected_on=date(2026, 11, 16),
+        robots="allowed",
+        leaked=False,
+        raw_sha256="0" * 64,
+        media_type="text/html",
+        text_sha256=text * 64,
+    )
+
+
+def test_the_report_counts_by_source_and_stage_and_shared_texts_once() -> None:
+    docs = [_doc("first/a", "1"), _doc("first/b", "2"), _doc("second/a", "1")]
+    both = _match("ocd-bill/1", "first/a").model_copy(
+        update={"stages": ["near_duplicate", "semantic"]}
+    )
+    by_meaning = _match("ocd-bill/2", "second/a").model_copy(update={"stages": ["semantic"]})
+    matches = [both, _match("ocd-bill/2", "first/a"), by_meaning]
+
+    report = origins_report(matches, docs, seconds=12.34)
+
+    assert (report.documents, report.distinct_texts, report.matches, report.bills) == (3, 2, 3, 2)
+    assert report.by_stage == {"near_duplicate": 1, "semantic": 1, "both": 1}
+    assert report.by_source["first"].model_dump() == {
+        "documents": 2,
+        "documents_matched": 1,
+        "matches": 2,
+    }
+    assert report.by_source["second"].matches == 1
+    assert report.seconds == 12.3
+
+
+def test_the_report_refuses_a_match_no_source_holds() -> None:
+    with pytest.raises(ValueError, match="no source holds"):
+        origins_report([_match("ocd-bill/1", "gone/a")], [_doc("first/a", "1")], seconds=None)

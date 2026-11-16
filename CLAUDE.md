@@ -52,7 +52,7 @@ uv run lineage eval agreement  # a person's labels against the model's on that s
 uv run lineage label-model SAMPLE  # provisional labels from a model, kept apart from people's; asks nothing without --live
 uv run lineage eval precision  # precision per stratum, stage and overall, people's and the model's apart -> reports/results.json
 uv run lineage collect-models SOURCE  # one source's model legislation -> data/modeldocs/<source>/, reports/modeldocs/<source>.json
-uv run lineage origins       # collected model documents against the corpus -> data/tables/origins/matches.jsonl (needs the built index and semantic vectors)
+uv run lineage origins       # collected model documents against the corpus -> data/tables/origins/matches.jsonl, reports/origins.json (needs the built index and semantic vectors; --report-only: count the table as it stands)
 uv run lineage eval origins  # origin recall on the development answer key -> reports/results.json (origins_development); --key held_out --final: the sealed key, once per configuration
 uv run lineage origin-sample  # seeded origin precision sample (--part tuning), label cost projected, nothing asked -> evals/origin_precision_tuning.jsonl, reports/origin_precision_sample.json; --part reporting --final once matching is final
 uv run lineage intake       # one day of new and changed bills from Open States' API v3 (key from OPENSTATES_API_KEY), text through the text layer -> data/days/<day>/, data/intake/; --tier default|bronze|silver

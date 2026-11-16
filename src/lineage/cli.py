@@ -173,7 +173,13 @@ from lineage.origin_precision import (
 )
 from lineage.origin_recall import KEYS as ORIGIN_KEYS
 from lineage.origin_recall import OriginRecallError, load_key, origin_recall, same_slug
-from lineage.origins import read_origin_matches, write_origin_matches
+from lineage.origins import REPORT as ORIGINS_REPORT
+from lineage.origins import (
+    origins_report,
+    read_origin_matches,
+    write_origin_matches,
+    write_origins_report,
+)
 from lineage.pair_data import PAIR_DATA_DIR, PairDataError, fetch_pair_data
 from lineage.pair_eval import REPORT as PAIR_REPORT
 from lineage.pair_eval import evaluate as evaluate_pairs
@@ -708,10 +714,22 @@ def origins_command(
         Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
     ] = MODELDOCS_DIR,
     min_free_gib: MinFreeOption = 20.0,
+    report: Annotated[Path, typer.Option("--report", help="Counts per source and stage.")] = (
+        ORIGINS_REPORT
+    ),
+    report_only: Annotated[
+        bool,
+        typer.Option("--report-only", help="Count the table as it stands; match nothing."),
+    ] = False,
 ) -> None:
-    """Match every collected model document against the corpus -> <tables>/origins/matches.jsonl
-    (DESIGN.md#origin-matches)."""
+    """Match every collected model document against the corpus -> <tables>/origins/matches.jsonl,
+    reports/origins.json (DESIGN.md#origin-matches)."""
     docs = [d for c in collectors().values() for d in read_docs(c.source, root)]
+    if report_only:
+        counted = origins_report(read_origin_matches(tables), docs, seconds=None)
+        typer.echo(f"{counted.matches} matches counted -> {write_origins_report(counted, report)}")
+        return
+    started = time.perf_counter()
     try:
         matches = match_models(
             tables,
@@ -731,7 +749,11 @@ def origins_command(
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
     path = write_origin_matches(tables, matches)
-    typer.echo(f"{len(matches)} matches from {len(docs)} documents -> {path}")
+    counted = origins_report(matches, docs, seconds=time.perf_counter() - started)
+    typer.echo(
+        f"{len(matches)} matches from {len(docs)} documents -> {path}, "
+        f"{write_origins_report(counted, report)}"
+    )
 
 
 @app.command("origin-sample")
