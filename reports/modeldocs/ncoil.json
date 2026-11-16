@@ -1,0 +1,9 @@
+{
+ "source": "ncoil",
+ "run_on": "2026-11-15",
+ "found": 95,
+ "collected": 30,
+ "unchanged": 65,
+ "blocked": [],
+ "failed": []
+}
