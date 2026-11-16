@@ -1,11 +1,10 @@
 # Synthetic, in the shape of alec.org's (read 2026-11-15), which is Yoast's block with an empty
 # Disallow, allowing every path. The withheld-lamp-act line is invented, so a test can see a
-# disallowed policy reported; it comes first because Python's parser applies the first rule that
-# fits, and it reads the empty Disallow as allowing everything.
+# disallowed policy reported; RFC 9309 applies the longest matching rule wherever it stands.
 # START YOAST BLOCK
 User-agent: *
-Disallow: /model-policy/withheld-
 Disallow:
+Disallow: /model-policy/withheld-
 
 Sitemap: https://alec.org/sitemap_index.xml
 # END YOAST BLOCK

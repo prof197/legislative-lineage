@@ -5,16 +5,24 @@ listed in the site's sitemaps. A page says what the document is ("Type:" Model P
 Resolution, Policy Statement, Statement of Principle or Model Ordinance), whether it is a
 "Draft" or "Final", and its dates ("Date Introduced:", "Date Finalized:", "Date Amended:"). Those
 fields are not in the site's REST API, so the page is read for them; the policy's text is read
-from the API, whose `content` field holds the policy body alone, without the page's summary,
-sidebar and sign-up form. An amendment is posted as a link to a Word or PDF file, which is read
-instead.
+from the API, whose `content` field holds the policy body without the page's sidebar and
+sign-up form. An amendment is posted as a link to a Word or PDF file, which is read instead.
+
+Older pages give fewer fields. Of the 1,047 pages the first full run found (2026-11-15), 62
+lacked a Type or a Status: policies reapproved in 2013 give a Type and a Date Amended only, some
+give a Status only, and four are lists of a meeting's adopted policies. A page without a Status
+is final unless it carries the "Draft Disclaimer" every draft does; one without a Type is told by
+its body (`body_kind`). Older bodies also set a summary before the policy, ended by a label such
+as "Model Legislation", which is cut (`policy_start`); a body without one is the policy from its
+first line, since many have no section headings at all (51 in that run).
 
 Which documents are collected: the final model policies and model resolutions, the library's
 model state legislation. Policy statements and statements of principle state the organization's
 positions, and a model ordinance is written for local government, so neither is collected, and
-neither is counted as found. Drafts are not collected either: a draft page says it is posted
-before its task force has considered it and is taken down if not adopted, so it is not yet a
-model the organization presents, and a later run collects it once it is final.
+neither is counted as found; nor is an ordinance or proclamation a page types "Model Policy"
+(`local_measure`). Drafts are not collected either: a draft page says it is posted before its
+task force has considered it and is taken down if not adopted, so it is not yet a model the
+organization presents, and a later run collects it once it is final.
 
 Fetching is on (`SITE_FETCH`). Read on 2026-11-15, the site's terms of use say that using the
 site is agreeing to them, with nothing to accept first, and they forbid copying or reproducing
@@ -94,34 +102,77 @@ _POLICY_SITEMAP = re.compile(r"/model-policy-sitemap\d*\.xml$")
 _POLICY_PAGE = re.compile(r"^https://alec\.org/model-policy/(?!page/)([^/?#]+)/?$")
 _FIELDS = "id,slug,link,title,content"
 
-# A numbered section's heading, "Section 1. {Title}" or "SECTION 2 Definitions".
-_SECTION = re.compile(r"^\s*\[?(?:section|sec\.)\s+\d+[a-z]?\b", re.IGNORECASE)
-# Where a text without numbered sections begins: its enacting or resolving clause.
-_OPENING = re.compile(
-    r"^\s*(?:be\s+it\s+(?:enacted|resolved)|whereas\b|now,?\s+therefore|resolved\b)", re.I
+# A section's heading: "Section 1. {Title}", "SECTION 2 Definitions", "Sec 1.", "NEW SECTION.
+# Sec. 1.", "Section I:", "SEC. xx.", "Section __" or "§ 1".
+_SECTION = re.compile(
+    r"^\s*[\[“\"]?(?:new\s+section\.?\s*)?"
+    r"(?:(?:section|sec\.?)\s+(?:\d+[a-z]?|[ivxlc]+|x+|_+)(?![a-z])|§\s*\d+)",
+    re.IGNORECASE,
 )
+# An enacting, resolving or ordaining clause, a recital, or a findings clause.
+_OPENING = re.compile(
+    r"^\s*(?:(?:now,?\s+)?(?:therefore,?\s+)?be\s+it\s+(?:further\s+)?(?:enacted|resolved|ordained)"
+    r"|where?as\b|now,?\s+therefore|(?:therefore,?\s+)?resolved\b"
+    r"|the\s+(?:legislature|general\s+assembly)\b.{0,80}\bfinds\b|(?:legislative\s+)?findings\b)",
+    re.IGNORECASE,
+)
+# A numbered or lettered provision, "(1)", "A.", "(iii)", or a sentence that commands or
+# defines: what a body that is law holds, and a notice or a list of other policies does not.
+_PROVISION = re.compile(
+    r"^\s*[“\"]?\(?(?:\d{1,3}|[a-z]|[ivx]{1,5})[.)]\s|\b(?:shall|may\s+not|means)\b", re.I
+)
+# Where the library's older bodies set a summary before the policy: "Summary", "Summary:" or
+# "Summary: <text>", "Model Policy Summary", "Summary of the Act", a Utah bill's "General
+# Description:" and "Highlighted Provisions:", or "The Problem".
+_SUMMARY = re.compile(
+    r"^\s*(?:(?:model\s+policy\s+)?summary(?:\s+of\s+the\s+(?:act|bill|policy|resolution))?"
+    r"(?:\s*:.*)?|general\s+description\s*:.*|highlighted\s+provisions\s*:?|the\s+problem)\s*$",
+    re.IGNORECASE,
+)
+# The label that ends a summary and stands before the text: "Model Legislation", "Model Policy",
+# "Model Resolution:", "Resolution:"; dropped wherever it stands.
+_LABEL = re.compile(
+    r"^\s*(?:model\s+(?:legislation|policy|resolution|act|bill|language|ordinance|statute)"
+    r"|resolution|legislation|model)\s*:?\s*$",
+    re.IGNORECASE,
+)
+# A summary given as one paragraph, "Summary: This bill ...", which can follow the enacting
+# clause; dropped wherever it stands.
+_SUMMARY_LINE = re.compile(r"^\s*summary\s*:\s*\S", re.IGNORECASE)
 # The board's and task forces' approval lines that close a policy: "Approved by ALEC Board of
-# Directors in 1995", "Reapproved by ALEC Board of Directors on January 28, 2013".
+# Directors in 1995", "Reapproved by ALEC Board of Directors on January 28, 2013", "Renewed by
+# the Task Forces on ...", "Renewal approved by the Board of Directors on ...", and the older
+# policies' source line, "Source Book of American State Legislation 1987-88".
 _APPROVAL = re.compile(
-    r"^\s*\(?\s*(?:final\s+version\s+)?(?:re-?)?(?:approved|adopted|amended|affirmed|reaffirmed)"
+    r"^\s*\(?\s*(?:(?:final\s+version\s+)?(?:re-?)?(?:approved|adopted|amended|affirmed"
+    r"|reaffirmed|renewed|renewal\s+approved)"
     r"\b.{0,200}\b(?:ALEC|American Legislative Exchange Council|Board\s+of\s+Directors|Task"
-    r"\s+Force)\b.{0,200}$",
+    r"\s+Forces?)\b.{0,200}|source\s+book\s+of\s+american\s+state\s+legislation\b.{0,40})$",
     re.IGNORECASE,
 )
 # A drafting, legislative or editor's note set as its own paragraph.
 _NOTE_LINE = re.compile(
     r"^\s*[\[{(]?\s*(?:(?:drafting|legislative|editor'?s?)\s+notes?\b|notes?\s*:)", re.I
 )
-# Labels the page sets before the body: "Model Policy", "Model Resolution", "Summary".
-_LABEL = re.compile(r"^\s*(?:model\s+(?:policy|resolution)|summary)\s*:?\s*$", re.IGNORECASE)
-# The commission's instruction words (lineage.modeltext), in braces as ALEC also writes them,
-# and "reference", which ALEC uses: "[reference any state compulsory insurance law]". Braced
+# Instructions to the drafter in braces, as ALEC also writes them, with the commission's words
+# (lineage.modeltext) and "reference", which ALEC uses: "{insert state}", "[reference any state
+# compulsory insurance law]", and the older policies' "{Title, enacting clause, etc.}". Braced
 # captions such as "{Title}" or "{Definitions}" are enacted headings and stay.
+_WORDS = (
+    r"(?:(?:cite|citation|insert|specify|identify|describe|enter|appropriate|reference)\b"
+    r"|name\s+of\b)"
+)
 _INSTRUCTION = re.compile(
-    r"[ \t]*\{\s*(?:(?:cite|insert|specify|identify|describe|enter|reference)\b|name\s+of\b)"
-    r"[^{}]*\}"
-    r"|[ \t]*\[\s*reference\b[^\[\]]*\]",
+    rf"[ \t]*\{{\s*{_WORDS}[^{{}}]*\}}"
+    r"|[ \t]*\[\s*reference\b[^\[\]]*\]"
+    r"|[ \t]*[\[{]\s*title,\s*enacting\s+clause\b[^\[\]{}\n]*[\]}]",
     re.IGNORECASE,
+)
+# An instruction whose brackets do not pair, "[insert department}", "{insert code reference]",
+# "[INSERT STATE)", or that is not closed on its line. Dropped before the commission's rule
+# reads the text, since that rule's span would run on to the next closing bracket, lines away.
+_UNPAIRED = re.compile(
+    rf"[ \t]*[\[{{]\s*{_WORDS}[^\[\]{{}}()\n]*(?:[\]}})]|$)", re.IGNORECASE | re.MULTILINE
 )
 _INLINE_NOTE = re.compile(
     r"[ \t]*\{\s*(?:drafting\s+note|legislative\s+note|note|comment)s?\s*:[^{}]*\}", re.I
@@ -129,39 +180,62 @@ _INLINE_NOTE = re.compile(
 _DATE_FORMATS = ("%B %d, %Y", "%b %d, %Y", "%m/%d/%Y")
 
 
+def policy_start(lines: list[str]) -> int:
+    """Where the policy begins: after the summary an older body sets first, at the label that
+    ends it or, without one, at the first section or clause; at the top when there is none. A
+    body without a summary is the policy from its first line: many have no section headings."""
+    law = next(
+        (i for i, line in enumerate(lines) if _SECTION.match(line) or _OPENING.match(line)),
+        len(lines),
+    )
+    summary = next((i for i, line in enumerate(lines[:law]) if _SUMMARY.match(line)), None)
+    if summary is None:
+        return 0
+    for i in range(summary + 1, len(lines)):
+        if _LABEL.match(lines[i]):
+            return i + 1
+        if _SECTION.match(lines[i]) or _OPENING.match(lines[i]):
+            return i
+    return summary + 1
+
+
+def has_law(text: str) -> bool:
+    """Whether a text holds a section, a clause or a provision, as a notice or a list of other
+    policies does not."""
+    return any(
+        _SECTION.match(line) or _OPENING.match(line) or _PROVISION.search(line)
+        for line in text.split("\n")
+    )
+
+
 def clean_policy(text: str) -> str:
-    """A policy's text as matching reads it: from its first numbered section, or, without one,
-    its enacting or resolving clause, to its end, without labels, notes, approval lines or
-    instructions to the drafter. Enacted brackets and braced captions stay as written."""
+    """A policy's text as matching reads it: its body, after any summary, without labels, notes,
+    approval lines or instructions to the drafter. Enacted brackets and braced captions stay as
+    written."""
     lines = [line.strip() for line in text.replace("\r\n", "\n").replace("\r", "\n").split("\n")]
+    lines = [line for line in lines if line]
     lines = [
         line
-        for line in lines
-        if line and not (_LABEL.match(line) or _NOTE_LINE.match(line) or _APPROVAL.match(line))
+        for line in lines[policy_start(lines) :]
+        if not any(r.match(line) for r in (_LABEL, _SUMMARY_LINE, _NOTE_LINE, _APPROVAL))
     ]
-    start = next((i for i, line in enumerate(lines) if _SECTION.match(line)), None)
-    if start is None:
-        start = next((i for i, line in enumerate(lines) if _OPENING.match(line)), None)
-    if start is None:
-        raise ModelTextError("no numbered section, enacting clause or resolving clause")
-    body = _INLINE_NOTE.sub("", "\n".join(lines[start:]))
-    while (dropped := _INSTRUCTION.sub("", drop_instructions(body))) != body:
+    body = _INLINE_NOTE.sub("", "\n".join(lines))
+    while (dropped := _INSTRUCTION.sub("", drop_instructions(_UNPAIRED.sub("", body)))) != body:
         body = dropped
     kept = [line.strip() for line in body.split("\n")]
-    return "\n".join(line for line in kept if line) + "\n"
+    kept = [line for line in kept if line]
+    if not has_law("\n".join(kept)):
+        raise ModelTextError("no section, clause or provision in the body")
+    return "\n".join(kept) + "\n"
 
 
 @dataclass(frozen=True, slots=True)
 class PolicyPage:
     """What a policy's page says about it."""
 
-    kind: str | None  # "Type:", e.g. "Model Policy"
-    status: str | None  # "Draft" or "Final"
+    kind: str | None  # "Type:", e.g. "Model Policy"; None where an older page gives none
+    status: str  # "Draft" or "Final", as the page gives it or as it reads (see policy_page)
     published: date | None  # the latest of "Date Amended:" and "Date Finalized:"
-
-    @property
-    def wanted(self) -> bool:
-        return (self.kind or "").lower() in TYPES and (self.status or "").lower() in STATUSES
 
 
 def _label(lines: list[str], label: str) -> str | None:
@@ -186,15 +260,69 @@ def _date(value: str | None) -> date | None:
 
 
 def policy_page(page: Fetched) -> PolicyPage:
-    lines = html_text(page.body, None).split("\n")
+    """The page's fields. Older pages give some of them only: a policy reapproved in 2013 gives
+    its Type and Date Amended but no Status, and some give a Status but no Type. A page without
+    a Status reads as final unless it carries the "Draft Disclaimer" every draft does; one
+    without a Type is told by its body (`body_kind`)."""
+    text = html_text(page.body, None).split("\n")
     # The page's "Policy Status" block holds the fields; read from it where it is found.
-    lines = lines[next((i for i, x in enumerate(lines) if x.lower() == "policy status"), 0) :]
+    lines = text[next((i for i, x in enumerate(text) if x.lower() == "policy status"), 0) :]
     dates = [d for d in (_date(_label(lines, f"Date {k}")) for k in ("Amended", "Finalized")) if d]
+    draft = any(x.lower() == "draft disclaimer" for x in text)
     return PolicyPage(
         kind=_label(lines, "Type"),
-        status=_label(lines, "Status"),
+        status=_label(lines, "Status") or ("Draft" if draft else "Final"),
         published=max(dates, default=None),
     )
+
+
+# A local government's measure: an ordinance, a mayor's proclamation, or a resolution left for a
+# city or county to fill in ("THE [Insert Governing Body] OF THE [Insert Jurisdiction]").
+_LOCAL_TITLE = re.compile(r"\bordinance\b|^\W*proclamation\b", re.IGNORECASE)
+_LOCAL_TEXT = re.compile(
+    r"\bbe\s+it\s+(?:further\s+)?ordained\b|\bhereby\s+ordains?\b|\bdo\s+hereby\s+proclaim\b"
+    r"|\[\s*insert\s+(?:governing\s+body|jurisdiction)\s*\]",
+    re.IGNORECASE,
+)
+
+
+def local_measure(title: str, body: str) -> bool:
+    """Whether a document is written for a city or county, as the library's ordinances and
+    proclamations are, though some pages type them "Model Policy": not state legislation."""
+    return bool(_LOCAL_TITLE.search(title) or _LOCAL_TEXT.search(body))
+
+
+_STATEMENT_TITLE = re.compile(r"\bstatements?\s+of\s+principles?\b|\bpolicy\s+statement\b", re.I)
+
+
+_POLICY_LINK = re.compile(r"""href=["']?(?:https?://alec\.org)?/model-policy/[^/"'\s>]+""", re.I)
+
+
+def body_kind(title: str, body: str, content: str = "") -> str | None:
+    """What a policy whose page gives no Type is, from its title, its body and the body's HTML:
+    a statement or an ordinance by its title, else by the label its body sets ("Model
+    Legislation", "Model Resolution"), else a resolution by its title, else a model policy if the
+    body holds law. The library's lists of a meeting's adopted policies sit among them
+    (`model-policies-annual-meeting-2013`): a body with no label that links to several other
+    policies, or holds no law, is not a policy."""
+    if _STATEMENT_TITLE.search(title):
+        return "Statement of Principle"
+    if re.search(r"\bordinance\b", title, re.IGNORECASE):
+        return "Model Ordinance"
+    for line in body.split("\n"):
+        if _LABEL.match(line):
+            word = line.lower()
+            if "ordinance" in word:
+                return "Model Ordinance"
+            if "resolution" in word:
+                return "Model Resolution"
+            if "model" in word or "legislation" in word:
+                return "Model Policy"
+    if len(_POLICY_LINK.findall(content)) >= 2:
+        return None
+    if re.search(r"\bresolution\b", title, re.IGNORECASE):
+        return "Model Resolution"
+    return "Model Policy" if has_law(body) else None
 
 
 def _locs(sitemap: Fetched, tag: str) -> list[str]:
@@ -279,10 +407,6 @@ def _title(rendered: str) -> str:
     return " ".join(html.unescape(re.sub(r"<[^>]+>", "", rendered)).split())
 
 
-def _has_law(text: str) -> bool:
-    return any(_SECTION.match(line) or _OPENING.match(line) for line in text.split("\n"))
-
-
 def _fetch_step(c: Collection, page_url: str, url: str) -> Fetched | None:
     """One request on the way to a policy's text; a refusal or failure settles the policy."""
     if c.permission(url) == "blocked":
@@ -306,10 +430,9 @@ def _collect_policy(
     except (CollectFetchError, ExtractError) as e:
         c.fail(url, str(e))
         return
-    if page.kind is None or page.status is None:
-        c.fail(url, "no Type or Status on the policy's page")
+    if page.status.lower() not in statuses:
         return
-    if page.kind.lower() not in types or page.status.lower() not in statuses:
+    if page.kind is not None and page.kind.lower() not in types:
         return
     if (match := _POLICY_PAGE.match(url)) is None:
         c.fail(url, "not a policy page")
@@ -322,9 +445,20 @@ def _collect_policy(
         return
     try:
         policy = api_policy(response, slug)
-        raw, media_type = response.body, "application/json"
-        body = html_text(policy.content.encode(), "utf-8") if policy.content.strip() else ""
-        if not _has_law(body) and (file_url := attachment(policy.content)) is not None:
+    except CollectFetchError as e:
+        c.fail(url, str(e))
+        return
+    body = html_text(policy.content.encode(), "utf-8") if policy.content.strip() else ""
+    # Not a policy, not one of the kinds collected, or a local measure: none is counted as found.
+    if page.kind is None:
+        kind = body_kind(_title(policy.title), body, policy.content)
+        if kind is None or kind.lower() not in types:
+            return
+    if local_measure(_title(policy.title), body):
+        return
+    raw, media_type = response.body, "application/json"
+    try:
+        if not has_law(body) and (file_url := attachment(policy.content)) is not None:
             if (robots := c.check(file_url)) is None:
                 return
             if (got := _fetch_step(c, url, file_url)) is None:

@@ -1,5 +1,5 @@
 Amendments to the Synthetic Lantern Registry Act
-(invented for tests; not an ALEC text)
+Note: invented for tests; not an ALEC text.
 
 Section 3. {Registration}
 A keeper shall register each lantern within [90] days with {insert name of office}.
