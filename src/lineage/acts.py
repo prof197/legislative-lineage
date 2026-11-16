@@ -44,6 +44,8 @@ ACT_NAMES = {
     "easement-relocation": "Easement Relocation",
     "mortgage-modification": "Mortgage Modification",
     "directed-trust": "Directed Trust",
+    "health-care-decisions": "Health-Care Decisions",
+    "antitrust-pre-merger-notification": "Antitrust Pre-Merger Notification",
 }
 ACTS_DIR = DATA / "acts"
 HELD_OUT_DIR = ACTS_DIR / "held-out"

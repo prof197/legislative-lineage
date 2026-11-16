@@ -1,9 +1,10 @@
 """The Uniform Law Commission's acts, the first library of model legislation collected.
 
 The acts already on disk come first: `lineage.acts` knows the development and held-out acts the
-commission eval reads from `data/acts/`, each saved by hand from the commission's download as
-plain text. They are collected as they are, without a request beyond robots.txt, so a collected
-document and the eval's query come from the same file. The rest come from the commission's site:
+commission eval reads from `data/acts/`, and the two reserve acts origin recall's sealed key
+reads, each saved by hand from the commission's download as plain text. They are collected as
+they are, without a request beyond robots.txt, so a collected document and the eval's query come
+from the same file. The rest come from the commission's site:
 the current-acts catalog, one page per initial letter, then each act's page, its "Final Act"
 library document, and the file attached to it, the edition without comments where there is one.
 
@@ -26,7 +27,15 @@ from datetime import date
 from html.parser import HTMLParser
 from pathlib import Path
 
-from lineage.acts import ACT_NAMES, ACTS, ACTS_DIR, HELD_OUT_ACTS, HELD_OUT_DIR, ActTextError
+from lineage.acts import (
+    ACT_NAMES,
+    ACTS,
+    ACTS_DIR,
+    HELD_OUT_ACTS,
+    HELD_OUT_DIR,
+    ORIGIN_HELD_OUT_ACTS,
+    ActTextError,
+)
 from lineage.collect import CollectContext, CollectReport
 from lineage.collect_base import (
     CollectFetchError,
@@ -84,6 +93,10 @@ ACT_KEYS = {
     "easement-relocation": "ec690784-90d6-42c3-99ea-1e13a49c8540",
     "mortgage-modification": "5c724df8-d5a1-4bc8-be3b-0191302a6a8d",
     "directed-trust": "ca4d8a5a-55d7-4c43-b494-5f8858885dd8",
+    # The reserve acts, origin recall's sealed key: from each act's Final Act document link
+    # (read 2026-11-16).
+    "health-care-decisions": "3df274d6-776b-4780-8e4e-018a850ef44e",
+    "antitrust-pre-merger-notification": "6bf5d101-d698-4c72-b7c1-0191302a6a95",
 }
 
 DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -218,7 +231,7 @@ def _collect_disk(c: Collection, acts_dir: Path, held_out_dir: Path, site: bool)
     """The acts on disk; returns those settled here."""
     settled: set[str] = set()
     for act, directory in [(a, acts_dir) for a in ACTS] + [
-        (a, held_out_dir) for a in HELD_OUT_ACTS
+        (a, held_out_dir) for a in HELD_OUT_ACTS + ORIGIN_HELD_OUT_ACTS
     ]:
         url = act_page(ACT_KEYS[act])
         path = directory / f"{act}.txt"

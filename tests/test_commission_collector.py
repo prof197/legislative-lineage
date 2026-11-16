@@ -43,7 +43,7 @@ WANTED = {
 
 
 def _disk(tmp_path: Path) -> tuple[Path, Path]:
-    """Synthetic texts saved as two of the acts lineage.acts knows; the other five are absent."""
+    """Synthetic texts saved as two of the acts lineage.acts knows; the other seven are absent."""
     acts, held_out = tmp_path / "acts", tmp_path / "acts" / "held-out"
     held_out.mkdir(parents=True)
     text = SYNTHETIC_ACT.read_text()
@@ -81,10 +81,12 @@ def test_the_acts_on_disk_are_collected_with_provenance_and_nothing_fetched(
     site = recorded_site()
     report = _run(tmp_path, site, on_site=False)
 
-    assert (report.found, report.collected, report.unchanged) == (7, 2, 0)
+    assert (report.found, report.collected, report.unchanged) == (9, 2, 0)
     assert report.blocked == []
-    # The five acts not on disk are reported, not silently skipped.
-    assert len(report.failed) == 5
+    # The seven acts not on disk, the two reserve acts among them, are reported, not silently
+    # skipped.
+    assert len(report.failed) == 7
+    assert any(f.reason.startswith("health-care-decisions.txt") for f in report.failed)
     assert all("not on disk" in f.reason for f in report.failed)
     assert site.requests == []
     assert site.robots_reads == [("https", "www.uniformlaws.org")]
@@ -224,9 +226,9 @@ def test_the_command_collects_the_acts_on_disk_without_fetching(
             "--reports", str(tmp_path / "reports"), "--min-free-gib", "0"]  # fmt: skip
     first = CliRunner().invoke(app, args)
     assert first.exit_code == 0, first.output
-    assert "7 found: 2 collected, 0 unchanged, 0 blocked by robots.txt, 5 failed" in first.output
+    assert "9 found: 2 collected, 0 unchanged, 0 blocked by robots.txt, 7 failed" in first.output
     report = json.loads((tmp_path / "reports" / "commission.json").read_text())
     # The report names no local path: it is committed.
     assert str(tmp_path) not in json.dumps(report)
     again = CliRunner().invoke(app, args)
-    assert "7 found: 0 collected, 2 unchanged" in again.output
+    assert "9 found: 0 collected, 2 unchanged" in again.output

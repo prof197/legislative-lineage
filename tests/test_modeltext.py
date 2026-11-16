@@ -11,7 +11,14 @@ from pathlib import Path
 
 import pytest
 
-from lineage.acts import ACTS, ACTS_DIR, HELD_OUT_ACTS, HELD_OUT_DIR, enacted_text
+from lineage.acts import (
+    ACTS,
+    ACTS_DIR,
+    HELD_OUT_ACTS,
+    HELD_OUT_DIR,
+    ORIGIN_HELD_OUT_ACTS,
+    enacted_text,
+)
 from lineage.modeltext import ModelTextError, clean_act, docx_text, drop_instructions
 from tests.recorded_site import SYNTHETIC_ACT, docx_bytes
 
@@ -114,7 +121,7 @@ _HEADING = re.compile(r"^\s*\[{0,2}(?:Section\s+\d+[A-Za-z]?\.|Article\]?\s+\d+)
 
 def _local_acts() -> list[Path]:
     paths = [ACTS_DIR / f"{a}.txt" for a in ACTS] + [
-        HELD_OUT_DIR / f"{a}.txt" for a in HELD_OUT_ACTS
+        HELD_OUT_DIR / f"{a}.txt" for a in HELD_OUT_ACTS + ORIGIN_HELD_OUT_ACTS
     ]
     return [p for p in paths if p.exists()]
 

@@ -121,6 +121,13 @@ textutil -convert txt -encoding UTF-8 -output data/acts/held-out/directed-trust.
 
 Their enactments are in `evals/ulc_enactments_heldout.csv`.
 
+Origin recall's sealed test, run once with `--final` in v2, uses that file's two reserve acts, which v1 never ran (DESIGN.md, [Origin matches](DESIGN.md#origin-matches)). Download and convert them the same way:
+
+```sh
+textutil -convert txt -encoding UTF-8 -output data/acts/held-out/health-care-decisions.txt "data/acts/held-out/Health-Care Decisions Act (2023)_Final Act_No Comments.docx"
+textutil -convert txt -encoding UTF-8 -output data/acts/held-out/antitrust-pre-merger-notification.txt "data/acts/held-out/Antitrust Pre_merger Notification Act_Final Act_No Comments_2026apr20.docx"
+```
+
 ### Finding a bill's relatives
 
 Build the tables and the index once, embed the corpus once, then query with any bill's text saved as a plain-text file:

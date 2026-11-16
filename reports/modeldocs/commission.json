@@ -1,9 +1,10 @@
 {
  "source": "commission",
- "run_on": "2026-11-15",
- "found": 7,
- "collected": 0,
+ "run_on": "2026-11-16",
+ "found": 9,
+ "collected": 2,
  "unchanged": 7,
  "blocked": [],
- "failed": []
+ "failed": [],
+ "withdrawn": []
 }
