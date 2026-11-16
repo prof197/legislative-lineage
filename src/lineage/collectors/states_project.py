@@ -93,7 +93,10 @@ _SECTION = re.compile(r"^section\s+\d+\b", re.IGNORECASE)
 _LABELED_SECTION = re.compile(r"^(Section\s+\d+)\s*\(\s*([^()]+?)\s*\)\s*:?\s*", re.IGNORECASE)
 _SUMMARY = re.compile(r"^section\s+\d+\s*\(\s*summary\s*\)", re.IGNORECASE)
 _MARKER = r"(?:\(?[a-z0-9]{1,4}[.)]\s*)?"
-_LANGUAGE = re.compile(rf"^{_MARKER}(?:sample|suggested|model)\s+language\s*:\s*", re.IGNORECASE)
+# One or more: a page can give the label twice over, "Sample language: Sample language: ...".
+_LANGUAGE = re.compile(
+    rf"^(?:{_MARKER}(?:sample|suggested|model)\s+language\s*:\s*)+", re.IGNORECASE
+)
 _EXAMPLES = re.compile(rf"^{_MARKER}examples?\s+(?:include|includes|of)\b", re.IGNORECASE)
 
 
