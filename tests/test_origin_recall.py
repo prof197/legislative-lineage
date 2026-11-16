@@ -6,12 +6,13 @@ from typing import Any
 
 import pytest
 
-from lineage.acts import ACTS, ORIGIN_HELD_OUT_ACTS
+from lineage.acts import ACTS, HELD_OUT_ACTS, ORIGIN_HELD_OUT_ACTS
 from lineage.answer_key import ANSWER_KEY, COLUMNS, render_answer_key
 from lineage.commission import RESULTS
 from lineage.intervals import wilson
 from lineage.origin_recall import (
     KEYS,
+    V1_OPENED,
     AnswerKey,
     OriginRecallError,
     evaluate,
@@ -239,3 +240,21 @@ def test_the_held_out_key_is_the_two_reserve_acts_v1_never_ran() -> None:
         ("health-care-decisions", "Utah", 2025),
     ]
     assert all(e.bill_ids for e in loaded.enactments)
+
+
+def test_v1s_held_out_acts_are_extra_evidence_labeled_and_never_sealed() -> None:
+    """Ruled at the M11 review: v1's four held-out acts, opened by v1's final run, are reported
+    at the floor as extra evidence, labeled so, apart from the sealed six."""
+    key = KEYS["v1_held_out"]
+    loaded = load_key(ROOT / key.path)
+
+    assert not key.sealed
+    assert key.status == V1_OPENED == "opened in v1; not a sealed test"
+    assert KEYS["held_out"].status is None
+    assert {e.act for e in loaded.enactments} == set(HELD_OUT_ACTS)
+    assert len(loaded.enactments) == 19
+    section = origin_recall([], AnswerKey(key.name, ROOT / key.path, False, key.status),
+                            same_slug(HELD_OUT_ACTS, SOURCE))  # fmt: skip
+    assert section["status"] == V1_OPENED
+    assert section["sealed"] is False
+    assert section["recall"]["pooled"]["enactments"] == 19

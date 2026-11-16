@@ -54,7 +54,7 @@ uv run lineage label-model SAMPLE  # provisional labels from a model, kept apart
 uv run lineage eval precision  # precision per stratum, stage and overall, people's and the model's apart -> reports/results.json
 uv run lineage collect-models SOURCE  # one source's model legislation -> data/modeldocs/<source>/, reports/modeldocs/<source>.json
 uv run lineage origins       # collected model documents against the corpus -> data/tables/origins/matches.jsonl, reports/origins.json (needs the built index and semantic vectors; --report-only: count the table as it stands)
-uv run lineage eval origins  # origin recall on the development answer key -> reports/results.json (origins_development); --key held_out --final: the sealed key, once per configuration
+uv run lineage eval origins  # origin recall on the development answer key -> reports/results.json (origins_development); --key v1_held_out: v1's held-out acts, opened in v1, extra evidence; --key held_out --final: the sealed key, once per configuration
 uv run lineage origin-sample  # seeded origin precision sample (--part tuning), label cost projected, nothing asked -> evals/origin_precision_tuning.jsonl, reports/origin_precision_sample.json; --part reporting --final once matching is final
 uv run lineage origin-label  # the sample's matches labeled by a model on each one's strongest section pair, v1's passage question; asks only with --live, through the Batches API, under v2's $25 -> evals/origin_precision_labels.jsonl, reports/origin_label_spend.json
 uv run lineage eval origin-threshold  # each candidate share floor's precision on the tuning sample, beside its development recall -> reports/origin_threshold_proposal.json

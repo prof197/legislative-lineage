@@ -26,7 +26,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal
 
-from lineage.answer_key import ANSWER_KEY, ORIGINS_HELD_OUT_KEY, read_answer_key
+from lineage.answer_key import ANSWER_KEY, HELD_OUT_KEY, ORIGINS_HELD_OUT_KEY, read_answer_key
 from lineage.commission import MIN_SHARE, SHARE_SWEEP
 from lineage.intervals import wilson
 from lineage.origins import FLOOR, OriginMatch, Stage, is_listed
@@ -46,18 +46,23 @@ class OriginRecallError(Exception):
 
 @dataclass(frozen=True, slots=True)
 class AnswerKey:
-    """A resolved answer key, and whether it is sealed: held out from tuning."""
+    """A resolved answer key, whether it is sealed (held out from tuning), and what a reader
+    must be told about it beside its figures."""
 
     name: str
     path: Path
     sealed: bool
+    status: str | None = None
 
 
 # The sealed key is the held-out lists' two reserve acts, which v1 never ran (ruled at the M11
 # review, 2026-11-16). A wider pull of the commission's lists is dropped for v2, since each new
-# act needs a text downloaded by hand.
+# act needs a text downloaded by hand. v1's four held-out acts are reported too, as extra
+# evidence: v1's final run opened them, so they are not a sealed test, and say so.
+V1_OPENED = "opened in v1; not a sealed test"
 KEYS: dict[str, AnswerKey] = {
     "development": AnswerKey("development", ANSWER_KEY, sealed=False),
+    "v1_held_out": AnswerKey("v1_held_out", HELD_OUT_KEY, sealed=False, status=V1_OPENED),
     "held_out": AnswerKey("held_out", ORIGINS_HELD_OUT_KEY, sealed=True),
 }
 
@@ -325,6 +330,7 @@ def origin_recall(
         "command": COMMAND,
         "answer_key": {"name": key.name, "path": str(key.path), "read": loaded.note},
         "sealed": key.sealed,
+        "status": key.status,
         "configuration": None if configuration is None else dict(configuration),
     } | result
     if key.sealed:

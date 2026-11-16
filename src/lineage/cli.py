@@ -1877,7 +1877,11 @@ def eval_origins(
     tables: TablesOption = DATA / "tables",
     key: Annotated[
         str,
-        typer.Option("--key", help="The answer key: development, or held_out (with --final)."),
+        typer.Option(
+            "--key",
+            help="The answer key: development, v1_held_out (v1's held-out acts, opened in "
+            "v1), or held_out (sealed, with --final).",
+        ),
     ] = "development",
     source: Annotated[
         str, typer.Option("--source", help="The source whose documents are named by act slug.")
@@ -1914,7 +1918,10 @@ def eval_origins(
         raise typer.Exit(1) from e
     write_results(results, name, section)
     r = section["recall"]["pooled"]
-    typer.echo(f"origin recall: {r['found']}/{r['enactments']} {r['interval_95']} -> {results}")
+    status = f" ({section['status']})" if section["status"] else ""
+    typer.echo(
+        f"origin recall: {r['found']}/{r['enactments']} {r['interval_95']}{status} -> {results}"
+    )
 
 
 @eval_app.command("origin-threshold")
