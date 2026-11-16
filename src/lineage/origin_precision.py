@@ -7,6 +7,14 @@ stratum is sampled apart without replacement under a fixed seed, and the drawn m
 shuffled into one labeling order. A sample row names a match by bill and document and holds no
 text, of the bill or of the model.
 
+The tuning sample is stratified otherwise, by share, since it is read to set the threshold: a
+floor on a match's larger share, of the model's words or of the bill's, below which a page would
+not list it. Its strata are the bands between the candidate floors (FLOORS), each drawn apart,
+so every candidate's precision rests on labels drawn from what it would list, and the band just
+above each floor, where a floor's choice is decided, is never left to a few labels: v1's first
+tuning sample, drawn from long lists below the candidates, held 3 relatives where the threshold
+was chosen (DESIGN.md#precision-sample).
+
 There are two samples (PARTS), each under its own seed, as v1 learned to keep them
 (DESIGN.md#precision-sample): v1's first sample was read to choose a threshold and then
 overstated precision there. The tuning sample may be drawn and read while matching is set. The
@@ -20,8 +28,8 @@ thinking included, and half that when sent through the Batches API. The origin p
 written yet, so v1's passage prompt (passages-v1-high) stands in for it: its system text, its
 limit, and as the message the whole model document beside every bill section the match's spans
 touch, or every matchable section of the bill when it has none, which errs high. A run projected
-over MAX_COST, or over BUDGET together with what the label ledger records as spent, is refused.
-Both caps and the ledger are v1's precision labels' own, the only cap set for labels so far.
+over MAX_COST, or over v2's BUDGET together with what v2's ledger records as spent, is refused.
+The exact projection, from the prompts as they would be sent, is lineage.origin_labels'.
 See DESIGN.md#precision-sample.
 """
 
@@ -35,8 +43,7 @@ import numpy as np
 
 from lineage import queries
 from lineage.intervals import wilson
-from lineage.model_labels import BUDGET, MAX_COST, MODEL_ID, PASSAGES_HIGH, PRICES
-from lineage.model_labels import SPEND as LABEL_SPEND
+from lineage.model_labels import MAX_COST, MODEL_ID, PASSAGES_HIGH, PRICES
 from lineage.model_labels import spent as label_spent
 from lineage.modeldocs import MODELDOCS_DIR, ModelDoc, load_text
 from lineage.origins import OriginMatch
@@ -49,12 +56,38 @@ COMMAND = "uv run lineage origin-sample"
 SEED = PRECISION_SEED + 6
 REPORTING_SEED = PRECISION_SEED + 7
 REPORT = Path("reports/origin_precision_sample.json")
+# v2's model calls are capped at $25 together, spent and projected, in v2's own ledger, apart
+# from v1's precision labels' (lineage.model_labels.SPEND).
+SPEND = Path("reports/origin_label_spend.json")
+BUDGET = 25.0
 # The question an origin's label would ask is v1's passage question: do the passages state the
 # same provision, beyond boilerplate? Its prompt stands in for the projection until the origin
 # prompt is written.
 STAND_IN = PASSAGES_HIGH
 
 MatchKey = tuple[str, str]  # (bill id, document id)
+# The candidate floors on a match's larger share, and the tuning sample's draw from each band
+# between them: four bands of 50 is 200 labels, about $6.50 at v1's measured passage-label cost.
+FLOORS = (0.0, 0.05, 0.10, 0.25)
+PER_BAND = 50
+
+
+def share_of(m: OriginMatch) -> float:
+    """What a floor compares: the larger of a match's two shares, so a bill that takes one
+    section of a long model and a long bill that takes a short model whole both stand."""
+    return max(m.model_share, m.bill_share)
+
+
+def band_name(floor: float) -> str:
+    return f"share_from_{floor:.2f}"
+
+
+BANDS = tuple(band_name(f) for f in FLOORS)
+
+
+def band_of(share: float) -> str:
+    """The band from the highest floor at or below `share`."""
+    return band_name(max(f for f in FLOORS if f <= share))
 
 
 class OriginPrecisionError(Exception):
@@ -72,9 +105,20 @@ class Part:
     sample: Path
     final_only: bool
     excludes: tuple[str, ...] = ()
+    by_share: bool = False  # stratified by share band (BANDS), not by stage
+
+    @property
+    def strata(self) -> tuple[str, ...]:
+        return BANDS if self.by_share else tuple(STRATA)
+
+    @property
+    def per_stratum(self) -> int:
+        return PER_BAND if self.by_share else PER_STRATUM
 
 
-_TUNING = Part("tuning", SEED, 1, Path("evals/origin_precision_tuning.jsonl"), final_only=False)
+_TUNING = Part(
+    "tuning", SEED, 1, Path("evals/origin_precision_tuning.jsonl"), final_only=False, by_share=True
+)
 PARTS: dict[str, Part] = {
     "tuning": _TUNING,
     "reporting": Part(
@@ -93,19 +137,22 @@ def match_key(m: OriginMatch) -> MatchKey:
     return (m.bill_id, m.doc_id)
 
 
-def by_stratum(matches: Iterable[OriginMatch]) -> dict[str, list[OriginMatch]]:
-    """Every match in exactly one stratum, each stratum in key order, so a draw repeats over
-    the same table whatever order it was written in."""
-    out: dict[str, list[OriginMatch]] = {name: [] for name in STRATA}
+def by_stratum(
+    matches: Iterable[OriginMatch], *, by_share: bool = False
+) -> dict[str, list[OriginMatch]]:
+    """Every match in exactly one stratum, by stage or by share band, each stratum in key
+    order, so a draw repeats over the same table whatever order it was written in."""
+    out: dict[str, list[OriginMatch]] = {name: [] for name in (BANDS if by_share else STRATA)}
     seen: set[MatchKey] = set()
     for m in sorted(matches, key=match_key):
         if match_key(m) in seen:
             raise OriginPrecisionError(f"{m.bill_id} matches {m.doc_id} twice in the table")
         seen.add(match_key(m))
         try:
-            out[stratum_of(m.stages)].append(m)
+            stage = stratum_of(m.stages)
         except PrecisionError as e:
             raise OriginPrecisionError(f"{m.bill_id} x {m.doc_id}: {e}") from e
+        out[band_of(share_of(m)) if by_share else stage].append(m)
     return out
 
 
@@ -115,7 +162,7 @@ def draw_part(
     *,
     excluded: Collection[MatchKey] = frozenset(),
     final: bool = False,
-    per_stratum: int = PER_STRATUM,
+    per_stratum: int | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """The part's sample rows in labeling order, and its report: the seed, and each stratum's
     size in the table, which an estimate weights by."""
@@ -123,20 +170,22 @@ def draw_part(
         raise OriginPrecisionError(
             f"the {part.name} sample is drawn only once matching is final; pass final for it"
         )
-    strata = by_stratum(matches)
+    per = part.per_stratum if per_stratum is None else per_stratum
+    strata = by_stratum(matches, by_share=part.by_share)
     eligible = {
         name: [m for m in ms if match_key(m) not in excluded] for name, ms in strata.items()
     }
     population = {name: np.arange(len(ms), dtype=np.uint64) for name, ms in eligible.items()}
-    drawn = draw(population, per_stratum=per_stratum, seed=part.seed)
+    drawn = draw(population, per_stratum=per, seed=part.seed, names=part.strata)
     rows: list[dict[str, Any]] = []
     for n, (name, index) in enumerate(drawn):
         m = eligible[name][index]
         rows.append(
             {
-                # Numbered in labeling order, so the id tells nothing of the stage.
+                # Numbered in labeling order, so the id tells nothing of the stratum.
                 "pair": f"o{part.first + n:04d}",
-                "stages": list(STRATA[name]),
+                "stratum": name,
+                "stages": list(STRATA[stratum_of(m.stages)]),
                 "bill_id": m.bill_id,
                 "doc_id": m.doc_id,
                 "ordinals": sorted({s.ordinal for s in m.spans}),
@@ -144,14 +193,16 @@ def draw_part(
                 "bill_share": m.bill_share,
             }
         )
-    report = {
+    report: dict[str, Any] = {
         "command": f"{COMMAND} --part {part.name}",
         "seed": part.seed,
-        "per_stratum": per_stratum,
+        "per_stratum": per,
         "strata": {name: len(ms) for name, ms in strata.items()},
-        "excluded": {name: len(strata[name]) - len(eligible[name]) for name in STRATA},
-        "drawn": {name: sum(r["stages"] == list(STRATA[name]) for r in rows) for name in STRATA},
+        "excluded": {name: len(strata[name]) - len(eligible[name]) for name in part.strata},
+        "drawn": {name: sum(r["stratum"] == name for r in rows) for name in part.strata},
     }
+    if part.by_share:
+        report["floors"] = list(FLOORS)
     return rows, report
 
 
@@ -284,7 +335,7 @@ def plan_labels(
     *,
     model: str = MODEL_ID,
     batch: bool = False,
-    spend_path: Path = LABEL_SPEND,
+    spend_path: Path = SPEND,
     max_cost: float = MAX_COST,
     budget: float = BUDGET,
 ) -> LabelPlan:
@@ -321,15 +372,13 @@ def estimate(
 ) -> dict[str, Any]:
     """Each stratum's precision with its Wilson interval, and the overall precision with the
     strata weighted by their sizes in the table (lineage.precision.stratified), from the rows
-    labeled in `correct`, by pair id. The overall is None until every stratum with matches has
-    a label."""
+    labeled in `correct`, by pair id; the strata are those `sizes` names, by stage or by band.
+    The overall is None until every stratum with matches has a label."""
     per: dict[str, dict[str, Any]] = {}
     parts: list[tuple[int, int, int]] = []
-    for name, stages in STRATA.items():
+    for name in sizes:
         labeled = [
-            correct[r["pair"]]
-            for r in rows
-            if tuple(r["stages"]) == stages and r["pair"] in correct
+            correct[r["pair"]] for r in rows if r["stratum"] == name and r["pair"] in correct
         ]
         n, x = len(labeled), sum(labeled)
         per[name] = {

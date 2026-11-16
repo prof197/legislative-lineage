@@ -11,9 +11,9 @@ DESIGN.md#origin-matches.
 from collections import Counter
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Literal
+from typing import Literal, Self
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from lineage.modeldocs import ModelDoc
 
@@ -32,6 +32,24 @@ class BillSpan(BaseModel):
     kind: Literal["exact", "paraphrase"]
 
 
+class SectionPair(BaseModel):
+    """A model section and a bill section a stage matched, with each stage's best evidence: the
+    near-duplicate stage's most band agreements of any window pair, and the best cosine by
+    meaning. Precision labels judge a match on its strongest pair (lineage.origin_precision)."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+    model_section: int = Field(ge=0)  # lineage.origin_matching.ModelText.display's index
+    ordinal: int = Field(ge=0)
+    agreements: int | None = Field(default=None, gt=0)
+    cosine: float | None = None
+
+    @model_validator(mode="after")
+    def _found_by_a_stage(self) -> Self:
+        if self.agreements is None and self.cosine is None:
+            raise ValueError("a section pair is found by at least one stage")
+        return self
+
+
 class OriginMatch(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
     bill_id: str
@@ -40,6 +58,9 @@ class OriginMatch(BaseModel):
     model_share: float = Field(ge=0, le=1)  # of the model's words, the share found in the bill
     bill_share: float = Field(ge=0, le=1)  # of the bill's words, the share from the model
     spans: list[BillSpan]
+    # Kept for labeling, never shown: the model's sections are not. Empty in a table written
+    # before they were kept.
+    pairs: list[SectionPair] = Field(default_factory=list[SectionPair])
 
 
 def origins_path(tables_dir: Path) -> Path:

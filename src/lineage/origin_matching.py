@@ -44,11 +44,12 @@ from lineage.embed import load_model
 from lineage.listing import MeaningHit, NearHit, SectionKey, flagged_sections
 from lineage.modeldocs import ModelDoc, ModelDocError, load_text
 from lineage.models import MODELS_DIR
-from lineage.origins import BillSpan, OriginMatch, Stage
+from lineage.origins import BillSpan, OriginMatch, SectionPair, Stage
 from lineage.query import matchable_sections, near_duplicate_hits, require_index, sign_query
 from lineage.semantic import CORROBORATING, THRESHOLD, Embedder, open_search, search_sections
 
 SHARE_PLACES = 4  # as the export and the results round a share
+COSINE_PLACES = 4
 
 
 @dataclass(frozen=True, slots=True)
@@ -104,6 +105,8 @@ def listed(
 class _BillHits:
     stages: set[Stage] = field(default_factory=set[Stage])
     pairs: set[tuple[int, int]] = field(default_factory=set[tuple[int, int]])  # (model, bill)
+    agreements: dict[tuple[int, int], int] = field(default_factory=dict[tuple[int, int], int])
+    cosine: dict[tuple[int, int], float] = field(default_factory=dict[tuple[int, int], float])
 
 
 def _merged(intervals: list[tuple[int, int]]) -> list[tuple[int, int]]:
@@ -191,14 +194,17 @@ def match_texts(
             meaning_of[d],
             flagged=flagged,
         )
-        stage_hits: list[tuple[Stage, int, str, int]] = [
-            *(("near_duplicate", q, b, o) for q, b, o, _ in near),
-            *(("semantic", q, b, o) for q, b, o, _ in by_meaning),
-        ]
-        for stage, q, bill_id, ordinal in stage_hits:
+        for q, bill_id, ordinal, count in near:
             entry = hits[(d, bill_id)]
-            entry.stages.add(stage)
+            entry.stages.add("near_duplicate")
             entry.pairs.add((q, ordinal))
+            entry.agreements[(q, ordinal)] = max(count, entry.agreements.get((q, ordinal), 0))
+        for q, bill_id, ordinal, cosine in by_meaning:
+            entry = hits[(d, bill_id)]
+            entry.stages.add("semantic")
+            entry.pairs.add((q, ordinal))
+            best = max(cosine, entry.cosine.get((q, ordinal), -1.0))
+            entry.cosine[(q, ordinal)] = best
     if not hits:
         return []
 
@@ -237,6 +243,17 @@ def match_texts(
                 model_share=_share(sum(text.words[q] for q in matched_model), model_words),
                 bill_share=_share(sum(bill[o][1] for o in matched_bill), bill_words),
                 spans=spans,
+                pairs=[
+                    SectionPair(
+                        model_section=q,
+                        ordinal=o,
+                        agreements=entry.agreements.get((q, o)),
+                        cosine=None
+                        if (q, o) not in entry.cosine
+                        else round(float(entry.cosine[(q, o)]), COSINE_PLACES),
+                    )
+                    for q, o in sorted(entry.pairs)
+                ],
             )
         )
     return out

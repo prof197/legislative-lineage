@@ -5,6 +5,7 @@ import json
 import os
 import time
 from collections.abc import Sequence
+from dataclasses import replace
 from pathlib import Path
 from typing import Annotated, Any
 
@@ -158,8 +159,18 @@ from lineage.neighbors import EF_SEARCH, RECALL_FLOOR, build_neighbors
 from lineage.neighbors import REPORT as NEIGHBORS_REPORT
 from lineage.neighbors import check_at as check_neighbors_at
 from lineage.neighbors import write_report as write_neighbors_report
+from lineage.origin_labels import LABELS as ORIGIN_LABELS
+from lineage.origin_labels import PROMPT as ORIGIN_PROMPT
+from lineage.origin_labels import build_items as build_origin_items
+from lineage.origin_labels import label_in_batch as origin_label_in_batch
+from lineage.origin_labels import load_labels as load_origin_labels
+from lineage.origin_labels import pending as origin_pending
+from lineage.origin_labels import plan as plan_origin_labels
+from lineage.origin_labels import record as record_origin_spend
 from lineage.origin_matching import match_models
 from lineage.origin_precision import PARTS as ORIGIN_PARTS
+from lineage.origin_precision import REPORT as ORIGIN_SAMPLE_REPORT
+from lineage.origin_precision import SPEND as ORIGIN_SPEND
 from lineage.origin_precision import (
     OriginPrecisionError,
     doc_chars,
@@ -171,8 +182,11 @@ from lineage.origin_precision import (
     section_chars,
     write_part,
 )
+from lineage.origin_precision import load_sample as load_origin_sample
 from lineage.origin_recall import KEYS as ORIGIN_KEYS
 from lineage.origin_recall import OriginRecallError, load_key, origin_recall, same_slug
+from lineage.origin_threshold import REPORT as ORIGIN_THRESHOLD_REPORT
+from lineage.origin_threshold import proposal as origin_threshold_proposal
 from lineage.origins import REPORT as ORIGINS_REPORT
 from lineage.origins import (
     origins_report,
@@ -805,6 +819,85 @@ def origin_sample_command(
         f"{len(rows)} matches -> {path}; labels projected at most ${plan.projected:,.2f}, "
         f"${plan.spent:,.2f} of ${plan.budget:,.2f} spent"
     )
+
+
+@app.command("origin-label")
+def origin_label_command(
+    part: Annotated[str, typer.Option("--part", help="The sample labeled.")] = "tuning",
+    tables: TablesOption = DATA / "tables",
+    root: Annotated[
+        Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
+    ] = MODELDOCS_DIR,
+    labels: Annotated[
+        Path, typer.Option("--labels", help="Labels file, appended to (committed).")
+    ] = ORIGIN_LABELS,
+    spend: Annotated[
+        Path, typer.Option("--spend", help="v2's spend ledger (committed).")
+    ] = ORIGIN_SPEND,
+    live: Annotated[
+        bool, typer.Option("--live", help="Ask, through the Batches API; else nothing is sent.")
+    ] = False,
+    batch_id: Annotated[
+        str | None, typer.Option("--batch-id", help="Collect a batch already sent.")
+    ] = None,
+    models_dir: Annotated[
+        Path, typer.Option("--models", help="Directory of model files (local), for alignment.")
+    ] = MODELS_DIR,
+) -> None:
+    """Label an origin sample's matches by a model on each one's strongest section pair; asks
+    only with --live (DESIGN.md#origin-matches)."""
+    if part not in ORIGIN_PARTS:
+        typer.echo(f"error: no part {part!r}; one of {', '.join(ORIGIN_PARTS)}", err=True)
+        raise typer.Exit(1)
+    chosen = ORIGIN_PARTS[part]
+    try:
+        if not chosen.sample.exists():
+            raise OriginPrecisionError(f"no {chosen.sample}; run `lineage origin-sample` first")
+        rows = load_origin_sample(chosen.sample)
+        docs = [d for c in collectors().values() for d in read_docs(c.source, root)]
+        items = origin_pending(
+            build_origin_items(rows, read_origin_matches(tables), docs, tables, root=root),
+            load_origin_labels(labels),
+        )
+        items = [
+            replace(i, item=it)
+            for i, it in zip(
+                items,
+                with_passages([i.item for i in items], _model_embedder(models_dir)),
+                strict=True,
+            )
+        ]
+        planned = plan_origin_labels(items, spend_path=spend)
+    except (OriginPrecisionError, ModelDocError, ModelError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    head = (
+        f"{planned.items} matches under {ORIGIN_PROMPT.version}, projected at most "
+        f"${planned.projected:,.2f}; ${planned.spent:,.2f} of v2's ${planned.budget:,.2f} spent"
+    )
+    if not live:
+        typer.echo(f"{head}; run with --live to ask.")
+        return
+    refusal = planned.refusal() if batch_id is None else None
+    if refusal:
+        typer.echo(f"error: {refusal}", err=True)
+        raise typer.Exit(1)
+    typer.echo(head)
+    today = datetime.date.today().isoformat()
+    batches = anthropic_batches()
+    done, unusable, sent = origin_label_in_batch(
+        items,
+        batches=batches,
+        model=LABEL_MODEL,
+        labels_path=labels,
+        today=today,
+        wait=lambda: time.sleep(60),
+        batch_id=batch_id,
+        submitted=lambda b: typer.echo(f"sent as batch {b}; collect with --batch-id {b}"),
+    )
+    ledger = record_origin_spend(batches, sent, model=LABEL_MODEL, today=today, spend_path=spend)
+    typer.echo(f"{done} labeled from batch {sent}, {unusable} unusable replies -> {labels}")
+    typer.echo(f"${ledger['spent']:,.2f} of v2's ${ledger['budget']:,.2f} spent -> {spend}")
 
 
 @app.command("intake")
@@ -1804,6 +1897,48 @@ def eval_origins(
     write_results(results, name, section)
     r = section["recall"]["pooled"]
     typer.echo(f"origin recall: {r['found']}/{r['enactments']} {r['interval_95']} -> {results}")
+
+
+@eval_app.command("origin-threshold")
+def eval_origin_threshold(
+    tables: TablesOption = DATA / "tables",
+    labels: Annotated[
+        Path, typer.Option("--labels", help="The origin labels (committed).")
+    ] = ORIGIN_LABELS,
+    report: Annotated[
+        Path, typer.Option("--report", help="The proposal (committed).")
+    ] = ORIGIN_THRESHOLD_REPORT,
+) -> None:
+    """Each candidate floor's precision on the origin tuning sample, beside its development
+    recall (DESIGN.md#origin-matches)."""
+    tuning = ORIGIN_PARTS["tuning"]
+    try:
+        if not tuning.sample.exists():
+            raise OriginPrecisionError(f"no {tuning.sample}; run `lineage origin-sample` first")
+        sizes = json.loads(ORIGIN_SAMPLE_REPORT.read_text())["tuning"]["strata"]
+        answer_key = ORIGIN_KEYS["development"]
+        acts = {e.act for e in load_key(answer_key.path).enactments}
+        doc = origin_threshold_proposal(
+            load_origin_sample(tuning.sample),
+            load_origin_labels(labels),
+            sizes,
+            read_origin_matches(tables),
+            load_key(answer_key.path),
+            same_slug(acts, "commission"),
+        )
+    except (OriginPrecisionError, OriginRecallError, ValueError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    report.write_text(json.dumps(doc, indent=1) + "\n")
+    for f in doc["floors"]:
+        p = f["precision"]
+        r = f["development_recall"]
+        shown = "unlabeled" if p is None else f"{p['precision']:.2f} {p['interval_95']}"
+        typer.echo(
+            f"floor {f['floor']:.2f}: precision {shown}, {f['matches_listed']:,} listed, "
+            f"recall {r['found']}/{r['enactments']}"
+        )
+    typer.echo(f"-> {report}")
 
 
 @eval_app.command("commission")

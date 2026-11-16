@@ -14,9 +14,11 @@ import pytest
 from lineage import model_labels
 from lineage.modeldocs import ModelDoc, Source, sha256, store
 from lineage.origin_precision import (
+    FLOORS,
     PARTS,
     STAND_IN,
     OriginPrecisionError,
+    band_of,
     doc_chars,
     draw_part,
     estimate,
@@ -34,13 +36,15 @@ from lineage.origins import BillSpan, OriginMatch, Stage
 UTAH_SB_18 = "ocd-bill/7968b9d9-25ee-4684-a92e-c76167d6f917"
 
 
-def _match(n: int, *stages: Stage, doc: str = "lib/a") -> OriginMatch:
+def _match(
+    n: int, *stages: Stage, doc: str = "lib/a", model_share: float = 0.5, bill_share: float = 0.25
+) -> OriginMatch:
     return OriginMatch(
         bill_id=f"bill-{n:03d}",
         doc_id=doc,
         stages=list(stages),
-        model_share=0.5,
-        bill_share=0.25,
+        model_share=model_share,
+        bill_share=bill_share,
         spans=[BillSpan(ordinal=n % 3, start=0, end=10, kind="exact")],
     )
 
@@ -54,21 +58,62 @@ def _table() -> list[OriginMatch]:
     )
 
 
-def test_each_stratum_is_drawn_apart_under_the_seed_whatever_the_tables_order() -> None:
-    table = _table()
-    rows, report = draw_part(table, PARTS["tuning"], per_stratum=10)
+def test_each_stage_stratum_is_drawn_apart_under_the_seed_whatever_the_tables_order() -> None:
+    table, reporting = _table(), PARTS["reporting"]
+    rows, report = draw_part(table, reporting, final=True, per_stratum=10)
     shuffled = table[:]
     random.Random(7).shuffle(shuffled)
 
-    assert draw_part(shuffled, PARTS["tuning"], per_stratum=10) == (rows, report)
+    assert draw_part(shuffled, reporting, final=True, per_stratum=10) == (rows, report)
     assert report["strata"] == {"near_duplicate_only": 30, "semantic_only": 20, "both": 5}
     assert report["drawn"] == {"near_duplicate_only": 10, "semantic_only": 10, "both": 5}
-    assert [r["pair"] for r in rows] == [f"o{n:04d}" for n in range(1, 26)]
+    first = reporting.first
+    assert [r["pair"] for r in rows] == [f"o{n:04d}" for n in range(first, first + 25)]
     # Shuffled into one labeling order, not stratum by stratum.
     assert [r["stages"] for r in rows[:10]] != [["near_duplicate"]] * 10
     assert rows[0].keys() == {
-        "pair", "stages", "bill_id", "doc_id", "ordinals", "model_share", "bill_share"
+        "pair", "stratum", "stages", "bill_id", "doc_id", "ordinals", "model_share", "bill_share"
     }  # fmt: skip
+
+
+def _shares() -> list[OriginMatch]:
+    """By the larger share: 30 under 0.05, 20 from 0.05, 10 from 0.10 and 40 from 0.25."""
+    return (
+        [_match(n, "semantic", model_share=0.02, bill_share=0.01) for n in range(30)]
+        # A bill's share counts as a model's does, and a floor is in the band it opens.
+        + [_match(n, "near_duplicate", model_share=0.01, bill_share=0.05) for n in range(30, 50)]
+        + [
+            _match(n, "semantic", "near_duplicate", model_share=0.2, bill_share=0.1)
+            for n in range(50, 60)
+        ]
+        + [_match(n, "near_duplicate", model_share=0.9) for n in range(60, 100)]
+    )
+
+
+def test_the_tuning_sample_is_drawn_apart_from_each_band_between_the_candidate_floors() -> None:
+    table = _shares()
+    rows, report = draw_part(table, PARTS["tuning"], per_stratum=15)
+    shuffled = table[:]
+    random.Random(7).shuffle(shuffled)
+
+    assert draw_part(shuffled, PARTS["tuning"], per_stratum=15) == (rows, report)
+    assert FLOORS == (0.0, 0.05, 0.10, 0.25)
+    assert report["floors"] == list(FLOORS)
+    assert report["strata"] == {
+        "share_from_0.00": 30, "share_from_0.05": 20, "share_from_0.10": 10,
+        "share_from_0.25": 40,
+    }  # fmt: skip
+    assert report["drawn"] == {
+        "share_from_0.00": 15, "share_from_0.05": 15, "share_from_0.10": 10,
+        "share_from_0.25": 15,
+    }  # fmt: skip
+    assert all(band_of(max(r["model_share"], r["bill_share"])) == r["stratum"] for r in rows)
+    assert [r["pair"] for r in rows] == [f"o{n:04d}" for n in range(1, 56)]
+    # The stages are kept, for reading the labels by stage, though they do not stratify.
+    assert {tuple(r["stages"]) for r in rows if r["stratum"] == "share_from_0.10"} == {
+        ("near_duplicate", "semantic")
+    }
+    assert PARTS["tuning"].per_stratum == 50
 
 
 def test_the_reporting_sample_is_drawn_only_when_final_from_matches_tuning_did_not_draw(
@@ -81,15 +126,18 @@ def test_the_reporting_sample_is_drawn_only_when_final_from_matches_tuning_did_n
     with pytest.raises(OriginPrecisionError, match="draw the tuning sample"):
         excluded_keys(reporting, tmp_path)
 
-    tuning_rows, tuning_report = draw_part(table, PARTS["tuning"], per_stratum=10)
+    tuning_rows, tuning_report = draw_part(table, PARTS["tuning"], per_stratum=40)
     write_part(tuning_rows, tuning_report, PARTS["tuning"], root=tmp_path)
     excluded = excluded_keys(reporting, tmp_path)
     rows, report = draw_part(table, reporting, excluded=excluded, final=True, per_stratum=10)
 
     tuned = {(r["bill_id"], r["doc_id"]) for r in tuning_rows}
     assert not tuned & {(r["bill_id"], r["doc_id"]) for r in rows}
-    assert report["excluded"] == {"near_duplicate_only": 10, "semantic_only": 10, "both": 5}
-    assert report["drawn"] == {"near_duplicate_only": 10, "semantic_only": 10, "both": 0}
+    # Every match of the table is in one band, so the tuning sample took 40 of the 55, and
+    # the reporting sample, by stage, draws from the 15 left.
+    left = {name: report["strata"][name] - report["excluded"][name] for name in report["strata"]}
+    assert sum(report["excluded"].values()) == 40
+    assert report["drawn"] == {name: min(10, n) for name, n in left.items()}
     assert rows[0]["pair"] == f"o{reporting.first:04d}"
     assert not {r["pair"] for r in tuning_rows} & {r["pair"] for r in rows}
     assert report["seed"] != tuning_report["seed"]
@@ -183,24 +231,24 @@ def test_the_sampler_and_the_guard_construct_no_client(
     monkeypatch.setattr(model_labels, "anthropic_batches", no_calls)
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
 
-    rows, report = draw_part(_table(), PARTS["tuning"], per_stratum=10)
+    rows, report = draw_part(_shares(), PARTS["tuning"], per_stratum=10)
     write_part(rows, report, PARTS["tuning"], root=tmp_path)
     sections = {r["bill_id"]: {0: 500, 1: 500, 2: 500} for r in rows}
     chars = prompt_chars(rows, sections=sections, docs={"lib/a": 20_000})
     plan = plan_labels(chars, spend_path=tmp_path / "spend.json")
     refuse_over_cap(plan)
 
-    assert plan.as_dict()["pairs"] == 25
+    assert plan.as_dict()["pairs"] == 40  # 10 from each of the four bands
     assert plan.prompt == "passages-v1-high"
     assert constructed == []
 
 
 def test_an_estimate_weights_the_strata_by_their_size_in_the_table() -> None:
     rows = [
-        {"pair": "o1", "stages": ["near_duplicate"]},
-        {"pair": "o2", "stages": ["near_duplicate"]},
-        {"pair": "o3", "stages": ["semantic"]},
-        {"pair": "o4", "stages": ["near_duplicate", "semantic"]},
+        {"pair": "o1", "stratum": "near_duplicate_only"},
+        {"pair": "o2", "stratum": "near_duplicate_only"},
+        {"pair": "o3", "stratum": "semantic_only"},
+        {"pair": "o4", "stratum": "both"},
     ]
     sizes = {"near_duplicate_only": 300, "semantic_only": 100, "both": 0}
     out = estimate(rows, {"o1": True, "o2": False, "o3": True}, sizes)

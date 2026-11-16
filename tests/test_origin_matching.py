@@ -28,7 +28,9 @@ from lineage.modeldocs import (
     store,
     text_path,
 )
+from lineage.origin_labels import build_items, strongest_pair
 from lineage.origin_matching import bill_spans, listed, match_models
+from lineage.origin_precision import OriginPrecisionError
 from lineage.origins import BillSpan, OriginMatch, read_origin_matches, write_origin_matches
 from lineage.semantic import CORROBORATING, THRESHOLD, open_search
 from lineage.sessions import load_sessions
@@ -107,6 +109,21 @@ def test_every_match_is_kept_by_bill_with_shares_and_spans_on_the_bill_side(
         assert m.spans == sorted(m.spans, key=lambda s: (s.ordinal, s.start, s.end))
     # Other states' enactments of the same act match the documents drawn from Utah's.
     assert len({m.bill_id for m in matches}) > len(_docs(root))
+
+
+def test_each_match_keeps_its_section_pairs_with_each_stages_evidence(
+    synthetic: tuple[Path, Path, list[OriginMatch]],
+) -> None:
+    tables, root, _ = synthetic
+
+    for m in _match(tables, _docs(root), root):
+        assert m.pairs == sorted(m.pairs, key=lambda p: (p.model_section, p.ordinal))
+        # Every section a span is in was paired, and a stage's evidence appears only when the
+        # stage found the match.
+        assert {s.ordinal for s in m.spans} <= {p.ordinal for p in m.pairs}
+        assert any(p.agreements for p in m.pairs) == ("near_duplicate" in m.stages)
+        assert any(p.cosine is not None for p in m.pairs) == ("semantic" in m.stages)
+        assert all(p.cosine is None or p.cosine >= CORROBORATING for p in m.pairs)
 
 
 def test_matching_is_deterministic_and_leaves_the_bill_index_alone(
@@ -270,3 +287,33 @@ def test_the_act_texts_as_models_find_every_enactment_v1_finds(
 
 def _enactment(e: dict[str, Any]) -> str:
     return f"{e['act']} {e['state']} {e['year']}"
+
+
+def test_a_sampled_match_is_read_back_as_its_strongest_pair_both_sections_whole(
+    synthetic: tuple[Path, Path, list[OriginMatch]],
+) -> None:
+    tables, root, _ = synthetic
+    docs = _docs(root)
+    matches = _match(tables, docs, root)
+    rows = [
+        {"pair": f"o{n:04d}", "stages": m.stages, "bill_id": m.bill_id, "doc_id": m.doc_id}
+        for n, m in enumerate(matches[:5], start=1)
+    ]
+
+    items = build_items(rows, matches, docs, tables, root=root)
+
+    assert [i.pair for i in items] == [r["pair"] for r in rows]
+    for i, m in zip(items, matches, strict=False):
+        best = strongest_pair(m)
+        # The model's section is asked first, the bill's second, each whole and each keyed by
+        # its normalized text's hash, as a label row names it.
+        assert (i.item.query.ref.bill_id, i.item.query.ref.ordinal) == (
+            m.doc_id,
+            best.model_section,
+        )
+        assert (i.item.match.ref.bill_id, i.item.match.ref.ordinal) == (m.bill_id, best.ordinal)
+        assert i.item.query.text.strip()
+        assert i.item.match.text.strip()
+    stale = [r | {"doc_id": "nowhere/else"} for r in rows[:1]]
+    with pytest.raises(OriginPrecisionError, match="not in the matches table"):
+        build_items(stale, matches, docs, tables, root=root)

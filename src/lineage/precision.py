@@ -80,16 +80,22 @@ def stratum_of(stages: Sequence[str]) -> str:
 
 
 def draw(
-    population: Mapping[str, PairKeys], *, per_stratum: int = PER_STRATUM, seed: int = SEED
+    population: Mapping[str, PairKeys],
+    *,
+    per_stratum: int = PER_STRATUM,
+    seed: int = SEED,
+    names: Sequence[str] = tuple(STRATA),
 ) -> list[tuple[str, int]]:
-    """(stratum, pair key) for up to `per_stratum` pairs of each stratum, in labeling order."""
+    """(stratum, pair key) for up to `per_stratum` pairs of each stratum, in labeling order.
+    `names` are the strata in order, by stage unless a sample stratifies otherwise; each takes
+    the seed with its place in that order."""
     drawn: list[tuple[str, int]] = []
-    for i, name in enumerate(STRATA):
+    for i, name in enumerate(names):
         keys = population.get(name, np.empty(0, dtype=np.uint64))
         rng = np.random.default_rng([seed, i])
         chosen = rng.choice(len(keys), size=min(per_stratum, len(keys)), replace=False)
         drawn += [(name, int(k)) for k in keys[np.sort(chosen)].tolist()]
-    order = np.random.default_rng([seed, len(STRATA)]).permutation(len(drawn))
+    order = np.random.default_rng([seed, len(names)]).permutation(len(drawn))
     return [drawn[i] for i in order.tolist()]
 
 
