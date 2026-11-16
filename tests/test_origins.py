@@ -9,10 +9,13 @@ from pydantic import ValidationError
 
 from lineage.modeldocs import ModelDoc
 from lineage.origins import (
+    FLOOR,
     BillSpan,
     OriginMatch,
+    is_listed,
     origins_report,
     read_origin_matches,
+    share_of,
     write_origin_matches,
 )
 
@@ -59,6 +62,21 @@ def _doc(doc_id: str, text: str) -> ModelDoc:
         media_type="text/html",
         text_sha256=text * 64,
     )
+
+
+def test_the_floor_reads_the_larger_share() -> None:
+    def match(model_share: float, bill_share: float) -> OriginMatch:
+        return OriginMatch(
+            bill_id="b", doc_id="s/d", stages=["semantic"],
+            model_share=model_share, bill_share=bill_share, spans=[],
+        )  # fmt: skip
+
+    assert FLOOR == 0.25
+    assert share_of(match(0.1, 0.4)) == share_of(match(0.4, 0.1)) == 0.4
+    assert is_listed(match(FLOOR, 0.0))
+    assert is_listed(match(0.0, FLOOR))
+    assert not is_listed(match(0.2499, 0.2499))
+    assert is_listed(match(0.1, 0.1), floor=0.1)
 
 
 def test_the_report_counts_by_source_and_stage_and_shared_texts_once() -> None:

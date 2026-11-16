@@ -31,7 +31,7 @@ from lineage.origin_precision import (
     section_chars,
     write_part,
 )
-from lineage.origins import BillSpan, OriginMatch, Stage
+from lineage.origins import FLOOR, BillSpan, OriginMatch, Stage
 
 UTAH_SB_18 = "ocd-bill/7968b9d9-25ee-4684-a92e-c76167d6f917"
 
@@ -148,6 +148,29 @@ def test_the_reporting_sample_is_drawn_only_when_final_from_matches_tuning_did_n
         write_part(rows, report, reporting, root=tmp_path)
     doc = json.loads((tmp_path / "reports" / "origin_precision_sample.json").read_text())
     assert doc == {"reporting": report, "tuning": tuning_report}
+
+
+def test_the_reporting_sample_draws_what_a_page_lists_and_counts_each_source() -> None:
+    """The published precision describes what a page lists, so the reporting part draws only
+    matches at the floor, and records each source's matches by stage for a reading by source."""
+    listed = [_match(n, "near_duplicate", doc="alec/x") for n in range(6)] + [
+        _match(n, "semantic", doc="ncoil/y") for n in range(6, 10)
+    ]
+    unlisted = [
+        _match(n, "near_duplicate", doc="alec/x", model_share=0.2, bill_share=0.1)
+        for n in range(10, 30)
+    ]
+    rows, report = draw_part(listed + unlisted, PARTS["reporting"], final=True, per_stratum=10)
+
+    assert PARTS["reporting"].floor == FLOOR
+    assert {r["bill_id"] for r in rows} == {m.bill_id for m in listed}
+    assert report["floor"] == FLOOR
+    assert report["strata"] == {"near_duplicate_only": 6, "semantic_only": 4, "both": 0}
+    assert report["by_source"] == {
+        "alec": {"near_duplicate_only": 6, "semantic_only": 0, "both": 0},
+        "ncoil": {"near_duplicate_only": 0, "semantic_only": 4, "both": 0},
+    }
+    assert "by_source" not in draw_part(unlisted, PARTS["tuning"], per_stratum=5)[1]
 
 
 def test_a_match_listed_twice_is_refused() -> None:

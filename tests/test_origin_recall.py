@@ -20,7 +20,7 @@ from lineage.origin_recall import (
     origin_recall,
     same_slug,
 )
-from lineage.origins import OriginMatch
+from lineage.origins import FLOOR, OriginMatch
 
 ROOT = Path(__file__).parents[1]
 SOURCE = "commission"
@@ -43,7 +43,8 @@ def test_v1s_development_figure_is_reproduced_from_its_own_matches() -> None:
     same 33 of 36, per act, per stratum and per stage, enactment by enactment."""
     v1 = _v1()
     matches = matches_from_commission(v1, lambda act: f"{SOURCE}/{act}")
-    section = origin_recall(matches, _development(), same_slug(ACTS, SOURCE))
+    # v1 listed a family at any share, so its figure is reproduced with no listing floor.
+    section = origin_recall(matches, _development(), same_slug(ACTS, SOURCE), floor=0.0)
 
     assert _counts(section["recall"]["pooled"]) == (33, 36)
     assert section["recall"]["pooled"]["interval_95"] == [round(v, 4) for v in wilson(33, 36)]
@@ -151,6 +152,31 @@ def test_an_enactment_is_found_through_any_of_its_bills_and_any_of_its_acts_docu
          "why": "listed as introduced"}
     ]  # fmt: skip
     assert [r["found"] for r in section["recall_by_min_share"]] == [1, 1, 1, 0]
+
+
+def test_a_match_below_the_floor_is_a_miss_with_its_share_kept(key: AnswerKey) -> None:
+    """The floor's cost is read among the misses: an enactment whose best match a page does not
+    list is below the threshold, with the share it fell short at; at no floor it is found."""
+    short = _match("ut-sb7", "lib/widget-registration", 0.2).model_copy(update={"bill_share": 0.1})
+    # The same bill, another of the act's documents: less of the model, but listed.
+    listed = _match("ut-sb7", "lib/widget-registration-2097", 0.1)
+
+    utah = {e["state"]: e for e in evaluate([short], load_key(key.path), DOCS)["enactments"]}["UT"]
+    assert not utah["found"]
+    assert utah["miss_reason"] == "below_threshold"
+    assert utah["best_share"] == 0.2
+    assert utah["bills"][1]["listed"] is False
+
+    at_zero = evaluate([short], load_key(key.path), DOCS, floor=0.0)
+    assert {e["state"]: e for e in at_zero["enactments"]}["UT"]["found"]
+    assert at_zero["threshold"]["floor"] == 0.0
+
+    # The listed match stands before the unlisted one with more of the model's words.
+    both = evaluate([short, listed], load_key(key.path), DOCS)
+    utah = {e["state"]: e for e in both["enactments"]}["UT"]
+    assert utah["found"]
+    assert utah["bills"][1]["doc_id"] == "lib/widget-registration-2097"
+    assert both["threshold"]["floor"] == FLOOR
 
 
 def test_every_act_of_the_key_needs_a_document(key: AnswerKey) -> None:

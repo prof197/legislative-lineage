@@ -1,7 +1,7 @@
 """`lineage eval origin-threshold`: each candidate floor's precision on the tuning sample, beside
 its development recall, for the ruling that sets origin matching's threshold.
 
-The threshold is a floor on a match's larger share (lineage.origin_precision.share_of): a page
+The threshold is a floor on a match's larger share (lineage.origins.share_of): a page
 lists an origin only at or above it. The tuning sample is drawn apart from each band between the
 candidate floors, so a floor's precision is the bands it keeps, each weighted by its size in the
 matches table (lineage.precision.stratified), and the band just above it is reported on its own.
@@ -18,9 +18,9 @@ from typing import Any
 from lineage.intervals import wilson
 from lineage.labels import is_correct
 from lineage.origin_labels import PROMPT
-from lineage.origin_precision import BANDS, FLOORS, band_name, estimate, share_of
+from lineage.origin_precision import BANDS, FLOORS, band_name, estimate
 from lineage.origin_recall import LoadedKey, evaluate
-from lineage.origins import OriginMatch
+from lineage.origins import OriginMatch, share_of
 from lineage.precision import STRATA, stratified
 
 COMMAND = "uv run lineage eval origin-threshold"
@@ -69,7 +69,7 @@ def proposal(
     for floor in FLOORS:
         kept = [b for f, b in zip(FLOORS, BANDS, strict=True) if f >= floor]
         listed = [m for m in matches if share_of(m) >= floor]
-        recall = evaluate(listed, key, docs)["recall"]["pooled"]
+        recall = evaluate(matches, key, docs, floor=floor)["recall"]["pooled"]
         sampled = [r for r in rows if r["stratum"] in kept and r["pair"] in correct]
         floors.append(
             {

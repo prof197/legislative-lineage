@@ -7,7 +7,7 @@ import pytest
 
 from lineage.export import ExportError, origins_by_bill
 from lineage.modeldocs import ModelDoc, Source
-from lineage.origins import BillSpan, OriginMatch
+from lineage.origins import FLOOR, BillSpan, OriginMatch
 
 SOURCE = Source(
     key="example-library",
@@ -51,3 +51,15 @@ def test_a_joint_documents_page_line_names_both_publishers() -> None:
 def test_a_match_no_source_holds_stops_the_export() -> None:
     with pytest.raises(ExportError, match="no collected source"):
         origins_by_bill([MATCH], {}, {"ocd-bill/1"})
+
+
+def test_a_page_lists_an_origin_only_at_the_floor() -> None:
+    """The floor reads the larger share: a bill taking a quarter of a long model is listed, one
+    whose shares both fall short is not."""
+    at = MATCH.model_copy(update={"model_share": FLOOR, "bill_share": 0.01})
+    below = MATCH.model_copy(
+        update={"bill_id": "ocd-bill/2", "model_share": 0.2, "bill_share": 0.2}
+    )
+    listed = origins_by_bill([at, below], {DOC.id: (DOC, SOURCE)}, {"ocd-bill/1", "ocd-bill/2"})
+
+    assert set(listed) == {"ocd-bill/1"}

@@ -20,6 +20,11 @@ from lineage.modeldocs import ModelDoc
 Stage = Literal["near_duplicate", "semantic"]
 ORIGINS_FILE = Path("origins") / "matches.jsonl"
 REPORT = Path("reports/origins.json")
+# A page lists an origin only when its larger share reaches this floor. Ruled at the M11 review,
+# 2026-11-16, on the tuning sample's precision beside development recall
+# (reports/origin_threshold_proposal.json): an origin names an organization, so a wrong one
+# costs more than a missed one. See DESIGN.md#origin-matches.
+FLOOR = 0.25
 
 
 class BillSpan(BaseModel):
@@ -61,6 +66,17 @@ class OriginMatch(BaseModel):
     # Kept for labeling, never shown: the model's sections are not. Empty in a table written
     # before they were kept.
     pairs: list[SectionPair] = Field(default_factory=list[SectionPair])
+
+
+def share_of(m: OriginMatch) -> float:
+    """What the floor compares: the larger of a match's two shares, so a bill that takes one
+    section of a long model and a long bill that takes a short model whole both stand."""
+    return max(m.model_share, m.bill_share)
+
+
+def is_listed(m: OriginMatch, floor: float = FLOOR) -> bool:
+    """Whether a page lists the match: its larger share at or above the floor."""
+    return share_of(m) >= floor
 
 
 def origins_path(tables_dir: Path) -> Path:

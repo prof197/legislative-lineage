@@ -46,7 +46,7 @@ from lineage.intervals import wilson
 from lineage.model_labels import MAX_COST, MODEL_ID, PASSAGES_HIGH, PRICES
 from lineage.model_labels import spent as label_spent
 from lineage.modeldocs import MODELDOCS_DIR, ModelDoc, load_text
-from lineage.origins import OriginMatch
+from lineage.origins import FLOOR, OriginMatch, is_listed, share_of
 from lineage.precision import PER_STRATUM, STRATA, PrecisionError, draw, stratified, stratum_of
 from lineage.precision import SEED as PRECISION_SEED
 from lineage.spend import upper_bound
@@ -70,12 +70,6 @@ MatchKey = tuple[str, str]  # (bill id, document id)
 # between them: four bands of 50 is 200 labels, about $6.50 at v1's measured passage-label cost.
 FLOORS = (0.0, 0.05, 0.10, 0.25)
 PER_BAND = 50
-
-
-def share_of(m: OriginMatch) -> float:
-    """What a floor compares: the larger of a match's two shares, so a bill that takes one
-    section of a long model and a long bill that takes a short model whole both stand."""
-    return max(m.model_share, m.bill_share)
 
 
 def band_name(floor: float) -> str:
@@ -106,6 +100,7 @@ class Part:
     final_only: bool
     excludes: tuple[str, ...] = ()
     by_share: bool = False  # stratified by share band (BANDS), not by stage
+    floor: float | None = None  # drawn only from the matches a page lists at this floor
 
     @property
     def strata(self) -> tuple[str, ...]:
@@ -129,6 +124,8 @@ PARTS: dict[str, Part] = {
         Path("evals/origin_precision_reporting.jsonl"),
         final_only=True,
         excludes=(_TUNING.name,),
+        # What the published precision describes is what a page lists.
+        floor=FLOOR,
     ),
 }
 
@@ -171,6 +168,8 @@ def draw_part(
             f"the {part.name} sample is drawn only once matching is final; pass final for it"
         )
     per = part.per_stratum if per_stratum is None else per_stratum
+    if part.floor is not None:
+        matches = [m for m in matches if is_listed(m, part.floor)]
     strata = by_stratum(matches, by_share=part.by_share)
     eligible = {
         name: [m for m in ms if match_key(m) not in excluded] for name, ms in strata.items()
@@ -203,7 +202,21 @@ def draw_part(
     }
     if part.by_share:
         report["floors"] = list(FLOORS)
+    if part.floor is not None:
+        report["floor"] = part.floor
+        # Each source's matches by stratum, which a reading by source weights by.
+        report["by_source"] = {
+            source: {
+                name: sum(source_of(m.doc_id) == source for m in ms) for name, ms in strata.items()
+            }
+            for source in sorted({source_of(m.doc_id) for ms in strata.values() for m in ms})
+        }
     return rows, report
+
+
+def source_of(doc_id: str) -> str:
+    """The source a document id names: "alec/some-act" -> "alec"."""
+    return doc_id.split("/", 1)[0]
 
 
 def load_sample(path: Path) -> list[dict[str, Any]]:

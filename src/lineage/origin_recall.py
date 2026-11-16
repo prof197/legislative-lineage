@@ -29,7 +29,7 @@ from typing import Any, Literal
 from lineage.answer_key import ANSWER_KEY, HELD_OUT_KEY, read_answer_key
 from lineage.commission import MIN_SHARE, SHARE_SWEEP
 from lineage.intervals import wilson
-from lineage.origins import OriginMatch, Stage
+from lineage.origins import FLOOR, OriginMatch, Stage, is_listed
 from lineage.ulc import ULC_STATES, Stratum
 
 COMMAND = "uv run lineage eval origins"
@@ -160,6 +160,10 @@ def check_configuration(
             )
 
 
+def _rank(m: OriginMatch, floor: float) -> tuple[bool, float]:
+    return (is_listed(m, floor), m.model_share)
+
+
 def _cell(records: Sequence[Mapping[str, Any]], key: str = "found") -> dict[str, Any]:
     found = sum(bool(r[key]) for r in records)
     n = len(records)
@@ -185,11 +189,15 @@ def evaluate(
     docs: Mapping[str, Collection[str]],
     *,
     min_share: float = MIN_SHARE,
+    floor: float = FLOOR,
 ) -> dict[str, Any]:
     """Recall of each act's enactments from the origin matches of the act's documents.
 
     `docs` names each act's documents (lineage.modeldocs.ModelDoc.id); a source may hold more
-    than one per act, an edition per revision, so any of them finds an enactment."""
+    than one per act, an edition per revision, so any of them finds an enactment. A match finds
+    one only when a page lists it, its larger share at `floor` or above (lineage.origins.FLOOR);
+    one below is a miss below the threshold, its best share kept, so the floor's cost is read
+    among the misses."""
     acts = sorted({e.act for e in key.enactments})
     missing = [a for a in acts if not docs.get(a)]
     if missing:
@@ -200,9 +208,10 @@ def evaluate(
         act = wanted.get(m.doc_id)
         if act is None:
             continue
-        # Two documents of one act can both match a bill; the act's best match stands.
+        # Two documents of one act can both match a bill; the act's best match stands, a listed
+        # one before any the floor leaves off.
         best = by_pair.get((m.bill_id, act))
-        if best is None or m.model_share > best.model_share:
+        if best is None or _rank(m, floor) > _rank(best, floor):
             by_pair[m.bill_id, act] = m
 
     records: list[dict[str, Any]] = []
@@ -217,10 +226,12 @@ def evaluate(
                     "stages": list(m.stages) if m else [],
                     "model_share": m.model_share if m else None,
                     "bill_share": m.bill_share if m else None,
-                    "found": m is not None and m.model_share > min_share,
+                    "listed": m is not None and is_listed(m, floor),
+                    "found": m is not None and m.model_share > min_share and is_listed(m, floor),
                 }
             )
         hits = [b for b in bills if b["found"]]
+        matched = [b for b in bills if b["doc_id"] is not None]
         best = max(hits, key=lambda b: b["model_share"]) if hits else None
         miss: MissReason | None = None
         if best is None:
@@ -246,6 +257,10 @@ def evaluate(
                 "found_by": best["id"] if best else None,
                 "model_share": best["model_share"] if best else None,
                 "bill_share": best["bill_share"] if best else None,
+                # The larger share of its best match, found or not: what a miss fell short by.
+                "best_share": max(
+                    (max(b["model_share"], b["bill_share"]) for b in matched), default=None
+                ),
                 "miss_reason": miss,
                 "bills": bills,
             }
@@ -259,7 +274,8 @@ def evaluate(
         "threshold": {
             "score": "share of the model's words in the sections the bill matches",
             "min_share": min_share,
-            "found_when": "score above min_share",
+            "floor": floor,
+            "found_when": "score above min_share, and the larger share at floor or above",
         },
         "documents": {a: sorted(docs[a]) for a in acts},
         "recall": _breakdown(records, acts),
@@ -291,6 +307,7 @@ def origin_recall(
     configuration: Mapping[str, Any] | None = None,
     previous: Mapping[str, Any] | None = None,
     min_share: float = MIN_SHARE,
+    floor: float = FLOOR,
 ) -> dict[str, Any]:
     """The eval's results section for one answer key.
 
@@ -303,7 +320,7 @@ def origin_recall(
             raise OriginRecallError("a sealed run records its configuration; none was given")
         check_configuration(previous, configuration)
     loaded = load_key(key.path)
-    result = evaluate(matches, loaded, docs, min_share=min_share)
+    result = evaluate(matches, loaded, docs, min_share=min_share, floor=floor)
     section: dict[str, Any] = {
         "command": COMMAND,
         "answer_key": {"name": key.name, "path": str(key.path), "read": loaded.note},

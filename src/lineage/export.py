@@ -91,7 +91,7 @@ from lineage.export_schema import (
 from lineage.listing import ListedPairs, listed_pairs, shipped_flag
 from lineage.minhash import NUM_PERM
 from lineage.modeldocs import MODELDOCS_DIR, ModelDoc, Source, read_docs
-from lineage.origins import OriginMatch, read_origin_matches
+from lineage.origins import OriginMatch, is_listed, read_origin_matches
 from lineage.pairs import load_families
 from lineage.paths import DATA
 from lineage.relatives import bill_relatives
@@ -426,11 +426,12 @@ def _write(root: Path, files: Mapping[str, BaseModel]) -> _Written:
 def origins_by_bill(
     matches: Sequence[OriginMatch], docs: Mapping[str, tuple[ModelDoc, Source]], hosted: set[str]
 ) -> dict[str, list[Origin]]:
-    """Each hosted bill's origins, the most of its words first. A match whose document no source
-    holds is an error: the page would name a model the sources page does not list."""
+    """Each hosted bill's origins at the listing floor (lineage.origins.FLOOR), the most of its
+    words first. A match whose document no source holds is an error: the page would name a model
+    the sources page does not list."""
     out: dict[str, list[Origin]] = defaultdict(list)
     for m in matches:
-        if m.bill_id not in hosted:
+        if m.bill_id not in hosted or not is_listed(m):
             continue
         if m.doc_id not in docs:
             raise ExportError(f"origin match names {m.doc_id}, which no collected source holds")

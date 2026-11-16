@@ -6652,7 +6652,8 @@
   "threshold": {
    "score": "share of the model's words in the sections the bill matches",
    "min_share": 0.0,
-   "found_when": "score above min_share"
+   "floor": 0.25,
+   "found_when": "score above min_share, and the larger share at floor or above"
   },
   "documents": {
    "electronic-estate-planning-documents": [
@@ -6668,30 +6669,30 @@
   "recall": {
    "pooled": {
     "enactments": 36,
-    "found": 33,
-    "recall": 0.9167,
+    "found": 31,
+    "recall": 0.8611,
     "interval_95": [
-     0.7817,
-     0.9713
+     0.7134,
+     0.9392
     ]
    },
    "by_act": {
     "electronic-estate-planning-documents": {
      "enactments": 9,
-     "found": 9,
-     "recall": 1.0,
+     "found": 8,
+     "recall": 0.8889,
      "interval_95": [
-      0.7009,
-      1.0
+      0.565,
+      0.9801
      ]
     },
     "public-expression-protection": {
      "enactments": 14,
-     "found": 11,
-     "recall": 0.7857,
+     "found": 10,
+     "recall": 0.7143,
      "interval_95": [
-      0.5241,
-      0.9243
+      0.4535,
+      0.8828
      ]
     },
     "special-deposits": {
@@ -6707,11 +6708,11 @@
    "by_stratum": {
     "enacted": {
      "enactments": 35,
-     "found": 33,
-     "recall": 0.9429,
+     "found": 31,
+     "recall": 0.8857,
      "interval_95": [
-      0.8139,
-      0.9842
+      0.7405,
+      0.9546
      ]
     },
     "substantially_similar": {
@@ -6789,30 +6790,30 @@
    "semantic": {
     "pooled": {
      "enactments": 36,
-     "found": 33,
-     "recall": 0.9167,
+     "found": 31,
+     "recall": 0.8611,
      "interval_95": [
-      0.7817,
-      0.9713
+      0.7134,
+      0.9392
      ]
     },
     "by_act": {
      "electronic-estate-planning-documents": {
       "enactments": 9,
-      "found": 9,
-      "recall": 1.0,
+      "found": 8,
+      "recall": 0.8889,
       "interval_95": [
-       0.7009,
-       1.0
+       0.565,
+       0.9801
       ]
      },
      "public-expression-protection": {
       "enactments": 14,
-      "found": 11,
-      "recall": 0.7857,
+      "found": 10,
+      "recall": 0.7143,
       "interval_95": [
-       0.5241,
-       0.9243
+       0.4535,
+       0.8828
       ]
      },
      "special-deposits": {
@@ -6828,11 +6829,11 @@
     "by_stratum": {
      "enacted": {
       "enactments": 35,
-      "found": 33,
-      "recall": 0.9429,
+      "found": 31,
+      "recall": 0.8857,
       "interval_95": [
-       0.8139,
-       0.9842
+       0.7405,
+       0.9546
       ]
      },
      "substantially_similar": {
@@ -6849,30 +6850,30 @@
    "both": {
     "pooled": {
      "enactments": 36,
-     "found": 33,
-     "recall": 0.9167,
+     "found": 31,
+     "recall": 0.8611,
      "interval_95": [
-      0.7817,
-      0.9713
+      0.7134,
+      0.9392
      ]
     },
     "by_act": {
      "electronic-estate-planning-documents": {
       "enactments": 9,
-      "found": 9,
-      "recall": 1.0,
+      "found": 8,
+      "recall": 0.8889,
       "interval_95": [
-       0.7009,
-       1.0
+       0.565,
+       0.9801
       ]
      },
      "public-expression-protection": {
       "enactments": 14,
-      "found": 11,
-      "recall": 0.7857,
+      "found": 10,
+      "recall": 0.7143,
       "interval_95": [
-       0.5241,
-       0.9243
+       0.4535,
+       0.8828
       ]
      },
      "special-deposits": {
@@ -6888,11 +6889,11 @@
     "by_stratum": {
      "enacted": {
       "enactments": 35,
-      "found": 33,
-      "recall": 0.9429,
+      "found": 31,
+      "recall": 0.8857,
       "interval_95": [
-       0.8139,
-       0.9842
+       0.7405,
+       0.9546
       ]
      },
      "substantially_similar": {
@@ -6910,11 +6911,11 @@
   "recall_by_min_share": [
    {
     "min_share": 0.0,
-    "found": 33
+    "found": 31
    },
    {
     "min_share": 0.1,
-    "found": 32
+    "found": 31
    },
    {
     "min_share": 0.25,
@@ -6926,7 +6927,8 @@
    }
   ],
   "miss_reasons": {
-   "not_matched": 3
+   "not_matched": 3,
+   "below_threshold": 2
   },
   "excluded": [
    {
@@ -7031,6 +7033,7 @@
     "found_by": "ocd-bill/466153a5-6ac0-4a17-b061-aecda47f1135",
     "model_share": 0.6195,
     "bill_share": 0.49,
+    "best_share": 0.6195,
     "miss_reason": null,
     "bills": [
      {
@@ -7042,6 +7045,7 @@
       ],
       "model_share": 0.6195,
       "bill_share": 0.49,
+      "listed": true,
       "found": true
      }
     ]
@@ -7062,6 +7066,7 @@
     "found_by": "ocd-bill/46682e76-7ccf-4157-962d-63fff9eecebe",
     "model_share": 0.618,
     "bill_share": 0.9553,
+    "best_share": 0.9553,
     "miss_reason": null,
     "bills": [
      {
@@ -7073,6 +7078,7 @@
       ],
       "model_share": 0.618,
       "bill_share": 0.9553,
+      "listed": true,
       "found": true
      },
      {
@@ -7081,6 +7087,7 @@
       "stages": [],
       "model_share": null,
       "bill_share": null,
+      "listed": false,
       "found": false
      },
      {
@@ -7091,6 +7098,7 @@
       ],
       "model_share": 0.1953,
       "bill_share": 0.9426,
+      "listed": true,
       "found": true
      }
     ]
@@ -7111,6 +7119,7 @@
     "found_by": "ocd-bill/26a84ccf-f59b-4813-9757-8e12e1bf471b",
     "model_share": 0.3813,
     "bill_share": 0.2693,
+    "best_share": 0.3813,
     "miss_reason": null,
     "bills": [
      {
@@ -7122,6 +7131,7 @@
       ],
       "model_share": 0.3813,
       "bill_share": 0.2693,
+      "listed": true,
       "found": true
      }
     ]
@@ -7142,6 +7152,7 @@
     "found_by": "ocd-bill/75aaddc4-4261-47f5-977b-fc6618d7df33",
     "model_share": 0.7883,
     "bill_share": 0.4869,
+    "best_share": 0.7883,
     "miss_reason": null,
     "bills": [
      {
@@ -7153,6 +7164,7 @@
       ],
       "model_share": 0.7883,
       "bill_share": 0.4869,
+      "listed": true,
       "found": true
      }
     ]
@@ -7173,6 +7185,7 @@
     "found_by": "ocd-bill/8bd05268-df20-4e80-8ea6-fee765d633f9",
     "model_share": 0.5215,
     "bill_share": 0.4729,
+    "best_share": 0.5215,
     "miss_reason": null,
     "bills": [
      {
@@ -7184,6 +7197,7 @@
       ],
       "model_share": 0.5215,
       "bill_share": 0.4729,
+      "listed": true,
       "found": true
      }
     ]
@@ -7204,6 +7218,7 @@
     "found_by": "ocd-bill/a61fad3c-ce0d-44b6-b046-0fab3413357b",
     "model_share": 0.6323,
     "bill_share": 0.4336,
+    "best_share": 0.6323,
     "miss_reason": null,
     "bills": [
      {
@@ -7212,6 +7227,7 @@
       "stages": [],
       "model_share": null,
       "bill_share": null,
+      "listed": false,
       "found": false
      },
      {
@@ -7223,6 +7239,7 @@
       ],
       "model_share": 0.6323,
       "bill_share": 0.4336,
+      "listed": true,
       "found": true
      }
     ]
@@ -7243,6 +7260,7 @@
     "found_by": "ocd-bill/6f42fae2-b316-4da2-b4c8-c8ee43443091",
     "model_share": 0.7031,
     "bill_share": 0.6645,
+    "best_share": 0.7031,
     "miss_reason": null,
     "bills": [
      {
@@ -7254,6 +7272,7 @@
       ],
       "model_share": 0.7031,
       "bill_share": 0.6645,
+      "listed": true,
       "found": true
      }
     ]
@@ -7266,15 +7285,16 @@
     "listed": "SB 237",
     "stratum": "enacted",
     "match_rule": "prior_session",
-    "found": true,
+    "found": false,
     "found_by_stage": {
      "near_duplicate": false,
-     "semantic": true
+     "semantic": false
     },
-    "found_by": "ocd-bill/ac8be703-90ff-46ce-a145-1871e12e3c89",
-    "model_share": 0.2368,
-    "bill_share": 0.0809,
-    "miss_reason": null,
+    "found_by": null,
+    "model_share": null,
+    "bill_share": null,
+    "best_share": 0.2368,
+    "miss_reason": "below_threshold",
     "bills": [
      {
       "id": "ocd-bill/ac8be703-90ff-46ce-a145-1871e12e3c89",
@@ -7284,7 +7304,8 @@
       ],
       "model_share": 0.2368,
       "bill_share": 0.0809,
-      "found": true
+      "listed": false,
+      "found": false
      }
     ]
    },
@@ -7304,6 +7325,7 @@
     "found_by": null,
     "model_share": null,
     "bill_share": null,
+    "best_share": null,
     "miss_reason": "not_matched",
     "bills": [
      {
@@ -7312,6 +7334,7 @@
       "stages": [],
       "model_share": null,
       "bill_share": null,
+      "listed": false,
       "found": false
      }
     ]
@@ -7332,6 +7355,7 @@
     "found_by": "ocd-bill/2a51f739-82fd-4614-8ded-9eaca8a19b9a",
     "model_share": 0.4635,
     "bill_share": 0.3901,
+    "best_share": 0.4635,
     "miss_reason": null,
     "bills": [
      {
@@ -7343,6 +7367,7 @@
       ],
       "model_share": 0.4635,
       "bill_share": 0.3901,
+      "listed": true,
       "found": true
      },
      {
@@ -7354,6 +7379,7 @@
       ],
       "model_share": 0.4635,
       "bill_share": 0.0109,
+      "listed": true,
       "found": true
      },
      {
@@ -7365,6 +7391,7 @@
       ],
       "model_share": 0.4635,
       "bill_share": 0.3901,
+      "listed": true,
       "found": true
      },
      {
@@ -7376,6 +7403,7 @@
       ],
       "model_share": 0.4635,
       "bill_share": 0.0176,
+      "listed": true,
       "found": true
      }
     ]
@@ -7396,6 +7424,7 @@
     "found_by": null,
     "model_share": null,
     "bill_share": null,
+    "best_share": null,
     "miss_reason": "not_matched",
     "bills": [
      {
@@ -7404,6 +7433,7 @@
       "stages": [],
       "model_share": null,
       "bill_share": null,
+      "listed": false,
       "found": false
      },
      {
@@ -7412,6 +7442,7 @@
       "stages": [],
       "model_share": null,
       "bill_share": null,
+      "listed": false,
       "found": false
      }
     ]
@@ -7432,6 +7463,7 @@
     "found_by": "ocd-bill/115d9931-94b4-40d4-b822-9eda98f1ae4e",
     "model_share": 0.4349,
     "bill_share": 0.3966,
+    "best_share": 0.4349,
     "miss_reason": null,
     "bills": [
      {
@@ -7443,6 +7475,7 @@
       ],
       "model_share": 0.4349,
       "bill_share": 0.3966,
+      "listed": true,
       "found": true
      },
      {
@@ -7454,6 +7487,7 @@
       ],
       "model_share": 0.432,
       "bill_share": 0.1943,
+      "listed": true,
       "found": true
      }
     ]
@@ -7474,6 +7508,7 @@
     "found_by": null,
     "model_share": null,
     "bill_share": null,
+    "best_share": null,
     "miss_reason": "not_matched",
     "bills": [
      {
@@ -7482,6 +7517,7 @@
       "stages": [],
       "model_share": null,
       "bill_share": null,
+      "listed": false,
       "found": false
      }
     ]
@@ -7502,6 +7538,7 @@
     "found_by": "ocd-bill/7968b9d9-25ee-4684-a92e-c76167d6f917",
     "model_share": 0.8183,
     "bill_share": 0.6047,
+    "best_share": 0.8183,
     "miss_reason": null,
     "bills": [
      {
@@ -7513,6 +7550,7 @@
       ],
       "model_share": 0.8183,
       "bill_share": 0.6047,
+      "listed": true,
       "found": true
      }
     ]
@@ -7533,6 +7571,7 @@
     "found_by": "ocd-bill/97b9eec9-c325-456e-b254-044c9c114bae",
     "model_share": 0.9285,
     "bill_share": 0.8702,
+    "best_share": 0.9285,
     "miss_reason": null,
     "bills": [
      {
@@ -7544,6 +7583,7 @@
       ],
       "model_share": 0.9285,
       "bill_share": 0.8702,
+      "listed": true,
       "found": true
      }
     ]
@@ -7564,6 +7604,7 @@
     "found_by": "ocd-bill/8d9dff64-7011-4962-90c3-a1a28a3370d4",
     "model_share": 0.9027,
     "bill_share": 0.8367,
+    "best_share": 0.9027,
     "miss_reason": null,
     "bills": [
      {
@@ -7575,6 +7616,7 @@
       ],
       "model_share": 0.9027,
       "bill_share": 0.8367,
+      "listed": true,
       "found": true
      }
     ]
@@ -7595,6 +7637,7 @@
     "found_by": "ocd-bill/36bad521-9e60-4a20-a39f-aa6a9c7216a0",
     "model_share": 0.9285,
     "bill_share": 0.9047,
+    "best_share": 0.9285,
     "miss_reason": null,
     "bills": [
      {
@@ -7606,6 +7649,7 @@
       ],
       "model_share": 0.9285,
       "bill_share": 0.9047,
+      "listed": true,
       "found": true
      },
      {
@@ -7617,6 +7661,7 @@
       ],
       "model_share": 0.9285,
       "bill_share": 0.9047,
+      "listed": true,
       "found": true
      }
     ]
@@ -7637,6 +7682,7 @@
     "found_by": "ocd-bill/96704f52-935a-45e6-9313-f9e85eddae71",
     "model_share": 0.9947,
     "bill_share": 0.972,
+    "best_share": 0.9947,
     "miss_reason": null,
     "bills": [
      {
@@ -7648,6 +7694,7 @@
       ],
       "model_share": 0.9947,
       "bill_share": 0.972,
+      "listed": true,
       "found": true
      }
     ]
@@ -7668,6 +7715,7 @@
     "found_by": "ocd-bill/c923a345-667d-443b-b897-7157c0767529",
     "model_share": 0.9947,
     "bill_share": 0.966,
+    "best_share": 0.9947,
     "miss_reason": null,
     "bills": [
      {
@@ -7679,6 +7727,7 @@
       ],
       "model_share": 0.9947,
       "bill_share": 0.966,
+      "listed": true,
       "found": true
      }
     ]
@@ -7699,6 +7748,7 @@
     "found_by": "ocd-bill/3cc60328-ce7c-4672-822d-83d1702cfff9",
     "model_share": 0.9285,
     "bill_share": 0.0217,
+    "best_share": 0.9285,
     "miss_reason": null,
     "bills": [
      {
@@ -7710,6 +7760,7 @@
       ],
       "model_share": 0.9285,
       "bill_share": 0.0217,
+      "listed": true,
       "found": true
      }
     ]
@@ -7730,6 +7781,7 @@
     "found_by": "ocd-bill/bb0205d7-bfe0-4789-99cb-0b8712f6a7f8",
     "model_share": 0.951,
     "bill_share": 0.9117,
+    "best_share": 0.951,
     "miss_reason": null,
     "bills": [
      {
@@ -7741,6 +7793,7 @@
       ],
       "model_share": 0.951,
       "bill_share": 0.9117,
+      "listed": true,
       "found": true
      }
     ]
@@ -7761,6 +7814,7 @@
     "found_by": "ocd-bill/a5394b24-d0b3-4cbb-b5fc-380f6e525e31",
     "model_share": 0.951,
     "bill_share": 0.5758,
+    "best_share": 0.951,
     "miss_reason": null,
     "bills": [
      {
@@ -7772,6 +7826,7 @@
       ],
       "model_share": 0.951,
       "bill_share": 0.5758,
+      "listed": true,
       "found": true
      }
     ]
@@ -7792,6 +7847,7 @@
     "found_by": "ocd-bill/171b2484-52fb-4dda-b3e3-0baa57ed5099",
     "model_share": 0.951,
     "bill_share": 0.8582,
+    "best_share": 0.951,
     "miss_reason": null,
     "bills": [
      {
@@ -7803,6 +7859,7 @@
       ],
       "model_share": 0.951,
       "bill_share": 0.8582,
+      "listed": true,
       "found": true
      },
      {
@@ -7814,6 +7871,7 @@
       ],
       "model_share": 0.951,
       "bill_share": 0.8593,
+      "listed": true,
       "found": true
      },
      {
@@ -7825,6 +7883,7 @@
       ],
       "model_share": 0.951,
       "bill_share": 0.8803,
+      "listed": true,
       "found": true
      }
     ]
@@ -7845,6 +7904,7 @@
     "found_by": "ocd-bill/340d147a-1e99-4b53-81e2-d9e760e63757",
     "model_share": 0.951,
     "bill_share": 0.8806,
+    "best_share": 0.951,
     "miss_reason": null,
     "bills": [
      {
@@ -7856,6 +7916,7 @@
       ],
       "model_share": 0.951,
       "bill_share": 0.8806,
+      "listed": true,
       "found": true
      }
     ]
@@ -7876,6 +7937,7 @@
     "found_by": "ocd-bill/8af10a38-1f43-49ed-8f32-44856e9b4f2c",
     "model_share": 0.9947,
     "bill_share": 0.8795,
+    "best_share": 0.9947,
     "miss_reason": null,
     "bills": [
      {
@@ -7887,6 +7949,7 @@
       ],
       "model_share": 0.9947,
       "bill_share": 0.8795,
+      "listed": true,
       "found": true
      }
     ]
@@ -7907,6 +7970,7 @@
     "found_by": "ocd-bill/30eb426e-5e8c-4be3-ba3b-9b3ec2f479a1",
     "model_share": 0.9285,
     "bill_share": 0.8644,
+    "best_share": 0.9285,
     "miss_reason": null,
     "bills": [
      {
@@ -7918,6 +7982,7 @@
       ],
       "model_share": 0.9285,
       "bill_share": 0.8644,
+      "listed": true,
       "found": true
      }
     ]
@@ -7938,6 +8003,7 @@
     "found_by": "ocd-bill/a3bec6ea-4c68-4251-b36c-60f0e4053031",
     "model_share": 0.9947,
     "bill_share": 0.9118,
+    "best_share": 0.9947,
     "miss_reason": null,
     "bills": [
      {
@@ -7949,6 +8015,7 @@
       ],
       "model_share": 0.9947,
       "bill_share": 0.9118,
+      "listed": true,
       "found": true
      }
     ]
@@ -7969,6 +8036,7 @@
     "found_by": "ocd-bill/6f465d45-da9a-4770-b4f3-81c6fb0dd2f3",
     "model_share": 0.2914,
     "bill_share": 0.0163,
+    "best_share": 0.2914,
     "miss_reason": null,
     "bills": [
      {
@@ -7980,6 +8048,7 @@
       ],
       "model_share": 0.2914,
       "bill_share": 0.0163,
+      "listed": true,
       "found": true
      }
     ]
@@ -8000,6 +8069,7 @@
     "found_by": "ocd-bill/213a3799-0793-474f-9bbe-94a3ece4fe1a",
     "model_share": 0.6398,
     "bill_share": 0.687,
+    "best_share": 0.687,
     "miss_reason": null,
     "bills": [
      {
@@ -8011,6 +8081,7 @@
       ],
       "model_share": 0.6398,
       "bill_share": 0.687,
+      "listed": true,
       "found": true
      },
      {
@@ -8022,6 +8093,7 @@
       ],
       "model_share": 0.6398,
       "bill_share": 0.687,
+      "listed": true,
       "found": true
      }
     ]
@@ -8042,6 +8114,7 @@
     "found_by": "ocd-bill/370e175f-246b-4076-a6b8-62312800299c",
     "model_share": 0.7958,
     "bill_share": 0.674,
+    "best_share": 0.7958,
     "miss_reason": null,
     "bills": [
      {
@@ -8053,6 +8126,7 @@
       ],
       "model_share": 0.7958,
       "bill_share": 0.674,
+      "listed": true,
       "found": true
      }
     ]
@@ -8065,15 +8139,16 @@
     "listed": "HB 754/SB 289/SB 428/HB 176/HB 180/HB 83",
     "stratum": "enacted",
     "match_rule": "in_year",
-    "found": true,
+    "found": false,
     "found_by_stage": {
      "near_duplicate": false,
-     "semantic": true
+     "semantic": false
     },
-    "found_by": "ocd-bill/f16c85d9-9f6e-49ec-81c3-dcad51fa9377",
-    "model_share": 0.0634,
-    "bill_share": 0.0044,
-    "miss_reason": null,
+    "found_by": null,
+    "model_share": null,
+    "bill_share": null,
+    "best_share": 0.0634,
+    "miss_reason": "below_threshold",
     "bills": [
      {
       "id": "ocd-bill/453ce620-242c-473e-bafc-4ec119d07b64",
@@ -8081,6 +8156,7 @@
       "stages": [],
       "model_share": null,
       "bill_share": null,
+      "listed": false,
       "found": false
      },
      {
@@ -8089,6 +8165,7 @@
       "stages": [],
       "model_share": null,
       "bill_share": null,
+      "listed": false,
       "found": false
      },
      {
@@ -8097,6 +8174,7 @@
       "stages": [],
       "model_share": null,
       "bill_share": null,
+      "listed": false,
       "found": false
      },
      {
@@ -8105,6 +8183,7 @@
       "stages": [],
       "model_share": null,
       "bill_share": null,
+      "listed": false,
       "found": false
      },
      {
@@ -8113,6 +8192,7 @@
       "stages": [],
       "model_share": null,
       "bill_share": null,
+      "listed": false,
       "found": false
      },
      {
@@ -8123,7 +8203,8 @@
       ],
       "model_share": 0.0634,
       "bill_share": 0.0044,
-      "found": true
+      "listed": false,
+      "found": false
      }
     ]
    },
@@ -8143,6 +8224,7 @@
     "found_by": "ocd-bill/463214e4-c47a-4c4b-8819-2eb952e28bdc",
     "model_share": 0.9339,
     "bill_share": 0.8874,
+    "best_share": 0.9339,
     "miss_reason": null,
     "bills": [
      {
@@ -8154,6 +8236,7 @@
       ],
       "model_share": 0.9339,
       "bill_share": 0.8874,
+      "listed": true,
       "found": true
      }
     ]
@@ -8174,6 +8257,7 @@
     "found_by": "ocd-bill/a328ce17-079d-4d27-b601-52705b04bbf5",
     "model_share": 0.7909,
     "bill_share": 0.6842,
+    "best_share": 0.7909,
     "miss_reason": null,
     "bills": [
      {
@@ -8185,6 +8269,7 @@
       ],
       "model_share": 0.7909,
       "bill_share": 0.6842,
+      "listed": true,
       "found": true
      }
     ]
@@ -8205,6 +8290,7 @@
     "found_by": "ocd-bill/fa4c5f9a-465f-40ec-810f-191e625fa9fd",
     "model_share": 0.8164,
     "bill_share": 0.6717,
+    "best_share": 0.8164,
     "miss_reason": null,
     "bills": [
      {
@@ -8216,6 +8302,7 @@
       ],
       "model_share": 0.8164,
       "bill_share": 0.6717,
+      "listed": true,
       "found": true
      }
     ]
@@ -8236,6 +8323,7 @@
     "found_by": "ocd-bill/37e5a984-c884-486f-b704-52ac2badf061",
     "model_share": 0.8889,
     "bill_share": 0.7643,
+    "best_share": 0.8889,
     "miss_reason": null,
     "bills": [
      {
@@ -8247,6 +8335,7 @@
       ],
       "model_share": 0.8889,
       "bill_share": 0.7643,
+      "listed": true,
       "found": true
      }
     ]
@@ -8267,6 +8356,7 @@
     "found_by": "ocd-bill/a87f9d8e-1e55-43bb-a5b2-f599862f89b4",
     "model_share": 0.864,
     "bill_share": 0.4936,
+    "best_share": 0.864,
     "miss_reason": null,
     "bills": [
      {
@@ -8278,6 +8368,7 @@
       ],
       "model_share": 0.864,
       "bill_share": 0.4936,
+      "listed": true,
       "found": true
      },
      {
@@ -8289,6 +8380,7 @@
       ],
       "model_share": 0.864,
       "bill_share": 0.4936,
+      "listed": true,
       "found": true
      }
     ]
