@@ -1,0 +1,14 @@
+National Council of Insurance Legislators (NCOIL)
+Synthetic Remote Lamplighting Model Act
+(invented for tests; not an NCOIL text)
+*Adopted by an invented committee on April 4, 2026.
+*Sponsored by an invented legislator
+
+AN ACT concerning lamps lit from a distance by authorized lamplighters using
+communication technology.
+
+(A) As used in this section:
+"Remote lamplighter" means a lamplighter who lights a lamp from a distance.
+(B) A remote lamplighter shall keep a record of each lamp lit.
+Note: An invented note on records.
+(C) This section applies to lamps lit after its effective date.

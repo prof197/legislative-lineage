@@ -9,7 +9,10 @@ each held one PDF.
 
 What is collected: every entry in the Model Laws Library, as NCOIL's current text of that model.
 Resolutions and working drafts are separate libraries and are not read; an entry in this one
-whose title calls it a draft or a resolution is passed over. A model is not listed once per
+whose title calls it a draft or a resolution is passed over. So is a model agreement: the
+library holds one, another association's reciprocal agreement for state workers' compensation
+agencies to sign, which NCOIL supports; it is not legislation, and its unnumbered layout of
+background, then agreement, would be read from the middle. A model is not listed once per
 adoption: amendments and readoptions are recorded in its one entry's title ("Originally Adopted
 11/18/12; ... Readopted 7/16/22; Amended on 7/19/25") and its file is replaced, so a readopted
 or amended text arrives as a new version of the same document, keyed by the model's name with
@@ -24,15 +27,18 @@ Fetching is on (`SITE_FETCH`): the site publishes no terms of use, its privacy p
 only to what NCOIL collects from visitors, robots.txt disallows only /wp-admin/, and the files
 open without a login or a click-through. The texts stay local, as every model text does.
 
-Cleaning: NCOIL's models put a title block, a sponsor and adoption line and a table of contents
-before Section 1, and drafting notes in the middle of a section, between its lettered
-subsections. `lineage.acts.enacted_text` would drop everything from such a note to the next
-section, law included, and keep a table of contents that has no page numbers, so this module
-reads its own layout (`clean_model`) and shares only the bracket rule, `drop_instructions`.
+Cleaning: NCOIL's models put a title block, adoption and sponsor lines, sometimes a preamble and
+a table of contents before their text, and drafting notes in the middle of a section, between
+its lettered subsections. `lineage.acts.enacted_text` would drop everything from such a note to
+the next section, law included, and keep a table of contents that has no page numbers, so this
+module reads its own layouts (`clean_model`) and shares only the bracket rule,
+`drop_instructions`. Forty years of models write their headings many ways ("Section 1.",
+"Section 1:", "Section 1 Short Title", "Section 1 - text", "Section I.", "Section A." within
+"Part I.", "Chapter 1.", "TITLE I", "I. DISMISSAL"); two have none and open at "(A)" or at
+lettered parts. Measured on the 84 models collected on 2026-11-15 and the 12 that failed then.
 See DESIGN.md#model-documents.
 """
 
-import itertools
 import re
 import urllib.parse
 from dataclasses import dataclass
@@ -113,8 +119,11 @@ _HISTORY = re.compile(
     re.IGNORECASE,
 )
 # A working draft ("Draft as of 10/21/2026"), or a resolution by its title's first word; a model
-# can be named for dispute resolution, so the word alone is not enough.
-_PASSED_OVER = re.compile(r"\bdraft\b|^\s*(?:NCOIL\s+)?resolution\b", re.IGNORECASE)
+# can be named for dispute resolution, so the word alone is not enough. A model agreement is an
+# agreement for state agencies to sign, not legislation (see the docstring).
+_PASSED_OVER = re.compile(
+    r"\bdraft\b|^\s*(?:NCOIL\s+)?(?:resolution|model\s+agreement)\b", re.IGNORECASE
+)
 # A sunset, not an adoption: "Readopted temporarily until November 2026 Meeting".
 _UNTIL = re.compile(r"\buntil\b[^;)]*", re.IGNORECASE)
 _FULL_DATE = re.compile(r"\b(\d{1,2})[/-](\d{1,2})[/-](\d{4}|\d{2})\b")
@@ -252,58 +261,257 @@ def file_suffix(url: str) -> str:
 
 # ---- cleaning ---------------------------------------------------------------------------------
 
-# "Section 1. Title, Scope and Purposes"; some older models number in roman numerals.
-_HEADING = re.compile(r"^\s*\[?(?:Section|Sec\.)\s+(?:\d+[A-Za-z]?|[IVXL]+)\.", re.IGNORECASE)
-_NOTE = re.compile(r"^\s*(?:drafting|legislative)\s+notes?\b", re.IGNORECASE)
-# The start of a subsection or list item, which ends a drafting note: "B. ", "(2) ", "(a) ".
-_ITEM = re.compile(r"^\s*(?:\(?(?:[A-Za-z]|\d+|[ivx]+)\)|[A-Z]\.|\d+\.)\s")
-_PAGE_NUMBER = re.compile(r"^\s*\d+\s*$")
-# The organization's name alone on a line is a running header or footer, not law.
-_RUNNING = re.compile(r"^\W*national council of insurance legislators(?:\s*\(ncoil\))?\W*$", re.I)
-# NCOIL's own word for an instruction to the drafter: "[citation to specific statute]".
-_CITATION = re.compile(r"[ \t]*\[\s*citation\b[^\[\]]*\]", re.IGNORECASE)
+# A section heading as NCOIL's models write it, across forty years of layouts: "Section 1. Title",
+# "Section 1: Title", "Section 1 Title", "Section 1 - text", "SECTION 1.", "Section I.",
+# "Section A." (sections lettered within parts), "Section __." (an amendment's blank number).
+# The word is matched in any case but what follows in its own, so "Section 3 may recover" in a
+# wrapped sentence is not a heading; nor is "Section C.2 of this Act", a reference.
+_SECTION_LABEL = r"(?i:section|sec\.?)\s+(?:\d+[A-Za-z]?|[IVXL]+|[A-Z]|_+)"
+# A container heading: "Part I.", "Article 2", "TITLE I - ANTI-RUNNER", "Chapter 1. Short Title".
+_CONTAINER_LABEL = r"(?i:article|part|title|chapter)\s+(?:\d+|[IVXL]+)"
+_HEADING = re.compile(
+    rf"^\s*\[?(?P<label>{_SECTION_LABEL}|{_CONTAINER_LABEL})"
+    r"(?:\s*[.:](?!\d)|\s+[\u2013\u2014-]|\s+(?=[A-Z(\[\u201c\"])|\s*$)"
+    # A bare capital roman numeral before a heading in capitals: "I. DISMISSAL OR ABATEMENT".
+    r"|^\s*(?P<roman>[IVX]+)\.\s+[A-Z]{2,}"
+)
+# An unnumbered section some models open with: "Purpose.", "Short Title", "Purpose - The ...".
+_NAMED = re.compile(
+    r"^\s*(?:Purpose|Short Title|Title|Findings|Legislative Findings|Definitions|Scope)"
+    r"\s*(?:[.:\u2013\u2014-]|\s*$)"
+)
+# The start of a subsection or list item: "B. ", "(2) ", "(a) ", "1. ". Three digits at most,
+# so a wrapped adoption line that starts "2010. Re-adopted" is not one.
+_ITEM = re.compile(r"^\s*(?:\(?(?:[A-Za-z]|\d{1,3}|[ivx]+)\)|[A-Z]\.|\d{1,3}\.)\s")
+# A drafting note, bracketed or not, and its kin: "Drafting Note:", "[Drafting note -",
+# "Legislative Note", "Drafting option:", "Note:", "[Note that ...".
+_NOTE = re.compile(
+    r"^\s*([\[(])?\s*(?:(?:drafting|legislative)\s+(?:notes?|options?|comments?)\b"
+    r"|notes?\s*:|note\s+that\b)",
+    re.IGNORECASE,
+)
+# A footnote, or a starred line of front matter ("*Sponsored by ..."); never law.
+_FOOTNOTE = re.compile(r"^\s*\*{1,2}\s*[\w(\u201c\"]")
+# A definition opens a provision of its own: "\u201cLessee\u201d means ...".
+_DEFINITION = re.compile(r"^\s*[\u201c\"][^\u201d\"]{1,80}[\u201d\"].*\bmeans\b")
+_CONTENTS = re.compile(
+    r"^\s*(?:table\s+of\s+)?contents\b[\s:]*(?:page\s+numbers?)?\s*$", re.IGNORECASE
+)
+# A contents entry's page reference: "(1-9)", "(23)", ".... 4", a wide gap then "12".
+_PAGE_REFERENCE = re.compile(
+    r"(?:\(\s*\d[\d\s,\u2013-]*\)|\.{2,}\s*\d+|(?:\s{2,}|\t)\d+(?:\s*[\u2013-]\s*\d+)?)\s*$"
+)
+# Lines that are layout, not text: page numbers, the running header or footer naming the
+# organization, rules of asterisks or underscores.
+_LAYOUT = re.compile(
+    r"^\s*(?:\d+|\W*national council of insurance legislators(?:\s*\(ncoil\))?\W*"
+    r"|[*_=-]{4,}[\s_*]*)\s*$",
+    re.IGNORECASE,
+)
+
+
+# A braced title: "Section 4. {Severability clause}" with no text under it is a placeholder for
+# the state's own clause; over text, as some models brace every title, it is only a title.
+_PLACEHOLDER = re.compile(r"^\{[^{}]*\}\.?$")
+# A note's line that ends mid-sentence, so the next line continues it even if it starts with a
+# heading's words: "... enforcement provisions for" / "Section 6.".
+_OPEN = re.compile(r"[^.:;?!)\]\"”]\s*$")
+_ROMAN = {"i": 1, "v": 5, "x": 10, "l": 50}
 
 
 class NcoilTextError(Exception):
     pass
 
 
+def _arabic(word: str) -> str:
+    """A roman numeral as its number ("iv" -> "4"); any other word as it is. A contents list
+    can number its sections 1-8 while the text numbers them I-VIII."""
+    if not word or any(c not in _ROMAN for c in word):
+        return word
+    values = [_ROMAN[c] for c in word]
+    total = sum(-v if v < after else v for v, after in zip(values, [*values[1:], 0], strict=True))
+    return str(total)
+
+
+def _label(line: str) -> str | None:
+    m = _HEADING.match(line)
+    if m is None:
+        return None
+    if m.group("roman"):
+        return f"roman {_arabic(m.group('roman').lower())}"
+    kind, number = m.group("label").lower().split(maxsplit=1)
+    return f"{kind} {_arabic(number)}"
+
+
+def _is_section(line: str) -> bool:
+    """A section heading, as against a part, article or title holding sections."""
+    label = _label(line)
+    return label is not None and (label.startswith("sec") or label.startswith("roman"))
+
+
+def _heading_rest(line: str) -> str:
+    """What follows a heading's label: its title, and any text set on the same line."""
+    m = _HEADING.match(line)
+    return line[m.end() :].strip(" .:\u2013\u2014-") if m else ""
+
+
+def _continues(line: str) -> bool:
+    """Whether a heading-like line could be a sentence's wrapped tail: a bare label ("Section
+    6."), or one followed by lowercase words. A label with a title is a heading."""
+    rest = _heading_rest(line)
+    return not rest or rest[0].islower()
+
+
+def _has_inline_text(line: str) -> bool:
+    """A heading carrying its section's text on the same line: "Section 4 - This law is
+    effective upon enactment." A title alone is a few words without a closing period."""
+    m = _HEADING.match(line)
+    rest = line[m.end() :].strip() if m else ""
+    return len(rest.split()) >= 5 and rest.endswith((".", ";", ":"))
+
+
+def _drop_notes(lines: list[str]) -> list[str]:
+    """`lines` without drafting notes or footnotes, and without the heading of a section whose
+    only text was a note: the model leaves that section for each state to write.
+
+    A note is one paragraph: it ends at a blank line, a heading or the next subsection, and a
+    bracketed one at its closing bracket. Ending early keeps a note's tail rather than dropping
+    law; a PDF's text layer often has no blank lines, so a page break (a page number, now blank)
+    ends one too."""
+    out: list[str] = []
+    in_note = bracketed = False
+    previous = ""  # the note's last line
+    section_at: int | None = None  # where the current section's heading is in `out`
+    body = noted = placeholder = False
+
+    def close_section() -> None:
+        # A section with no text of its own, only a note or a placeholder title, is left to
+        # each state to write. A braced title over text is only a title: "Section 1. {Short
+        # Title}" in some models.
+        if section_at is not None and not body and (noted or placeholder):
+            del out[section_at]
+
+    for line in lines:
+        heading = _HEADING.match(line) is not None
+        if heading and in_note and _OPEN.search(previous) and _continues(line):
+            heading = False
+        if in_note and _CONTENTS.match(line):
+            in_note = False
+        if heading:
+            in_note = False
+        elif in_note:
+            if bracketed and "]" in line:
+                in_note = False
+                continue
+            if not line.strip() or _ITEM.match(line) or _DEFINITION.match(line):
+                in_note = False
+            else:
+                previous = line
+                continue
+        if not heading and (m := _NOTE.match(line) or _FOOTNOTE.match(line)):
+            noted = True
+            bracketed = m.re is _NOTE and m.group(1) == "["
+            in_note = not (bracketed and "]" in line)
+            previous = line
+            continue
+        if heading:
+            close_section()
+            section_at, body, noted = None, False, False
+            placeholder = _PLACEHOLDER.match(_heading_rest(line)) is not None
+            if _is_section(line) and not _has_inline_text(line):
+                section_at = len(out)
+        elif line.strip():
+            body = True
+        out.append(line)
+    close_section()
+    return out
+
+
+def _key(line: str) -> list[str]:
+    """A contents entry or a heading as words, without a page reference, its number arabic."""
+    words = re.findall(r"[a-z0-9]+", _PAGE_REFERENCE.sub("", line).lower())
+    if len(words) >= 2 and _HEADING.match(line):
+        words[1] = _arabic(words[1])
+    return words
+
+
+def _is_wrapped_entry(line: str) -> bool:
+    """A contents entry's second line: a few words, not a sentence."""
+    words = line.split()
+    return 0 < len(words) <= 8 and not line.rstrip().endswith((".", ":", ";"))
+
+
+def _same_entry(entry: list[str], line: list[str]) -> bool:
+    if len(entry) < 2 or len(line) < 2:
+        return entry == line
+    shorter = min(len(entry), len(line))
+    return entry[:shorter] == line[:shorter]
+
+
+def _body_start(lines: list[str]) -> int | None:
+    """Where the model's text begins, after its title, adoption and sponsor lines, preamble and
+    contents.
+
+    It begins at its first heading, numbered provision or named opening section ("Purpose").
+    Two layouts put headings before that point: a contents list under its own header, whose
+    first entry the text then repeats, and a contents list without one, a run of headings with
+    nothing between whose first label comes back later."""
+    headings = [i for i, line in enumerate(lines) if _HEADING.match(line)]
+    starts = sorted(
+        set(headings)
+        | {i for i, line in enumerate(lines) if _ITEM.match(line) or _NAMED.match(line)}
+    )
+    header = next((i for i, line in enumerate(lines) if _CONTENTS.match(line)), None)
+    if header is not None and (not starts or header < starts[0]):
+        entry = next((i for i in range(header + 1, len(lines)) if lines[i].strip()), None)
+        if entry is not None:
+            # A heading's entry is found again by its number, since the list may shorten its
+            # title ("Section 1. Title" for "Section 1. Short Title"); any other by its words.
+            label, key = _label(lines[entry]), _key(lines[entry])
+            for j in range(entry + 1, len(lines)):
+                if not lines[j].strip():
+                    continue
+                if label is not None and _label(lines[j]) == label:
+                    return j
+                if label is None and _same_entry(key, _key(lines[j])):
+                    return j
+        # The text never repeats the first entry: the list ends where its entries do, headings
+        # and the short lines an entry wraps onto.
+        end = header + 1
+        while end < len(lines) and (
+            not lines[end].strip() or _HEADING.match(lines[end]) or _is_wrapped_entry(lines[end])
+        ):
+            end += 1
+        starts = [i for i in starts if i >= end]
+    if not starts:
+        return None
+    first = starts[0]
+    label = _label(lines[first])
+    if label is None:
+        return first
+    run = [first]
+    for i in headings:
+        if i > run[-1]:
+            if any(line.strip() for line in lines[run[-1] + 1 : i]):
+                break
+            run.append(i)
+    if len(run) >= 2:
+        return next((i for i in headings if i > first and _label(lines[i]) == label), first)
+    return first
+
+
 def clean_model(raw: str) -> str:
     """An NCOIL model as matching reads it: its sections, without front matter, the table of
-    contents, page numbers, drafting notes or bracketed instructions to the drafter."""
-    # Page numbers and running headers are dropped outright, so a note running over a page
-    # break stays one note.
+    contents, page numbers, drafting notes, footnotes or bracketed instructions to the drafter."""
     lines = [
-        line.rstrip()
+        "" if _LAYOUT.match(line) else line.rstrip()
         for line in raw.replace("\r\n", "\n").replace("\r", "\n").split("\n")
-        if not (_PAGE_NUMBER.match(line) or _RUNNING.match(line))
     ]
-    headings = [i for i, line in enumerate(lines) if _HEADING.match(line)]
-    if not headings:
-        raise NcoilTextError("no section heading: is this the model's text?")
-    # A table of contents is a run of headings with nothing but blank lines between them; the
-    # run's last heading is the first section's own, followed by its text.
-    toc = {
-        i
-        for i, j in itertools.pairwise(headings)
-        if not any(line.strip() for line in lines[i + 1 : j])
-    }
-    kept: list[str] = []
-    in_note = False
-    for i in range(headings[0], len(lines)):
-        line = lines[i]
-        if i in toc:
-            continue
-        if _HEADING.match(line):
-            in_note = False
-        elif in_note and (not line.strip() or _ITEM.match(line)):
-            # A note is one paragraph: it ends at a blank line or the next lettered subsection.
-            in_note = False
-        elif _NOTE.match(line):
-            in_note = True
-        if not in_note:
-            kept.append(line)
-    text = drop_instructions(_CITATION.sub("", "\n".join(kept)))
+    lines = _drop_notes(lines)
+    start = _body_start(lines)
+    if start is None:
+        raise NcoilTextError("no heading or numbered provision: is this the model's text?")
+    text = drop_instructions("\n".join(lines[start:]))
     text = "\n".join(line if line.strip() else "" for line in text.split("\n"))
     return re.sub(r"\n{3,}", "\n\n", text).strip() + "\n"
 

@@ -69,6 +69,7 @@ CLEANED = (
     'A. "Commissioner" means the commissioner of insurance of this state.\n'
     'B. "Lantern" means a portable lamp insured under.\n'
     "(1) A lantern kept under is covered.\n"
+    "\n"  # a page break, its number and running header gone
     "(2) A lantern kept in [this state] is covered.\n"
     "\n"
     "Section 3. Lantern Coverage\n"
@@ -310,10 +311,12 @@ def test_a_document_page_gives_its_file_and_not_a_related_document() -> None:
         (f"Beacon Model Act {EN} Draft as of 10/21/2026", False),
         ("Resolution in Support of Lantern Safety", False),
         ("NCOIL Resolution on Wicks", False),
+        (f"Model Agreement Between Lamp Agencies {EN} Supported 7/22/06", False),
         (f"Lantern Dispute Resolution Model Act {EN} Adopted 1/2/26", True),
+        (f"Model Act on Lamp Agreements {EN} Adopted 1/2/26", True),
     ],
 )
-def test_drafts_and_resolutions_are_passed_over_and_a_model_on_resolution_is_not(
+def test_drafts_resolutions_and_agreements_are_passed_over_and_models_naming_them_are_not(
     title: str, listed: bool
 ) -> None:
     body = f'<h3><a href="/resource/x/">{title}</a></h3><p>January 1, 2026</p>'
@@ -407,16 +410,207 @@ def test_a_drafting_note_ends_at_the_next_subsection_not_the_next_section() -> N
     assert clean_model(raw) == "Section 1. Definitions\nA. One.\nB. Two.\n(1) Three.\n(a) Four.\n"
 
 
-def test_a_text_without_sections_fails() -> None:
-    with pytest.raises(NcoilTextError, match="no section heading"):
+def test_a_text_without_any_provision_fails() -> None:
+    with pytest.raises(NcoilTextError, match="no heading or numbered provision"):
         clean_model("A memo about a model act.\n")
+
+
+PARTS_MODEL = FIXTURES / "synthetic_parts_model.txt"
+PARTS_CLEANED = (
+    "A. Definitions *\n"
+    "\n"
+    '"Lamp network" means a list of lamp keepers under contract.\n'
+    '"Lessee" means a person that leases a lamp network.\n'
+    "\n"
+    "B. Lamp Network Contracting Act\n"
+    "Section I. Leasing\n"
+    "A. A keeper may lease a lamp network only under.\n"
+    "B. A lessee shall give notice of each lease.\n"
+    "\n"
+    "Section IV. Notice\n"
+    "A lessee shall post notice of each lease.\n"
+    "\n"
+    "C. Effective Date\n"
+    "This Act takes effect on.\n"
+)
+UNNUMBERED_MODEL = FIXTURES / "synthetic_unnumbered_model.txt"
+UNNUMBERED_CLEANED = (
+    "(A) As used in this section:\n"
+    '"Remote lamplighter" means a lamplighter who lights a lamp from a distance.\n'
+    "(B) A remote lamplighter shall keep a record of each lamp lit.\n"
+    "(C) This section applies to lamps lit after its effective date.\n"
+)
+
+
+@pytest.mark.parametrize(
+    ("path", "cleaned"),
+    [(PARTS_MODEL, PARTS_CLEANED), (UNNUMBERED_MODEL, UNNUMBERED_CLEANED)],
+    ids=["lettered-parts", "unnumbered"],
+)
+def test_a_model_in_parts_or_without_headings_keeps_its_provisions(
+    path: Path, cleaned: str
+) -> None:
+    # Lettered parts under a "Contents:" list, sections numbered I, II within a part, a
+    # footnote, a bracketed note, a section whose only text is a note, a placeholder section;
+    # or no headings at all, an "AN ACT" title before "(A)". Read as text, Word and PDF.
+    text = path.read_text()
+    assert clean_model(text) == cleaned
+    assert clean_model(cleaned) == cleaned
+    assert clean_model(docx_text(docx_bytes(text))) == cleaned
+    assert clean_model(file_text(pdf_bytes(text), "application/pdf")).split() == cleaned.split()
+
+
+@pytest.mark.parametrize(
+    "heading",
+    [
+        "Section 1. Short Title",
+        "Section 1: Short Title",
+        "Section 1 Short Title",
+        "SECTION 1. SHORT TITLE",
+        "Section I. Short Title",
+        "Section __. Short Title",
+        "Chapter 1. Short Title",
+        f"TITLE I {EN} SHORT TITLE",
+        "I. SHORT TITLE",
+    ],
+)
+def test_every_heading_form_opens_the_text(heading: str) -> None:
+    raw = f"A Synthetic Model Act\n*Adopted on an invented day.\n\n{heading}\nA lamp is a lamp.\n"
+    assert clean_model(raw) == f"{heading}\nA lamp is a lamp.\n"
+
+
+def test_a_heading_carrying_its_text_opens_the_text() -> None:
+    raw = f"A Synthetic Model Act\n\nSection 1 {EN} The commissioner shall keep a lamp.\n"
+    assert clean_model(raw) == f"Section 1 {EN} The commissioner shall keep a lamp.\n"
+
+
+@pytest.mark.parametrize(
+    "line",
+    [
+        "Section 3 may recover its costs.",
+        "Section C.2 of this Act applies.",
+        "Sections 2 or 3 of this Act.",
+        "Title 18 of the federal code.",
+    ],
+)
+def test_a_sentence_naming_a_section_is_not_a_heading(line: str) -> None:
+    raw = f"Section 1. Scope\nA. One.\n{line}\nB. Two.\n"
+    assert clean_model(raw) == raw
+
+
+def test_a_contents_list_numbered_apart_from_the_text_is_dropped() -> None:
+    # The list says 1 and 2 where the text says I and II, shortens a title, wraps an entry and
+    # gives page numbers; the list's first entry is found again by its number.
+    raw = (
+        "Table of Contents        Page Numbers\n"
+        "Section 1. Title        (1)\n"
+        "Section 2. Lamp Keepers and the Lamps They\n"
+        "Keep        (1-2)\n"
+        "\n"
+        "Section I. Short Title\n"
+        "This Act is the Lamp Act.\n"
+        "Section II. Lamp Keepers and the Lamps They Keep\n"
+        "A keeper keeps lamps.\n"
+    )
+    assert clean_model(raw) == raw[raw.index("Section I.") :]
+
+
+def test_a_contents_list_split_by_a_note_is_dropped() -> None:
+    raw = (
+        "A Synthetic Model Act\n"
+        "Section 1. Definitions         (1)\n"
+        "Section 2. Keepers         (2)\n"
+        "\n"
+        "[Drafting Note: an invented note\n"
+        "on the whole Act.]\n"
+        "\n"
+        "Section 1. Definitions\n"
+        "A. One.\n"
+        "Section 2. Keepers\n"
+        "A. Two.\n"
+    )
+    assert clean_model(raw) == "Section 1. Definitions\nA. One.\nSection 2. Keepers\nA. Two.\n"
+
+
+def test_a_section_left_to_the_states_goes_and_one_with_text_stays() -> None:
+    raw = (
+        "Section 1. Scope\n"
+        "A. One.\n"
+        "Section 2. Penalties\n"
+        "Drafting Note: a state may write its own.\n"
+        "Section 3. {Repealer clause}\n"
+        "Section 4 - This Act takes effect upon enactment by the state.\n"
+        "Drafting Note: an invented note.\n"
+        "Section 5. {Records}\n"
+        "A keeper keeps records.\n"
+    )
+    assert clean_model(raw) == (
+        "Section 1. Scope\nA. One.\n"
+        "Section 4 - This Act takes effect upon enactment by the state.\n"
+        "Section 5. {Records}\nA keeper keeps records.\n"
+    )
+
+
+def test_a_note_wrapping_onto_a_sections_name_stays_one_note() -> None:
+    raw = (
+        "Section 5. Rules\n"
+        "A. The department shall adopt rules.\n"
+        "Drafting Note: rules should include enforcement for\n"
+        "Section 6.\n"
+        "\n"
+        "Section 7. Effective Date\n"
+        "This Act takes effect at once.\n"
+    )
+    assert clean_model(raw) == (
+        "Section 5. Rules\nA. The department shall adopt rules.\n\n"
+        "Section 7. Effective Date\nThis Act takes effect at once.\n"
+    )
+
+
+def test_footnotes_go_and_a_page_break_ends_one() -> None:
+    raw = (
+        "Section 1. Scope\nA. One.*\n*1 Based on an invented statute.\n4\napplies to every lamp.\n"
+    )
+    assert clean_model(raw) == "Section 1. Scope\nA. One.*\n\napplies to every lamp.\n"
 
 
 # ---- real samples, local only --------------------------------------------------------------------
 
-_HEADING_LINE = re.compile(r"^\s*\[?(?:Section|Sec\.)\s+(?:\d+[A-Za-z]?|[IVXL]+)\.", re.I | re.M)
+# A section heading in any of the forms the models use (see the module); "Section 3 may" is not.
+_HEADING_LINE = re.compile(
+    r"^\s*\[?(?i:section|sec\.?)\s+(?P<number>\d+[A-Za-z]?|[IVXL]+|[A-Z]|_+)"
+    r"(?:\s*[.:](?!\d)|\s+[\u2013\u2014-]|\s+(?=[A-Z(\[\u201c\"])|\s*$)"
+)
+_PROVISION = re.compile(r"^\s*(?:\(?(?:[A-Za-z]|\d{1,3})\)|[A-Z]\.|\d{1,3}\.)\s")
 _INSTRUCTION_LEFT = re.compile(r"\[\s*(?:cite|citation|insert|specify)\b", re.IGNORECASE)
 _NOTE_LINE = re.compile(r"^\s*(?:legislative|drafting)\s+notes?\b", re.IGNORECASE | re.MULTILINE)
+_ROMAN = {
+    "I": 1,
+    "II": 2,
+    "III": 3,
+    "IV": 4,
+    "V": 5,
+    "VI": 6,
+    "VII": 7,
+    "VIII": 8,
+    "IX": 9,
+    "X": 10,
+}
+
+
+def _number(line: str) -> str | None:
+    m = _HEADING_LINE.match(line)
+    if m is None:
+        return None
+    number = m.group("number")
+    return str(_ROMAN.get(number, number))
+
+
+def _carries_text(line: str) -> bool:
+    """A heading with its section's one sentence on the same line."""
+    m = _HEADING_LINE.match(line)
+    rest = line[m.end() :].strip() if m else ""
+    return len(rest.split()) >= 5 and rest.endswith((".", ";", ":"))
 
 
 def _collected() -> list[str]:
@@ -426,32 +620,56 @@ def _collected() -> list[str]:
         return []
 
 
+def _read(doc_id: str) -> tuple[str, str]:
+    """A collected model's stored raw file as read, and its stored text."""
+    doc = next(d for d in read_docs(SOURCE, MODELDOCS_DIR) if d.id == doc_id)
+    raw = raw_path(doc, MODELDOCS_DIR).read_bytes()
+    return file_text(raw, doc.media_type), load_text(doc, MODELDOCS_DIR)
+
+
+@pytest.mark.skipif(not _collected(), reason="no NCOIL models collected under the data directory")
+@pytest.mark.parametrize("doc_id", _collected(), ids=lambda i: i.partition("/")[2][:40])
+def test_a_collected_models_stored_text_is_its_cleaning(doc_id: str) -> None:
+    read, stored = _read(doc_id)
+    same = clean_model(read) == stored  # a bool, so a failure never prints the model's text
+    assert same
+
+
 @pytest.mark.skipif(not _collected(), reason="no NCOIL models collected under the data directory")
 @pytest.mark.parametrize("doc_id", _collected(), ids=lambda i: i.partition("/")[2][:40])
 def test_a_collected_model_keeps_its_sections_and_no_note(doc_id: str) -> None:
-    doc = next(d for d in read_docs(SOURCE, MODELDOCS_DIR) if d.id == doc_id)
-    raw = raw_path(doc, MODELDOCS_DIR).read_bytes()
-    read = file_text(raw, doc.media_type)
-    text = load_text(doc, MODELDOCS_DIR)
+    read, _ = _read(doc_id)
+    text = clean_model(read)
 
     # Counts only, so a failure never prints the model's text.
     lines = [line for line in text.split("\n") if line.strip()]
+    raw_lines = [line for line in read.split("\n") if line.strip()]
     headings = sum(1 for line in lines if _HEADING_LINE.match(line))
+    raw_headings = sum(1 for line in raw_lines if _HEADING_LINE.match(line))
+    provisions = sum(1 for line in lines if _HEADING_LINE.match(line) or _PROVISION.match(line))
+    first_kept = next((_number(line) for line in lines if _HEADING_LINE.match(line)), None)
+    first_raw = next((_number(line) for line in raw_lines if _HEADING_LINE.match(line)), None)
     adjacent_headings = sum(
         1 for a, b in itertools.pairwise(lines)
-        if _HEADING_LINE.match(a) and _HEADING_LINE.match(b)
+        if _HEADING_LINE.match(a) and not _carries_text(a) and _HEADING_LINE.match(b)
     )  # fmt: skip
     instructions_left = len(_INSTRUCTION_LEFT.findall(text))
     note_lines = len(_NOTE_LINE.findall(text))
     contents = text.lower().count("table of contents")
-    kept, before = len(text.split()), len(read.split())
+    # The words from where the text's first line first appears in the raw, its contents list
+    # included: the title, adoption and sponsor lines before it are not law.
+    first = " ".join(lines[0].split())
+    at = next((i for i, line in enumerate(raw_lines) if " ".join(line.split()) == first), 0)
+    kept, before = len(text.split()), sum(len(line.split()) for line in raw_lines[at:])
 
-    assert clean_model(read) == text
     assert clean_model(text) == text
-    assert headings > 0
+    assert provisions > 0
+    assert headings > 0 or raw_headings == 0
+    # The text opens at the model's first section, not at one after it.
+    assert first_kept == first_raw
     assert adjacent_headings == 0  # no table of contents left
     assert instructions_left == 0
     assert note_lines == 0
     assert contents == 0
-    # Front matter, contents and notes are a share of a model; losing most of it is losing law.
+    # Notes and footnotes are a share of a model's text; losing most of it is losing law.
     assert 0.6 * before <= kept <= before

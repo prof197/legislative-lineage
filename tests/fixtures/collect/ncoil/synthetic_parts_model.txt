@@ -1,0 +1,36 @@
+1
+National Council of Insurance Legislators (NCOIL)
+Synthetic Lamp Network Contracting Model Act
+(invented for tests; not an NCOIL text)
+*Sponsored by an invented legislator
+*Adopted by an invented committee on March 3, 2026.
+
+Contents:
+A. Definitions
+B. Lamp Network Contracting - Fair and Open
+Leasing of Networks
+C. Effective Date
+
+A. Definitions *
+*The definitions below are invented for this test and
+run on for a second line.
+
+"Lamp network" means a list of lamp keepers under contract.
+"Lessee" means a person that leases a lamp network.
+
+B. Lamp Network Contracting Act
+Section I. Leasing
+A. A keeper may lease a lamp network only under [cite lamp code].
+[Drafting Note: An invented bracketed note
+that runs over two lines.]
+B. A lessee shall give notice of each lease.
+Section II. Penalties
+Drafting Note: A state may set its own penalties here.
+
+Section III. {Severability clause}
+Section IV. Notice
+A lessee shall post notice of each lease.
+
+C. Effective Date
+This Act takes effect on [insert date].
+*1 Based on an invented statute.
