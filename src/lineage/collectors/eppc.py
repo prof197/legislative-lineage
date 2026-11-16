@@ -1,31 +1,33 @@
-"""The model state legislation the Ethics and Public Policy Center publishes with the Institute
-for Family Studies, as one source.
+"""The Ethics and Public Policy Center's model state legislation.
 
-What is collected: the documents both organizations present as model state legislation, listed
-in `DOCUMENTS` as read on 2026-11-15. EPPC keeps a public library of model legislation (its
-"Model Legislation" category), and IFS carries the same joint bill among its research briefs;
-one joint document stands in both, and it is collected once, from EPPC's page. Each
-organization also publishes model bills on its own (EPPC's library holds several, IFS hosts one
-on its technology initiative's page); those are not this source's and are not collected here.
-Policy briefs, reports, summaries and fact sheets are not model legislation and are left out.
+What is collected: the documents EPPC presents as model state legislation, listed in
+`DOCUMENTS` as read on 2026-11-15 from its public "Model Legislation" library, and its
+assisted reproductive technology package, which the library does not list. A document another
+organization publishes with EPPC names it as a co-publisher, as the document or its page names
+it: the 2023 social media bill, written with the Institute for Family Studies (which carries it
+too, and is its own source, `lineage.collectors.ifs`), and the 2025 age verification bill,
+EPPC's with the Center for Renewing America. The library's article on four legislative
+proposals is left out: its bill texts are another publisher's, on another host.
 
 A document is its publication page: the page names the organizations and the date, and links
 the model text, a PDF or Word file, or a page of its own. The link is the one whose text names
-the model legislation, never a summary or fact sheet, and only on the organizations' own hosts.
-EPPC's files under eppc.org/wp-content/uploads/ answer with a permanent redirect to
-media.eppc.org; the file is asked for there, so that host's robots.txt is the one read.
+the model legislation, never a summary or fact sheet, and only on the organization's own hosts.
+Where the link answers with a redirect, or there is no page, `Listed.file` records the file's
+own URL, so the host that serves it is the one whose robots.txt is read; EPPC's files under
+eppc.org/wp-content/uploads/ are served from media.eppc.org and are asked for there.
 
 Cleaning (`clean_model_text`) keeps the bill's parts and sections and drops what no state
-enacts: the cover and author lines before the first heading, the running page footers and page
-numbers, footnotes, the capitalized line that introduces an alternative section, commentary
-and drafting notes, the author biographies after the last section, and bracketed instructions
-to the drafter (`lineage.modeltext.drop_instructions`); brackets a state enacts as written stay.
+enacts: the cover, author lines and preamble before the first heading, the running page footers,
+program banners and page numbers, footnotes, the capitalized line that introduces an
+alternative section, overviews, commentary and drafting notes, the author biographies after the
+last section, and bracketed instructions to the drafter (`lineage.modeltext.drop_instructions`);
+brackets a state enacts as written stay. The Institute for Family Studies' collector reads its
+bill the same way.
 
-Fetching is on (`SITE_FETCH`): read on 2026-11-15, neither organization publishes terms of use
-and nothing asks a visitor to accept terms, and both sites' robots.txt let this project read
-the documents' paths. EPPC's robots.txt signals that its content is not for training AI; it is
-read here to measure the wording bills share with it, kept local and never redistributed. See
-DESIGN.md#model-documents.
+Fetching is on (`SITE_FETCH`): read on 2026-11-15, EPPC publishes no terms of use and nothing
+asks a visitor to accept terms, and its robots.txt lets this project read the documents' paths.
+It signals that its content is not for training AI; it is read here to measure the wording bills
+share with it, kept local and never redistributed. See DESIGN.md#model-documents.
 """
 
 import re
@@ -53,79 +55,106 @@ from lineage.modeltext import ModelTextError, docx_text, drop_instructions
 
 EPPC = "https://eppc.org"
 MEDIA = "https://media.eppc.org"
-IFS = "https://ifstudies.org"
 LIBRARY = f"{EPPC}/category/model-legislation/"
 # On, from the terms as read (see the module docstring); tests pass `site=` either way.
 SITE_FETCH = True
 
 # The descriptor's sources, read 2026-11-15:
-# - EPPC, IRS: ProPublica's Nonprofit Explorer, Ethics And Public Policy Center Inc, EIN
-#   52-1162185, 501(c)(3), exempt since 1980, latest Form 990 for the year ending June 2025:
+# - IRS: ProPublica's Nonprofit Explorer, Ethics And Public Policy Center Inc, EIN 52-1162185,
+#   501(c)(3), exempt since 1980, latest Form 990 for the year ending June 2025:
 #   https://projects.propublica.org/nonprofits/organizations/521162185
-#   kind: https://eppc.org/about/ (an institute in Washington, D.C.; no membership).
-# - IFS, IRS: ProPublica's Nonprofit Explorer, The Institute For Family Studies, EIN
-#   27-0950140, 501(c)(3), exempt since 2010, latest Form 990 for the year ending December 2025:
-#   https://projects.propublica.org/nonprofits/organizations/270950140
-#   kind: https://ifstudies.org/about-us (research and public engagement; no membership).
+# - kind: https://eppc.org/about/ (an institute in Washington, D.C.; no membership).
 # Terms, read 2026-11-15: eppc.org's footer links no terms, and /terms-of-use and
-# /privacy-policy answer 404; ifstudies.org links https://ifstudies.org/privacy-policy and
-# https://ifstudies.org/ai-submission-policy, neither about using its content. robots.txt:
-# https://eppc.org/robots.txt and https://media.eppc.org/robots.txt allow every path to any
-# crawler not named, name AI-training crawlers to bar, and carry a Content-Signal of search
-# yes, AI training no, use as reference; https://ifstudies.org/robots.txt disallows one report
-# directory to all.
+# /privacy-policy answer 404. robots.txt: https://eppc.org/robots.txt and
+# https://media.eppc.org/robots.txt allow every path to any crawler not named, name
+# AI-training crawlers to bar, and carry a Content-Signal of search yes, AI training no, use as
+# reference.
 SOURCE = Source(
-    key="eppc-ifs",
-    organization="Ethics and Public Policy Center, with the Institute for Family Studies",
-    # Type: each organization's about page. IRS: each one's filings in ProPublica's Nonprofit
-    # Explorer, EINs 52-1162185 and 27-0950140 (URLs above).
-    descriptor="two nonprofit corporations, each exempt under IRS section 501(c)(3): the "
-    "Ethics and Public Policy Center, a public policy institute in Washington, D.C., and the "
-    "Institute for Family Studies, a research and public education organization in "
-    "Charlottesville, Virginia; neither has members",
+    key="eppc",
+    organization="Ethics and Public Policy Center",
+    # Type: eppc.org/about/. IRS: EIN 52-1162185 in ProPublica's Nonprofit Explorer (above).
+    descriptor="nonprofit corporation exempt under IRS section 501(c)(3); a public policy "
+    "institute in Washington, D.C.; no members",
     library_url=LIBRARY,
     terms_url=None,
-    terms_note="Neither organization publishes terms of use: eppc.org links none and "
-    "ifstudies.org links only a privacy policy and a policy for submissions. Pages carry a "
-    "copyright notice and nothing asks a visitor to accept terms. Both sites' robots.txt let "
-    "any crawler not named read the documents; EPPC's bars named AI-training crawlers and "
-    "signals that its content may be used for search and reference, not to train AI. The "
-    "texts are read for matching, kept local and never redistributed.",
+    terms_note="EPPC publishes no terms of use: its site links none. Pages carry a copyright "
+    "notice and nothing asks a visitor to accept terms. Its robots.txt lets any crawler not "
+    "named read the documents, bars named AI-training crawlers, and signals that its content "
+    "may be used for search and reference, not to train AI. The texts are read for matching, "
+    "kept local and never redistributed.",
     terms_read_on=date(2026, 11, 15),
 )
 
 
 @dataclass(frozen=True, slots=True)
 class Listed:
-    """A document as the organizations list it."""
+    """A document as its organization lists it."""
 
     slug: str
     title: str  # the document's own title
     page: str  # its publication page, recorded as the document's URL
-    published: date | None  # as the organizations date it
+    published: date | None  # as the organization dates it
+    # Other organizations the document or its page names as publishing it, as named there.
+    co_publishers: tuple[str, ...] = ()
+    # The model text's own URL, where the page's link redirects to it or there is no page.
+    file: str | None = None
 
 
-# Both organizations' model state legislation, read 2026-11-15. The joint social media bill,
-# by authors from both, stands in EPPC's library and as IFS's "Model Legislation for Age
-# Verification of Social Media" brief
-# (https://ifstudies.org/report-brief/model-legislation-for-age-verification-of-social-media),
-# whose download buttons are scripts; EPPC's page links the file.
+# EPPC's model state legislation, read 2026-11-15.
 DOCUMENTS: tuple[Listed, ...] = (
+    # Written with IFS's executive director and carried by IFS as its "Model Legislation for
+    # Age Verification of Social Media" brief, whose download buttons are scripts.
     Listed(
         slug="age-verification-of-social-media",
         title="Model Legislation for Age Verification of Social Media",
         page=f"{EPPC}/publication/protecting-kids-online-model-legislation/",
         published=date(2023, 10, 17),
+        co_publishers=("Institute for Family Studies",),
+    ),
+    # Its page calls it a model "from the Ethics and Public Policy Center and Center for
+    # Renewing America", and the PDF's authors are one from each.
+    Listed(
+        slug="age-verification-for-websites-containing-obscene-and-indecent-material",
+        title="Age Verification for Websites Containing Obscene and Indecent Material",
+        page=f"{EPPC}/publication/model-legislation-age-verification-for-websites-containing"
+        "-obscene-and-indecent-material/",
+        published=date(2025, 1, 29),
+        co_publishers=("Center for Renewing America",),
+    ),
+    # "View Model Legislation" links eppc.org/the-safe-chat-act/, which answers with a 301 to
+    # this PDF.
+    Listed(
+        slug="safe-chat-act",
+        title="The SAFE CHAT Act",
+        page=f"{EPPC}/publication/safeguarding-children-from-ai-companion-chatbots-model"
+        "-legislation/",
+        published=date(2025, 10, 29),
+        file=f"{MEDIA}/2025/10/The-SAFE-CHAT-Act.pdf",
+    ),
+    Listed(
+        slug="books-act",
+        title="The BOOKS (Books Optimize Our Kids' Schools) Act",
+        page=f"{EPPC}/publication/the-books-act/",
+        published=date(2026, 3, 2),
+    ),
+    # Nine bills in one PDF, with no publication page found and no date of its own; the upload
+    # path says November 2024.
+    Listed(
+        slug="state-assisted-reproductive-technology-model-legislation",
+        title="State Assisted Reproductive Technology Model Legislation",
+        page=f"{EPPC}/wp-content/uploads/2024/11/State-Assisted-Reproductive-Technology-Model"
+        "-Legislation.pdf",
+        published=None,
+        file=f"{MEDIA}/2024/11/State-Assisted-Reproductive-Technology-Model-Legislation.pdf",
     ),
 )
 
 DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-_FILES = {".docx": DOCX, ".pdf": "application/pdf"}
-# Only the organizations' own hosts: a link elsewhere is another publisher's, under terms not
+PDF = "application/pdf"
+_FILES = {".docx": DOCX, ".pdf": PDF}
+# Only the organization's own hosts: a link elsewhere is another publisher's, under terms not
 # read for this source.
-HOSTS = frozenset(
-    {"eppc.org", "www.eppc.org", "media.eppc.org", "ifstudies.org", "www.ifstudies.org"}
-)
+HOSTS = frozenset({"eppc.org", "www.eppc.org", "media.eppc.org"})
 _UPLOADS = re.compile(r"^https?://(?:www\.)?eppc\.org/wp-content/uploads/", re.IGNORECASE)
 _MODEL = re.compile(r"\bmodel\s+(?:legislation|bill|act)\b", re.IGNORECASE)
 _PDF_BUTTON = re.compile(r"^(?:view\s+|download\s+)?(?:pdf|word)$", re.IGNORECASE)
@@ -176,17 +205,17 @@ def _suffix(url: str) -> str:
     return PurePosixPath(urllib.parse.urlsplit(url).path).suffix.lower()
 
 
-def model_text_link(page: Fetched) -> str | None:
+def model_text_link(page: Fetched, hosts: frozenset[str] = HOSTS) -> str | None:
     """The link to the model text on a publication page: one whose text names the model
     legislation first, then a bare "PDF" button; a file before a page, Word before PDF. Never a
-    summary, fact sheet or brief, a listing, or a link off the organizations' hosts."""
+    summary, fact sheet or brief, a listing, or a link off the organization's `hosts`."""
     here = urllib.parse.urlsplit(page.url)._replace(fragment="").geturl()
     ranked: list[tuple[int, int, int, str]] = []
     for order, link in enumerate(links(page)):
         parts = urllib.parse.urlsplit(link.href)
         name = PurePosixPath(parts.path).name
         if (
-            (parts.hostname or "").lower() not in HOSTS
+            (parts.hostname or "").lower() not in hosts
             or parts._replace(fragment="").geturl() == here
             or _LISTING.search(parts.path)
             or _NOT_MODEL.search(link.text)
@@ -212,20 +241,31 @@ def on_media_host(url: str) -> str:
 
 # ---- cleaning -------------------------------------------------------------------------------
 
-# "Part 1. General Requirements", "Section 101. Definitions.", "SECTION 1. TITLE.", and an
-# optional one in brackets.
+_SPELLED = (
+    r"one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|"
+    r"fifteen|sixteen|seventeen|eighteen|nineteen|twenty"
+)
+# "Part 1. General Requirements", "Section 101. Definitions.", "SECTION 1. TITLE.",
+# "SECTION A", "Section One: Findings", and an optional one in brackets. A lettered section is
+# a capital letter standing alone, never a word such as "Section a person".
 _HEADING = re.compile(
-    r"^\s*\[?\s*(?:(?:part|article)\s+(?:\d+|[ivxlc]+)\b|(?:section|sec\.)\s+\d+)", re.IGNORECASE
+    r"^\s*\[?\s*(?:(?:part|article)\s+(?:\d+|[ivxlc]+)\b"
+    rf"|(?:section|sec\.)\s+(?:\d+|(?-i:[A-Z])(?![\w'\u2019])|(?:{_SPELLED})\b))",
+    re.IGNORECASE,
 )
 _CONTENTS_ENTRY = re.compile(r"(?:\t|\.{3,}|\s{2,})\s*\d+\s*$")
 _ORGS = r"(?:ethics\s+and\s+public\s+policy\s+center|institute\s+for\s+family\s+studies)"
 # The site a footer names after the organization: "♦ www.eppc.org".
 _SITE = r"(?:\s*[^\w\s]?\s*(?:www\.)?(?:eppc|ifstudies)\.org)?"
+# EPPC's programs, whose names head a document's pages.
+_PROGRAMS = (
+    r"(?:bioethics,?\s+)?technology,?\s+and\s+human\s+flourishing"
+    r"|education\s+and\s+american\s+ideals"
+)
 # A page's running footer ("5 ethics and public policy center ♦ www.eppc.org"), its running
 # header, or a bare page number.
 _FURNITURE = re.compile(
-    rf"^\s*(?:\d{{1,3}}\s+{_ORGS}{_SITE}|{_ORGS}{_SITE}\s+\d{{1,3}}|\d{{1,3}}"
-    r"|technology\s+and\s+human\s+flourishing)\s*$",
+    rf"^\s*(?:\d{{1,3}}\s+{_ORGS}{_SITE}|{_ORGS}{_SITE}\s+\d{{1,3}}|\d{{1,3}}|{_PROGRAMS})\s*$",
     re.IGNORECASE,
 )
 # A footnote opens with its number and a sentence, and runs to the page's footer.
@@ -233,24 +273,31 @@ _FOOTNOTE = re.compile(r"^\s*(\d{1,2})\s+[A-Z][a-z]")
 # A footnote's mark at the end of a line, "... years.1", or on a line of its own.
 _FOOTNOTE_MARK = re.compile(r"(?<=[.;:,\"”])(\d{1,2})$")
 _BARE_NUMBER = re.compile(r"^\s*(\d{1,2})\s*$")
+# An item's number left alone once the drafter's instruction it held is dropped: "3.".
+_BARE_ITEM = re.compile(r"^\s*\(?(?:\d{1,3}|[A-Za-z]|[ivxlc]{2,5})[.)]\s*$")
 # The capitalized line that introduces an alternative: "OR ANOTHER MORE LIMITED OPTION ...".
 _ALTERNATIVE = re.compile(r"^\s*(?:OR|ALTERNATIVE(?:LY)?|OPTION)\b[^a-z]*$")
-# Commentary and notes run from their heading to the next part or section.
-# A heading on its own line, or "Drafting note: ...", never a sentence that opens with the word.
+# Commentary, notes and overviews run from their heading to the next part or section: a
+# heading on its own line, or "Drafting note: ...", never a sentence that opens with the word.
 _COMMENTARY = re.compile(
-    r"^\s*(?:commentary|comments?|(?:drafting|drafter'?s|explanatory|legislative)\s+notes?)"
-    r"\s*(?::.*)?$",
+    r"^\s*(?:commentary|comments?|overview|(?:drafting|drafter'?s|explanatory|legislative)"
+    r"\s+notes?)\s*(?::.*)?$",
     re.IGNORECASE,
 )
-# What follows the last section: the authors, endorsements, notes, the copyright line.
+# What follows the last section: the authors, endorsements, notes, the copyright line, or a
+# biography set without a heading ("A. Name is a senior fellow ...").
 _BACK_MATTER = re.compile(
     r"^\s*(?:about\s+the\s+authors?\b|endnotes\b|endorse(?:ments?|d\s+by)\b|"
-    r"acknowledge?ments\b|copyright\s+(?:©|\(c\)|\d{4})|©)",
+    r"acknowledge?ments\b|copyright\s+(?:©|\(c\)|\d{4})|©)"
+    r"|^\s*(?!(?:the|this|that|each|any|such|no|every|a|an)\s)"
+    r"(?-i:[A-Z][a-z'\u2019-]*\.?(?:\s+[A-Z]\.)*(?:\s+[A-Z][a-z'\u2019-]+){1,2})\s+is\s+"
+    r"(?:(?:a|an|the|currently)\s+)?(?:senior|contributing|professor|fellow|executive|director|"
+    r"president|research|policy|visiting|distinguished)\b",
     re.IGNORECASE,
 )
 
 
-def _is_heading(line: str) -> bool:
+def is_heading(line: str) -> bool:
     return _HEADING.match(line) is not None and _CONTENTS_ENTRY.search(line) is None
 
 
@@ -259,7 +306,7 @@ def clean_model_text(raw: str) -> str:
     page furniture, footnotes, alternative markers, commentary, back matter or instructions to
     the drafter."""
     lines = drop_instructions(raw.replace("\r\n", "\n").replace("\r", "\n")).split("\n")
-    start = next((i for i, line in enumerate(lines) if _is_heading(line)), None)
+    start = next((i for i, line in enumerate(lines) if is_heading(line)), None)
     if start is None:
         raise ModelTextError("no part or section heading: is this the model's text?")
     kept: list[str] = []
@@ -268,7 +315,7 @@ def clean_model_text(raw: str) -> str:
     for i, line in enumerate(lines[start:], start=start):
         if bare := _BARE_NUMBER.match(line):
             marks.add(bare[1])
-        if _is_heading(line):
+        if is_heading(line):
             commentary = footnote = False
         elif _BACK_MATTER.match(line):
             break
@@ -283,7 +330,13 @@ def clean_model_text(raw: str) -> str:
             and _footer_comes_first(lines, i + 1)
         ):
             footnote = True
-        if commentary or footnote or _ALTERNATIVE.match(line) or _CONTENTS_ENTRY.search(line):
+        if (
+            commentary
+            or footnote
+            or _ALTERNATIVE.match(line)
+            or _CONTENTS_ENTRY.search(line)
+            or _BARE_ITEM.match(line)
+        ):
             continue
         line = line.strip()
         if mark := _FOOTNOTE_MARK.search(line):
@@ -299,15 +352,18 @@ def _footer_comes_first(lines: Sequence[str], start: int) -> bool:
     for line in lines[start:]:
         if _FURNITURE.match(line):
             return True
-        if _is_heading(line) or _BACK_MATTER.match(line):
+        if is_heading(line) or _BACK_MATTER.match(line):
             return False
     return False
 
 
 def media_type(url: str, content_type: str) -> str | None:
+    """A PDF, Word file or page, by the URL's suffix, else by the Content-Type."""
     if (suffix := _suffix(url)) in _FILES:
         return _FILES[suffix]
     media = content_type.partition(";")[0].strip().lower()
+    if media in {PDF, DOCX}:
+        return media
     return "text/html" if media in {"text/html", "application/xhtml+xml"} else None
 
 
@@ -335,13 +391,21 @@ def _fetch_step(c: Collection, doc_url: str, url: str) -> Fetched | None:
         return None
 
 
-def _collect_document(c: Collection, listed: Listed) -> None:
+def _model_text_url(c: Collection, listed: Listed, hosts: frozenset[str]) -> str | None:
+    """The URL of a document's model text: its recorded file, or its page's link."""
+    if listed.file is not None:
+        return listed.file
     if (page := _fetch_step(c, listed.page, listed.page)) is None:
-        return
-    if (link := model_text_link(page)) is None:
+        return None
+    if (link := model_text_link(page, hosts)) is None:
         c.fail(listed.page, "no link to the model legislation on its page")
+        return None
+    return on_media_host(link)
+
+
+def _collect_document(c: Collection, listed: Listed, hosts: frozenset[str]) -> None:
+    if (url := _model_text_url(c, listed, hosts)) is None:
         return
-    url = on_media_host(link)
     if (robots := c.check(url)) is None:
         return
     if (got := _fetch_step(c, listed.page, url)) is None:
@@ -355,7 +419,7 @@ def _collect_document(c: Collection, listed: Listed) -> None:
         c.fail(listed.page, f"{url}: {e}")
         return
     doc = provenance(
-        SOURCE,
+        c.source,
         slug=listed.slug,
         title=listed.title,
         url=listed.page,
@@ -365,8 +429,30 @@ def _collect_document(c: Collection, listed: Listed) -> None:
         robots=robots,
         collected_on=c.context.on,
         published=listed.published,
+        co_publishers=listed.co_publishers,
     )
     c.keep(doc, raw=got.body, text=text)
+
+
+def collect_documents(
+    source: Source,
+    context: CollectContext,
+    documents: Sequence[Listed],
+    *,
+    hosts: frozenset[str],
+    fetch: Fetch,
+    robots_reader: ReadRobots,
+    site: bool,
+) -> CollectReport:
+    """Each listed document of `source` from its publication page or file; with `site` off,
+    each is reported failed and nothing is asked."""
+    c = Collection(source, context, fetch=fetch, robots_reader=robots_reader)
+    for listed in sorted(documents, key=lambda d: d.slug):
+        if site:
+            _collect_document(c, listed, hosts)
+        else:
+            c.fail(listed.page, "fetching from the site is off (SITE_FETCH)")
+    return c.report()
 
 
 def collect_from(
@@ -377,15 +463,15 @@ def collect_from(
     robots_reader: ReadRobots = read_robots,
     site: bool = SITE_FETCH,
 ) -> CollectReport:
-    """Each listed document from its publication page; with `site` off, each is reported failed
-    and nothing is asked."""
-    c = Collection(SOURCE, context, fetch=fetch, robots_reader=robots_reader)
-    for listed in sorted(documents, key=lambda d: d.slug):
-        if site:
-            _collect_document(c, listed)
-        else:
-            c.fail(listed.page, "fetching from the site is off (SITE_FETCH)")
-    return c.report()
+    return collect_documents(
+        SOURCE,
+        context,
+        documents,
+        hosts=HOSTS,
+        fetch=fetch,
+        robots_reader=robots_reader,
+        site=site,
+    )
 
 
 def collect(context: CollectContext) -> CollectReport:
