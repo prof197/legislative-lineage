@@ -4,7 +4,9 @@ to the drafter dropped, enacted brackets kept as written.
 The real-sample tests read the commission's acts from the local data directory (LINEAGE_DATA)
 and are skipped without them, so CI passes; they assert counts only, never print act text."""
 
+import io
 import re
+import zipfile
 from pathlib import Path
 
 import pytest
@@ -46,6 +48,8 @@ def test_an_act_keeps_its_sections_and_loses_commentary_and_instructions() -> No
         ("[Identify the fund] and [describe the account]", " and"),
         ("as [ . . . ] and […] and [___] and [ ]", "as and and and"),
         ("[Drafting Note: rename it.] The registry", " The registry"),
+        ("under [citation to the insurance code], a", "under, a"),
+        ("in [appropriate section of the state code].", "in."),
         ("a fee [Comment: optional.] of", "a fee of"),
     ],
 )
@@ -83,6 +87,22 @@ def test_a_word_document_reads_as_its_text_does() -> None:
     assert clean_act(docx_text(docx_bytes(text))) == clean_act(text)
     with pytest.raises(ModelTextError, match="unreadable Word document"):
         docx_text(b"not a zip")
+
+
+def test_struck_wording_in_a_word_file_is_not_read() -> None:
+    w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+    runs = (
+        '<w:r><w:t xml:space="preserve">The fee is </w:t></w:r>'
+        '<w:r><w:rPr><w:strike/></w:rPr><w:t xml:space="preserve">ten</w:t></w:r>'
+        '<w:r><w:rPr><w:dstrike w:val="1"/></w:rPr><w:t xml:space="preserve">nine</w:t></w:r>'
+        '<w:r><w:rPr><w:strike w:val="false"/></w:rPr><w:t xml:space="preserve">twenty</w:t></w:r>'
+        '<w:r><w:t xml:space="preserve"> dollars.</w:t></w:r>'
+    )
+    document = f'<w:document xmlns:w="{w}"><w:body><w:p>{runs}</w:p></w:body></w:document>'
+    out = io.BytesIO()
+    with zipfile.ZipFile(out, "w") as z:
+        z.writestr("word/document.xml", document)
+    assert docx_text(out.getvalue()) == "The fee is twenty dollars."
 
 
 # ---- real samples, local only ---------------------------------------------------------------

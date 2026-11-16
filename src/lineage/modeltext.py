@@ -27,7 +27,8 @@ from lineage.acts import enacted_text
 # instruction can hold an enacted bracket ("[cite to the law ... of this [act]]"), so one level
 # of nesting is inside it; "[not less than [insert a number]" keeps its outer, enacted, bracket.
 _INSTRUCTION = re.compile(
-    r"[ \t]*\[\s*(?:(?:cite|insert|specify|identify|describe|enter)\b|name\s+of\b)"
+    r"[ \t]*\[\s*(?:(?:cite|citation|insert|specify|identify|describe|enter|appropriate)\b"
+    r"|name\s+of\b)"
     r"[^\[\]]*(?:\[[^\[\]]*\][^\[\]]*)*\]"
     r"|[ \t]*\[\s*(?:…|\.(?:\s*\.)+|_+)?\s*\]",
     re.IGNORECASE,
@@ -79,12 +80,13 @@ def docx_text(data: bytes) -> str:
 
 def _paragraph_text(paragraph: ElementTree.Element) -> str:
     """A paragraph's own text. A paragraph nested in it, as in a text box, is a paragraph of its
-    own, so its text is not repeated here. Deleted tracked changes hold w:delText, never read."""
+    own, so its text is not repeated here. Deleted tracked changes hold w:delText, never read,
+    and a struck-through run is wording an amendment deletes, so it is not read either."""
     parts: list[str] = []
     stack = list(reversed(list(paragraph)))
     while stack:
         node = stack.pop()
-        if node.tag == f"{_W}p":
+        if node.tag == f"{_W}p" or (node.tag == f"{_W}r" and _struck(node)):
             continue
         if node.tag == f"{_W}t":
             parts.append(node.text or "")
@@ -94,3 +96,16 @@ def _paragraph_text(paragraph: ElementTree.Element) -> str:
             parts.append("\n")
         stack.extend(reversed(list(node)))
     return "".join(parts)
+
+
+def _struck(run: ElementTree.Element) -> bool:
+    """Whether a run is set in single or double strikethrough; `w:val` of 0, false or off unsets
+    it, as a style's strike can be turned off for one run."""
+    props = run.find(f"{_W}rPr")
+    if props is None:
+        return False
+    for tag in ("strike", "dstrike"):
+        mark = props.find(f"{_W}{tag}")
+        if mark is not None and mark.get(f"{_W}val", "true").lower() not in {"0", "false", "off"}:
+            return True
+    return False
