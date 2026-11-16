@@ -14,7 +14,14 @@ import typer
 from numpy.typing import NDArray
 
 from lineage import __version__
-from lineage.acts import ACTS, ACTS_DIR, HELD_OUT_ACTS, HELD_OUT_DIR, ActTextError
+from lineage.acts import (
+    ACTS,
+    ACTS_DIR,
+    HELD_OUT_ACTS,
+    HELD_OUT_DIR,
+    ORIGIN_HELD_OUT_ACTS,
+    ActTextError,
+)
 from lineage.agreement import PAIRS as AGREEMENT_PAIRS
 from lineage.agreement import SAMPLE as AGREEMENT_SAMPLE
 from lineage.agreement import SAMPLE_REPORT as AGREEMENT_SAMPLE_REPORT
@@ -28,7 +35,13 @@ from lineage.agreement import (
     write_subsample,
 )
 from lineage.align import Embedder, align
-from lineage.answer_key import ANSWER_KEY, HELD_OUT_KEY, build_answer_key, render_answer_key
+from lineage.answer_key import (
+    ANSWER_KEY,
+    HELD_OUT_KEY,
+    ORIGINS_HELD_OUT_KEY,
+    build_answer_key,
+    render_answer_key,
+)
 from lineage.collect import REPORTS_DIR as COLLECT_REPORTS
 from lineage.collect import CollectContext, CollectError, collectors, run_collector
 from lineage.collect import write_report as write_collect_report
@@ -190,6 +203,7 @@ from lineage.origin_recall import OriginRecallError, load_key, origin_recall, sa
 from lineage.origin_threshold import REPORT as ORIGIN_THRESHOLD_REPORT
 from lineage.origin_threshold import correct_by_pair as origin_correct_by_pair
 from lineage.origin_threshold import proposal as origin_threshold_proposal
+from lineage.origins import FLOOR as ORIGIN_FLOOR
 from lineage.origins import REPORT as ORIGINS_REPORT
 from lineage.origins import (
     origins_report,
@@ -1888,8 +1902,9 @@ def eval_origins(
             answer_key,
             same_slug(acts, source),
             final=final,
-            # v1's listing configuration stands in until origin matching names its own settings
+            # v1's listing configuration, and the floor a page lists an origin at
             configuration=run_configuration(True, flagged_sections(tables))
+            | {"origin_floor": ORIGIN_FLOOR}
             if answer_key.sealed and final
             else None,
             previous=previous,
@@ -2116,19 +2131,31 @@ def eval_answer_key(
             "--held-out", help="Resolve the held-out lists, skipping the development set's bills."
         ),
     ] = False,
+    origins: Annotated[
+        bool,
+        typer.Option(
+            "--origins",
+            help="With --held-out: resolve the reserve acts, origin recall's sealed key "
+            "[default out: reports/answer_key_origins_heldout.csv].",
+        ),
+    ] = False,
 ) -> None:
     """The bills each commission list row resolved to, for checking the mapping by eye.
 
     Resolving the held-out lists runs no matching, so it may run before the final evaluation.
     """
-    out = out or (HELD_OUT_KEY if held_out else ANSWER_KEY)
+    if origins and not held_out:
+        typer.echo("error: --origins resolves the held-out lists; pass --held-out", err=True)
+        raise typer.Exit(1)
+    held_acts = ORIGIN_HELD_OUT_ACTS if origins else HELD_OUT_ACTS
+    out = out or ((ORIGINS_HELD_OUT_KEY if origins else HELD_OUT_KEY) if held_out else ANSWER_KEY)
     try:
         note, rows = build_answer_key(
             tables,
             enactments_path=enactments or (HELD_OUT_ENACTMENTS if held_out else ENACTMENTS),
             sessions_path=sessions,
             development_path=ENACTMENTS if held_out else None,
-            acts=frozenset(HELD_OUT_ACTS) if held_out else None,
+            acts=frozenset(held_acts) if held_out else None,
         )
     except UlcError as e:
         typer.echo(str(e), err=True)

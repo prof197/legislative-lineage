@@ -30,6 +30,8 @@ from lineage.ulc import (
 
 ANSWER_KEY = Path("reports/answer_key.csv")
 HELD_OUT_KEY = Path("reports/answer_key_heldout.csv")
+# The reserve acts' lists resolved, origin recall's sealed key (lineage.acts.ORIGIN_HELD_OUT_ACTS).
+ORIGINS_HELD_OUT_KEY = Path("reports/answer_key_origins_heldout.csv")
 COMMAND = "uv run lineage eval answer-key"
 COLUMNS: tuple[str, ...] = (
     "act",

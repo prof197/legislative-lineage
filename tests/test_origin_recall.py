@@ -6,7 +6,7 @@ from typing import Any
 
 import pytest
 
-from lineage.acts import ACTS
+from lineage.acts import ACTS, ORIGIN_HELD_OUT_ACTS
 from lineage.answer_key import ANSWER_KEY, COLUMNS, render_answer_key
 from lineage.commission import RESULTS
 from lineage.intervals import wilson
@@ -220,9 +220,22 @@ def test_a_sealed_key_runs_once_per_configuration(key: AnswerKey) -> None:
                       previous=second)  # fmt: skip
 
 
-def test_the_held_out_key_counts_the_enactments_v1_counted() -> None:
+def test_the_held_out_key_is_the_two_reserve_acts_v1_never_ran() -> None:
+    """Ruled at the M11 review: origin recall's sealed key is the held-out lists' reserves, so
+    it shares no act with v1's development or held-out runs; each act's three enactments resolve
+    to corpus bills."""
     loaded = load_key(ROOT / KEYS["held_out"].path)
-    v1 = json.loads((ROOT / RESULTS).read_text())["commission_held_out"]
+    v1 = json.loads((ROOT / RESULTS).read_text())
 
-    assert len(loaded.enactments) == v1["recall"]["pooled"]["all"]["enactments"] == 19
-    assert {e.act for e in loaded.enactments} == set(v1["recall"]["by_act"])
+    assert {e.act for e in loaded.enactments} == set(ORIGIN_HELD_OUT_ACTS)
+    assert not set(ORIGIN_HELD_OUT_ACTS) & set(v1["commission"]["recall"]["by_act"])
+    assert not set(ORIGIN_HELD_OUT_ACTS) & set(v1["commission_held_out"]["recall"]["by_act"])
+    assert sorted((e.act, e.jurisdiction, e.year) for e in loaded.enactments) == [
+        ("antitrust-pre-merger-notification", "California", 2026),
+        ("antitrust-pre-merger-notification", "Colorado", 2025),
+        ("antitrust-pre-merger-notification", "Washington", 2025),
+        ("health-care-decisions", "Delaware", 2024),
+        ("health-care-decisions", "Oklahoma", 2026),
+        ("health-care-decisions", "Utah", 2025),
+    ]
+    assert all(e.bill_ids for e in loaded.enactments)

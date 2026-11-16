@@ -33,6 +33,7 @@ uv run lineage eval commission  # commission recall, act texts from data/acts/ -
 uv run lineage eval threshold  # each semantic threshold option's page precision on the tuning sample of relatives, beside development recall -> reports/threshold_proposal.json
 uv run lineage eval answer-key  # each commission list row and the bills it resolved to -> reports/answer_key.csv
 uv run lineage eval answer-key --held-out  # the held-out lists resolved, development-set bills skipped -> reports/answer_key_heldout.csv
+uv run lineage eval answer-key --held-out --origins  # the reserve acts' lists resolved, origin recall's sealed key -> reports/answer_key_origins_heldout.csv
 uv run lineage eval commission --held-out --final  # held-out recall: run at the end of M5 (2026-11-12), at 0.93 and then at the final configuration; refuses a configuration already run
 uv run lineage eval readme   # regenerate README.md's summary and results tables from reports/results.json, results_exported_only.json and relatives_reporting.json
 uv run lineage label SAMPLE --labeler HANDLE  # label sampled matches by hand, 0 unrelated to 4 identical, blind to the stage, resumable -> evals/precision_labels.jsonl
@@ -197,6 +198,7 @@ reports/          committed outputs of pipeline commands; README and DESIGN numb
   results_exported_only.json  commission recall on the export's text alone, for the comparison in DR-6
   answer_key.csv  each commission list row and the corpus bills it resolved to
   answer_key_heldout.csv  the held-out lists resolved to bills; no matching is run on them before the final evaluation
+  answer_key_origins_heldout.csv  the reserve acts' lists resolved to bills, origin recall's sealed key
   pair_data.json  the stages on the labeled pair dataset: precision, recall, per label; metrics only
   text_inventory.json  records without usable text, the versions planned, hosts and their robots.txt
   text_quality.json  the quality test per state and format: outcomes, usable and clean rates per reading, comparison

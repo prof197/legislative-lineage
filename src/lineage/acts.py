@@ -29,6 +29,13 @@ HELD_OUT_ACTS = (
     "mortgage-modification",
     "directed-trust",
 )
+# The held-out key origin recall reads once, with --final (ruled at the M11 review, 2026-11-16):
+# the held-out lists' two reserve acts, which v1 never ran, so no matching has been examined on
+# them. Their texts are downloaded by hand into data/acts/held-out/, as the others' are.
+ORIGIN_HELD_OUT_ACTS = (
+    "health-care-decisions",
+    "antitrust-pre-merger-notification",
+)
 ACT_NAMES = {
     "public-expression-protection": "Public Expression Protection",
     "special-deposits": "Special Deposits",

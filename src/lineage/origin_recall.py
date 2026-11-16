@@ -26,7 +26,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal
 
-from lineage.answer_key import ANSWER_KEY, HELD_OUT_KEY, read_answer_key
+from lineage.answer_key import ANSWER_KEY, ORIGINS_HELD_OUT_KEY, read_answer_key
 from lineage.commission import MIN_SHARE, SHARE_SWEEP
 from lineage.intervals import wilson
 from lineage.origins import FLOOR, OriginMatch, Stage, is_listed
@@ -53,12 +53,12 @@ class AnswerKey:
     sealed: bool
 
 
-# The answer keys for every act enacted 2023-2026 are added here as they are resolved. The
-# held-out acts were run once for v1's commission eval, but origin matching has not been tuned
-# on them, so for origins they are sealed again.
+# The sealed key is the held-out lists' two reserve acts, which v1 never ran (ruled at the M11
+# review, 2026-11-16). A wider pull of the commission's lists is dropped for v2, since each new
+# act needs a text downloaded by hand.
 KEYS: dict[str, AnswerKey] = {
     "development": AnswerKey("development", ANSWER_KEY, sealed=False),
-    "held_out": AnswerKey("held_out", HELD_OUT_KEY, sealed=True),
+    "held_out": AnswerKey("held_out", ORIGINS_HELD_OUT_KEY, sealed=True),
 }
 
 
