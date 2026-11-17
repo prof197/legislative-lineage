@@ -201,7 +201,11 @@ def test_an_unreadable_file_fails_its_act_only(tmp_path: Path) -> None:
 
 def test_the_source_and_the_acts_it_looks_for() -> None:
     assert collectors()["commission"].source == SOURCE
-    assert SOURCE.terms_note == "TERMS NOTE PENDING (main agent)"
+    # The terms as read, stated for the sources page: what they allow, and why fetching is off.
+    assert "PENDING" not in SOURCE.terms_note
+    assert "noncommercial" in SOURCE.terms_note
+    assert "fetching from the site stays off" in SOURCE.terms_note
+    assert SOURCE.terms_read_on == date(2026, 11, 17)
     assert not SOURCE.leaked
     # From the committed enactment lists: the development, held-out and reserve acts.
     assert {"public-expression-protection", "directed-trust", "health-care-decisions"} <= (

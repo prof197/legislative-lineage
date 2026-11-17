@@ -80,8 +80,14 @@ SOURCE = Source(
     members_source="https://www.uniformlaws.org/aboutulc/overview",
     library_url=CATALOG,
     terms_url=f"{SITE}/termsofuse",
-    terms_note="TERMS NOTE PENDING (main agent)",
-    terms_read_on=date(2026, 11, 15),  # PENDING with the terms note
+    terms_note="Using the site counts as agreeing to its terms, with nothing to accept first. "
+    "They allow viewing, copying, printing and distributing its content, unmodified, for "
+    "informational, noncommercial purposes with the copyright notice or other attribution, and "
+    "modifying it as part of a legislative process with prominent acknowledgement of the "
+    "commission. Nothing on automated access. Its document pages appear to ask a visitor to "
+    "accept a copyright notice before a download, so fetching from the site stays off; the acts "
+    "matched are copies saved by hand.",
+    terms_read_on=date(2026, 11, 17),
 )
 
 # Each on-disk act's page on the commission's site, from its catalog (read 2026-11-15).
