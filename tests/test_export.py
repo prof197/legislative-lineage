@@ -2,9 +2,7 @@
 site's types come from, every comparison's spans indexing the section texts written beside it,
 and featured pairs carrying their cached explanation (DESIGN.md#export)."""
 
-import hashlib
 import json
-import tarfile
 from pathlib import Path
 from typing import Any
 
@@ -21,14 +19,12 @@ from lineage.export import (
     align_all,
     build_export,
     comparison_slug,
-    package,
     schema_text,
     slug,
     stories_for,
     validation_from,
-    write_release_manifest,
 )
-from lineage.export_schema import BillList, BillPage, BillTexts, Comparison, Meta, Release
+from lineage.export_schema import BillList, BillPage, BillTexts, Comparison, Meta
 from lineage.semantic_pairs import build_semantic_pairs
 from tests.conftest import FAKE_MODEL
 from tests.test_explain import scripted
@@ -268,42 +264,6 @@ def test_a_missing_or_stale_committed_input_fails_before_any_alignment(
     assert not aligned
     assert not (tmp_path / "stale").exists()
     assert not (tmp_path / "gone").exists()
-
-
-def test_the_release_asset_is_reproducible_and_carries_its_checksum(tmp_path: Path) -> None:
-    export = tmp_path / "GA"
-    (export / "bills").mkdir(parents=True)
-    (export / "meta.json").write_text("{}")
-    (export / "bills" / "ga-1.json").write_text('{"a": 1}')
-
-    asset, checksum = package(export, state="GA", tag="data-ga-1", out_dir=tmp_path / "a")
-    (export / "meta.json").touch()  # a newer timestamp changes nothing
-    again, _ = package(export, state="GA", tag="data-ga-1", out_dir=tmp_path / "b")
-
-    assert asset.name == "export-GA-data-ga-1.tar.gz"
-    assert asset.read_bytes() == again.read_bytes()
-    digest, name = checksum.read_text().split()
-    assert name == asset.name
-    assert digest == hashlib.sha256(asset.read_bytes()).hexdigest()
-    with tarfile.open(asset) as tar:
-        assert tar.getnames() == ["bills/ga-1.json", "meta.json"]
-    with pytest.raises(ExportError, match="no export"):
-        package(tmp_path / "empty", state="GA", tag="t", out_dir=tmp_path / "c")
-
-
-def test_the_release_manifest_pins_the_assets_own_digest(tmp_path: Path) -> None:
-    export = tmp_path / "GA"
-    export.mkdir()
-    (export / "meta.json").write_text("{}")
-    asset, checksum = package(export, state="GA", tag="data-ga-1", out_dir=tmp_path / "a")
-    manifest = tmp_path / "site" / "data-release.json"
-
-    write_release_manifest(asset, tag="data-ga-1", path=manifest)
-
-    pinned = Release.model_validate_json(manifest.read_text())
-    assert pinned == Release(
-        tag="data-ga-1", asset=asset.name, sha256=checksum.read_text().split()[0]
-    )
 
 
 def test_aligning_in_worker_processes_gives_what_one_process_does() -> None:

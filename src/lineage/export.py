@@ -23,14 +23,10 @@ output is written to a fresh directory and swapped in whole, so a failed export 
 mix of two builds.
 """
 
-import gzip
-import hashlib
-import io
 import json
 import multiprocessing
 import re
 import shutil
-import tarfile
 import time
 import tomllib
 from collections import defaultdict
@@ -74,7 +70,6 @@ from lineage.export_schema import (
     Origin,
     Recall,
     Relative,
-    Release,
     SectionInfo,
     SectionPair,
     SectionText,
@@ -95,6 +90,10 @@ from lineage.origins import OriginMatch, is_listed, read_origin_matches
 from lineage.pairs import load_families
 from lineage.paths import DATA
 from lineage.relatives import bill_relatives
+from lineage.release import RELEASE_MANIFEST as RELEASE_MANIFEST
+from lineage.release import ReleaseError as ReleaseError
+from lineage.release import package as package
+from lineage.release import write_release_manifest as write_release_manifest
 from lineage.semantic import MODEL
 from lineage.semantic_pairs import section_keys
 from lineage.state_boilerplate import COMPACT_PHRASES
@@ -107,9 +106,6 @@ from lineage.stats import (
 )
 
 EXPORT_DIR = DATA / "export"
-# The data release the deploy builds from, committed: its tag and the asset's expected SHA-256.
-# A data change reaches the site only as a reviewed commit to this file.
-RELEASE_MANIFEST = Path("site/data-release.json")
 REPORT = Path("reports/export.json")
 SCHEMA = Path("schema/export.schema.json")
 FEATURED_PAIRS = Path("evals/featured_pairs.jsonl")
@@ -783,41 +779,3 @@ def build_export(
         "largest_file": {"path": written.largest[0], "bytes": written.largest[1]},
         "seconds": round(time.monotonic() - started),
     }
-
-
-def package(export: Path, *, state: str, tag: str, out_dir: Path) -> tuple[Path, Path]:
-    """The export as one release asset, `export-<ST>-<tag>.tar.gz`, and its SHA-256 in the
-    form `sha256sum -c` reads. The archive is byte-for-byte reproducible: names sorted, every
-    timestamp and owner zeroed, so the same export always gives the same checksum."""
-    if not (export / "meta.json").exists():
-        raise ExportError(f"{export} holds no export; run `uv run lineage export` first")
-    name = f"export-{state}-{tag}.tar.gz"
-    buffer = io.BytesIO()
-    with tarfile.open(fileobj=buffer, mode="w", format=tarfile.PAX_FORMAT) as tar:
-        for path in sorted(p for p in export.rglob("*") if p.is_file()):
-            info = tarfile.TarInfo(path.relative_to(export).as_posix())
-            info.size = path.stat().st_size
-            info.mtime = 0
-            info.mode = 0o644
-            with path.open("rb") as f:
-                tar.addfile(info, f)
-    data = gzip.compress(buffer.getvalue(), mtime=0)
-    out_dir.mkdir(parents=True, exist_ok=True)
-    asset = out_dir / name
-    asset.write_bytes(data)
-    checksum = out_dir / f"{name}.sha256"
-    checksum.write_text(f"{hashlib.sha256(data).hexdigest()}  {name}\n")
-    return asset, checksum
-
-
-def write_release_manifest(asset: Path, *, tag: str, path: Path = RELEASE_MANIFEST) -> Release:
-    """Pin `asset` as the release the deploy builds from: the tag, the asset's name and its
-    SHA-256, computed from the asset itself. The deploy checks the download against this
-    committed digest, not against a checksum file published beside the asset, which anyone able
-    to replace the asset could replace too."""
-    release = Release(
-        tag=tag, asset=asset.name, sha256=hashlib.sha256(asset.read_bytes()).hexdigest()
-    )
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(release.model_dump(), indent=1) + "\n")
-    return release
