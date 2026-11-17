@@ -58,6 +58,8 @@ uv run lineage eval origins  # origin recall on the development answer key -> re
 uv run lineage origin-sample  # seeded origin precision sample (--part tuning), label cost projected, nothing asked -> evals/origin_precision_tuning.jsonl, reports/origin_precision_sample.json; --part reporting --final once matching is final
 uv run lineage origin-label  # the sample's matches labeled by a model on each one's strongest section pair, v1's passage question; asks only with --live, through the Batches API, under v2's $25 -> evals/origin_precision_labels.jsonl, reports/origin_label_spend.json
 uv run lineage eval origin-threshold  # each candidate share floor's precision on the tuning sample, beside its development recall -> reports/origin_threshold_proposal.json
+uv run lineage origin-sample --part census_eppc  # every EPPC match a page lists, a census, label cost projected -> evals/origin_precision_census_eppc.jsonl
+uv run lineage eval origin-census  # the census read: precision as a count, each wrong match's section pairs by generic kind -> reports/results.json (origins_census_eppc)
 uv run lineage eval origin-precision  # the reporting sample read once: overall, by stage, by source, ALEC against the rest -> reports/results.json (origins_precision)
 uv run lineage intake       # one day of new and changed bills from Open States' API v3 (key from OPENSTATES_API_KEY), text through the text layer -> data/days/<day>/, data/intake/; --tier default|bronze|silver
 uv run lineage intake-estimate  # the API requests a January day needs, against each tier, from the snapshot; no network -> reports/intake_estimate.json
@@ -172,6 +174,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   origin_recall.py  `lineage eval origins`: model-to-bill recall from the resolved answer keys; a sealed key only with --final
   origin_precision.py  `lineage origin-sample` and `eval origin-precision`: seeded samples of origin matches, the tuning part by share band, the reporting part by stage at the floor; v2's label budget; the reporting reading by source
   origin_labels.py  `lineage origin-label`: a match's strongest section pair, both sections and their passages, asked in one batch; rows by text hash
+  generic_sections.py  a section's generic kind by its opening: definitions, short title, findings, or lineage.boilerplate's kinds
   origin_threshold.py  `lineage eval origin-threshold`: each candidate floor's weighted precision and development recall
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
 tools/            dev and CI checks

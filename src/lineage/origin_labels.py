@@ -24,6 +24,7 @@ from pathlib import Path
 from typing import Any
 
 from lineage import queries
+from lineage.generic_sections import generic_kind
 from lineage.labels import Item, Pair, Section, SectionKey, SectionRef, model_labeler, text_sha256
 from lineage.model_labels import (
     MAX_COST,
@@ -130,6 +131,54 @@ def build_items(
             Section(bill_ref, b_display),
         )
         out.append(OriginItem(r, item))
+    return out
+
+
+def pair_sections(
+    keys: Iterable[MatchKey],
+    matches: Iterable[OriginMatch],
+    docs: Iterable[ModelDoc],
+    tables_dir: Path,
+    *,
+    root: Path = MODELDOCS_DIR,
+) -> dict[MatchKey, list[dict[str, Any]]]:
+    """Every section pair each match rests on, the strongest (the one labeled) marked, each
+    side's length in words and its generic kind (lineage.generic_sections), with no text."""
+    wanted = set(keys)
+    by_key = {match_key(m): m for m in matches if match_key(m) in wanted}
+    held = {d.id: d for d in docs}
+    model: dict[str, list[tuple[str, str]]] = {}
+    for doc_id in sorted({d for _, d in by_key}):
+        model[doc_id] = matchable_sections(load_text(held[doc_id], root))[1]
+    with queries.connect_quiet() as con:
+        found = queries.matchable_sections_of(
+            con,
+            sections_glob=str(tables_dir / "sections" / "*.parquet"),
+            eligible_path=tables_dir / "eligible.parquet",
+            ids=sorted({b for b, _ in by_key}),
+        )
+    bill = {(b, o): normalized for b, o, _, normalized in found}
+    out: dict[MatchKey, list[dict[str, Any]]] = {}
+    for key, m in sorted(by_key.items()):
+        strongest = strongest_pair(m)
+        rows: list[dict[str, Any]] = []
+        for p in sorted(m.pairs, key=lambda p: (p.model_section, p.ordinal)):
+            m_norm = model[m.doc_id][p.model_section][1]
+            b_norm = bill.get((m.bill_id, p.ordinal), "")
+            rows.append(
+                {
+                    "model_section": p.model_section,
+                    "bill_section": p.ordinal,
+                    "strongest": p == strongest,
+                    "agreements": p.agreements,
+                    "cosine": p.cosine,
+                    "model_words": len(m_norm.split()),
+                    "bill_words": len(b_norm.split()),
+                    "model_kind": generic_kind(m_norm),
+                    "bill_kind": generic_kind(b_norm),
+                }
+            )
+        out[key] = rows
     return out
 
 

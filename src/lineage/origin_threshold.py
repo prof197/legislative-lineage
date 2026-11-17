@@ -41,6 +41,21 @@ def correct_by_pair(labels: Iterable[Mapping[str, Any]]) -> dict[str, bool]:
     return out
 
 
+def correct_by_match(labels: Iterable[Mapping[str, Any]]) -> dict[tuple[str, str], bool]:
+    """Each labeled match's answer under the origin prompt, by (bill id, document id), whichever
+    part drew it; two different answers for one match are refused."""
+    out: dict[tuple[str, str], bool] = {}
+    for row in labels:
+        if not str(row["labeler"]).endswith(f"@{PROMPT.version}"):
+            continue
+        key = (str(row["bill_id"]), str(row["doc_id"]))
+        answer = is_correct(row)
+        if out.get(key, answer) != answer:
+            raise ValueError(f"{key[0]} x {key[1]} has two different labels")
+        out[key] = answer
+    return out
+
+
 def _share(xs: Sequence[bool]) -> dict[str, Any]:
     n, x = len(xs), sum(xs)
     return {

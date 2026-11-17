@@ -105,6 +105,8 @@ class Part:
     excludes: tuple[str, ...] = ()
     by_share: bool = False  # stratified by share band (BANDS), not by stage
     floor: float | None = None  # drawn only from the matches a page lists at this floor
+    source: str | None = None  # drawn only from this source's matches
+    census: bool = False  # every match it may draw, not a sample
 
     @property
     def strata(self) -> tuple[str, ...]:
@@ -130,6 +132,19 @@ PARTS: dict[str, Part] = {
         excludes=(_TUNING.name,),
         # What the published precision describes is what a page lists.
         floor=FLOOR,
+    ),
+    # Ruled at the step 47 review: before the parked fix is built, every EPPC match a page
+    # lists is labeled, since its reporting labels (one correct of four, the errors one
+    # document's) were too few to read. Numbered after every id the reporting sample can take.
+    "census_eppc": Part(
+        "census_eppc",
+        REPORTING_SEED + 1,
+        2 * len(STRATA) * PER_STRATUM + 1,
+        Path("evals/origin_precision_census_eppc.jsonl"),
+        final_only=False,
+        floor=FLOOR,
+        source="eppc",
+        census=True,
     ),
 }
 
@@ -174,7 +189,11 @@ def draw_part(
     per = part.per_stratum if per_stratum is None else per_stratum
     if part.floor is not None:
         matches = [m for m in matches if is_listed(m, part.floor)]
+    if part.source is not None:
+        matches = [m for m in matches if source_of(m.doc_id) == part.source]
     strata = by_stratum(matches, by_share=part.by_share)
+    if part.census:
+        per = max([len(ms) for ms in strata.values()], default=0)
     eligible = {
         name: [m for m in ms if match_key(m) not in excluded] for name, ms in strata.items()
     }
@@ -206,6 +225,8 @@ def draw_part(
     }
     if part.by_share:
         report["floors"] = list(FLOORS)
+    if part.source is not None:
+        report |= {"source": part.source, "census": part.census}
     if part.floor is not None:
         report["floor"] = part.floor
         # Each source's matches by stratum, which a reading by source weights by.
@@ -407,6 +428,60 @@ def estimate(
         }
         parts.append((sizes.get(name, 0), n, x))
     return {"strata": per, "overall": stratified(parts)}
+
+
+def census_reading(
+    rows: Sequence[Mapping[str, Any]],
+    correct: Mapping[MatchKey, bool],
+    sections: Mapping[MatchKey, Sequence[Mapping[str, Any]]],
+    *,
+    source: str,
+) -> dict[str, Any]:
+    """A census read: every listed match of a source labeled, so its precision is a count and
+    needs no interval. A match's label may come from any part, since a label answers the
+    match's strongest pair whichever sample drew it. Each wrong match is listed with the
+    section pairs it rests on (`sections`, by match). Refused until every match is labeled."""
+    keys = [(str(r["bill_id"]), str(r["doc_id"])) for r in rows]
+    missing = [k for k in keys if k not in correct]
+    if missing:
+        raise OriginPrecisionError(
+            f"{len(missing)} of the {len(rows)} matches have no label yet, {missing[0]} first"
+        )
+    by_stage: dict[str, dict[str, int]] = {name: {"matches": 0, "correct": 0} for name in STRATA}
+    by_document: dict[str, dict[str, int]] = {}
+    wrong: list[dict[str, Any]] = []
+    for r, k in zip(rows, keys, strict=True):
+        ok = correct[k]
+        for cell in (
+            by_stage[str(r["stratum"])],
+            by_document.setdefault(k[1], {"matches": 0, "correct": 0}),
+        ):
+            cell["matches"] += 1
+            cell["correct"] += ok
+        if not ok:
+            wrong.append(
+                {
+                    "pair": r["pair"],
+                    "bill_id": k[0],
+                    "doc_id": k[1],
+                    "stratum": r["stratum"],
+                    "model_share": r["model_share"],
+                    "bill_share": r["bill_share"],
+                    "sections": list(sections.get(k, [])),
+                }
+            )
+    n, x = len(rows), sum(correct[k] for k in keys)
+    return {
+        "source": source,
+        "floor": FLOOR,
+        "census": True,
+        "matches": n,
+        "correct": x,
+        "precision": round(x / n, 4) if n else None,
+        "by_stage": by_stage,
+        "by_document": dict(sorted(by_document.items())),
+        "wrong": sorted(wrong, key=lambda w: (w["doc_id"], w["bill_id"])),
+    }
 
 
 # The reporting reading's comparison: errors concentrated on one organization would be unfair

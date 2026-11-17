@@ -1,4 +1,44 @@
 {
+ "census_eppc": {
+  "command": "uv run lineage origin-sample --part census_eppc",
+  "seed": 20261120,
+  "per_stratum": 37,
+  "strata": {
+   "near_duplicate_only": 10,
+   "semantic_only": 24,
+   "both": 37
+  },
+  "excluded": {
+   "near_duplicate_only": 0,
+   "semantic_only": 0,
+   "both": 0
+  },
+  "drawn": {
+   "near_duplicate_only": 10,
+   "semantic_only": 24,
+   "both": 37
+  },
+  "source": "eppc",
+  "census": true,
+  "floor": 0.25,
+  "by_source": {
+   "eppc": {
+    "near_duplicate_only": 10,
+    "semantic_only": 24,
+    "both": 37
+   }
+  },
+  "label_plan": {
+   "pairs": 71,
+   "model": "claude-opus-5-5",
+   "prompt": "passages-v1-high",
+   "batch": true,
+   "projected": 2.9824,
+   "spent": 6.1829,
+   "max_cost": 10.0,
+   "budget": 25.0
+  }
+ },
  "reporting": {
   "command": "uv run lineage origin-sample --part reporting",
   "seed": 20261119,

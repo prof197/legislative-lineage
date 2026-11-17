@@ -21,6 +21,7 @@ from lineage.origin_precision import (
     STAND_IN,
     OriginPrecisionError,
     band_of,
+    census_reading,
     doc_chars,
     draw_part,
     estimate,
@@ -367,3 +368,48 @@ def test_the_reporting_sample_is_read_once(tmp_path: Path) -> None:
     assert run.exit_code == 1
     assert "read once already" in run.output
     assert json.loads(results.read_text()) == {"origins_precision": {"overall": {}}}
+
+
+def test_a_census_takes_every_listed_match_of_its_source_once() -> None:
+    """Ruled at the step 47 review: EPPC's matches at the floor are labeled whole, a census, so
+    its precision is a count, not an estimate."""
+    eppc = [_match(n, "near_duplicate", doc="eppc/x") for n in range(140)]
+    low = [_match(n, "semantic", doc="eppc/y", model_share=0.2, bill_share=0.1) for n in range(3)]
+    other = [_match(n, "semantic", doc="alec/z") for n in range(200, 210)]
+    census = PARTS["census_eppc"]
+    rows, report = draw_part(eppc + low + other, census)
+
+    assert (census.source, census.census, census.floor, census.final_only) == (
+        "eppc", True, FLOOR, False,
+    )  # fmt: skip
+    assert sorted(r["bill_id"] for r in rows) == sorted(m.bill_id for m in eppc)
+    assert rows[0]["pair"] == "o0601"
+    assert len({r["pair"] for r in rows}) == 140
+    assert (report["source"], report["census"]) == ("eppc", True)
+    assert report["strata"] == {"near_duplicate_only": 140, "semantic_only": 0, "both": 0}
+
+
+def test_a_census_reading_counts_labels_from_any_part_and_lists_the_wrong_matches() -> None:
+    rows = [
+        {"pair": f"o06{n:02d}", "stratum": s, "bill_id": f"b{n}", "doc_id": d,
+         "model_share": 0.3, "bill_share": 0.1}
+        for n, (s, d) in enumerate(
+            [("both", "eppc/x"), ("both", "eppc/x"), ("semantic_only", "eppc/x"),
+             ("near_duplicate_only", "eppc/y")]
+        )
+    ]  # fmt: skip
+    correct = {("b0", "eppc/x"): True, ("b1", "eppc/x"): False, ("b2", "eppc/x"): False,
+               ("b3", "eppc/y"): True}  # fmt: skip
+    sections = {("b1", "eppc/x"): [{"model_kind": "definitions"}],
+                ("b2", "eppc/x"): [{"model_kind": None}]}  # fmt: skip
+    out = census_reading(rows, correct, sections, source="eppc")
+
+    assert (out["matches"], out["correct"], out["precision"]) == (4, 2, 0.5)
+    assert out["by_stage"]["both"] == {"matches": 2, "correct": 1}
+    assert out["by_document"] == {
+        "eppc/x": {"matches": 3, "correct": 1}, "eppc/y": {"matches": 1, "correct": 1},
+    }  # fmt: skip
+    assert [w["bill_id"] for w in out["wrong"]] == ["b1", "b2"]
+    assert out["wrong"][0]["sections"] == [{"model_kind": "definitions"}]
+    with pytest.raises(OriginPrecisionError, match="no label"):
+        census_reading(rows, {}, sections, source="eppc")

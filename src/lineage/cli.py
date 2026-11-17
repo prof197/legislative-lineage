@@ -177,6 +177,7 @@ from lineage.origin_labels import PROMPT as ORIGIN_PROMPT
 from lineage.origin_labels import build_items as build_origin_items
 from lineage.origin_labels import label_in_batch as origin_label_in_batch
 from lineage.origin_labels import load_labels as load_origin_labels
+from lineage.origin_labels import pair_sections as origin_pair_sections
 from lineage.origin_labels import pending as origin_pending
 from lineage.origin_labels import plan as plan_origin_labels
 from lineage.origin_labels import record as record_origin_spend
@@ -196,11 +197,13 @@ from lineage.origin_precision import (
     section_chars,
     write_part,
 )
+from lineage.origin_precision import census_reading as origin_census_reading
 from lineage.origin_precision import load_sample as load_origin_sample
 from lineage.origin_precision import reading as origin_precision_reading
 from lineage.origin_recall import KEYS as ORIGIN_KEYS
 from lineage.origin_recall import OriginRecallError, load_key, origin_recall, same_slug
 from lineage.origin_threshold import REPORT as ORIGIN_THRESHOLD_REPORT
+from lineage.origin_threshold import correct_by_match as origin_correct_by_match
 from lineage.origin_threshold import correct_by_pair as origin_correct_by_pair
 from lineage.origin_threshold import proposal as origin_threshold_proposal
 from lineage.origins import FLOOR as ORIGIN_FLOOR
@@ -790,7 +793,12 @@ def origins_command(
 @app.command("origin-sample")
 def origin_sample_command(
     part: Annotated[
-        str, typer.Option("--part", help="tuning, or reporting (once matching is final).")
+        str,
+        typer.Option(
+            "--part",
+            help="tuning, reporting (once matching is final), or census_eppc (every EPPC "
+            "match listed).",
+        ),
     ] = "tuning",
     tables: TablesOption = DATA / "tables",
     root: Annotated[
@@ -2020,6 +2028,54 @@ def eval_origin_precision(
     for name, g in read["compared"].items():
         typer.echo(line(name, g))
     typer.echo(f"-> {results}")
+
+
+@eval_app.command("origin-census")
+def eval_origin_census(
+    part: Annotated[str, typer.Option("--part", help="The census read.")] = "census_eppc",
+    tables: TablesOption = DATA / "tables",
+    root: Annotated[
+        Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
+    ] = MODELDOCS_DIR,
+    labels: Annotated[
+        Path, typer.Option("--labels", help="The origin labels (committed).")
+    ] = ORIGIN_LABELS,
+    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+) -> None:
+    """A census of one source's listed matches: its precision as a count, and the section pairs
+    each wrong match rests on, by kind (DESIGN.md#origin-matches)."""
+    chosen = ORIGIN_PARTS.get(part)
+    if chosen is None or not chosen.census or chosen.source is None:
+        censuses = ", ".join(n for n, c in ORIGIN_PARTS.items() if c.census)
+        typer.echo(f"error: no census {part!r}; one of {censuses}", err=True)
+        raise typer.Exit(1)
+    try:
+        if not chosen.sample.exists():
+            raise OriginPrecisionError(f"no {chosen.sample}; run `lineage origin-sample` first")
+        rows = load_origin_sample(chosen.sample)
+        correct = origin_correct_by_match(load_origin_labels(labels))
+        wrong = [
+            (str(r["bill_id"]), str(r["doc_id"]))
+            for r in rows
+            if not correct.get((str(r["bill_id"]), str(r["doc_id"])), True)
+        ]
+        docs = [d for c in collectors().values() for d in read_docs(c.source, root)]
+        sections = origin_pair_sections(wrong, read_origin_matches(tables), docs, tables, root=root)
+        read = origin_census_reading(rows, correct, sections, source=chosen.source)
+    except (OriginPrecisionError, ModelDocError, ValueError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    section = {
+        "command": f"uv run lineage eval origin-census --part {part}",
+        "sample": str(chosen.sample),
+        "labels": str(labels),
+        "prompt": ORIGIN_PROMPT.version,
+    } | read
+    write_results(results, f"origins_{part}", section)
+    typer.echo(
+        f"{chosen.source}: {read['correct']}/{read['matches']} listed matches correct "
+        f"({read['precision']}), {len(read['wrong'])} wrong -> {results}"
+    )
 
 
 @eval_app.command("commission")
