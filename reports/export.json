@@ -14,24 +14,26 @@
   "bills.json": 1,
   "compare": 4595,
   "meta.json": 1,
+  "origin_story.json": 1,
   "sources.json": 1,
   "stories": 3,
   "texts": 3620
  },
  "bytes": {
-  "bills": 9050842,
+  "bills": 9067364,
   "bills.json": 1570449,
   "compare": 49843880,
   "meta.json": 7510,
-  "sources.json": 801,
+  "origin_story.json": 770,
+  "sources.json": 7745,
   "stories": 35660,
   "texts": 53168886
  },
- "total_bytes": 113678028,
+ "total_bytes": 113702264,
  "share_of_site_limit": 0.1137,
  "largest_file": {
   "path": "bills.json",
   "bytes": 1570449
  },
- "seconds": 6454
+ "seconds": 6130
 }
