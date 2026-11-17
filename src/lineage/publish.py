@@ -63,6 +63,7 @@ from lineage.export import (
     align_all,
     carries_origin_story,
     comparison_slug,
+    judged_origins,
     origins_by_bill,
     pairs_between,
     slug,
@@ -98,6 +99,7 @@ from lineage.export_schema import (
 from lineage.incremental import applied_days
 from lineage.listing import listed_pairs, shipped_flag
 from lineage.modeldocs import MODELDOCS_DIR, read_docs
+from lineage.origin_labels import LABELS as ORIGIN_LABELS
 from lineage.origin_story import FILE as ORIGIN_STORY_FILE
 from lineage.origin_story import story_file as origin_story_file
 from lineage.origins import read_origin_matches
@@ -273,6 +275,7 @@ class Plan:
     sections_of: Mapping[str, list[tuple[int, str | None, int, str | None]]]
     shown: Mapping[SectionKey, tuple[str | None, str, str]]
     origins: Mapping[str, list[Origin]]
+    judged: frozenset[tuple[str, str]]  # origins a labeler judged correct (lineage.origin_story)
     stories: Mapping[str, Story]
     sources: Sources
     meta: Meta
@@ -295,6 +298,7 @@ def plan_export(
     collector_package: str = COLLECT_PACKAGE,
     model: str = MODEL,
     require_flag: bool = True,
+    origin_labels: Path = ORIGIN_LABELS,
 ) -> Plan:
     """What `build_export` reads before it aligns anything, with its inputs and checks."""
     inputs = (featured_pairs, featured_report, stories_rules, results)
@@ -394,6 +398,8 @@ def plan_export(
         stories=list(stories),
         validation=validation,
     )
+    matches = read_origin_matches(tables)
+    origins = origins_by_bill(matches, docs, set(hosted))
     return Plan(
         state=state,
         hosted=list(hosted),
@@ -404,7 +410,18 @@ def plan_export(
         text_infos=text_infos,
         sections_of=dict(sections_of),
         shown=shown,
-        origins=origins_by_bill(read_origin_matches(tables), docs, set(hosted)),
+        origins=origins,
+        judged=judged_origins(
+            tables,
+            origins,
+            refs,
+            matches,
+            docs,
+            modeldocs_root=modeldocs_root,
+            labels=origin_labels,
+        )
+        if carries_origin_story(state, stories_rules)
+        else frozenset(),
         stories=stories,
         sources=sources_doc(sources, docs),
         meta=meta,
@@ -676,6 +693,7 @@ def export_changes(
     model: str = MODEL,
     require_flag: bool = True,
     floor: int = DEFAULT_FLOOR_BYTES,
+    origin_labels: Path = ORIGIN_LABELS,
     progress: Callable[[str], None] = lambda _: None,
 ) -> dict[str, Any]:
     """Apply the logged days the live `export` lacks to a staging copy of it, from the updated
@@ -700,6 +718,7 @@ def export_changes(
         collector_package=collector_package,
         model=model,
         require_flag=require_flag,
+        origin_labels=origin_labels,
     )
     before = _export_files(target)
     writes: dict[str, bytes] = {}
@@ -814,7 +833,7 @@ def export_changes(
     # The origin story, chosen afresh from the hosted pages as a full export chooses it.
     origin_story: set[str] = set()
     if carries_origin_story(state, stories_rules):
-        chosen = origin_story_file(bill_page(plan, b) for b in plan.hosted)
+        chosen = origin_story_file((bill_page(plan, b) for b in plan.hosted), plan.judged)
         if chosen is not None:
             put(ORIGIN_STORY_FILE, chosen)
             origin_story.add(ORIGIN_STORY_FILE)

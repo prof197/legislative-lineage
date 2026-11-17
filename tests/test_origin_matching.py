@@ -83,7 +83,8 @@ def synthetic(embedded_commission: Path, tmp_path: Path) -> tuple[Path, Path, li
     """The embedded commission fixture, the fixture export's model documents stored under a
     root of their own, and the matches written by hand for them."""
     root = tmp_path / "modeldocs"
-    return embedded_commission, root, hand_made(embedded_commission, root, _sources())
+    labels = tmp_path / "origin_labels.jsonl"
+    return embedded_commission, root, hand_made(embedded_commission, root, _sources(), labels)
 
 
 def test_a_model_copied_whole_yields_its_hand_made_match(

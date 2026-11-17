@@ -20,8 +20,11 @@ from lineage import queries
 from lineage.collect import collectors
 from lineage.export import RESULTS, build_export
 from lineage.generic_sections import generic_kind
+from lineage.labels import SAME_PROVISION, text_sha256
 from lineage.modeldocs import ModelDoc, Source, sha256, store
-from lineage.origins import BillSpan, OriginMatch, write_origin_matches
+from lineage.origin_labels import PROMPT
+from lineage.origins import BillSpan, OriginMatch, SectionPair, write_origin_matches
+from lineage.query import matchable_sections
 from lineage.sections import normalize
 from lineage.semantic_pairs import build_semantic_pairs
 from tests.conftest import (
@@ -52,8 +55,11 @@ SECTIONS_DRAWN = 2
 
 
 def hand_made_origins(
-    tables: Path, modeldocs: Path, sources: dict[str, Source]
+    tables: Path, modeldocs: Path, sources: dict[str, Source], labels: Path
 ) -> list[OriginMatch]:
+    """The hand-made matches, and in `labels` a label judging the first correct, as a labeler
+    would on its strongest pair, so the fixture's origin story can feature it (a featured
+    story features only a match judged correct, lineage.origin_story)."""
     ids = [bill for bill, _ in DRAWN_FROM.values()]
     with queries.connect_quiet() as con:
         rows = queries.matchable_section_texts(
@@ -90,6 +96,11 @@ def hand_made_origins(
         store(source, doc, raw=raw, text=text, root=modeldocs)
         # Generic sections are left out of a match's shares (lineage.generic_sections).
         words = sum(len(t.split()) for _, t in sections if generic_kind(normalize(t)) is None)
+        model_sections = [norm for _, norm in matchable_sections(text)[1]]
+        pairs = [
+            SectionPair(model_section=model_sections.index(normalize(t)), ordinal=o, agreements=9)
+            for o, t in drawn
+        ]
         out.append(
             OriginMatch(
                 bill_id=bill_id,
@@ -98,8 +109,24 @@ def hand_made_origins(
                 model_share=1.0,
                 bill_share=round(sum(len(t.split()) for _, t in drawn) / words, 4),
                 spans=[BillSpan(ordinal=o, start=0, end=len(t), kind="exact") for o, t in drawn],
+                pairs=pairs,
             )
         )
+        if doc_id == first:
+            strongest = min(pairs, key=lambda p: (p.model_section, p.ordinal))
+            bill_text = dict(drawn)[strongest.ordinal]
+            label = {
+                "pair": "fixture-1",
+                "bill_id": bill_id,
+                "doc_id": doc_id,
+                "model_section": text_sha256(model_sections[strongest.model_section]),
+                "bill_section": text_sha256(normalize(bill_text)),
+                "label": 1,
+                "labeler": f"fixture@{PROMPT.version}",
+                "scale": SAME_PROVISION,
+                "at": COLLECTED_ON.isoformat(),
+            }
+            labels.write_text(json.dumps(label) + "\n")
     return out
 
 
@@ -111,7 +138,8 @@ def build_fixture_export(root: Path) -> Path:
     build_semantic_pairs(tables, model=FAKE_MODEL, floor_bytes=0)
     sources = {c.source.key: c.source for c in collectors(PACKAGE).values()}
     modeldocs = root / "modeldocs"
-    write_origin_matches(tables, hand_made_origins(tables, modeldocs, sources))
+    labels = root / "origin_labels.jsonl"
+    write_origin_matches(tables, hand_made_origins(tables, modeldocs, sources, labels))
     no_pairs, no_stories, rules = root / "none.jsonl", root / "none.json", root / "stories.toml"
     no_pairs.touch()
     no_stories.write_text('{"stories": {}}')
@@ -132,6 +160,7 @@ def build_fixture_export(root: Path) -> Path:
         model=FAKE_MODEL,
         require_flag=False,
         floor=0,
+        origin_labels=labels,
     )
     return out
 

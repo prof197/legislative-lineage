@@ -113,17 +113,23 @@ export function bySource(sources: readonly SourceEntry[]): SourceEntry[] {
 
 // The origin story (DESIGN.md#export): one passed bill and the listed model document both stages
 // found holding the most of its wording, chosen by lineage.origin_story's rule, which names no
-// organization; its file's type is the export schema's.
+// organization and features only a match a labeler judged correct; its file's type is the export
+// schema's.
 export type { OriginStory };
 
 // The story's own words. The organization appears only in the origin line and the publishers line,
 // as the data names it; nothing here says who wrote the bill or which text came first.
 export function originStoryCopy(s: OriginStory, names: { bill: string; state: string }) {
   const found = `with a listed model document that both stages found`;
-  const rule =
+  const checked = "A match is featured only after a model has read the passages it rests on and judged them the same provision.";
+  const k = s.passed_over;
+  const ranked =
     s.eligible === 1
       ? `It is the only passed ${names.state} bill ${found}. Among several, the one with the largest share of its wording in such a document would be shown; a tie would go to the larger share of the model, then the lower bill id.`
-      : `Of the ${s.eligible.toLocaleString("en-US")} passed ${names.state} bills ${found}, this bill has the largest share of its wording in such a document. A tie goes to the larger share of the model, then the lower bill id.`;
+      : k === 0
+        ? `Of the ${s.eligible.toLocaleString("en-US")} passed ${names.state} bills ${found}, this bill has the largest share of its wording in such a document. A tie goes to the larger share of the model, then the lower bill id.`
+        : `Of the ${s.eligible.toLocaleString("en-US")} passed ${names.state} bills ${found}, ${k === 1 ? "one holds a larger share of its" : `${k.toLocaleString("en-US")} hold a larger share of their`} wording in such a document, but ${k === 1 ? "its match has" : "their matches have"} not been judged the same provision. Of the matches that have, this bill's holds the largest share; a tie goes to the larger share of the model, then the lower bill id.`;
+  const rule = `${ranked} ${checked}`;
   return {
     title: `${names.bill} and a published model`,
     headline: `A passed ${names.state} bill that shares wording with a published model`,
@@ -140,4 +146,4 @@ export function originStoryCopy(s: OriginStory, names: { bill: string; state: st
 export const ORIGIN_STORY_CAVEAT = "Matching shows where the texts share wording, not who wrote either one or which came first.";
 
 export const NO_ORIGIN_STORY = (state: string): string =>
-  `No passed ${state} bill in this data has a listed model document that both stages found.`;
+  `No passed ${state} bill in this data has a listed model document that both stages found and a model has judged the same provision on the passages it rests on.`;

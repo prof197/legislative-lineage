@@ -361,3 +361,27 @@ def record(
             }
     spend_path.write_text(json.dumps(ledger, indent=1) + "\n")
     return ledger
+
+
+def judged_correct(
+    keys: Iterable[MatchKey],
+    matches: Iterable[OriginMatch],
+    docs: Iterable[ModelDoc],
+    tables_dir: Path,
+    labels: Iterable[Mapping[str, Any]],
+    *,
+    root: Path = MODELDOCS_DIR,
+) -> set[MatchKey]:
+    """Of the matches `keys` names, those a label under this prompt judged correct on the
+    sections their strongest pair rests on now: the matches a featured story may feature
+    (lineage.origin_story, ruled at the step 48 review). A match never labeled, or labeled on
+    sections it no longer rests on, is not judged."""
+    rows: list[dict[str, Any]] = [
+        {"pair": f"{bill_id} {doc_id}", "bill_id": bill_id, "doc_id": doc_id, "stages": ()}
+        for bill_id, doc_id in sorted(set(keys))
+    ]
+    if not rows:
+        return set()
+    items = build_items(rows, matches, docs, tables_dir, root=root)
+    answers = correct_by_sections(items, labels)
+    return {(str(i.row["bill_id"]), str(i.row["doc_id"])) for i in items if answers.get(i.pair)}

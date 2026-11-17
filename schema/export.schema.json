@@ -723,7 +723,7 @@
   },
   "OriginStory": {
    "additionalProperties": false,
-   "description": "`origin_story.json`: the origin story (DESIGN.md#export), the passed bill and listed origin\nlineage.origin_story's rule chooses; not written when no passed bill has a listed origin both\nstages found.",
+   "description": "`origin_story.json`: the origin story (DESIGN.md#export), the passed bill and listed origin\nlineage.origin_story's rule chooses; not written when no passed bill has a listed origin both\nstages found that a labeler judged correct.",
    "properties": {
     "bill": {
      "$ref": "#/$defs/BillRef"
@@ -734,12 +734,17 @@
     },
     "origin": {
      "$ref": "#/$defs/Origin"
+    },
+    "passed_over": {
+     "title": "Passed Over",
+     "type": "integer"
     }
    },
    "required": [
     "bill",
     "origin",
-    "eligible"
+    "eligible",
+    "passed_over"
    ],
    "title": "OriginStory",
    "type": "object"

@@ -86,6 +86,9 @@ from lineage.export_schema import (
 from lineage.listing import ListedPairs, listed_pairs, shipped_flag
 from lineage.minhash import NUM_PERM
 from lineage.modeldocs import MODELDOCS_DIR, ModelDoc, Source, read_docs
+from lineage.origin_labels import LABELS as ORIGIN_LABELS
+from lineage.origin_labels import judged_correct, load_labels
+from lineage.origin_story import BOTH as BOTH_STAGES
 from lineage.origin_story import FILE as ORIGIN_STORY_FILE
 from lineage.origin_story import STORY as ORIGIN_STORY
 from lineage.origin_story import story_file as origin_story_file
@@ -464,6 +467,37 @@ def origins_by_bill(
     return {b: sorted(os, key=lambda o: (-o.bill_share, o.doc.id)) for b, os in out.items()}
 
 
+def judged_origins(
+    tables: Path,
+    origins: Mapping[str, Sequence[Origin]],
+    refs: Mapping[str, BillRef],
+    matches: Sequence[OriginMatch],
+    docs: Mapping[str, tuple[ModelDoc, Source]],
+    *,
+    modeldocs_root: Path,
+    labels: Path,
+) -> frozenset[tuple[str, str]]:
+    """The origin story's candidates a labeler judged correct, by (bill slug, document id):
+    each passed bill's listed origins both stages found, judged on the sections its match's
+    strongest pair rests on now (lineage.origin_labels.judged_correct)."""
+    keys = {
+        (bill_id, o.doc.id)
+        for bill_id, listed in origins.items()
+        if refs[bill_id].status == "passed"
+        for o in listed
+        if frozenset(o.stages) >= BOTH_STAGES
+    }
+    judged = judged_correct(
+        keys,
+        matches,
+        [d for d, _ in docs.values()],
+        tables,
+        load_labels(labels),
+        root=modeldocs_root,
+    )
+    return frozenset((refs[b].slug, d) for b, d in judged)
+
+
 def sources_doc(sources: Sequence[Source], docs: Mapping[str, tuple[ModelDoc, Source]]) -> Sources:
     """The sources page: every library, with how many documents were collected and when."""
     entries: list[SourceEntry] = []
@@ -507,6 +541,7 @@ def build_export(
     model: str = MODEL,
     require_flag: bool = True,
     floor: int = DEFAULT_FLOOR_BYTES,
+    origin_labels: Path = ORIGIN_LABELS,
     progress: Callable[[str], None] = lambda _: None,
 ) -> dict[str, Any]:
     """Write `state`'s site data to `out`, replacing what was there; returns the report."""
@@ -577,7 +612,8 @@ def build_export(
     progress(f"{len(found)} comparisons, {n_pairs} section pairs to align")
 
     files: dict[str, BaseModel] = {}
-    origins = origins_by_bill(read_origin_matches(tables), docs, set(hosted))
+    matches = read_origin_matches(tables)
+    origins = origins_by_bill(matches, docs, set(hosted))
     featured_explained = 0
     withheld = 0
     ordered = [
@@ -752,7 +788,16 @@ def build_export(
 
     if carries_origin_story(state, stories_rules):
         pages = (f for name, f in files.items() if name.startswith("bills/"))
-        story = origin_story_file(p for p in pages if isinstance(p, BillPage))
+        judged = judged_origins(
+            tables,
+            origins,
+            refs,
+            matches,
+            docs,
+            modeldocs_root=modeldocs_root,
+            labels=origin_labels,
+        )
+        story = origin_story_file((p for p in pages if isinstance(p, BillPage)), judged)
         if story is not None:
             files[ORIGIN_STORY_FILE] = story
 

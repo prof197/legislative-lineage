@@ -35,7 +35,7 @@ const origin: Origin = {
   sections: [1, 2],
 };
 
-const story: OriginStory = { bill, origin, eligible: 14 };
+const story: OriginStory = { bill, origin, eligible: 14, passed_over: 0 };
 const names = { bill: "Georgia HB 1", state: "Georgia" };
 const copy = originStoryCopy(story, names);
 
@@ -64,12 +64,17 @@ test("the shares are explained as what they count, nothing more", () => {
 test("the rule that chose the bill is stated, with how many bills it read", () => {
   assert.equal(
     copy.rule,
-    "Of the 14 passed Georgia bills with a listed model document that both stages found, this bill has the largest share of its wording in such a document. A tie goes to the larger share of the model, then the lower bill id. The rule names no organization; the one shown is whichever publishes the document.",
+    "Of the 14 passed Georgia bills with a listed model document that both stages found, this bill has the largest share of its wording in such a document. A tie goes to the larger share of the model, then the lower bill id. A match is featured only after a model has read the passages it rests on and judged them the same provision. The rule names no organization; the one shown is whichever publishes the document.",
   );
   assert.equal(
     originStoryCopy({ ...story, eligible: 1 }, names).rule,
-    "It is the only passed Georgia bill with a listed model document that both stages found. Among several, the one with the largest share of its wording in such a document would be shown; a tie would go to the larger share of the model, then the lower bill id. The rule names no organization; the one shown is whichever publishes the document.",
+    "It is the only passed Georgia bill with a listed model document that both stages found. Among several, the one with the largest share of its wording in such a document would be shown; a tie would go to the larger share of the model, then the lower bill id. A match is featured only after a model has read the passages it rests on and judged them the same provision. The rule names no organization; the one shown is whichever publishes the document.",
   );
+  assert.equal(
+    originStoryCopy({ ...story, passed_over: 2 }, names).rule,
+    "Of the 14 passed Georgia bills with a listed model document that both stages found, 2 hold a larger share of their wording in such a document, but their matches have not been judged the same provision. Of the matches that have, this bill's holds the largest share; a tie goes to the larger share of the model, then the lower bill id. A match is featured only after a model has read the passages it rests on and judged them the same provision. The rule names no organization; the one shown is whichever publishes the document.",
+  );
+  assert.match(originStoryCopy({ ...story, passed_over: 1 }, names).rule, /, one holds a larger share of its wording in such a document, but its match has not been judged/);
   assert.match(originStoryCopy({ ...story, eligible: 1200 }, names).rule, /^Of the 1,200 passed Georgia bills with /);
 });
 
@@ -80,5 +85,5 @@ test("no authorship, direction or political label in the story's own copy", () =
 });
 
 test("with no story, the page says no bill met the rule", () => {
-  assert.equal(NO_ORIGIN_STORY("Georgia"), "No passed Georgia bill in this data has a listed model document that both stages found.");
+  assert.equal(NO_ORIGIN_STORY("Georgia"), "No passed Georgia bill in this data has a listed model document that both stages found and a model has judged the same provision on the passages it rests on.");
 });
