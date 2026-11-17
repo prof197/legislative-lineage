@@ -13,6 +13,7 @@ Find bills in other states that share provisions with a state bill, matched sect
 | The same, on four acts never used while tuning | 17 of 19 (89.5%) | `uv run lineage eval commission --held-out --final` |
 | Judged by a model: do the related bills a page lists share the provision? (100 sampled from Georgia's pages) | 0.83 [0.74, 0.89] | `uv run lineage eval relatives` |
 | Judged by a model: do the explanations describe the text they cite? (359 claims) | 0.87 [0.83, 0.90] | `uv run lineage eval faithfulness` |
+| Matched as published model legislation, does a uniform act find the bills that enacted it? (three acts, at the listing floor) | 31 of 36 (86.1%) | `uv run lineage eval origins` |
 <!-- /results:summary -->
 
 **Where it falls short.**
@@ -69,6 +70,21 @@ Held-out recall: the same measure on four uniform acts never examined while matc
 
 Misses by both stages, at the step where the near-duplicate stage lost them: never proposed 2.
 <!-- /results:held-out -->
+
+<!-- results:origins -->
+Origin recall: each uniform act's published text is matched against the corpus as a model document, through both stages and the rule a page lists by, and an enactment is found when the act's document matches one of its bills with the larger of the two shares, of the model's words or of the bill's, at the listing floor of 0.25 or above. Each result carries its 95% Wilson interval, and each command writes `reports/results.json` ([DESIGN.md](DESIGN.md#origin-matches)).
+
+| | Result | Reproduce |
+|---|---|---|
+| Recall on the development key, three acts | 31 of 36, 0.86 [0.71, 0.94] | `uv run lineage eval origins` |
+| Recall on the sealed key, two acts v1 never ran, run once with `--final` | 6 of 6, 1.00 [0.61, 1.00] | `uv run lineage eval origins --key held_out --final` |
+
+Apart from the sealed key, v1's held-out acts: v1's final run looked at their matches, so they test nothing sealed.
+
+| | Result | Reproduce |
+|---|---|---|
+| Recall on v1's four held-out acts: opened in v1; not a sealed test | 16 of 19, 0.84 [0.62, 0.94] | `uv run lineage eval origins --key v1_held_out` |
+<!-- /results:origins -->
 
 ## Known failure modes
 
