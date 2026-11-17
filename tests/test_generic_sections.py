@@ -36,3 +36,39 @@ def test_a_section_is_named_by_its_opening(text: str, kind: str | None) -> None:
 def test_a_definition_deep_in_a_section_is_not_a_definitions_section() -> None:
     text = "Section 4. Duties. " + "A lamp shall be lit at dusk. " * 12 + '"Dusk" means sunset.'
     assert generic_kind(normalize(text)) is None
+
+
+LONG = " ".join(["The court shall consider the legislature's intent in each case."] * 12)
+
+
+@pytest.mark.parametrize(
+    ("text", "kind"),
+    [
+        # A long severability section, the case-law recital EPPC's models carry, is generic by
+        # its heading, though too long for lineage.boilerplate's whole-section patterns.
+        (f"Section 6. Severability. Mindful of Leavitt v. Jane L. {LONG}", "severability"),
+        (f"Section 501. Severability. (1) {LONG}", "severability"),
+        (f"Section 12. Effective Date. {LONG}", "effective date"),
+        (f"Section 9. Rules of Construction. {LONG}", "construction"),
+        (f"Article X. Withdrawal, Default and Expulsion. {LONG}", "compact clause"),
+        (f"Article XII. Binding Effect of Compact and Other Laws. {LONG}", "compact clause"),
+        (f"Section 3. Definitions. {LONG}", "definitions"),
+    ],
+)
+def test_a_long_section_is_named_by_its_heading(text: str, kind: str) -> None:
+    assert generic_kind(normalize(text)) == kind
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        f"Section 4. Construction Contracts. A contractor shall post a bond. {LONG}",
+        f"Section 5. Liability. A commercial entity is liable for damages. {LONG}",
+        f"Section 7. Default Judgments. A court may enter a judgment. {LONG}",
+        f"Section 1. Title IX of the Education Code is amended to read. {LONG}",
+        # A heading's word deep in a provision names nothing.
+        f"Section 8. Enforcement. The attorney general may sue. {LONG} Severability applies.",
+    ],
+)
+def test_a_provision_is_not_generic_for_a_word_its_heading_shares(text: str) -> None:
+    assert generic_kind(normalize(text)) is None

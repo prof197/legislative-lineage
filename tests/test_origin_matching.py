@@ -29,7 +29,15 @@ from lineage.modeldocs import (
     text_path,
 )
 from lineage.origin_labels import build_items, strongest_pair
-from lineage.origin_matching import bill_spans, listed, match_models
+from lineage.origin_matching import (
+    BillHits,
+    BillSection,
+    ModelText,
+    bill_spans,
+    listed,
+    match_models,
+    match_of,
+)
 from lineage.origin_precision import OriginPrecisionError
 from lineage.origins import BillSpan, OriginMatch, read_origin_matches, write_origin_matches
 from lineage.semantic import CORROBORATING, THRESHOLD, open_search
@@ -317,3 +325,34 @@ def test_a_sampled_match_is_read_back_as_its_strongest_pair_both_sections_whole(
     stale = [r | {"doc_id": "nowhere/else"} for r in rows[:1]]
     with pytest.raises(OriginPrecisionError, match="not in the matches table"):
         build_items(stale, matches, docs, tables, root=root)
+
+
+def test_generic_sections_are_left_out_of_a_match_on_both_sides() -> None:
+    """Ruled at the step 47 review: a pair counts only when neither section is generic, the
+    shares are of the sections that are not, and the stages and pairs are the counted pairs'."""
+    text = ModelText(
+        "lib/m", "", ["alpha beta", "gamma delta", "severability"], [100, 300, 600], frozenset({2})
+    )
+    bill = {
+        0: BillSection("alpha beta", 50, False),
+        1: BillSection("gamma delta", 150, False),
+        2: BillSection("definitions", 800, True),
+    }
+    hits = BillHits(
+        stages={"near_duplicate", "semantic"},
+        pairs={(0, 0), (2, 1), (1, 2)},
+        agreements={(2, 1): 9, (1, 2): 4},
+        cosine={(0, 0): 0.97},
+    )
+    m = match_of(text, "b1", bill, hits, None)
+
+    assert m is not None
+    assert [(p.model_section, p.ordinal) for p in m.pairs] == [(0, 0)]
+    assert m.stages == ["semantic"]
+    assert m.model_share == 0.25  # 100 of the 400 words not generic
+    assert m.bill_share == 0.25  # 50 of the 200
+    assert {s.ordinal for s in m.spans} <= {0}
+
+    only_generic = BillHits(stages={"near_duplicate"}, pairs={(2, 1), (1, 2)},
+                            agreements={(2, 1): 9, (1, 2): 4})  # fmt: skip
+    assert match_of(text, "b1", bill, only_generic, None) is None

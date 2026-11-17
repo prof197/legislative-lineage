@@ -41,6 +41,7 @@ from lineage.align import align
 from lineage.disk import require_free_space
 from lineage.embed import embed as embed_texts
 from lineage.embed import load_model
+from lineage.generic_sections import generic_kind
 from lineage.listing import MeaningHit, NearHit, SectionKey, flagged_sections
 from lineage.modeldocs import ModelDoc, ModelDocError, load_text
 from lineage.models import MODELS_DIR
@@ -60,6 +61,8 @@ class ModelText:
     raw: str
     display: list[str]
     words: list[int]  # each section's normalized words, the shares' unit
+    # Sections a match leaves out on the model's side (lineage.generic_sections)
+    generic: frozenset[int] = frozenset()
 
     @property
     def searched(self) -> set[int]:
@@ -75,6 +78,7 @@ def model_text(doc_id: str, raw: str) -> ModelText:
         raw,
         [text for text, _ in matchable],
         [len(normalized.split()) for _, normalized in matchable],
+        frozenset(q for q, (_, norm) in enumerate(matchable) if generic_kind(norm) is not None),
     )
 
 
@@ -102,7 +106,7 @@ def listed(
 
 
 @dataclass(slots=True)
-class _BillHits:
+class BillHits:
     stages: set[Stage] = field(default_factory=set[Stage])
     pairs: set[tuple[int, int]] = field(default_factory=set[tuple[int, int]])  # (model, bill)
     agreements: dict[tuple[int, int], int] = field(default_factory=dict[tuple[int, int], int])
@@ -187,7 +191,7 @@ def match_texts(
         d, q = offsets[hit.query_section]
         meaning_of[d].append((q, hit.bill_id, hit.ordinal, hit.cosine))
 
-    hits: dict[tuple[int, str], _BillHits] = defaultdict(_BillHits)  # (document, bill)
+    hits: dict[tuple[int, str], BillHits] = defaultdict(BillHits)  # (document, bill)
     for d, text in enumerate(texts):
         near, by_meaning = listed(
             near_duplicate_hits(sign_query(text.raw, tables_dir), tables_dir),
@@ -215,48 +219,77 @@ def match_texts(
             eligible_path=tables_dir / "eligible.parquet",
             ids=sorted({bill_id for _, bill_id in hits}),
         )
-    sections: dict[str, dict[int, tuple[str, int]]] = defaultdict(dict)
+    sections: dict[str, dict[int, BillSection]] = defaultdict(dict)
     for bill_id, ordinal, display, normalized in rows:
-        sections[bill_id][ordinal] = (display, len(normalized.split()))
+        sections[bill_id][ordinal] = BillSection(
+            display, len(normalized.split()), generic_kind(normalized) is not None
+        )
 
     out: list[OriginMatch] = []
     for (d, bill_id), entry in sorted(hits.items(), key=lambda kv: (kv[0][1], kv[0][0])):
-        text = texts[d]
-        bill = sections[bill_id]
-        model_words = sum(text.words[q] for q in text.searched)
-        bill_words = sum(words for _, words in bill.values())
-        matched_model = {q for q, _ in entry.pairs}
-        matched_bill = {o for _, o in entry.pairs}
-        by_ordinal: dict[int, list[int]] = defaultdict(list)
-        for q, o in sorted(entry.pairs):
-            by_ordinal[o].append(q)
-        spans = [
-            span
-            for o in sorted(by_ordinal)
-            for span in bill_spans(o, bill[o][0], [text.display[q] for q in by_ordinal[o]], embed)
-        ]
-        out.append(
-            OriginMatch(
-                bill_id=bill_id,
-                doc_id=text.doc_id,
-                stages=sorted(entry.stages),
-                model_share=_share(sum(text.words[q] for q in matched_model), model_words),
-                bill_share=_share(sum(bill[o][1] for o in matched_bill), bill_words),
-                spans=spans,
-                pairs=[
-                    SectionPair(
-                        model_section=q,
-                        ordinal=o,
-                        agreements=entry.agreements.get((q, o)),
-                        cosine=None
-                        if (q, o) not in entry.cosine
-                        else round(float(entry.cosine[(q, o)]), COSINE_PLACES),
-                    )
-                    for q, o in sorted(entry.pairs)
-                ],
-            )
-        )
+        if (m := match_of(texts[d], bill_id, sections[bill_id], entry, embed)) is not None:
+            out.append(m)
     return out
+
+
+@dataclass(frozen=True, slots=True)
+class BillSection:
+    display: str
+    words: int
+    generic: bool  # left out of a match on the bill's side (lineage.generic_sections)
+
+
+def match_of(
+    text: ModelText,
+    bill_id: str,
+    bill: dict[int, BillSection],
+    entry: BillHits,
+    embed: Embedder | None,
+) -> OriginMatch | None:
+    """A bill's match with a model from the section pairs the stages found, generic sections
+    left out on both sides (ruled at the step 47 review): a pair counts only when neither of its
+    sections is generic, both shares are of the sections that are not, and the stages, spans
+    and pairs are the counted pairs'. A bill whose every pair touches a generic section has no
+    match."""
+    pairs = sorted((q, o) for q, o in entry.pairs if q not in text.generic and not bill[o].generic)
+    if not pairs:
+        return None
+    model_words = sum(text.words[q] for q in text.searched if q not in text.generic)
+    bill_words = sum(s.words for s in bill.values() if not s.generic)
+    matched_model = {q for q, _ in pairs}
+    matched_bill = {o for _, o in pairs}
+    by_ordinal: dict[int, list[int]] = defaultdict(list)
+    for q, o in pairs:
+        by_ordinal[o].append(q)
+    spans = [
+        span
+        for o in sorted(by_ordinal)
+        for span in bill_spans(o, bill[o].display, [text.display[q] for q in by_ordinal[o]], embed)
+    ]
+    stages: list[Stage] = []
+    if any(p in entry.agreements for p in pairs):
+        stages.append("near_duplicate")
+    if any(p in entry.cosine for p in pairs):
+        stages.append("semantic")
+    return OriginMatch(
+        bill_id=bill_id,
+        doc_id=text.doc_id,
+        stages=stages,
+        model_share=_share(sum(text.words[q] for q in matched_model), model_words),
+        bill_share=_share(sum(bill[o].words for o in matched_bill), bill_words),
+        spans=spans,
+        pairs=[
+            SectionPair(
+                model_section=q,
+                ordinal=o,
+                agreements=entry.agreements.get((q, o)),
+                cosine=None
+                if (q, o) not in entry.cosine
+                else round(float(entry.cosine[(q, o)]), COSINE_PLACES),
+            )
+            for q, o in pairs
+        ],
+    )
 
 
 def _share(part: int, whole: int) -> float:

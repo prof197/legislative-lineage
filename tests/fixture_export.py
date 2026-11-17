@@ -19,8 +19,10 @@ from pathlib import Path
 from lineage import queries
 from lineage.collect import collectors
 from lineage.export import RESULTS, build_export
+from lineage.generic_sections import generic_kind
 from lineage.modeldocs import ModelDoc, Source, sha256, store
 from lineage.origins import BillSpan, OriginMatch, write_origin_matches
+from lineage.sections import normalize
 from lineage.semantic_pairs import build_semantic_pairs
 from tests.conftest import (
     COMMISSION,
@@ -83,7 +85,8 @@ def hand_made_origins(
             text_sha256=sha256(raw),
         )
         store(source, doc, raw=raw, text=text, root=modeldocs)
-        words = sum(len(t.split()) for _, t in sections)
+        # Generic sections are left out of a match's shares (lineage.generic_sections).
+        words = sum(len(t.split()) for _, t in sections if generic_kind(normalize(t)) is None)
         out.append(
             OriginMatch(
                 bill_id=bill_id,
