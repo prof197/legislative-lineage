@@ -43,16 +43,40 @@ export const possessive = (name: string): string => (/s$/i.test(name) ? `${name}
 
 const capitalized = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1);
 
-// The origin line, ruled at M12's start: both shares, always, so a bill that takes one section of
-// a long model and a bill that copies a short model whole never read alike.
-//   "34% of this bill's wording appears in [organization]'s model [title], covering 25% of the model."
+// A title as the origin line shows it: when it opens with its own organization's name or
+// abbreviation ("NCOIL Insurance Fraud Model Act"), that is dropped, since the line names the
+// organization after it (ruled at the deploy review). Only an opening name goes, with what joins
+// it to the rest ("'s", a colon or a dash); a title that is nothing else stays whole.
+export function shownTitle(title: string, organization: string): string {
+  const name = organization.replace(/\s*\(.*\)\s*$/, "").trim();
+  const abbreviation = /\(([A-Z][A-Z&.-]{1,})\)/.exec(organization)?.[1];
+  const names = [organization, name, abbreviation]
+    .filter((n): n is string => !!n)
+    .flatMap((n) => [n, n.replace(/^the\s+/i, "")])
+    .filter((n) => n.length > 1)
+    .sort((x, y) => y.length - x.length);
+  const lower = title.toLowerCase();
+  for (const n of names) {
+    if (!lower.startsWith(n.toLowerCase())) continue;
+    const rest = title.slice(n.length);
+    if (rest && !/^(?:['’]s\b|[\s:–—-])/.test(rest)) continue;
+    const kept = rest.replace(/^(?:['’]s)?[\s:–—-]*/, "").trim();
+    return kept ? kept : title;
+  }
+  return title;
+}
+
+// The origin line, ruled at M12's start and reworded at the deploy review: both shares, always,
+// so a bill that takes one section of a long model and a bill that copies a short model whole
+// never read alike.
+//   "34% of this bill's wording appears in [title], a model published by [organization], covering 25% of the model."
 // The title is the part a page links to the document in its library. The organization is the
 // library's, as the data names it; co-publishers are credited on the line below, not here.
 export function originLine(o: Origin): { before: string; title: string; after: string } {
   return {
-    before: `${capitalized(percent(o.bill_share))} of this bill's wording appears in ${possessive(o.doc.organization)} model`,
-    title: o.doc.title,
-    after: `, covering ${percent(o.model_share)} of the model.`,
+    before: `${capitalized(percent(o.bill_share))} of this bill's wording appears in`,
+    title: shownTitle(o.doc.title, o.doc.organization),
+    after: `, a model published by ${o.doc.organization}, covering ${percent(o.model_share)} of the model.`,
   };
 }
 
@@ -64,7 +88,7 @@ export const originText = (o: Origin): string => {
 // The form every rendered origin line must take, which the copy check holds each page to.
 const SHARE = String.raw`(?:\d{1,3}%|[Uu]nder 1%)`;
 export const ORIGIN_LINE = new RegExp(
-  String.raw`^${SHARE} of this bill's wording appears in .+'s? model .+, covering ${SHARE} of the model\.$`,
+  String.raw`^${SHARE} of this bill's wording appears in .+, a model published by .+, covering ${SHARE} of the model\.$`,
 );
 
 const STAGE: Record<Origin["stages"][number], string> = {

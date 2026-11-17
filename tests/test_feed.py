@@ -201,12 +201,38 @@ def test_entries_state_dates_and_shared_text_and_never_a_model_text() -> None:
     assert gained.link == "https://le.utah.gov/hb2"  # another state's: its text's source
     assert origin.link is None
     assert "60% of the bill's wording appears in it, covering 25% of the model" in origin.content
+    assert "“Model Public Expression Act”, a model published by A Library" in origin.content
     assert "leaked archive" in origin.content
     assert "(shares wording)" in new.content
     assert "(similar in meaning)" in new.content
     assert group.title == "Bills in 3 states first seen within 14 days share text"
     assert group.link == f"{SITE}/bills/ga-sb-1/"  # its first hosted bill, not its first bill
     check(render(entries, feed_id="urn:uuid:x", site_url=SITE, updated="2026-01-06T00:00:00Z"))
+
+
+NCOIL = "National Council of Insurance Legislators (NCOIL)"
+ALEC = "American Legislative Exchange Council (ALEC)"
+
+
+@pytest.mark.parametrize(
+    ("title", "organization", "shown"),
+    [
+        ("NCOIL Insurance Transfer Model Act", NCOIL, "Insurance Transfer Model Act"),
+        ("Public Citizen Model State Law: A Right", "Public Citizen", "Model State Law: A Right"),
+        ("ALEC's Model Resolution", ALEC, "Model Resolution"),
+        ("States Project: Read Act", "The States Project (policy work)", "Read Act"),
+        ("Renaming the ALEC Act", ALEC, "Renaming the ALEC Act"),
+        ("Model Act \u2013 NCOIL", NCOIL, "Model Act \u2013 NCOIL"),
+        ("NCOIL \u2013 Model Act", NCOIL, "Model Act"),
+        ("NCOILS Act", NCOIL, "NCOILS Act"),
+        ("NCOIL", NCOIL, "NCOIL"),
+    ],
+)
+def test_a_title_opening_with_its_organization_does_not_repeat_it(
+    title: str, organization: str, shown: str
+) -> None:
+    """As the site's origin line does (site/src/lib/origins.test.ts), ruled at the deploy review."""
+    assert feed.shown_title(title, organization) == shown
 
 
 def test_a_withheld_documents_match_is_not_an_event() -> None:

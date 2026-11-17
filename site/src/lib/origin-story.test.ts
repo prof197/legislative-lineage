@@ -47,7 +47,7 @@ test("the story is titled by its bill and a published model, naming no organizat
 
 test("the lede names the bill; the line beside it gives both shares", () => {
   assert.equal(copy.lede, "Georgia HB 1, Example Act; enact, passed.");
-  assert.equal(originText(origin), "62% of this bill's wording appears in Example Council's model Model Example Act, covering 40% of the model.");
+  assert.equal(originText(origin), "62% of this bill's wording appears in Model Example Act, a model published by Example Council, covering 40% of the model.");
 });
 
 test("the shares are explained as what they count, nothing more", () => {

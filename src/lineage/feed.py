@@ -256,6 +256,29 @@ def listed_origin(c: OriginGained, withheld: frozenset[str] = frozenset()) -> bo
     return max(c.bill_share, c.model_share) >= FLOOR and c.doc_id not in withheld
 
 
+def shown_title(title: str, organization: str) -> str:
+    """A title as an origin line shows it, as the site's does (site/src/lib/origins.ts,
+    shownTitle): an opening name or abbreviation of its own organization dropped, with what
+    joins it to the rest, since the line names the organization after it. A title that is
+    nothing else stays whole."""
+    name = re.sub(r"\s*\(.*\)\s*$", "", organization).strip()
+    abbreviation = re.search(r"\(([A-Z][A-Z&.-]{1,})\)", organization)
+    found = [organization, name] + ([abbreviation.group(1)] if abbreviation else [])
+    names = sorted(
+        {n for f in found for n in (f, re.sub(r"(?i)^the\s+", "", f)) if len(n) > 1},
+        key=lambda n: -len(n),
+    )
+    for n in names:
+        if not title.lower().startswith(n.lower()):
+            continue
+        rest = title[len(n) :]
+        if rest and not re.match(r"(?:['\u2019]s\b|[\s:\u2013\u2014-])", rest):
+            continue
+        kept = re.sub(r"^(?:['\u2019]s)?[\s:\u2013\u2014-]*", "", rest).strip()
+        return kept or title
+    return title
+
+
 def _named(b: BillInfo) -> str:
     return f"{b.state} {b.identifier}, “{b.title}”"
 
@@ -312,7 +335,8 @@ def entry(event: Event, bills: Mapping[str, BillInfo], docs: Mapping[str, DocInf
             leaked = ", from a leaked archive" if doc.leaked else ""
             bill_share, model_share = (float(x) for x in shares.split())
             lines.append(
-                f"- “{doc.title}”, a model document in the library of {doc.organization}{leaked}: "
+                f"- “{shown_title(doc.title, doc.organization)}”, a model published by "
+                f"{doc.organization}{leaked}: "
                 f"{bill_share:.0%} of the bill's wording appears in it, covering "
                 f"{model_share:.0%} of the model"
             )
