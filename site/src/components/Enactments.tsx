@@ -19,7 +19,7 @@ const MISS: Record<string, string> = {
 export function Enactments({ acts, enactments }: { acts: { key: string; name: string }[]; enactments: Enactment[] }) {
   const [open, setOpen] = useState<Record<string, boolean>>({ [acts[0]?.key ?? ""]: true });
   return (
-    <div style={{ marginTop: 16, display: "grid", gap: 28 }}>
+    <div style={{ marginTop: 16, display: "grid", gridTemplateColumns: "minmax(0, 1fr)", gap: 28 }}>
       {acts.map(({ key, name }) => {
         const rows = enactments.filter((e) => e.act === key);
         const found = rows.filter((e) => e.found).length;
