@@ -64,6 +64,7 @@ uv run lineage eval origin-precision  # the reporting sample after the generic-s
 uv run lineage intake       # one day of new and changed bills from Open States' API v3 (key from OPENSTATES_API_KEY), text through the text layer -> data/days/<day>/, data/intake/; --tier default|bronze|silver
 uv run lineage intake-estimate  # the API requests a January day needs, against each tier, from the snapshot; no network -> reports/intake_estimate.json
 uv run lineage update --day DIR  # apply one day's new and changed records -> data/changes/<as_of>.jsonl and the tables in place, held to a full rebuild over the same days
+uv run lineage rebuild --out DIR [--pinned-from TABLES]  # the folded days laid over the snapshot's archives, the whole pipeline run again, statistics pinned from tables at the same day or counted afresh, vectors reused for the same texts -> DIR, DIR.build/rebuild.json
 uv run lineage text inventory  # version to fetch per record, by host, robots.txt read -> data/text/plan.parquet, reports/text_inventory.json
 uv run lineage text sample   # quality test: fetch a seeded sample per state and format -> data/text/sample/, reports/text_quality.json
 uv run lineage text fetch    # fetch every planned record as rules/text_layer.toml says, California from its bulk download; resumable -> data/text/full/, reports/text_fetch.json
@@ -74,8 +75,12 @@ uv run lineage publish pages --state GA  # the live track: the logged days the e
 uv run lineage publish feed --site-url URL  # the national Atom feed of the live track's events, checked against RFC 4287 -> <staging>/feed.xml
 uv run lineage publish promote --state GA  # swap the staging copy in as the live export; deploys nothing
 uv run lineage publish weekly --pinned DIR  # the weekly rebuild's check: agreement with the updated tables, failing below 98%, and the drift -> data/schedule/weekly.json
-uv run lineage schedule daily --site-url URL  # the daily job: intake, update, pages, feed, promote, stopping at a failed step and alerting -> data/schedule/status.json
-uv run lineage schedule weekly   # the weekly job; refuses until `lineage rebuild` exists
+uv run lineage publish deploy --state GA  # in session: the live export's day packed as a release, gated (contract, local paths, copy, size), the circuit breaker, the pin committed and leak-checked, then the GitHub release, push and Pages dispatch; exits 3 when held -> data/deploy/days/<day>.json
+uv run lineage publish release --day D  # a day the circuit breaker held, published after the maintainer's review
+uv run lineage publish candidate --site-url URL  # before session: the live export packed and gated as a release candidate, publishing nothing -> data/deploy/candidates/<tag>/review.txt
+uv run lineage publish review --site-url URL  # in session: the week's new origin claims for the maintainer's review -> data/deploy/reviews/<day>.txt
+uv run lineage schedule daily --site-url URL  # the daily job: intake, update, pages, feed, promote, and from the first day of session (rules/deploy.toml) the deploy; a failed step or held day stops it and alerts -> data/schedule/status.json
+uv run lineage schedule weekly --site-url URL  # the weekly job: two rebuilds and the agreement check, then a candidate before session or the origin-claims review during it
 uv run lineage schedule plist daily --out FILE --site-url URL  # fill a launchd template from scheduling/; loading it is by hand
 uv run python -m evals.fixture  # rebuild tests/fixtures/commission/ from the local snapshot, dev only
 uv run python -m benchmarks.minhash  # NumPy vs datasketch: signing and LSH index time and memory (DR-3), dev only
@@ -171,9 +176,11 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   origin_story.py  the origin story's rule, which names no organization, and its file (DESIGN.md#export)
   publish.py      `lineage publish pages|promote`: the pages a day's changes touch, rewritten in a staging copy, and the swap (DESIGN.md#updates)
   feed.py         `lineage publish feed`: the national Atom feed of the live track's events, checked against RFC 4287
-  schedule.py     `lineage schedule`: the daily and weekly jobs under launchd, their status and alerts; the weekly agreement check and drift
+  schedule.py     `lineage schedule`: the daily and weekly jobs under launchd, their status (held included) and alerts; the weekly agreement check and drift
+  deploy.py       `lineage publish deploy|release|candidate|review`: the day's release, its gates and circuit breaker, a held day's release, the candidate and the origin-claims review; every external command through an injectable shell (DR-13)
   updates.py      the live track's contracts (DR-7): days, records over time, the change log, the snapshot an update must equal
   incremental.py  `lineage update`'s body, one day applied in both directions in a staging view, journaled per day
+  rebuild.py      `lineage rebuild`: the folded days over the snapshot's archives, the pipeline run again with pinned or refreshed statistics (DR-7)
   modeldocs.py    model legislation: each source's entry, each collected document, texts per version under data/modeldocs/
   collect.py      the collector registry: one module per source under collectors/, found by name; the coverage report
   collectors/     one collector module per source of model legislation, each owned by the lane that builds it
@@ -210,6 +217,7 @@ snapshot/sessions.csv   session start/end dates and carryover, from a pinned scr
 rules/document_types.csv  which document types are matched, per state; first fitting rule wins
 rules/text_layer.toml  the text layer's rules: usable bar, per-state format and PDF reading, content elements, replacement
 rules/stories.toml  which featured stories each hosted state's site carries
+rules/deploy.toml  each hosted state's first day of session, from which the daily job deploys, and the circuit breaker's and size gate's numbers
 schema/export.schema.json  the export's JSON Schema, generated from lineage.export_schema; a test fails when it drifts
 reports/          committed outputs of pipeline commands; README and DESIGN numbers cite them
   results.json    eval results, one section per eval; the README results table reads it
@@ -237,6 +245,8 @@ data/             local snapshots and derived tables; gitignored, never committe
   pair_data/      the labeled pair dataset's split files, from `lineage pair-data fetch`; never committed
   models/<name>/  embedding model files at their pinned revision, from `lineage model fetch`
   export/<ST>/    the static site's JSON for one state, from `lineage export`
+  rebuild/        the weekly job's two rebuilds, pinned/ and refreshed/, each with its .build/ archives' manifest and reports
+  deploy/         the deploy's day records, release candidates, weekly reviews, and checkout/, the job's own clone of the repository (set up by hand)
 ```
 
 ## Conventions

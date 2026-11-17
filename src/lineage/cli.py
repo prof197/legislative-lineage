@@ -13,7 +13,8 @@ import numpy as np
 import typer
 from numpy.typing import NDArray
 
-from lineage import __version__
+from lineage import __version__, deploy
+from lineage import rebuild as rebuilding
 from lineage.acts import (
     ACTS,
     ACTS_DIR,
@@ -169,7 +170,7 @@ from lineage.model_labels import record_spend as record_label_spend
 from lineage.model_labels import spent as label_spent
 from lineage.modeldocs import MODELDOCS_DIR, ModelDocError, read_docs
 from lineage.models import MODELS, MODELS_DIR, ModelError, fetch_model
-from lineage.neighbors import EF_SEARCH, RECALL_FLOOR, build_neighbors
+from lineage.neighbors import EF_SEARCH, RECALL_FLOOR, SPEC, build_neighbors
 from lineage.neighbors import REPORT as NEIGHBORS_REPORT
 from lineage.neighbors import check_at as check_neighbors_at
 from lineage.neighbors import write_report as write_neighbors_report
@@ -259,8 +260,8 @@ from lineage.schedule import (
     osascript_notifier,
     render_template,
     run_job,
+    weekly_job_steps,
     weekly_report,
-    weekly_steps,
 )
 from lineage.sectioning import SectioningError, build_sections
 from lineage.semantic import MODEL as SEMANTIC_MODEL
@@ -732,6 +733,113 @@ def update_command(
         typer.echo(f"error: not built yet: {e}", err=True)
         raise typer.Exit(1) from e
     typer.echo(f"{len(logged)} changes -> {changes}")
+
+
+@app.command("rebuild")
+def rebuild_command(
+    out: Annotated[Path, typer.Option("--out", help="The rebuild's tables directory (local).")],
+    days: Annotated[
+        Path, typer.Option("--days", help="The days taken in, one directory each (local).")
+    ] = DATA / "days",
+    through: Annotated[
+        str | None,
+        typer.Option("--through", help="Fold the days up to this one, YYYY-MM-DD [default: all]."),
+    ] = None,
+    pinned_from: Annotated[
+        Path | None,
+        typer.Option(
+            "--pinned-from",
+            help="Tables at the same day whose stoplist and state boilerplate counts to keep; "
+            "without it they are counted afresh.",
+        ),
+    ] = None,
+    vectors_from: Annotated[
+        Path | None,
+        typer.Option(
+            "--vectors-from",
+            help="Tables whose vectors to reuse for the same texts [default: --pinned-from].",
+        ),
+    ] = None,
+    raw: RawOption = rebuilding.RAW,
+    manifest: ManifestOption = rebuilding.MANIFEST,
+    days_only: Annotated[
+        bool,
+        typer.Option("--days-only", help="Lay the days over no archives: the days are the corpus."),
+    ] = False,
+    sessions: Annotated[
+        Path, typer.Option("--sessions", help="Session dates CSV (committed).")
+    ] = rebuilding.SESSIONS,
+    text_plan: Annotated[
+        Path, typer.Option("--text-plan", help="The text layer's fetch plan, as `text merge`.")
+    ] = PLAN,
+    max_share: Annotated[
+        float,
+        typer.Option("--max-share", help="A refreshed stoplist's share, as `lineage boilerplate`."),
+    ] = rebuilding.MAX_SHARE,
+    origins: Annotated[
+        bool | None,
+        typer.Option(
+            "--origins/--no-origins",
+            help="Match the model documents [default: when the tables reused hold matches].",
+        ),
+    ] = None,
+    model: Annotated[str, typer.Option("--model", help="The embedding model.")] = SEMANTIC_MODEL,
+    exact: Annotated[
+        bool,
+        typer.Option("--exact", help="Search neighbors exactly, not by HNSW (small corpora)."),
+    ] = False,
+    workers: Annotated[int, typer.Option("--workers", help="Worker processes.")] = (
+        os.cpu_count() or 1
+    ),
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """The folded days laid over the snapshot's archives and the whole pipeline run into OUT,
+    with pinned or refreshed corpus statistics -> OUT, OUT.build/rebuild.json (DR-7)."""
+    try:
+        doc = rebuilding.rebuild(
+            out,
+            days_dir=days,
+            through=datetime.date.fromisoformat(through) if through else None,
+            base=None if days_only else rebuilding.Base(raw=raw, manifest=manifest),
+            sessions=sessions,
+            text_plan=text_plan,
+            pinned_from=pinned_from,
+            vectors_from=vectors_from,
+            max_share=max_share,
+            origins=origins,
+            model=model,
+            neighbors_spec="Flat" if exact else SPEC,
+            ef_search=None if exact else EF_SEARCH,
+            workers=workers,
+            floor_bytes=int(min_free_gib * GiB),
+            progress=typer.echo,
+        )
+    except (
+        rebuilding.RebuildError,
+        UpdateError,
+        SnapshotError,
+        InsufficientDiskSpaceError,
+        StoplistError,
+        EmbedError,
+        ModelError,
+        SemanticPairsError,
+        StateBoilerplateError,
+        MemoryBoundError,
+        SectioningError,
+        DocTypesError,
+        ModelDocError,
+        IndexMissingError,
+    ) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    v = doc["vectors"]
+    typer.echo(
+        f"{doc['records']:,} records as of {doc['as_of']}, {len(doc['days'])} days over "
+        f"{doc['archives']['written']} archives, statistics {doc['statistics']}; "
+        f"{v['shards_reused']} of {v['shards']} vector shards reused, {v['shards_embedded']} "
+        f"embedded; {doc['seconds']['total']:.0f}s -> {out}, "
+        f"{rebuilding.work_dir(out) / rebuilding.REPORT}"
+    )
 
 
 @app.command("collect-models")
@@ -3060,11 +3168,12 @@ def publish_weekly_command(
     report: Annotated[
         Path, typer.Option("--report", help="The weekly report (local).")
     ] = WEEKLY_REPORT,
+    model: Annotated[str, typer.Option("--model", help="The embedding model.")] = SEMANTIC_MODEL,
 ) -> None:
     """The weekly rebuild's check: the share of relatives the updated tables and the rebuild
     agree on, failing below 98%, and the drift when the statistics are refreshed (DR-7)."""
     try:
-        doc = weekly_report(updated, pinned, refreshed, report=report)
+        doc = weekly_report(updated, pinned, refreshed, model=model, report=report)
     except ScheduleError as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
@@ -3074,6 +3183,154 @@ def publish_weekly_command(
         f"{a['share']:.2%} of relatives agree ({a['relatives_agreed']} of "
         f"{a['relatives_updated']}){drifted} -> {report}"
     )
+
+
+DeployRootOption = Annotated[
+    Path, typer.Option("--deploy-dir", help="The deploy's records and releases (local).")
+]
+
+
+def _deploy_paths(root: Path) -> deploy.DeployPaths:
+    return deploy.DeployPaths(root=root, checkout=root / "checkout")
+
+
+@publish_app.command("deploy")
+def publish_deploy_command(
+    state: StateOption = "GA",
+    export: Annotated[
+        Path | None,
+        typer.Option("--export", help="The live export (local); default data/export/<ST>."),
+    ] = None,
+    changes: ChangesOption = CHANGES_DIR,
+    root: DeployRootOption = deploy.DEPLOY_DIR,
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """Deploy the live export's day: pack the release, the gates, the circuit breaker, then
+    the GitHub release, the pin's commit, the push and the Pages workflow (DESIGN.md#updates).
+    Exits 3 when the day is held for review, printing its counts and baseline last."""
+    state = state.upper()
+    target = export if export is not None else EXPORT_DIR / state
+    try:
+        record = deploy.deploy_day(
+            state=state,
+            export=target,
+            changes_dir=changes,
+            paths=_deploy_paths(root),
+            floor=int(min_free_gib * GiB),
+        )
+    except (deploy.DeployError, ReleaseError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    if record.state == "held":
+        typer.echo(
+            json.dumps(
+                {
+                    "day": record.day.isoformat(),
+                    "tag": record.tag,
+                    "held_on_counts": record.held_on_counts,
+                    "held_behind": None if record.held_behind is None else str(record.held_behind),
+                    "reasons": record.reasons,
+                    "counts": record.counts,
+                    "baseline": record.baseline,
+                }
+            )
+        )
+        raise typer.Exit(deploy.HELD)
+    typer.echo(f"{record.day}: {record.state} as {record.tag}; {record.counts}")
+
+
+@publish_app.command("release")
+def publish_release_command(
+    day: Annotated[str, typer.Option("--day", help="The held day, YYYY-MM-DD.")],
+    root: DeployRootOption = deploy.DEPLOY_DIR,
+) -> None:
+    """Publish a day the circuit breaker held, once reviewed: its own release, the site's gates
+    run again, the pin committed and leak-checked, pushed, and the Pages workflow dispatched."""
+    try:
+        record = deploy.release_day(datetime.date.fromisoformat(day), paths=_deploy_paths(root))
+    except (deploy.DeployError, ReleaseError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    typer.echo(f"{record.day}: {record.state} as {record.tag}")
+
+
+def _review_names(tables: Path, state: str, site_url: str) -> tuple[Any, dict[str, dict[str, Any]]]:
+    return (
+        deploy.describe_bills(tables, state=state, site_url=site_url),
+        deploy.document_names(),
+    )
+
+
+@publish_app.command("candidate")
+def publish_candidate_command(
+    site_url: SiteOption,
+    state: StateOption = "GA",
+    day: Annotated[
+        str | None, typer.Option("--day", help="The day, YYYY-MM-DD [default: today, UTC].")
+    ] = None,
+    tables: TablesOption = DATA / "tables",
+    export: Annotated[
+        Path | None,
+        typer.Option("--export", help="The live export (local); default data/export/<ST>."),
+    ] = None,
+    changes: ChangesOption = CHANGES_DIR,
+    root: DeployRootOption = deploy.DEPLOY_DIR,
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """Before session: the live export packed and gated as a release candidate, with a review
+    summary against the pinned release -> <deploy>/candidates/<tag>/review.txt. Publishes
+    nothing."""
+    state = state.upper()
+    as_of = datetime.date.fromisoformat(day) if day else datetime.datetime.now(datetime.UTC).date()
+    describe, documents = _review_names(tables, state, site_url)
+    try:
+        doc = deploy.prepare_candidate(
+            as_of,
+            state=state,
+            export=export if export is not None else EXPORT_DIR / state,
+            changes_dir=changes,
+            paths=_deploy_paths(root),
+            describe=describe,
+            documents=documents,
+            floor=int(min_free_gib * GiB),
+        )
+    except (deploy.DeployError, ReleaseError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    files = doc["files"]
+    typer.echo(
+        f"{doc['tag']} against {doc['pinned']}: {len(files['added'])} added, "
+        f"{len(files['changed'])} changed, {len(files['removed'])} removed; "
+        f"{len(doc['origin_claims'])} new origin claims -> "
+        f"{root / 'candidates' / doc['tag'] / 'review.txt'}"
+    )
+
+
+@publish_app.command("review")
+def publish_review_command(
+    site_url: SiteOption,
+    state: StateOption = "GA",
+    through: Annotated[
+        str | None, typer.Option("--through", help="The week's last day [default: today, UTC].")
+    ] = None,
+    tables: TablesOption = DATA / "tables",
+    changes: ChangesOption = CHANGES_DIR,
+    root: DeployRootOption = deploy.DEPLOY_DIR,
+) -> None:
+    """During session: the week's new origin claims, each with its bill, document, shares,
+    stages and the day first listed, for the maintainer's weekly review ->
+    <deploy>/reviews/<day>.txt."""
+    day = (
+        datetime.date.fromisoformat(through)
+        if through
+        else datetime.datetime.now(datetime.UTC).date()
+    )
+    describe, documents = _review_names(tables, state.upper(), site_url)
+    out = deploy.weekly_review(
+        day, changes_dir=changes, paths=_deploy_paths(root), describe=describe, documents=documents
+    )
+    n = len(json.loads(out.read_text())["origin_claims"])
+    typer.echo(f"{n} new origin claims in the week through {day} -> {out.with_suffix('.txt')}")
 
 
 @schedule_app.command("daily")
@@ -3086,32 +3343,33 @@ def schedule_daily_command(
     tier: Annotated[str, typer.Option("--tier", help="The intake key's limits.")] = "default",
 ) -> None:
     """The daily job: intake, update, the incremental export and the feed, swapped in only when
-    every step succeeds; a failure is recorded in data/schedule/status.json and alerted."""
+    every step succeeds, and from the first day of session the deploy (rules/deploy.toml); a
+    failure or a held day is recorded in data/schedule/status.json and alerted. Exits 3 when
+    the day is held for review."""
     as_of = datetime.date.fromisoformat(day) if day else datetime.datetime.now(datetime.UTC).date()
     steps = daily_steps(as_of, state=state.upper(), site_url=site_url, tier=tier)
     status = run_job("daily", steps, run=cli_runner, notify=osascript_notifier)
+    if status.state == "held":
+        typer.echo(f"daily {as_of}: held for review; see data/schedule/status.json")
+        raise typer.Exit(deploy.HELD)
     typer.echo(f"daily {as_of}: " + ("ok" if status.ok else f"stopped at {status.failed_step}"))
     raise typer.Exit(0 if status.ok else 1)
 
 
 @schedule_app.command("weekly")
 def schedule_weekly_command(
+    site_url: SiteOption,
+    state: StateOption = "GA",
     day: Annotated[
         str | None, typer.Option("--day", help="The day, YYYY-MM-DD [default: today, UTC].")
     ] = None,
 ) -> None:
-    """The weekly job: two full rebuilds over the days so far, then the check, which fails the
-    job below 98% agreement (DR-7)."""
-    # The job's two rebuilds need `lineage rebuild`, which lays the folded days over the
-    # snapshot's archives and runs the whole pipeline; until it is built the job refuses here
-    # rather than failing at its first step (DESIGN.md#updates).
-    if not any(c.name == "rebuild" for c in app.registered_commands):
-        typer.echo(
-            "error: the weekly job needs `lineage rebuild`, which is not built yet", err=True
-        )
-        raise typer.Exit(1)
+    """The weekly job: two full rebuilds over the days the tables have had, then the check,
+    which fails the job below 98% agreement (DR-7); then, before session, a release candidate
+    for review, and during it the week's new origin claims (DESIGN.md#updates)."""
     as_of = datetime.date.fromisoformat(day) if day else datetime.datetime.now(datetime.UTC).date()
-    status = run_job("weekly", weekly_steps(as_of), run=cli_runner, notify=osascript_notifier)
+    steps = weekly_job_steps(state=state.upper(), site_url=site_url, day=as_of)
+    status = run_job("weekly", steps, run=cli_runner, notify=osascript_notifier)
     typer.echo(f"weekly {as_of}: " + ("ok" if status.ok else f"stopped at {status.failed_step}"))
     raise typer.Exit(0 if status.ok else 1)
 

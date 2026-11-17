@@ -6,20 +6,26 @@ is applied now; `publish pages`, the incremental export into a staging copy of t
 export; `publish feed` into that copy; and `publish promote`, which swaps the copy in. A step
 that fails stops the job, so the live export stays the last good one: nothing before the swap
 touches it. Each run writes its outcome to a status file under the data directory, and a failed
-run raises a macOS notification, since the job has no outside service to post to. The job
-builds a local export and feed ready to publish; it deploys and publishes nothing.
+run raises a macOS notification, since the job has no outside service to post to. Before the
+hosted state's first day of session (rules/deploy.toml) the job stops there, at a local export
+and feed; from that day it ends with `publish deploy` (lineage.deploy), which publishes the day
+behind its gates, or holds it: a held day stops the job with status "held", its counts and
+baseline, and an alert, as a failure does.
 
 **The weekly job** compares the updated tables with a full rebuild over the same days and the
 same pinned corpus statistics (`lineage.updates.snapshot`): the share of relatives the two agree
 on must be at least 98%, or the job fails loudly (DR-7). It then reports the drift: how many
-relatives changed when the stoplist and the state boilerplate flag were counted afresh.
+relatives changed when the stoplist and the state boilerplate flag were counted afresh. Before
+session it then prepares a release candidate for review (`publish candidate`), and during it
+lists the week's new origin claims for the maintainer (`publish review`).
 
 The steps are `Step`s, each a `lineage` command line, run by an injectable runner (the CLI in
 a subprocess, or the library in-process in the tests) and alerted by an injectable notifier
 (osascript, or a fake). Two jobs never run at once: the second finds the lock held and stops.
 `scheduling/` holds the launchd templates and the shell runner launchd starts.
 
-Owned by lane L3 (M12). See DESIGN.md#updates, DR-7.
+Owned by lane L3 (M12), the deploy and the weekly job's rebuilds lane L4's. See
+DESIGN.md#updates, DR-7.
 
 See DESIGN.md#dr-13.
 """
@@ -37,6 +43,7 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
 
+from lineage.deploy import DEPLOY_DIR, HELD, DeployRules, in_session, load_rules
 from lineage.incremental import applied_days
 from lineage.paths import DATA
 from lineage.publish import staging_dir
@@ -102,6 +109,7 @@ class DailyPaths:
     tables: Path = DATA / "tables"
     changes: Path = CHANGES_DIR
     export_root: Path = DATA / "export"
+    deploy: Path = DEPLOY_DIR
 
     def export(self, state: str) -> Path:
         return self.export_root / state
@@ -115,10 +123,13 @@ def daily_steps(
     tier: str = "default",
     paths: DailyPaths | None = None,
     paraphrase: bool = True,
+    rules: DeployRules | None = None,
 ) -> Iterator[Step]:
     """The daily job's steps, in order. The update steps are listed once the intake has run,
-    since they are the days it leaves to apply."""
+    since they are the days it leaves to apply. From the state's first day of session the
+    deploy follows the promote."""
     paths = paths if paths is not None else DailyPaths()
+    rules = rules if rules is not None else load_rules()
     export = paths.export(state)
     yield Step(
         "intake",
@@ -173,6 +184,23 @@ def daily_steps(
         ),
     )
     yield Step("promote", ("publish", "promote", "--export", str(export)))
+    if in_session(rules, state, day):
+        yield Step(
+            "deploy",
+            (
+                "publish",
+                "deploy",
+                "--state",
+                state,
+                "--export",
+                str(export),
+                "--changes",
+                str(paths.changes),
+                "--deploy-dir",
+                str(paths.deploy),
+            ),
+            day,
+        )
 
 
 # Running a job.
@@ -186,6 +214,20 @@ class JobStatus:
     finished: str | None = None
     failed_step: str | None = None
     steps: list[dict[str, Any]] = field(default_factory=list[dict[str, Any]])
+    state: str = "running"  # then ok, failed, held (a day held for review) or locked
+    held: dict[str, Any] | None = None  # a held day's counts, baseline and reasons
+
+
+def _held_detail(output: str) -> dict[str, Any]:
+    """The held day's record, the last line `publish deploy` prints when it holds a day."""
+    for line in reversed(output.strip().splitlines()):
+        try:
+            doc = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(doc, dict):
+            return dict(doc)  # pyright: ignore[reportUnknownArgumentType]
+    return {"output": output[-OUTPUT_TAIL:]}
 
 
 def _now() -> datetime:
@@ -213,15 +255,16 @@ def run_job(
     status_dir: Path = SCHEDULE_DIR,
     now: Callable[[], datetime] = _now,
 ) -> JobStatus:
-    """Run each step in order and stop at the first that fails. The outcome goes to the
-    status file, and a failure, or a job already running, to the notifier."""
+    """Run each step in order and stop at the first that fails or holds a day. The outcome
+    goes to the status file, and a failure, a held day, or a job already running, to the
+    notifier."""
     status = JobStatus(job=job, started=now().isoformat())
     status_dir.mkdir(parents=True, exist_ok=True)
     with (status_dir / LOCK_FILE).open("w") as lock:
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
-            status.ok, status.failed_step = False, "lock"
+            status.ok, status.failed_step, status.state = False, "lock", "locked"
             status.finished = now().isoformat()
             notify(NOTIFY_TITLE, f"The {job} job did not start: another job is running.")
             return status
@@ -241,8 +284,22 @@ def run_job(
                     "output": outcome.output[-OUTPUT_TAIL:],
                 }
             )
+            if outcome.code == HELD and step.name == "deploy":
+                status.ok, status.state = False, "held"
+                status.held = _held_detail(outcome.output)
+                status.finished = now().isoformat()
+                path = _write_status(status, status_dir)
+                held_day = status.held.get("day", step.day.isoformat() if step.day else "the day")
+                reasons = "; ".join(status.held.get("reasons", []))[:200]
+                notify(
+                    NOTIFY_TITLE,
+                    f"The {job} job held {held_day} for review; nothing was published."
+                    + (f" {reasons}." if reasons else "")
+                    + f" After review: lineage publish release --day {held_day} (see {path})",
+                )
+                return status
             if outcome.code != 0:
-                status.ok, status.failed_step = False, step.name
+                status.ok, status.failed_step, status.state = False, step.name, "failed"
                 status.finished = now().isoformat()
                 path = _write_status(status, status_dir)
                 last = outcome.output.strip().splitlines()[-1:] or [f"exit code {outcome.code}"]
@@ -252,7 +309,7 @@ def run_job(
                     f"{last[0][:200]} (see {path})",
                 )
                 return status
-        status.ok = True
+        status.ok, status.state = True, "ok"
         status.finished = now().isoformat()
         _write_status(status, status_dir)
         return status
@@ -434,6 +491,9 @@ class WeeklyPaths:
     pinned: Path = DATA / "rebuild" / "pinned"
     refreshed: Path = DATA / "rebuild" / "refreshed"
     report: Path = WEEKLY_REPORT
+    changes: Path = CHANGES_DIR
+    export_root: Path = DATA / "export"
+    deploy: Path = DEPLOY_DIR
 
 
 def weekly_steps(as_of: date, *, paths: WeeklyPaths | None = None) -> list[Step]:
@@ -465,6 +525,10 @@ def weekly_steps(as_of: date, *, paths: WeeklyPaths | None = None) -> list[Step]
                 days,
                 "--through",
                 as_of.isoformat(),
+                # The same texts' vectors, not the statistics: a window's vector does not
+                # depend on the stoplist or the flag.
+                "--vectors-from",
+                tables,
                 "--out",
                 str(paths.refreshed),
             ),
@@ -487,6 +551,62 @@ def weekly_steps(as_of: date, *, paths: WeeklyPaths | None = None) -> list[Step]
             as_of,
         ),
     ]
+
+
+def weekly_job_steps(
+    paths: WeeklyPaths | None = None,
+    *,
+    state: str | None = None,
+    site_url: str | None = None,
+    day: date | None = None,
+    rules: DeployRules | None = None,
+) -> list[Step]:
+    """The weekly job's rebuilds and check, over the days the updated tables have had: through
+    the last one applied, since pinned statistics come from tables at the same day and a day
+    taken in but not applied is not in the tables to agree with; none before any day is.
+
+    For a hosted `state`, then: before its first day of session, a release candidate packed and
+    gated for review; from it, the week's new origin claims for the maintainer's review. Both
+    come after the check, so a live track that has drifted prepares nothing."""
+    paths = paths if paths is not None else WeeklyPaths()
+    applied = applied_days(paths.tables)
+    steps = weekly_steps(max(applied), paths=paths) if applied else []
+    if state is None or site_url is None or day is None:
+        return steps
+    rules = rules if rules is not None else load_rules()
+    common = (
+        "--state",
+        state,
+        "--site-url",
+        site_url,
+        "--tables",
+        str(paths.tables),
+        "--changes",
+        str(paths.changes),
+        "--deploy-dir",
+        str(paths.deploy),
+    )
+    if in_session(rules, state, day):
+        steps.append(
+            Step("review", ("publish", "review", *common, "--through", day.isoformat()), day)
+        )
+    else:
+        steps.append(
+            Step(
+                "candidate",
+                (
+                    "publish",
+                    "candidate",
+                    *common,
+                    "--export",
+                    str(paths.export_root / state),
+                    "--day",
+                    day.isoformat(),
+                ),
+                day,
+            )
+        )
+    return steps
 
 
 # The launchd templates.
