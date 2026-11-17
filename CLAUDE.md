@@ -69,6 +69,14 @@ uv run lineage text sample   # quality test: fetch a seeded sample per state and
 uv run lineage text fetch    # fetch every planned record as rules/text_layer.toml says, California from its bulk download; resumable -> data/text/full/, reports/text_fetch.json
 uv run lineage export --state GA  # the static site's JSON for one state -> data/export/GA/ (local), reports/export.json
 uv run lineage export --schema   # the export's JSON Schema, the site's contract -> schema/export.schema.json
+uv run lineage export --state GA --package data-ga-YYYY-MM-DD  # the export as a release asset, checksums.json inside, refused unless every file is one the contract names -> data/export/, pinned in site/data-release.json
+uv run lineage publish pages --state GA  # the live track: the logged days the export lacks, only the files they touch rewritten, into a staging copy -> data/export/GA.staging/, data/publish/GA.json
+uv run lineage publish feed --site-url URL  # the national Atom feed of the live track's events, checked against RFC 4287 -> <staging>/feed.xml
+uv run lineage publish promote --state GA  # swap the staging copy in as the live export; deploys nothing
+uv run lineage publish weekly --pinned DIR  # the weekly rebuild's check: agreement with the updated tables, failing below 98%, and the drift -> data/schedule/weekly.json
+uv run lineage schedule daily --site-url URL  # the daily job: intake, update, pages, feed, promote, stopping at a failed step and alerting -> data/schedule/status.json
+uv run lineage schedule weekly   # the weekly job; refuses until `lineage rebuild` exists
+uv run lineage schedule plist daily --out FILE --site-url URL  # fill a launchd template from scheduling/; loading it is by hand
 uv run python -m evals.fixture  # rebuild tests/fixtures/commission/ from the local snapshot, dev only
 uv run python -m benchmarks.minhash  # NumPy vs datasketch: signing and LSH index time and memory (DR-3), dev only
 uv run lineage model fetch   # the pinned embedding models' files, hash-checked -> data/models/<name>/
@@ -78,7 +86,7 @@ uv run python -m benchmarks.ann  # IVF-PQ and HNSW against exact search on a sam
 LEAK_CHECK_TERMS=... uv run python -m tools.leak_check --history  # no local path or deny-listed term (any case) in any file or commit; CI runs it
 ```
 
-All four checks must pass before every commit. CI runs the same four commands, then the leak check, whose deny list comes from the `LEAK_CHECK_TERMS` repository secret. Run the leak check before every push.
+All four checks must pass before every commit. CI runs the same four commands, the site's checks over both fixtures, then the leak check, whose deny list comes from the `LEAK_CHECK_TERMS` repository secret. Run the leak check before every push. On pull requests to main, data.yml downloads the pinned data release, verifies it, builds the site from it and runs the copy check.
 
 ## Layout
 
@@ -159,6 +167,11 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   ann.py          nearest neighbors over unit vectors: exact search, and faiss indexes (build extra), typed
   export_schema.py  the site's data contract: every exported file as a Pydantic model, which emits the JSON Schema
   export.py       `lineage export`: bill pages, comparisons, section texts, stories and the data stamp for one state
+  release.py      the data release: the export contract's files, packing with its checksum manifest, pinning (DESIGN.md#export)
+  origin_story.py  the origin story's rule, which names no organization, and its file (DESIGN.md#export)
+  publish.py      `lineage publish pages|promote`: the pages a day's changes touch, rewritten in a staging copy, and the swap (DESIGN.md#updates)
+  feed.py         `lineage publish feed`: the national Atom feed of the live track's events, checked against RFC 4287
+  schedule.py     `lineage schedule`: the daily and weekly jobs under launchd, their status and alerts; the weekly agreement check and drift
   updates.py      the live track's contracts (DR-7): days, records over time, the change log, the snapshot an update must equal
   incremental.py  `lineage update`'s body, one day applied in both directions in a staging view, journaled per day
   modeldocs.py    model legislation: each source's entry, each collected document, texts per version under data/modeldocs/
@@ -174,9 +187,10 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   origin_recall.py  `lineage eval origins`: model-to-bill recall from the resolved answer keys; a sealed key only with --final
   origin_precision.py  `lineage origin-sample` and `eval origin-precision`: seeded samples of origin matches, the tuning part by share band, the reporting part by stage at the floor; v2's label budget; the reporting reading by source
   origin_labels.py  `lineage origin-label`: a match's strongest section pair, both sections and their passages, asked in one batch; rows by text hash
-  generic_sections.py  a section's generic kind by its opening: definitions, short title, findings, or lineage.boilerplate's kinds
+  generic_sections.py  a section's generic kind by its heading or opening, within its kind's bound: definitions, short title, findings, severability and the rest, or lineage.boilerplate's kinds
   origin_threshold.py  `lineage eval origin-threshold`: each candidate floor's weighted precision and development recall
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
+scheduling/       the live track's launchd templates and run.sh; nothing loads them
 tools/            dev and CI checks
   leak_check.py   local paths and deny-listed terms in tracked files and every commit
 evals/            eval inputs: ulc_enactments.csv (hand copy of the commission's lists, dated), ulc_enactments_heldout.csv (the held-out acts' lists, reserves included), precision_labels.jsonl (the precision sample's labels, keyed by Open States bill id and section text hash; labelers by GitHub handle or model id; no text)
@@ -187,6 +201,7 @@ tests/            pytest; small committed fixtures only
   fixtures/collect/  synthetic responses in the commission site's shape, for its collector's tests
   fixtures/intake/  API v3 responses constructed in the documented shape, synthetic bills and sponsors
   days.py         recorded days for the live track, built at test time from fixtures/commission/, and the reference rebuild
+  live.py         the live track built once per session over the recorded days: updated tables, a pinned and a refreshed rebuild, for the publish, feed and schedule tests
   fixture_export.py  builds fixtures/export/: Utah's bills, synthetic model documents, hand-made origins (LINEAGE_REGENERATE=1 rewrites it)
   fixtures/export/  the fixture export every v2 lane builds and tests against (committed, generated)
   collector_fixtures/  two synthetic sources, one leaked, for the registry and the fixture export
