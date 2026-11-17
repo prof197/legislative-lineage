@@ -5,7 +5,7 @@
 // The site states shared wording and dates, never direction or authorship, so a line names how
 // much wording the bill and the document share and nothing about which came first or who wrote
 // either.
-import type { Origin, SourceEntry } from "@/types/export";
+import type { BillRef, Origin, SourceEntry } from "@/types/export";
 
 // The sources page's inclusion rule, as ruled.
 export const INCLUSION_RULE =
@@ -106,3 +106,34 @@ export function bySource(sources: readonly SourceEntry[]): SourceEntry[] {
   return [...sources].sort((x, y) => x.organization.localeCompare(y.organization) || x.key.localeCompare(y.key));
 }
 
+// The origin story (DESIGN.md#export): one passed bill and the listed model document both stages
+// found holding the most of its wording, chosen by lineage.origin_story's rule, which names no
+// organization. Until the export's schema carries the story's file, its shape is written here from
+// the generated types; it is the proposed OriginStory model, field for field.
+export type OriginStory = { bill: BillRef; origin: Origin; eligible: number };
+
+// The story's own words. The organization appears only in the origin line and the publishers line,
+// as the data names it; nothing here says who wrote the bill or which text came first.
+export function originStoryCopy(s: OriginStory, names: { bill: string; state: string }) {
+  const found = `with a listed model document that both stages found`;
+  const rule =
+    s.eligible === 1
+      ? `It is the only passed ${names.state} bill ${found}. Among several, the one with the largest share of its wording in such a document would be shown; a tie would go to the larger share of the model, then the lower bill id.`
+      : `Of the ${s.eligible.toLocaleString("en-US")} passed ${names.state} bills ${found}, this bill has the largest share of its wording in such a document. A tie goes to the larger share of the model, then the lower bill id.`;
+  return {
+    title: `${names.bill} and a published model`,
+    headline: `A passed ${names.state} bill that shares wording with a published model`,
+    lede: `${names.bill}, ${s.bill.title}, passed.`,
+    shares: [
+      `${capitalized(percent(s.origin.bill_share))} of ${possessive(names.bill)} wording is in sections that match sections of the model, by shared wording or similar meaning.`,
+      `The model's matching sections hold ${percent(s.origin.model_share)} of its wording.`,
+      "Sections such as definitions, severability and effective dates are left out of both counts.",
+    ],
+    rule: `${rule} The rule names no organization; the one shown is whichever publishes the document.`,
+  };
+}
+
+export const ORIGIN_STORY_CAVEAT = "Matching shows where the texts share wording, not who wrote either one or which came first.";
+
+export const NO_ORIGIN_STORY = (state: string): string =>
+  `No passed ${state} bill in this data has a listed model document that both stages found.`;
