@@ -112,6 +112,7 @@ from lineage.faithfulness import with_earlier_runs as with_earlier_faithfulness
 from lineage.featured import PAIRS as FEATURED_PAIRS
 from lineage.featured import REPORT as FEATURED_REPORT
 from lineage.featured import FeaturedError, build_featured, write_featured
+from lineage.feed import FeedError, write_feed
 from lineage.fetch import SOURCE, FetchError, fetch_raw, open_url
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
@@ -224,6 +225,7 @@ from lineage.paths import DATA
 from lineage.precision import SAMPLE as PRECISION_SAMPLE
 from lineage.precision import SAMPLE_REPORT as PRECISION_SAMPLE_REPORT
 from lineage.precision import PrecisionError, build_sample, estimate, load_sizes, write_sample
+from lineage.publish import PublishError, export_changes, promote, staging_dir
 from lineage.query import IndexMissingError, query_text, require_index
 from lineage.relatives_sample import LABELS as RELATIVES_LABELS
 from lineage.relatives_sample import PARTS as RELATIVES_PARTS
@@ -236,12 +238,25 @@ from lineage.relatives_sample import (
 )
 from lineage.relatives_sample import estimate as relatives_estimate
 from lineage.relatives_sample import write_sample as write_relatives_sample
+from lineage.release import ReleaseError
 from lineage.results_table import (
     EXPORTED_ONLY,
     README,
     SAMPLED_STATE_REPORT,
     ResultsTableError,
     rendered_readme,
+)
+from lineage.schedule import (
+    TEMPLATES,
+    WEEKLY_REPORT,
+    ScheduleError,
+    cli_runner,
+    daily_steps,
+    osascript_notifier,
+    render_template,
+    run_job,
+    weekly_report,
+    weekly_steps,
 )
 from lineage.sectioning import SectioningError, build_sections
 from lineage.semantic import MODEL as SEMANTIC_MODEL
@@ -1649,8 +1664,10 @@ def export_command(
         str | None,
         typer.Option(
             "--package",
-            help="Package the existing export as a release asset under this tag, with its "
-            "SHA-256, pin it in the release manifest, and stop.",
+            help="Package the existing export as a release asset under this tag "
+            "(data-<st>-YYYY-MM-DD), refused unless every file is one the export contract names "
+            "and valid against its model, with checksums.json inside and its SHA-256 beside it; "
+            "pin it in the release manifest, and stop.",
         ),
     ] = None,
     release_manifest: Annotated[
@@ -1674,10 +1691,10 @@ def export_command(
             asset, checksum = package_export(
                 target, state=state, tag=package_tag, out_dir=target.parent
             )
-        except ExportError as e:
+            write_release_manifest(asset, tag=package_tag, path=release_manifest)
+        except (ExportError, ReleaseError) as e:
             typer.echo(f"error: {e}", err=True)
             raise typer.Exit(1) from e
-        write_release_manifest(asset, tag=package_tag, path=release_manifest)
         typer.echo(
             f"{checksum.read_text().strip()} ({asset.stat().st_size / 1e6:.1f} MB) -> {asset}"
         )
@@ -2858,3 +2875,259 @@ def eval_pair_data(
             f"recall {at.get('test_recall')}"
         )
     typer.echo(f"-> {report}")
+
+
+PUBLISH_REPORTS = DATA / "publish"
+
+publish_app = typer.Typer(
+    no_args_is_help=True,
+    help="The live track's publishing: the incremental export, the feed and the swap.",
+)
+app.add_typer(publish_app, name="publish")
+schedule_app = typer.Typer(
+    no_args_is_help=True, help="The live track's scheduled jobs, as launchd runs them."
+)
+app.add_typer(schedule_app, name="schedule")
+
+StateOption = Annotated[str, typer.Option("--state", help="The hosted state, by postal code.")]
+ChangesOption = Annotated[
+    Path, typer.Option("--changes", help="The change log, one file per day (local).")
+]
+SiteOption = Annotated[
+    str, typer.Option("--site-url", help="The site's address, absolute, for the feed's links.")
+]
+
+
+@publish_app.command("pages")
+def publish_pages_command(
+    state: StateOption = "GA",
+    tables: TablesOption = DATA / "tables",
+    export: Annotated[
+        Path | None,
+        typer.Option("--export", help="The live export (local); default data/export/<ST>."),
+    ] = None,
+    changes: ChangesOption = CHANGES_DIR,
+    since: Annotated[
+        str | None,
+        typer.Option("--since", help="Apply the logged days from this one, YYYY-MM-DD."),
+    ] = None,
+    cache: Annotated[
+        Path, typer.Option("--cache", help="Cached explanations (committed).")
+    ] = EXPLAIN_CACHE,
+    paraphrase: Annotated[
+        bool,
+        typer.Option(
+            "--paraphrase/--no-paraphrase",
+            help="Mark paraphrase as the export in place was built (local model).",
+        ),
+    ] = True,
+    models_dir: Annotated[
+        Path, typer.Option("--models", help="Directory of model files (local).")
+    ] = MODELS_DIR,
+    workers: Annotated[
+        int, typer.Option("--workers", help="Processes aligning section pairs.")
+    ] = EXPORT_WORKERS,
+    featured_pairs: Annotated[
+        Path, typer.Option("--featured-pairs", help="The featured pairs (committed).")
+    ] = FEATURED_PAIRS,
+    featured_report: Annotated[
+        Path, typer.Option("--featured-report", help="Each story's relatives (committed).")
+    ] = FEATURED_REPORT,
+    stories_rules: Annotated[
+        Path, typer.Option("--stories", help="Which stories each state's site carries (committed).")
+    ] = STORIES_RULES,
+    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """Apply the logged days the export lacks to a staging copy of it, rewriting only the files
+    they touch -> <export>.staging/, data/publish/<ST>.json (DESIGN.md#updates)."""
+    state = state.upper()
+    target = export if export is not None else EXPORT_DIR / state
+    try:
+        doc = export_changes(
+            tables,
+            state=state,
+            export=target,
+            changes_dir=changes,
+            since=datetime.date.fromisoformat(since) if since else None,
+            models_dir=models_dir if paraphrase else None,
+            workers=workers,
+            cache=cache,
+            featured_pairs=featured_pairs,
+            featured_report=featured_report,
+            stories_rules=stories_rules,
+            results=results,
+            floor=int(min_free_gib * GiB),
+            progress=typer.echo,
+        )
+    except (
+        PublishError,
+        ExportError,
+        NotCachedError,
+        SemanticPairsError,
+        StateBoilerplateError,
+        UpdateError,
+        InsufficientDiskSpaceError,
+    ) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    PUBLISH_REPORTS.mkdir(parents=True, exist_ok=True)
+    report = PUBLISH_REPORTS / f"{state}.json"
+    report.write_text(json.dumps(doc, indent=1) + "\n")
+    written = sum(doc["files_written"].values())
+    typer.echo(
+        f"{len(doc['days'])} days applied, as of {doc['as_of']}: {written} files written, "
+        f"{doc['files_removed']} removed, {doc['section_pairs_aligned']} section pairs aligned; "
+        f"{len(doc['beyond_log'])} beyond the log -> {doc['staging']}, {report}"
+    )
+
+
+@publish_app.command("feed")
+def publish_feed_command(
+    site_url: SiteOption,
+    state: StateOption = "GA",
+    tables: TablesOption = DATA / "tables",
+    export: Annotated[
+        Path | None,
+        typer.Option(
+            "--export", help="The export to write feed.xml into; default the staging copy."
+        ),
+    ] = None,
+    changes: ChangesOption = CHANGES_DIR,
+) -> None:
+    """The Atom feed of the live track's events from every state, checked against RFC 4287
+    -> <export>/feed.xml (DESIGN.md#updates)."""
+    state = state.upper()
+    target = export if export is not None else staging_dir(EXPORT_DIR / state)
+    try:
+        doc = write_feed(tables, state=state, export=target, site_url=site_url, changes_dir=changes)
+    except (FeedError, PublishError, ExportError, FileNotFoundError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    kinds = ", ".join(f"{k} {v}" for k, v in doc["by_kind"].items())
+    typer.echo(
+        f"{doc['entries']} entries through {doc['through']} ({kinds or 'none'}), "
+        f"{len(doc['states'])} states, {doc['bytes']:,} bytes -> {doc['path']}"
+    )
+
+
+@publish_app.command("promote")
+def publish_promote_command(
+    state: StateOption = "GA",
+    export: Annotated[
+        Path | None,
+        typer.Option("--export", help="The live export (local); default data/export/<ST>."),
+    ] = None,
+) -> None:
+    """Swap the staging copy in as the live export. Nothing is deployed or published."""
+    target = export if export is not None else EXPORT_DIR / state.upper()
+    try:
+        promote(target)
+    except PublishError as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    typer.echo(f"-> {target}")
+
+
+@publish_app.command("weekly")
+def publish_weekly_command(
+    pinned: Annotated[
+        Path, typer.Option("--pinned", help="A full rebuild with the base build's statistics.")
+    ],
+    updated: Annotated[Path, typer.Option("--updated", help="The updated tables (local).")] = DATA
+    / "tables",
+    refreshed: Annotated[
+        Path | None,
+        typer.Option("--refreshed", help="A full rebuild with the statistics counted afresh."),
+    ] = None,
+    report: Annotated[
+        Path, typer.Option("--report", help="The weekly report (local).")
+    ] = WEEKLY_REPORT,
+) -> None:
+    """The weekly rebuild's check: the share of relatives the updated tables and the rebuild
+    agree on, failing below 98%, and the drift when the statistics are refreshed (DR-7)."""
+    try:
+        doc = weekly_report(updated, pinned, refreshed, report=report)
+    except ScheduleError as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    a, d = doc["agreement"], doc["drift"]
+    drifted = "" if d is None else f"; {d['relatives_changed']} relatives drift when refreshed"
+    typer.echo(
+        f"{a['share']:.2%} of relatives agree ({a['relatives_agreed']} of "
+        f"{a['relatives_updated']}){drifted} -> {report}"
+    )
+
+
+@schedule_app.command("daily")
+def schedule_daily_command(
+    site_url: SiteOption,
+    state: StateOption = "GA",
+    day: Annotated[
+        str | None, typer.Option("--day", help="The day, YYYY-MM-DD [default: today, UTC].")
+    ] = None,
+    tier: Annotated[str, typer.Option("--tier", help="The intake key's limits.")] = "default",
+) -> None:
+    """The daily job: intake, update, the incremental export and the feed, swapped in only when
+    every step succeeds; a failure is recorded in data/schedule/status.json and alerted."""
+    as_of = datetime.date.fromisoformat(day) if day else datetime.datetime.now(datetime.UTC).date()
+    steps = daily_steps(as_of, state=state.upper(), site_url=site_url, tier=tier)
+    status = run_job("daily", steps, run=cli_runner, notify=osascript_notifier)
+    typer.echo(f"daily {as_of}: " + ("ok" if status.ok else f"stopped at {status.failed_step}"))
+    raise typer.Exit(0 if status.ok else 1)
+
+
+@schedule_app.command("weekly")
+def schedule_weekly_command(
+    day: Annotated[
+        str | None, typer.Option("--day", help="The day, YYYY-MM-DD [default: today, UTC].")
+    ] = None,
+) -> None:
+    """The weekly job: two full rebuilds over the days so far, then the check, which fails the
+    job below 98% agreement (DR-7)."""
+    # The job's two rebuilds need `lineage rebuild`, which lays the folded days over the
+    # snapshot's archives and runs the whole pipeline; until it is built the job refuses here
+    # rather than failing at its first step (DESIGN.md#updates).
+    if not any(c.name == "rebuild" for c in app.registered_commands):
+        typer.echo(
+            "error: the weekly job needs `lineage rebuild`, which is not built yet", err=True
+        )
+        raise typer.Exit(1)
+    as_of = datetime.date.fromisoformat(day) if day else datetime.datetime.now(datetime.UTC).date()
+    status = run_job("weekly", weekly_steps(as_of), run=cli_runner, notify=osascript_notifier)
+    typer.echo(f"weekly {as_of}: " + ("ok" if status.ok else f"stopped at {status.failed_step}"))
+    raise typer.Exit(0 if status.ok else 1)
+
+
+@schedule_app.command("plist")
+def schedule_plist_command(
+    job: Annotated[str, typer.Argument(help="daily or weekly.")],
+    out: Annotated[Path, typer.Option("--out", help="Where the filled plist goes (local).")],
+    site_url: SiteOption,
+    state: StateOption = "GA",
+    hour: Annotated[int, typer.Option("--hour", help="The hour it runs, local time.")] = 7,
+    label: Annotated[str, typer.Option("--label", help="launchd's label prefix.")] = (
+        "local.legislative-lineage"
+    ),
+) -> None:
+    """Fill a launchd template with this checkout, the data directory and the PATH it runs
+    under -> OUT. Loading it with launchctl is the operator's step."""
+    if job not in ("daily", "weekly"):
+        typer.echo("error: the job is daily or weekly", err=True)
+        raise typer.Exit(1)
+    values = {
+        "REPO": str(Path.cwd().resolve()),
+        "DATA": str(DATA.resolve()),
+        "STATE": state.upper(),
+        "SITE_URL": site_url,
+        "PATH": os.environ.get("PATH", "/usr/bin:/bin"),
+        "HOUR": str(hour),
+        "LABEL": label,
+    }
+    try:
+        text = render_template((TEMPLATES / f"lineage-{job}.plist.template").read_text(), values)
+    except ScheduleError as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    out.write_text(text)
+    typer.echo(f"-> {out}; load it with launchctl when ready")
