@@ -1,8 +1,12 @@
 # Legislative Lineage
 
-Find bills in other states that share provisions with a state bill, matched section by section, and see how each one's text differs. It shows that texts are alike and when each appeared, not who wrote them or why.
+Find bills in other states that share provisions with a state bill, matched section by section, and see how each one's text differs. Find, too, the published model legislation the bill shares wording with. It shows that texts are alike and when each appeared, not who wrote them or why.
 
 **See it.** [The Georgia site](https://prof197.github.io/legislative-lineage/) lists, for each of Georgia's bills from the 2023–2026 sessions, the bills in other states that share its provisions, with side-by-side comparisons and three featured stories.
+
+**Documented origins.** A bill's page also lists the model bills it shares wording with, from any organization that publishes model legislation in a public collection: the Uniform Law Commission, advocacy groups, think tanks, and trade and lobbying groups. Each origin gives both shares, how much of the bill's wording is found in the model and how much of the model the bill covers, and links to the document. The model's text is never shown, and a shared passage is not a claim that the organization drafted the bill or asked for it. Each organization is described by what kind of organization it is and its tax status, from public filings, and documents that became public through a leak are labeled leaked. The sources page lists every library matched, whether or not any bill matches it, with its terms and how many documents were collected ([DESIGN.md](DESIGN.md#model-documents)).
+
+**Kept current.** A live track reads each day's new and changed bills from Open States' API and matches each new text against the whole corpus in both directions, so a published bill gains a relative when another state introduces one. A national Atom feed carries the events from every state: a hosted bill with new relatives, a bill that gains a relative or a match to a published model, and a family whose first versions reach several states in a short span, stated as dates and shared text, never as who drew on whom. Each update must give what a full rebuild over the same days gives, and a weekly rebuild during session checks it ([DESIGN.md](DESIGN.md#updates)). How long a new bill's matches take to surface will be reported weekly once it runs in session ([OUTCOMES.md](OUTCOMES.md)).
 
 **Does it work?**
 
@@ -13,6 +17,7 @@ Find bills in other states that share provisions with a state bill, matched sect
 | The same, on four acts never used while tuning | 17 of 19 (89.5%) | `uv run lineage eval commission --held-out --final` |
 | Judged by a model: do the related bills a page lists share the provision? (100 sampled from Georgia's pages) | 0.83 [0.74, 0.89] | `uv run lineage eval relatives` |
 | Judged by a model: do the explanations describe the text they cite? (359 claims) | 0.87 [0.83, 0.90] | `uv run lineage eval faithfulness` |
+| Matched as published model legislation, does a uniform act find the bills that enacted it? (three acts, at the listing floor) | 31 of 36 (86.1%) | `uv run lineage eval origins` |
 <!-- /results:summary -->
 
 **Where it falls short.**
@@ -21,7 +26,9 @@ Find bills in other states that share provisions with a state bill, matched sect
 - **Maine's amended bills are not in the corpus as amended.** For a bill of Maine's 131st Legislature rewritten in committee, the enacted wording is in a separate document of adopted amendments, which the text layer does not fetch ([DESIGN.md](DESIGN.md#parked)).
 - **Minnesota's text includes the language a bill deletes.** Comparisons strike it through, but it is still matched as if it were law the bill makes ([DESIGN.md](DESIGN.md#known-failure-modes)).
 - **It covers the 2023–2026 sessions only.** A relative introduced before 2023 is not found ([DESIGN.md](DESIGN.md#data-snapshot)).
-- **No evaluation has expert labels.** Precision and faithfulness are a model's judgments. A person checked a sample of the model's precision labels, but not with legal training, which labels that settle the question would need ([DESIGN.md](DESIGN.md#precision-sample)).
+- **An origin can be missed, by design, to keep wrong ones out.** An origin names an organization, so a wrong one costs more than a missed one: a bill lists a model only when one of the two shares reaches a floor, and the standard sections that models and bills share, such as definitions, findings, severability and effective dates, are left out on both sides. Some enactments of the commission's acts fall under the floor ([Results](#results), [DESIGN.md](DESIGN.md#origin-matches)).
+- **Only published collections are matched.** A model that no public library or archive holds cannot be found; the sources page lists the libraries that are matched.
+- **No evaluation has expert labels.** Precision, origin precision and faithfulness are a model's judgments. A person checked a sample of the model's precision labels, but not with legal training, which labels that settle the question would need ([DESIGN.md](DESIGN.md#precision-sample)).
 
 [Results](#results) has the detail and [DESIGN.md](DESIGN.md) how each figure was measured.
 
@@ -31,7 +38,7 @@ Find bills in other states that share provisions with a state bill, matched sect
 
 **Used it on real work?** [OUTCOMES.md](OUTCOMES.md) records where it has been used.
 
-**Data.** Bill data from [Open States](https://open.pluralpolicy.com/), by [Plural Policy](https://pluralpolicy.com/) (public domain); bill text from each legislature's website.
+**Data.** Bill data from [Open States](https://open.pluralpolicy.com/), by [Plural Policy](https://pluralpolicy.com/) (public domain); bill text from each legislature's website. Model legislation from each source's public library or archive, held locally for matching and never committed, redistributed or shown; the sources page states each source's terms as read.
 
 ## Results
 
@@ -70,6 +77,23 @@ Held-out recall: the same measure on four uniform acts never examined while matc
 Misses by both stages, at the step where the near-duplicate stage lost them: never proposed 2.
 <!-- /results:held-out -->
 
+Documented origins are measured the same two ways. Recall comes from the commission's lists, with each uniform act's published text matched as a model document, and counts an enactment found only where its page would list the act. Its sealed key is the held-out lists' reserve acts, which v1 never ran, run once with `--final`; v1's held-out acts are reported beside it but apart, since v1's final run had already looked at their matches. Precision is a model's judgment of a seeded sample of the origins pages list, asked the same passage-level question as the relatives, and read for each source and for one source against the rest as well as overall, since errors concentrated on one organization would be unfair to it ([DESIGN.md](DESIGN.md#origin-matches)).
+
+<!-- results:origins -->
+Origin recall: each uniform act's published text is matched against the corpus as a model document, through both stages and the rule a page lists by, and an enactment is found when the act's document matches one of its bills with the larger of the two shares, of the model's words or of the bill's, at the listing floor of 0.25 or above. Each result carries its 95% Wilson interval, and each command writes `reports/results.json` ([DESIGN.md](DESIGN.md#origin-matches)).
+
+| | Result | Reproduce |
+|---|---|---|
+| Recall on the development key, three acts | 31 of 36, 0.86 [0.71, 0.94] | `uv run lineage eval origins` |
+| Recall on the sealed key, two acts v1 never ran, run once with `--final` | 6 of 6, 1.00 [0.61, 1.00] | `uv run lineage eval origins --key held_out --final` |
+
+Apart from the sealed key, v1's held-out acts: v1's final run looked at their matches, so they test nothing sealed.
+
+| | Result | Reproduce |
+|---|---|---|
+| Recall on v1's four held-out acts: opened in v1; not a sealed test | 16 of 19, 0.84 [0.62, 0.94] | `uv run lineage eval origins --key v1_held_out` |
+<!-- /results:origins -->
+
 ## Known failure modes
 
 Each has a mitigation or a plain disclosure; [DESIGN.md](DESIGN.md#known-failure-modes) has the full list.
@@ -84,6 +108,9 @@ Each has a mitigation or a plain disclosure; [DESIGN.md](DESIGN.md#known-failure
 - **A short provision inside a long section can be missed.**
 - **Explanations come from a model and can be wrong.** Each claim cites the spans it rests on, and the faithfulness eval measures how often a claim describes them correctly.
 - **Minnesota's text includes the language a bill deletes.** Comparisons show it struck through.
+- **An origin is shared wording, not authorship.** A model and a bill can share text because the bill drew on the model, the model on a bill, or both on another text. A page gives both shares and a link, never the model's text.
+- **A model's standard sections can make false origins.** A long severability clause that recites case law matches many bills; sections of the standard kinds are left out of origin matches on both sides.
+- **A model reworded many ways is found by meaning only in its closest matches,** since each of its windows keeps only its nearest corpus texts, as a query does. Matches by wording have no such limit.
 
 ## Building it
 
@@ -141,6 +168,17 @@ uv run lineage query bill.txt
 Embedding every distinct window takes about a day on the reference laptop (`reports/embedding.json`, `seconds`; [DESIGN.md](DESIGN.md#cost-and-runtime)); `lineage embed` resumes where it stopped. Until it has finished, `uv run lineage query bill.txt --no-semantic` searches the near-duplicate stage alone.
 
 A query runs offline against the index and the vectors in `data/tables/`. It lists the families of bills that share sections with the query, found by near-identical text, by similar meaning, or both, and says which. Families found by meaning alone are listed apart from those that share wording, since they are right less often. A family is one state's near-identical bills, such as companion bills in each chamber, counted once. For each family it shows the share of the query's sections with a match, the highest estimated similarity of a near-identical section, and the best cosine of a match by meaning.
+
+### Documented origins
+
+Each source's library is collected by its own collector, one source at a time, through the same fetcher as bill text, which honors robots.txt and paces each host. The collected documents are then matched against the built index and vectors, each one as `lineage query` treats a bill:
+
+```sh
+uv run lineage collect-models commission   # one source -> data/modeldocs/commission/, reports/modeldocs/commission.json
+uv run lineage origins                     # every collected document against the corpus
+```
+
+The commission's collector reads the act texts already in `data/acts/` and asks the commission's site only for its robots.txt, since fetching from the site is off until its terms are ruled on. Collected texts stay in `data/modeldocs/`, which is gitignored; each source's coverage report, which counts the documents found, collected, unchanged, blocked and failed, is committed.
 
 ### The site
 

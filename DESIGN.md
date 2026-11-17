@@ -1041,3 +1041,164 @@ The filter does not bias the recall eval. It selects on what kind of document a 
 - At full scale the index's approximate search means an update and a rebuild can differ in the last neighbors, so the exact guarantee holds at fixture scale only. The weekly rebuild doubles as the full-scale check: before refreshing the statistics it is compared with the updated snapshot, it reports the share of relatives the two agree on, and it fails loudly below 98%.
 
 **Would reverse it.** If an update cannot meet the snapshot on the recorded days without recomputing most of the corpus, the live track rebuilds nightly instead and derives the change log by comparing snapshots.
+
+<a id="dr-8"></a>
+### DR-8 · Model documents matched as a second collection, through the same stages
+
+**Status:** accepted with v2's contracts, which M10's lanes built to ([Lanes](#lanes)); first run on the full corpus 2026-11-15.
+
+**Context.** v1 shows that texts are alike, not where a text came from. v2 shows, for a bill, the published model documents it shares wording with ([Origin matches](#origin-matches)). A model document is not a bill: it belongs to no state or session, its text is held only for matching and never shown ([Model documents](#model-documents)), and the bill corpus's statistics, the stoplist and the state boilerplate flag, are counted over every bill, so whatever joins the corpus moves them and every signature and listing with them ([Updates](#updates)).
+
+**Options.**
+
+- **Add the documents to the bill corpus.** They would move the corpus-wide statistics, and every signature and listing with them.
+- **Query each document against the corpus as `lineage query` queries a bill.** The bill index stays as it is, and a model is held to the bar a relative is.
+
+**Decision.** The second. Each document goes through what `lineage query` does to a bill: its text cleaned by `lineage.modeltext`, its sections and windows, the near-duplicate stage's bands and verification, then exact semantic search, its hits kept by the page's listing rule (`lineage.origin_matching`). A match is per bill, not per family. A text several sources hold, the same cleaned text by its SHA-256, is matched once and its matches credited to each source. The collection is searched in passes, so memory does not grow with the number of documents.
+
+**Consequences.**
+
+- v1's evals carry over: an act text matched as a model finds what v1's commission eval finds, and fed v1's own results as matches, origin recall gives v1's development recall (`tests/test_origin_recall.py`).
+- Each model window keeps its 20 nearest texts, as a query does, so a model reworded more ways than that is found by meaning only in the closest; the near-duplicate stage has no such limit.
+- A model document added to the collection is matched against every bill, and a bill gaining or losing a match is logged like a relative, in the snapshot an update must equal ([DR-7](#dr-7)).
+- The texts stay local, so the fixture export every lane tests against carries synthetic model documents and hand-made matches (`tests/fixtures/export/`).
+
+**Would reverse it.** Not yet recorded.
+
+<a id="dr-9"></a>
+### DR-9 · Evidence as both shares, with the listing floor on the larger
+
+**Status:** decided at the M11 review, 2026-11-16 (`lineage.origins.FLOOR`).
+
+**Context.** A match gives two shares: of the model's words found in the bill, and of the bill's words that come from the model. A bill that borrows one section of a long model and a bill that copies a short model whole read differently, and one share alone would make them look alike ([Origin matches](#origin-matches)). An origin names an organization, so a wrong attribution costs more than a missed one. On the tuning sample, drawn by bands between the candidate floors, the low bands were mostly wrong; the figures are in [Origin matches](#origin-matches) and `reports/origin_threshold_proposal.json`.
+
+**Options.**
+
+- **A floor on one share.** Either share alone leaves out one of the two kinds of match above: the model's share drops a bill that takes one section of a long model, the bill's share a long bill that takes a short model whole.
+- **A floor on the larger share,** at one of the candidate floors, 0, 0.05, 0.10 or 0.25, each read for precision beside its development recall (`uv run lineage eval origin-threshold`).
+- **Both shares at the floor,** weighed later, at the step 47 review. It would raise precision and cut recall, and the reporting sample is not weighted for that question ([Parked](#parked)).
+- **Holding back a model that matches many bills.** The tuning sample's errors sit mostly in a few such documents, but a model that matches many bills is often the finding.
+
+**Decision.** A floor of 0.25 on the larger share. Precision comes before recall.
+
+**Consequences.**
+
+- A bill's page shows both shares, since the floor reads either: the share of the bill's wording found in the model, and the share of the model it covers.
+- The floor is applied wherever an origin is listed: a bill's page in the export, origin recall, and the reporting sample, which draws only from matches at the floor. The matches table keeps every match, so a later floor needs no new matching.
+- Development enactments under the floor are misses, each with its best share recorded ([Origin matches](#origin-matches)). No labels were added inside the band just under it.
+- The sealed key records the floor among the configuration it runs at, once.
+
+**Would reverse it.** Requiring both shares reopens if precision after the generic-section fix ([DR-11](#dr-11)) still falls short on matches listed on the bill's share alone ([Parked](#parked)).
+
+<a id="dr-10"></a>
+### DR-10 · Which sources are matched, and how they are described
+
+**Status:** accepted with the model-documents contract; terms and co-publishers ruled 2026-11-15.
+
+**Context.** An origin names an organization. v1 parked documented origins on the condition that a library would draw its sources even-handedly, from every kind of organization that publishes model bills, and describe matches only ([Parked](#parked)). Some libraries' terms restrict copying, and some documents became public only through a leak.
+
+**Options.**
+
+- **The commission's acts alone,** the first source, whose texts were already on disk ([Model documents](#model-documents)). It would leave out every other kind of organization the parked idea named.
+- **Every organization with a public collection, by one rule,** each described from public filings.
+
+**Decision.** The second.
+
+- **Inclusion.** A source is any organization that publishes text it presents as model or sample state legislation, in a public library or a public archive. A URL robots.txt disallows is never collected, and a source lane reads nothing behind a login, a paywall, a CAPTCHA or a click-through ([Lanes](#lanes)).
+- **Descriptors.** A source's entry says what kind of organization it is from public filings: its type and IRS status, never a political label, and for a membership organization one line on who its members are, with the public page that line comes from.
+- **Leaked documents.** A leaked archive is marked leaked and says how its documents became public, and each of its documents carries the mark.
+- **Terms.** Each entry records what its terms allow and the day they were read. A source whose terms restrict copying is still collected where nothing asks a visitor to accept them first: the copy is held only for matching, and a page gives only the shares and a link.
+- **Co-publishers.** A document published jointly names its other publishers, so a bill page credits each organization though only one library holds it.
+
+**Consequences.**
+
+- Each source's entry and collector live in its own module, so adding a source edits no shared file ([Model documents](#model-documents)).
+- The sources page lists every library the matching reads, whether or not any bill matches it, with its kind, its terms as read and how many documents were collected ([Origin matches](#origin-matches)).
+- Errors concentrated on one organization would be unfair to it, whatever the overall figure, so precision is read for each source and for one source against the rest, and a source with too few labels can be read in full, as EPPC's matches were ([Origin matches](#origin-matches)).
+- A document a later run reads and finds out of scope is withdrawn, its text kept, and one a run could not read is failed, so an outage never empties a library.
+
+**Would reverse it.** For one source: terms read as forbidding this use, or as asking a visitor to accept them first, turn its fetching off, as the commission's site is off until its terms are ruled on ([Lanes](#lanes), [Model documents](#model-documents)).
+
+<a id="dr-11"></a>
+### DR-11 · Generic sections left out of origin matches
+
+**Status:** ruled at the step 47 review, 2026-11-16. Its two limits were added after reading what the first run with the rule set aside, before any of its matches were sampled.
+
+**Context.** EPPC's census, every EPPC match a page listed, came in below the ruling's bar, and nearly all of its wrong matches rest on a severability section on the model's side ([Origin matches](#origin-matches)). EPPC's severability sections recite case law far past what `lineage.boilerplate` strips, since it takes a section only when almost nothing is left without its boilerplate ([Boilerplate](#boilerplate)). On the tuning sample, errors sat mostly in a few documents that match many bills on generic passages.
+
+**Options.**
+
+- **Hold back a model that matches many bills.** Breadth alone is not suppressed: a model that matches many bills is often the finding ([DR-9](#dr-9)).
+- **Require both shares at the floor.** Parked: many such errors are a short bill falling wholly inside one generic section of a long model, but the sample is not weighted for that question ([Parked](#parked)).
+- **Leave generic sections out of a match,** on both sides, for every source.
+
+**Decision.** The third (`lineage.generic_sections`, `lineage.origin_matching.match_of`).
+
+- A section is generic when `lineage.boilerplate` flags it, or when its heading, right after its number, names definitions, a short title, findings or purpose, severability, an effective date, rules of construction, or a standard article of an interstate compact. A definitions section is also known by its opening. "General provisions" is not a kind, since some acts put substance under it.
+- Terms defined for a section itself serve that section's own provisions, so they make no definitions section unless the section says they apply throughout a chapter or act.
+- A section past its kind's bound has substance merged into it and is a provision: a short title, severability, an effective date and construction are bounded at 750 words, findings and a compact's articles at 1,200 (`lineage.generic_sections.MAX_WORDS`). Definitions have no bound.
+- A section pair counts toward a match only when neither section is generic. Both shares are taken over the sections that are not, and a match's stages, spans and stored pairs are its counted pairs'. A bill whose every pair touches a generic section has no match.
+
+**Consequences.**
+
+- The rule applies to origin matches only. v1's relatives are unchanged.
+- Matches changed, so the reporting sample read before the rule is kept as its own reading (`reports/results.json`, `origins_precision_before_fix`), and precision is read again on a fresh sample drawn after it (`uv run lineage origin-sample --part reporting_after_fix`, then `uv run lineage eval origin-precision`).
+- A census's wrong matches are listed with each section pair's generic kind, with no text (`uv run lineage eval origin-census`).
+
+**Would reverse it.** Not yet recorded. If precision after the rule still falls short on matches listed on the bill's share alone, requiring both shares reopens ([DR-9](#dr-9)).
+
+<a id="dr-12"></a>
+### DR-12 · Origin labels from a model, on each match's strongest pair, under v2's own ledger
+
+**Status:** accepted; the tuning sample labeled and the reporting sample read once on 2026-11-16.
+
+**Context.** Origin precision needs labels. v1's precision labels are a model's, checked against a person's on a subsample, and its passage-level question asks whether the passages a page highlights state the same provision, beyond boilerplate ([Precision sample](#precision-sample)). Labels that settle the question would need legal expertise, which is beyond this project's scope. v1's model calls are held to their own caps.
+
+**Options.**
+
+- **A question of its own for origins.** Its answers would not mean what v1's do.
+- **v1's passage-level question, unchanged,** on the section pair a match's listing rests on most, as a relative is labeled.
+
+**Decision.** The second (`uv run lineage origin-label`).
+
+- A match is labeled on its strongest pair, which the matches table keeps for each match: the near-duplicate pair with the most band agreements, failing that the pair found by meaning at the best cosine. The model's section and the bill's are aligned, and the model sees both.
+- Labels are keyed by section text hashes and hold no text (`evals/origin_precision_labels.jsonl`).
+- Spend goes in v2's own ledger, `reports/origin_label_spend.json`, under v2's cap of $25 for model calls, projected from the prompts as sent and refused over it.
+- The tuning part is drawn by share band between the candidate floors, so no floor's precision rests on a few labels, the failure of v1's first tuning sample. The reporting part is drawn by stage, once, when matching is final, from matches the tuning part did not draw, and read once.
+
+**Consequences.**
+
+- Every origin precision is model-judged. The passage-level question was not itself checked against a person ([Precision sample](#precision-sample)).
+- v2's spend is counted apart from v1's ledgers.
+- A source gets a weighted figure only when every stage holding its matches has a label, and a census can stand in for the sample for one source ([DR-10](#dr-10)).
+- A reading is regenerated only for its intervals: `uv run lineage eval origin-precision --intervals-only` refuses if anything else would move.
+
+**Would reverse it.** Not yet recorded. People's labels, which [Precision sample](#precision-sample) already takes, are estimated apart from the model's and never pooled with them.
+
+<a id="dr-13"></a>
+### DR-13 · The live track's publishing
+
+**Status:** proposed. The calls were made at M12's start and are open to the step 48 review; lane L3 builds to them.
+
+**Context.** Each update is held to a rebuild ([DR-7](#dr-7)), `lineage update` applies a day and `lineage intake` writes one ([Updates](#updates)). What remains is running them each day and publishing what changed: the hosted pages a day touches, and the events.
+
+**Options.**
+
+- **A server** to run the daily job. The index and tables would have to move to it.
+- **A scheduled job on the Mac that holds the index and tables,** under launchd.
+- For the feed's validation, **a parsing dependency**, or **RFC 4287's required elements checked with the standard library's XML parser** ([Lanes](#lanes), Dependencies).
+
+**Decision.** The scheduled job under launchd, and the standard library's parser.
+
+- Each day the job runs intake, `lineage update`, the incremental export of the pages the day's change log touches, and the feed.
+- A failed step stops the job, leaves the published site as it was, writes the failure to a status file under the data directory and raises a macOS notification, since the job has no outside service to post to.
+- The Atom feed is national: events from every state, though hosted bill pages stay the hosted state's. Its events are a new bill of the hosted state with relatives, an existing bill that gains a relative, any bill that gains a match to a published model, and a family gaining first versions from three or more states within 14 days, stated as dates and shared text, never as an attribution.
+- A full rebuild runs weekly during session and fails below 98% agreement with the updated snapshot ([DR-7](#dr-7)).
+
+**Consequences.**
+
+- The job costs nothing to run, and moving it later changes only where `lineage` runs.
+- A failure is reported only on that machine, through the status file and the notification.
+- The feed adds no dependency.
+
+**Would reverse it.** The step 48 review may change any of these calls. Beyond it, [DR-7](#dr-7)'s condition holds: if an update cannot meet the snapshot without recomputing most of the corpus, the live track rebuilds nightly instead.
