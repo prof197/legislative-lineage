@@ -1,54 +1,54 @@
 {
  "documents": 1199,
  "distinct_texts": 1197,
- "matches": 5827,
- "bills": 4926,
+ "matches": 4462,
+ "bills": 3952,
  "by_stage": {
-  "near_duplicate": 1268,
-  "semantic": 1725,
-  "both": 2834
+  "near_duplicate": 899,
+  "semantic": 1319,
+  "both": 2244
  },
  "by_source": {
   "alec": {
    "documents": 1028,
-   "documents_matched": 354,
-   "matches": 3806
+   "documents_matched": 305,
+   "matches": 2927
   },
   "commission": {
    "documents": 9,
    "documents_matched": 9,
-   "matches": 305
+   "matches": 203
   },
   "eppc": {
    "documents": 5,
    "documents_matched": 4,
-   "matches": 159
+   "matches": 58
   },
   "goldwater": {
    "documents": 15,
    "documents_matched": 12,
-   "matches": 115
+   "matches": 105
   },
   "ifs": {
    "documents": 1,
    "documents_matched": 1,
-   "matches": 8
+   "matches": 2
   },
   "ncoil": {
    "documents": 95,
-   "documents_matched": 65,
-   "matches": 986
+   "documents_matched": 63,
+   "matches": 810
   },
   "public-citizen": {
    "documents": 7,
    "documents_matched": 5,
-   "matches": 65
+   "matches": 62
   },
   "states-project": {
    "documents": 39,
-   "documents_matched": 31,
-   "matches": 383
+   "documents_matched": 29,
+   "matches": 295
   }
  },
- "seconds": 5773.2
+ "seconds": 5950.5
 }

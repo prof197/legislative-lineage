@@ -8291,7 +8291,7 @@
    },
    {
     "min_share": 0.5,
-    "found": 27
+    "found": 26
    }
   ],
   "miss_reasons": {
@@ -8399,9 +8399,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/466153a5-6ac0-4a17-b061-aecda47f1135",
-    "model_share": 0.6195,
-    "bill_share": 0.49,
-    "best_share": 0.6195,
+    "model_share": 0.6266,
+    "bill_share": 0.5426,
+    "best_share": 0.6266,
     "miss_reason": null,
     "bills": [
      {
@@ -8411,8 +8411,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.6195,
-      "bill_share": 0.49,
+      "model_share": 0.6266,
+      "bill_share": 0.5426,
       "listed": true,
       "found": true
      }
@@ -8432,7 +8432,7 @@
      "semantic": true
     },
     "found_by": "ocd-bill/46682e76-7ccf-4157-962d-63fff9eecebe",
-    "model_share": 0.618,
+    "model_share": 0.6252,
     "bill_share": 0.9553,
     "best_share": 0.9553,
     "miss_reason": null,
@@ -8444,7 +8444,7 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.618,
+      "model_share": 0.6252,
       "bill_share": 0.9553,
       "listed": true,
       "found": true
@@ -8464,7 +8464,7 @@
       "stages": [
        "near_duplicate"
       ],
-      "model_share": 0.1953,
+      "model_share": 0.1975,
       "bill_share": 0.9426,
       "listed": true,
       "found": true
@@ -8485,9 +8485,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/26a84ccf-f59b-4813-9757-8e12e1bf471b",
-    "model_share": 0.3813,
+    "model_share": 0.3857,
     "bill_share": 0.2693,
-    "best_share": 0.3813,
+    "best_share": 0.3857,
     "miss_reason": null,
     "bills": [
      {
@@ -8497,7 +8497,7 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.3813,
+      "model_share": 0.3857,
       "bill_share": 0.2693,
       "listed": true,
       "found": true
@@ -8518,9 +8518,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/75aaddc4-4261-47f5-977b-fc6618d7df33",
-    "model_share": 0.7883,
-    "bill_share": 0.4869,
-    "best_share": 0.7883,
+    "model_share": 0.7974,
+    "bill_share": 0.4899,
+    "best_share": 0.7974,
     "miss_reason": null,
     "bills": [
      {
@@ -8530,8 +8530,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.7883,
-      "bill_share": 0.4869,
+      "model_share": 0.7974,
+      "bill_share": 0.4899,
       "listed": true,
       "found": true
      }
@@ -8551,9 +8551,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/8bd05268-df20-4e80-8ea6-fee765d633f9",
-    "model_share": 0.5215,
-    "bill_share": 0.4729,
-    "best_share": 0.5215,
+    "model_share": 0.5275,
+    "bill_share": 0.4784,
+    "best_share": 0.5275,
     "miss_reason": null,
     "bills": [
      {
@@ -8563,8 +8563,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.5215,
-      "bill_share": 0.4729,
+      "model_share": 0.5275,
+      "bill_share": 0.4784,
       "listed": true,
       "found": true
      }
@@ -8584,9 +8584,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/a61fad3c-ce0d-44b6-b046-0fab3413357b",
-    "model_share": 0.6323,
-    "bill_share": 0.4336,
-    "best_share": 0.6323,
+    "model_share": 0.6397,
+    "bill_share": 0.4375,
+    "best_share": 0.6397,
     "miss_reason": null,
     "bills": [
      {
@@ -8605,8 +8605,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.6323,
-      "bill_share": 0.4336,
+      "model_share": 0.6397,
+      "bill_share": 0.4375,
       "listed": true,
       "found": true
      }
@@ -8626,9 +8626,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/6f42fae2-b316-4da2-b4c8-c8ee43443091",
-    "model_share": 0.7031,
-    "bill_share": 0.6645,
-    "best_share": 0.7031,
+    "model_share": 0.7113,
+    "bill_share": 0.6992,
+    "best_share": 0.7113,
     "miss_reason": null,
     "bills": [
      {
@@ -8638,8 +8638,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.7031,
-      "bill_share": 0.6645,
+      "model_share": 0.7113,
+      "bill_share": 0.6992,
       "listed": true,
       "found": true
      }
@@ -8661,7 +8661,7 @@
     "found_by": null,
     "model_share": null,
     "bill_share": null,
-    "best_share": 0.2368,
+    "best_share": 0.2395,
     "miss_reason": "below_threshold",
     "bills": [
      {
@@ -8670,7 +8670,7 @@
       "stages": [
        "semantic"
       ],
-      "model_share": 0.2368,
+      "model_share": 0.2395,
       "bill_share": 0.0809,
       "listed": false,
       "found": false
@@ -8721,9 +8721,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/2a51f739-82fd-4614-8ded-9eaca8a19b9a",
-    "model_share": 0.4635,
+    "model_share": 0.4689,
     "bill_share": 0.3901,
-    "best_share": 0.4635,
+    "best_share": 0.4689,
     "miss_reason": null,
     "bills": [
      {
@@ -8733,7 +8733,7 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.4635,
+      "model_share": 0.4689,
       "bill_share": 0.3901,
       "listed": true,
       "found": true
@@ -8745,8 +8745,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.4635,
-      "bill_share": 0.0109,
+      "model_share": 0.4689,
+      "bill_share": 0.011,
       "listed": true,
       "found": true
      },
@@ -8757,7 +8757,7 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.4635,
+      "model_share": 0.4689,
       "bill_share": 0.3901,
       "listed": true,
       "found": true
@@ -8769,8 +8769,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.4635,
-      "bill_share": 0.0176,
+      "model_share": 0.4689,
+      "bill_share": 0.0178,
       "listed": true,
       "found": true
      }
@@ -8829,9 +8829,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/115d9931-94b4-40d4-b822-9eda98f1ae4e",
-    "model_share": 0.4349,
+    "model_share": 0.4399,
     "bill_share": 0.3966,
-    "best_share": 0.4349,
+    "best_share": 0.4399,
     "miss_reason": null,
     "bills": [
      {
@@ -8841,7 +8841,7 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.4349,
+      "model_share": 0.4399,
       "bill_share": 0.3966,
       "listed": true,
       "found": true
@@ -8853,7 +8853,7 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.432,
+      "model_share": 0.437,
       "bill_share": 0.1943,
       "listed": true,
       "found": true
@@ -8904,9 +8904,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/7968b9d9-25ee-4684-a92e-c76167d6f917",
-    "model_share": 0.8183,
-    "bill_share": 0.6047,
-    "best_share": 0.8183,
+    "model_share": 0.8278,
+    "bill_share": 0.6096,
+    "best_share": 0.8278,
     "miss_reason": null,
     "bills": [
      {
@@ -8916,8 +8916,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.8183,
-      "bill_share": 0.6047,
+      "model_share": 0.8278,
+      "bill_share": 0.6096,
       "listed": true,
       "found": true
      }
@@ -8937,9 +8937,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/97b9eec9-c325-456e-b254-044c9c114bae",
-    "model_share": 0.9285,
-    "bill_share": 0.8702,
-    "best_share": 0.9285,
+    "model_share": 0.9064,
+    "bill_share": 0.8212,
+    "best_share": 0.9064,
     "miss_reason": null,
     "bills": [
      {
@@ -8949,8 +8949,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9285,
-      "bill_share": 0.8702,
+      "model_share": 0.9064,
+      "bill_share": 0.8212,
       "listed": true,
       "found": true
      }
@@ -8970,9 +8970,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/8d9dff64-7011-4962-90c3-a1a28a3370d4",
-    "model_share": 0.9027,
-    "bill_share": 0.8367,
-    "best_share": 0.9027,
+    "model_share": 0.8698,
+    "bill_share": 0.8512,
+    "best_share": 0.8698,
     "miss_reason": null,
     "bills": [
      {
@@ -8982,8 +8982,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9027,
-      "bill_share": 0.8367,
+      "model_share": 0.8698,
+      "bill_share": 0.8512,
       "listed": true,
       "found": true
      }
@@ -9003,9 +9003,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/36bad521-9e60-4a20-a39f-aa6a9c7216a0",
-    "model_share": 0.9285,
-    "bill_share": 0.9047,
-    "best_share": 0.9285,
+    "model_share": 0.9064,
+    "bill_share": 0.8764,
+    "best_share": 0.9064,
     "miss_reason": null,
     "bills": [
      {
@@ -9015,8 +9015,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9285,
-      "bill_share": 0.9047,
+      "model_share": 0.9064,
+      "bill_share": 0.8764,
       "listed": true,
       "found": true
      },
@@ -9027,8 +9027,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9285,
-      "bill_share": 0.9047,
+      "model_share": 0.9064,
+      "bill_share": 0.8764,
       "listed": true,
       "found": true
      }
@@ -9048,9 +9048,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/96704f52-935a-45e6-9313-f9e85eddae71",
-    "model_share": 0.9947,
-    "bill_share": 0.972,
-    "best_share": 0.9947,
+    "model_share": 1.0,
+    "bill_share": 0.9684,
+    "best_share": 1.0,
     "miss_reason": null,
     "bills": [
      {
@@ -9060,8 +9060,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9947,
-      "bill_share": 0.972,
+      "model_share": 1.0,
+      "bill_share": 0.9684,
       "listed": true,
       "found": true
      }
@@ -9081,9 +9081,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/c923a345-667d-443b-b897-7157c0767529",
-    "model_share": 0.9947,
-    "bill_share": 0.966,
-    "best_share": 0.9947,
+    "model_share": 1.0,
+    "bill_share": 0.6838,
+    "best_share": 1.0,
     "miss_reason": null,
     "bills": [
      {
@@ -9093,8 +9093,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9947,
-      "bill_share": 0.966,
+      "model_share": 1.0,
+      "bill_share": 0.6838,
       "listed": true,
       "found": true
      }
@@ -9114,9 +9114,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/3cc60328-ce7c-4672-822d-83d1702cfff9",
-    "model_share": 0.9285,
-    "bill_share": 0.0217,
-    "best_share": 0.9285,
+    "model_share": 0.9064,
+    "bill_share": 0.0164,
+    "best_share": 0.9064,
     "miss_reason": null,
     "bills": [
      {
@@ -9126,8 +9126,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9285,
-      "bill_share": 0.0217,
+      "model_share": 0.9064,
+      "bill_share": 0.0164,
       "listed": true,
       "found": true
      }
@@ -9147,9 +9147,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/bb0205d7-bfe0-4789-99cb-0b8712f6a7f8",
-    "model_share": 0.951,
-    "bill_share": 0.9117,
-    "best_share": 0.951,
+    "model_share": 0.9381,
+    "bill_share": 0.8815,
+    "best_share": 0.9381,
     "miss_reason": null,
     "bills": [
      {
@@ -9159,8 +9159,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.951,
-      "bill_share": 0.9117,
+      "model_share": 0.9381,
+      "bill_share": 0.8815,
       "listed": true,
       "found": true
      }
@@ -9180,9 +9180,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/a5394b24-d0b3-4cbb-b5fc-380f6e525e31",
-    "model_share": 0.951,
-    "bill_share": 0.5758,
-    "best_share": 0.951,
+    "model_share": 0.9381,
+    "bill_share": 0.5309,
+    "best_share": 0.9381,
     "miss_reason": null,
     "bills": [
      {
@@ -9192,8 +9192,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.951,
-      "bill_share": 0.5758,
+      "model_share": 0.9381,
+      "bill_share": 0.5309,
       "listed": true,
       "found": true
      }
@@ -9213,9 +9213,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/171b2484-52fb-4dda-b3e3-0baa57ed5099",
-    "model_share": 0.951,
-    "bill_share": 0.8582,
-    "best_share": 0.951,
+    "model_share": 0.9381,
+    "bill_share": 0.8157,
+    "best_share": 0.9381,
     "miss_reason": null,
     "bills": [
      {
@@ -9225,8 +9225,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.951,
-      "bill_share": 0.8582,
+      "model_share": 0.9381,
+      "bill_share": 0.8157,
       "listed": true,
       "found": true
      },
@@ -9237,8 +9237,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.951,
-      "bill_share": 0.8593,
+      "model_share": 0.9381,
+      "bill_share": 0.8172,
       "listed": true,
       "found": true
      },
@@ -9249,8 +9249,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.951,
-      "bill_share": 0.8803,
+      "model_share": 0.9381,
+      "bill_share": 0.845,
       "listed": true,
       "found": true
      }
@@ -9270,9 +9270,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/340d147a-1e99-4b53-81e2-d9e760e63757",
-    "model_share": 0.951,
-    "bill_share": 0.8806,
-    "best_share": 0.951,
+    "model_share": 0.9381,
+    "bill_share": 0.8368,
+    "best_share": 0.9381,
     "miss_reason": null,
     "bills": [
      {
@@ -9282,8 +9282,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.951,
-      "bill_share": 0.8806,
+      "model_share": 0.9381,
+      "bill_share": 0.8368,
       "listed": true,
       "found": true
      }
@@ -9303,9 +9303,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/8af10a38-1f43-49ed-8f32-44856e9b4f2c",
-    "model_share": 0.9947,
-    "bill_share": 0.8795,
-    "best_share": 0.9947,
+    "model_share": 1.0,
+    "bill_share": 0.8438,
+    "best_share": 1.0,
     "miss_reason": null,
     "bills": [
      {
@@ -9315,8 +9315,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9947,
-      "bill_share": 0.8795,
+      "model_share": 1.0,
+      "bill_share": 0.8438,
       "listed": true,
       "found": true
      }
@@ -9336,9 +9336,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/30eb426e-5e8c-4be3-ba3b-9b3ec2f479a1",
-    "model_share": 0.9285,
-    "bill_share": 0.8644,
-    "best_share": 0.9285,
+    "model_share": 0.9064,
+    "bill_share": 0.6177,
+    "best_share": 0.9064,
     "miss_reason": null,
     "bills": [
      {
@@ -9348,8 +9348,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9285,
-      "bill_share": 0.8644,
+      "model_share": 0.9064,
+      "bill_share": 0.6177,
       "listed": true,
       "found": true
      }
@@ -9369,9 +9369,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/a3bec6ea-4c68-4251-b36c-60f0e4053031",
-    "model_share": 0.9947,
-    "bill_share": 0.9118,
-    "best_share": 0.9947,
+    "model_share": 1.0,
+    "bill_share": 0.8888,
+    "best_share": 1.0,
     "miss_reason": null,
     "bills": [
      {
@@ -9381,8 +9381,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9947,
-      "bill_share": 0.9118,
+      "model_share": 1.0,
+      "bill_share": 0.8888,
       "listed": true,
       "found": true
      }
@@ -9402,9 +9402,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/6f465d45-da9a-4770-b4f3-81c6fb0dd2f3",
-    "model_share": 0.2914,
-    "bill_share": 0.0163,
-    "best_share": 0.2914,
+    "model_share": 0.4728,
+    "bill_share": 0.0176,
+    "best_share": 0.4728,
     "miss_reason": null,
     "bills": [
      {
@@ -9414,8 +9414,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.2914,
-      "bill_share": 0.0163,
+      "model_share": 0.4728,
+      "bill_share": 0.0176,
       "listed": true,
       "found": true
      }
@@ -9435,9 +9435,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/213a3799-0793-474f-9bbe-94a3ece4fe1a",
-    "model_share": 0.6398,
-    "bill_share": 0.687,
-    "best_share": 0.687,
+    "model_share": 0.4297,
+    "bill_share": 0.2668,
+    "best_share": 0.4297,
     "miss_reason": null,
     "bills": [
      {
@@ -9447,8 +9447,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.6398,
-      "bill_share": 0.687,
+      "model_share": 0.4297,
+      "bill_share": 0.2668,
       "listed": true,
       "found": true
      },
@@ -9459,8 +9459,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.6398,
-      "bill_share": 0.687,
+      "model_share": 0.4297,
+      "bill_share": 0.2668,
       "listed": true,
       "found": true
      }
@@ -9480,9 +9480,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/370e175f-246b-4076-a6b8-62312800299c",
-    "model_share": 0.7958,
-    "bill_share": 0.674,
-    "best_share": 0.7958,
+    "model_share": 0.6828,
+    "bill_share": 0.3786,
+    "best_share": 0.6828,
     "miss_reason": null,
     "bills": [
      {
@@ -9492,8 +9492,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.7958,
-      "bill_share": 0.674,
+      "model_share": 0.6828,
+      "bill_share": 0.3786,
       "listed": true,
       "found": true
      }
@@ -9515,7 +9515,7 @@
     "found_by": null,
     "model_share": null,
     "bill_share": null,
-    "best_share": 0.0634,
+    "best_share": 0.1028,
     "miss_reason": "below_threshold",
     "bills": [
      {
@@ -9569,7 +9569,7 @@
       "stages": [
        "semantic"
       ],
-      "model_share": 0.0634,
+      "model_share": 0.1028,
       "bill_share": 0.0044,
       "listed": false,
       "found": false
@@ -9590,9 +9590,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/463214e4-c47a-4c4b-8819-2eb952e28bdc",
-    "model_share": 0.9339,
-    "bill_share": 0.8874,
-    "best_share": 0.9339,
+    "model_share": 0.9069,
+    "bill_share": 0.8244,
+    "best_share": 0.9069,
     "miss_reason": null,
     "bills": [
      {
@@ -9602,8 +9602,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9339,
-      "bill_share": 0.8874,
+      "model_share": 0.9069,
+      "bill_share": 0.8244,
       "listed": true,
       "found": true
      }
@@ -9623,9 +9623,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/a328ce17-079d-4d27-b601-52705b04bbf5",
-    "model_share": 0.7909,
-    "bill_share": 0.6842,
-    "best_share": 0.7909,
+    "model_share": 0.6749,
+    "bill_share": 0.5038,
+    "best_share": 0.6749,
     "miss_reason": null,
     "bills": [
      {
@@ -9635,8 +9635,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.7909,
-      "bill_share": 0.6842,
+      "model_share": 0.6749,
+      "bill_share": 0.5038,
       "listed": true,
       "found": true
      }
@@ -9656,9 +9656,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/fa4c5f9a-465f-40ec-810f-191e625fa9fd",
-    "model_share": 0.8164,
-    "bill_share": 0.6717,
-    "best_share": 0.8164,
+    "model_share": 0.7162,
+    "bill_share": 0.3948,
+    "best_share": 0.7162,
     "miss_reason": null,
     "bills": [
      {
@@ -9668,8 +9668,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.8164,
-      "bill_share": 0.6717,
+      "model_share": 0.7162,
+      "bill_share": 0.3948,
       "listed": true,
       "found": true
      }
@@ -9689,9 +9689,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/37e5a984-c884-486f-b704-52ac2badf061",
-    "model_share": 0.8889,
-    "bill_share": 0.7643,
-    "best_share": 0.8889,
+    "model_share": 0.8339,
+    "bill_share": 0.6687,
+    "best_share": 0.8339,
     "miss_reason": null,
     "bills": [
      {
@@ -9701,8 +9701,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.8889,
-      "bill_share": 0.7643,
+      "model_share": 0.8339,
+      "bill_share": 0.6687,
       "listed": true,
       "found": true
      }
@@ -9722,9 +9722,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/a87f9d8e-1e55-43bb-a5b2-f599862f89b4",
-    "model_share": 0.864,
-    "bill_share": 0.4936,
-    "best_share": 0.864,
+    "model_share": 0.7935,
+    "bill_share": 0.3459,
+    "best_share": 0.7935,
     "miss_reason": null,
     "bills": [
      {
@@ -9734,8 +9734,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.864,
-      "bill_share": 0.4936,
+      "model_share": 0.7935,
+      "bill_share": 0.3459,
       "listed": true,
       "found": true
      },
@@ -9746,8 +9746,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.864,
-      "bill_share": 0.4936,
+      "model_share": 0.7935,
+      "bill_share": 0.3459,
       "listed": true,
       "found": true
      }
@@ -11392,7 +11392,7 @@
    },
    {
     "min_share": 0.5,
-    "found": 15
+    "found": 16
    }
   ],
   "miss_reasons": {
@@ -11662,9 +11662,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/d56fd42c-c1d6-4d76-a9f0-eeb0cc123f31",
-    "model_share": 0.9909,
-    "bill_share": 0.9612,
-    "best_share": 0.9909,
+    "model_share": 0.9894,
+    "bill_share": 0.9548,
+    "best_share": 0.9894,
     "miss_reason": null,
     "bills": [
      {
@@ -11674,8 +11674,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9909,
-      "bill_share": 0.9612,
+      "model_share": 0.9894,
+      "bill_share": 0.9548,
       "listed": true,
       "found": true
      }
@@ -11695,9 +11695,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/6a187ab7-1011-451b-a54a-b9268f1d9668",
-    "model_share": 0.9886,
-    "bill_share": 0.9935,
-    "best_share": 0.9935,
+    "model_share": 0.9894,
+    "bill_share": 0.9925,
+    "best_share": 0.9925,
     "miss_reason": null,
     "bills": [
      {
@@ -11707,8 +11707,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9886,
-      "bill_share": 0.9935,
+      "model_share": 0.9894,
+      "bill_share": 0.9925,
       "listed": true,
       "found": true
      }
@@ -11728,9 +11728,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/9ea2f016-2a27-45bc-a51c-d4d14c24d951",
-    "model_share": 0.9475,
-    "bill_share": 0.7308,
-    "best_share": 0.9475,
+    "model_share": 0.9412,
+    "bill_share": 0.7754,
+    "best_share": 0.9412,
     "miss_reason": null,
     "bills": [
      {
@@ -11740,8 +11740,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9475,
-      "bill_share": 0.7308,
+      "model_share": 0.9412,
+      "bill_share": 0.7754,
       "listed": true,
       "found": true
      }
@@ -11791,9 +11791,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/01dd3cc3-3af2-4963-9970-fb1c82c655c2",
-    "model_share": 0.9886,
-    "bill_share": 0.8716,
-    "best_share": 0.9886,
+    "model_share": 0.9894,
+    "bill_share": 0.7523,
+    "best_share": 0.9894,
     "miss_reason": null,
     "bills": [
      {
@@ -11803,8 +11803,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9886,
-      "bill_share": 0.8716,
+      "model_share": 0.9894,
+      "bill_share": 0.7523,
       "listed": true,
       "found": true
      }
@@ -11824,9 +11824,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/66018717-08d9-4c8b-827e-98661c3a98b0",
-    "model_share": 0.9663,
-    "bill_share": 0.8651,
-    "best_share": 0.9663,
+    "model_share": 0.9633,
+    "bill_share": 0.8457,
+    "best_share": 0.9633,
     "miss_reason": null,
     "bills": [
      {
@@ -11836,8 +11836,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9663,
-      "bill_share": 0.8651,
+      "model_share": 0.9633,
+      "bill_share": 0.8457,
       "listed": true,
       "found": true
      }
@@ -11887,9 +11887,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/7a3f76bd-979e-49d3-8f74-ad9c7b98aba7",
-    "model_share": 0.858,
-    "bill_share": 0.3834,
-    "best_share": 0.858,
+    "model_share": 0.8015,
+    "bill_share": 0.3394,
+    "best_share": 0.8015,
     "miss_reason": null,
     "bills": [
      {
@@ -11899,8 +11899,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.858,
-      "bill_share": 0.3834,
+      "model_share": 0.8015,
+      "bill_share": 0.3394,
       "listed": true,
       "found": true
      }
@@ -11920,9 +11920,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/498bff4c-ee76-4ac0-bb0e-57ee960c740d",
-    "model_share": 0.9622,
-    "bill_share": 0.8738,
-    "best_share": 0.9622,
+    "model_share": 0.9533,
+    "bill_share": 0.6211,
+    "best_share": 0.9533,
     "miss_reason": null,
     "bills": [
      {
@@ -11932,8 +11932,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9622,
-      "bill_share": 0.8738,
+      "model_share": 0.9533,
+      "bill_share": 0.6211,
       "listed": true,
       "found": true
      },
@@ -11944,8 +11944,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9622,
-      "bill_share": 0.8194,
+      "model_share": 0.9533,
+      "bill_share": 0.5818,
       "listed": true,
       "found": true
      }
@@ -11965,9 +11965,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/a5575133-1b36-4125-8b8d-239f5e5fa0a9",
-    "model_share": 0.9622,
-    "bill_share": 0.9125,
-    "best_share": 0.9622,
+    "model_share": 0.9533,
+    "bill_share": 0.8828,
+    "best_share": 0.9533,
     "miss_reason": null,
     "bills": [
      {
@@ -11977,8 +11977,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9622,
-      "bill_share": 0.9125,
+      "model_share": 0.9533,
+      "bill_share": 0.8828,
       "listed": true,
       "found": true
      }
@@ -11998,9 +11998,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/fe9a38e0-5fe9-4b49-9271-b641c88f8c8b",
-    "model_share": 0.9622,
-    "bill_share": 0.4313,
-    "best_share": 0.9622,
+    "model_share": 0.9533,
+    "bill_share": 0.3713,
+    "best_share": 0.9533,
     "miss_reason": null,
     "bills": [
      {
@@ -12010,8 +12010,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9622,
-      "bill_share": 0.4313,
+      "model_share": 0.9533,
+      "bill_share": 0.3713,
       "listed": true,
       "found": true
      }
@@ -12031,9 +12031,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/0769a612-51fc-4ed4-8d38-92faecb7abe1",
-    "model_share": 0.9094,
-    "bill_share": 0.7619,
-    "best_share": 0.9094,
+    "model_share": 0.8691,
+    "bill_share": 0.3995,
+    "best_share": 0.8691,
     "miss_reason": null,
     "bills": [
      {
@@ -12043,8 +12043,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9094,
-      "bill_share": 0.7619,
+      "model_share": 0.8691,
+      "bill_share": 0.3995,
       "listed": true,
       "found": true
      }
@@ -12064,9 +12064,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/6d7af944-1fbd-45e3-9a5a-9ab186a99271",
-    "model_share": 0.9094,
-    "bill_share": 0.5062,
-    "best_share": 0.9094,
+    "model_share": 0.8691,
+    "bill_share": 0.2833,
+    "best_share": 0.8691,
     "miss_reason": null,
     "bills": [
      {
@@ -12076,8 +12076,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9094,
-      "bill_share": 0.5062,
+      "model_share": 0.8691,
+      "bill_share": 0.2833,
       "listed": true,
       "found": true
      },
@@ -12085,11 +12085,10 @@
       "id": "ocd-bill/d2a4351c-e574-4442-ae19-ecb61744a51c",
       "doc_id": "commission/mortgage-modification",
       "stages": [
-       "near_duplicate",
-       "semantic"
+       "near_duplicate"
       ],
-      "model_share": 0.75,
-      "bill_share": 0.3549,
+      "model_share": 0.592,
+      "bill_share": 0.194,
       "listed": true,
       "found": true
      }
@@ -12109,9 +12108,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/196c9c66-69ff-4502-9613-63a4aee17f74",
-    "model_share": 0.9094,
-    "bill_share": 0.8426,
-    "best_share": 0.9094,
+    "model_share": 0.8691,
+    "bill_share": 0.7702,
+    "best_share": 0.8691,
     "miss_reason": null,
     "bills": [
      {
@@ -12121,8 +12120,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9094,
-      "bill_share": 0.8426,
+      "model_share": 0.8691,
+      "bill_share": 0.7702,
       "listed": true,
       "found": true
      }
@@ -12142,9 +12141,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/7a3f76bd-979e-49d3-8f74-ad9c7b98aba7",
-    "model_share": 0.3406,
-    "bill_share": 0.0615,
-    "best_share": 0.3406,
+    "model_share": 0.592,
+    "bill_share": 0.0625,
+    "best_share": 0.592,
     "miss_reason": null,
     "bills": [
      {
@@ -12153,8 +12152,8 @@
       "stages": [
        "semantic"
       ],
-      "model_share": 0.3406,
-      "bill_share": 0.0615,
+      "model_share": 0.592,
+      "bill_share": 0.0625,
       "listed": true,
       "found": true
      }
@@ -12174,7 +12173,7 @@
      "semantic": true
     },
     "found_by": "ocd-bill/25f6ce26-e9b6-4720-8058-0007a62361e4",
-    "model_share": 0.7018,
+    "model_share": 0.6367,
     "bill_share": 0.8117,
     "best_share": 0.8117,
     "miss_reason": null,
@@ -12186,7 +12185,7 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.7018,
+      "model_share": 0.6367,
       "bill_share": 0.8117,
       "listed": true,
       "found": true
@@ -12216,9 +12215,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/c8e28bad-3818-4f32-a10f-2b8bba334a85",
-    "model_share": 0.9361,
-    "bill_share": 0.2075,
-    "best_share": 0.9361,
+    "model_share": 0.9285,
+    "bill_share": 0.1693,
+    "best_share": 0.9285,
     "miss_reason": null,
     "bills": [
      {
@@ -12228,8 +12227,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9067,
-      "bill_share": 0.8128,
+      "model_share": 0.892,
+      "bill_share": 0.6572,
       "listed": true,
       "found": true
      },
@@ -12240,8 +12239,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9361,
-      "bill_share": 0.2075,
+      "model_share": 0.9285,
+      "bill_share": 0.1693,
       "listed": true,
       "found": true
      }
@@ -12263,7 +12262,7 @@
     "found_by": null,
     "model_share": null,
     "bill_share": null,
-    "best_share": 0.0924,
+    "best_share": 0.1151,
     "miss_reason": "below_threshold",
     "bills": [
      {
@@ -12272,8 +12271,8 @@
       "stages": [
        "semantic"
       ],
-      "model_share": 0.0924,
-      "bill_share": 0.0327,
+      "model_share": 0.1151,
+      "bill_share": 0.0348,
       "listed": false,
       "found": false
      }
@@ -12293,9 +12292,9 @@
      "semantic": true
     },
     "found_by": "ocd-bill/c8ddb361-4aa3-4764-b2de-0ae27686fc34",
-    "model_share": 0.9899,
-    "bill_share": 0.9742,
-    "best_share": 0.9899,
+    "model_share": 0.9956,
+    "bill_share": 0.9763,
+    "best_share": 0.9956,
     "miss_reason": null,
     "bills": [
      {
@@ -12305,8 +12304,8 @@
        "near_duplicate",
        "semantic"
       ],
-      "model_share": 0.9899,
-      "bill_share": 0.9742,
+      "model_share": 0.9956,
+      "bill_share": 0.9763,
       "listed": true,
       "found": true
      }
