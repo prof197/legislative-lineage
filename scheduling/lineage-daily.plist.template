@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  The live track's daily job for launchd (DESIGN.md#updates): intake, update, the incremental
+  export and the feed, staged and swapped in only on success. A template: each placeholder, a
+  name between at signs, is filled by lineage.schedule.render_template, and nothing here names
+  a real path. Loading it is the operator's step, by hand.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>@LABEL@.daily</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>@REPO@/scheduling/run.sh</string>
+    <string>daily</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>@REPO@</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>LINEAGE_DATA</key>
+    <string>@DATA@</string>
+    <key>LINEAGE_STATE</key>
+    <string>@STATE@</string>
+    <key>LINEAGE_SITE_URL</key>
+    <string>@SITE_URL@</string>
+    <key>PATH</key>
+    <string>@PATH@</string>
+  </dict>
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>@HOUR@</integer>
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+  <key>StandardOutPath</key>
+  <string>@DATA@/schedule/daily.log</string>
+  <key>StandardErrorPath</key>
+  <string>@DATA@/schedule/daily.log</string>
+  <key>ProcessType</key>
+  <string>Background</string>
+  <key>LowPriorityIO</key>
+  <true/>
+</dict>
+</plist>

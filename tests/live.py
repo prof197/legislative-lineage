@@ -6,10 +6,11 @@ The hosted state is Georgia, whose synthetic record arrives on day 1, gains Utah
 2 and is replaced on day 3 (tests/days.py).
 """
 
+import json
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TypedDict
+from typing import Any, TypedDict
 
 import pytest
 
@@ -53,7 +54,12 @@ def recorded(factory: pytest.TempPathFactory) -> Recorded:
         tables[n] = root / f"updated{n}"
         shutil.copytree(tables[n - 1], tables[n], symlinks=False)
         update(tables[n], day, model=FAKE_MODEL, changes_dir=log, floor_bytes=0)
-    _built["recorded"] = Recorded(root=root, days=days, tables=tables, log=log)
+    _built["recorded"] = Recorded(
+        root=root,
+        days=days,
+        tables=tables,
+        log=log,
+    )
     return _built["recorded"]
 
 
@@ -92,3 +98,36 @@ def export_inputs(root: Path) -> ExportInputs:
 def full_export(tables: Path, out: Path, inputs: ExportInputs, state: str = STATE) -> Path:
     build_export(tables, state=state, out=out, models_dir=None, floor=0, **inputs)
     return out
+
+
+# Comparing exports.
+
+
+@dataclass(frozen=True, slots=True)
+class Seen:
+    data: bytes
+    inode: int
+    mtime_ns: int
+
+
+def files_seen(root: Path) -> dict[str, Seen]:
+    out: dict[str, Seen] = {}
+    for p in sorted(root.rglob("*")):
+        if p.is_file():
+            st = p.stat()
+            out[p.relative_to(root).as_posix()] = Seen(p.read_bytes(), st.st_ino, st.st_mtime_ns)
+    return out
+
+
+def unstamped(name: str, data: bytes) -> Any:
+    """A file as a full export writes it: no live-track dates."""
+    doc = json.loads(data)
+    if name.startswith("bills/") or name == "meta.json":
+        doc.pop("updated_on", None)
+        doc.pop("as_of", None)
+    return doc
+
+
+def normalized(root: Path) -> dict[str, Any]:
+    """Every JSON file of an export as a full export writes it; the feed is not one."""
+    return {n: unstamped(n, s.data) for n, s in files_seen(root).items() if n.endswith(".json")}

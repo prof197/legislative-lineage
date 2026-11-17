@@ -4,10 +4,8 @@ differ, with the pages the log names, were written; every other file is the same
 
 import json
 import shutil
-from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
-from typing import Any
 
 import pytest
 
@@ -25,38 +23,9 @@ from lineage.publish import (
 )
 from lineage.updates import RecordUpdated, RelativeGained, RelativeLost
 from tests.days import DAYS
-from tests.live import Recorded, export_inputs, full_export, recorded
+from tests.live import Recorded, export_inputs, files_seen, full_export, normalized, recorded
 
 D1, D2, D3 = (date.fromisoformat(d) for d in DAYS)
-
-
-@dataclass(frozen=True, slots=True)
-class Seen:
-    data: bytes
-    inode: int
-    mtime_ns: int
-
-
-def _files(root: Path) -> dict[str, Seen]:
-    out: dict[str, Seen] = {}
-    for p in sorted(root.rglob("*")):
-        if p.is_file():
-            st = p.stat()
-            out[p.relative_to(root).as_posix()] = Seen(p.read_bytes(), st.st_ino, st.st_mtime_ns)
-    return out
-
-
-def _unstamped(name: str, data: bytes) -> Any:
-    """A file as a full export writes it: no live-track dates."""
-    doc = json.loads(data)
-    if name.startswith("bills/") or name == "meta.json":
-        doc.pop("updated_on", None)
-        doc.pop("as_of", None)
-    return doc
-
-
-def _normalized(root: Path) -> dict[str, Any]:
-    return {n: _unstamped(n, s.data) for n, s in _files(root).items()}
 
 
 @pytest.fixture(scope="module")
@@ -97,7 +66,7 @@ def test_only_the_files_a_day_changes_are_rewritten_and_the_export_equals_a_full
 
     for n in range(first, 4):
         day = date.fromisoformat(DAYS[n - 1])
-        before = _files(live)
+        before = files_seen(live)
         report = export_changes(
             rec.tables[n],
             state=state,
@@ -108,11 +77,11 @@ def test_only_the_files_a_day_changes_are_rewritten_and_the_export_equals_a_full
             floor=0,
             **inputs,
         )
-        assert _files(live) == before  # nothing reaches the live export before the swap
+        assert files_seen(live) == before  # nothing reaches the live export before the swap
         promote(live)
-        after = _files(live)
+        after = files_seen(live)
 
-        assert _normalized(live) == _normalized(full[n])
+        assert normalized(live) == normalized(full[n])
         changed = {k for k in after if k not in before or after[k].data != before[k].data}
         assert changed == set(report["written"])
         assert set(report["removed"]) == set(before) - set(after)
@@ -121,7 +90,7 @@ def test_only_the_files_a_day_changes_are_rewritten_and_the_export_equals_a_full
                 before[name].inode,
                 before[name].mtime_ns,
             )
-        old, new = _normalized(full[n - 1]), _normalized(full[n])
+        old, new = normalized(full[n - 1]), normalized(full[n])
         differ = {k for k in new if old.get(k) != new[k]}
         named = _named_pages(rec, n, live)
         assert changed == differ | named | {"meta.json"}
@@ -182,7 +151,7 @@ def test_a_page_a_relative_moved_without_a_log_entry_is_rebuilt_and_reported(
     promote(live)
 
     assert report["beyond_log"] == sorted([f"bills/{utah.name}", f"compare/{compared.name}"])
-    assert _normalized(live) == _normalized(target)
+    assert normalized(live) == normalized(target)
 
 
 def test_an_export_ahead_of_or_behind_the_tables_is_refused(rec: Recorded, tmp_path: Path) -> None:
