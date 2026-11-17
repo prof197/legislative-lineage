@@ -217,6 +217,9 @@ class OriginGained(_Change):
     doc_id: str
     stages: list[str]
     bill_share: float
+    # Both shares, so the feed applies the listing floor to the larger and states both, as a
+    # page does (ruled at M11's review), from the log alone.
+    model_share: float
 
 
 class OriginLost(_Change):
@@ -394,6 +397,7 @@ def origin_changes(before: Snapshot | None, after: Snapshot, as_of: date) -> lis
                     doc_id=doc,
                     stages=list(new[doc][1]),
                     bill_share=new[doc][3],
+                    model_share=new[doc][2],
                 )
             )
         for doc in sorted(set(old) - set(new)):

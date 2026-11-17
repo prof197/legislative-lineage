@@ -45,7 +45,7 @@ from lineage.collect import PACKAGE as COLLECT_PACKAGE
 from lineage.collect import collectors
 from lineage.export_schema import Meta
 from lineage.modeldocs import MODELDOCS_DIR, read_docs
-from lineage.origins import FLOOR, is_listed, read_origin_matches
+from lineage.origins import FLOOR
 from lineage.publish import FEED_FILE, META, bill_refs, changes_on, logged_days
 from lineage.updates import (
     CHANGES_DIR,
@@ -213,7 +213,7 @@ def _day_events(
         if isinstance(c, RelativeGained):
             gained[c.bill_id].append((c.relative_id, "+".join(c.stages)))
         elif isinstance(c, OriginGained) and listed_origin(c):
-            origins[c.bill_id].append((c.doc_id, f"{c.bill_share:.4f}"))
+            origins[c.bill_id].append((c.doc_id, f"{c.bill_share:.4f} {c.model_share:.4f}"))
     out: list[Event] = []
     for bill_id, related in sorted(gained.items()):
         new = first_seen.get(bill_id, (None, None))[0] == day
@@ -296,12 +296,14 @@ def entry(event: Event, bills: Mapping[str, BillInfo], docs: Mapping[str, DocInf
             "a published model document" if n == 1 else f"{n} published model documents"
         )
         lines = [f"As of {day}, {_named(bill)}, shares wording with:"]
-        for doc_id, share in event.related:
+        for doc_id, shares in event.related:
             doc = docs[doc_id]
             leaked = ", from a leaked archive" if doc.leaked else ""
+            bill_share, model_share = (float(x) for x in shares.split())
             lines.append(
                 f"- “{doc.title}”, a model document in the library of {doc.organization}{leaked}: "
-                f"{float(share):.0%} of the bill's words are found in it"
+                f"{bill_share:.0%} of the bill's wording appears in it, covering "
+                f"{model_share:.0%} of the model"
             )
     else:
         others = "a bill in another state" if n == 1 else f"{n} bills in other states"
@@ -480,13 +482,10 @@ def write_feed(
             default=date(1970, 1, 1),
         )
     changes = [c for d in logged if d <= through for c in changes_on(changes_dir, d)]
-    current = {(m.bill_id, m.doc_id): m for m in read_origin_matches(tables)}
 
     def listed_origin(c: OriginGained) -> bool:
-        # A page lists a match by its larger share. The log keeps the bill's; a match still in
-        # the table gives the model's too, and one since lost is reported only on the bill's.
-        m = current.get((c.bill_id, c.doc_id))
-        return c.bill_share >= FLOOR or (m is not None and is_listed(m))
+        # A page lists a match by its larger share, which the log keeps both of.
+        return max(c.bill_share, c.model_share) >= FLOOR
 
     events = feed_events(
         changes,

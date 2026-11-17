@@ -163,7 +163,12 @@ def test_a_bill_gains_and_loses_published_models_as_it_does_relatives() -> None:
 
     assert origin_changes(before, after, D3) == [
         OriginGained(
-            as_of=D3, bill_id="b1", doc_id="commission/y", stages=["semantic"], bill_share=0.3
+            as_of=D3,
+            bill_id="b1",
+            doc_id="commission/y",
+            stages=["semantic"],
+            bill_share=0.3,
+            model_share=0.2,
         ),
         OriginLost(as_of=D3, bill_id="b1", doc_id="commission/x"),
     ]

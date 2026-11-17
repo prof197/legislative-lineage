@@ -130,15 +130,25 @@ def test_events_are_kept_14_days_and_name_new_and_existing_bills_apart() -> None
         added(20, "ut-new", "UT"),
         *linked(20, "ut-new", "tx-old"),
         OriginGained(
-            as_of=d(20), bill_id="tx-old", doc_id="lib/a", stages=["semantic"], bill_share=0.6
+            as_of=d(20),
+            bill_id="tx-old",
+            doc_id="lib/a",
+            stages=["semantic"],
+            bill_share=0.6,
+            model_share=0.2,
         ),
         OriginGained(
-            as_of=d(20), bill_id="tx-old", doc_id="lib/b", stages=["semantic"], bill_share=0.1
+            as_of=d(20),
+            bill_id="tx-old",
+            doc_id="lib/b",
+            stages=["semantic"],
+            bill_share=0.1,
+            model_share=0.05,
         ),
     ]
 
     def listed(c: OriginGained) -> bool:
-        return c.bill_share >= 0.25
+        return max(c.bill_share, c.model_share) >= 0.25
 
     early = feed_events(log, hosted_state="GA", through=d(5), listed_origin=listed)
     assert [(e.kind, e.bill_id) for e in early] == [
@@ -150,7 +160,7 @@ def test_events_are_kept_14_days_and_name_new_and_existing_bills_apart() -> None
         ("origin_gained", "tx-old"),
         ("relative_gained", "tx-old"),  # Utah's is new but not hosted: only the existing bill's
     ]
-    assert late[0].related == (("lib/a", "0.6000"),)  # under the listing floor is no event
+    assert late[0].related == (("lib/a", "0.6000 0.2000"),)  # under the listing floor is no event
     again = feed_events(log, hosted_state="GA", through=d(20), listed_origin=listed)
     assert [e.id for e in again] == [e.id for e in late]  # ids are the event's, every time
 
@@ -171,7 +181,7 @@ def test_entries_state_dates_and_shared_text_and_never_a_model_text() -> None:
     events = [
         Event("new_bill", d(1), "ga", (("ut", "near_duplicate+semantic"), ("tx", "semantic"))),
         Event("relative_gained", d(1), "ut", (("ga", "near_duplicate"),)),
-        Event("origin_gained", d(1), "tx", (("lib/a", "0.6000"),)),
+        Event("origin_gained", d(1), "tx", (("lib/a", "0.6000 0.2500"),)),
         Event(
             "states_group",
             d(1),
@@ -190,7 +200,7 @@ def test_entries_state_dates_and_shared_text_and_never_a_model_text() -> None:
     assert new.link == f"{SITE}/bills/ga-sb-1/"  # the hosted page
     assert gained.link == "https://le.utah.gov/hb2"  # another state's: its text's source
     assert origin.link is None
-    assert "60% of the bill's words" in origin.content
+    assert "60% of the bill's wording appears in it, covering 25% of the model" in origin.content
     assert "leaked archive" in origin.content
     assert "(shares wording)" in new.content
     assert "(similar in meaning)" in new.content
