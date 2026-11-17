@@ -1,12 +1,14 @@
-"""The daily job (DESIGN.md#updates, Publishing): its steps in order, a failed step that leaves
-the last good export in place with its status and an alert, a dry run over the recorded days
-with the network stubbed, and the launchd template."""
+"""The scheduled jobs (DESIGN.md#updates, Publishing; DR-7): the daily job's steps in order, a
+failed step that leaves the last good export in place with its status and an alert, a dry run
+over the recorded days with the network stubbed, the weekly rebuild's agreement, which fails
+below 98%, and its drift, and the launchd templates."""
 
 import fcntl
 import json
 import plistlib
 import shutil
 import socket
+from dataclasses import replace
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -17,19 +19,26 @@ from lineage import fetch
 from lineage.feed import check, write_feed
 from lineage.publish import export_changes, promote, staging_dir
 from lineage.schedule import (
+    AGREEMENT_FLOOR,
     LOCK_FILE,
     STATUS_FILE,
     TEMPLATES,
     DailyPaths,
+    DisagreementError,
     Outcome,
     ScheduleError,
     Step,
+    WeeklyPaths,
+    agreement,
     daily_steps,
     placeholders,
     render_template,
     run_job,
+    weekly_check,
+    weekly_report,
+    weekly_steps,
 )
-from lineage.updates import load_day, update
+from lineage.updates import Snapshot, load_day, snapshot, update
 from tests.conftest import FAKE_MODEL
 from tests.days import DAYS
 from tests.live import (
@@ -292,10 +301,105 @@ def test_the_daily_steps_are_the_cli_commands_in_order(tmp_path: Path) -> None:
     assert rest[4].argv == ("publish", "promote", "--export", str(export))
 
 
+# The weekly rebuild.
+
+
+def test_the_updated_tables_agree_with_a_rebuild_and_the_refreshed_statistics_drift(
+    rec: Recorded, tmp_path: Path
+) -> None:
+    report = tmp_path / "weekly.json"
+    doc = weekly_report(rec.tables[3], rec.rebuilt, rec.refreshed, model=FAKE_MODEL, report=report)
+
+    assert json.loads(report.read_text()) == doc
+    assert doc["as_of"] == DAYS[2]
+    a = doc["agreement"]
+    assert a["ok"] is True
+    assert a["share"] == 1.0  # exact search at fixture scale: an update gives a rebuild
+    assert a["relatives_exact"] == a["relatives_agreed"] == a["relatives_updated"] > 0
+    assert (a["statuses_differ"], a["families_differ"]) == (0, 0)
+    d = doc["drift"]
+    assert d["relatives_pinned"] == a["relatives_rebuilt"]
+    assert d["relatives_changed"] == d["gained"] + d["lost"]
+    assert d["relatives_changed"] + d["kept_but_changed"] > 0  # the refreshed stoplist moves some
+    assert d["bills_affected"] > 0
+
+
+def _drop(s: Snapshot, n: int) -> Snapshot:
+    """`s` with its first `n` relatives, a bill and one it lists, taken out."""
+    out: dict[str, tuple[Any, ...]] = {}
+    left = n
+    for bill, rs in sorted(s.relatives.items()):
+        take = min(left, len(rs))
+        out[bill] = rs[take:]
+        left -= take
+    return replace(s, relatives=out)
+
+
+def test_a_recorded_disagreement_below_98_percent_fails_the_weekly_check(
+    rec: Recorded, tmp_path: Path
+) -> None:
+    updated = snapshot(rec.tables[3], model=FAKE_MODEL)
+    total = sum(len(rs) for rs in updated.relatives.values())
+    below = int(total * (1 - AGREEMENT_FLOOR)) + 1  # just under the floor
+    report = tmp_path / "weekly.json"
+
+    with pytest.raises(DisagreementError, match="below 98%"):
+        weekly_check(updated, _drop(updated, below), None, as_of=D3, report=report)
+
+    doc = json.loads(report.read_text())  # on record with its numbers
+    assert doc["agreement"]["ok"] is False
+    assert doc["agreement"]["share"] < AGREEMENT_FLOOR
+    assert doc["agreement"]["relatives_agreed"] == total - below
+
+
+def test_the_floor_is_98_percent_of_the_relatives_either_lists(tmp_path: Path) -> None:
+    def rel(i: int) -> tuple[str, tuple[str, ...], int, float]:
+        return (f"r{i}", ("near_duplicate",), 1, 0.5)
+
+    def snap(n: int, extra: int = 0) -> Snapshot:
+        return Snapshot(
+            statuses={},
+            families=frozenset(),
+            relatives={"b": tuple(rel(i) for i in range(n + extra))},
+        )
+
+    assert agreement(snap(98), snap(98, 2)).share == 0.98  # 98 of the 100 either lists
+    assert agreement(snap(98), snap(98, 2)).ok
+    assert not agreement(snap(97), snap(97, 3)).ok
+    assert agreement(snap(0), snap(0)).share == 1.0
+    with pytest.raises(DisagreementError):
+        weekly_check(snap(97), snap(97, 3), None, as_of=D3, report=tmp_path / "weekly.json")
+
+
+def test_the_weekly_steps_check_before_anything_is_adopted(tmp_path: Path) -> None:
+    paths = WeeklyPaths(
+        days=tmp_path / "days",
+        tables=tmp_path / "t",
+        pinned=tmp_path / "p",
+        refreshed=tmp_path / "f",
+        report=tmp_path / "w.json",
+    )
+    steps = weekly_steps(D3, paths=paths)
+    assert [s.name for s in steps] == ["rebuild-pinned", "rebuild-refreshed", "check"]
+    assert "--pinned-from" in steps[0].argv
+    assert "--pinned-from" not in steps[1].argv
+    assert steps[2].argv[:2] == ("publish", "weekly")
+    alerts = Alerts()
+    status = run_job(
+        "weekly",
+        steps,
+        run=lambda s: Outcome(1 if s.name == "check" else 0, "error: below 98%"),
+        notify=alerts,
+        status_dir=tmp_path / "s",
+    )
+    assert status.failed_step == "check"
+    assert "stopped at check" in alerts.sent[0][1]
+
+
 # The launchd templates.
 
 
-@pytest.mark.parametrize("job", ["daily"])
+@pytest.mark.parametrize("job", ["daily", "weekly"])
 def test_a_launchd_template_names_no_real_path_and_renders_to_a_property_list(job: str) -> None:
     template = (TEMPLATES / f"lineage-{job}.plist.template").read_text()
     assert not LOCAL_PATH.search(template)
@@ -328,4 +432,5 @@ def test_the_runner_script_calls_the_cli_and_names_no_real_path() -> None:
     script = (TEMPLATES / "run.sh").read_text()
     assert not LOCAL_PATH.search(script)
     assert "uv run --frozen lineage schedule daily --state" in script
+    assert "uv run --frozen lineage schedule weekly" in script
     assert "launchctl" not in script

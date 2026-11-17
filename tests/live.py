@@ -13,11 +13,15 @@ from pathlib import Path
 from typing import Any, TypedDict
 
 import pytest
+from typer.testing import CliRunner
 
+from lineage.cli import app
 from lineage.export import RESULTS, build_export
-from lineage.updates import load_days, update
-from tests.conftest import FAKE_MODEL
-from tests.days import DAYS, rebuild, write_days
+from lineage.semantic_pairs import build_semantic_pairs
+from lineage.state_boilerplate import build_state_boilerplate
+from lineage.updates import fold, load_days, update, write_archives
+from tests.conftest import FAKE_MODEL, embed_with_stand_in
+from tests.days import DAYS, rebuild, sessions_csv, write_days
 
 REPO = Path(__file__).parent.parent
 STATE = "GA"
@@ -30,6 +34,8 @@ class Recorded:
     days: Path
     tables: dict[int, Path]  # the tables after day n: day 1 built, days 2 and 3 updated
     log: Path  # every day's change log, days 2 and 3
+    rebuilt: Path  # a full rebuild over the three days, with the base build's statistics
+    refreshed: Path  # the same, with the stoplist and the state boilerplate flag counted afresh
 
     def log_through(self, n: int, where: Path) -> Path:
         """A change log holding days 2 to `n` only."""
@@ -59,8 +65,46 @@ def recorded(factory: pytest.TempPathFactory) -> Recorded:
         days=days,
         tables=tables,
         log=log,
+        rebuilt=rebuild(days, 3, root / "rebuilt"),
+        refreshed=refreshed_rebuild(days, 3, root / "refreshed"),
     )
     return _built["recorded"]
+
+
+# The base build's stoplist is empty: a few dozen bills are too few for the corpus's share
+# (tests/conftest.py). Refreshed, the stoplist takes shingles found in more than this share of
+# sections, which at fixture scale are the acts' shared wording, so relatives move.
+REFRESHED_SHARE = "0.02"
+
+
+def _invoke(*args: str) -> None:
+    result = CliRunner().invoke(app, list(args))
+    assert result.exit_code == 0, result.output
+
+
+def refreshed_rebuild(days: Path, upto: int, root: Path) -> Path:
+    """A full rebuild over the first `upto` days with its corpus statistics counted afresh: a
+    stoplist at REFRESHED_SHARE and the state boilerplate counts; returns its tables dir."""
+    root.mkdir(parents=True)
+    raw = write_archives(fold(load_days(days)[:upto]), root / "raw")
+    manifest, built, reports = root / "manifest.json", root / "tables", root / "reports"
+    no_floor = ("--min-free-gib", "0")
+    _invoke("snapshot", "--raw", str(raw), "--manifest", str(manifest))
+    _invoke("ingest", "--raw", str(raw), "--manifest", str(manifest), "--out", str(built),
+         "--sessions", str(sessions_csv(root)), *no_floor)  # fmt: skip
+    _invoke("text", "merge", "--tables", str(built), "--plan", str(root / "no-plan.parquet"),
+         *no_floor)  # fmt: skip
+    _invoke("split", "--tables", str(built), "--workers", "1", *no_floor)
+    _invoke("eligible", "--tables", str(built), "--report", str(reports / "types.json"))
+    _invoke("boilerplate", "--tables", str(built), "--manifest", str(manifest), "--max-share",
+         REFRESHED_SHARE, "--report", str(reports / "boilerplate.json"),
+         "--workers", "1")  # fmt: skip
+    _invoke("index", "--tables", str(built), "--workers", "1", "--report",
+         str(reports / "index.json"), *no_floor)  # fmt: skip
+    tables = embed_with_stand_in(built, root / "embedded")
+    build_semantic_pairs(tables, model=FAKE_MODEL, floor_bytes=0)
+    build_state_boilerplate(tables, model=FAKE_MODEL, floor_bytes=0)
+    return tables
 
 
 class ExportInputs(TypedDict):

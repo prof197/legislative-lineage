@@ -9,12 +9,17 @@ touches it. Each run writes its outcome to a status file under the data director
 run raises a macOS notification, since the job has no outside service to post to. The job
 builds a local export and feed ready to publish; it deploys and publishes nothing.
 
+**The weekly job** compares the updated tables with a full rebuild over the same days and the
+same pinned corpus statistics (`lineage.updates.snapshot`): the share of relatives the two agree
+on must be at least 98%, or the job fails loudly (DR-7). It then reports the drift: how many
+relatives changed when the stoplist and the state boilerplate flag were counted afresh.
+
 The steps are `Step`s, each a `lineage` command line, run by an injectable runner (the CLI in
 a subprocess, or the library in-process in the tests) and alerted by an injectable notifier
 (osascript, or a fake). Two jobs never run at once: the second finds the lock held and stops.
 `scheduling/` holds the launchd templates and the shell runner launchd starts.
 
-Owned by lane L3 (M12). See DESIGN.md#updates.
+Owned by lane L3 (M12). See DESIGN.md#updates, DR-7.
 """
 
 import fcntl
@@ -33,12 +38,15 @@ from typing import Any
 from lineage.incremental import applied_days
 from lineage.paths import DATA
 from lineage.publish import staging_dir
-from lineage.updates import CHANGES_DIR, DAY_FILE, DayInfo
+from lineage.semantic import MODEL
+from lineage.updates import CHANGES_DIR, DAY_FILE, DayInfo, Relative, Snapshot, snapshot
 
 SCHEDULE_DIR = DATA / "schedule"
 STATUS_FILE = "status.json"
 RUNS_FILE = "runs.jsonl"
 LOCK_FILE = "lock"
+WEEKLY_REPORT = SCHEDULE_DIR / "weekly.json"
+AGREEMENT_FLOOR = 0.98  # DR-7: the weekly rebuild fails below it
 OUTPUT_TAIL = 4000  # characters of a step's output kept in the status file
 NOTIFY_TITLE = "Legislative Lineage"
 TEMPLATES = Path("scheduling")
@@ -263,6 +271,220 @@ def osascript_notifier(title: str, message: str) -> None:
     """A macOS notification. A notification that cannot be shown is no reason to fail."""
     script = f"display notification {_applescript(message)} with title {_applescript(title)}"
     subprocess.run(["osascript", "-e", script], check=False, timeout=30, capture_output=True)
+
+
+# The weekly rebuild's check.
+
+
+def _directed(s: Snapshot) -> dict[tuple[str, str], Relative]:
+    return {(bill, r[0]): r for bill, rs in s.relatives.items() for r in rs}
+
+
+@dataclass(frozen=True, slots=True)
+class Agreement:
+    """How far the updated tables' relatives agree with a full rebuild's over the same days."""
+
+    updated: int  # relatives, a bill and one it lists, in the updated tables
+    rebuilt: int
+    agreed: int  # listed by both
+    share: float  # agreed, of those either lists
+    exact: int  # of those agreed, with the same stages, sections matched and share
+    statuses_differ: int
+    families_differ: int  # same-state families either has that the other does not
+    origins_differ: int  # bills whose origin matches differ
+
+    @property
+    def ok(self) -> bool:
+        return self.share >= AGREEMENT_FLOOR
+
+
+def agreement(updated: Snapshot, rebuilt: Snapshot) -> Agreement:
+    u, r = _directed(updated), _directed(rebuilt)
+    both = set(u) & set(r)
+    either = set(u) | set(r)
+    bills = set(updated.statuses) | set(rebuilt.statuses)
+    origin_bills = set(updated.origins) | set(rebuilt.origins)
+    return Agreement(
+        updated=len(u),
+        rebuilt=len(r),
+        agreed=len(both),
+        share=len(both) / len(either) if either else 1.0,
+        exact=sum(1 for k in both if u[k] == r[k]),
+        statuses_differ=sum(1 for b in bills if updated.statuses.get(b) != rebuilt.statuses.get(b)),
+        families_differ=len(updated.families ^ rebuilt.families),
+        origins_differ=sum(
+            1 for b in origin_bills if updated.origins.get(b) != rebuilt.origins.get(b)
+        ),
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class Drift:
+    """How many relatives changed when the corpus statistics were counted afresh."""
+
+    pinned: int  # relatives with the base build's stoplist and flag
+    refreshed: int  # with the stoplist and flag counted over the corpus as it stands
+    gained: int
+    lost: int
+    changed: int  # kept, with other stages, sections matched or share
+    bills: int  # bills with any of those
+
+    @property
+    def relatives_changed(self) -> int:
+        return self.gained + self.lost
+
+
+def drift(pinned: Snapshot, refreshed: Snapshot) -> Drift:
+    p, f = _directed(pinned), _directed(refreshed)
+    gained, lost = set(f) - set(p), set(p) - set(f)
+    changed = {k for k in set(p) & set(f) if p[k] != f[k]}
+    return Drift(
+        pinned=len(p),
+        refreshed=len(f),
+        gained=len(gained),
+        lost=len(lost),
+        changed=len(changed),
+        bills=len({bill for bill, _ in gained | lost | changed}),
+    )
+
+
+class DisagreementError(ScheduleError):
+    """The updated tables and the rebuild agree on less than the floor: the live track has
+    drifted from what a build gives, and must not go on as if it had not."""
+
+
+def weekly_check(
+    updated: Snapshot,
+    pinned: Snapshot,
+    refreshed: Snapshot | None,
+    *,
+    as_of: date,
+    report: Path = WEEKLY_REPORT,
+) -> dict[str, Any]:
+    """The weekly report: the agreement between the updated tables and the pinned rebuild, and
+    the drift to the refreshed one. Written first, then raised on when the agreement is below
+    the floor, so a failure is on record with its numbers."""
+    a = agreement(updated, pinned)
+    doc: dict[str, Any] = {
+        "as_of": as_of.isoformat(),
+        "agreement": {
+            "floor": AGREEMENT_FLOOR,
+            "ok": a.ok,
+            "share": round(a.share, 6),
+            "relatives_updated": a.updated,
+            "relatives_rebuilt": a.rebuilt,
+            "relatives_agreed": a.agreed,
+            "relatives_exact": a.exact,
+            "statuses_differ": a.statuses_differ,
+            "families_differ": a.families_differ,
+            "origins_differ": a.origins_differ,
+        },
+        "drift": None,
+    }
+    if refreshed is not None:
+        d = drift(pinned, refreshed)
+        doc["drift"] = {
+            "relatives_changed": d.relatives_changed,
+            "relatives_pinned": d.pinned,
+            "relatives_refreshed": d.refreshed,
+            "gained": d.gained,
+            "lost": d.lost,
+            "kept_but_changed": d.changed,
+            "bills_affected": d.bills,
+        }
+    report.parent.mkdir(parents=True, exist_ok=True)
+    report.write_text(json.dumps(doc, indent=1) + "\n")
+    if not a.ok:
+        raise DisagreementError(
+            f"the updated tables agree with the rebuild on {a.share:.2%} of relatives, below "
+            f"{AGREEMENT_FLOOR:.0%} ({a.agreed} of {a.updated} updated and {a.rebuilt} rebuilt); "
+            f"see {report}"
+        )
+    return doc
+
+
+def weekly_report(
+    updated: Path,
+    pinned: Path,
+    refreshed: Path | None,
+    *,
+    model: str = MODEL,
+    report: Path = WEEKLY_REPORT,
+) -> dict[str, Any]:
+    """`weekly_check` on three tables directories: the updated tables, the rebuild over the
+    same days with their pinned statistics, and the rebuild with the statistics refreshed."""
+    applied = applied_days(updated)
+    if not applied:
+        raise ScheduleError(f"{updated} has had no day applied; there is nothing to check")
+    return weekly_check(
+        snapshot(updated, model=model),
+        snapshot(pinned, model=model),
+        None if refreshed is None else snapshot(refreshed, model=model),
+        as_of=max(applied),
+        report=report,
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class WeeklyPaths:
+    days: Path = DATA / "days"
+    tables: Path = DATA / "tables"
+    pinned: Path = DATA / "rebuild" / "pinned"
+    refreshed: Path = DATA / "rebuild" / "refreshed"
+    report: Path = WEEKLY_REPORT
+
+
+def weekly_steps(as_of: date, *, paths: WeeklyPaths | None = None) -> list[Step]:
+    """The weekly job's steps: the two rebuilds over the days so far, then the check, which
+    fails the job below the floor before anything adopts the refreshed rebuild."""
+    paths = paths if paths is not None else WeeklyPaths()
+    days, tables = str(paths.days), str(paths.tables)
+    return [
+        Step(
+            "rebuild-pinned",
+            (
+                "rebuild",
+                "--days",
+                days,
+                "--through",
+                as_of.isoformat(),
+                "--pinned-from",
+                tables,
+                "--out",
+                str(paths.pinned),
+            ),
+            as_of,
+        ),
+        Step(
+            "rebuild-refreshed",
+            (
+                "rebuild",
+                "--days",
+                days,
+                "--through",
+                as_of.isoformat(),
+                "--out",
+                str(paths.refreshed),
+            ),
+            as_of,
+        ),
+        Step(
+            "check",
+            (
+                "publish",
+                "weekly",
+                "--updated",
+                tables,
+                "--pinned",
+                str(paths.pinned),
+                "--refreshed",
+                str(paths.refreshed),
+                "--report",
+                str(paths.report),
+            ),
+            as_of,
+        ),
+    ]
 
 
 # The launchd templates.
