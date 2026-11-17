@@ -60,7 +60,7 @@ uv run lineage origin-label  # the sample's matches labeled by a model on each o
 uv run lineage eval origin-threshold  # each candidate share floor's precision on the tuning sample, beside its development recall -> reports/origin_threshold_proposal.json
 uv run lineage origin-sample --part census_eppc  # every EPPC match a page lists, a census, label cost projected -> evals/origin_precision_census_eppc.jsonl
 uv run lineage eval origin-census  # the census read: precision as a count, each wrong match's section pairs by generic kind -> reports/results.json (origins_census_eppc)
-uv run lineage eval origin-precision  # the reporting sample read once: overall, by stage, by source, ALEC against the rest -> reports/results.json (origins_precision)
+uv run lineage eval origin-precision  # the reporting sample read once: overall, by stage, by source, ALEC against the rest -> reports/results.json (origins_precision) (--intervals-only: regenerate the stored reading's intervals, refused if anything else moves)
 uv run lineage intake       # one day of new and changed bills from Open States' API v3 (key from OPENSTATES_API_KEY), text through the text layer -> data/days/<day>/, data/intake/; --tier default|bronze|silver
 uv run lineage intake-estimate  # the API requests a January day needs, against each tier, from the snapshot; no network -> reports/intake_estimate.json
 uv run lineage update --day DIR  # apply one day's new and changed records -> data/changes/<as_of>.jsonl and the tables in place, held to a full rebuild over the same days

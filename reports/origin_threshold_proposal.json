@@ -52,8 +52,8 @@
    "precision": {
     "precision": 0.6893,
     "interval_95": [
-     0.612,
-     0.7396
+     0.6221,
+     0.7494
     ]
    },
    "band_above": {
@@ -112,8 +112,8 @@
    "precision": {
     "precision": 0.7459,
     "interval_95": [
-     0.6583,
-     0.7983
+     0.6706,
+     0.8088
     ]
    },
    "band_above": {
@@ -172,8 +172,8 @@
    "precision": {
     "precision": 0.8247,
     "interval_95": [
-     0.7229,
-     0.8802
+     0.7369,
+     0.8877
     ]
    },
    "band_above": {

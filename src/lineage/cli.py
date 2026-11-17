@@ -200,6 +200,7 @@ from lineage.origin_precision import (
 from lineage.origin_precision import census_reading as origin_census_reading
 from lineage.origin_precision import load_sample as load_origin_sample
 from lineage.origin_precision import reading as origin_precision_reading
+from lineage.origin_precision import without_intervals as without_origin_intervals
 from lineage.origin_recall import KEYS as ORIGIN_KEYS
 from lineage.origin_recall import OriginRecallError, load_key, origin_recall, same_slug
 from lineage.origin_threshold import REPORT as ORIGIN_THRESHOLD_REPORT
@@ -1987,13 +1988,22 @@ def eval_origin_precision(
         Path, typer.Option("--labels", help="The origin labels (committed).")
     ] = ORIGIN_LABELS,
     results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+    intervals_only: Annotated[
+        bool,
+        typer.Option(
+            "--intervals-only",
+            help="Regenerate the stored reading's intervals; refused if anything else would move.",
+        ),
+    ] = False,
 ) -> None:
     """Origin precision on the reporting sample, read once: overall, by stage, by source, and
     ALEC's against the rest (DESIGN.md#origin-matches)."""
     reporting = ORIGIN_PARTS["reporting"]
     try:
         doc: dict[str, Any] = json.loads(results.read_text()) if results.exists() else {}
-        if ORIGIN_PRECISION_SECTION in doc:
+        if intervals_only and ORIGIN_PRECISION_SECTION not in doc:
+            raise OriginPrecisionError(f"no stored reading in {results} to regenerate")
+        if ORIGIN_PRECISION_SECTION in doc and not intervals_only:
             raise OriginPrecisionError(
                 f"the reporting sample was read once already ({results}, "
                 f"{ORIGIN_PRECISION_SECTION}); a second reading could be chosen"
@@ -2017,6 +2027,15 @@ def eval_origin_precision(
         "labels": str(labels),
         "prompt": ORIGIN_PROMPT.version,
     } | read
+    if intervals_only and without_origin_intervals(section) != without_origin_intervals(
+        doc[ORIGIN_PRECISION_SECTION]
+    ):
+        typer.echo(
+            f"error: the reading would change other than its intervals ({results}, "
+            f"{ORIGIN_PRECISION_SECTION}); it is read once",
+            err=True,
+        )
+        raise typer.Exit(1)
     write_results(results, ORIGIN_PRECISION_SECTION, section)
 
     def line(name: str, g: Mapping[str, Any]) -> str:

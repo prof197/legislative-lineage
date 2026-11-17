@@ -33,6 +33,7 @@ from lineage.origin_precision import (
     reading,
     refuse_over_cap,
     section_chars,
+    without_intervals,
     write_part,
 )
 from lineage.origins import FLOOR, BillSpan, OriginMatch, Stage
@@ -368,6 +369,39 @@ def test_the_reporting_sample_is_read_once(tmp_path: Path) -> None:
     assert run.exit_code == 1
     assert "read once already" in run.output
     assert json.loads(results.read_text()) == {"origins_precision": {"overall": {}}}
+
+
+def test_only_its_intervals_may_be_rewritten_and_only_when_nothing_else_moves(
+    tmp_path: Path,
+) -> None:
+    """Ruled at the step 47 review: the interval fix regenerates the reading's intervals; the
+    reading itself, every point and count, stays as it was read."""
+    assert without_intervals({"a": {"precision": 0.9, "interval_95": [0.8, 0.95]}, "b": [1]}) == {
+        "a": {"precision": 0.9}, "b": [1],
+    }  # fmt: skip
+    stored = json.loads(Path("reports/results.json").read_text())["origins_precision"]
+    moved = json.loads(json.dumps(stored))
+    moved["overall"]["correct"] -= 1
+    results = tmp_path / "results.json"
+    results.write_text(json.dumps({"origins_precision": moved}))
+
+    args = ["eval", "origin-precision", "--results", str(results), "--intervals-only"]
+    run = CliRunner().invoke(app, args)
+    assert run.exit_code == 1
+    assert "other than its intervals" in run.output
+    assert json.loads(results.read_text()) == {"origins_precision": moved}
+
+    widened = json.loads(json.dumps(stored))
+    widened["overall"]["precision"]["interval_95"] = [0.0, 1.0]
+    results.write_text(json.dumps({"origins_precision": widened}))
+    run = CliRunner().invoke(app, args)
+    assert run.exit_code == 0, run.output
+    assert without_intervals(json.loads(results.read_text())["origins_precision"]) == (
+        without_intervals(stored)
+    )
+    assert json.loads(results.read_text())["origins_precision"]["overall"]["precision"][
+        "interval_95"
+    ] != [0.0, 1.0]
 
 
 def test_a_census_takes_every_listed_match_of_its_source_once() -> None:

@@ -41,7 +41,7 @@ import json
 from collections.abc import Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
@@ -482,6 +482,20 @@ def census_reading(
         "by_document": dict(sorted(by_document.items())),
         "wrong": sorted(wrong, key=lambda w: (w["doc_id"], w["bill_id"])),
     }
+
+
+def without_intervals(node: Any) -> Any:
+    """A reading with every interval left out: what must not move when only its intervals are
+    regenerated."""
+    if isinstance(node, Mapping):
+        return {
+            str(k): without_intervals(v)
+            for k, v in cast(Mapping[str, Any], node).items()
+            if k != "interval_95"
+        }
+    if isinstance(node, list):
+        return [without_intervals(v) for v in cast(list[Any], node)]
+    return node
 
 
 # The reporting reading's comparison: errors concentrated on one organization would be unfair

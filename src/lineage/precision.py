@@ -20,7 +20,6 @@ DESIGN.md#precision-sample.
 """
 
 import json
-import math
 from collections.abc import Callable, Collection, Mapping, Sequence
 from pathlib import Path
 from typing import Any
@@ -28,7 +27,7 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage.intervals import Z_95, wilson
+from lineage.intervals import wilson
 from lineage.labels import CORRECT_FROM, MODEL, PERSON, Item, SectionKey, is_correct
 from lineage.pairs import load_cross_state_pairs
 from lineage.semantic import BUILD_THRESHOLD
@@ -121,7 +120,13 @@ def sample_rows(
 
 def stratified(parts: Sequence[tuple[int, int, int]]) -> dict[str, Any] | None:
     """Precision over strata given as (size in the build, labeled, correct), weighted by size;
-    None when a stratum with pairs has no labels yet."""
+    None when a stratum with pairs has no labels yet.
+
+    The interval is Wilson's at the effective sample size: the n whose binomial variance at
+    the point equals the stratified estimate's, p(1 - p) / sum(w^2 p_h (1 - p_h) / n_h), capped
+    at the labels taken, and the labels taken when that variance is zero. A Wilson interval
+    holds its point, which the interval it replaced, centred on each stratum's Wilson-adjusted
+    share, did not where small strata were all correct (fixed at the step 47 review)."""
     weighted = [(size, n, x) for size, n, x in parts if size > 0]
     if not weighted or any(n == 0 for _, n, _ in weighted):
         return None
@@ -129,16 +134,14 @@ def stratified(parts: Sequence[tuple[int, int, int]]) -> dict[str, Any] | None:
         [(_, n, x)] = weighted
         return {"precision": round(x / n, 4), "interval_95": [round(v, 4) for v in wilson(x, n)]}
     total = sum(size for size, _, _ in weighted)
-    z2 = Z_95 * Z_95
-    point = center = variance = 0.0
+    labeled = sum(n for _, n, _ in weighted)
+    point = variance = 0.0
     for size, n, x in weighted:
-        w = size / total
-        adjusted = (x + z2 / 2) / (n + z2)
-        point += w * x / n
-        center += w * adjusted
-        variance += w * w * adjusted * (1 - adjusted) / (n + z2)
-    margin = Z_95 * math.sqrt(variance)
-    interval = [round(max(0.0, center - margin), 4), round(min(1.0, center + margin), 4)]
+        w, p = size / total, x / n
+        point += w * p
+        variance += w * w * p * (1 - p) / n
+    effective = labeled if variance == 0 else min(labeled, point * (1 - point) / variance)
+    interval = [round(v, 4) for v in wilson(point * effective, effective)]
     return {"precision": round(point, 4), "interval_95": interval}
 
 
