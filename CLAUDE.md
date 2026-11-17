@@ -78,6 +78,7 @@ uv run lineage publish promote --state GA  # swap the staging copy in as the liv
 uv run lineage publish weekly --pinned DIR  # the weekly rebuild's check: agreement with the updated tables, failing below 98%, and the drift -> data/schedule/weekly.json
 uv run lineage publish deploy --state GA  # in session: the live export's day packed as a release, gated (contract, local paths, copy, size), the circuit breaker, the pin committed and leak-checked, then the GitHub release, push and Pages dispatch; exits 3 when held -> data/deploy/days/<day>.json
 uv run lineage publish release --day D  # a day the circuit breaker held, published after the maintainer's review
+uv run lineage publish reject --day D  # a held day rejected after review: never published, its data kept, the next day publishes as usual
 uv run lineage publish candidate --site-url URL  # before session: the live export packed and gated as a release candidate, publishing nothing -> data/deploy/candidates/<tag>/review.txt
 uv run lineage publish review --site-url URL  # in session: the week's new origin claims for the maintainer's review -> data/deploy/reviews/<day>.txt
 uv run lineage schedule daily --site-url URL  # the daily job: intake, update, pages, feed, promote, and from the first day of session (rules/deploy.toml) the deploy; a failed step or held day stops it and alerts -> data/schedule/status.json

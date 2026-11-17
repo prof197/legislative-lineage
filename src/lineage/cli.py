@@ -3287,6 +3287,25 @@ def publish_release_command(
     typer.echo(f"{record.day}: {record.state} as {record.tag}")
 
 
+@publish_app.command("reject")
+def publish_reject_command(
+    day: Annotated[str, typer.Option("--day", help="The held day, YYYY-MM-DD.")],
+    root: DeployRootOption = deploy.DEPLOY_DIR,
+) -> None:
+    """Reject a day the circuit breaker held, once reviewed: its release is never published and
+    nothing leaves this machine. The live track keeps its data, and the next day's run publishes
+    as usual, with it."""
+    try:
+        record = deploy.reject_day(datetime.date.fromisoformat(day), paths=_deploy_paths(root))
+    except deploy.DeployError as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    typer.echo(
+        f"{record.day}: rejected; {record.tag} stays unpublished, and the next day's run "
+        "publishes as usual"
+    )
+
+
 def _review_names(tables: Path, state: str, site_url: str) -> tuple[Any, dict[str, dict[str, Any]]]:
     return (
         deploy.describe_bills(tables, state=state, site_url=site_url),

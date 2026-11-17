@@ -10,8 +10,9 @@
 # Constitution, Article III, Section IV, Paragraph I). The second Monday of January 2027.
 first_day = 2027-01-11
 source = "Ga. Const. art. III, sec. IV, para. I: regular session on the second Monday in January"
-# Set to true once the maintainer has checked the date against the General Assembly's calendar.
-confirmed = false
+# Confirmed by the maintainer at the deploy review (2026-11-17), from the constitution; to be
+# checked again against the General Assembly's announced calendar in December 2026.
+confirmed = true
 
 # The circuit breaker: a day is held for the maintainer's review when a count jumps well past a
 # normal day. With at least `min_history` days deployed without a hold, a count is held above

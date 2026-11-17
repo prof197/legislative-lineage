@@ -295,7 +295,8 @@ def run_job(
                     NOTIFY_TITLE,
                     f"The {job} job held {held_day} for review; nothing was published."
                     + (f" {reasons}." if reasons else "")
-                    + f" After review: lineage publish release --day {held_day} (see {path})",
+                    + f" After review: lineage publish release --day {held_day}, or reject it with"
+                    + f" lineage publish reject --day {held_day} (see {path})",
                 )
                 return status
             if outcome.code != 0:

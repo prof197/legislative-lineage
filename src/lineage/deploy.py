@@ -14,7 +14,10 @@ candidate, packed and gated with a short review summary, and publishes nothing
    `site/scripts/size.mjs` against the Pages limit.
 3. **The circuit breaker.** The day's new origin claims (the change log's, as a page or the feed
    lists them) and its changed files (against the release before it) are set against the days
-   deployed without a hold; a count past the limit holds the day (`breaker`).
+   deployed without a hold; a count past the limit holds the day (`breaker`). The files the day
+   adds or changes are read for the leak check's deny list, as whole words; a file naming a
+   term holds the day too (`deny_listed`), since public records name many people and whether
+   one should be shown is the maintainer's to rule.
 4. **Commit the pin** to `site/data-release.json` and run the leak check on that commit, the
    check CI runs, with the deny list from the environment.
 5. **Publish:** create the GitHub release with the asset, push the commit, and dispatch the
@@ -23,7 +26,10 @@ candidate, packed and gated with a short review summary, and publishes nothing
 A held day publishes nothing and is recorded with its counts and baseline; the daily job alerts
 on it as on a failure. Only `release_day`, which the maintainer runs after review, publishes it.
 A later day is held behind it rather than published past it, since its release would carry the
-held day's changes; once the held day is released, the next day's run publishes as before.
+held day's changes; once the held day is released, the next day's run publishes as before. Or
+the maintainer rejects it (`reject_day`): its release is never published, the live track keeps
+its data, and the next day's run publishes as usual, counted against the rejected day's release
+so its jump is not counted twice.
 Every step that leaves this machine (git, gh, npm, the leak check) goes through an injectable
 `Shell`, so the tests run the whole flow with fakes. Each day's record, under `<data>/deploy/`,
 lists the steps done, so a run stopped part way resumes rather than publishing twice.
@@ -50,7 +56,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict
 
 from lineage.export_schema import Meta, Release
-from lineage.origins import FLOOR
+from lineage.feed import listed_origin
 from lineage.paths import DATA
 from lineage.release import (
     RELEASE_MANIFEST,
@@ -62,6 +68,8 @@ from lineage.release import (
     write_release_manifest,
 )
 from lineage.updates import Change, OriginGained, OriginLost, read_changes
+from lineage.withheld import REPORT as WITHHELD_REPORT
+from lineage.withheld import load_withheld
 
 RULES = Path("rules/deploy.toml")
 DEPLOY_DIR = DATA / "deploy"
@@ -176,7 +184,7 @@ def _run(shell: Shell, argv: Sequence[str], cwd: Path, what: str) -> str:
 
 # The ledger: one record per day the daily job deployed or tried to.
 
-DayState = Literal["deployed", "held", "released", "failed", "superseded"]
+DayState = Literal["deployed", "held", "released", "rejected", "failed", "superseded"]
 
 
 class DayRecord(BaseModel):
@@ -411,20 +419,73 @@ def site_gates(
     return gates
 
 
+# The deny list over the release's files.
+
+DENY_ENV = "LEAK_CHECK_TERMS"
+
+
+def deny_pattern(terms: str | None = None) -> re.Pattern[str]:
+    """The leak check's deny list (tools.leak_check, from the environment), as whole words: a
+    term inside a longer public word, such as a surname that contains it, is not the term."""
+    raw = os.environ.get(DENY_ENV, "") if terms is None else terms
+    words = [t.strip() for t in raw.split(",") if t.strip()]
+    if not words:
+        raise DeployError(
+            f"{DENY_ENV} is not set, so the release's files cannot be read for the deny list"
+        )
+    return re.compile(
+        r"(?<!\w)(?:" + "|".join(re.escape(w) for w in words) + r")(?!\w)", re.IGNORECASE
+    )
+
+
+def changed_paths(candidate: Candidate, reference: Checksums | None) -> list[str]:
+    """The files a release adds or changes against the one before it; every file, without one."""
+    if reference is None:
+        return sorted(f.path for f in candidate.checksums.files)
+    diff = changed_files(reference, candidate.checksums)
+    return diff["added"] + diff["changed"]
+
+
+def deny_listed(asset: Path, files: Iterable[str], pattern: re.Pattern[str]) -> list[str]:
+    """Of `files` in the release, those that name a deny-listed term, by path only: the match
+    itself is never repeated, as the leak check never repeats it."""
+    wanted = set(files)
+    found: list[str] = []
+    with tarfile.open(asset) as tar:
+        for member in tar.getmembers():
+            if not member.isfile() or member.name not in wanted:
+                continue
+            handle = tar.extractfile(member)
+            if handle is not None and pattern.search(handle.read().decode("utf-8", "replace")):
+                found.append(member.name)
+    return sorted(found)
+
+
+def deny_gate(found: Sequence[str], checked: int) -> dict[str, Any]:
+    return {"ok": not found, "files_checked": checked, "files": list(found[:_SHOWN]),
+            "count": len(found)}  # fmt: skip
+
+
+def deny_reason(found: Sequence[str]) -> str:
+    more = f" and {len(found) - _SHOWN} more" if len(found) > _SHOWN else ""
+    return (
+        f"{len(found)} files added or changed name a deny-listed term "
+        f"({', '.join(found[:_SHOWN])}{more}); read them before releasing"
+    )
+
+
 # The circuit breaker.
 
 
-def listed_origin_claims(changes: Iterable[Change], days: Iterable[date]) -> list[OriginGained]:
+def listed_origin_claims(
+    changes: Iterable[Change], days: Iterable[date], withheld: frozenset[str] = frozenset()
+) -> list[OriginGained]:
     """The origin matches the given days gained that a page or the feed lists: by the larger
-    of the two shares, at the listing floor, as lineage.feed lists them."""
+    of the two shares, at the listing floor, their document not withheld, as lineage.feed lists
+    them."""
     wanted = set(days)
-    return [
-        c
-        for c in changes
-        if isinstance(c, OriginGained)
-        and c.as_of in wanted
-        and max(c.bill_share, c.model_share) >= FLOOR
-    ]
+    return [c for c in changes if isinstance(c, OriginGained) and c.as_of in wanted and
+            listed_origin(c, withheld)]  # fmt: skip
 
 
 def day_counts(
@@ -432,6 +493,7 @@ def day_counts(
     reference: Checksums | None,
     changes: Sequence[Change],
     days: Iterable[date],
+    withheld: frozenset[str] = frozenset(),
 ) -> dict[str, int]:
     """A day's counts: its listed new origin claims, and the files its release adds, changes or
     removes against the one before (every file, without one)."""
@@ -441,7 +503,7 @@ def day_counts(
         diff = changed_files(reference, candidate.checksums)
         files = sum(len(v) for v in diff.values())
     return {
-        "origin_claims": len(listed_origin_claims(changes, days)),
+        "origin_claims": len(listed_origin_claims(changes, days, withheld)),
         "changed_files": files,
     }
 
@@ -598,6 +660,7 @@ def deploy_day(
     rules: DeployRules | None = None,
     shell: Shell = subprocess_shell,
     floor: int,
+    withheld_report: Path = WITHHELD_REPORT,
 ) -> DayRecord:
     """Deploy the live export, as of the last day applied to it: pack, gate, check the breaker,
     publish. Returns the day's record: deployed (or already), held, publishing nothing, or
@@ -624,6 +687,7 @@ def deploy_day(
     resuming = record is not None and bool(record.done)
     record = record if resuming and record is not None else DayRecord(day=day, state="failed")
     try:
+        pattern = deny_pattern()
         tag = tag_for(state, day)
         candidate = _candidate_of(paths, tag) if resuming else None
         if candidate is None:
@@ -645,11 +709,16 @@ def deploy_day(
                 None if reference is None else reference.checksums,
                 read_changes(changes_dir),
                 days,
+                load_withheld(withheld_report).ids,
             )
+            checked = changed_paths(candidate, None if reference is None else reference.checksums)
+            named = deny_listed(candidate.asset, checked, pattern)
+            record.gates["deny_list"] = deny_gate(named, len(checked))
             decision = breaker(record.counts, normal_history(paths, day), rules.breaker)
             record.baseline = decision.baseline
-            if decision.hold:
-                record.state, record.held_on_counts, record.reasons = "held", True, decision.reasons
+            reasons = decision.reasons + ([deny_reason(named)] if named else [])
+            if reasons:
+                record.state, record.held_on_counts, record.reasons = "held", True, reasons
                 write_record(paths, record)
                 return record
             blocker = blocking_day(paths, day)
@@ -704,6 +773,23 @@ def release_day(
     return _publish_held(record, paths=paths, rules=rules, shell=shell, reviewed=True)
 
 
+def reject_day(day: date, *, paths: DeployPaths | None = None) -> DayRecord:
+    """Reject a held day after the maintainer's review: its release is never published and
+    nothing leaves this machine. The live track keeps its data, so the next day's release
+    carries it, counted against the rejected day's release, which stays packed as the
+    reference (`previous_candidate`); a day held behind it waits no longer, and is published
+    with the next day's release. A rejected day does not set what a normal day is."""
+    paths = paths if paths is not None else DeployPaths()
+    record = read_record(paths, day)
+    if record is None or record.state != "held":
+        state = "no record" if record is None else record.state
+        raise DeployError(f"{day} is not held ({state}); only a held day is rejected")
+    record.state = "rejected"
+    record.reasons = [*record.reasons, f"rejected after review on {datetime.now(UTC).date()}"]
+    write_record(paths, record)
+    return record
+
+
 def _publish_held(
     record: DayRecord, *, paths: DeployPaths, rules: DeployRules, shell: Shell, reviewed: bool
 ) -> DayRecord:
@@ -734,12 +820,14 @@ def origin_claims_review(
     days: int = REVIEW_DAYS,
     describe: Callable[[list[str]], Mapping[str, Mapping[str, Any]]] = lambda _: {},
     documents: Mapping[str, Mapping[str, Any]] | None = None,
+    withheld: frozenset[str] = frozenset(),
 ) -> list[dict[str, Any]]:
     """The listed origin claims first listed in the `days` days ending `through`, each with its
-    bill, document, both shares, stages, the day first listed, and whether it still stands."""
+    bill, document, both shares, stages, the day first listed, and whether it still stands; a
+    withheld document's are not listed, so not reviewed."""
     start = through - timedelta(days=days - 1)
     window = [start + timedelta(days=n) for n in range(days)]
-    claims = listed_origin_claims(changes, window)
+    claims = listed_origin_claims(changes, window, withheld)
     lost = {(c.bill_id, c.doc_id): c.as_of for c in changes if isinstance(c, OriginLost)}
     bills = describe(sorted({c.bill_id for c in claims}))
     docs = documents or {}
@@ -797,12 +885,17 @@ def weekly_review(
     paths: DeployPaths | None = None,
     describe: Callable[[list[str]], Mapping[str, Mapping[str, Any]]] = lambda _: {},
     documents: Mapping[str, Mapping[str, Any]] | None = None,
+    withheld_report: Path = WITHHELD_REPORT,
 ) -> Path:
     """The week's new origin claims, for the maintainer's weekly review during session ->
     `<deploy>/reviews/<through>.json` and `.txt`."""
     paths = paths if paths is not None else DeployPaths()
     claims = origin_claims_review(
-        read_changes(changes_dir), through=through, describe=describe, documents=documents
+        read_changes(changes_dir),
+        through=through,
+        describe=describe,
+        documents=documents,
+        withheld=load_withheld(withheld_report).ids,
     )
     return write_review(claims, through=through, out=paths.reviews / f"{through.isoformat()}.json")
 
@@ -819,12 +912,14 @@ def prepare_candidate(
     describe: Callable[[list[str]], Mapping[str, Mapping[str, Any]]] = lambda _: {},
     documents: Mapping[str, Mapping[str, Any]] | None = None,
     floor: int,
+    withheld_report: Path = WITHHELD_REPORT,
 ) -> dict[str, Any]:
     """Before session: the live export packed and gated as a release candidate, with a review
     summary of the files it changes against the pinned release and the week's new origin
     claims -> `<deploy>/candidates/<tag>/review.json` and `.txt`. Publishes nothing."""
     paths = paths if paths is not None else DeployPaths()
     rules = rules if rules is not None else load_rules()
+    pattern = deny_pattern()
     as_of = export_day(export) or day
     tag = tag_for(state, as_of)
     candidate = pack(export, state=state, tag=tag, paths=paths, floor=floor)
@@ -836,8 +931,15 @@ def prepare_candidate(
     gates |= site_gates(candidate, paths=paths, shell=shell, max_share=rules.max_share)
     pin, pinned = pinned_checksums(paths, shell)
     diff = changed_files(pinned, candidate.checksums)
+    checked = changed_paths(candidate, pinned)
+    named = deny_listed(candidate.asset, checked, pattern)
+    gates["deny_list"] = deny_gate(named, len(checked))
     claims = origin_claims_review(
-        read_changes(changes_dir), through=as_of, describe=describe, documents=documents
+        read_changes(changes_dir),
+        through=as_of,
+        describe=describe,
+        documents=documents,
+        withheld=load_withheld(withheld_report).ids,
     )
     by_part: dict[str, int] = {}
     for paths_changed in diff.values():
@@ -853,6 +955,11 @@ def prepare_candidate(
         f"Gates passed: contract ({gates['contract']['files']} files), local paths, copy, size "
         f"({gates['size']['share_of_pages_limit']:.1%} of the Pages limit). The leak check runs "
         "on the commit that pins it.",
+        (
+            f"Deny list: {deny_reason(named)}."
+            if named
+            else f"Deny list: none of the {len(checked)} files added or changed names a term."
+        ),
         f"To publish it after review: gh release create {tag} {candidate.asset}, then commit its "
         f"pin to {RELEASE_MANIFEST} and run the Pages workflow (DESIGN.md#export).",
         "",

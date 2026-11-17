@@ -27,6 +27,12 @@ from tests.live import REFRESHED_SHARE, Recorded, recorded
 D3 = date.fromisoformat(DAYS[2])
 
 
+@pytest.fixture(autouse=True)
+def deny_list(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The deny list the deploy reads from the environment, as the daily job sets it."""
+    monkeypatch.setenv("LEAK_CHECK_TERMS", "zzdenyterm")
+
+
 @pytest.fixture(scope="module")
 def rec(tmp_path_factory: pytest.TempPathFactory) -> Recorded:
     return recorded(tmp_path_factory)

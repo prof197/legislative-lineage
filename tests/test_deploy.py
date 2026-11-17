@@ -32,6 +32,7 @@ from lineage.deploy import (
     origin_claims_review,
     prepare_candidate,
     read_record,
+    reject_day,
     release_day,
     tag_for,
     weekly_review,
@@ -41,7 +42,7 @@ from lineage.export_schema import Release
 from lineage.feed import write_feed
 from lineage.origins import FLOOR
 from lineage.publish import export_changes, promote, staging_dir
-from lineage.release import RELEASE_MANIFEST, changed_files, read_checksums
+from lineage.release import RELEASE_MANIFEST, Checksums, changed_files, read_checksums
 from lineage.updates import OriginGained, OriginLost, RecordAdded, write_changes
 from tests.days import DAYS
 from tests.live import Recorded, export_inputs, full_export, recorded
@@ -142,6 +143,16 @@ def _rules(*, ceiling: int = 2500, floor: int = 1000, min_history: int = 5) -> D
         "changed_files": Limits(floor=floor, ceiling=ceiling),
     }
     return replace(rules, breaker=replace(rules.breaker, limits=limits, min_history=min_history))
+
+
+DENY_TERM = "zzdenyterm"
+
+
+@pytest.fixture(autouse=True)
+def deny_list(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The deny list the deploy reads from the environment, as the daily job sets it; a term
+    no fixture file holds."""
+    monkeypatch.setenv("LEAK_CHECK_TERMS", f" ,{DENY_TERM}")
 
 
 @pytest.fixture
@@ -341,6 +352,117 @@ def test_a_jump_holds_the_day_and_a_later_day_waits_behind_it(
         release_day(D3, paths=paths, rules=rules, shell=fake)
 
 
+def _name_in_a_bill(export: Path, word: str) -> str:
+    """A bill page whose title carries `word`, as a public record might; returns its path."""
+    page = sorted((export / "bills").glob("*.json"))[0]
+    doc = json.loads(page.read_text())
+    doc["bill"]["title"] = f"{doc['bill']['title']} {word}"
+    page.write_text(json.dumps(doc))
+    return page.relative_to(export).as_posix()
+
+
+def test_a_changed_file_naming_a_deny_listed_term_holds_the_day(
+    setup: tuple[DeployPaths, Fake, Path], rec: Recorded
+) -> None:
+    """Ruled at the deploy review: the deny list is read over the release's files too. A hit
+    holds the day for review rather than failing it, since public records name people, and the
+    record names the file, never the term."""
+    paths, fake, export = setup
+    named = _name_in_a_bill(export, DENY_TERM.upper())
+
+    held = deploy_day(
+        state="GA", export=export, changes_dir=rec.log, paths=paths, shell=fake, rules=_rules(),
+        floor=0,
+    )  # fmt: skip
+    assert held.state == "held"
+    assert held.held_on_counts
+    assert held.gates["deny_list"]["files"] == [named]
+    assert held.gates["deny_list"]["ok"] is False
+    (reason,) = held.reasons
+    assert f"1 files added or changed name a deny-listed term ({named})" in reason
+    assert DENY_TERM not in reason.lower()
+    assert fake.published() == []
+
+
+def test_a_term_inside_a_longer_word_is_not_the_term(
+    setup: tuple[DeployPaths, Fake, Path], rec: Recorded
+) -> None:
+    paths, fake, export = setup
+    _name_in_a_bill(export, f"Fitz{DENY_TERM}")
+
+    done = deploy_day(
+        state="GA", export=export, changes_dir=rec.log, paths=paths, shell=fake, rules=_rules(),
+        floor=0,
+    )  # fmt: skip
+    assert done.state == "deployed"
+    assert done.gates["deny_list"]["ok"] is True
+
+
+def test_without_the_deny_list_nothing_is_deployed(
+    setup: tuple[DeployPaths, Fake, Path], rec: Recorded, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    paths, fake, export = setup
+    monkeypatch.delenv("LEAK_CHECK_TERMS")
+    with pytest.raises(DeployError, match="LEAK_CHECK_TERMS is not set"):
+        deploy_day(
+            state="GA", export=export, changes_dir=rec.log, paths=paths, shell=fake,
+            rules=_rules(), floor=0,
+        )  # fmt: skip
+    assert fake.published() == []
+
+
+def test_a_rejected_day_is_never_published_and_the_next_day_publishes_as_usual(
+    setup: tuple[DeployPaths, Fake, Path], live: dict[int, Path], rec: Recorded
+) -> None:
+    """Ruled at the deploy review: a held day can be rejected. Its pages are not deployed, the
+    live track keeps its data, and the next good day publishes normally, counted against the
+    rejected day's release."""
+    paths, fake, export = setup
+    held = deploy_day(
+        state="GA", export=export, changes_dir=rec.log, paths=paths, shell=fake,
+        rules=_rules(ceiling=10), floor=0,
+    )  # fmt: skip
+    assert held.state == "held"
+
+    rejected = reject_day(D2, paths=paths)
+    assert rejected.state == "rejected"
+    assert rejected.reasons[-1].startswith("rejected after review on ")
+    assert fake.published() == []
+    with pytest.raises(DeployError, match="not held \\(rejected\\)"):
+        release_day(D2, paths=paths, rules=_rules(), shell=fake)
+    with pytest.raises(DeployError, match="only a held day is rejected"):
+        reject_day(D2, paths=paths)
+
+    _to(export, live[3])
+    nxt = deploy_day(
+        state="GA", export=export, changes_dir=rec.log, paths=paths, shell=fake, rules=_rules(),
+        floor=0,
+    )  # fmt: skip
+    # Not held behind the rejected day, and counted against its release, which stays packed as
+    # the reference, so day 2's changes are not counted again.
+    assert nxt.state == "deployed", nxt.reasons
+    sums = {
+        d: Checksums.model_validate_json(
+            (paths.candidates / tag_for("GA", d) / "checksums.json").read_text()
+        )
+        for d in (D2, D3)
+    }
+    diff = changed_files(sums[D2], sums[D3])
+    assert nxt.counts["changed_files"] == sum(len(v) for v in diff.values())
+    assert Release.model_validate_json((paths.checkout / RELEASE_MANIFEST).read_text()).tag == (
+        "data-ga-2026-01-14"
+    )
+    assert read_record(paths, D2).state == "rejected"  # type: ignore[union-attr]
+
+
+def test_the_reject_command_refuses_a_day_not_held(tmp_path: Path) -> None:
+    result = CliRunner().invoke(
+        app, ["publish", "reject", "--day", "2027-01-12", "--deploy-dir", str(tmp_path)]
+    )
+    assert result.exit_code == 1
+    assert "2027-01-12 is not held (no record); only a held day is rejected" in result.output
+
+
 def test_a_failed_leak_check_undoes_the_commit_and_publishes_nothing(
     setup: tuple[DeployPaths, Fake, Path], rec: Recorded
 ) -> None:
@@ -514,7 +636,7 @@ def test_with_history_a_count_is_held_above_both_the_multiple_and_the_floor() ->
     assert breaker({"origin_claims": 11, "changed_files": 100}, quiet, _b()).hold
 
 
-def test_the_rules_file_records_georgias_first_day_unconfirmed() -> None:
+def test_the_rules_file_records_georgias_first_day_confirmed() -> None:
     rules = load_rules()
     first = rules.first_day["GA"]
     assert first == date(2027, 1, 11)
@@ -522,12 +644,12 @@ def test_the_rules_file_records_georgias_first_day_unconfirmed() -> None:
     assert first.weekday() == 0
     assert 8 <= first.day <= 14
     assert first.month == 1
-    assert rules.confirmed["GA"] is False
-    # Unconfirmed, the date turns nothing on: no day deploys without review.
-    assert not in_session(rules, "GA", first)
-    confirmed = replace(rules, confirmed={"GA": True})
-    assert not in_session(confirmed, "GA", first - timedelta(days=1))
-    assert in_session(confirmed, "GA", first)
+    # Confirmed at the deploy review: the daily job deploys from that day, not before.
+    assert rules.confirmed["GA"] is True
+    assert not in_session(rules, "GA", first - timedelta(days=1))
+    assert in_session(rules, "GA", first)
+    unconfirmed = replace(rules, confirmed={"GA": False})
+    assert not in_session(unconfirmed, "GA", first)  # unconfirmed, the date turns nothing on
     assert not in_session(rules, "UT", date(2030, 1, 1))  # no first day recorded: never
     assert rules.max_share == 0.5
     b = rules.breaker
@@ -555,6 +677,8 @@ def test_only_the_origin_claims_a_page_lists_are_counted() -> None:
     ]
     assert [c.bill_id for c in listed_origin_claims(changes, [D2])] == ["b1"]
     assert [c.bill_id for c in listed_origin_claims(changes, [D2, D3])] == ["b1", "b3"]
+    # A withheld document's matches are listed nowhere, so they are not claims.
+    assert [c.bill_id for c in listed_origin_claims(changes, [D2, D3], frozenset({"d2"}))] == ["b1"]
 
 
 def test_the_weekly_review_lists_the_weeks_new_origin_claims(tmp_path: Path) -> None:

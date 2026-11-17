@@ -34,6 +34,13 @@ from tests.days import DAYS
 from tests.live import ExportInputs, Recorded, export_inputs, full_export, recorded
 from tests.test_deploy import Fake, job_checkout
 
+
+@pytest.fixture(autouse=True)
+def deny_list(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The deny list the deploy reads from the environment, as the daily job sets it."""
+    monkeypatch.setenv("LEAK_CHECK_TERMS", "zzdenyterm")
+
+
 SITE = "https://example.org/lineage"
 D2, D3 = (date.fromisoformat(d) for d in DAYS[1:])
 
