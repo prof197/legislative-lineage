@@ -75,12 +75,17 @@ const decode = (s: string) =>
 // Every string the export carries that holds a banned phrase or label: bill titles, headings,
 // section text, model documents' own titles. A source's account (ACCOUNT_KEYS) is not set aside.
 const fromBills = new Set<string>();
+// A source's terms note reports what its library's own terms allow, in their words ("viewing,
+// copying, printing and distributing"): that is no claim about a bill, so it is set aside from the
+// direction and authorship scan, and checked for political labels like the rest of the account.
+const termsNotes = new Set<string>();
 function flagged(s: string): boolean {
   PATTERN.lastIndex = 0;
   POLITICAL_PATTERN.lastIndex = 0;
   return PATTERN.test(s) || POLITICAL_PATTERN.test(s);
 }
 function collect(value: unknown, key = ""): void {
+  if (key === "terms_note" && typeof value === "string") termsNotes.add(value);
   if (ACCOUNT_KEYS.has(key)) return;
   if (typeof value === "string") {
     if (flagged(value)) fromBills.add(value);
@@ -94,8 +99,10 @@ const billStrings = [...fromBills].sort((a, b) => b.length - a.length);
 
 function scan(file: string, text: string): void {
   for (const s of billStrings) if (text.includes(s)) text = text.split(s).join(" ");
-  for (const m of text.matchAll(PATTERN)) {
-    const context = text.slice(Math.max(0, m.index - 60), m.index + m[0].length + 60).replace(/\s+/g, " ").trim();
+  let claims = text;
+  for (const s of termsNotes) if (claims.includes(s)) claims = claims.split(s).join(" ");
+  for (const m of claims.matchAll(PATTERN)) {
+    const context = claims.slice(Math.max(0, m.index - 60), m.index + m[0].length + 60).replace(/\s+/g, " ").trim();
     const rel = path.relative(OUT, file);
     if (ALLOWED.some((a) => a.where.test(rel) && a.context.test(context))) continue;
     hits.push({ file: rel, phrase: m[0].toLowerCase(), context });
@@ -172,11 +179,12 @@ if (originProblems.length) {
   process.exit(1);
 }
 
-// The data credit, on every page but the not-found page: it travels in the shared footer, and a
-// page built without that footer would drop it silently.
+// The data credit, on every page but the not-found pages: it travels in the shared footer, and a
+// page built without that footer would drop it silently. stories/none is the not-found page too:
+// a static export must render one route, so data with no featured stories renders it there.
 const CREDIT = "Bill data from Open States, by Plural Policy (public domain); bill text from each legislature's website.";
 const uncredited = files(OUT, (f) => f.endsWith(".html"))
-  .filter((f) => !/(^|\/)(404|_not-found)(\/index)?\.html$/.test(path.relative(OUT, f)))
+  .filter((f) => !/(^|\/)(404|_not-found|stories\/none)(\/index)?\.html$/.test(path.relative(OUT, f)))
   .filter((f) => {
     const html = readFileSync(f, "utf8").replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " ");
     return !decode(html.replace(/<[^>]+>/g, "")).replace(/\s+/g, " ").includes(CREDIT);
