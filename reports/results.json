@@ -10551,6 +10551,530 @@
   ],
   "earlier_runs": []
  },
+ "origins_precision": {
+  "command": "uv run lineage eval origin-precision --part reporting_after_fix",
+  "sample": "evals/origin_precision_reporting_after_fix.jsonl",
+  "labels": "evals/origin_precision_labels.jsonl",
+  "prompt": "passages-v1-high",
+  "floor": 0.25,
+  "seed": 20261121,
+  "overall": {
+   "sources": [
+    "alec",
+    "commission",
+    "eppc",
+    "goldwater",
+    "ifs",
+    "ncoil",
+    "public-citizen",
+    "states-project"
+   ],
+   "matches": 2913,
+   "labeled": 300,
+   "correct": 265,
+   "precision": {
+    "precision": 0.8807,
+    "interval_95": [
+     0.8351,
+     0.9149
+    ]
+   },
+   "by_stage": {
+    "near_duplicate_only": {
+     "size": 539,
+     "labeled": 100,
+     "correct": 90,
+     "precision": 0.9,
+     "interval_95": [
+      0.8256,
+      0.9448
+     ]
+    },
+    "semantic_only": {
+     "size": 877,
+     "labeled": 100,
+     "correct": 87,
+     "precision": 0.87,
+     "interval_95": [
+      0.7902,
+      0.9224
+     ]
+    },
+    "both": {
+     "size": 1497,
+     "labeled": 100,
+     "correct": 88,
+     "precision": 0.88,
+     "interval_95": [
+      0.8019,
+      0.93
+     ]
+    }
+   }
+  },
+  "by_source": {
+   "alec": {
+    "sources": [
+     "alec"
+    ],
+    "matches": 1667,
+    "labeled": 179,
+    "correct": 154,
+    "precision": {
+     "precision": 0.8301,
+     "interval_95": [
+      0.7589,
+      0.8835
+     ]
+    },
+    "by_stage": {
+     "near_duplicate_only": {
+      "size": 330,
+      "labeled": 65,
+      "correct": 62,
+      "precision": 0.9538,
+      "interval_95": [
+       0.8729,
+       0.9842
+      ]
+     },
+     "semantic_only": {
+      "size": 524,
+      "labeled": 60,
+      "correct": 50,
+      "precision": 0.8333,
+      "interval_95": [
+       0.7197,
+       0.9069
+      ]
+     },
+     "both": {
+      "size": 813,
+      "labeled": 54,
+      "correct": 42,
+      "precision": 0.7778,
+      "interval_95": [
+       0.6506,
+       0.868
+      ]
+     }
+    }
+   },
+   "commission": {
+    "sources": [
+     "commission"
+    ],
+    "matches": 172,
+    "labeled": 9,
+    "correct": 9,
+    "precision": null,
+    "by_stage": {
+     "near_duplicate_only": {
+      "size": 8,
+      "labeled": 1,
+      "correct": 1,
+      "precision": 1.0,
+      "interval_95": [
+       0.2065,
+       1.0
+      ]
+     },
+     "semantic_only": {
+      "size": 5,
+      "labeled": 0,
+      "correct": 0,
+      "precision": null,
+      "interval_95": [
+       0.0,
+       1.0
+      ]
+     },
+     "both": {
+      "size": 159,
+      "labeled": 8,
+      "correct": 8,
+      "precision": 1.0,
+      "interval_95": [
+       0.6756,
+       1.0
+      ]
+     }
+    }
+   },
+   "eppc": {
+    "sources": [
+     "eppc"
+    ],
+    "matches": 17,
+    "labeled": 5,
+    "correct": 4,
+    "precision": {
+     "precision": 0.8235,
+     "interval_95": [
+      0.395,
+      0.9709
+     ]
+    },
+    "by_stage": {
+     "near_duplicate_only": {
+      "size": 3,
+      "labeled": 1,
+      "correct": 0,
+      "precision": 0.0,
+      "interval_95": [
+       0.0,
+       0.7935
+      ]
+     },
+     "semantic_only": {
+      "size": 8,
+      "labeled": 3,
+      "correct": 3,
+      "precision": 1.0,
+      "interval_95": [
+       0.4385,
+       1.0
+      ]
+     },
+     "both": {
+      "size": 6,
+      "labeled": 1,
+      "correct": 1,
+      "precision": 1.0,
+      "interval_95": [
+       0.2065,
+       1.0
+      ]
+     }
+    }
+   },
+   "goldwater": {
+    "sources": [
+     "goldwater"
+    ],
+    "matches": 83,
+    "labeled": 5,
+    "correct": 5,
+    "precision": null,
+    "by_stage": {
+     "near_duplicate_only": {
+      "size": 13,
+      "labeled": 1,
+      "correct": 1,
+      "precision": 1.0,
+      "interval_95": [
+       0.2065,
+       1.0
+      ]
+     },
+     "semantic_only": {
+      "size": 16,
+      "labeled": 0,
+      "correct": 0,
+      "precision": null,
+      "interval_95": [
+       0.0,
+       1.0
+      ]
+     },
+     "both": {
+      "size": 54,
+      "labeled": 4,
+      "correct": 4,
+      "precision": 1.0,
+      "interval_95": [
+       0.5101,
+       1.0
+      ]
+     }
+    }
+   },
+   "ifs": {
+    "sources": [
+     "ifs"
+    ],
+    "matches": 2,
+    "labeled": 0,
+    "correct": 0,
+    "precision": null,
+    "by_stage": {
+     "near_duplicate_only": {
+      "size": 0,
+      "labeled": 0,
+      "correct": 0,
+      "precision": null,
+      "interval_95": [
+       0.0,
+       1.0
+      ]
+     },
+     "semantic_only": {
+      "size": 1,
+      "labeled": 0,
+      "correct": 0,
+      "precision": null,
+      "interval_95": [
+       0.0,
+       1.0
+      ]
+     },
+     "both": {
+      "size": 1,
+      "labeled": 0,
+      "correct": 0,
+      "precision": null,
+      "interval_95": [
+       0.0,
+       1.0
+      ]
+     }
+    }
+   },
+   "ncoil": {
+    "sources": [
+     "ncoil"
+    ],
+    "matches": 616,
+    "labeled": 64,
+    "correct": 61,
+    "precision": {
+     "precision": 0.9675,
+     "interval_95": [
+      0.8912,
+      0.9908
+     ]
+    },
+    "by_stage": {
+     "near_duplicate_only": {
+      "size": 94,
+      "labeled": 17,
+      "correct": 17,
+      "precision": 1.0,
+      "interval_95": [
+       0.8157,
+       1.0
+      ]
+     },
+     "semantic_only": {
+      "size": 167,
+      "labeled": 25,
+      "correct": 22,
+      "precision": 0.88,
+      "interval_95": [
+       0.7004,
+       0.9583
+      ]
+     },
+     "both": {
+      "size": 355,
+      "labeled": 22,
+      "correct": 22,
+      "precision": 1.0,
+      "interval_95": [
+       0.8513,
+       1.0
+      ]
+     }
+    }
+   },
+   "public-citizen": {
+    "sources": [
+     "public-citizen"
+    ],
+    "matches": 61,
+    "labeled": 9,
+    "correct": 9,
+    "precision": {
+     "precision": 1.0,
+     "interval_95": [
+      0.7009,
+      1.0
+     ]
+    },
+    "by_stage": {
+     "near_duplicate_only": {
+      "size": 14,
+      "labeled": 3,
+      "correct": 3,
+      "precision": 1.0,
+      "interval_95": [
+       0.4385,
+       1.0
+      ]
+     },
+     "semantic_only": {
+      "size": 14,
+      "labeled": 3,
+      "correct": 3,
+      "precision": 1.0,
+      "interval_95": [
+       0.4385,
+       1.0
+      ]
+     },
+     "both": {
+      "size": 33,
+      "labeled": 3,
+      "correct": 3,
+      "precision": 1.0,
+      "interval_95": [
+       0.4385,
+       1.0
+      ]
+     }
+    }
+   },
+   "states-project": {
+    "sources": [
+     "states-project"
+    ],
+    "matches": 295,
+    "labeled": 29,
+    "correct": 23,
+    "precision": {
+     "precision": 0.8695,
+     "interval_95": [
+      0.7032,
+      0.9493
+     ]
+    },
+    "by_stage": {
+     "near_duplicate_only": {
+      "size": 77,
+      "labeled": 12,
+      "correct": 6,
+      "precision": 0.5,
+      "interval_95": [
+       0.2538,
+       0.7462
+      ]
+     },
+     "semantic_only": {
+      "size": 142,
+      "labeled": 9,
+      "correct": 9,
+      "precision": 1.0,
+      "interval_95": [
+       0.7009,
+       1.0
+      ]
+     },
+     "both": {
+      "size": 76,
+      "labeled": 8,
+      "correct": 8,
+      "precision": 1.0,
+      "interval_95": [
+       0.6756,
+       1.0
+      ]
+     }
+    }
+   }
+  },
+  "compared": {
+   "alec": {
+    "sources": [
+     "alec"
+    ],
+    "matches": 1667,
+    "labeled": 179,
+    "correct": 154,
+    "precision": {
+     "precision": 0.8301,
+     "interval_95": [
+      0.7589,
+      0.8835
+     ]
+    },
+    "by_stage": {
+     "near_duplicate_only": {
+      "size": 330,
+      "labeled": 65,
+      "correct": 62,
+      "precision": 0.9538,
+      "interval_95": [
+       0.8729,
+       0.9842
+      ]
+     },
+     "semantic_only": {
+      "size": 524,
+      "labeled": 60,
+      "correct": 50,
+      "precision": 0.8333,
+      "interval_95": [
+       0.7197,
+       0.9069
+      ]
+     },
+     "both": {
+      "size": 813,
+      "labeled": 54,
+      "correct": 42,
+      "precision": 0.7778,
+      "interval_95": [
+       0.6506,
+       0.868
+      ]
+     }
+    }
+   },
+   "rest": {
+    "sources": [
+     "commission",
+     "eppc",
+     "goldwater",
+     "ifs",
+     "ncoil",
+     "public-citizen",
+     "states-project"
+    ],
+    "matches": 1246,
+    "labeled": 121,
+    "correct": 111,
+    "precision": {
+     "precision": 0.9452,
+     "interval_95": [
+      0.8893,
+      0.9737
+     ]
+    },
+    "by_stage": {
+     "near_duplicate_only": {
+      "size": 209,
+      "labeled": 35,
+      "correct": 28,
+      "precision": 0.8,
+      "interval_95": [
+       0.6411,
+       0.8996
+      ]
+     },
+     "semantic_only": {
+      "size": 353,
+      "labeled": 40,
+      "correct": 37,
+      "precision": 0.925,
+      "interval_95": [
+       0.8014,
+       0.9742
+      ]
+     },
+     "both": {
+      "size": 684,
+      "labeled": 46,
+      "correct": 46,
+      "precision": 1.0,
+      "interval_95": [
+       0.9229,
+       1.0
+      ]
+     }
+    }
+   }
+  }
+ },
  "origins_precision_before_fix": {
   "command": "uv run lineage eval origin-precision --part reporting",
   "sample": "evals/origin_precision_reporting.jsonl",
