@@ -5,6 +5,8 @@ which stores what it finds through `lineage.modeldocs.store` and returns a `Coll
 registry imports every module in the package, so a new source is a new file and nothing shared
 is edited. Every request goes through `lineage.fetch.open_url` and its pacing, and a URL that
 robots.txt disallows is reported, never worked around. See DESIGN.md#model-documents.
+
+See DESIGN.md#dr-10.
 """
 
 import importlib

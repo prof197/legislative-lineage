@@ -15,6 +15,8 @@ A label row names its match by bill and document and each section by the SHA-256
 normalized text, and holds no text. Spend goes in v2's own ledger, under v2's cap for model
 calls (lineage.origin_precision.BUDGET), apart from v1's precision-label ledger. See
 DESIGN.md#origin-matches.
+
+See DESIGN.md#dr-12.
 """
 
 import json

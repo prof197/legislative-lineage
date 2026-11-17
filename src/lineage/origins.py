@@ -6,6 +6,8 @@ model a bill copies whole read differently. Spans are kept on the bill's side on
 text is never shown, so nothing on the site could point into it. `lineage origins` (lane C,
 lineage.origin_matching) writes the table; the export and the snapshot read it. See
 DESIGN.md#origin-matches.
+
+See DESIGN.md#dr-9.
 """
 
 from collections import Counter

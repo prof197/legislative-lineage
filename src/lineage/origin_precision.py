@@ -35,6 +35,8 @@ The reporting part draws only what a page lists, the matches at lineage.origins.
 read once (`reading`): overall, by stage, each source's, and one source's against the rest,
 each weighted by that source's matches per stage, since errors concentrated on one
 organization would be unfair to it whatever the overall figure. See DESIGN.md#precision-sample.
+
+See DESIGN.md#dr-12.
 """
 
 import json

@@ -20,6 +20,8 @@ a subprocess, or the library in-process in the tests) and alerted by an injectab
 `scheduling/` holds the launchd templates and the shell runner launchd starts.
 
 Owned by lane L3 (M12). See DESIGN.md#updates, DR-7.
+
+See DESIGN.md#dr-13.
 """
 
 import fcntl

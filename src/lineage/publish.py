@@ -26,6 +26,8 @@ written: the day is applied to a staging copy whose unchanged files are hard lin
 ones, and `promote` swaps it in only once every step has succeeded.
 
 Owned by lane L3 (M12). See DESIGN.md#updates, DESIGN.md#export.
+
+See DESIGN.md#dr-13.
 """
 
 import json

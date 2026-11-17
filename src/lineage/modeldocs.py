@@ -8,6 +8,8 @@ and a leaked archive is annotated as leaked. A document's text is stored once pe
 its SHA-256, so a revised text replaces the earlier one without erasing it, as bill records do
 (DESIGN.md#updates). Texts are never committed, redistributed or shown; only what is recorded
 here, and the share of wording a bill matches, reaches the site. See DESIGN.md#model-documents.
+
+See DESIGN.md#dr-10.
 """
 
 import hashlib

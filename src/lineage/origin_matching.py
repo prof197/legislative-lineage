@@ -26,6 +26,8 @@ on how many rows it multiplies.
 A model window keeps its K nearest corpus texts, as a query's does, so an act copied with
 rewording into more than K distinct versions is found by meaning in only the K closest; the
 near-duplicate stage has no such limit. See DESIGN.md#origin-matches.
+
+See DESIGN.md#dr-8.
 """
 
 from collections import defaultdict

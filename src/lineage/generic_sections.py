@@ -26,6 +26,8 @@ Definitions have no bound: real ones run to thousands of words.
 
 Patterns run on normalized text (lineage.sections.normalize: lowercase words, no punctuation).
 See DESIGN.md#origin-matches.
+
+See DESIGN.md#dr-11.
 """
 
 import re

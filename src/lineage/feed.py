@@ -28,6 +28,8 @@ that day, so the same days always give the same bytes. The feed is checked again
 required elements and cardinalities with the standard library's parser before it is written.
 
 Owned by lane L3 (M12). See DESIGN.md#updates.
+
+See DESIGN.md#dr-13.
 """
 
 import re
