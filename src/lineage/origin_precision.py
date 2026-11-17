@@ -136,6 +136,19 @@ PARTS: dict[str, Part] = {
     # Ruled at the step 47 review: before the parked fix is built, every EPPC match a page
     # lists is labeled, since its reporting labels (one correct of four, the errors one
     # document's) were too few to read. Numbered after every id the reporting sample can take.
+    # Ruled at the step 47 review: generic sections are left out of matches, so the published
+    # precision is read again, on a fresh sample drawn once from the table matched after the fix,
+    # apart from both earlier samples' matches; the census's are left in, since leaving out every
+    # EPPC match listed would leave EPPC none to read. Numbered after every id the census can take.
+    "reporting_after_fix": Part(
+        "reporting_after_fix",
+        REPORTING_SEED + 2,
+        1001,
+        Path("evals/origin_precision_reporting_after_fix.jsonl"),
+        final_only=True,
+        excludes=("tuning", "reporting"),
+        floor=FLOOR,
+    ),
     "census_eppc": Part(
         "census_eppc",
         REPORTING_SEED + 1,
@@ -502,6 +515,12 @@ def without_intervals(node: Any) -> Any:
 # to it, whatever the overall figure, so its precision is read against every other source's.
 COMPARED = "alec"
 RESULTS_SECTION = "origins_precision"
+# Each reporting part's reading in the results; the first, read before generic sections were
+# left out of matches, is kept under its own name.
+RESULTS_SECTIONS = {
+    "reporting": "origins_precision_before_fix",
+    "reporting_after_fix": RESULTS_SECTION,
+}
 
 
 def reading(

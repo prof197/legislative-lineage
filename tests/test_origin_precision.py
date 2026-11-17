@@ -18,6 +18,7 @@ from lineage.modeldocs import ModelDoc, Source, sha256, store
 from lineage.origin_precision import (
     FLOORS,
     PARTS,
+    RESULTS_SECTIONS,
     STAND_IN,
     OriginPrecisionError,
     band_of,
@@ -379,27 +380,28 @@ def test_only_its_intervals_may_be_rewritten_and_only_when_nothing_else_moves(
     assert without_intervals({"a": {"precision": 0.9, "interval_95": [0.8, 0.95]}, "b": [1]}) == {
         "a": {"precision": 0.9}, "b": [1],
     }  # fmt: skip
-    stored = json.loads(Path("reports/results.json").read_text())["origins_precision"]
+    stored = json.loads(Path("reports/results.json").read_text())["origins_precision_before_fix"]
     moved = json.loads(json.dumps(stored))
     moved["overall"]["correct"] -= 1
     results = tmp_path / "results.json"
-    results.write_text(json.dumps({"origins_precision": moved}))
+    results.write_text(json.dumps({"origins_precision_before_fix": moved}))
 
-    args = ["eval", "origin-precision", "--results", str(results), "--intervals-only"]
+    args = ["eval", "origin-precision", "--part", "reporting", "--results", str(results),
+            "--intervals-only"]  # fmt: skip
     run = CliRunner().invoke(app, args)
     assert run.exit_code == 1
     assert "other than its intervals" in run.output
-    assert json.loads(results.read_text()) == {"origins_precision": moved}
+    assert json.loads(results.read_text()) == {"origins_precision_before_fix": moved}
 
     widened = json.loads(json.dumps(stored))
     widened["overall"]["precision"]["interval_95"] = [0.0, 1.0]
-    results.write_text(json.dumps({"origins_precision": widened}))
+    results.write_text(json.dumps({"origins_precision_before_fix": widened}))
     run = CliRunner().invoke(app, args)
     assert run.exit_code == 0, run.output
-    assert without_intervals(json.loads(results.read_text())["origins_precision"]) == (
+    assert without_intervals(json.loads(results.read_text())["origins_precision_before_fix"]) == (
         without_intervals(stored)
     )
-    assert json.loads(results.read_text())["origins_precision"]["overall"]["precision"][
+    assert json.loads(results.read_text())["origins_precision_before_fix"]["overall"]["precision"][
         "interval_95"
     ] != [0.0, 1.0]
 
@@ -447,3 +449,35 @@ def test_a_census_reading_counts_labels_from_any_part_and_lists_the_wrong_matche
     assert out["wrong"][0]["sections"] == [{"model_kind": "definitions"}]
     with pytest.raises(OriginPrecisionError, match="no label"):
         census_reading(rows, {}, sections, source="eppc")
+
+
+def test_the_reporting_sample_after_the_fix_is_drawn_once_apart_from_both_earlier_samples(
+    tmp_path: Path,
+) -> None:
+    """Ruled at the step 47 review: with generic sections left out of matches, a fresh
+    reporting sample is drawn and read once; the first reading is kept as the one before the
+    fix."""
+    after = PARTS["reporting_after_fix"]
+    assert (after.final_only, after.floor, after.excludes) == (True, FLOOR, ("tuning", "reporting"))
+    assert after.seed not in {p.seed for n, p in PARTS.items() if n != "reporting_after_fix"}
+    assert RESULTS_SECTIONS == {
+        "reporting": "origins_precision_before_fix",
+        "reporting_after_fix": "origins_precision",
+    }
+    table = _table()
+    for name in ("tuning", "reporting"):
+        (tmp_path / PARTS[name].sample).parent.mkdir(parents=True, exist_ok=True)
+    (tmp_path / PARTS["tuning"].sample).write_text(
+        json.dumps({"bill_id": "bill-000", "doc_id": "lib/a"}) + "\n"
+    )
+    (tmp_path / PARTS["reporting"].sample).write_text(
+        json.dumps({"bill_id": "bill-030", "doc_id": "lib/a"}) + "\n"
+    )
+    rows, _ = draw_part(table, after, excluded=excluded_keys(after, tmp_path), final=True)
+
+    drawn = {r["bill_id"] for r in rows}
+    assert not drawn & {"bill-000", "bill-030"}
+    assert rows
+    assert min(int(r["pair"][1:]) for r in rows) == 1001
+    with pytest.raises(OriginPrecisionError, match="final"):
+        draw_part(table, after)

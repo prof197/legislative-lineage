@@ -10551,8 +10551,8 @@
   ],
   "earlier_runs": []
  },
- "origins_precision": {
-  "command": "uv run lineage eval origin-precision",
+ "origins_precision_before_fix": {
+  "command": "uv run lineage eval origin-precision --part reporting",
   "sample": "evals/origin_precision_reporting.jsonl",
   "labels": "evals/origin_precision_labels.jsonl",
   "prompt": "passages-v1-high",

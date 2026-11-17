@@ -184,7 +184,7 @@ from lineage.origin_labels import record as record_origin_spend
 from lineage.origin_matching import match_models
 from lineage.origin_precision import PARTS as ORIGIN_PARTS
 from lineage.origin_precision import REPORT as ORIGIN_SAMPLE_REPORT
-from lineage.origin_precision import RESULTS_SECTION as ORIGIN_PRECISION_SECTION
+from lineage.origin_precision import RESULTS_SECTIONS as ORIGIN_RESULTS_SECTIONS
 from lineage.origin_precision import SPEND as ORIGIN_SPEND
 from lineage.origin_precision import (
     OriginPrecisionError,
@@ -1984,6 +1984,13 @@ def eval_origin_threshold(
 
 @eval_app.command("origin-precision")
 def eval_origin_precision(
+    part: Annotated[
+        str,
+        typer.Option(
+            "--part",
+            help="reporting_after_fix, or reporting (read before generic sections were left out).",
+        ),
+    ] = "reporting_after_fix",
     labels: Annotated[
         Path, typer.Option("--labels", help="The origin labels (committed).")
     ] = ORIGIN_LABELS,
@@ -1996,47 +2003,52 @@ def eval_origin_precision(
         ),
     ] = False,
 ) -> None:
-    """Origin precision on the reporting sample, read once: overall, by stage, by source, and
+    """Origin precision on a reporting sample, read once: overall, by stage, by source, and
     ALEC's against the rest (DESIGN.md#origin-matches)."""
-    reporting = ORIGIN_PARTS["reporting"]
+    if part not in ORIGIN_RESULTS_SECTIONS:
+        typer.echo(
+            f"error: no reporting part {part!r}; one of {', '.join(ORIGIN_RESULTS_SECTIONS)}",
+            err=True,
+        )
+        raise typer.Exit(1)
+    reporting = ORIGIN_PARTS[part]
+    name = ORIGIN_RESULTS_SECTIONS[part]
     try:
         doc: dict[str, Any] = json.loads(results.read_text()) if results.exists() else {}
-        if intervals_only and ORIGIN_PRECISION_SECTION not in doc:
+        if intervals_only and name not in doc:
             raise OriginPrecisionError(f"no stored reading in {results} to regenerate")
-        if ORIGIN_PRECISION_SECTION in doc and not intervals_only:
+        if name in doc and not intervals_only:
             raise OriginPrecisionError(
-                f"the reporting sample was read once already ({results}, "
-                f"{ORIGIN_PRECISION_SECTION}); a second reading could be chosen"
+                f"the {part} sample was read once already ({results}, {name}); a second "
+                "reading could be chosen"
             )
         if not reporting.sample.exists():
             raise OriginPrecisionError(
-                f"no {reporting.sample}; run `lineage origin-sample --part reporting --final`"
+                f"no {reporting.sample}; run `lineage origin-sample --part {part} --final`"
             )
         rows = load_origin_sample(reporting.sample)
         read = origin_precision_reading(
             rows,
             origin_correct_by_pair(load_origin_labels(labels)),
-            json.loads(ORIGIN_SAMPLE_REPORT.read_text())["reporting"],
+            json.loads(ORIGIN_SAMPLE_REPORT.read_text())[part],
         )
     except (OriginPrecisionError, ValueError) as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
     section = {
-        "command": "uv run lineage eval origin-precision",
+        "command": f"uv run lineage eval origin-precision --part {part}",
         "sample": str(reporting.sample),
         "labels": str(labels),
         "prompt": ORIGIN_PROMPT.version,
     } | read
-    if intervals_only and without_origin_intervals(section) != without_origin_intervals(
-        doc[ORIGIN_PRECISION_SECTION]
-    ):
+    if intervals_only and without_origin_intervals(section) != without_origin_intervals(doc[name]):
         typer.echo(
-            f"error: the reading would change other than its intervals ({results}, "
-            f"{ORIGIN_PRECISION_SECTION}); it is read once",
+            f"error: the reading would change other than its intervals ({results}, {name}); "
+            "it is read once",
             err=True,
         )
         raise typer.Exit(1)
-    write_results(results, ORIGIN_PRECISION_SECTION, section)
+    write_results(results, name, section)
 
     def line(name: str, g: Mapping[str, Any]) -> str:
         p = g["precision"]
