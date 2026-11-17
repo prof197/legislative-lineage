@@ -3326,24 +3326,33 @@ def schedule_daily_command(
     tier: Annotated[str, typer.Option("--tier", help="The intake key's limits.")] = "default",
 ) -> None:
     """The daily job: intake, update, the incremental export and the feed, swapped in only when
-    every step succeeds; a failure is recorded in data/schedule/status.json and alerted."""
+    every step succeeds, and from the first day of session the deploy (rules/deploy.toml); a
+    failure or a held day is recorded in data/schedule/status.json and alerted. Exits 3 when
+    the day is held for review."""
     as_of = datetime.date.fromisoformat(day) if day else datetime.datetime.now(datetime.UTC).date()
     steps = daily_steps(as_of, state=state.upper(), site_url=site_url, tier=tier)
     status = run_job("daily", steps, run=cli_runner, notify=osascript_notifier)
+    if status.state == "held":
+        typer.echo(f"daily {as_of}: held for review; see data/schedule/status.json")
+        raise typer.Exit(deploy.HELD)
     typer.echo(f"daily {as_of}: " + ("ok" if status.ok else f"stopped at {status.failed_step}"))
     raise typer.Exit(0 if status.ok else 1)
 
 
 @schedule_app.command("weekly")
 def schedule_weekly_command(
+    site_url: SiteOption,
+    state: StateOption = "GA",
     day: Annotated[
         str | None, typer.Option("--day", help="The day, YYYY-MM-DD [default: today, UTC].")
     ] = None,
 ) -> None:
     """The weekly job: two full rebuilds over the days the tables have had, then the check,
-    which fails the job below 98% agreement (DR-7)."""
+    which fails the job below 98% agreement (DR-7); then, before session, a release candidate
+    for review, and during it the week's new origin claims (DESIGN.md#updates)."""
     as_of = datetime.date.fromisoformat(day) if day else datetime.datetime.now(datetime.UTC).date()
-    status = run_job("weekly", weekly_job_steps(), run=cli_runner, notify=osascript_notifier)
+    steps = weekly_job_steps(state=state.upper(), site_url=site_url, day=as_of)
+    status = run_job("weekly", steps, run=cli_runner, notify=osascript_notifier)
     typer.echo(f"weekly {as_of}: " + ("ok" if status.ok else f"stopped at {status.failed_step}"))
     raise typer.Exit(0 if status.ok else 1)
 

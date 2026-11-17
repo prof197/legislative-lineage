@@ -120,7 +120,7 @@ class Fake:
         ]
 
 
-def _checkout(root: Path) -> Path:
+def job_checkout(root: Path) -> Path:
     """The job's clone, as far as the deploy reads it: a repository with the pin and the
     committed size report."""
     checkout = root / "checkout"
@@ -146,7 +146,7 @@ def _rules(*, ceiling: int = 2500, floor: int = 1000, min_history: int = 5) -> D
 
 @pytest.fixture
 def setup(live: dict[int, Path], tmp_path: Path) -> tuple[DeployPaths, Fake, Path]:
-    paths = DeployPaths(root=tmp_path / "deploy", checkout=_checkout(tmp_path))
+    paths = DeployPaths(root=tmp_path / "deploy", checkout=job_checkout(tmp_path))
     export = tmp_path / "data" / "GA"
     shutil.copytree(live[2], export)
     return paths, Fake(paths.checkout), export
