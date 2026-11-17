@@ -25,7 +25,16 @@ from typing import Any
 
 from lineage import queries
 from lineage.generic_sections import generic_kind
-from lineage.labels import Item, Pair, Section, SectionKey, SectionRef, model_labeler, text_sha256
+from lineage.labels import (
+    Item,
+    Pair,
+    Section,
+    SectionKey,
+    SectionRef,
+    is_correct,
+    model_labeler,
+    text_sha256,
+)
 from lineage.model_labels import (
     MAX_COST,
     MODEL_ID,
@@ -198,6 +207,26 @@ def pending(items: Sequence[OriginItem], labels: Iterable[Mapping[str, Any]]) ->
     return [i for i in items if _key(i) not in done]
 
 
+def correct_by_sections(
+    items: Sequence[OriginItem], labels: Iterable[Mapping[str, Any]]
+) -> dict[str, bool]:
+    """Each item's answer under this prompt, by its pair id, from the label on the same bill,
+    document and both sections, whichever part's row took it: a sample drawn after matching
+    changed may share matches with an earlier part, and only a label on the sections its row
+    now rests on answers it. An item no such label answers is absent; two different answers for
+    the same sections are refused."""
+    by_sections: dict[tuple[str, str, str, str], bool] = {}
+    for row in labels:
+        if not str(row["labeler"]).endswith(f"@{PROMPT.version}"):
+            continue
+        key = (str(row["bill_id"]), str(row["doc_id"]), row["model_section"], row["bill_section"])
+        answer = is_correct(row)
+        if by_sections.get(key, answer) != answer:
+            raise OriginPrecisionError(f"{key[0]} x {key[1]} has two different labels")
+        by_sections[key] = answer
+    return {i.pair: by_sections[_key(i)] for i in items if _key(i) in by_sections}
+
+
 def _key(i: OriginItem) -> tuple[str, str, str, str]:
     return (
         i.item.match.ref.bill_id,
@@ -297,10 +326,19 @@ def label_in_batch(
 
 
 def record(
-    batches: Batches, batch_id: str, *, model: str, today: str, spend_path: Path = SPEND
+    batches: Batches,
+    batch_id: str,
+    *,
+    model: str,
+    today: str,
+    spend_path: Path = SPEND,
+    planned: Plan | None = None,
 ) -> dict[str, Any]:
-    """An ended batch's tokens and cost, in v2's ledger under v2's budget."""
-    return record_spend(
+    """An ended batch's tokens and cost, in v2's ledger under v2's budget. With its plan, the
+    batch's entry also records what it was projected at and the cap it ran under beside the
+    per-run cap, so a run allowed past that cap (ruled at M12's start, when its projection fits
+    v2's budget) says so in the ledger."""
+    ledger = record_spend(
         spend_path,
         batch_id=batch_id,
         model=model,
@@ -310,3 +348,14 @@ def record(
         budget=BUDGET,
         command=COMMAND,
     )
+    if planned is None:
+        return ledger
+    for entry in ledger["batches"]:
+        if entry["batch_id"] == batch_id:
+            entry |= {
+                "projected": round(planned.projected, 4),
+                "max_cost": planned.max_cost,
+                "per_run_cap": MAX_COST,
+            }
+    spend_path.write_text(json.dumps(ledger, indent=1) + "\n")
+    return ledger

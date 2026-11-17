@@ -13,6 +13,7 @@ from lineage.model_labels import PASSAGES_HIGH, BatchReply, SameProvision, Schem
 from lineage.origin_labels import (
     PROMPT,
     OriginItem,
+    correct_by_sections,
     label_in_batch,
     pending,
     plan,
@@ -148,3 +149,44 @@ def test_the_command_caps_a_run_at_v1s_cap_unless_raised_explicitly() -> None:
 
     default = inspect.signature(origin_label_command).parameters["max_cost"].default
     assert default == MAX_COST == 10.0
+
+
+def _row(
+    pair: str, model: int, bill: int, label: int, labeler: str = PROMPT.version
+) -> dict[str, Any]:
+    return {
+        "pair": pair, "bill_id": "ocd-bill/1", "doc_id": "lib/a",
+        "model_section": f"{model:064x}", "bill_section": f"{bill:064x}", "label": label,
+        "labeler": f"model:claude-opus-5-5@{labeler}",
+    }  # fmt: skip
+
+
+def test_a_label_is_found_by_its_sections_whichever_part_took_it() -> None:
+    # A match another part labeled on the same sections answers this sample's row; a label on
+    # other sections of the same match, such as a pair matching no longer counts, does not.
+    items = [_item(1), _item(2)]
+    labels = [_row("c0007", 1, 101, 3), _row("r0042", 2, 999, 4), _row("x", 2, 102, 0, "other")]
+    assert correct_by_sections(items, labels) == {"o0001": True}
+
+
+def test_two_answers_for_the_same_sections_are_refused() -> None:
+    labels = [_row("c0007", 1, 101, 3), _row("r0042", 1, 101, 0)]
+    with pytest.raises(OriginPrecisionError, match="two different labels"):
+        correct_by_sections([_item(1)], labels)
+
+
+def test_a_run_over_the_per_run_cap_is_recorded_with_its_cap_and_projection(
+    tmp_path: Path,
+) -> None:
+    # Ruled at M12's start: a run may pass the per-run cap when its projection fits v2's budget,
+    # and the spend file records that it did.
+    ledger = tmp_path / "spend.json"
+    items = [_item(n, "x" * 5000, "y" * 5000) for n in range(10)]
+    planned = plan(items, spend_path=ledger, max_cost=13.30)
+    record(_Batches({"o0001": 1}), "msgbatch_over", model="claude-opus-5-5",
+           today="2026-11-17", spend_path=ledger, planned=planned)  # fmt: skip
+    entry = json.loads(ledger.read_text())["batches"][-1]
+    assert entry["batch_id"] == "msgbatch_over"
+    assert entry["projected"] == round(planned.projected, 4)
+    assert entry["max_cost"] == 13.30
+    assert entry["per_run_cap"] == 10.0

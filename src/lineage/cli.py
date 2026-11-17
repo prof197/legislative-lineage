@@ -175,6 +175,7 @@ from lineage.neighbors import write_report as write_neighbors_report
 from lineage.origin_labels import LABELS as ORIGIN_LABELS
 from lineage.origin_labels import PROMPT as ORIGIN_PROMPT
 from lineage.origin_labels import build_items as build_origin_items
+from lineage.origin_labels import correct_by_sections as origin_correct_by_sections
 from lineage.origin_labels import label_in_batch as origin_label_in_batch
 from lineage.origin_labels import load_labels as load_origin_labels
 from lineage.origin_labels import pair_sections as origin_pair_sections
@@ -928,7 +929,9 @@ def origin_label_command(
         batch_id=batch_id,
         submitted=lambda b: typer.echo(f"sent as batch {b}; collect with --batch-id {b}"),
     )
-    ledger = record_origin_spend(batches, sent, model=LABEL_MODEL, today=today, spend_path=spend)
+    ledger = record_origin_spend(
+        batches, sent, model=LABEL_MODEL, today=today, spend_path=spend, planned=planned
+    )
     typer.echo(f"{done} labeled from batch {sent}, {unusable} unusable replies -> {labels}")
     typer.echo(f"${ledger['spent']:,.2f} of v2's ${ledger['budget']:,.2f} spent -> {spend}")
 
@@ -1994,6 +1997,10 @@ def eval_origin_precision(
     labels: Annotated[
         Path, typer.Option("--labels", help="The origin labels (committed).")
     ] = ORIGIN_LABELS,
+    tables: TablesOption = DATA / "tables",
+    root: Annotated[
+        Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
+    ] = MODELDOCS_DIR,
     results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
     intervals_only: Annotated[
         bool,
@@ -2027,12 +2034,16 @@ def eval_origin_precision(
                 f"no {reporting.sample}; run `lineage origin-sample --part {part} --final`"
             )
         rows = load_origin_sample(reporting.sample)
+        if reporting.by_sections:
+            docs = [d for c in collectors().values() for d in read_docs(c.source, root)]
+            items = build_origin_items(rows, read_origin_matches(tables), docs, tables, root=root)
+            correct = origin_correct_by_sections(items, load_origin_labels(labels))
+        else:
+            correct = origin_correct_by_pair(load_origin_labels(labels))
         read = origin_precision_reading(
-            rows,
-            origin_correct_by_pair(load_origin_labels(labels)),
-            json.loads(ORIGIN_SAMPLE_REPORT.read_text())[part],
+            rows, correct, json.loads(ORIGIN_SAMPLE_REPORT.read_text())[part]
         )
-    except (OriginPrecisionError, ValueError) as e:
+    except (OriginPrecisionError, ModelDocError, ValueError) as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
     section = {

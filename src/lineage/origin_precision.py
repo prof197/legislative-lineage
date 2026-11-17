@@ -107,6 +107,10 @@ class Part:
     floor: float | None = None  # drawn only from the matches a page lists at this floor
     source: str | None = None  # drawn only from this source's matches
     census: bool = False  # every match it may draw, not a sample
+    # Its labels are found by the sections its rows rest on, whichever part's row took them
+    # (lineage.origin_labels.correct_by_sections): drawn after matching changed, it may share
+    # matches with a census, and only a label on the sections a row now rests on answers it.
+    by_sections: bool = False
 
     @property
     def strata(self) -> tuple[str, ...]:
@@ -148,6 +152,7 @@ PARTS: dict[str, Part] = {
         final_only=True,
         excludes=("tuning", "reporting"),
         floor=FLOOR,
+        by_sections=True,
     ),
     "census_eppc": Part(
         "census_eppc",
