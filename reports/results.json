@@ -6640,6 +6640,1373 @@
    "passes": false
   }
  },
+ "origins_census_eppc": {
+  "command": "uv run lineage eval origin-census --part census_eppc",
+  "sample": "evals/origin_precision_census_eppc.jsonl",
+  "labels": "evals/origin_precision_labels.jsonl",
+  "prompt": "passages-v1-high",
+  "source": "eppc",
+  "floor": 0.25,
+  "census": true,
+  "matches": 71,
+  "correct": 17,
+  "precision": 0.2394,
+  "by_stage": {
+   "near_duplicate_only": {
+    "matches": 10,
+    "correct": 1
+   },
+   "semantic_only": {
+    "matches": 24,
+    "correct": 8
+   },
+   "both": {
+    "matches": 37,
+    "correct": 8
+   }
+  },
+  "by_document": {
+   "eppc/age-verification-for-websites-containing-obscene-and-indecent-material": {
+    "matches": 42,
+    "correct": 2
+   },
+   "eppc/age-verification-of-social-media": {
+    "matches": 21,
+    "correct": 9
+   },
+   "eppc/safe-chat-act": {
+    "matches": 2,
+    "correct": 0
+   },
+   "eppc/state-assisted-reproductive-technology-model-legislation": {
+    "matches": 6,
+    "correct": 6
+   }
+  },
+  "wrong": [
+   {
+    "pair": "o0645",
+    "bill_id": "ocd-bill/15979181-cf97-464d-a947-b612815dae18",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.0668,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 54,
+      "strongest": true,
+      "agreements": 75,
+      "cosine": 0.9549,
+      "model_words": 697,
+      "bill_words": 622,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0658",
+    "bill_id": "ocd-bill/16c8789a-6bbc-45b5-ad2b-b1d15201701c",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.2206,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 6,
+      "strongest": true,
+      "agreements": 67,
+      "cosine": 0.9467,
+      "model_words": 697,
+      "bill_words": 625,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0610",
+    "bill_id": "ocd-bill/1e749ea5-7278-416d-a998-f40e52496e2e",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.0668,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 54,
+      "strongest": true,
+      "agreements": 75,
+      "cosine": 0.9549,
+      "model_words": 697,
+      "bill_words": 622,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0622",
+    "bill_id": "ocd-bill/258ae878-2fc9-47c6-9c38-e01881505e5c",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.1249,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 20,
+      "strongest": true,
+      "agreements": 76,
+      "cosine": 0.9543,
+      "model_words": 697,
+      "bill_words": 800,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0612",
+    "bill_id": "ocd-bill/266b6e20-8ac8-41bf-b9d2-e76ed084591c",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.0875,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 12,
+      "strongest": true,
+      "agreements": 76,
+      "cosine": 0.9482,
+      "model_words": 697,
+      "bill_words": 560,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0637",
+    "bill_id": "ocd-bill/321efbd4-29a8-44ae-93b7-906aedc26765",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.0673,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 54,
+      "strongest": true,
+      "agreements": 75,
+      "cosine": 0.9549,
+      "model_words": 697,
+      "bill_words": 622,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0663",
+    "bill_id": "ocd-bill/3371e47e-5d9e-400a-b292-73fa1100596c",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.4788,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 12,
+      "strongest": true,
+      "agreements": 78,
+      "cosine": 0.9701,
+      "model_words": 697,
+      "bill_words": 612,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     },
+     {
+      "model_section": 5,
+      "bill_section": 24,
+      "strongest": false,
+      "agreements": 75,
+      "cosine": null,
+      "model_words": 697,
+      "bill_words": 599,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0627",
+    "bill_id": "ocd-bill/367f0921-8a41-418b-bb3d-2873410911b2",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.0673,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 54,
+      "strongest": true,
+      "agreements": 75,
+      "cosine": 0.9549,
+      "model_words": 697,
+      "bill_words": 622,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0668",
+    "bill_id": "ocd-bill/3e760a0c-962d-4b4f-bf42-40b5a0b4466c",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.4278,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 11,
+      "strongest": true,
+      "agreements": 82,
+      "cosine": 0.9552,
+      "model_words": 697,
+      "bill_words": 649,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0650",
+    "bill_id": "ocd-bill/3ed6572f-5f32-4578-a819-ec3893e732c9",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "semantic_only",
+    "model_share": 0.3015,
+    "bill_share": 0.4958,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 10,
+      "strongest": true,
+      "agreements": null,
+      "cosine": 0.9507,
+      "model_words": 697,
+      "bill_words": 474,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     },
+     {
+      "model_section": 5,
+      "bill_section": 19,
+      "strongest": false,
+      "agreements": null,
+      "cosine": 0.9507,
+      "model_words": 697,
+      "bill_words": 474,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0635",
+    "bill_id": "ocd-bill/43039710-b262-418a-b32b-d77b7e6fe016",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.2343,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 23,
+      "strongest": false,
+      "agreements": null,
+      "cosine": 0.9461,
+      "model_words": 697,
+      "bill_words": 627,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     },
+     {
+      "model_section": 5,
+      "bill_section": 33,
+      "strongest": true,
+      "agreements": 65,
+      "cosine": 0.9461,
+      "model_words": 697,
+      "bill_words": 632,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0670",
+    "bill_id": "ocd-bill/47068035-b1e2-417a-86e6-dd2575e67377",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.0672,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 54,
+      "strongest": true,
+      "agreements": 75,
+      "cosine": 0.9549,
+      "model_words": 697,
+      "bill_words": 622,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0626",
+    "bill_id": "ocd-bill/69ed208d-a1ca-4238-a9f2-2d261c261a91",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.0879,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 12,
+      "strongest": true,
+      "agreements": 76,
+      "cosine": 0.9482,
+      "model_words": 697,
+      "bill_words": 560,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0636",
+    "bill_id": "ocd-bill/7ede73fb-ca0c-4c3f-90d9-2bf60a5147d1",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "semantic_only",
+    "model_share": 0.3015,
+    "bill_share": 0.4958,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 10,
+      "strongest": true,
+      "agreements": null,
+      "cosine": 0.9507,
+      "model_words": 697,
+      "bill_words": 474,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     },
+     {
+      "model_section": 5,
+      "bill_section": 19,
+      "strongest": false,
+      "agreements": null,
+      "cosine": 0.9507,
+      "model_words": 697,
+      "bill_words": 474,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0639",
+    "bill_id": "ocd-bill/887061c4-6c3e-40ec-9c9e-7a64a7223a16",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.219,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 25,
+      "strongest": false,
+      "agreements": null,
+      "cosine": 0.9461,
+      "model_words": 697,
+      "bill_words": 630,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     },
+     {
+      "model_section": 5,
+      "bill_section": 32,
+      "strongest": true,
+      "agreements": 65,
+      "cosine": 0.9461,
+      "model_words": 697,
+      "bill_words": 631,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0607",
+    "bill_id": "ocd-bill/88c91581-141a-4eed-9590-eabed9406d44",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "semantic_only",
+    "model_share": 0.3015,
+    "bill_share": 0.11,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 13,
+      "strongest": true,
+      "agreements": null,
+      "cosine": 0.9559,
+      "model_words": 697,
+      "bill_words": 618,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0654",
+    "bill_id": "ocd-bill/8dd4c4f4-770a-4552-a977-9e7488630427",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "near_duplicate_only",
+    "model_share": 0.3015,
+    "bill_share": 0.1311,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 9,
+      "strongest": true,
+      "agreements": 67,
+      "cosine": null,
+      "model_words": 697,
+      "bill_words": 741,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0653",
+    "bill_id": "ocd-bill/9abade1f-b7d7-4eec-b305-851b714d1b50",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.2343,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 23,
+      "strongest": false,
+      "agreements": null,
+      "cosine": 0.9461,
+      "model_words": 697,
+      "bill_words": 627,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     },
+     {
+      "model_section": 5,
+      "bill_section": 33,
+      "strongest": true,
+      "agreements": 65,
+      "cosine": 0.9461,
+      "model_words": 697,
+      "bill_words": 632,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0619",
+    "bill_id": "ocd-bill/9f852080-aae0-4831-8e4f-34deec794a2f",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.219,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 25,
+      "strongest": false,
+      "agreements": null,
+      "cosine": 0.9461,
+      "model_words": 697,
+      "bill_words": 630,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     },
+     {
+      "model_section": 5,
+      "bill_section": 32,
+      "strongest": true,
+      "agreements": 65,
+      "cosine": 0.9461,
+      "model_words": 697,
+      "bill_words": 631,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0617",
+    "bill_id": "ocd-bill/9f9f2677-1ed7-44ce-9948-380c5f8246d8",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.2771,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 9,
+      "strongest": true,
+      "agreements": 75,
+      "cosine": 0.9562,
+      "model_words": 697,
+      "bill_words": 616,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0609",
+    "bill_id": "ocd-bill/a1eca98f-ab62-4152-9229-c26ae82bb03b",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "semantic_only",
+    "model_share": 0.3015,
+    "bill_share": 0.4606,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 11,
+      "strongest": true,
+      "agreements": null,
+      "cosine": 0.9507,
+      "model_words": 697,
+      "bill_words": 474,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     },
+     {
+      "model_section": 5,
+      "bill_section": 21,
+      "strongest": false,
+      "agreements": null,
+      "cosine": 0.9507,
+      "model_words": 697,
+      "bill_words": 474,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0621",
+    "bill_id": "ocd-bill/a44f69c7-5cc9-4e7e-abe0-9026b8269131",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.376,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 11,
+      "strongest": true,
+      "agreements": 82,
+      "cosine": 0.9552,
+      "model_words": 697,
+      "bill_words": 649,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0625",
+    "bill_id": "ocd-bill/a73648d6-9d38-4a96-9338-43cd52cbe9b9",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "semantic_only",
+    "model_share": 0.3015,
+    "bill_share": 0.2023,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 13,
+      "strongest": true,
+      "agreements": null,
+      "cosine": 0.955,
+      "model_words": 697,
+      "bill_words": 625,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0628",
+    "bill_id": "ocd-bill/a843cbfb-c56b-4640-b321-06dda1f9fcb7",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.1012,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 31,
+      "strongest": true,
+      "agreements": 76,
+      "cosine": 0.9543,
+      "model_words": 697,
+      "bill_words": 800,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0618",
+    "bill_id": "ocd-bill/ae0f0abf-e1b8-4926-ad86-7a97e037ca54",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "semantic_only",
+    "model_share": 0.3015,
+    "bill_share": 0.2023,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 13,
+      "strongest": true,
+      "agreements": null,
+      "cosine": 0.955,
+      "model_words": 697,
+      "bill_words": 625,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0604",
+    "bill_id": "ocd-bill/be206b0c-aeb3-4aa1-93b0-726fe1db3345",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.0673,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 54,
+      "strongest": true,
+      "agreements": 75,
+      "cosine": 0.9549,
+      "model_words": 697,
+      "bill_words": 622,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0602",
+    "bill_id": "ocd-bill/c3b9a282-9a7b-4756-9dea-575231e65c9c",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "semantic_only",
+    "model_share": 0.3015,
+    "bill_share": 0.1516,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 13,
+      "strongest": true,
+      "agreements": null,
+      "cosine": 0.9604,
+      "model_words": 697,
+      "bill_words": 885,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0661",
+    "bill_id": "ocd-bill/c8cc4935-fcd1-4aba-b8ab-1b2e6c8f637b",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "semantic_only",
+    "model_share": 0.3015,
+    "bill_share": 0.1079,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 13,
+      "strongest": true,
+      "agreements": null,
+      "cosine": 0.9559,
+      "model_words": 697,
+      "bill_words": 618,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0616",
+    "bill_id": "ocd-bill/cfd57d8e-80a2-4b89-84e8-83d668add3ce",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.1452,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 12,
+      "strongest": true,
+      "agreements": 89,
+      "cosine": 0.981,
+      "model_words": 697,
+      "bill_words": 592,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0643",
+    "bill_id": "ocd-bill/d84c886d-37e9-4217-8305-720f12015df4",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "near_duplicate_only",
+    "model_share": 0.3015,
+    "bill_share": 0.0145,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 9,
+      "strongest": true,
+      "agreements": 74,
+      "cosine": null,
+      "model_words": 697,
+      "bill_words": 366,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0623",
+    "bill_id": "ocd-bill/d8a9b3eb-c662-40ec-8b86-f033336aa196",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "near_duplicate_only",
+    "model_share": 0.3015,
+    "bill_share": 0.2381,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 11,
+      "strongest": true,
+      "agreements": 68,
+      "cosine": null,
+      "model_words": 697,
+      "bill_words": 598,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0601",
+    "bill_id": "ocd-bill/dc402501-c70e-4b36-82d1-8970a77d7c2c",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.1527,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 19,
+      "strongest": true,
+      "agreements": 64,
+      "cosine": 0.9407,
+      "model_words": 697,
+      "bill_words": 624,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0615",
+    "bill_id": "ocd-bill/dd31d2d1-9152-4b25-ad57-17cb132346c2",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "near_duplicate_only",
+    "model_share": 0.3015,
+    "bill_share": 0.4331,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 3,
+      "strongest": true,
+      "agreements": 73,
+      "cosine": null,
+      "model_words": 697,
+      "bill_words": 663,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0632",
+    "bill_id": "ocd-bill/df21a6e7-578a-4fbc-9c4d-baf4c1cc169a",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "semantic_only",
+    "model_share": 0.3015,
+    "bill_share": 0.4606,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 11,
+      "strongest": true,
+      "agreements": null,
+      "cosine": 0.9507,
+      "model_words": 697,
+      "bill_words": 474,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     },
+     {
+      "model_section": 5,
+      "bill_section": 21,
+      "strongest": false,
+      "agreements": null,
+      "cosine": 0.9507,
+      "model_words": 697,
+      "bill_words": 474,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0605",
+    "bill_id": "ocd-bill/e24bd730-5af2-40e2-b92d-d34425c13df0",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.2343,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 23,
+      "strongest": false,
+      "agreements": null,
+      "cosine": 0.9461,
+      "model_words": 697,
+      "bill_words": 627,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     },
+     {
+      "model_section": 5,
+      "bill_section": 33,
+      "strongest": true,
+      "agreements": 65,
+      "cosine": 0.9461,
+      "model_words": 697,
+      "bill_words": 632,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0614",
+    "bill_id": "ocd-bill/e3c728a9-5e44-4037-9790-9691531fe473",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.2342,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 23,
+      "strongest": false,
+      "agreements": null,
+      "cosine": 0.9461,
+      "model_words": 697,
+      "bill_words": 627,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     },
+     {
+      "model_section": 5,
+      "bill_section": 33,
+      "strongest": true,
+      "agreements": 65,
+      "cosine": 0.9461,
+      "model_words": 697,
+      "bill_words": 632,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0640",
+    "bill_id": "ocd-bill/f7479639-1b18-411f-9d72-c24b5abd3143",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.188,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 26,
+      "strongest": true,
+      "agreements": 69,
+      "cosine": 0.9539,
+      "model_words": 697,
+      "bill_words": 622,
+      "model_kind": "severability",
+      "bill_kind": null
+     },
+     {
+      "model_section": 5,
+      "bill_section": 36,
+      "strongest": false,
+      "agreements": 69,
+      "cosine": 0.9539,
+      "model_words": 697,
+      "bill_words": 626,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0638",
+    "bill_id": "ocd-bill/f75f7308-53ff-4d33-b74b-97f2126dba8f",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "semantic_only",
+    "model_share": 0.3015,
+    "bill_share": 0.1951,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 6,
+      "strongest": true,
+      "agreements": null,
+      "cosine": 0.9706,
+      "model_words": 697,
+      "bill_words": 635,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0629",
+    "bill_id": "ocd-bill/f9d8da03-8b61-452f-8eb4-0c3b8dccbe05",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "semantic_only",
+    "model_share": 0.3015,
+    "bill_share": 0.1951,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 6,
+      "strongest": true,
+      "agreements": null,
+      "cosine": 0.9706,
+      "model_words": 697,
+      "bill_words": 635,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0659",
+    "bill_id": "ocd-bill/fbe07dc3-ca94-4ebd-98aa-515de16163a0",
+    "doc_id": "eppc/age-verification-for-websites-containing-obscene-and-indecent-material",
+    "stratum": "both",
+    "model_share": 0.3015,
+    "bill_share": 0.0673,
+    "sections": [
+     {
+      "model_section": 5,
+      "bill_section": 54,
+      "strongest": true,
+      "agreements": 75,
+      "cosine": 0.9549,
+      "model_words": 697,
+      "bill_words": 622,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0651",
+    "bill_id": "ocd-bill/1586e68c-6fc1-44a1-9a9f-c5eeaa3d8355",
+    "doc_id": "eppc/age-verification-of-social-media",
+    "stratum": "near_duplicate_only",
+    "model_share": 0.2086,
+    "bill_share": 0.5366,
+    "sections": [
+     {
+      "model_section": 8,
+      "bill_section": 2,
+      "strongest": true,
+      "agreements": 68,
+      "cosine": null,
+      "model_words": 514,
+      "bill_words": 1233,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0666",
+    "bill_id": "ocd-bill/3371e47e-5d9e-400a-b292-73fa1100596c",
+    "doc_id": "eppc/age-verification-of-social-media",
+    "stratum": "semantic_only",
+    "model_share": 0.2086,
+    "bill_share": 0.4788,
+    "sections": [
+     {
+      "model_section": 8,
+      "bill_section": 12,
+      "strongest": false,
+      "agreements": null,
+      "cosine": 0.9611,
+      "model_words": 514,
+      "bill_words": 612,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     },
+     {
+      "model_section": 8,
+      "bill_section": 24,
+      "strongest": true,
+      "agreements": null,
+      "cosine": 0.9619,
+      "model_words": 514,
+      "bill_words": 599,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0646",
+    "bill_id": "ocd-bill/3e760a0c-962d-4b4f-bf42-40b5a0b4466c",
+    "doc_id": "eppc/age-verification-of-social-media",
+    "stratum": "both",
+    "model_share": 0.2086,
+    "bill_share": 0.4278,
+    "sections": [
+     {
+      "model_section": 8,
+      "bill_section": 11,
+      "strongest": true,
+      "agreements": 97,
+      "cosine": 0.9834,
+      "model_words": 514,
+      "bill_words": 649,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0655",
+    "bill_id": "ocd-bill/3ed6572f-5f32-4578-a819-ec3893e732c9",
+    "doc_id": "eppc/age-verification-of-social-media",
+    "stratum": "semantic_only",
+    "model_share": 0.2086,
+    "bill_share": 0.4958,
+    "sections": [
+     {
+      "model_section": 8,
+      "bill_section": 10,
+      "strongest": true,
+      "agreements": null,
+      "cosine": 0.9519,
+      "model_words": 514,
+      "bill_words": 474,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     },
+     {
+      "model_section": 8,
+      "bill_section": 19,
+      "strongest": false,
+      "agreements": null,
+      "cosine": 0.9519,
+      "model_words": 514,
+      "bill_words": 474,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0641",
+    "bill_id": "ocd-bill/7ede73fb-ca0c-4c3f-90d9-2bf60a5147d1",
+    "doc_id": "eppc/age-verification-of-social-media",
+    "stratum": "semantic_only",
+    "model_share": 0.2086,
+    "bill_share": 0.4958,
+    "sections": [
+     {
+      "model_section": 8,
+      "bill_section": 10,
+      "strongest": true,
+      "agreements": null,
+      "cosine": 0.9519,
+      "model_words": 514,
+      "bill_words": 474,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     },
+     {
+      "model_section": 8,
+      "bill_section": 19,
+      "strongest": false,
+      "agreements": null,
+      "cosine": 0.9519,
+      "model_words": 514,
+      "bill_words": 474,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0606",
+    "bill_id": "ocd-bill/9f9f2677-1ed7-44ce-9948-380c5f8246d8",
+    "doc_id": "eppc/age-verification-of-social-media",
+    "stratum": "both",
+    "model_share": 0.2086,
+    "bill_share": 0.2771,
+    "sections": [
+     {
+      "model_section": 8,
+      "bill_section": 9,
+      "strongest": true,
+      "agreements": 79,
+      "cosine": 0.9708,
+      "model_words": 514,
+      "bill_words": 616,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0667",
+    "bill_id": "ocd-bill/a1eca98f-ab62-4152-9229-c26ae82bb03b",
+    "doc_id": "eppc/age-verification-of-social-media",
+    "stratum": "semantic_only",
+    "model_share": 0.2086,
+    "bill_share": 0.4606,
+    "sections": [
+     {
+      "model_section": 8,
+      "bill_section": 11,
+      "strongest": true,
+      "agreements": null,
+      "cosine": 0.9519,
+      "model_words": 514,
+      "bill_words": 474,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     },
+     {
+      "model_section": 8,
+      "bill_section": 21,
+      "strongest": false,
+      "agreements": null,
+      "cosine": 0.9519,
+      "model_words": 514,
+      "bill_words": 474,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0649",
+    "bill_id": "ocd-bill/a44f69c7-5cc9-4e7e-abe0-9026b8269131",
+    "doc_id": "eppc/age-verification-of-social-media",
+    "stratum": "both",
+    "model_share": 0.2086,
+    "bill_share": 0.376,
+    "sections": [
+     {
+      "model_section": 8,
+      "bill_section": 11,
+      "strongest": true,
+      "agreements": 92,
+      "cosine": 0.9834,
+      "model_words": 514,
+      "bill_words": 649,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0669",
+    "bill_id": "ocd-bill/d9c9a6d2-5403-42a3-888f-082f9671a269",
+    "doc_id": "eppc/age-verification-of-social-media",
+    "stratum": "near_duplicate_only",
+    "model_share": 0.2086,
+    "bill_share": 0.5461,
+    "sections": [
+     {
+      "model_section": 8,
+      "bill_section": 2,
+      "strongest": true,
+      "agreements": 68,
+      "cosine": null,
+      "model_words": 514,
+      "bill_words": 1261,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0662",
+    "bill_id": "ocd-bill/dd31d2d1-9152-4b25-ad57-17cb132346c2",
+    "doc_id": "eppc/age-verification-of-social-media",
+    "stratum": "both",
+    "model_share": 0.2086,
+    "bill_share": 0.4331,
+    "sections": [
+     {
+      "model_section": 8,
+      "bill_section": 3,
+      "strongest": true,
+      "agreements": 74,
+      "cosine": 0.958,
+      "model_words": 514,
+      "bill_words": 663,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0657",
+    "bill_id": "ocd-bill/df21a6e7-578a-4fbc-9c4d-baf4c1cc169a",
+    "doc_id": "eppc/age-verification-of-social-media",
+    "stratum": "semantic_only",
+    "model_share": 0.2086,
+    "bill_share": 0.4606,
+    "sections": [
+     {
+      "model_section": 8,
+      "bill_section": 11,
+      "strongest": true,
+      "agreements": null,
+      "cosine": 0.9519,
+      "model_words": 514,
+      "bill_words": 474,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     },
+     {
+      "model_section": 8,
+      "bill_section": 21,
+      "strongest": false,
+      "agreements": null,
+      "cosine": 0.9519,
+      "model_words": 514,
+      "bill_words": 474,
+      "model_kind": "severability",
+      "bill_kind": "severability"
+     }
+    ]
+   },
+   {
+    "pair": "o0630",
+    "bill_id": "ocd-bill/e23d7bfa-c037-40dd-a98b-eb4bc880d87b",
+    "doc_id": "eppc/age-verification-of-social-media",
+    "stratum": "near_duplicate_only",
+    "model_share": 0.2086,
+    "bill_share": 0.5461,
+    "sections": [
+     {
+      "model_section": 8,
+      "bill_section": 2,
+      "strongest": true,
+      "agreements": 68,
+      "cosine": null,
+      "model_words": 514,
+      "bill_words": 1261,
+      "model_kind": "severability",
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0631",
+    "bill_id": "ocd-bill/1a678919-7c6a-4687-9a58-81b1ba74cacc",
+    "doc_id": "eppc/safe-chat-act",
+    "stratum": "near_duplicate_only",
+    "model_share": 0.1739,
+    "bill_share": 0.2784,
+    "sections": [
+     {
+      "model_section": 7,
+      "bill_section": 6,
+      "strongest": true,
+      "agreements": 67,
+      "cosine": null,
+      "model_words": 256,
+      "bill_words": 358,
+      "model_kind": null,
+      "bill_kind": null
+     }
+    ]
+   },
+   {
+    "pair": "o0647",
+    "bill_id": "ocd-bill/a29ee826-b253-4f66-8a70-b7bc315f6723",
+    "doc_id": "eppc/safe-chat-act",
+    "stratum": "near_duplicate_only",
+    "model_share": 0.1739,
+    "bill_share": 0.2784,
+    "sections": [
+     {
+      "model_section": 7,
+      "bill_section": 6,
+      "strongest": true,
+      "agreements": 67,
+      "cosine": null,
+      "model_words": 256,
+      "bill_words": 358,
+      "model_kind": null,
+      "bill_kind": null
+     }
+    ]
+   }
+  ]
+ },
  "origins_development": {
   "command": "uv run lineage eval origins",
   "answer_key": {
