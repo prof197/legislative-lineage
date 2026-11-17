@@ -38,7 +38,10 @@ ORIGIN_V1_HELD_OUT = "origins_v1_held_out"
 ORIGIN_PRECISION = "origins_precision"
 # One footnote on the sealed row, filled in when the README is regenerated: the sealed key runs
 # once per configuration, so a later change to matching is said beside it, never rerun to fit.
-SEALED_NOTE = ""
+SEALED_NOTE = (
+    "Run once, before generic sections were left out of origin matches; a sealed key is not run "
+    "again, so it stands at the configuration it records ([DESIGN.md](DESIGN.md#origin-matches))."
+)
 _ORIGIN_STAGES = {
     "near_duplicate_only": "found by the near-duplicate stage alone",
     "semantic_only": "found by meaning alone",
