@@ -255,6 +255,28 @@ class Share(_Model):
     interval_95: tuple[float, float]
 
 
+class OriginShare(_Model):
+    """A group of origin matches' precision on the reporting sample, weighted by stage."""
+
+    sources: list[str]  # the source keys whose matches the group holds
+    matches: int  # listed at the floor
+    labeled: int
+    correct: int
+    share: float | None  # None when a stage holding matches has no label
+    interval_95: tuple[float, float] | None
+
+
+class OriginPrecision(_Model):
+    """Origin precision as the reporting sample reads it (reports/results.json,
+    origins_precision): the whole, and one source's matches against every other source's."""
+
+    floor: float
+    overall: OriginShare
+    compared: OriginShare  # the compared source's matches
+    rest: OriginShare  # every other source's together
+    labeler: list[str]
+
+
 class Validation(_Model):
     """The validation page's figures, from the committed results (reports/results.json)."""
 
@@ -269,6 +291,7 @@ class Validation(_Model):
     relatives_precision_labeler: str
     faithfulness: Share  # model-judged
     faithfulness_judge: str
+    origin_precision: OriginPrecision  # model-judged
 
 
 class Meta(_Model):

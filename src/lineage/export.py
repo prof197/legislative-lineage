@@ -68,6 +68,8 @@ from lineage.export_schema import (
     Meta,
     ModelDocRef,
     Origin,
+    OriginPrecision,
+    OriginShare,
     Recall,
     Relative,
     SectionInfo,
@@ -258,6 +260,19 @@ def validation_from(results: Mapping[str, Any]) -> Validation:
     def recall(r: Mapping[str, Any]) -> Recall:
         return Recall(enactments=r["enactments"], found=r["found"], recall=r["recall"])
 
+    def origin_share(g: Mapping[str, Any]) -> OriginShare:
+        p = g["precision"]
+        return OriginShare(
+            sources=list(g["sources"]),
+            matches=g["matches"],
+            labeled=g["labeled"],
+            correct=g["correct"],
+            share=None if p is None else p["precision"],
+            interval_95=None if p is None else tuple(p["interval_95"]),
+        )
+
+    origins = results["origins_precision"]
+    (compared,) = (k for k in origins["compared"] if k != "rest")
     dev, held = results["commission"], results["commission_held_out"]
     stages = dev["stage_ablation"]
     precision = results["relatives_precision"]["provisional_model"]
@@ -303,6 +318,13 @@ def validation_from(results: Mapping[str, Any]) -> Validation:
             interval_95=tuple(faith["overall"]["interval_95"]),
         ),
         faithfulness_judge=faith["judge"],
+        origin_precision=OriginPrecision(
+            floor=origins["floor"],
+            overall=origin_share(origins["overall"]),
+            compared=origin_share(origins["compared"][compared]),
+            rest=origin_share(origins["compared"]["rest"]),
+            labeler=list(origins["labeler"]),
+        ),
     )
 
 

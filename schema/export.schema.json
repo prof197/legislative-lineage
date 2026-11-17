@@ -721,6 +721,108 @@
    "title": "Origin",
    "type": "object"
   },
+  "OriginPrecision": {
+   "additionalProperties": false,
+   "description": "Origin precision as the reporting sample reads it (reports/results.json,\norigins_precision): the whole, and one source's matches against every other source's.",
+   "properties": {
+    "compared": {
+     "$ref": "#/$defs/OriginShare"
+    },
+    "floor": {
+     "title": "Floor",
+     "type": "number"
+    },
+    "labeler": {
+     "items": {
+      "type": "string"
+     },
+     "title": "Labeler",
+     "type": "array"
+    },
+    "overall": {
+     "$ref": "#/$defs/OriginShare"
+    },
+    "rest": {
+     "$ref": "#/$defs/OriginShare"
+    }
+   },
+   "required": [
+    "floor",
+    "overall",
+    "compared",
+    "rest",
+    "labeler"
+   ],
+   "title": "OriginPrecision",
+   "type": "object"
+  },
+  "OriginShare": {
+   "additionalProperties": false,
+   "description": "A group of origin matches' precision on the reporting sample, weighted by stage.",
+   "properties": {
+    "correct": {
+     "title": "Correct",
+     "type": "integer"
+    },
+    "interval_95": {
+     "anyOf": [
+      {
+       "maxItems": 2,
+       "minItems": 2,
+       "prefixItems": [
+        {
+         "type": "number"
+        },
+        {
+         "type": "number"
+        }
+       ],
+       "type": "array"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Interval 95"
+    },
+    "labeled": {
+     "title": "Labeled",
+     "type": "integer"
+    },
+    "matches": {
+     "title": "Matches",
+     "type": "integer"
+    },
+    "share": {
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Share"
+    },
+    "sources": {
+     "items": {
+      "type": "string"
+     },
+     "title": "Sources",
+     "type": "array"
+    }
+   },
+   "required": [
+    "sources",
+    "matches",
+    "labeled",
+    "correct",
+    "share",
+    "interval_95"
+   ],
+   "title": "OriginShare",
+   "type": "object"
+  },
   "OriginStory": {
    "additionalProperties": false,
    "description": "`origin_story.json`: the origin story (DESIGN.md#export), the passed bill and listed origin\nlineage.origin_story's rule chooses; not written when no passed bill has a listed origin both\nstages found that a labeler judged correct.",
@@ -1428,6 +1530,9 @@
     "held_out_recall": {
      "$ref": "#/$defs/Recall"
     },
+    "origin_precision": {
+     "$ref": "#/$defs/OriginPrecision"
+    },
     "relatives_precision": {
      "$ref": "#/$defs/Share"
     },
@@ -1451,7 +1556,8 @@
     "relatives_precision",
     "relatives_precision_labeler",
     "faithfulness",
-    "faithfulness_judge"
+    "faithfulness_judge",
+    "origin_precision"
    ],
    "title": "Validation",
    "type": "object"

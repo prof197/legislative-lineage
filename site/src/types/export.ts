@@ -296,6 +296,7 @@ development_recall_by_stage: {
 faithfulness: Share
 faithfulness_judge: string
 held_out_recall: Recall
+origin_precision: OriginPrecision
 relatives_precision: Share
 relatives_precision_labeler: string
 semantic_threshold: number
@@ -322,6 +323,34 @@ correct: number
 interval_95: [number, number]
 labeled: number
 share: (number | null)
+}
+/**
+ * Origin precision as the reporting sample reads it (reports/results.json,
+ * origins_precision): the whole, and one source's matches against every other source's.
+ * 
+ * This interface was referenced by `LegislativeLineageExport`'s JSON-Schema
+ * via the `definition` "OriginPrecision".
+ */
+export interface OriginPrecision {
+compared: OriginShare
+floor: number
+labeler: string[]
+overall: OriginShare
+rest: OriginShare
+}
+/**
+ * A group of origin matches' precision on the reporting sample, weighted by stage.
+ * 
+ * This interface was referenced by `LegislativeLineageExport`'s JSON-Schema
+ * via the `definition` "OriginShare".
+ */
+export interface OriginShare {
+correct: number
+interval_95: ([number, number] | null)
+labeled: number
+matches: number
+share: (number | null)
+sources: string[]
 }
 /**
  * `origin_story.json`: the origin story (DESIGN.md#export), the passed bill and listed origin

@@ -53,6 +53,15 @@ def test_the_validation_figures_are_the_committed_results() -> None:
     assert got.faithfulness.share == results["faithfulness"]["overall"]["share"]
     assert got.faithfulness_judge == results["faithfulness"]["judge"]
     assert len(got.development_enactments) == len(results["commission"]["enactments"])
+    # Ruled at the step 48 review: origin precision, ALEC's matches against every other
+    # source's, with intervals, as the published reading holds them.
+    origins = results["origins_precision"]
+    assert got.origin_precision.overall.share == origins["overall"]["precision"]["precision"]
+    assert got.origin_precision.compared.sources == ["alec"]
+    alec = origins["compared"]["alec"]
+    assert got.origin_precision.compared.interval_95 == tuple(alec["precision"]["interval_95"])
+    assert got.origin_precision.rest.matches == origins["compared"]["rest"]["matches"]
+    assert got.origin_precision.labeler == origins["labeler"]
 
 
 @pytest.fixture
