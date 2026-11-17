@@ -30,14 +30,35 @@ export function byBillShare(origins: readonly Origin[]): Origin[] {
   );
 }
 
-// The words before the document's linked title: "Shares 34% of its wording with".
-export const originLead = (o: Origin): string => `Shares ${percent(o.bill_share)} of its wording with`;
+// An organization's name as the data gives it, made possessive: a name ending in "s" takes the
+// apostrophe alone ("Institute for Family Studies'").
+export const possessive = (name: string): string => (/s$/i.test(name) ? `${name}'` : `${name}'s`);
 
-// The document's side of the same match, as a separate fact about the document.
-export const modelShareLine = (o: Origin): string =>
-  o.model_share >= 1
-    ? "The shared wording is all of the document's text."
-    : `The shared wording is ${percent(o.model_share)} of the document's text.`;
+const capitalized = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1);
+
+// The origin line, ruled at M12's start: both shares, always, so a bill that takes one section of
+// a long model and a bill that copies a short model whole never read alike.
+//   "34% of this bill's wording appears in [organization]'s model [title], covering 25% of the model."
+// The title is the part a page links to the document in its library. The organization is the
+// library's, as the data names it; co-publishers are credited on the line below, not here.
+export function originLine(o: Origin): { before: string; title: string; after: string } {
+  return {
+    before: `${capitalized(percent(o.bill_share))} of this bill's wording appears in ${possessive(o.doc.organization)} model`,
+    title: o.doc.title,
+    after: `, covering ${percent(o.model_share)} of the model.`,
+  };
+}
+
+export const originText = (o: Origin): string => {
+  const l = originLine(o);
+  return `${l.before} ${l.title}${l.after}`;
+};
+
+// The form every rendered origin line must take, which the copy check holds each page to.
+const SHARE = String.raw`(?:\d{1,3}%|[Uu]nder 1%)`;
+export const ORIGIN_LINE = new RegExp(
+  String.raw`^${SHARE} of this bill's wording appears in .+'s? model .+, covering ${SHARE} of the model\.$`,
+);
 
 const STAGE: Record<Origin["stages"][number], string> = {
   near_duplicate: "shared wording",
