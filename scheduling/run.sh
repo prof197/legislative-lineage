@@ -41,10 +41,22 @@ if [[ -z "${LEAK_CHECK_TERMS:-}" ]]; then
   fi
 fi
 
+# The job's GitHub access: a fine-grained token scoped to this repository alone (contents and
+# actions), from the keychain, not the maintainer's own gh login. gh reads GH_TOKEN, and git
+# reaches GitHub through gh's credential helper (set in the job's checkout once), so the token
+# is in no file. Only the deploy uses it; without it the deploy step fails, recorded and alerted.
+if [[ -z "${GH_TOKEN:-}" ]]; then
+  if GH_TOKEN="$(security find-generic-password -w -s legislative-lineage-gh-token 2>/dev/null)"; then
+    export GH_TOKEN
+  fi
+fi
+
+# caffeinate holds off idle sleep while the job runs: the Mac is woken for it (pmset), and a
+# rebuild runs for hours, longer than the Mac stays awake on its own.
 if [[ "$job" == daily ]]; then
-  uv run --frozen lineage schedule daily --state "$LINEAGE_STATE" --site-url "$LINEAGE_SITE_URL"
+  caffeinate -i uv run --frozen lineage schedule daily --state "$LINEAGE_STATE" --site-url "$LINEAGE_SITE_URL"
 else
-  uv run --frozen lineage schedule weekly --state "$LINEAGE_STATE" --site-url "$LINEAGE_SITE_URL"
+  caffeinate -i uv run --frozen lineage schedule weekly --state "$LINEAGE_STATE" --site-url "$LINEAGE_SITE_URL"
 fi
 code=$?
 # Exit code 1 is a step that failed and 3 a day held for review, which lineage has already

@@ -613,6 +613,23 @@ def weekly_job_steps(
 # The launchd templates.
 
 
+@dataclass(frozen=True, slots=True)
+class When:
+    """When launchd starts a job, in the Mac's local time: launchd's Weekday counts from 0,
+    Sunday, and a job with none runs every day."""
+
+    hour: int
+    minute: int
+    weekday: int | None = None
+
+
+# Ruled at the deploy review (2026-11-17), Eastern time, the Mac's own zone: the daily job at
+# 05:30, and the weekly job's rebuilds on Saturday at 22:00, so they run overnight. The two never
+# run at once: a daily run that finds the weekly still going stops on the lock, alerted, and the
+# next day's intake resumes each state from its own cursor, so no day's changes are lost.
+SCHEDULE = {"daily": When(hour=5, minute=30), "weekly": When(hour=22, minute=0, weekday=6)}
+
+
 def render_template(template: str, values: Mapping[str, str]) -> str:
     """A launchd template with its @NAME@ placeholders filled; one left unfilled is an error,
     as is a result that is not a property list."""

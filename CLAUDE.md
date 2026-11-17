@@ -83,7 +83,7 @@ uv run lineage publish candidate --site-url URL  # before session: the live expo
 uv run lineage publish review --site-url URL  # in session: the week's new origin claims for the maintainer's review -> data/deploy/reviews/<day>.txt
 uv run lineage schedule daily --site-url URL  # the daily job: intake, update, pages, feed, promote, and from the first day of session (rules/deploy.toml) the deploy; a failed step or held day stops it and alerts -> data/schedule/status.json
 uv run lineage schedule weekly --site-url URL  # the weekly job: two rebuilds and the agreement check, then a candidate before session or the origin-claims review during it
-uv run lineage schedule plist daily --out FILE --site-url URL  # fill a launchd template from scheduling/; loading it is by hand
+uv run lineage schedule plist daily --out FILE --site-url URL  # fill a launchd template from scheduling/ at the ruled time (daily 05:30, weekly Saturday 22:00, local); loading it is by hand
 uv run python -m evals.fixture  # rebuild tests/fixtures/commission/ from the local snapshot, dev only
 uv run python -m benchmarks.minhash  # NumPy vs datasketch: signing and LSH index time and memory (DR-3), dev only
 uv run lineage model fetch   # the pinned embedding models' files, hash-checked -> data/models/<name>/

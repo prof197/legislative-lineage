@@ -35,7 +35,7 @@
     <key>Hour</key>
     <integer>@HOUR@</integer>
     <key>Minute</key>
-    <integer>0</integer>
+    <integer>@MINUTE@</integer>
   </dict>
   <key>StandardOutPath</key>
   <string>@DATA@/schedule/daily.log</string>

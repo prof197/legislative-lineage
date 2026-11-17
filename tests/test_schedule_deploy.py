@@ -258,3 +258,8 @@ def test_the_runner_script_reads_the_leak_terms_from_the_keychain_and_knows_a_he
     assert "export LEAK_CHECK_TERMS" in script
     assert "uv run --frozen lineage schedule weekly --state" in script
     assert "-ne 3" in script  # a held day is already alerted, like a failed step
+    # The job's GitHub token, scoped to this repository, from the keychain, not a gh login.
+    assert "security find-generic-password -w -s legislative-lineage-gh-token" in script
+    assert "export GH_TOKEN" in script
+    # Held awake for the length of the job, which the Mac is woken for.
+    assert "caffeinate -i uv run --frozen lineage schedule daily" in script

@@ -14,13 +14,16 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from typer.testing import CliRunner
 
 from lineage import fetch
+from lineage.cli import app
 from lineage.feed import check, write_feed
 from lineage.publish import export_changes, promote, staging_dir
 from lineage.schedule import (
     AGREEMENT_FLOOR,
     LOCK_FILE,
+    SCHEDULE,
     STATUS_FILE,
     TEMPLATES,
     DailyPaths,
@@ -29,6 +32,7 @@ from lineage.schedule import (
     ScheduleError,
     Step,
     WeeklyPaths,
+    When,
     agreement,
     daily_steps,
     placeholders,
@@ -399,14 +403,35 @@ def test_the_weekly_steps_check_before_anything_is_adopted(tmp_path: Path) -> No
 # The launchd templates.
 
 
+def test_the_jobs_run_when_ruled_daily_at_0530_and_weekly_saturday_at_2200() -> None:
+    assert SCHEDULE["daily"] == When(hour=5, minute=30)
+    assert SCHEDULE["weekly"] == When(hour=22, minute=0, weekday=6)  # launchd's 6 is Saturday
+
+
+def test_the_plist_command_fills_the_ruled_times(tmp_path: Path) -> None:
+    for job, expected in (("daily", (5, 30, None)), ("weekly", (22, 0, 6))):
+        out = tmp_path / f"{job}.plist"
+        result = CliRunner().invoke(
+            app, ["schedule", "plist", job, "--out", str(out), "--site-url", SITE]
+        )
+        assert result.exit_code == 0, result.output
+        when = plistlib.loads(out.read_bytes())["StartCalendarInterval"]
+        assert (when["Hour"], when["Minute"], when.get("Weekday")) == expected
+
+
 @pytest.mark.parametrize("job", ["daily", "weekly"])
 def test_a_launchd_template_names_no_real_path_and_renders_to_a_property_list(job: str) -> None:
     template = (TEMPLATES / f"lineage-{job}.plist.template").read_text()
     assert not LOCAL_PATH.search(template)
-    assert placeholders(template) == ["DATA", "HOUR", "LABEL", "PATH", "REPO", "SITE_URL", "STATE"]
+    timed = ["HOUR", "MINUTE"] + (["WEEKDAY"] if job == "weekly" else [])
+    assert placeholders(template) == sorted(
+        ["DATA", "LABEL", "PATH", "REPO", "SITE_URL", "STATE", *timed]
+    )
     values = {
         "DATA": "/srv/lineage-data",
         "HOUR": "6",
+        "MINUTE": "30",
+        "WEEKDAY": "6",
         "LABEL": "org.example.lineage",
         "PATH": "/usr/bin:/bin",
         "REPO": "/srv/legislative-lineage",
@@ -416,6 +441,12 @@ def test_a_launchd_template_names_no_real_path_and_renders_to_a_property_list(jo
     plist = plistlib.loads(render_template(template, values).encode())
 
     assert plist["Label"] == f"org.example.lineage.{job}"
+    when = plist["StartCalendarInterval"]
+    assert (when["Hour"], when["Minute"], when.get("Weekday")) == (
+        6,
+        30,
+        6 if job == "weekly" else None,
+    )
     assert plist["ProgramArguments"] == [
         "/bin/bash",
         "/srv/legislative-lineage/scheduling/run.sh",
