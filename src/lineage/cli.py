@@ -14,6 +14,7 @@ import typer
 from numpy.typing import NDArray
 
 from lineage import __version__
+from lineage import rebuild as rebuilding
 from lineage.acts import (
     ACTS,
     ACTS_DIR,
@@ -169,7 +170,7 @@ from lineage.model_labels import record_spend as record_label_spend
 from lineage.model_labels import spent as label_spent
 from lineage.modeldocs import MODELDOCS_DIR, ModelDocError, read_docs
 from lineage.models import MODELS, MODELS_DIR, ModelError, fetch_model
-from lineage.neighbors import EF_SEARCH, RECALL_FLOOR, build_neighbors
+from lineage.neighbors import EF_SEARCH, RECALL_FLOOR, SPEC, build_neighbors
 from lineage.neighbors import REPORT as NEIGHBORS_REPORT
 from lineage.neighbors import check_at as check_neighbors_at
 from lineage.neighbors import write_report as write_neighbors_report
@@ -728,6 +729,113 @@ def update_command(
         typer.echo(f"error: not built yet: {e}", err=True)
         raise typer.Exit(1) from e
     typer.echo(f"{len(logged)} changes -> {changes}")
+
+
+@app.command("rebuild")
+def rebuild_command(
+    out: Annotated[Path, typer.Option("--out", help="The rebuild's tables directory (local).")],
+    days: Annotated[
+        Path, typer.Option("--days", help="The days taken in, one directory each (local).")
+    ] = DATA / "days",
+    through: Annotated[
+        str | None,
+        typer.Option("--through", help="Fold the days up to this one, YYYY-MM-DD [default: all]."),
+    ] = None,
+    pinned_from: Annotated[
+        Path | None,
+        typer.Option(
+            "--pinned-from",
+            help="Tables at the same day whose stoplist and state boilerplate counts to keep; "
+            "without it they are counted afresh.",
+        ),
+    ] = None,
+    vectors_from: Annotated[
+        Path | None,
+        typer.Option(
+            "--vectors-from",
+            help="Tables whose vectors to reuse for the same texts [default: --pinned-from].",
+        ),
+    ] = None,
+    raw: RawOption = rebuilding.RAW,
+    manifest: ManifestOption = rebuilding.MANIFEST,
+    days_only: Annotated[
+        bool,
+        typer.Option("--days-only", help="Lay the days over no archives: the days are the corpus."),
+    ] = False,
+    sessions: Annotated[
+        Path, typer.Option("--sessions", help="Session dates CSV (committed).")
+    ] = rebuilding.SESSIONS,
+    text_plan: Annotated[
+        Path, typer.Option("--text-plan", help="The text layer's fetch plan, as `text merge`.")
+    ] = PLAN,
+    max_share: Annotated[
+        float,
+        typer.Option("--max-share", help="A refreshed stoplist's share, as `lineage boilerplate`."),
+    ] = rebuilding.MAX_SHARE,
+    origins: Annotated[
+        bool | None,
+        typer.Option(
+            "--origins/--no-origins",
+            help="Match the model documents [default: when the tables reused hold matches].",
+        ),
+    ] = None,
+    model: Annotated[str, typer.Option("--model", help="The embedding model.")] = SEMANTIC_MODEL,
+    exact: Annotated[
+        bool,
+        typer.Option("--exact", help="Search neighbors exactly, not by HNSW (small corpora)."),
+    ] = False,
+    workers: Annotated[int, typer.Option("--workers", help="Worker processes.")] = (
+        os.cpu_count() or 1
+    ),
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """The folded days laid over the snapshot's archives and the whole pipeline run into OUT,
+    with pinned or refreshed corpus statistics -> OUT, OUT.build/rebuild.json (DR-7)."""
+    try:
+        doc = rebuilding.rebuild(
+            out,
+            days_dir=days,
+            through=datetime.date.fromisoformat(through) if through else None,
+            base=None if days_only else rebuilding.Base(raw=raw, manifest=manifest),
+            sessions=sessions,
+            text_plan=text_plan,
+            pinned_from=pinned_from,
+            vectors_from=vectors_from,
+            max_share=max_share,
+            origins=origins,
+            model=model,
+            neighbors_spec="Flat" if exact else SPEC,
+            ef_search=None if exact else EF_SEARCH,
+            workers=workers,
+            floor_bytes=int(min_free_gib * GiB),
+            progress=typer.echo,
+        )
+    except (
+        rebuilding.RebuildError,
+        UpdateError,
+        SnapshotError,
+        InsufficientDiskSpaceError,
+        StoplistError,
+        EmbedError,
+        ModelError,
+        SemanticPairsError,
+        StateBoilerplateError,
+        MemoryBoundError,
+        SectioningError,
+        DocTypesError,
+        ModelDocError,
+        IndexMissingError,
+    ) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    v = doc["vectors"]
+    typer.echo(
+        f"{doc['records']:,} records as of {doc['as_of']}, {len(doc['days'])} days over "
+        f"{doc['archives']['written']} archives, statistics {doc['statistics']}; "
+        f"{v['shards_reused']} of {v['shards']} vector shards reused, {v['shards_embedded']} "
+        f"embedded; {doc['seconds']['total']:.0f}s -> {out}, "
+        f"{rebuilding.work_dir(out) / rebuilding.REPORT}"
+    )
 
 
 @app.command("collect-models")
