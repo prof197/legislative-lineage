@@ -13,7 +13,7 @@ import numpy as np
 import typer
 from numpy.typing import NDArray
 
-from lineage import __version__
+from lineage import __version__, deploy
 from lineage import rebuild as rebuilding
 from lineage.acts import (
     ACTS,
@@ -3166,6 +3166,154 @@ def publish_weekly_command(
         f"{a['share']:.2%} of relatives agree ({a['relatives_agreed']} of "
         f"{a['relatives_updated']}){drifted} -> {report}"
     )
+
+
+DeployRootOption = Annotated[
+    Path, typer.Option("--deploy-dir", help="The deploy's records and releases (local).")
+]
+
+
+def _deploy_paths(root: Path) -> deploy.DeployPaths:
+    return deploy.DeployPaths(root=root, checkout=root / "checkout")
+
+
+@publish_app.command("deploy")
+def publish_deploy_command(
+    state: StateOption = "GA",
+    export: Annotated[
+        Path | None,
+        typer.Option("--export", help="The live export (local); default data/export/<ST>."),
+    ] = None,
+    changes: ChangesOption = CHANGES_DIR,
+    root: DeployRootOption = deploy.DEPLOY_DIR,
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """Deploy the live export's day: pack the release, the gates, the circuit breaker, then
+    the GitHub release, the pin's commit, the push and the Pages workflow (DESIGN.md#updates).
+    Exits 3 when the day is held for review, printing its counts and baseline last."""
+    state = state.upper()
+    target = export if export is not None else EXPORT_DIR / state
+    try:
+        record = deploy.deploy_day(
+            state=state,
+            export=target,
+            changes_dir=changes,
+            paths=_deploy_paths(root),
+            floor=int(min_free_gib * GiB),
+        )
+    except (deploy.DeployError, ReleaseError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    if record.state == "held":
+        typer.echo(
+            json.dumps(
+                {
+                    "day": record.day.isoformat(),
+                    "tag": record.tag,
+                    "held_on_counts": record.held_on_counts,
+                    "held_behind": None if record.held_behind is None else str(record.held_behind),
+                    "reasons": record.reasons,
+                    "counts": record.counts,
+                    "baseline": record.baseline,
+                }
+            )
+        )
+        raise typer.Exit(deploy.HELD)
+    typer.echo(f"{record.day}: {record.state} as {record.tag}; {record.counts}")
+
+
+@publish_app.command("release")
+def publish_release_command(
+    day: Annotated[str, typer.Option("--day", help="The held day, YYYY-MM-DD.")],
+    root: DeployRootOption = deploy.DEPLOY_DIR,
+) -> None:
+    """Publish a day the circuit breaker held, once reviewed: its own release, the site's gates
+    run again, the pin committed and leak-checked, pushed, and the Pages workflow dispatched."""
+    try:
+        record = deploy.release_day(datetime.date.fromisoformat(day), paths=_deploy_paths(root))
+    except (deploy.DeployError, ReleaseError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    typer.echo(f"{record.day}: {record.state} as {record.tag}")
+
+
+def _review_names(tables: Path, state: str, site_url: str) -> tuple[Any, dict[str, dict[str, Any]]]:
+    return (
+        deploy.describe_bills(tables, state=state, site_url=site_url),
+        deploy.document_names(),
+    )
+
+
+@publish_app.command("candidate")
+def publish_candidate_command(
+    site_url: SiteOption,
+    state: StateOption = "GA",
+    day: Annotated[
+        str | None, typer.Option("--day", help="The day, YYYY-MM-DD [default: today, UTC].")
+    ] = None,
+    tables: TablesOption = DATA / "tables",
+    export: Annotated[
+        Path | None,
+        typer.Option("--export", help="The live export (local); default data/export/<ST>."),
+    ] = None,
+    changes: ChangesOption = CHANGES_DIR,
+    root: DeployRootOption = deploy.DEPLOY_DIR,
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """Before session: the live export packed and gated as a release candidate, with a review
+    summary against the pinned release -> <deploy>/candidates/<tag>/review.txt. Publishes
+    nothing."""
+    state = state.upper()
+    as_of = datetime.date.fromisoformat(day) if day else datetime.datetime.now(datetime.UTC).date()
+    describe, documents = _review_names(tables, state, site_url)
+    try:
+        doc = deploy.prepare_candidate(
+            as_of,
+            state=state,
+            export=export if export is not None else EXPORT_DIR / state,
+            changes_dir=changes,
+            paths=_deploy_paths(root),
+            describe=describe,
+            documents=documents,
+            floor=int(min_free_gib * GiB),
+        )
+    except (deploy.DeployError, ReleaseError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    files = doc["files"]
+    typer.echo(
+        f"{doc['tag']} against {doc['pinned']}: {len(files['added'])} added, "
+        f"{len(files['changed'])} changed, {len(files['removed'])} removed; "
+        f"{len(doc['origin_claims'])} new origin claims -> "
+        f"{root / 'candidates' / doc['tag'] / 'review.txt'}"
+    )
+
+
+@publish_app.command("review")
+def publish_review_command(
+    site_url: SiteOption,
+    state: StateOption = "GA",
+    through: Annotated[
+        str | None, typer.Option("--through", help="The week's last day [default: today, UTC].")
+    ] = None,
+    tables: TablesOption = DATA / "tables",
+    changes: ChangesOption = CHANGES_DIR,
+    root: DeployRootOption = deploy.DEPLOY_DIR,
+) -> None:
+    """During session: the week's new origin claims, each with its bill, document, shares,
+    stages and the day first listed, for the maintainer's weekly review ->
+    <deploy>/reviews/<day>.txt."""
+    day = (
+        datetime.date.fromisoformat(through)
+        if through
+        else datetime.datetime.now(datetime.UTC).date()
+    )
+    describe, documents = _review_names(tables, state.upper(), site_url)
+    out = deploy.weekly_review(
+        day, changes_dir=changes, paths=_deploy_paths(root), describe=describe, documents=documents
+    )
+    n = len(json.loads(out.read_text())["origin_claims"])
+    typer.echo(f"{n} new origin claims in the week through {day} -> {out.with_suffix('.txt')}")
 
 
 @schedule_app.command("daily")
