@@ -95,7 +95,14 @@ export const docDate = (o: Origin): string => (o.doc.published ? `Dated ${isoDat
 
 export const documents = (n: number): string => `${n.toLocaleString("en-US")} ${n === 1 ? "document" : "documents"}`;
 
+// A note from a source's entry, ended as a sentence: notes as read are often several sentences.
+export const sentence = (s: string): string => (/[.!?]$/.test(s.trim()) ? s.trim() : `${s.trim()}.`);
+
+// The day a source's terms were read, as its own sentence after the note.
+export const termsRead = (iso: string): string => `Terms read ${isoDate(iso)}.`;
+
 // The sources page's order: by organization, then key, so it never depends on the export's.
 export function bySource(sources: readonly SourceEntry[]): SourceEntry[] {
   return [...sources].sort((x, y) => x.organization.localeCompare(y.organization) || x.key.localeCompare(y.key));
 }
+

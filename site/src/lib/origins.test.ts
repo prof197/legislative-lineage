@@ -4,7 +4,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { Origin, SourceEntry } from "@/types/export";
-import { byBillShare, bySource, docDate, documents, foundBy, isoDate, ORIGIN_LINE, originLine, originText, percent, possessive, publishers } from "./origins.ts";
+import { byBillShare, bySource, docDate, documents, foundBy, isoDate, ORIGIN_LINE, originLine, originText, percent, possessive, publishers, sentence, termsRead } from "./origins.ts";
 
 function origin(title: string, bill_share: number, model_share: number, published: string | null = null): Origin {
   return {
@@ -78,6 +78,13 @@ test("stages and counts", () => {
   assert.equal(foundBy(o), "Found by shared wording and similar meaning");
   assert.equal(documents(1), "1 document");
   assert.equal(documents(1200), "1,200 documents");
+});
+
+test("a source's terms note ends as a sentence, and the day it was read follows as its own", () => {
+  assert.equal(sentence("viewing and copying with attribution"), "viewing and copying with attribution.");
+  assert.equal(sentence(" robots.txt disallows nothing. "), "robots.txt disallows nothing.");
+  assert.equal(sentence("Is copying allowed?"), "Is copying allowed?");
+  assert.equal(termsRead("2026-11-15"), "Terms read Nov 15, 2026.");
 });
 
 test("sources by organization", () => {

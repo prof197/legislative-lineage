@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
 import { Footer, Header } from "@/components/Chrome";
 import { sources } from "@/lib/data";
-import { bySource, documents, INCLUSION_RULE, isoDate, LEAKED_LABEL } from "@/lib/origins";
+import { bySource, documents, INCLUSION_RULE, isoDate, LEAKED_LABEL, sentence, termsRead } from "@/lib/origins";
 import type { SourceEntry } from "@/types/export";
 
 export const metadata: Metadata = { title: "Sources" };
-
-// A note from the source's entry, ended as a sentence.
-const sentence = (s: string): string => (/[.!?]$/.test(s.trim()) ? s.trim() : `${s.trim()}.`);
 
 function Field({ name, children }: { name: string; children: React.ReactNode }) {
   return (
@@ -45,7 +42,9 @@ function Source({ s }: { s: SourceEntry }) {
           {s.collected_on ? `, collected as of ${isoDate(s.collected_on)}` : ", not yet collected"}
         </Field>
         <Field name="Terms">
-          {s.terms_url ? <a href={s.terms_url}>{s.terms_note}</a> : s.terms_note}; read {isoDate(s.terms_read_on)}
+          {/* A note is often several sentences, so the date follows it as its own sentence. */}
+          {sentence(s.terms_note)}{" "}
+          {s.terms_url ? <a href={s.terms_url}>{termsRead(s.terms_read_on)}</a> : termsRead(s.terms_read_on)}
         </Field>
       </dl>
     </article>
@@ -86,7 +85,16 @@ export default function SourcesPage() {
                 {list.length} {list.length === 1 ? "library" : "libraries"}, {documents(list.reduce((n, s) => n + s.documents, 0))}{" "}
                 in all, whether or not any bill shares wording with them.
               </p>
-              <div style={{ marginTop: 20 }}>
+              {/* With every library collected the entries run long, so a short index leads to each. */}
+              <ul aria-label="Libraries listed" style={{ listStyle: "none", padding: 0, margin: "16px 0 0", display: "flex", flexDirection: "column", gap: 6, fontSize: 15 }}>
+                {list.map((s) => (
+                  <li key={s.key} style={{ overflowWrap: "anywhere" }}>
+                    <a href={`#${s.key}`}>{s.organization}</a>{" "}
+                    <span className="small">· {documents(s.documents)}{s.leaked ? ` · ${LEAKED_LABEL}` : ""}</span>
+                  </li>
+                ))}
+              </ul>
+              <div style={{ marginTop: 28 }}>
                 {list.map((s) => <Source key={s.key} s={s} />)}
               </div>
             </>
