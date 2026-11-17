@@ -7,6 +7,7 @@ import pytest
 from typer.testing import CliRunner
 
 from lineage.cli import app
+from lineage.export import STORIES_RULES as STORIES
 from lineage.results_table import (
     END,
     HELD_OUT_END,
@@ -17,6 +18,8 @@ from lineage.results_table import (
     SUMMARY_END,
     SUMMARY_START,
     ResultsTableError,
+    hosted_state,
+    render_stories,
     rendered_readme,
 )
 
@@ -55,9 +58,23 @@ def test_the_committed_readme_shows_the_committed_results() -> None:
 
     state = json.loads((ROOT / "reports" / "relatives_reporting.json").read_text())["state"]
 
-    assert readme == rendered_readme(readme, results, exported, state), (
+    stories = render_stories(hosted_state(ROOT / "site" / "data-release.json"), ROOT / STORIES)
+    assert readme == rendered_readme(readme, results, exported, state, stories=stories), (
         "run `uv run lineage eval readme`"
     )
+
+
+def test_the_story_count_is_the_hosted_states_from_the_stories_rules(tmp_path: Path) -> None:
+    rules = tmp_path / "stories.toml"
+    rules.write_text(
+        '[stories.a]\nstates = "all"\n[stories.b]\nstates = ["GA"]\n'
+        '[stories.c]\nstates = ["UT"]\n[stories.origin]\nstates = "all"\n'
+    )
+    ga = render_stories("GA", rules)
+    assert ga.startswith("two featured stories, and one on a passed bill")
+    rules.write_text('[stories.a]\nstates = ["UT"]\n')
+    assert render_stories("GA", rules) == "no featured stories."
+    assert render_stories("UT", rules) == "one featured story."
 
 
 def test_renders_counts_and_shares_from_the_results() -> None:

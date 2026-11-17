@@ -9,10 +9,15 @@ text layer added, stage for stage. The export's text has no semantic run, since 
 vectors are embedded from the fetched text. See DESIGN.md#dr-6.
 """
 
+import json
+import tomllib
 from pathlib import Path
 from typing import Any, cast
 
 from lineage.acts import ACT_NAMES
+from lineage.export import STORIES_RULES, stories_for
+from lineage.origin_story import STORY as ORIGIN_STORY
+from lineage.release import RELEASE_MANIFEST
 from lineage.ulc import ULC_STATES
 
 README = Path("README.md")
@@ -30,6 +35,10 @@ SUMMARY_START = "<!-- results:summary -->"
 SUMMARY_END = "<!-- /results:summary -->"
 ORIGINS_START = "<!-- results:origins -->"
 ORIGINS_END = "<!-- /results:origins -->"
+# The stories the hosted state's site carries, counted from rules/stories.toml.
+STORIES_START = "<!-- stories -->"
+STORIES_END = "<!-- /stories -->"
+_COUNT_WORDS = ("no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine")
 # v2's origin evals, each rendered only when its section is in the results: they are
 # regenerated as matching settles, and a row for a run not yet made would be a number typed in.
 ORIGIN_DEVELOPMENT = "origins_development"
@@ -387,6 +396,29 @@ def render_summary(results: dict[str, Any], sampled_state: str) -> str:
     return "\n".join(lines)
 
 
+def hosted_state(manifest: Path = RELEASE_MANIFEST) -> str:
+    """The state the site hosts: the one whose data release the deploy builds from."""
+    tag = str(json.loads(manifest.read_text())["tag"])
+    return tag.split("-")[1].upper()
+
+
+def render_stories(state: str, rules: Path = STORIES_RULES) -> str:
+    """The stories `state`'s site carries, counted from the stories rules: its featured stories,
+    and the origin story when the rules place it, which a site shows only once a labeler has
+    judged its match correct (lineage.origin_story)."""
+    listed: dict[str, Any] = tomllib.loads(rules.read_text()).get("stories", {})
+    carried = stories_for(state, listed, rules)
+    n = len(carried - {ORIGIN_STORY})
+    count = _COUNT_WORDS[n] if n < len(_COUNT_WORDS) else f"{n:,}"
+    out = f"{count} featured stor{'y' if n == 1 else 'ies'}"
+    if ORIGIN_STORY in carried:
+        out += (
+            ", and one on a passed bill that shares wording with a published model, once a model "
+            "has judged such a match correct"
+        )
+    return out + "."
+
+
 def _replaced(readme: str, start_mark: str, end_mark: str, body: str) -> str:
     start, end = readme.find(start_mark), readme.find(end_mark)
     if start < 0 or end < start:
@@ -400,13 +432,15 @@ def rendered_readme(
     exported: dict[str, Any],
     sampled_state: str | None = None,
     sealed_note: str = SEALED_NOTE,
+    stories: str | None = None,
 ) -> str:
     """The README with its results section replaced by one rendered from `results`, and from
     `exported`, the results on the export's text alone; its opening summary, when it has one,
     from `results` and the state the precision sample was drawn from; its held-out section,
     when it has one, from the held-out run's results, which must then exist; and its origins
     section, when it has one, from whichever origin evals the results hold, with `sealed_note`
-    as the sealed row's footnote when it is given."""
+    as the sealed row's footnote when it is given; and its story count, when it has one, from
+    `stories` (render_stories)."""
     out = _replaced(
         readme, START, END, render_commission(results["commission"], exported["commission"])
     )
@@ -424,4 +458,8 @@ def rendered_readme(
         )
     if ORIGINS_START in out:
         out = _replaced(out, ORIGINS_START, ORIGINS_END, render_origins(results, sealed_note))
+    if STORIES_START in out:
+        if stories is None:
+            raise ResultsTableError("README counts its stories but no count was given")
+        out = _replaced(out, STORIES_START, STORIES_END, stories)
     return out

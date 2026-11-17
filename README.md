@@ -2,7 +2,9 @@
 
 Find bills in other states that share provisions with a state bill, matched section by section, and see how each one's text differs. Find, too, the published model legislation the bill shares wording with. It shows that texts are alike and when each appeared, not who wrote them or why.
 
-**See it.** [The Georgia site](https://prof197.github.io/legislative-lineage/) lists, for each of Georgia's bills from the 2023–2026 sessions, the bills in other states that share its provisions, with side-by-side comparisons and three featured stories.
+**See it.** [The Georgia site](https://prof197.github.io/legislative-lineage/) lists, for each of Georgia's bills from the 2023–2026 sessions, the bills in other states that share its provisions, with side-by-side comparisons and <!-- stories -->
+three featured stories, and one on a passed bill that shares wording with a published model, once a model has judged such a match correct.
+<!-- /stories -->
 
 **Documented origins.** A bill's page also lists the model bills it shares wording with, from any organization that publishes model legislation in a public collection: the Uniform Law Commission, advocacy groups, think tanks, and trade and lobbying groups. Each origin gives both shares, how much of the bill's wording is found in the model and how much of the model the bill covers, and links to the document. The model's text is never shown, and a shared passage is not a claim that the organization drafted the bill or asked for it. Each organization is described by what kind of organization it is and its tax status, from public filings, and documents that became public through a leak are labeled leaked. The sources page lists every library matched, whether or not any bill matches it, with its terms and how many documents were collected ([DESIGN.md](DESIGN.md#model-documents)).
 

@@ -244,6 +244,8 @@ from lineage.results_table import (
     README,
     SAMPLED_STATE_REPORT,
     ResultsTableError,
+    hosted_state,
+    render_stories,
     rendered_readme,
 )
 from lineage.schedule import (
@@ -2312,6 +2314,7 @@ def eval_readme(
             json.loads(results.read_text()),
             json.loads(exported_only.read_text()),
             json.loads(SAMPLED_STATE_REPORT.read_text())["state"],
+            stories=render_stories(hosted_state()),
         )
     except ResultsTableError as e:
         typer.echo(str(e), err=True)
