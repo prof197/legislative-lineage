@@ -5,7 +5,7 @@ import { FEED_PATH, hasFeed, meta } from "@/lib/data";
 import { stateName } from "@/lib/format";
 
 // As lineage.feed titles the feed itself.
-const FEED_TITLE = "Legislative Lineage: bills newly found to share text";
+const FEED_TITLE = "Legislative Lineage: new matches";
 
 // Self-hosted at build time, so a page makes no request to a font service.
 const serif = Newsreader({ subsets: ["latin"], variable: "--font-serif", style: ["normal", "italic"], weight: ["400", "500", "600"] });

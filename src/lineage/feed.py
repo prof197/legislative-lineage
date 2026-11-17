@@ -62,7 +62,7 @@ ATOM = "http://www.w3.org/2005/Atom"
 RETENTION_DAYS = 14
 GROUP_DAYS = 14
 GROUP_STATES = 3
-TITLE = "Legislative Lineage: bills newly found to share text"
+TITLE = "Legislative Lineage: new matches"
 SUBTITLE = (
     "Bills in every state newly found to share text with bills in other states or with "
     "published model documents, as of each day's update."
