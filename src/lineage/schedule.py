@@ -465,6 +465,10 @@ def weekly_steps(as_of: date, *, paths: WeeklyPaths | None = None) -> list[Step]
                 days,
                 "--through",
                 as_of.isoformat(),
+                # The same texts' vectors, not the statistics: a window's vector does not
+                # depend on the stoplist or the flag.
+                "--vectors-from",
+                tables,
                 "--out",
                 str(paths.refreshed),
             ),
@@ -487,6 +491,15 @@ def weekly_steps(as_of: date, *, paths: WeeklyPaths | None = None) -> list[Step]
             as_of,
         ),
     ]
+
+
+def weekly_job_steps(paths: WeeklyPaths | None = None) -> list[Step]:
+    """The weekly job's rebuilds and check, over the days the updated tables have had: through
+    the last one applied, since pinned statistics come from tables at the same day and a day
+    taken in but not applied is not in the tables to agree with. None before any day is."""
+    paths = paths if paths is not None else WeeklyPaths()
+    applied = applied_days(paths.tables)
+    return weekly_steps(max(applied), paths=paths) if applied else []
 
 
 # The launchd templates.

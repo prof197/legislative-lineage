@@ -256,8 +256,8 @@ from lineage.schedule import (
     osascript_notifier,
     render_template,
     run_job,
+    weekly_job_steps,
     weekly_report,
-    weekly_steps,
 )
 from lineage.sectioning import SectioningError, build_sections
 from lineage.semantic import MODEL as SEMANTIC_MODEL
@@ -3151,11 +3151,12 @@ def publish_weekly_command(
     report: Annotated[
         Path, typer.Option("--report", help="The weekly report (local).")
     ] = WEEKLY_REPORT,
+    model: Annotated[str, typer.Option("--model", help="The embedding model.")] = SEMANTIC_MODEL,
 ) -> None:
     """The weekly rebuild's check: the share of relatives the updated tables and the rebuild
     agree on, failing below 98%, and the drift when the statistics are refreshed (DR-7)."""
     try:
-        doc = weekly_report(updated, pinned, refreshed, report=report)
+        doc = weekly_report(updated, pinned, refreshed, model=model, report=report)
     except ScheduleError as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
@@ -3191,18 +3192,10 @@ def schedule_weekly_command(
         str | None, typer.Option("--day", help="The day, YYYY-MM-DD [default: today, UTC].")
     ] = None,
 ) -> None:
-    """The weekly job: two full rebuilds over the days so far, then the check, which fails the
-    job below 98% agreement (DR-7)."""
-    # The job's two rebuilds need `lineage rebuild`, which lays the folded days over the
-    # snapshot's archives and runs the whole pipeline; until it is built the job refuses here
-    # rather than failing at its first step (DESIGN.md#updates).
-    if not any(c.name == "rebuild" for c in app.registered_commands):
-        typer.echo(
-            "error: the weekly job needs `lineage rebuild`, which is not built yet", err=True
-        )
-        raise typer.Exit(1)
+    """The weekly job: two full rebuilds over the days the tables have had, then the check,
+    which fails the job below 98% agreement (DR-7)."""
     as_of = datetime.date.fromisoformat(day) if day else datetime.datetime.now(datetime.UTC).date()
-    status = run_job("weekly", weekly_steps(as_of), run=cli_runner, notify=osascript_notifier)
+    status = run_job("weekly", weekly_job_steps(), run=cli_runner, notify=osascript_notifier)
     typer.echo(f"weekly {as_of}: " + ("ok" if status.ok else f"stopped at {status.failed_step}"))
     raise typer.Exit(0 if status.ok else 1)
 
