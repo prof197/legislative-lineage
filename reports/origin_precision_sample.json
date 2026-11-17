@@ -112,6 +112,79 @@
    "budget": 25.0
   }
  },
+ "reporting_after_compact_fix": {
+  "command": "uv run lineage origin-sample --part reporting_after_compact_fix",
+  "seed": 20261122,
+  "per_stratum": 100,
+  "strata": {
+   "near_duplicate_only": 526,
+   "semantic_only": 824,
+   "both": 1401
+  },
+  "excluded": {
+   "near_duplicate_only": 175,
+   "semantic_only": 171,
+   "both": 178
+  },
+  "drawn": {
+   "near_duplicate_only": 100,
+   "semantic_only": 100,
+   "both": 100
+  },
+  "floor": 0.25,
+  "by_source": {
+   "alec": {
+    "near_duplicate_only": 317,
+    "semantic_only": 471,
+    "both": 717
+   },
+   "commission": {
+    "near_duplicate_only": 8,
+    "semantic_only": 5,
+    "both": 159
+   },
+   "eppc": {
+    "near_duplicate_only": 3,
+    "semantic_only": 8,
+    "both": 6
+   },
+   "goldwater": {
+    "near_duplicate_only": 13,
+    "semantic_only": 16,
+    "both": 54
+   },
+   "ifs": {
+    "near_duplicate_only": 0,
+    "semantic_only": 1,
+    "both": 1
+   },
+   "ncoil": {
+    "near_duplicate_only": 94,
+    "semantic_only": 167,
+    "both": 355
+   },
+   "public-citizen": {
+    "near_duplicate_only": 14,
+    "semantic_only": 14,
+    "both": 33
+   },
+   "states-project": {
+    "near_duplicate_only": 77,
+    "semantic_only": 142,
+    "both": 76
+   }
+  },
+  "label_plan": {
+   "pairs": 300,
+   "model": "claude-opus-5-5",
+   "prompt": "passages-v1-high",
+   "batch": false,
+   "projected": 24.6304,
+   "spent": 11.3997,
+   "max_cost": 10.0,
+   "budget": 25.0
+  }
+ },
  "reporting_after_fix": {
   "command": "uv run lineage origin-sample --part reporting_after_fix",
   "seed": 20261121,
