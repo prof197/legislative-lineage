@@ -260,6 +260,22 @@ def _origin_precision() -> dict[str, object]:
                 "both": _stratum(30, 3, 3),
             },
         },
+        "compared": {
+            "example-library": {
+                "sources": ["example-library"],
+                "matches": 40,
+                "labeled": 6,
+                "correct": 5,
+                "precision": {"precision": 0.8101, "interval_95": [0.4012, 0.9655]},
+            },
+            "rest": {
+                "sources": ["example-archive"],
+                "matches": 20,
+                "labeled": 3,
+                "correct": 3,
+                "precision": {"precision": 1.0, "interval_95": [0.4385, 1.0]},
+            },
+        },
     }
 
 
@@ -306,6 +322,12 @@ def test_origin_recall_and_precision_are_rendered_with_intervals_and_commands() 
     assert "3 labels of 10 matches" in near
     assert any("by meaning alone" in r for r in rows)
     assert any("both stages" in r for r in rows)
+    # Ruled at the step 48 review: one source against every other's, with intervals.
+    one = next(r for r in rows if "example-library's matches" in r)  # no collector names it
+    assert "0.81 [0.40, 0.97]" in one
+    assert "6 labels of 40 matches" in one
+    rest = next(r for r in rows if "every other source's matches" in r)
+    assert "1.00 [0.44, 1.00]" in rest
 
 
 def test_v1_held_out_acts_are_labeled_exactly_and_kept_apart_from_the_sealed_row() -> None:

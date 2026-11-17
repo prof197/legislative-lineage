@@ -246,6 +246,20 @@ def _origin_precision(group: dict[str, Any]) -> str:
 V1_HELD_OUT_STATUS = "opened in v1; not a sealed test"
 
 
+def _compared_name(name: str, group: dict[str, Any]) -> str:
+    """A compared group by whose matches it holds: one source's, by its organization's name as
+    its collector gives it, or every other source's."""
+    if name == "rest":
+        return "every other source's matches"
+    from lineage.collect import collectors  # the registry imports every collector
+
+    (source,) = group["sources"]
+    organization = next(
+        (c.source.organization for c in collectors().values() if c.source.key == source), source
+    )
+    return f"{organization}'s matches"
+
+
 def render_origins(results: dict[str, Any], sealed_note: str = SEALED_NOTE) -> str:
     """v2's origin evals, one row each for those in the results and nothing for those not:
     recall on the development key and on the sealed key, precision on the reporting sample
@@ -270,9 +284,10 @@ def render_origins(results: dict[str, Any], sealed_note: str = SEALED_NOTE) -> s
         intro.append(
             "Origin precision: a model's judgment of a seeded sample of the matches pages list "
             "at the floor, drawn by stage and weighted by each stage's matches, each labeled "
-            "on the section pair it rests on most with v1's passage-level question. Each "
-            "source's own figure, and one source's against every other's, are in the same "
-            "section (`by_source`, `compared`)."
+            "on the section pair it rests on most with v1's passage-level question. One "
+            "source's matches are read against every other source's together, each weighted "
+            "by stage as the whole is (`compared`), and each source's own figure is in the "
+            "same section (`by_source`)."
         )
     intro.append(
         "Each result carries its 95% Wilson interval, and each command writes "
@@ -306,6 +321,16 @@ def render_origins(results: dict[str, Any], sealed_note: str = SEALED_NOTE) -> s
                 precision["command"],
             )
             for stage, g in overall["by_stage"].items()
+        ]
+        compared: dict[str, Any] = precision["compared"]
+        rows += [
+            (
+                f"Precision, {_compared_name(name, g)} ({g['labeled']} labels of "
+                f"{g['matches']:,} matches)",
+                _origin_precision(g),
+                precision["command"],
+            )
+            for name, g in compared.items()
         ]
     lines = [" ".join(intro)]
     if rows:

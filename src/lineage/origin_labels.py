@@ -229,6 +229,21 @@ def correct_by_sections(
     return {i.pair: by_sections[_key(i)] for i in items if _key(i) in by_sections}
 
 
+def labelers(items: Sequence[OriginItem], labels: Iterable[Mapping[str, Any]]) -> list[str]:
+    """Who labeled the items, under this prompt, on the sections each rests on: what a reading
+    records as its labeler."""
+    keys = {_key(i) for i in items}
+    return sorted(
+        {
+            str(row["labeler"])
+            for row in labels
+            if str(row["labeler"]).endswith(f"@{PROMPT.version}")
+            and (str(row["bill_id"]), str(row["doc_id"]), row["model_section"], row["bill_section"])
+            in keys
+        }
+    )
+
+
 def _key(i: OriginItem) -> tuple[str, str, str, str]:
     return (
         i.item.match.ref.bill_id,

@@ -178,6 +178,7 @@ from lineage.origin_labels import PROMPT as ORIGIN_PROMPT
 from lineage.origin_labels import build_items as build_origin_items
 from lineage.origin_labels import correct_by_sections as origin_correct_by_sections
 from lineage.origin_labels import label_in_batch as origin_label_in_batch
+from lineage.origin_labels import labelers as origin_labelers
 from lineage.origin_labels import load_labels as load_origin_labels
 from lineage.origin_labels import pair_sections as origin_pair_sections
 from lineage.origin_labels import pending as origin_pending
@@ -202,6 +203,7 @@ from lineage.origin_precision import (
 from lineage.origin_precision import census_reading as origin_census_reading
 from lineage.origin_precision import load_sample as load_origin_sample
 from lineage.origin_precision import reading as origin_precision_reading
+from lineage.origin_precision import retired as origin_retired
 from lineage.origin_precision import without_intervals as without_origin_intervals
 from lineage.origin_recall import KEYS as ORIGIN_KEYS
 from lineage.origin_recall import OriginRecallError, load_key, origin_recall, same_slug
@@ -2010,9 +2012,10 @@ def eval_origin_precision(
         str,
         typer.Option(
             "--part",
-            help="reporting_after_fix, or reporting (read before generic sections were left out).",
+            help="reporting_after_compact_fix; reporting_after_fix and reporting are the "
+            "readings before each change to matching.",
         ),
-    ] = "reporting_after_fix",
+    ] = "reporting_after_compact_fix",
     labels: Annotated[
         Path, typer.Option("--labels", help="The origin labels (committed).")
     ] = ORIGIN_LABELS,
@@ -2041,6 +2044,11 @@ def eval_origin_precision(
     name = ORIGIN_RESULTS_SECTIONS[part]
     try:
         doc: dict[str, Any] = json.loads(results.read_text()) if results.exists() else {}
+        # A reading published before this part existed moves to its own part's name first.
+        moved = origin_retired(doc)
+        if moved != doc:
+            doc = moved
+            results.write_text(json.dumps(doc, indent=1) + "\n")
         if intervals_only and name not in doc:
             raise OriginPrecisionError(f"no stored reading in {results} to regenerate")
         if name in doc and not intervals_only:
@@ -2057,20 +2065,26 @@ def eval_origin_precision(
             docs = [d for c in collectors().values() for d in read_docs(c.source, root)]
             items = build_origin_items(rows, read_origin_matches(tables), docs, tables, root=root)
             correct = origin_correct_by_sections(items, load_origin_labels(labels))
+            labelers = origin_labelers(items, load_origin_labels(labels))
         else:
             correct = origin_correct_by_pair(load_origin_labels(labels))
+            labelers = []
         read = origin_precision_reading(
             rows, correct, json.loads(ORIGIN_SAMPLE_REPORT.read_text())[part]
         )
     except (OriginPrecisionError, ModelDocError, ValueError) as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
-    section = {
-        "command": f"uv run lineage eval origin-precision --part {part}",
-        "sample": str(reporting.sample),
-        "labels": str(labels),
-        "prompt": ORIGIN_PROMPT.version,
-    } | read
+    section = (
+        {
+            "command": f"uv run lineage eval origin-precision --part {part}",
+            "sample": str(reporting.sample),
+            "labels": str(labels),
+            "prompt": ORIGIN_PROMPT.version,
+        }
+        | ({"labeler": labelers} if labelers else {})
+        | read
+    )
     if intervals_only and without_origin_intervals(section) != without_origin_intervals(doc[name]):
         typer.echo(
             f"error: the reading would change other than its intervals ({results}, {name}); "

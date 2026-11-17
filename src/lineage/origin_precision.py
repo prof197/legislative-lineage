@@ -156,6 +156,21 @@ PARTS: dict[str, Part] = {
         floor=FLOOR,
         by_sections=True,
     ),
+    # Ruled at the step 48 review: generic text inside a section is left out of matches too, the
+    # last change to matching before launch, so precision is read once more, on a fresh sample
+    # drawn once from the table matched after it, apart from every earlier reporting and tuning
+    # sample's matches, and published whatever it says. Numbered after every id the first
+    # sample after the fix took.
+    "reporting_after_compact_fix": Part(
+        "reporting_after_compact_fix",
+        REPORTING_SEED + 3,
+        1301,
+        Path("evals/origin_precision_reporting_after_compact_fix.jsonl"),
+        final_only=True,
+        excludes=("tuning", "reporting", "reporting_after_fix"),
+        floor=FLOOR,
+        by_sections=True,
+    ),
     "census_eppc": Part(
         "census_eppc",
         REPORTING_SEED + 1,
@@ -522,12 +537,38 @@ def without_intervals(node: Any) -> Any:
 # to it, whatever the overall figure, so its precision is read against every other source's.
 COMPARED = "alec"
 RESULTS_SECTION = "origins_precision"
-# Each reporting part's reading in the results; the first, read before generic sections were
-# left out of matches, is kept under its own name.
+# Each reporting part's reading in the results. The published one is the last part's; each
+# earlier reading, taken before a later change to matching, is kept under its own name.
 RESULTS_SECTIONS = {
     "reporting": "origins_precision_before_fix",
-    "reporting_after_fix": RESULTS_SECTION,
+    "reporting_after_fix": "origins_precision_before_compact_fix",
+    "reporting_after_compact_fix": RESULTS_SECTION,
 }
+
+
+def part_of(section: Mapping[str, Any]) -> str:
+    """The reporting part a stored reading was read from, by the command it records."""
+    command = str(section.get("command", ""))
+    if "--part " not in command:
+        raise OriginPrecisionError(f"a stored reading names no part: {command}")
+    return command.split("--part ", 1)[1].split()[0]
+
+
+def retired(results: Mapping[str, Any]) -> dict[str, Any]:
+    """The results with each stored reading under its own part's section: a reading published
+    before a later part existed moves to the name its part now keeps, unchanged, and is never
+    read again. A reading whose new place is taken is refused."""
+    out = dict(results)
+    for name in set(RESULTS_SECTIONS.values()):
+        if name not in out:
+            continue
+        home = RESULTS_SECTIONS.get(part_of(out[name]))
+        if home is None or home == name:
+            continue
+        if home in out:
+            raise OriginPrecisionError(f"{name} holds {home}'s reading, and {home} is taken")
+        out[home] = out.pop(name)
+    return out
 
 
 def reading(

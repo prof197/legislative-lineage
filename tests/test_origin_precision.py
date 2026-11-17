@@ -33,6 +33,7 @@ from lineage.origin_precision import (
     prompt_chars,
     reading,
     refuse_over_cap,
+    retired,
     section_chars,
     without_intervals,
     write_part,
@@ -363,13 +364,19 @@ def test_the_reporting_reading_weights_each_source_by_stage_and_compares_one_wit
 
 def test_the_reporting_sample_is_read_once(tmp_path: Path) -> None:
     results = tmp_path / "results.json"
-    results.write_text(json.dumps({"origins_precision": {"overall": {}}}))
+    stored: dict[str, dict[str, object]] = {
+        "origins_precision": {
+            "command": "uv run lineage eval origin-precision --part reporting_after_compact_fix",
+            "overall": {},
+        }
+    }
+    results.write_text(json.dumps(stored))
 
     run = CliRunner().invoke(app, ["eval", "origin-precision", "--results", str(results)])
 
     assert run.exit_code == 1
     assert "read once already" in run.output
-    assert json.loads(results.read_text()) == {"origins_precision": {"overall": {}}}
+    assert json.loads(results.read_text()) == stored
 
 
 def test_only_its_intervals_may_be_rewritten_and_only_when_nothing_else_moves(
@@ -460,9 +467,11 @@ def test_the_reporting_sample_after_the_fix_is_drawn_once_apart_from_both_earlie
     after = PARTS["reporting_after_fix"]
     assert (after.final_only, after.floor, after.excludes) == (True, FLOOR, ("tuning", "reporting"))
     assert after.seed not in {p.seed for n, p in PARTS.items() if n != "reporting_after_fix"}
+    # Ruled at the step 48 review: its reading is kept as the one before the compact fix.
     assert RESULTS_SECTIONS == {
         "reporting": "origins_precision_before_fix",
-        "reporting_after_fix": "origins_precision",
+        "reporting_after_fix": "origins_precision_before_compact_fix",
+        "reporting_after_compact_fix": "origins_precision",
     }
     table = _table()
     for name in ("tuning", "reporting"):
@@ -481,3 +490,31 @@ def test_the_reporting_sample_after_the_fix_is_drawn_once_apart_from_both_earlie
     assert min(int(r["pair"][1:]) for r in rows) == 1001
     with pytest.raises(OriginPrecisionError, match="final"):
         draw_part(table, after)
+
+
+def test_a_published_reading_moves_aside_unchanged_when_a_later_part_is_read() -> None:
+    """Ruled at the step 48 review: the reading after the first generic-section fix is kept as
+    the reading before the compact fix, as it was read, and the fresh part's reading is the one
+    published."""
+    first = {"command": "uv run lineage eval origin-precision --part reporting_after_fix", "x": 1}
+    oldest = {"command": "uv run lineage eval origin-precision --part reporting", "x": 0}
+    results = {"origins_precision": first, "origins_precision_before_fix": oldest, "other": 2}
+    moved = retired(results)
+    assert moved == {
+        "origins_precision_before_compact_fix": first,
+        "origins_precision_before_fix": oldest,
+        "other": 2,
+    }
+    assert retired(moved) == moved
+    assert RESULTS_SECTIONS["reporting_after_compact_fix"] == "origins_precision"
+    taken = results | {"origins_precision_before_compact_fix": oldest}
+    with pytest.raises(OriginPrecisionError, match="is taken"):
+        retired(taken)
+
+
+def test_the_fresh_part_is_drawn_apart_from_every_earlier_sample() -> None:
+    part = PARTS["reporting_after_compact_fix"]
+    assert (part.final_only, part.by_sections, part.floor) == (True, True, FLOOR)
+    assert set(part.excludes) == {"tuning", "reporting", "reporting_after_fix"}
+    seeds = [p.seed for p in PARTS.values()]
+    assert len(seeds) == len(set(seeds))
