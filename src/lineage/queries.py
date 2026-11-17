@@ -1511,6 +1511,19 @@ def matchable_sections_of(
     return rows
 
 
+def split_by_heading_of(
+    con: duckdb.DuckDBPyConnection, *, sections_glob: str, ids: list[str]
+) -> dict[str, bool]:
+    """Whether each wanted bill's sections were split at headings or are the window fallback's
+    windows of one text (lineage.sections.Split.by_heading)."""
+    rows: list[tuple[str, bool]] = con.execute(
+        "SELECT bill_id, bool_and(by_heading) FROM read_parquet($sections) "
+        "WHERE bill_id IN (SELECT unnest($ids)) GROUP BY bill_id",
+        {"sections": sections_glob, "ids": ids},
+    ).fetchall()
+    return dict(rows)
+
+
 # --- lane D: evals ---
 
 # --- lane L1: incremental core ---

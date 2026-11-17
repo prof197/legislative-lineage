@@ -33,13 +33,16 @@ from lineage.origin_matching import (
     BillHits,
     BillSection,
     ModelText,
+    bill_sections,
     bill_spans,
     listed,
     match_models,
     match_of,
+    model_text,
 )
 from lineage.origin_precision import OriginPrecisionError
 from lineage.origins import BillSpan, OriginMatch, read_origin_matches, write_origin_matches
+from lineage.sections import normalize
 from lineage.semantic import CORROBORATING, THRESHOLD, open_search
 from lineage.sessions import load_sessions
 from lineage.ulc import ENACTMENTS, load_enactments
@@ -356,3 +359,53 @@ def test_generic_sections_are_left_out_of_a_match_on_both_sides() -> None:
     only_generic = BillHits(stages={"near_duplicate"}, pairs={(2, 1), (1, 2)},
                             agreements={(2, 1): 9, (1, 2): 4})  # fmt: skip
     assert match_of(text, "b1", bill, only_generic, None) is None
+
+
+# An invented compact's articles, for generic text inside a section (ruled at the step 48
+# review): a commission article every compact shares, and two articles of substance.
+SHARED_ARTICLE = (
+    "ARTICLE IX. WITHDRAWAL AND DISSOLUTION.\nA member state may withdraw from this compact by "
+    "repealing the statute that enacted it, and the withdrawal takes effect one year after the "
+    "repeal is enacted; the withdrawing state remains bound until then."
+)
+LAMPS = (
+    "ARTICLE III. LAMP KEEPING.\nEach keeper shall light every harbor lamp at dusk, trim its "
+    "wick at midnight and record the hour of each lighting in the keeper's log."
+)
+BELLS = (
+    "ARTICLE III. BELL RINGING.\nEach sexton shall ring the town bell at noon on market days "
+    "and toll it slowly at the death of any resident of the parish."
+)
+
+
+def _compact_section(*articles: str, opening: str = "Section 2. The Lamp Compact reads:") -> str:
+    return opening + "\n" + "\n".join(articles)
+
+
+def test_a_pair_resting_on_generic_text_inside_its_sections_does_not_count() -> None:
+    """Two compacts sharing only a commission article, each enacted as one long section, are
+    no match; sharing an article of substance too, they match, the shares count only the words
+    outside generic text and the spans leave it out."""
+    model = model_text(
+        "lib/compact", "Section 1. Lamps.\n" + _compact_section(LAMPS, SHARED_ARTICLE)
+    )
+    (q,) = [n for n, d in enumerate(model.display) if "ARTICLE IX" in d]
+    assert q in model.inside
+    assert q not in model.generic
+
+    def bill(*articles: str) -> dict[int, BillSection]:
+        text = _compact_section(*articles, opening="Sec. 5. Text of the agreement.")
+        return bill_sections([(1, text, normalize(text))], by_heading=True)
+
+    hits = BillHits(stages={"near_duplicate"}, pairs={(q, 1)}, agreements={(q, 1): 9})
+    assert match_of(model, "b-bells", bill(BELLS, SHARED_ARTICLE), hits, None) is None
+
+    lamps = bill(LAMPS, SHARED_ARTICLE)
+    m = match_of(model, "b-lamps", lamps, hits, None)
+    assert m is not None
+    assert lamps[1].counted == len(
+        normalize(_compact_section(LAMPS, opening="Sec. 5. Text of the agreement.")).split()
+    )
+    assert m.bill_share == 1.0
+    assert m.spans
+    assert all("WITHDRAWAL" not in lamps[1].display[s.start : s.end] for s in m.spans)

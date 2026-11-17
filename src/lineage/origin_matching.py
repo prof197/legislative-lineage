@@ -39,16 +39,18 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lineage import queries
-from lineage.align import align
+from lineage.align import Alignment, align
+from lineage.boilerplate import boilerplate_kind
 from lineage.disk import require_free_space
 from lineage.embed import embed as embed_texts
 from lineage.embed import load_model
-from lineage.generic_sections import generic_kind
+from lineage.generic_sections import MIN_WORDS, Inside, generic_inside, generic_kind, words_outside
 from lineage.listing import MeaningHit, NearHit, SectionKey, flagged_sections
 from lineage.modeldocs import ModelDoc, ModelDocError, load_text
 from lineage.models import MODELS_DIR
 from lineage.origins import BillSpan, OriginMatch, SectionPair, Stage
-from lineage.query import matchable_sections, near_duplicate_hits, require_index, sign_query
+from lineage.query import near_duplicate_hits, require_index, sign_query
+from lineage.sections import normalize, split_sections
 from lineage.semantic import CORROBORATING, THRESHOLD, Embedder, open_search, search_sections
 
 SHARE_PLACES = 4  # as the export and the results round a share
@@ -65,6 +67,12 @@ class ModelText:
     words: list[int]  # each section's normalized words, the shares' unit
     # Sections a match leaves out on the model's side (lineage.generic_sections)
     generic: frozenset[int] = frozenset()
+    # Generic text inside a section that is not generic (lineage.generic_sections), by section
+    inside: dict[int, Inside] = field(default_factory=dict[int, Inside])
+
+    def counted(self, q: int) -> int:
+        """Section q's words a share counts: those outside its generic text."""
+        return self.words[q] - (self.inside[q].words if q in self.inside else 0)
 
     @property
     def searched(self) -> set[int]:
@@ -74,14 +82,43 @@ class ModelText:
 
 
 def model_text(doc_id: str, raw: str) -> ModelText:
-    _, matchable = matchable_sections(raw)
+    """The document's matchable sections as lineage.query.matchable_sections gives them, and
+    their generic text, read over every section in order so that an article running through
+    the window fallback's windows is read whole."""
+    split = split_sections(raw)
+    texts = [section.text for section in split.sections]
+    inside_of = generic_inside(texts, continuous=not split.by_heading)
+    matchable = [
+        (text, norm, inside)
+        for text, inside in zip(texts, inside_of, strict=True)
+        if boilerplate_kind(norm := normalize(text)) is None
+    ]
+    generic, inside = _generic(
+        [(len(norm.split()), generic_kind(norm), ins) for _, norm, ins in matchable]
+    )
     return ModelText(
         doc_id,
         raw,
-        [text for text, _ in matchable],
-        [len(normalized.split()) for _, normalized in matchable],
-        frozenset(q for q, (_, norm) in enumerate(matchable) if generic_kind(norm) is not None),
+        [text for text, _, _ in matchable],
+        [len(norm.split()) for _, norm, _ in matchable],
+        generic,
+        inside,
     )
+
+
+def _generic(
+    sections: Sequence[tuple[int, str | None, Inside | None]],
+) -> tuple[frozenset[int], dict[int, Inside]]:
+    """Which sections are generic, whole, and the generic text inside the rest: a section is
+    generic by its kind, or when less than MIN_WORDS of it lies outside its generic text."""
+    whole: set[int] = set()
+    inside: dict[int, Inside] = {}
+    for n, (words, kind, ins) in enumerate(sections):
+        if kind is not None or (ins is not None and words - ins.words < MIN_WORDS):
+            whole.add(n)
+        elif ins is not None:
+            inside[n] = ins
+    return frozenset(whole), inside
 
 
 def listed(
@@ -149,18 +186,26 @@ def bill_spans(
 ) -> list[BillSpan]:
     """The characters of one bill section that match any of `model_sections`, from each pair's
     alignment, merged by kind; exact wins over paraphrase."""
+    return _spans_of(ordinal, [align(m, bill_text, embed=embed) for m in model_sections])
+
+
+def _spans_of(
+    ordinal: int, alignments: Sequence[Alignment], cut: Sequence[tuple[int, int]] = ()
+) -> list[BillSpan]:
+    """A bill section's spans from its pairs' alignments, merged by kind, exact winning over
+    paraphrase, with the characters in `cut`, its generic text, left out."""
     exact: list[tuple[int, int]] = []
     paraphrase: list[tuple[int, int]] = []
-    for model_section in model_sections:
-        for span in align(model_section, bill_text, embed=embed).spans:
+    for alignment in alignments:
+        for span in alignment.spans:
             if span.b is None:
                 continue
             if span.kind == "copied":
                 exact.append(span.b)
             elif span.kind == "paraphrased":
                 paraphrase.append(span.b)
-    exact = _merged(exact)
-    paraphrase = _less(_merged(paraphrase), exact)
+    exact = _less(_merged(exact), list(cut))
+    paraphrase = _less(_less(_merged(paraphrase), exact), list(cut))
     spans = [BillSpan(ordinal=ordinal, start=s, end=e, kind="exact") for s, e in exact] + [
         BillSpan(ordinal=ordinal, start=s, end=e, kind="paraphrase") for s, e in paraphrase
     ]
@@ -221,11 +266,18 @@ def match_texts(
             eligible_path=tables_dir / "eligible.parquet",
             ids=sorted({bill_id for _, bill_id in hits}),
         )
-    sections: dict[str, dict[int, BillSection]] = defaultdict(dict)
-    for bill_id, ordinal, display, normalized in rows:
-        sections[bill_id][ordinal] = BillSection(
-            display, len(normalized.split()), generic_kind(normalized) is not None
+        split_by_heading = queries.split_by_heading_of(
+            con,
+            sections_glob=str(tables_dir / "sections" / "*.parquet"),
+            ids=sorted({bill_id for _, bill_id in hits}),
         )
+    by_bill: dict[str, list[tuple[int, str, str]]] = defaultdict(list)
+    for bill_id, ordinal, display, normalized in rows:
+        by_bill[bill_id].append((ordinal, display, normalized))
+    sections = {
+        bill_id: bill_sections(rows_of, by_heading=split_by_heading[bill_id])
+        for bill_id, rows_of in by_bill.items()
+    }
 
     out: list[OriginMatch] = []
     for (d, bill_id), entry in sorted(hits.items(), key=lambda kv: (kv[0][1], kv[0][0])):
@@ -239,6 +291,38 @@ class BillSection:
     display: str
     words: int
     generic: bool  # left out of a match on the bill's side (lineage.generic_sections)
+    inside: Inside | None = None  # generic text inside a section that is not generic
+
+    @property
+    def cut(self) -> tuple[tuple[int, int], ...]:
+        """Its generic text's characters, left out of its spans."""
+        return self.inside.ranges if self.inside is not None else ()
+
+    @property
+    def counted(self) -> int:
+        """The words a share counts: those outside its generic text."""
+        return self.words - (self.inside.words if self.inside is not None else 0)
+
+
+def bill_sections(
+    rows: Sequence[tuple[int, str, str]], *, by_heading: bool
+) -> dict[int, BillSection]:
+    """A bill's matchable sections, (ordinal, display, normalized) in order, with their generic
+    text; sections from the window fallback are read as one text, as a model's are."""
+    whole, inside = _generic(
+        [
+            (len(norm.split()), generic_kind(norm), ins)
+            for (_, _, norm), ins in zip(
+                rows,
+                generic_inside([d for _, d, _ in rows], continuous=not by_heading),
+                strict=True,
+            )
+        ]
+    )
+    return {
+        ordinal: BillSection(display, len(norm.split()), n in whole, inside.get(n))
+        for n, (ordinal, display, norm) in enumerate(rows)
+    }
 
 
 def match_of(
@@ -253,11 +337,38 @@ def match_of(
     sections is generic, both shares are of the sections that are not, and the stages, spans
     and pairs are the counted pairs'. A bill whose every pair touches a generic section has no
     match."""
-    pairs = sorted((q, o) for q, o in entry.pairs if q not in text.generic and not bill[o].generic)
+    aligned: dict[tuple[int, int], Alignment] = {}
+
+    def alignment(q: int, o: int) -> Alignment:
+        if (q, o) not in aligned:
+            aligned[(q, o)] = align(text.display[q], bill[o].display, embed=embed)
+        return aligned[(q, o)]
+
+    def outside(q: int, o: int) -> bool:
+        """Ruled at the step 48 review: where either section holds generic text, a pair counts
+        only when its alignment shares MIN_WORDS outside it on both sides."""
+        model_in, bill_in = text.inside.get(q), bill[o].inside
+        if model_in is None and bill_in is None:
+            return True
+        return any(
+            span.a is not None
+            and span.b is not None
+            and words_outside(text.display[q], span.a, model_in.ranges if model_in else ())
+            >= MIN_WORDS
+            and words_outside(bill[o].display, span.b, bill_in.ranges if bill_in else ())
+            >= MIN_WORDS
+            for span in alignment(q, o).spans
+        )
+
+    pairs = sorted(
+        (q, o)
+        for q, o in entry.pairs
+        if q not in text.generic and not bill[o].generic and outside(q, o)
+    )
     if not pairs:
         return None
-    model_words = sum(text.words[q] for q in text.searched if q not in text.generic)
-    bill_words = sum(s.words for s in bill.values() if not s.generic)
+    model_words = sum(text.counted(q) for q in text.searched if q not in text.generic)
+    bill_words = sum(s.counted for s in bill.values() if not s.generic)
     matched_model = {q for q, _ in pairs}
     matched_bill = {o for _, o in pairs}
     by_ordinal: dict[int, list[int]] = defaultdict(list)
@@ -266,7 +377,11 @@ def match_of(
     spans = [
         span
         for o in sorted(by_ordinal)
-        for span in bill_spans(o, bill[o].display, [text.display[q] for q in by_ordinal[o]], embed)
+        for span in _spans_of(
+            o,
+            [alignment(q, o) for q in by_ordinal[o]],
+            bill[o].cut,
+        )
     ]
     stages: list[Stage] = []
     if any(p in entry.agreements for p in pairs):
@@ -277,8 +392,8 @@ def match_of(
         bill_id=bill_id,
         doc_id=text.doc_id,
         stages=stages,
-        model_share=_share(sum(text.words[q] for q in matched_model), model_words),
-        bill_share=_share(sum(bill[o].words for o in matched_bill), bill_words),
+        model_share=_share(sum(text.counted(q) for q in matched_model), model_words),
+        bill_share=_share(sum(bill[o].counted for o in matched_bill), bill_words),
         spans=spans,
         pairs=[
             SectionPair(
