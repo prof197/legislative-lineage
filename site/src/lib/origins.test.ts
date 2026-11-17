@@ -4,7 +4,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { Origin, SourceEntry } from "@/types/export";
-import { byBillShare, bySource, docDate, documents, foundBy, isoDate, ORIGIN_LINE, originLine, originText, percent, possessive, publishers, sentence, termsRead } from "./origins.ts";
+import { byBillShare, bySource, docDate, documents, foundBy, isoDate, ORIGIN_LINE, originLine, originText, percent, possessive, publishers, sentence, termsRead, updatedLine } from "./origins.ts";
 
 function origin(title: string, bill_share: number, model_share: number, published: string | null = null): Origin {
   return {
@@ -85,6 +85,12 @@ test("a source's terms note ends as a sentence, and the day it was read follows 
   assert.equal(sentence(" robots.txt disallows nothing. "), "robots.txt disallows nothing.");
   assert.equal(sentence("Is copying allowed?"), "Is copying allowed?");
   assert.equal(termsRead("2026-11-15"), "Terms read Nov 15, 2026.");
+});
+
+test("a bill page dates its matches only when the live track set the day", () => {
+  assert.equal(updatedLine("2026-11-16"), "Related bills and model documents updated Nov 16, 2026");
+  assert.equal(updatedLine(null), null);
+  assert.equal(updatedLine(undefined), null);
 });
 
 test("sources by organization", () => {

@@ -95,6 +95,11 @@ export const docDate = (o: Origin): string => (o.doc.published ? `Dated ${isoDat
 
 export const documents = (n: number): string => `${n.toLocaleString("en-US")} ${n === 1 ? "document" : "documents"}`;
 
+// The day a bill's relatives or origins last changed, which the live track sets on its page
+// (BillPage.updated_on); nothing when it is not set, so a full build's pages carry no date.
+export const updatedLine = (iso: string | null | undefined): string | null =>
+  iso ? `Related bills and model documents updated ${isoDate(iso)}` : null;
+
 // A note from a source's entry, ended as a sentence: notes as read are often several sentences.
 export const sentence = (s: string): string => (/[.!?]$/.test(s.trim()) ? s.trim() : `${s.trim()}.`);
 
