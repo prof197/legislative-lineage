@@ -32,6 +32,7 @@ from lineage.export_schema import (
     BillTexts,
     Comparison,
     Meta,
+    OriginStory,
     Release,
     Sources,
     Story,
@@ -56,7 +57,11 @@ CONTRACT: tuple[tuple[str, type[BaseModel]], ...] = (
     (rf"compare/{_SLUG}--{_SLUG}\.json", Comparison),
     (rf"texts/{_SLUG}\.json", BillTexts),
     (rf"stories/{_SLUG}\.json", Story),
+    (r"origin_story\.json", OriginStory),
 )
+# The live track's feed (lineage.feed), the one file not JSON: held to RFC 4287's required
+# elements, as lineage.feed writes it.
+FEED = "feed.xml"
 _CONTRACT = tuple((re.compile(pattern), model) for pattern, model in CONTRACT)
 REQUIRED = ("meta.json", "bills.json", "sources.json")
 # The tag and asset naming site/scripts/fetch-data.sh accepts.
@@ -116,7 +121,7 @@ def check_export(export: Path, *, state: str) -> Checksums:
     if irregular:
         raise _refuse("not a regular file", irregular)
     files = [(n, p) for n, p in entries if p.is_file()]
-    stray = [n for n, _ in files if _model_for(n) is None]
+    stray = [n for n, _ in files if n != FEED and _model_for(n) is None]
     if stray:
         raise _refuse("not a file the export contract names", stray)
     present = {n for n, _ in files}
@@ -126,6 +131,13 @@ def check_export(export: Path, *, state: str) -> Checksums:
     sums: list[FileSum] = []
     for name, path in files:
         data = path.read_bytes()
+        if name == FEED:
+            from lineage.feed import violations  # the feed's check pulls in the export's stack
+
+            if problems := violations(data):
+                raise ReleaseError(f"{FEED} is not a valid Atom feed: {problems[0]}")
+            sums.append(FileSum(path=name, size=len(data), sha256=hashlib.sha256(data).hexdigest()))
+            continue
         model = _model_for(name)
         assert model is not None
         try:

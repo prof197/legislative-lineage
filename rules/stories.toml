@@ -11,3 +11,10 @@ states = "all"
 
 [stories.georgia-social-media]
 states = ["GA"]
+
+# The origin story: chosen from the hosted state's own bills by lineage.origin_story's rule, which
+# names no organization, so each state's site carries its own, or none when no passed bill meets
+# the rule. Written as origin_story.json at the export's root, not under stories/, since it is not
+# a featured story of relatives.
+[stories.origin]
+states = "all"

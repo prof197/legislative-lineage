@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { meta, release } from "@/lib/data";
+import { FEED_PATH, hasFeed, meta, release } from "@/lib/data";
 import { asOf, stateName } from "@/lib/format";
 
 function Logo() {
@@ -102,6 +102,8 @@ export function Footer() {
           <a href={REPOSITORY}>Source code</a>
           <Link href="/validation/">How we checked</Link>
           <Link href="/sources/">Sources</Link>
+          {/* The live track's feed, when the data carries one: a file, not a page, so a plain link. */}
+          {hasFeed() && <a href={FEED_PATH}>Atom feed</a>}
           <Link href="/run/">Run it for your state</Link>
           <a href={`${REPOSITORY}/issues`}>Report an error</a>
         </nav>

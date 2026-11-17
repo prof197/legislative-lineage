@@ -308,6 +308,16 @@ class Sources(_Model):
     sources: list[SourceEntry]
 
 
+class OriginStory(_Model):
+    """`origin_story.json`: the origin story (DESIGN.md#export), the passed bill and listed origin
+    lineage.origin_story's rule chooses; not written when no passed bill has a listed origin both
+    stages found."""
+
+    bill: BillRef
+    origin: Origin  # the bill's best listed origin both stages found, as its page lists it
+    eligible: int  # passed bills with a listed origin both stages found
+
+
 class Release(_Model):
     """`release.json`, written by the site build when it fetches the export: the release the
     data came from and the checksum it was verified against, for the data stamp."""
@@ -325,5 +335,6 @@ TOP_LEVEL: tuple[type[BaseModel], ...] = (
     Comparison,
     BillTexts,
     Story,
+    OriginStory,
     Sources,
 )

@@ -5,7 +5,7 @@
 // The site states shared wording and dates, never direction or authorship, so a line names how
 // much wording the bill and the document share and nothing about which came first or who wrote
 // either.
-import type { BillRef, Origin, SourceEntry } from "@/types/export";
+import type { Origin, OriginStory, SourceEntry } from "@/types/export";
 
 // The sources page's inclusion rule, as ruled.
 export const INCLUSION_RULE =
@@ -113,9 +113,8 @@ export function bySource(sources: readonly SourceEntry[]): SourceEntry[] {
 
 // The origin story (DESIGN.md#export): one passed bill and the listed model document both stages
 // found holding the most of its wording, chosen by lineage.origin_story's rule, which names no
-// organization. Until the export's schema carries the story's file, its shape is written here from
-// the generated types; it is the proposed OriginStory model, field for field.
-export type OriginStory = { bill: BillRef; origin: Origin; eligible: number };
+// organization; its file's type is the export schema's.
+export type { OriginStory };
 
 // The story's own words. The organization appears only in the origin line and the publishers line,
 // as the data names it; nothing here says who wrote the bill or which text came first.

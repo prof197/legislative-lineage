@@ -3,6 +3,7 @@ import Link from "next/link";
 import { BillView } from "@/components/BillView";
 import { Footer, Header } from "@/components/Chrome";
 import { Origins } from "@/components/Origins";
+import { updatedLine } from "@/lib/origins";
 import { StatusBadge } from "@/components/Status";
 import { billList, billPage } from "@/lib/data";
 import { billName, count, relatedCount, sectionLabels, sessionPhrase, stateName } from "@/lib/format";
@@ -31,6 +32,7 @@ export default async function BillPageView({ params }: Props) {
   const notice = page.text?.notice_only ?? false;
   const labels = sectionLabels(page.sections);
   const order = new Map(page.sections.map((x, i) => [x.ordinal, i]));
+  const updated = updatedLine(page.updated_on);
   return (
     <>
       <Header current="bills" />
@@ -43,6 +45,7 @@ export default async function BillPageView({ params }: Props) {
           <StatusBadge status={b.status} />
           {page.text?.version && <span>Text stored: {page.text.version}</span>}
           {page.text?.url && <a href={page.text.url}>The bill on the legislature&apos;s site</a>}
+          {updated && <span>{updated}</span>}
         </div>
 
         {notice ? (

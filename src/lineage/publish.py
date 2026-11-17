@@ -59,6 +59,7 @@ from lineage.export import (
     ExportError,
     OrdinalPair,
     align_all,
+    carries_origin_story,
     comparison_slug,
     origins_by_bill,
     pairs_between,
@@ -95,6 +96,8 @@ from lineage.export_schema import (
 from lineage.incremental import applied_days
 from lineage.listing import listed_pairs, shipped_flag
 from lineage.modeldocs import MODELDOCS_DIR, read_docs
+from lineage.origin_story import FILE as ORIGIN_STORY_FILE
+from lineage.origin_story import story_file as origin_story_file
 from lineage.origins import read_origin_matches
 from lineage.pairs import load_families
 from lineage.relatives import BillRelatives, bill_relatives
@@ -806,6 +809,13 @@ def export_changes(
     put(BILLS, bill_list(plan))
     for key, story in plan.stories.items():
         put(f"stories/{key}.json", story)
+    # The origin story, chosen afresh from the hosted pages as a full export chooses it.
+    origin_story: set[str] = set()
+    if carries_origin_story(state, stories_rules):
+        chosen = origin_story_file(bill_page(plan, b) for b in plan.hosted)
+        if chosen is not None:
+            put(ORIGIN_STORY_FILE, chosen)
+            origin_story.add(ORIGIN_STORY_FILE)
     put(SOURCES, plan.sources)
     put(
         META,
@@ -817,6 +827,7 @@ def export_changes(
         | names_now
         | {f"texts/{s}.json" for s in texts}
         | {f"stories/{k}.json" for k in plan.stories}
+        | origin_story
         | {BILLS, SOURCES, META}
     )
     removed = sorted(before - expected)

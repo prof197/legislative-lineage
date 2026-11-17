@@ -721,6 +721,29 @@
    "title": "Origin",
    "type": "object"
   },
+  "OriginStory": {
+   "additionalProperties": false,
+   "description": "`origin_story.json`: the origin story (DESIGN.md#export), the passed bill and listed origin\nlineage.origin_story's rule chooses; not written when no passed bill has a listed origin both\nstages found.",
+   "properties": {
+    "bill": {
+     "$ref": "#/$defs/BillRef"
+    },
+    "eligible": {
+     "title": "Eligible",
+     "type": "integer"
+    },
+    "origin": {
+     "$ref": "#/$defs/Origin"
+    }
+   },
+   "required": [
+    "bill",
+    "origin",
+    "eligible"
+   ],
+   "title": "OriginStory",
+   "type": "object"
+  },
   "Recall": {
    "additionalProperties": false,
    "properties": {

@@ -14,7 +14,7 @@ near-duplicate and the semantic stage found the match, the evidence least likely
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 
-from lineage.export_schema import BillPage, Stage, Status
+from lineage.export_schema import BillPage, OriginStory, Stage, Status
 
 BOTH: frozenset[Stage] = frozenset({"near_duplicate", "semantic"})
 
@@ -76,3 +76,19 @@ def hosted_bill(page: BillPage) -> HostedBill:
             for o in page.origins
         ),
     )
+
+
+FILE = "origin_story.json"
+STORY = "origin"  # its key in rules/stories.toml, which places it on a state's site
+
+
+def story_file(pages: Iterable[BillPage]) -> OriginStory | None:
+    """The origin story's file from the hosted state's bill pages, or None when the rule chooses
+    no bill: what the export writes, and the live track's incremental export too."""
+    by_slug = {p.bill.slug: p for p in pages}
+    chosen = choose(hosted_bill(p) for p in by_slug.values())
+    if chosen is None:
+        return None
+    page = by_slug[chosen.bill.slug]
+    origin = next(o for o in page.origins if o.doc.id == chosen.origin.doc_id)
+    return OriginStory(bill=page.bill, origin=origin, eligible=chosen.eligible)

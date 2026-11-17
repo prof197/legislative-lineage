@@ -66,6 +66,9 @@ def hand_made_origins(
     for bill_id, ordinal, text in rows:
         by_bill[bill_id].append((ordinal, text))
     out: list[OriginMatch] = []
+    # The first is found by both stages, so the fixture carries an origin story
+    # (lineage.origin_story), and the rest by wording alone.
+    first = next(iter(DRAWN_FROM))
     for doc_id, (bill_id, title) in DRAWN_FROM.items():
         sections = by_bill[bill_id]
         drawn = sorted(sorted(sections, key=lambda s: -len(s[1]))[:SECTIONS_DRAWN])
@@ -91,7 +94,7 @@ def hand_made_origins(
             OriginMatch(
                 bill_id=bill_id,
                 doc_id=doc_id,
-                stages=["near_duplicate"],
+                stages=["near_duplicate", "semantic"] if doc_id == first else ["near_duplicate"],
                 model_share=1.0,
                 bill_share=round(sum(len(t.split()) for _, t in drawn) / words, 4),
                 spans=[BillSpan(ordinal=o, start=0, end=len(t), kind="exact") for o, t in drawn],
@@ -112,7 +115,7 @@ def build_fixture_export(root: Path) -> Path:
     no_pairs, no_stories, rules = root / "none.jsonl", root / "none.json", root / "stories.toml"
     no_pairs.touch()
     no_stories.write_text('{"stories": {}}')
-    rules.write_text("")
+    rules.write_text('[stories.origin]\nstates = "all"\n')
     out = root / "export"
     build_export(
         tables,

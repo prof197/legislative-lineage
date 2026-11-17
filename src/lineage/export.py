@@ -86,6 +86,9 @@ from lineage.export_schema import (
 from lineage.listing import ListedPairs, listed_pairs, shipped_flag
 from lineage.minhash import NUM_PERM
 from lineage.modeldocs import MODELDOCS_DIR, ModelDoc, Source, read_docs
+from lineage.origin_story import FILE as ORIGIN_STORY_FILE
+from lineage.origin_story import STORY as ORIGIN_STORY
+from lineage.origin_story import story_file as origin_story_file
 from lineage.origins import OriginMatch, is_listed, read_origin_matches
 from lineage.pairs import load_families
 from lineage.paths import DATA
@@ -381,6 +384,13 @@ def stories_for(state: str, stories: Iterable[str], rules: Path = STORIES_RULES)
         if states == "all" or (isinstance(states, list) and state in states):
             out.add(key)
     return out
+
+
+def carries_origin_story(state: str, rules: Path = STORIES_RULES) -> bool:
+    """Whether `state`'s site carries the origin story: only where `rules` place it, so a rules
+    file without it carries none, the safe reading for a story that shows nothing unplaced."""
+    listed: dict[str, Any] = tomllib.loads(rules.read_text()).get("stories", {})
+    return ORIGIN_STORY in listed and bool(stories_for(state, [ORIGIN_STORY], rules))
 
 
 def _load_featured(path: Path) -> dict[str, set[tuple[str, int, str, int]]]:
@@ -739,6 +749,12 @@ def build_export(
             relatives=story_relatives,
         )
         story_slugs.append(key)
+
+    if carries_origin_story(state, stories_rules):
+        pages = (f for name, f in files.items() if name.startswith("bills/"))
+        story = origin_story_file(p for p in pages if isinstance(p, BillPage))
+        if story is not None:
+            files[ORIGIN_STORY_FILE] = story
 
     files["sources.json"] = sources_doc(sources, docs)
     files["meta.json"] = Meta(
