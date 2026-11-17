@@ -2,10 +2,12 @@
 (DESIGN.md#export, "The data release").
 
 Data never enters git, so the site is built from a GitHub Release asset,
-`export-<ST>-<tag>.tar.gz`, whose SHA-256 is committed in `site/data-release.json`. Inside the
-tarball, `checksums.json` lists every other file's path, size and SHA-256, so a reader can
-check any one file, `site/scripts/fetch-data.sh` can check every unpacked file, and two
-releases' manifests show exactly which files changed.
+`export-<ST>-<tag>.tar.gz`, whose SHA-256 is committed in `site/data-release.json`. Packing
+refuses any file the export contract does not name, and any JSON file its model rejects, so a
+stray file or text the contract has no field for cannot ship. Inside the tarball,
+`checksums.json` lists every other file's path, size and SHA-256, so a reader can check any one
+file, `site/scripts/fetch-data.sh` can check every unpacked file, and two releases' manifests
+show exactly which files changed.
 
 The tarball is byte-for-byte reproducible: members sorted by path, every timestamp, owner and
 mode fixed, and no name or time in the gzip header, so the same export always gives the same
@@ -21,10 +23,19 @@ import re
 import tarfile
 from pathlib import Path
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, ValidationError
 
 from lineage.disk import DEFAULT_FLOOR_BYTES, require_free_space
-from lineage.export_schema import Release
+from lineage.export_schema import (
+    BillList,
+    BillPage,
+    BillTexts,
+    Comparison,
+    Meta,
+    Release,
+    Sources,
+    Story,
+)
 
 # The data release the deploy builds from, committed: its tag and the asset's expected SHA-256.
 # A data change reaches the site only as a reviewed commit to this file.
@@ -32,9 +43,26 @@ RELEASE_MANIFEST = Path("site/data-release.json")
 # The checksum manifest inside the tarball; never a file the export writes.
 CHECKSUMS = "checksums.json"
 
+# A bill's file name as lineage.export.slug makes it: runs of [a-z0-9_] joined by one hyphen, so
+# a comparison's `--` between two slugs is unambiguous. Story keys are slugs too.
+_SLUG = r"[a-z0-9_]+(?:-[a-z0-9_]+)*"
+# Every file the export writes, by path, and the model it must validate against. release.json
+# is the site build's, written beside the export when it is fetched, so it is not here.
+CONTRACT: tuple[tuple[str, type[BaseModel]], ...] = (
+    (r"meta\.json", Meta),
+    (r"bills\.json", BillList),
+    (r"sources\.json", Sources),
+    (rf"bills/{_SLUG}\.json", BillPage),
+    (rf"compare/{_SLUG}--{_SLUG}\.json", Comparison),
+    (rf"texts/{_SLUG}\.json", BillTexts),
+    (rf"stories/{_SLUG}\.json", Story),
+)
+_CONTRACT = tuple((re.compile(pattern), model) for pattern, model in CONTRACT)
+REQUIRED = ("meta.json", "bills.json", "sources.json")
 # The tag and asset naming site/scripts/fetch-data.sh accepts.
 _STATE = re.compile(r"[A-Z]{2}")
 _TAG = r"data-{state}-[0-9]{{4}}-[0-9]{{2}}-[0-9]{{2}}"
+_SHOWN = 10  # problems named in a refusal; the rest are counted
 
 
 class ReleaseError(Exception):
@@ -64,19 +92,52 @@ def checksums_bytes(checksums: Checksums) -> bytes:
     return f'{{"files": [\n{lines}\n]}}\n'.encode()
 
 
-def sum_export(export: Path) -> Checksums:
-    """Every file in `export`, summed, sorted by path."""
+def _refuse(what: str, items: list[str]) -> ReleaseError:
+    shown = ", ".join(items[:_SHOWN])
+    more = f" and {len(items) - _SHOWN} more" if len(items) > _SHOWN else ""
+    return ReleaseError(f"{what}: {shown}{more}")
+
+
+def _model_for(name: str) -> type[BaseModel] | None:
+    return next((model for pattern, model in _CONTRACT if pattern.fullmatch(name)), None)
+
+
+def check_export(export: Path, *, state: str) -> Checksums:
+    """Every file in `export`, checked against the contract and summed. Refused: a file whose
+    path the contract does not name, anything but a regular file, a JSON file its model rejects
+    (strictly, and with no field the model lacks), a missing meta.json, bills.json or
+    sources.json, and another state's export."""
     if not (export / "meta.json").is_file():
         raise ReleaseError(f"{export} holds no meta.json; run `uv run lineage export` first")
-    files = sorted(
-        ((p.relative_to(export).as_posix(), p) for p in export.rglob("*") if p.is_file()),
-        key=lambda e: e[0],
+    entries = sorted(
+        ((p.relative_to(export).as_posix(), p) for p in export.rglob("*")), key=lambda e: e[0]
     )
-    if any(name == CHECKSUMS for name, _ in files):
-        raise ReleaseError(f"{export} already holds {CHECKSUMS}, which packing writes")
+    irregular = [n for n, p in entries if p.is_symlink() or not (p.is_file() or p.is_dir())]
+    if irregular:
+        raise _refuse("not a regular file", irregular)
+    files = [(n, p) for n, p in entries if p.is_file()]
+    stray = [n for n, _ in files if _model_for(n) is None]
+    if stray:
+        raise _refuse("not a file the export contract names", stray)
+    present = {n for n, _ in files}
+    for name in REQUIRED:
+        if name not in present:
+            raise ReleaseError(f"{export} holds no {name}")
     sums: list[FileSum] = []
     for name, path in files:
         data = path.read_bytes()
+        model = _model_for(name)
+        assert model is not None
+        try:
+            doc = model.model_validate_json(data, strict=True)
+        except ValidationError as e:
+            first = e.errors()[0]
+            where = ".".join(str(x) for x in first["loc"]) or "the file"
+            raise ReleaseError(
+                f"{name} is not a valid {model.__name__}: {where}: {first['msg']}"
+            ) from e
+        if isinstance(doc, Meta) and doc.state != state:
+            raise ReleaseError(f"meta.json is {doc.state}'s export, not {state}'s")
         sums.append(FileSum(path=name, size=len(data), sha256=hashlib.sha256(data).hexdigest()))
     return Checksums(files=sums)
 
@@ -114,9 +175,10 @@ def package(
 ) -> tuple[Path, Path]:
     """The export as one release asset, `export-<ST>-<tag>.tar.gz`, with `checksums.json`
     inside, and its SHA-256 beside it in the form `sha256sum -c` reads. Nothing is written
-    unless the tag is one the deploy accepts, and the asset appears whole or not at all."""
+    unless the tag is one the deploy accepts and every file passes check_export, and the asset
+    appears whole or not at all."""
     name = asset_name(state, tag)
-    checksums = sum_export(export)
+    checksums = check_export(export, state=state)
     manifest = checksums_bytes(checksums)
     members: dict[str, FileSum | bytes] = {f.path: f for f in checksums.files}
     members[CHECKSUMS] = manifest

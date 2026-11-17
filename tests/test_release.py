@@ -3,6 +3,8 @@ manifest inside, packed only from files the export contract names, each valid ag
 model; pinned by its digest in site/data-release.json."""
 
 import hashlib
+import json
+import re
 import shutil
 import tarfile
 from pathlib import Path
@@ -12,12 +14,14 @@ from typer.testing import CliRunner
 
 from lineage import release
 from lineage.cli import app
-from lineage.export_schema import Release
+from lineage.export_schema import TOP_LEVEL, Release
 from lineage.release import (
     CHECKSUMS,
+    CONTRACT,
     Checksums,
     ReleaseError,
     changed_files,
+    check_export,
     checksums_bytes,
     package,
     read_checksums,
@@ -47,6 +51,11 @@ def _members(asset: Path) -> dict[str, bytes]:
             assert f is not None
             out[m.name] = f.read()
         return out
+
+
+def test_the_contract_names_every_file_the_export_writes() -> None:
+    # Release is release.json, which the site build writes beside the export; it never ships.
+    assert {model for _, model in CONTRACT} == set(TOP_LEVEL) - {Release}
 
 
 def test_a_valid_export_packs_with_its_checksum_manifest_inside(export: Path, tmp_path: Path):
@@ -122,6 +131,94 @@ def test_a_release_without_a_manifest_is_named_as_such(tmp_path: Path) -> None:
         read_checksums(asset)
 
 
+@pytest.mark.parametrize(
+    "stray",
+    [
+        "notes.txt",
+        ".DS_Store",
+        "bills/ut-2023-sb-18.txt",
+        "bills/nested/ut-2023-sb-18.json",
+        "modeldocs/alec/doc.json",
+        "texts/UT-2099-SB-1.json",  # upper case: not a slug
+        "compare/ut-2023-sb-18.json",
+        "release.json",
+        CHECKSUMS,
+    ],
+)
+def test_a_file_the_contract_does_not_name_is_refused(
+    export: Path, tmp_path: Path, stray: str
+) -> None:
+    path = export / stray
+    path.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy(export / "meta.json", path)
+
+    with pytest.raises(
+        ReleaseError, match=f"not a file the export contract names.*{re.escape(stray)}"
+    ):
+        _pack(export, tmp_path / "a")
+    assert not (tmp_path / "a").exists()
+
+
+def test_a_symlink_is_refused_even_to_a_valid_file(export: Path, tmp_path: Path) -> None:
+    (export / "bills" / "ut-9999-sb-1.json").symlink_to(export / "bills" / "ut-2023-sb-18.json")
+
+    with pytest.raises(ReleaseError, match=r"not a regular file.*ut-9999-sb-1\.json"):
+        check_export(export, state="UT")
+
+
+def _edit(path: Path, change: dict[str, object]) -> None:
+    doc = json.loads(path.read_text())
+    doc.update(change)
+    path.write_text(json.dumps(doc))
+
+
+@pytest.mark.parametrize(
+    ("name", "content"),
+    [
+        ("bills/ut-2023-sb-18.json", "{not json"),
+        # A field the model does not have: model text riding along in a bill's page.
+        ("bills/ut-2023-sb-18.json", {"model_text": "Section 1. Model act."}),
+        ("meta.json", {"hosted_bills": "three"}),
+        ("sources.json", {"sources": [{"key": "x"}]}),
+    ],
+)
+def test_a_json_file_its_model_rejects_is_refused(
+    export: Path, tmp_path: Path, name: str, content: str | dict[str, object]
+) -> None:
+    if isinstance(content, str):
+        (export / name).write_text(content)
+    else:
+        _edit(export / name, content)
+
+    with pytest.raises(ReleaseError, match=f"{name} is not a valid"):
+        _pack(export, tmp_path / "a")
+    assert not (tmp_path / "a").exists()
+
+
+def test_a_file_in_the_wrong_place_is_refused(export: Path) -> None:
+    # A valid comparison, but where a bill's page belongs.
+    comparison = next((export / "compare").iterdir())
+    shutil.copy(comparison, export / "bills" / "ut-2099-hb-1.json")
+
+    with pytest.raises(ReleaseError, match=r"bills/ut-2099-hb-1\.json is not a valid BillPage"):
+        check_export(export, state="UT")
+
+
+@pytest.mark.parametrize("required", ["meta.json", "bills.json", "sources.json"])
+def test_an_export_missing_a_required_file_is_refused(
+    export: Path, tmp_path: Path, required: str
+) -> None:
+    (export / required).unlink()
+
+    with pytest.raises(ReleaseError, match=f"no {required}"):
+        _pack(export, tmp_path / "a")
+
+
+def test_another_states_export_is_refused(export: Path, tmp_path: Path) -> None:
+    with pytest.raises(ReleaseError, match=r"meta\.json is UT's export, not GA's"):
+        _pack(export, tmp_path / "a", state="GA", tag="data-ga-2026-11-16")
+
+
 def test_a_tag_the_deploy_would_refuse_is_refused(export: Path, tmp_path: Path) -> None:
     with pytest.raises(ReleaseError, match="not a data release tag for UT"):
         _pack(export, tmp_path / "a", tag="data-ga-2026-11-16")
@@ -179,3 +276,17 @@ def test_the_cli_packs_and_pins_through_the_release_module(
     asset = tmp_path / f"export-UT-{TAG}.tar.gz"
     assert Release.model_validate_json(pin.read_text()).asset == asset.name
     assert CHECKSUMS in _members(asset)
+
+
+def test_the_cli_pins_nothing_when_packing_is_refused(
+    export: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(release, "require_free_space", _no_floor)
+    (export / "notes.txt").write_text("stray")
+    pin = tmp_path / "site" / "data-release.json"
+    args = ["export", "--state", "UT", "--out", str(export), "--package", TAG]
+    refused = CliRunner().invoke(app, [*args, "--release-manifest", str(pin)])
+
+    assert refused.exit_code == 1
+    assert not (tmp_path / f"export-UT-{TAG}.tar.gz").exists()
+    assert not pin.exists()
