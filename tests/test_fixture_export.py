@@ -8,14 +8,21 @@ from pathlib import Path
 import pytest
 
 from lineage.collect import collectors
+from lineage.export import RESULTS, carries_origin_story
 from lineage.export_schema import BillPage, Meta, Sources
 from lineage.modeldocs import read_docs
 from lineage.origin_labels import judged_correct, load_labels
+from lineage.origin_story import FILE as ORIGIN_STORY_FILE
+from lineage.origin_story import story_file
 from lineage.origins import read_origin_matches
+from lineage.publish import bill_list, bill_page, plan_export, texts_by_slug
+from tests.conftest import FAKE_MODEL
 from tests.fixture_export import (
     COMMITTED,
     DRAWN_FROM,
     PACKAGE,
+    REPO,
+    STATE,
     build_fixture_export,
     files_of,
     replace_committed,
@@ -66,3 +73,45 @@ def test_a_match_is_judged_correct_only_on_the_sections_its_label_names(built: P
     wrong = [r | {"label": 0} for r in labels]
     assert judged_correct(keys, matches, docs, tables, wrong, root=modeldocs) == set()
     assert json.loads((COMMITTED / "origin_story.json").read_text())["passed_over"] == 0
+
+
+def test_the_live_tracks_rendering_gives_the_exports_pages_byte_for_byte(built: Path) -> None:
+    """Ruled at the step 48 review: until lineage.publish shares the export's rendering, its
+    own copy must give the same files for the same bills, read from the same tables: every bill
+    page, the bill index, every bill's section texts and the origin story."""
+    root = built.parent
+    plan = plan_export(
+        root / "embedded",
+        state=STATE,
+        cache=root / "no-cache",
+        featured_pairs=root / "none.jsonl",
+        featured_report=root / "none.json",
+        stories_rules=root / "stories.toml",
+        results=REPO / RESULTS,
+        modeldocs_root=root / "modeldocs",
+        collector_package=PACKAGE,
+        model=FAKE_MODEL,
+        require_flag=False,
+        origin_labels=root / "origin_labels.jsonl",
+    )
+
+    def same(name: str, rendered: bytes) -> None:
+        assert rendered == (built / name).read_bytes(), name
+
+    assert plan.hosted
+    for bill_id in plan.hosted:
+        same(
+            f"bills/{plan.refs[bill_id].slug}.json",
+            bill_page(plan, bill_id).model_dump_json().encode(),
+        )
+    same("bills.json", bill_list(plan).model_dump_json().encode())
+    texts = texts_by_slug(plan)
+    assert {f"texts/{s}.json" for s in texts} == {
+        p.relative_to(built).as_posix() for p in built.glob("texts/*.json")
+    }
+    for slug, doc in texts.items():
+        same(f"texts/{slug}.json", doc.model_dump_json().encode())
+    assert carries_origin_story(STATE, root / "stories.toml")
+    story = story_file((bill_page(plan, b) for b in plan.hosted), plan.judged)
+    assert story is not None
+    same(ORIGIN_STORY_FILE, story.model_dump_json().encode())
