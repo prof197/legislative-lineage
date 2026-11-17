@@ -20,7 +20,7 @@ three featured stories, and one on a passed bill that shares wording with a publ
 | Judged by a model: do the related bills a page lists share the provision? (100 sampled from Georgia's pages) | 0.83 [0.74, 0.89] | `uv run lineage eval relatives` |
 | Judged by a model: do the explanations describe the text they cite? (359 claims) | 0.87 [0.83, 0.90] | `uv run lineage eval faithfulness` |
 | Matched as published model legislation, does a uniform act find the bills that enacted it? (three acts, at the listing floor) | 31 of 36 (86.1%) | `uv run lineage eval origins` |
-| Judged by a model: does the model legislation a page lists as an origin share the provision? (300 sampled matches) | 0.88 [0.84, 0.91] | `uv run lineage eval origin-precision --part reporting_after_fix` |
+| Judged by a model: does the model legislation a page lists as an origin share the provision? (300 sampled matches) | 0.91 [0.87, 0.94] | `uv run lineage eval origin-precision --part reporting_after_compact_fix` |
 <!-- /results:summary -->
 
 **Where it falls short.**
@@ -89,12 +89,12 @@ Origin recall: each uniform act's published text is matched against the corpus a
 |---|---|---|
 | Recall on the development key, three acts | 31 of 36, 0.86 [0.71, 0.94] | `uv run lineage eval origins` |
 | Recall on the sealed key, two acts v1 never ran, run once with `--final`[^sealed] | 6 of 6, 1.00 [0.61, 1.00] | `uv run lineage eval origins --key held_out --final` |
-| Precision, model-judged, all stages (300 labels of 2,913 matches) | 0.88 [0.84, 0.91] | `uv run lineage eval origin-precision --part reporting_after_fix` |
-| Precision, found by the near-duplicate stage alone (100 labels of 539 matches) | 0.90 [0.83, 0.94] | `uv run lineage eval origin-precision --part reporting_after_fix` |
-| Precision, found by meaning alone (100 labels of 877 matches) | 0.87 [0.79, 0.92] | `uv run lineage eval origin-precision --part reporting_after_fix` |
-| Precision, found by both stages (100 labels of 1,497 matches) | 0.88 [0.80, 0.93] | `uv run lineage eval origin-precision --part reporting_after_fix` |
-| Precision, American Legislative Exchange Council (ALEC)'s matches (179 labels of 1,667 matches) | 0.83 [0.76, 0.88] | `uv run lineage eval origin-precision --part reporting_after_fix` |
-| Precision, every other source's matches (121 labels of 1,246 matches) | 0.95 [0.89, 0.97] | `uv run lineage eval origin-precision --part reporting_after_fix` |
+| Precision, model-judged, all stages (300 labels of 2,751 matches) | 0.91 [0.87, 0.94] | `uv run lineage eval origin-precision --part reporting_after_compact_fix` |
+| Precision, found by the near-duplicate stage alone (100 labels of 526 matches) | 0.87 [0.79, 0.92] | `uv run lineage eval origin-precision --part reporting_after_compact_fix` |
+| Precision, found by meaning alone (100 labels of 824 matches) | 0.98 [0.93, 0.99] | `uv run lineage eval origin-precision --part reporting_after_compact_fix` |
+| Precision, found by both stages (100 labels of 1,401 matches) | 0.89 [0.81, 0.94] | `uv run lineage eval origin-precision --part reporting_after_compact_fix` |
+| Precision, American Legislative Exchange Council (ALEC)'s matches (158 labels of 1,505 matches) | 0.84 [0.77, 0.89] | `uv run lineage eval origin-precision --part reporting_after_compact_fix` |
+| Precision, every other source's matches (142 labels of 1,246 matches) | 0.99 [0.95, 1.00] | `uv run lineage eval origin-precision --part reporting_after_compact_fix` |
 
 [^sealed]: Run once, before generic sections were left out of origin matches; a sealed key is not run again, so it stands at the configuration it records ([DESIGN.md](DESIGN.md#origin-matches)).
 
