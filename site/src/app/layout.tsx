@@ -9,10 +9,16 @@ const serif = Newsreader({ subsets: ["latin"], variable: "--font-serif", style: 
 const sans = Public_Sans({ subsets: ["latin"], variable: "--font-sans", weight: ["400", "500", "600", "700"] });
 const mono = IBM_Plex_Mono({ subsets: ["latin"], variable: "--font-mono", weight: ["400", "500"] });
 
+// The Atom feed of new matches, which the publishing job writes at the export's root (DESIGN.md#updates).
+// Metadata URLs are not given the base path, so it is added here, as GitHub Pages serves the site
+// under one (DESIGN.md#dr-2).
+const FEED =`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/data/feed.xml`;
+
 export function generateMetadata(): Metadata {
   return {
     title: { default: "Legislative Lineage", template: "%s · Legislative Lineage" },
     description: `${stateName(meta().state)} bills from the 2023–2026 sessions, and the bills in other states that share their language.`,
+    alternates: { types: { "application/atom+xml": [{ url: FEED, title: "Legislative Lineage: new matches" }] } },
   };
 }
 

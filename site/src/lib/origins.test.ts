@@ -1,9 +1,10 @@
-// `node --test`: origin lines read "Shares N% of its wording with …", most of the bill first, and
-// a share never rounds to all or none of the wording.
+// `node --test`: origin lines give both shares, "N% of this bill's wording appears in [organization]'s
+// model [title], covering M% of the model", most of the bill first, and a share never rounds to all
+// or none of the wording.
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { Origin, SourceEntry } from "@/types/export";
-import { byBillShare, bySource, docDate, documents, foundBy, isoDate, modelShareLine, originLead, percent, publishers } from "./origins.ts";
+import { byBillShare, bySource, docDate, documents, foundBy, isoDate, ORIGIN_LINE, originLine, originText, percent, possessive, publishers, sentence, termsRead, updatedLine } from "./origins.ts";
 
 function origin(title: string, bill_share: number, model_share: number, published: string | null = null): Origin {
   return {
@@ -24,10 +25,37 @@ test("a share reads as a whole percent, never all or none unless it is", () => {
   assert.equal(percent(0), "0%");
 });
 
-test("every origin line reads Shares N% of its wording with", () => {
-  assert.equal(originLead(origin("a", 0.3418, 1)), "Shares 34% of its wording with");
-  assert.equal(modelShareLine(origin("a", 0.3418, 1)), "The shared wording is all of the document's text.");
-  assert.equal(modelShareLine(origin("a", 0.3418, 0.25)), "The shared wording is 25% of the document's text.");
+test("every origin line gives both shares: the bill's, then the model's", () => {
+  const o = origin("Model Act", 0.3418, 0.25);
+  assert.deepEqual(originLine(o), {
+    before: "34% of this bill's wording appears in Org's model",
+    title: "Model Act",
+    after: ", covering 25% of the model.",
+  });
+  assert.equal(originText(o), "34% of this bill's wording appears in Org's model Model Act, covering 25% of the model.");
+  assert.equal(originText(origin("Short Act", 0.12, 1)), "12% of this bill's wording appears in Org's model Short Act, covering 100% of the model.");
+});
+
+test("a share under 1% opens the line capitalized", () => {
+  assert.equal(originLine(origin("Long Act", 0.004, 0.9)).before, "Under 1% of this bill's wording appears in Org's model");
+  assert.equal(originLine(origin("Long Act", 0.9, 0.004)).after, ", covering under 1% of the model.");
+});
+
+test("the organization is named as the data names it, with its possessive", () => {
+  assert.equal(possessive("American Legislative Exchange Council (ALEC)"), "American Legislative Exchange Council (ALEC)'s");
+  assert.equal(possessive("Public Citizen"), "Public Citizen's");
+  assert.equal(possessive("Institute for Family Studies"), "Institute for Family Studies'");
+  const o = { ...origin("A", 0.5, 0.5), doc: { ...origin("A", 0.5, 0.5).doc, organization: "The States Project", co_publishers: ["Second Institute"] } };
+  assert.equal(originLine(o).before, "50% of this bill's wording appears in The States Project's model");
+});
+
+test("the copy check's form accepts every line and rejects the old one", () => {
+  for (const [b, m] of [[0.3418, 0.25], [0.004, 1], [1, 0.004], [0.5, 0.996]] as const) {
+    assert.match(originText(origin("Model, with a comma (2019)", b, m)), ORIGIN_LINE);
+  }
+  assert.doesNotMatch("Shares 34% of its wording with Model Act.", ORIGIN_LINE);
+  assert.doesNotMatch("34% of this bill's wording appears in Org's model Model Act.", ORIGIN_LINE);
+  assert.doesNotMatch("34% of this bill's wording was written by Org's model Model Act, covering 25% of the model.", ORIGIN_LINE);
 });
 
 test("most of the bill's words first, ties by the document's share, then title", () => {
@@ -50,6 +78,19 @@ test("stages and counts", () => {
   assert.equal(foundBy(o), "Found by shared wording and similar meaning");
   assert.equal(documents(1), "1 document");
   assert.equal(documents(1200), "1,200 documents");
+});
+
+test("a source's terms note ends as a sentence, and the day it was read follows as its own", () => {
+  assert.equal(sentence("viewing and copying with attribution"), "viewing and copying with attribution.");
+  assert.equal(sentence(" robots.txt disallows nothing. "), "robots.txt disallows nothing.");
+  assert.equal(sentence("Is copying allowed?"), "Is copying allowed?");
+  assert.equal(termsRead("2026-11-15"), "Terms read Nov 15, 2026.");
+});
+
+test("a bill page dates its matches only when the live track set the day", () => {
+  assert.equal(updatedLine("2026-11-16"), "Related bills and model documents updated Nov 16, 2026");
+  assert.equal(updatedLine(null), null);
+  assert.equal(updatedLine(undefined), null);
 });
 
 test("sources by organization", () => {

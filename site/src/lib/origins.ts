@@ -5,7 +5,7 @@
 // The site states shared wording and dates, never direction or authorship, so a line names how
 // much wording the bill and the document share and nothing about which came first or who wrote
 // either.
-import type { Origin, SourceEntry } from "@/types/export";
+import type { BillRef, Origin, SourceEntry } from "@/types/export";
 
 // The sources page's inclusion rule, as ruled.
 export const INCLUSION_RULE =
@@ -30,14 +30,35 @@ export function byBillShare(origins: readonly Origin[]): Origin[] {
   );
 }
 
-// The words before the document's linked title: "Shares 34% of its wording with".
-export const originLead = (o: Origin): string => `Shares ${percent(o.bill_share)} of its wording with`;
+// An organization's name as the data gives it, made possessive: a name ending in "s" takes the
+// apostrophe alone ("Institute for Family Studies'").
+export const possessive = (name: string): string => (/s$/i.test(name) ? `${name}'` : `${name}'s`);
 
-// The document's side of the same match, as a separate fact about the document.
-export const modelShareLine = (o: Origin): string =>
-  o.model_share >= 1
-    ? "The shared wording is all of the document's text."
-    : `The shared wording is ${percent(o.model_share)} of the document's text.`;
+const capitalized = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1);
+
+// The origin line, ruled at M12's start: both shares, always, so a bill that takes one section of
+// a long model and a bill that copies a short model whole never read alike.
+//   "34% of this bill's wording appears in [organization]'s model [title], covering 25% of the model."
+// The title is the part a page links to the document in its library. The organization is the
+// library's, as the data names it; co-publishers are credited on the line below, not here.
+export function originLine(o: Origin): { before: string; title: string; after: string } {
+  return {
+    before: `${capitalized(percent(o.bill_share))} of this bill's wording appears in ${possessive(o.doc.organization)} model`,
+    title: o.doc.title,
+    after: `, covering ${percent(o.model_share)} of the model.`,
+  };
+}
+
+export const originText = (o: Origin): string => {
+  const l = originLine(o);
+  return `${l.before} ${l.title}${l.after}`;
+};
+
+// The form every rendered origin line must take, which the copy check holds each page to.
+const SHARE = String.raw`(?:\d{1,3}%|[Uu]nder 1%)`;
+export const ORIGIN_LINE = new RegExp(
+  String.raw`^${SHARE} of this bill's wording appears in .+'s? model .+, covering ${SHARE} of the model\.$`,
+);
 
 const STAGE: Record<Origin["stages"][number], string> = {
   near_duplicate: "shared wording",
@@ -74,7 +95,50 @@ export const docDate = (o: Origin): string => (o.doc.published ? `Dated ${isoDat
 
 export const documents = (n: number): string => `${n.toLocaleString("en-US")} ${n === 1 ? "document" : "documents"}`;
 
+// The day a bill's relatives or origins last changed, which the live track sets on its page
+// (BillPage.updated_on); nothing when it is not set, so a full build's pages carry no date.
+export const updatedLine = (iso: string | null | undefined): string | null =>
+  iso ? `Related bills and model documents updated ${isoDate(iso)}` : null;
+
+// A note from a source's entry, ended as a sentence: notes as read are often several sentences.
+export const sentence = (s: string): string => (/[.!?]$/.test(s.trim()) ? s.trim() : `${s.trim()}.`);
+
+// The day a source's terms were read, as its own sentence after the note.
+export const termsRead = (iso: string): string => `Terms read ${isoDate(iso)}.`;
+
 // The sources page's order: by organization, then key, so it never depends on the export's.
 export function bySource(sources: readonly SourceEntry[]): SourceEntry[] {
   return [...sources].sort((x, y) => x.organization.localeCompare(y.organization) || x.key.localeCompare(y.key));
 }
+
+// The origin story (DESIGN.md#export): one passed bill and the listed model document both stages
+// found holding the most of its wording, chosen by lineage.origin_story's rule, which names no
+// organization. Until the export's schema carries the story's file, its shape is written here from
+// the generated types; it is the proposed OriginStory model, field for field.
+export type OriginStory = { bill: BillRef; origin: Origin; eligible: number };
+
+// The story's own words. The organization appears only in the origin line and the publishers line,
+// as the data names it; nothing here says who wrote the bill or which text came first.
+export function originStoryCopy(s: OriginStory, names: { bill: string; state: string }) {
+  const found = `with a listed model document that both stages found`;
+  const rule =
+    s.eligible === 1
+      ? `It is the only passed ${names.state} bill ${found}. Among several, the one with the largest share of its wording in such a document would be shown; a tie would go to the larger share of the model, then the lower bill id.`
+      : `Of the ${s.eligible.toLocaleString("en-US")} passed ${names.state} bills ${found}, this bill has the largest share of its wording in such a document. A tie goes to the larger share of the model, then the lower bill id.`;
+  return {
+    title: `${names.bill} and a published model`,
+    headline: `A passed ${names.state} bill that shares wording with a published model`,
+    lede: `${names.bill}, ${s.bill.title}, passed.`,
+    shares: [
+      `${capitalized(percent(s.origin.bill_share))} of ${possessive(names.bill)} wording is in sections that match sections of the model, by shared wording or similar meaning.`,
+      `The model's matching sections hold ${percent(s.origin.model_share)} of its wording.`,
+      "Sections such as definitions, severability and effective dates are left out of both counts.",
+    ],
+    rule: `${rule} The rule names no organization; the one shown is whichever publishes the document.`,
+  };
+}
+
+export const ORIGIN_STORY_CAVEAT = "Matching shows where the texts share wording, not who wrote either one or which came first.";
+
+export const NO_ORIGIN_STORY = (state: string): string =>
+  `No passed ${state} bill in this data has a listed model document that both stages found.`;
