@@ -55,7 +55,10 @@ def _rules(first_day: date, *, ceiling: int = 2500) -> DeployRules:
     rules = load_rules()
     limits = {"origin_claims": Limits(30, 50), "changed_files": Limits(1000, ceiling)}
     return replace(
-        rules, first_day={"GA": first_day}, breaker=replace(rules.breaker, limits=limits)
+        rules,
+        first_day={"GA": first_day},
+        confirmed={"GA": True},
+        breaker=replace(rules.breaker, limits=limits),
     )
 
 

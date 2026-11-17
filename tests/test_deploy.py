@@ -523,8 +523,11 @@ def test_the_rules_file_records_georgias_first_day_unconfirmed() -> None:
     assert 8 <= first.day <= 14
     assert first.month == 1
     assert rules.confirmed["GA"] is False
-    assert not in_session(rules, "GA", first - timedelta(days=1))
-    assert in_session(rules, "GA", first)
+    # Unconfirmed, the date turns nothing on: no day deploys without review.
+    assert not in_session(rules, "GA", first)
+    confirmed = replace(rules, confirmed={"GA": True})
+    assert not in_session(confirmed, "GA", first - timedelta(days=1))
+    assert in_session(confirmed, "GA", first)
     assert not in_session(rules, "UT", date(2030, 1, 1))  # no first day recorded: never
     assert rules.max_share == 0.5
     b = rules.breaker

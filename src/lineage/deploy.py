@@ -128,10 +128,11 @@ def load_rules(path: Path = RULES) -> DeployRules:
 
 
 def in_session(rules: DeployRules, state: str, day: date) -> bool:
-    """Whether `day` is on or after the state's first day of session; a state with none
-    recorded never deploys by itself."""
+    """Whether `day` is on or after the state's first day of session, once the maintainer has
+    confirmed that date; a state with none recorded, or with its date unconfirmed, never
+    deploys by itself, since deploying without review is what the date turns on."""
     first = rules.first_day.get(state)
-    return first is not None and day >= first
+    return first is not None and rules.confirmed.get(state, False) and day >= first
 
 
 # What leaves this machine.
