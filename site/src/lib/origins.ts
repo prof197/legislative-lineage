@@ -13,6 +13,13 @@ export const INCLUSION_RULE =
 
 export const LEAKED_LABEL = "Leaked";
 
+// The sources page's line on a library's withheld documents (lineage.withheld, ruled at the
+// deploy review): what is held back, from where, and why, without naming it a fault of the library.
+export function withheldNote(n: number): string {
+  const which = n === 1 ? "This document is" : `These ${n} documents are`;
+  return `${which} withheld from bill pages, the feed and stories until matching improves: most of the matches checked for ${n === 1 ? "it" : "them"} rest on generic text, such as definitions or standard clauses many acts share, rather than on a shared provision.`;
+}
+
 // A share as a whole percent. Rounding never makes a partial share read as all or none of the
 // wording: above 0 and below 1% reads "under 1%", and anything short of the whole reads at most 99%.
 export function percent(share: number): string {

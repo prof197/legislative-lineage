@@ -23,6 +23,7 @@ from tests.fixture_export import (
     PACKAGE,
     REPO,
     STATE,
+    WITHHELD,
     build_fixture_export,
     files_of,
     replace_committed,
@@ -93,6 +94,7 @@ def test_the_live_tracks_rendering_gives_the_exports_pages_byte_for_byte(built: 
         model=FAKE_MODEL,
         require_flag=False,
         origin_labels=root / "origin_labels.jsonl",
+        withheld_report=root / "withheld.json",
     )
 
     def same(name: str, rendered: bytes) -> None:
@@ -115,3 +117,22 @@ def test_the_live_tracks_rendering_gives_the_exports_pages_byte_for_byte(built: 
     story = story_file((bill_page(plan, b) for b in plan.hosted), plan.judged)
     assert story is not None
     same(ORIGIN_STORY_FILE, story.model_dump_json().encode())
+
+
+def test_a_withheld_document_is_on_the_sources_page_and_on_no_bill_page(built: Path) -> None:
+    """Ruled at the deploy review: a document whose labeled matches are mostly wrong is withheld
+    from bill pages, the feed and stories, and the sources page lists it, with the reason."""
+    sources = json.loads((built / "sources.json").read_text())["sources"]
+    withheld = [w for s in sources for w in s["withheld"]]
+    assert [(w["id"], w["reason"]) for w in withheld] == [(WITHHELD, "generic_text")]
+    named = {
+        o["doc"]["id"]
+        for p in (built / "bills").glob("*.json")
+        for o in json.loads(p.read_text())["origins"]
+    }
+    assert named, "the fixture lists its other origins"
+    assert WITHHELD not in named
+    story = json.loads((built / "origin_story.json").read_text())
+    assert story["origin"]["doc"]["id"] != WITHHELD
+    meta = json.loads((built / "meta.json").read_text())["validation"]["origin_precision"]
+    assert (meta["withheld_documents"], meta["withheld_matches"]) == (1, 1)

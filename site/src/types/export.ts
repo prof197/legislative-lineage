@@ -337,6 +337,8 @@ floor: number
 labeler: string[]
 overall: OriginShare
 rest: OriginShare
+withheld_documents: number
+withheld_matches: number
 }
 /**
  * A group of origin matches' precision on the reporting sample, weighted by stage.
@@ -398,6 +400,20 @@ organization: string
 terms_note: string
 terms_read_on: string
 terms_url: (string | null)
+withheld: WithheldDocument[]
+}
+/**
+ * A model document withheld from bill pages, the feed and stories (lineage.withheld): at
+ * least 3 of its listed matches labeled, fewer than half judged correct.
+ * 
+ * This interface was referenced by `LegislativeLineageExport`'s JSON-Schema
+ * via the `definition` "WithheldDocument".
+ */
+export interface WithheldDocument {
+id: string
+reason: "generic_text"
+title: string
+url: string
 }
 /**
  * `sources.json`: every library the matching reads, whether or not any bill matches it.

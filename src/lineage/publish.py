@@ -121,6 +121,8 @@ from lineage.updates import (
     RelativeGained,
     RelativeLost,
 )
+from lineage.withheld import REPORT as WITHHELD_REPORT
+from lineage.withheld import load_withheld
 
 STAGING_SUFFIX = ".staging"
 OLD_SUFFIX = ".old"
@@ -299,14 +301,16 @@ def plan_export(
     model: str = MODEL,
     require_flag: bool = True,
     origin_labels: Path = ORIGIN_LABELS,
+    withheld_report: Path = WITHHELD_REPORT,
 ) -> Plan:
     """What `build_export` reads before it aligns anything, with its inputs and checks."""
     inputs = (featured_pairs, featured_report, stories_rules, results)
     missing = [str(p) for p in inputs if not p.exists()]
     if missing:
         raise ExportError(f"committed inputs not found: {', '.join(missing)}")
+    kept_back = load_withheld(withheld_report)
     try:
-        validation = validation_from(json.loads(results.read_text()))
+        validation = validation_from(json.loads(results.read_text()), kept_back)
     except KeyError as e:
         raise ExportError(f"{results} lacks {e}; is it older than this code?") from e
     sources = [c.source for c in collectors(collector_package).values()]
@@ -399,7 +403,7 @@ def plan_export(
         validation=validation,
     )
     matches = read_origin_matches(tables)
-    origins = origins_by_bill(matches, docs, set(hosted))
+    origins = origins_by_bill(matches, docs, set(hosted), kept_back.ids)
     return Plan(
         state=state,
         hosted=list(hosted),
@@ -423,7 +427,7 @@ def plan_export(
         if carries_origin_story(state, stories_rules)
         else frozenset(),
         stories=stories,
-        sources=sources_doc(sources, docs),
+        sources=sources_doc(sources, docs, kept_back.ids),
         meta=meta,
         cache=cache,
     )
@@ -694,6 +698,7 @@ def export_changes(
     require_flag: bool = True,
     floor: int = DEFAULT_FLOOR_BYTES,
     origin_labels: Path = ORIGIN_LABELS,
+    withheld_report: Path = WITHHELD_REPORT,
     progress: Callable[[str], None] = lambda _: None,
 ) -> dict[str, Any]:
     """Apply the logged days the live `export` lacks to a staging copy of it, from the updated
@@ -719,6 +724,7 @@ def export_changes(
         model=model,
         require_flag=require_flag,
         origin_labels=origin_labels,
+        withheld_report=withheld_report,
     )
     before = _export_files(target)
     writes: dict[str, bytes] = {}

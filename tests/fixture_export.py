@@ -27,6 +27,8 @@ from lineage.origins import BillSpan, OriginMatch, SectionPair, write_origin_mat
 from lineage.query import matchable_sections
 from lineage.sections import normalize
 from lineage.semantic_pairs import build_semantic_pairs
+from lineage.withheld import Tally
+from lineage.withheld import write_report as write_withheld
 from tests.conftest import (
     COMMISSION,
     FAKE_MODEL,
@@ -50,7 +52,13 @@ DRAWN_FROM = {
         "ocd-bill/370e175f-246b-4076-a6b8-62312800299c",  # Utah HB 181 (2026)
         "Model Electronic Estate Planning Documents Act (synthetic fixture)",
     ),
+    # Matched, then withheld (lineage.withheld), so no page lists it and the sources page does.
+    "example-library/speech-procedures": (
+        "ocd-bill/7968b9d9-25ee-4684-a92e-c76167d6f917",  # Utah SB 18 (2023)
+        "Model Speech Procedures Act (synthetic fixture)",
+    ),
 }
+WITHHELD = "example-library/speech-procedures"
 SECTIONS_DRAWN = 2
 
 
@@ -144,6 +152,11 @@ def build_fixture_export(root: Path) -> Path:
     no_pairs.touch()
     no_stories.write_text('{"stories": {}}')
     rules.write_text('[stories.origin]\nstates = "all"\n')
+    withheld = root / "withheld.json"
+    write_withheld(
+        [Tally(doc_id=WITHHELD, title=DRAWN_FROM[WITHHELD][1], listed=1, labeled=3, correct=0)],
+        withheld,
+    )
     out = root / "export"
     build_export(
         tables,
@@ -161,6 +174,7 @@ def build_fixture_export(root: Path) -> Path:
         require_flag=False,
         floor=0,
         origin_labels=labels,
+        withheld_report=withheld,
     )
     return out
 

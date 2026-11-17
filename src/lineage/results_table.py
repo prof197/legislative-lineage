@@ -260,11 +260,16 @@ def _compared_name(name: str, group: dict[str, Any]) -> str:
     return f"{organization}'s matches"
 
 
-def render_origins(results: dict[str, Any], sealed_note: str = SEALED_NOTE) -> str:
+def render_origins(
+    results: dict[str, Any],
+    sealed_note: str = SEALED_NOTE,
+    withheld: dict[str, Any] | None = None,
+) -> str:
     """v2's origin evals, one row each for those in the results and nothing for those not:
     recall on the development key and on the sealed key, precision on the reporting sample
     overall and by stage, and apart from the sealed row, v1's held-out acts, which v1's final
-    run had already opened."""
+    run had already opened. With `withheld`, the withheld documents' report (lineage.withheld),
+    precision is said to be read before they were withheld."""
     floor = _origin_floor(results)
     if floor is None:
         return ""
@@ -289,6 +294,18 @@ def render_origins(results: dict[str, Any], sealed_note: str = SEALED_NOTE) -> s
             "by stage as the whole is (`compared`), and each source's own figure is in the "
             "same section (`by_source`)."
         )
+        held = (withheld or {}).get("withheld", [])
+        if held:
+            n = len(held)
+            matches = int((withheld or {})["listed_matches_withheld"])
+            intro.append(
+                f"The reading was taken before {_counted(n, 'document')} whose labeled matches "
+                f"were mostly wrong {'was' if n == 1 else 'were'} withheld from pages, "
+                f"{matches:,} listed {'match' if matches == 1 else 'matches'} in all "
+                "(`uv run lineage withhold`, "
+                "`reports/withheld_documents.json`), so it likely understates the precision of "
+                "what pages show."
+            )
     intro.append(
         "Each result carries its 95% Wilson interval, and each command writes "
         "`reports/results.json` ([DESIGN.md](DESIGN.md#origin-matches))."
@@ -458,6 +475,7 @@ def rendered_readme(
     sampled_state: str | None = None,
     sealed_note: str = SEALED_NOTE,
     stories: str | None = None,
+    withheld: dict[str, Any] | None = None,
 ) -> str:
     """The README with its results section replaced by one rendered from `results`, and from
     `exported`, the results on the export's text alone; its opening summary, when it has one,
@@ -482,7 +500,9 @@ def rendered_readme(
             out, HELD_OUT_START, HELD_OUT_END, render_held_out(results["commission_held_out"])
         )
     if ORIGINS_START in out:
-        out = _replaced(out, ORIGINS_START, ORIGINS_END, render_origins(results, sealed_note))
+        out = _replaced(
+            out, ORIGINS_START, ORIGINS_END, render_origins(results, sealed_note, withheld)
+        )
     if STORIES_START in out:
         if stories is None:
             raise ResultsTableError("README counts its stories but no count was given")

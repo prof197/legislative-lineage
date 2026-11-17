@@ -7,7 +7,8 @@ Its events, each an entry dated the day it was logged:
 - `relative_gained`: a bill of any state, seen before, that gained relatives that day; one entry
   per bill and day, naming every relative it gained.
 - `origin_gained`: a bill of any state that gained a match to a published model document a
-  page would list (lineage.origins.FLOOR); one entry per bill and day.
+  page would list (lineage.origins.FLOOR), its document not withheld (lineage.withheld); one
+  entry per bill and day.
 - `states_group`: bills from three or more states, linked by relatives, all first seen within
   14 days. Precisely: on day D, take the bills the live track first saw (a `RecordAdded`) from
   D-13 to D, and link two of them when either lists the other as a relative after D's changes.
@@ -57,6 +58,8 @@ from lineage.updates import (
     RelativeGained,
     RelativeLost,
 )
+from lineage.withheld import REPORT as WITHHELD_REPORT
+from lineage.withheld import load_withheld
 
 ATOM = "http://www.w3.org/2005/Atom"
 RETENTION_DAYS = 14
@@ -245,6 +248,12 @@ class DocInfo:
     title: str
     organization: str
     leaked: bool
+
+
+def listed_origin(c: OriginGained, withheld: frozenset[str] = frozenset()) -> bool:
+    """Whether a page would list the gained match: by its larger share, which the log keeps
+    both of, and its document not withheld (lineage.withheld)."""
+    return max(c.bill_share, c.model_share) >= FLOOR and c.doc_id not in withheld
 
 
 def _named(b: BillInfo) -> str:
@@ -468,6 +477,7 @@ def write_feed(
     modeldocs_root: Path = MODELDOCS_DIR,
     collector_package: str = COLLECT_PACKAGE,
     retention: int = RETENTION_DAYS,
+    withheld_report: Path = WITHHELD_REPORT,
 ) -> dict[str, Any]:
     """Write `export`/feed.xml from the change log, through the last day applied to the export
     (its `as_of`, else the last logged day), after checking it; returns the report."""
@@ -485,15 +495,12 @@ def write_feed(
         )
     changes = [c for d in logged if d <= through for c in changes_on(changes_dir, d)]
 
-    def listed_origin(c: OriginGained) -> bool:
-        # A page lists a match by its larger share, which the log keeps both of.
-        return max(c.bill_share, c.model_share) >= FLOOR
-
+    withheld = load_withheld(withheld_report).ids
     events = feed_events(
         changes,
         hosted_state=state,
         through=through,
-        listed_origin=listed_origin,
+        listed_origin=lambda c: listed_origin(c, withheld),
         retention=retention,
     )
     bills = bill_infos(tables, state=state, site_url=site, ids=_bills_of(events))

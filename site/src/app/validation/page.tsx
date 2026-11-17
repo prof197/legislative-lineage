@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import type { OriginPrecision, OriginShare } from "@/types/export";
 import { DataCredit, Footer, Header } from "@/components/Chrome";
 import { Enactments } from "@/components/Enactments";
@@ -50,6 +51,13 @@ function OriginPrecisionSection({ o }: { o: OriginPrecision | undefined }) {
         organization&apos;s documents would wrong it whatever the overall figure. A wrong match is two
         texts that share wording, such as a clause many acts carry, without sharing a provision.
       </p>
+      {(o.withheld_documents ?? 0) > 0 && (
+        <p className="note">
+          These figures were measured before {o.withheld_documents === 1 ? "one model document" : `${o.withheld_documents} model documents`} whose
+          checked matches were mostly wrong {o.withheld_documents === 1 ? "was" : "were"} withheld from bill pages ({o.withheld_matches.toLocaleString("en-US")} listed{" "}
+          {o.withheld_matches === 1 ? "match" : "matches"}; the <Link href="/sources/">sources page</Link> names {o.withheld_documents === 1 ? "it" : "them"}). For what pages show now, they likely understate precision.
+        </p>
+      )}
     </section>
   );
 }

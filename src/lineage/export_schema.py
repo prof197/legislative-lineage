@@ -275,6 +275,10 @@ class OriginPrecision(_Model):
     compared: OriginShare  # the compared source's matches
     rest: OriginShare  # every other source's together
     labeler: list[str]
+    # Measured before documents whose labeled matches were mostly wrong were withheld from pages
+    # (lineage.withheld), so conservative for what pages show: how many, and their listed matches.
+    withheld_documents: int
+    withheld_matches: int
 
 
 class Validation(_Model):
@@ -307,6 +311,16 @@ class Meta(_Model):
     as_of: str | None = None  # the last day the live track applied, ISO 8601 (DESIGN.md#updates)
 
 
+class WithheldDocument(_Model):
+    """A model document withheld from bill pages, the feed and stories (lineage.withheld): at
+    least 3 of its listed matches labeled, fewer than half judged correct."""
+
+    id: str
+    title: str
+    url: str
+    reason: Literal["generic_text"]  # its matches rest on generic text
+
+
 class SourceEntry(_Model):
     """A library of model legislation, as the sources page lists it (DESIGN.md#model-documents)."""
 
@@ -323,6 +337,7 @@ class SourceEntry(_Model):
     leak_note: str | None
     documents: int  # collected
     collected_on: str | None  # the latest collection, ISO 8601
+    withheld: list[WithheldDocument]  # documents no page lists until a fix lands
 
 
 class Sources(_Model):

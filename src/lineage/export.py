@@ -84,6 +84,7 @@ from lineage.export_schema import (
     StoryRelative,
     TextInfo,
     Validation,
+    WithheldDocument,
 )
 from lineage.listing import ListedPairs, listed_pairs, shipped_flag
 from lineage.minhash import NUM_PERM
@@ -112,6 +113,10 @@ from lineage.stats import (
     GEORGIA_ENACTING,
     GEORGIA_NOTICE,
 )
+from lineage.withheld import NONE as NO_WITHHELD
+from lineage.withheld import REASON as WITHHELD_REASON
+from lineage.withheld import REPORT as WITHHELD_REPORT
+from lineage.withheld import Withheld, load_withheld
 
 EXPORT_DIR = DATA / "export"
 REPORT = Path("reports/export.json")
@@ -254,8 +259,9 @@ def _stages(found: _PairFound) -> list[Stage]:
     return [s for s in ("near_duplicate", "semantic") if s in found.stages]
 
 
-def validation_from(results: Mapping[str, Any]) -> Validation:
-    """The validation page's figures, read from the committed results."""
+def validation_from(results: Mapping[str, Any], withheld: Withheld = NO_WITHHELD) -> Validation:
+    """The validation page's figures, read from the committed results; origin precision with
+    how many documents were withheld after it was measured (lineage.withheld)."""
 
     def recall(r: Mapping[str, Any]) -> Recall:
         return Recall(enactments=r["enactments"], found=r["found"], recall=r["recall"])
@@ -324,6 +330,8 @@ def validation_from(results: Mapping[str, Any]) -> Validation:
             compared=origin_share(origins["compared"][compared]),
             rest=origin_share(origins["compared"]["rest"]),
             labeler=list(origins["labeler"]),
+            withheld_documents=len(withheld.ids),
+            withheld_matches=withheld.matches,
         ),
     )
 
@@ -455,14 +463,17 @@ def _write(root: Path, files: Mapping[str, BaseModel]) -> _Written:
 
 
 def origins_by_bill(
-    matches: Sequence[OriginMatch], docs: Mapping[str, tuple[ModelDoc, Source]], hosted: set[str]
+    matches: Sequence[OriginMatch],
+    docs: Mapping[str, tuple[ModelDoc, Source]],
+    hosted: set[str],
+    withheld: frozenset[str] = frozenset(),
 ) -> dict[str, list[Origin]]:
     """Each hosted bill's origins at the listing floor (lineage.origins.FLOOR), the most of its
-    words first. A match whose document no source holds is an error: the page would name a model
-    the sources page does not list."""
+    words first, less those to a withheld document (lineage.withheld). A match whose document no
+    source holds is an error: the page would name a model the sources page does not list."""
     out: dict[str, list[Origin]] = defaultdict(list)
     for m in matches:
-        if m.bill_id not in hosted or not is_listed(m):
+        if m.bill_id not in hosted or not is_listed(m) or m.doc_id in withheld:
             continue
         if m.doc_id not in docs:
             raise ExportError(f"origin match names {m.doc_id}, which no collected source holds")
@@ -520,11 +531,17 @@ def judged_origins(
     return frozenset((refs[b].slug, d) for b, d in judged)
 
 
-def sources_doc(sources: Sequence[Source], docs: Mapping[str, tuple[ModelDoc, Source]]) -> Sources:
-    """The sources page: every library, with how many documents were collected and when."""
+def sources_doc(
+    sources: Sequence[Source],
+    docs: Mapping[str, tuple[ModelDoc, Source]],
+    withheld: frozenset[str] = frozenset(),
+) -> Sources:
+    """The sources page: every library, with how many documents were collected and when, and
+    the documents withheld from pages because their matches rest on generic text."""
     entries: list[SourceEntry] = []
     for src in sorted(sources, key=lambda s: s.key):
         held = [d for d, s in docs.values() if s.key == src.key]
+        kept_back = sorted((d for d in held if d.id in withheld), key=lambda d: d.id)
         latest = max((d.collected_on for d in held), default=None)
         entries.append(
             SourceEntry(
@@ -541,6 +558,10 @@ def sources_doc(sources: Sequence[Source], docs: Mapping[str, tuple[ModelDoc, So
                 leak_note=src.leak_note,
                 documents=len(held),
                 collected_on=None if latest is None else latest.isoformat(),
+                withheld=[
+                    WithheldDocument(id=d.id, title=d.title, url=d.url, reason=WITHHELD_REASON)
+                    for d in kept_back
+                ],
             )
         )
     return Sources(sources=entries)
@@ -564,6 +585,7 @@ def build_export(
     require_flag: bool = True,
     floor: int = DEFAULT_FLOOR_BYTES,
     origin_labels: Path = ORIGIN_LABELS,
+    withheld_report: Path = WITHHELD_REPORT,
     progress: Callable[[str], None] = lambda _: None,
 ) -> dict[str, Any]:
     """Write `state`'s site data to `out`, replacing what was there; returns the report."""
@@ -575,8 +597,9 @@ def build_export(
     missing = [str(p) for p in inputs if not p.exists()]
     if missing:
         raise ExportError(f"committed inputs not found: {', '.join(missing)}")
+    kept_back = load_withheld(withheld_report)
     try:
-        validation = validation_from(json.loads(results.read_text()))
+        validation = validation_from(json.loads(results.read_text()), kept_back)
     except KeyError as e:
         raise ExportError(f"{results} lacks {e}; is it older than this code?") from e
     sources = [c.source for c in collectors(collector_package).values()]
@@ -635,7 +658,7 @@ def build_export(
 
     files: dict[str, BaseModel] = {}
     matches = read_origin_matches(tables)
-    origins = origins_by_bill(matches, docs, set(hosted))
+    origins = origins_by_bill(matches, docs, set(hosted), kept_back.ids)
     featured_explained = 0
     withheld = 0
     ordered = [
@@ -823,7 +846,7 @@ def build_export(
         if story is not None:
             files[ORIGIN_STORY_FILE] = story
 
-    files["sources.json"] = sources_doc(sources, docs)
+    files["sources.json"] = sources_doc(sources, docs, kept_back.ids)
     files["meta.json"] = Meta(
         state=state,
         archives=[

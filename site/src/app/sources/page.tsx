@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Footer, Header } from "@/components/Chrome";
 import { sources } from "@/lib/data";
-import { bySource, documents, INCLUSION_RULE, isoDate, LEAKED_LABEL, sentence, termsRead } from "@/lib/origins";
+import { bySource, documents, INCLUSION_RULE, isoDate, LEAKED_LABEL, sentence, termsRead, withheldNote } from "@/lib/origins";
 import type { SourceEntry } from "@/types/export";
 
 export const metadata: Metadata = { title: "Sources" };
@@ -32,6 +32,17 @@ function Source({ s }: { s: SourceEntry }) {
         <p className="note" style={{ marginTop: 8, overflowWrap: "anywhere" }}>
           <strong style={{ color: "var(--ink)" }}>{LEAKED_LABEL} archive:</strong> {sentence(s.leak_note ?? "its documents became public through a leak")}
         </p>
+      )}
+      {/* Data from before the withholding rule has no list. */}
+      {(s.withheld ?? []).length > 0 && (
+        <div style={{ marginTop: 12 }}>
+          <p className="note" style={{ overflowWrap: "anywhere" }}>
+            <strong style={{ color: "var(--ink)" }}>Withheld:</strong> {withheldNote(s.withheld.length)}
+          </p>
+          <ul className="note" style={{ margin: "6px 0 0", paddingLeft: 20, overflowWrap: "anywhere" }}>
+            {s.withheld.map((w) => <li key={w.id}><a href={w.url}>{w.title}</a></li>)}
+          </ul>
+        </div>
       )}
       <dl style={{ margin: "20px 0 0", display: "flex", flexWrap: "wrap", gap: "18px 32px" }}>
         <Field name="Library">
@@ -90,7 +101,7 @@ export default function SourcesPage() {
                 {list.map((s) => (
                   <li key={s.key} style={{ overflowWrap: "anywhere" }}>
                     <a href={`#${s.key}`}>{s.organization}</a>{" "}
-                    <span className="small">· {documents(s.documents)}{s.leaked ? ` · ${LEAKED_LABEL}` : ""}</span>
+                    <span className="small">· {documents(s.documents)}{s.leaked ? ` · ${LEAKED_LABEL}` : ""}{(s.withheld ?? []).length ? ` · ${s.withheld.length} withheld` : ""}</span>
                   </li>
                 ))}
               </ul>

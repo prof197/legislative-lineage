@@ -4,7 +4,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { Origin, SourceEntry } from "@/types/export";
-import { byBillShare, bySource, docDate, documents, foundBy, isoDate, ORIGIN_LINE, originLine, originText, percent, possessive, publishers, sentence, termsRead, updatedLine } from "./origins.ts";
+import { byBillShare, bySource, docDate, documents, foundBy, isoDate, ORIGIN_LINE, originLine, originText, percent, possessive, publishers, sentence, withheldNote, termsRead, updatedLine } from "./origins.ts";
 
 function origin(title: string, bill_share: number, model_share: number, published: string | null = null): Origin {
   return {
@@ -105,4 +105,9 @@ test("a joint document names every publisher, its library's first", () => {
   assert.equal(publishers(one), `${solo.doc.organization}, with Second Institute`);
   const two = { ...solo, doc: { ...solo.doc, co_publishers: ["Second Institute", "Third Center"] } };
   assert.equal(publishers(two), `${solo.doc.organization}, with Second Institute and Third Center`);
+});
+
+test("a library's withheld documents are named with why, as its count reads", () => {
+  assert.match(withheldNote(1), /^This document is withheld from bill pages, the feed and stories until matching improves: most of the matches checked for it rest on generic text/);
+  assert.match(withheldNote(2), /^These 2 documents are withheld .* checked for them rest on generic text/);
 });

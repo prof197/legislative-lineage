@@ -209,6 +209,22 @@ def test_entries_state_dates_and_shared_text_and_never_a_model_text() -> None:
     check(render(entries, feed_id="urn:uuid:x", site_url=SITE, updated="2026-01-06T00:00:00Z"))
 
 
+def test_a_withheld_documents_match_is_not_an_event() -> None:
+    def gained(doc_id: str, bill: float, model: float) -> OriginGained:
+        return OriginGained(
+            as_of=d(1),
+            bill_id="tx",
+            doc_id=doc_id,
+            stages=["near_duplicate"],
+            bill_share=bill,
+            model_share=model,
+        )
+
+    assert feed.listed_origin(gained("lib/a", 0.1, 0.6))
+    assert not feed.listed_origin(gained("lib/a", 0.1, 0.2))  # under the floor
+    assert not feed.listed_origin(gained("lib/a", 0.1, 0.6), frozenset({"lib/a"}))
+
+
 ID, TITLE, UPDATED = "<id>urn:x</id>", "<title>t</title>", "<updated>2026-01-01T00:00:00Z</updated>"
 AUTHOR = "<author><name>a</name></author>"
 HEAD = ID + TITLE + UPDATED + AUTHOR

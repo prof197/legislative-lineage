@@ -2,6 +2,7 @@
 
 import json
 from pathlib import Path
+from typing import Any
 
 import pytest
 from typer.testing import CliRunner
@@ -59,9 +60,10 @@ def test_the_committed_readme_shows_the_committed_results() -> None:
     state = json.loads((ROOT / "reports" / "relatives_reporting.json").read_text())["state"]
 
     stories = render_stories(hosted_state(ROOT / "site" / "data-release.json"), ROOT / STORIES)
-    assert readme == rendered_readme(readme, results, exported, state, stories=stories), (
-        "run `uv run lineage eval readme`"
-    )
+    withheld = json.loads((ROOT / "reports" / "withheld_documents.json").read_text())
+    assert readme == rendered_readme(
+        readme, results, exported, state, stories=stories, withheld=withheld
+    ), "run `uv run lineage eval readme`"
 
 
 def test_the_story_count_is_the_hosted_states_from_the_stories_rules(tmp_path: Path) -> None:
@@ -290,13 +292,16 @@ def _origins() -> dict[str, object]:
     }
 
 
-def _rendered_origins(results: dict[str, object], sealed_note: str = "") -> str:
+def _rendered_origins(
+    results: dict[str, object], sealed_note: str = "", withheld: dict[str, Any] | None = None
+) -> str:
     readme = f"{START}\n{END}\n{ORIGINS_START}\nstale\n{ORIGINS_END}\n"
     out = rendered_readme(
         readme,
         {"commission": _section(1, 3)} | results,
         {"commission": _section(1, 3)},
         sealed_note=sealed_note,
+        withheld=withheld,
     )
     return out[out.index(ORIGINS_START) : out.index(ORIGINS_END)]
 
@@ -328,6 +333,22 @@ def test_origin_recall_and_precision_are_rendered_with_intervals_and_commands() 
     assert "6 labels of 40 matches" in one
     rest = next(r for r in rows if "every other source's matches" in r)
     assert "1.00 [0.44, 1.00]" in rest
+
+
+def test_precision_read_before_documents_were_withheld_says_so() -> None:
+    """Ruled at the deploy review: the readings stand as measured, noted as understating the
+    precision of what pages show once mostly-wrong documents are withheld."""
+    assert "withheld" not in _rendered_origins(_origins())
+    assert "withheld" not in _rendered_origins(
+        _origins(), withheld={"withheld": [], "listed_matches_withheld": 0}
+    )
+    held = [{"doc_id": f"lib/{n}"} for n in range(6)]
+    block = _rendered_origins(
+        _origins(), withheld={"withheld": held, "listed_matches_withheld": 82}
+    )
+    assert "before 6 documents whose labeled matches were mostly wrong were withheld" in block
+    assert "82 listed matches in all" in block
+    assert "likely understates the precision of what pages show" in block
 
 
 def test_v1_held_out_acts_are_labeled_exactly_and_kept_apart_from_the_sealed_row() -> None:

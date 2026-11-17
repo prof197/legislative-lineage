@@ -323,6 +323,9 @@ from lineage.vectors import REPORT as EMBED_REPORT
 from lineage.vectors import THREADS as EMBED_THREADS
 from lineage.vectors import EmbedError, embed_corpus, vectors_dir
 from lineage.vectors import write_report as write_embed_report
+from lineage.withheld import REPORT as WITHHELD_REPORT
+from lineage.withheld import tallies as withheld_tallies
+from lineage.withheld import write_report as write_withheld
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
 eval_app = typer.Typer(no_args_is_help=True, help="Run an eval and write its results.")
@@ -973,6 +976,35 @@ def origin_sample_command(
         f"{len(rows)} matches -> {path}; labels projected at most ${plan.projected:,.2f}, "
         f"${plan.spent:,.2f} of ${plan.budget:,.2f} spent"
     )
+
+
+@app.command("withhold")
+def withhold_command(
+    tables: TablesOption = DATA / "tables",
+    root: Annotated[
+        Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
+    ] = MODELDOCS_DIR,
+    labels: Annotated[
+        Path, typer.Option("--labels", help="Origin precision labels (committed).")
+    ] = ORIGIN_LABELS,
+    out: Annotated[
+        Path, typer.Option("--out", help="The withheld documents' report (committed).")
+    ] = WITHHELD_REPORT,
+) -> None:
+    """The model documents withheld from pages, the feed and stories: at least 3 labeled listed
+    matches, fewer than half judged correct (DESIGN.md#origin-matches)."""
+    try:
+        docs = [d for c in collectors().values() for d in read_docs(c.source, root)]
+        matches = read_origin_matches(tables)
+        found = withheld_tallies(matches, docs, tables, load_origin_labels(labels))
+    except (OriginPrecisionError, ModelDocError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    path = write_withheld(found, out)
+    held = [t for t in found if t.withheld]
+    for t in held:
+        typer.echo(f"withheld {t.doc_id}: {t.correct} of {t.labeled} labeled matches correct")
+    typer.echo(f"{len(held)} of {len(found)} documents with labeled matches withheld -> {path}")
 
 
 @app.command("origin-label")
@@ -2437,6 +2469,7 @@ def eval_readme(
             json.loads(exported_only.read_text()),
             json.loads(SAMPLED_STATE_REPORT.read_text())["state"],
             stories=render_stories(hosted_state()),
+            withheld=json.loads(WITHHELD_REPORT.read_text()) if WITHHELD_REPORT.exists() else None,
         )
     except ResultsTableError as e:
         typer.echo(str(e), err=True)

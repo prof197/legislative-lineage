@@ -744,6 +744,14 @@
     },
     "rest": {
      "$ref": "#/$defs/OriginShare"
+    },
+    "withheld_documents": {
+     "title": "Withheld Documents",
+     "type": "integer"
+    },
+    "withheld_matches": {
+     "title": "Withheld Matches",
+     "type": "integer"
     }
    },
    "required": [
@@ -751,7 +759,9 @@
     "overall",
     "compared",
     "rest",
-    "labeler"
+    "labeler",
+    "withheld_documents",
+    "withheld_matches"
    ],
    "title": "OriginPrecision",
    "type": "object"
@@ -1239,6 +1249,13 @@
       }
      ],
      "title": "Terms Url"
+    },
+    "withheld": {
+     "items": {
+      "$ref": "#/$defs/WithheldDocument"
+     },
+     "title": "Withheld",
+     "type": "array"
     }
    },
    "required": [
@@ -1254,7 +1271,8 @@
     "leaked",
     "leak_note",
     "documents",
-    "collected_on"
+    "collected_on",
+    "withheld"
    ],
    "title": "SourceEntry",
    "type": "object"
@@ -1560,6 +1578,37 @@
     "origin_precision"
    ],
    "title": "Validation",
+   "type": "object"
+  },
+  "WithheldDocument": {
+   "additionalProperties": false,
+   "description": "A model document withheld from bill pages, the feed and stories (lineage.withheld): at\nleast 3 of its listed matches labeled, fewer than half judged correct.",
+   "properties": {
+    "id": {
+     "title": "Id",
+     "type": "string"
+    },
+    "reason": {
+     "const": "generic_text",
+     "title": "Reason",
+     "type": "string"
+    },
+    "title": {
+     "title": "Title",
+     "type": "string"
+    },
+    "url": {
+     "title": "Url",
+     "type": "string"
+    }
+   },
+   "required": [
+    "id",
+    "title",
+    "url",
+    "reason"
+   ],
+   "title": "WithheldDocument",
    "type": "object"
   }
  },
