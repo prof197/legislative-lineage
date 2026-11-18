@@ -251,7 +251,7 @@ def days_to_apply(
     return days
 
 
-def export_changes(
+def export_changes(  # noqa: C901  (M13 allow-list, until step 5's lanes)
     tables: Path,
     *,
     state: str,

@@ -717,6 +717,7 @@ The package is eleven layers, set at M13's step 1 review (2026-11-18). A module 
 - **SQL** lives only in a package's own `queries` module ([DR-4](#dr-4)). A package above may call a lower package's queries, imported as `<package>_queries`; connections come only from `lineage.core.db`.
 - **Names** drop a prefix the package already carries (`text_fetch` became `lineage.text.fetch`, `origin_recall` became `lineage.origins.recall`), and three modules were renamed so they do not read as another: `fetch` is `lineage.core.http`, `export` is `lineage.export.build`, `semantic` is `lineage.match.semantic.stage`.
 - **Tests** stay flat in `tests/`, one file per module as before.
+- **Guards in CI.** `uv run lint-imports` checks the rule as import-linter contracts in `pyproject.toml`: the eleven layers, match's three parts, the collectors' independence (IFS's import of EPPC's reader allowed), the Anthropic SDK only in the explanation step and the model labels, and faiss only behind `lineage.match.semantic.ann`. Ruff holds every function to a complexity of 15, `tools/module_size.py` every module to 800 lines, and `tools/dead_code.py` every top-level name to being read; each has an allow-list that fails once an entry no longer applies.
 
 ## Alternatives considered
 

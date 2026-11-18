@@ -1,0 +1,10 @@
+# Top-level names nothing in the package reads, kept on purpose (tools/dead_code.py): module:name  why
+lineage.live.incremental:register_embedder  the hook the tests' stand-in embedder is registered through (tests/conftest.py)
+lineage.live.incremental:unregister_embedder  its undo, for the tests that register one
+lineage.live.schedule:placeholders  a launchd template's placeholders, which the tests check the templates by
+lineage.live.updates:write_archives  the reference rebuild the tests hold lay_days to (tests/days.py)
+lineage.match.near.lsh:candidate_probability  banding's S-curve, the reference the tests check the band count against
+lineage.match.near.minhash:universal_hash  the hash family's plain form, its values pinned by a test
+lineage.match.near.stoplist:over_threshold  the stoplist's cut as a pure function, tested apart from the build
+lineage.origins.matching:bill_spans  one section pair's spans as a pure function, tested apart from matching
+lineage.origins.recall:matches_from_commission  v1's commission results as origin matches, the tests' known-good input

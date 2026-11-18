@@ -366,7 +366,7 @@ class _Timer:
         return value
 
 
-def rebuild(
+def rebuild(  # noqa: C901  (M13 allow-list, until step 5's lanes)
     out: Path,
     *,
     days_dir: Path,

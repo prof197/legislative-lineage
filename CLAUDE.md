@@ -8,6 +8,10 @@ uv run ruff check            # lint
 uv run ruff format --check   # formatting (drop --check to apply)
 uv run pyright               # type check, strict
 uv run pytest                # tests
+uv run lint-imports          # the layering rule, as import-linter contracts in pyproject.toml
+uv run python -m tools.module_size  # no module over 800 lines but those allowed
+uv run python -m tools.dead_code    # no top-level name nothing reads but those in tools/dead_code_allow.txt
+uv run python -m tools.report_check  # the offline evals rerun, every committed report unchanged (a move or refactor, dev only)
 uv run lineage --help        # the CLI
 
 uv run lineage fetch-raw     # download the archives the manifest pins into data/raw/
@@ -93,7 +97,7 @@ uv run python -m benchmarks.ann  # IVF-PQ and HNSW against exact search on a sam
 LEAK_CHECK_TERMS=... uv run python -m tools.leak_check --history  # no local path or deny-listed term (any case) in any file or commit; CI runs it
 ```
 
-All four checks must pass before every commit. CI runs the same four commands, the site's checks over both fixtures, then the leak check, whose deny list comes from the `LEAK_CHECK_TERMS` repository secret. Run the leak check before every push. On pull requests to main, data.yml downloads the pinned data release, verifies it, builds the site from it and runs the copy check.
+All seven checks must pass before every commit. CI runs the same seven commands, the site's checks over both fixtures, then the leak check, whose deny list comes from the `LEAK_CHECK_TERMS` repository secret. Run the leak check before every push. On pull requests to main, data.yml downloads the pinned data release, verifies it, builds the site from it and runs the copy check.
 
 ## Layout
 

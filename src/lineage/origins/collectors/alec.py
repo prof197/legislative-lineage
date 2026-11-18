@@ -419,7 +419,7 @@ def _fetch_step(c: Collection, page_url: str, url: str) -> Fetched | None:
         return None
 
 
-def _collect_policy(
+def _collect_policy(  # noqa: C901  (M13 allow-list, until step 5's lanes)
     c: Collection, url: str, *, types: frozenset[str], statuses: frozenset[str]
 ) -> None:
     if c.permission(url) == "blocked":

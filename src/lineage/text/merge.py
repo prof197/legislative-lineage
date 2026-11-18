@@ -21,8 +21,7 @@ from lineage.text.inventory import PLAN, load_plan
 from lineage.text.rules import RULES, load_rules, replaced_states
 from lineage.text.run import QUALITY, STORE, plan_jobs
 
-# Values of texts.text_source.
-EXPORTED = "openstates"
+# Values of texts.text_source besides "openstates", the export's own text, which the SQL writes.
 FETCHED = "legislature"
 BULK = "ca_bulk"
 

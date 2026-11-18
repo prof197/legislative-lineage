@@ -318,7 +318,7 @@ def relatives_sample(
 
 
 @app.command("label-model")
-def label_model(
+def label_model(  # noqa: C901  (M13 allow-list, until step 5's lanes)
     sample: Annotated[
         Path,
         typer.Argument(
