@@ -8,6 +8,7 @@ import typer
 
 from lineage.cli.app import (
     MinFreeOption,
+    PlanOption,
     TablesOption,
     app,
     text_app,
@@ -47,7 +48,7 @@ def split(
 @text_app.command("inventory")
 def text_inventory(
     tables: TablesOption = DATA / "tables",
-    plan: Annotated[Path, typer.Option("--plan", help="Fetch plan Parquet (local).")] = PLAN,
+    plan: PlanOption = PLAN,
     out: Annotated[Path, typer.Option("--out", help="Inventory JSON (committed).")] = REPORT,
 ) -> None:
     """Choose each eligible record's version to fetch, count by host, and read robots.txt."""
@@ -64,7 +65,7 @@ def text_inventory(
 @text_app.command("sample")
 def text_sample(
     tables: TablesOption = DATA / "tables",
-    plan: Annotated[Path, typer.Option("--plan", help="Fetch plan Parquet (local).")] = PLAN,
+    plan: PlanOption = PLAN,
     store: Annotated[Path, typer.Option("--store", help="Fetched sample (local).")] = STORE,
     out: Annotated[Path, typer.Option("--out", help="Quality report JSON (committed).")] = QUALITY,
     fetch: Annotated[bool, typer.Option(help="Fetch what the store lacks before judging.")] = True,
@@ -84,7 +85,7 @@ def text_sample(
 @text_app.command("fetch")
 def text_fetch(
     tables: TablesOption = DATA / "tables",
-    plan: Annotated[Path, typer.Option("--plan", help="Fetch plan Parquet (local).")] = PLAN,
+    plan: PlanOption = PLAN,
     out: Annotated[Path, typer.Option("--out", help="Fetch report JSON (committed).")] = (
         FETCH_REPORT
     ),
@@ -106,7 +107,7 @@ def text_fetch(
 @text_app.command("merge")
 def text_merge(
     tables: TablesOption = DATA / "tables",
-    plan: Annotated[Path, typer.Option("--plan", help="Fetch plan Parquet (local).")] = PLAN,
+    plan: PlanOption = PLAN,
     exported_only: Annotated[
         bool, typer.Option(help="Use only the exported text, to measure without the fetch.")
     ] = False,

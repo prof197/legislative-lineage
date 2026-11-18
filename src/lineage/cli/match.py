@@ -13,6 +13,8 @@ import typer
 from lineage.cli.app import (
     ManifestOption,
     MinFreeOption,
+    ModelsOption,
+    ReportOption,
     RulesOption,
     SemanticOption,
     TablesOption,
@@ -65,9 +67,7 @@ def boilerplate(
             "--max-share", help="Stoplist shingles found in more than this share of sections."
         ),
     ] = 0.001,
-    report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = Path(
-        "reports/boilerplate.json"
-    ),
+    report: ReportOption = Path("reports/boilerplate.json"),
     workers: Annotated[int, typer.Option("--workers", help="Worker processes.")] = (
         os.cpu_count() or 1
     ),
@@ -99,9 +99,7 @@ def embed_command(
     model: Annotated[
         str, typer.Option("--model", help=f"Embedding model: {', '.join(MODELS)}.")
     ] = SEMANTIC_MODEL,
-    models_dir: Annotated[
-        Path, typer.Option("--models", help="Directory of model files (local).")
-    ] = MODELS_DIR,
+    models_dir: ModelsOption = MODELS_DIR,
     processes: Annotated[int, typer.Option("--processes", help="Worker processes.")] = (
         EMBED_PROCESSES
     ),
@@ -109,9 +107,7 @@ def embed_command(
         EMBED_THREADS
     ),
     min_free_gib: MinFreeOption = 20.0,
-    report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = (
-        EMBED_REPORT
-    ),
+    report: ReportOption = (EMBED_REPORT),
 ) -> None:
     """Embed every distinct semantic window, float16, resumable -> <tables>/semantic/."""
     try:
@@ -139,9 +135,7 @@ def embed_command(
 def neighbors_command(
     tables: TablesOption = DATA / "tables",
     min_free_gib: MinFreeOption = 20.0,
-    report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = (
-        NEIGHBORS_REPORT
-    ),
+    report: ReportOption = (NEIGHBORS_REPORT),
     ef_search: Annotated[
         int, typer.Option("--ef-search", help="HNSW's search width; wider finds more.")
     ] = EF_SEARCH,
@@ -204,9 +198,7 @@ def neighbors_command(
 def semantic_pairs_command(
     tables: TablesOption = DATA / "tables",
     min_free_gib: MinFreeOption = 20.0,
-    report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = (
-        SEMANTIC_PAIRS_REPORT
-    ),
+    report: ReportOption = (SEMANTIC_PAIRS_REPORT),
 ) -> None:
     """The neighbors as cross-state section pairs, best cosine and window pair each ->
     <tables>/semantic/<model>/pairs/."""
@@ -227,9 +219,7 @@ def semantic_pairs_command(
 def state_boilerplate_command(
     tables: TablesOption = DATA / "tables",
     min_free_gib: MinFreeOption = 20.0,
-    report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = (
-        STATE_BOILERPLATE_REPORT
-    ),
+    report: ReportOption = (STATE_BOILERPLATE_REPORT),
 ) -> None:
     """Count the families of its own state each section's near-duplicates reach ->
     <tables>/state_boilerplate/; flagged at MIN_FAMILIES or more."""
@@ -260,9 +250,7 @@ def index(
         os.cpu_count() or 1
     ),
     min_free_gib: MinFreeOption = 20.0,
-    report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = Path(
-        "reports/index.json"
-    ),
+    report: ReportOption = Path("reports/index.json"),
 ) -> None:
     """Build the search index: signatures, LSH bands, verified pairs, families."""
     started = time.monotonic()
@@ -358,9 +346,7 @@ def model_fetch(
         list[str] | None,
         typer.Argument(help=f"Models to fetch; all when none: {', '.join(MODELS)}."),
     ] = None,
-    models_dir: Annotated[
-        Path, typer.Option("--models", help="Directory of model files (local).")
-    ] = MODELS_DIR,
+    models_dir: ModelsOption = MODELS_DIR,
     min_free_gib: MinFreeOption = 20.0,
 ) -> None:
     """Download each model's pinned files that are missing or changed -> data/models/<name>/."""

@@ -9,6 +9,10 @@ from typing import Annotated
 import typer
 
 from lineage.cli.app import (
+    CacheOption,
+    ModelsOption,
+    ParaphraseOption,
+    ResultsOption,
     TablesOption,
     app,
     eval_app,
@@ -91,19 +95,9 @@ def export_command(
         Path | None,
         typer.Option("--out", help="Where the site data goes (local); default data/export/<ST>."),
     ] = None,
-    cache: Annotated[
-        Path, typer.Option("--cache", help="Cached explanations (committed).")
-    ] = EXPLAIN_CACHE,
-    paraphrase: Annotated[
-        bool,
-        typer.Option(
-            "--paraphrase/--no-paraphrase",
-            help="Mark paraphrased sentences, with the semantic stage's model (local).",
-        ),
-    ] = True,
-    models_dir: Annotated[
-        Path, typer.Option("--models", help="Directory of model files (local).")
-    ] = MODELS_DIR,
+    cache: CacheOption = EXPLAIN_CACHE,
+    paraphrase: ParaphraseOption = True,
+    models_dir: ModelsOption = MODELS_DIR,
     report: Annotated[
         Path, typer.Option("--report", help="The export's sizes and counts (committed).")
     ] = EXPORT_REPORT,
@@ -116,7 +110,7 @@ def export_command(
     stories_rules: Annotated[
         Path, typer.Option("--stories", help="Which stories each state's site carries (committed).")
     ] = STORIES_RULES,
-    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+    results: ResultsOption = RESULTS,
     schema_only: Annotated[
         bool,
         typer.Option("--schema", help="Write the export's JSON Schema (committed) and stop."),
@@ -192,7 +186,7 @@ def export_command(
 @eval_app.command("readme")
 def eval_readme(
     readme: Annotated[Path, typer.Option("--readme", help="The README to update.")] = README,
-    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+    results: ResultsOption = RESULTS,
     exported_only: Annotated[
         Path,
         typer.Option("--exported-only", help="Results on Open States' text alone (committed)."),

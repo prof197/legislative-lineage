@@ -61,6 +61,40 @@ SemanticOption = Annotated[
     ),
 ]
 
+# Options more than one command declares, word for word.
+ResultsOption = Annotated[Path, typer.Option("--results", help="Results JSON (committed).")]
+ModelsOption = Annotated[Path, typer.Option("--models", help="Directory of model files (local).")]
+ReportOption = Annotated[Path, typer.Option("--report", help="Report JSON (committed).")]
+ModelDocsOption = Annotated[
+    Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
+]
+ParaphraseOption = Annotated[
+    bool,
+    typer.Option(
+        "--paraphrase/--no-paraphrase",
+        help="Mark paraphrased sentences, with the semantic stage's model (local).",
+    ),
+]
+SessionsOption = Annotated[Path, typer.Option("--sessions", help="Session dates CSV (committed).")]
+LiveExportOption = Annotated[
+    Path | None, typer.Option("--export", help="The live export (local); default data/export/<ST>.")
+]
+LabelsAppendOption = Annotated[
+    Path, typer.Option("--labels", help="Labels file, appended to (committed).")
+]
+LabelsOption = Annotated[Path, typer.Option("--labels", help="Labels file (committed).")]
+CacheOption = Annotated[Path, typer.Option("--cache", help="Cached explanations (committed).")]
+PlanOption = Annotated[Path, typer.Option("--plan", help="Fetch plan Parquet (local).")]
+AlignModelsOption = Annotated[
+    Path, typer.Option("--models", help="Directory of model files (local), for alignment.")
+]
+OriginLabelsOption = Annotated[
+    Path, typer.Option("--labels", help="The origin labels (committed).")
+]
+DayOption = Annotated[
+    str | None, typer.Option("--day", help="The day, YYYY-MM-DD [default: today, UTC].")
+]
+
 
 def model_embedder(models_dir: Path = MODELS_DIR) -> Embedder:
     model = load_model(SEMANTIC_MODEL, models_dir)

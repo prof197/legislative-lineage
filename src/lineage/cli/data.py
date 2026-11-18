@@ -10,7 +10,9 @@ from lineage.cli.app import (
     ManifestOption,
     MinFreeOption,
     RawOption,
+    ReportOption,
     RulesOption,
+    SessionsOption,
     TablesOption,
     app,
 )
@@ -118,9 +120,7 @@ def ingest(
     manifest: ManifestOption = Path("snapshot/manifest.json"),
     out: Annotated[Path, typer.Option("--out", help="Directory for Parquet tables.")] = DATA
     / "tables",
-    sessions: Annotated[
-        Path, typer.Option("--sessions", help="Session dates CSV (committed).")
-    ] = Path("snapshot/sessions.csv"),
+    sessions: SessionsOption = Path("snapshot/sessions.csv"),
     min_free_gib: MinFreeOption = 20.0,
 ) -> None:
     """Verify the raw archives against the manifest and load them into the `bills` table."""
@@ -139,9 +139,7 @@ def ingest(
 def eligible(
     tables: TablesOption = DATA / "tables",
     rules: RulesOption = RULES,
-    report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = Path(
-        "reports/document_types.json"
-    ),
+    report: ReportOption = Path("reports/document_types.json"),
 ) -> None:
     """Decide which records are matched, by the document-type rules, and count each rule."""
     try:
@@ -161,12 +159,8 @@ def eligible(
 def stats(
     tables: TablesOption = DATA / "tables",
     manifest: ManifestOption = Path("snapshot/manifest.json"),
-    sessions: Annotated[
-        Path, typer.Option("--sessions", help="Session dates CSV (committed).")
-    ] = Path("snapshot/sessions.csv"),
-    report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = Path(
-        "reports/coverage.json"
-    ),
+    sessions: SessionsOption = Path("snapshot/sessions.csv"),
+    report: ReportOption = Path("reports/coverage.json"),
     rules: RulesOption = RULES,
     samples: Annotated[
         bool,

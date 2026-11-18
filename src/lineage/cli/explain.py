@@ -8,6 +8,9 @@ from typing import Annotated, Any
 import typer
 
 from lineage.cli.app import (
+    CacheOption,
+    ModelsOption,
+    ParaphraseOption,
     TablesOption,
     app,
     pair_alignments,
@@ -55,19 +58,9 @@ def explain_command(
     live: Annotated[
         bool, typer.Option("--live", help="Ask the model for pairs not in the cache (costs money).")
     ] = False,
-    cache: Annotated[
-        Path, typer.Option("--cache", help="Cached explanations (committed).")
-    ] = EXPLAIN_CACHE,
-    paraphrase: Annotated[
-        bool,
-        typer.Option(
-            "--paraphrase/--no-paraphrase",
-            help="Mark paraphrased sentences, with the semantic stage's model (local).",
-        ),
-    ] = True,
-    models_dir: Annotated[
-        Path, typer.Option("--models", help="Directory of model files (local).")
-    ] = MODELS_DIR,
+    cache: CacheOption = EXPLAIN_CACHE,
+    paraphrase: ParaphraseOption = True,
+    models_dir: ModelsOption = MODELS_DIR,
     spend: Annotated[
         Path, typer.Option("--spend", help="M6's model-call ledger (committed).")
     ] = CALL_SPEND,

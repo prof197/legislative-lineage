@@ -11,8 +11,17 @@ from typing import Annotated, Any
 import typer
 
 from lineage.cli.app import (
+    AlignModelsOption,
+    CacheOption,
+    LabelsAppendOption,
+    LabelsOption,
     MinFreeOption,
+    ModelsOption,
+    ParaphraseOption,
+    ReportOption,
+    ResultsOption,
     SemanticOption,
+    SessionsOption,
     TablesOption,
     app,
     eval_app,
@@ -192,20 +201,10 @@ def label(
         str, typer.Option("--labeler", help="Your GitHub handle; labels are never kept by name.")
     ],
     tables: TablesOption = DATA / "tables",
-    labels: Annotated[
-        Path, typer.Option("--labels", help="Labels file, appended to (committed).")
-    ] = LABELS_PATH,
+    labels: LabelsAppendOption = LABELS_PATH,
     color: Annotated[bool, typer.Option("--color/--no-color", help="Mark spans in color.")] = True,
-    paraphrase: Annotated[
-        bool,
-        typer.Option(
-            "--paraphrase/--no-paraphrase",
-            help="Mark paraphrased sentences, with the semantic stage's model (local).",
-        ),
-    ] = True,
-    models_dir: Annotated[
-        Path, typer.Option("--models", help="Directory of model files (local).")
-    ] = MODELS_DIR,
+    paraphrase: ParaphraseOption = True,
+    models_dir: ModelsOption = MODELS_DIR,
 ) -> None:
     """Label sampled matches by hand, unrelated (0) to identical (4); stop and resume at will."""
     try:
@@ -253,16 +252,8 @@ def label_page(
     out: Annotated[
         Path, typer.Option("--out", help="Directory for the page and its data (local).")
     ] = LABEL_PAGE_OUT,
-    paraphrase: Annotated[
-        bool,
-        typer.Option(
-            "--paraphrase/--no-paraphrase",
-            help="Mark paraphrased sentences, with the semantic stage's model (local).",
-        ),
-    ] = True,
-    models_dir: Annotated[
-        Path, typer.Option("--models", help="Directory of model files (local).")
-    ] = MODELS_DIR,
+    paraphrase: ParaphraseOption = True,
+    models_dir: ModelsOption = MODELS_DIR,
 ) -> None:
     """Write a labeling page for a phone: the pending pairs, blind to stages, for an artifact."""
     try:
@@ -292,9 +283,7 @@ def label_import(
         str, typer.Option("--labeler", help="The GitHub handle the page was written for.")
     ],
     tables: TablesOption = DATA / "tables",
-    labels: Annotated[
-        Path, typer.Option("--labels", help="Labels file, appended to (committed).")
-    ] = LABELS_PATH,
+    labels: LabelsAppendOption = LABELS_PATH,
 ) -> None:
     """Append a labeling page's saved labels to the labels file, each checked against the sample."""
     try:
@@ -447,9 +436,7 @@ def label_model(
         ),
     ] = PRECISION_SAMPLE,
     tables: TablesOption = DATA / "tables",
-    labels: Annotated[
-        Path, typer.Option("--labels", help="Labels file, appended to (committed).")
-    ] = LABELS_PATH,
+    labels: LabelsAppendOption = LABELS_PATH,
     model: Annotated[str, typer.Option("--model", help="The model asked.")] = LABEL_MODEL,
     prompt_version: Annotated[
         str,
@@ -474,9 +461,7 @@ def label_model(
     batch_id: Annotated[
         str | None, typer.Option("--batch-id", help="Collect a batch already sent.")
     ] = None,
-    models_dir: Annotated[
-        Path, typer.Option("--models", help="Directory of model files (local), for alignment.")
-    ] = MODELS_DIR,
+    models_dir: AlignModelsOption = MODELS_DIR,
     also: Annotated[
         list[str] | None,
         typer.Option(
@@ -625,10 +610,8 @@ def eval_commission(
             "lists, or the held-out lists with --held-out].",
         ),
     ] = None,
-    sessions: Annotated[
-        Path, typer.Option("--sessions", help="Session dates CSV (committed).")
-    ] = Path("snapshot/sessions.csv"),
-    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+    sessions: SessionsOption = Path("snapshot/sessions.csv"),
+    results: ResultsOption = RESULTS,
     held_out: Annotated[
         bool, typer.Option("--held-out", help="Evaluate the held-out acts (with --final only).")
     ] = False,
@@ -712,9 +695,7 @@ def eval_answer_key(
             "lists, or the held-out lists with --held-out].",
         ),
     ] = None,
-    sessions: Annotated[
-        Path, typer.Option("--sessions", help="Session dates CSV (committed).")
-    ] = Path("snapshot/sessions.csv"),
+    sessions: SessionsOption = Path("snapshot/sessions.csv"),
     out: Annotated[
         Path | None,
         typer.Option(
@@ -790,16 +771,14 @@ def eval_agreement(
         ),
     ] = AGREEMENT_SAMPLE,
     tables: TablesOption = DATA / "tables",
-    labels: Annotated[
-        Path, typer.Option("--labels", help="Labels file (committed).")
-    ] = LABELS_PATH,
+    labels: LabelsOption = LABELS_PATH,
     model_labeler: Annotated[
         str, typer.Option("--model-labeler", help="The model labeler compared, model id@prompt.")
     ] = model_labeler_name(LABEL_MODEL, LABEL_PROMPT_VERSION),
     strata: Annotated[
         Path, typer.Option("--strata", help="The precision sample's draw report, its strata.")
     ] = PRECISION_SAMPLE_REPORT,
-    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+    results: ResultsOption = RESULTS,
 ) -> None:
     """A person's labels against a model's on the subsample: weighted kappa, cutoff agreement,
     and the precision each gives on the same pairs."""
@@ -843,16 +822,12 @@ def eval_relatives(
         ),
     ] = "reporting",
     tables: TablesOption = DATA / "tables",
-    labels: Annotated[
-        Path, typer.Option("--labels", help="Labels file (committed).")
-    ] = RELATIVES_LABELS,
+    labels: LabelsOption = RELATIVES_LABELS,
     model_labeler: Annotated[
         str, typer.Option("--model-labeler", help="The model labeler counted, model id@prompt.")
     ] = model_labeler_name(LABEL_MODEL, "passages-v1-high"),
-    models_dir: Annotated[
-        Path, typer.Option("--models", help="Directory of model files (local), for alignment.")
-    ] = MODELS_DIR,
-    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+    models_dir: AlignModelsOption = MODELS_DIR,
+    results: ResultsOption = RESULTS,
 ) -> None:
     """The precision of what a page lists, from the reporting sample's labels; with --part, a
     tuning sample's, recorded apart."""
@@ -916,9 +891,7 @@ def eval_threshold(
         typer.Argument(help="The tuning sample of relatives.", exists=True, dir_okay=False),
     ] = RELATIVES_SAMPLE,
     tables: TablesOption = DATA / "tables",
-    labels: Annotated[
-        Path, typer.Option("--labels", help="Labels file (committed).")
-    ] = RELATIVES_LABELS,
+    labels: LabelsOption = RELATIVES_LABELS,
     model_labeler: Annotated[
         str, typer.Option("--model-labeler", help="The model labeler counted, model id@prompt.")
     ] = model_labeler_name(LABEL_MODEL, "passages-v1-high"),
@@ -972,9 +945,7 @@ def eval_precision(
         ),
     ] = PRECISION_SAMPLE,
     tables: TablesOption = DATA / "tables",
-    labels: Annotated[
-        Path, typer.Option("--labels", help="Labels file (committed).")
-    ] = LABELS_PATH,
+    labels: LabelsOption = LABELS_PATH,
     strata: Annotated[
         Path, typer.Option("--strata", help="The draw's report, with each stratum's size.")
     ] = PRECISION_SAMPLE_REPORT,
@@ -996,7 +967,7 @@ def eval_precision(
             "--flagged-labeler", help="The model labeler counted on the flag's dropped pairs."
         ),
     ] = model_labeler_name(LABEL_MODEL, "passages-v1-high"),
-    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+    results: ResultsOption = RESULTS,
 ) -> None:
     """Precision per stratum, stage and overall, from people's labels and, apart, a model's,
     with the state boilerplate flag off and on."""
@@ -1071,26 +1042,16 @@ def eval_faithfulness(
         bool,
         typer.Option("--live", help="Ask the judge about unjudged claims (costs money)."),
     ] = False,
-    cache: Annotated[
-        Path, typer.Option("--cache", help="Cached explanations (committed).")
-    ] = EXPLAIN_CACHE,
+    cache: CacheOption = EXPLAIN_CACHE,
     judgments: Annotated[
         Path, typer.Option("--judgments", help="The judge's verdicts, appended to (committed).")
     ] = JUDGMENTS,
-    paraphrase: Annotated[
-        bool,
-        typer.Option(
-            "--paraphrase/--no-paraphrase",
-            help="Mark paraphrased sentences, with the semantic stage's model (local).",
-        ),
-    ] = True,
-    models_dir: Annotated[
-        Path, typer.Option("--models", help="Directory of model files (local).")
-    ] = MODELS_DIR,
+    paraphrase: ParaphraseOption = True,
+    models_dir: ModelsOption = MODELS_DIR,
     spend: Annotated[
         Path, typer.Option("--spend", help="M6's model-call ledger (committed).")
     ] = CALL_SPEND,
-    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+    results: ResultsOption = RESULTS,
 ) -> None:
     """Faithfulness, model-judged: the share of kept claims that describe their cited spans
     correctly, beside the hard check that every kept claim cites spans that exist and differ."""
@@ -1149,9 +1110,7 @@ def eval_cost(
     reports: Annotated[
         Path, typer.Option("--reports", help="The committed reports the build wrote.")
     ] = Path("reports"),
-    report: Annotated[Path, typer.Option("--report", help="Report JSON (committed).")] = (
-        COST_REPORT
-    ),
+    report: ReportOption = (COST_REPORT),
     semantic: SemanticOption = True,
 ) -> None:
     """Cost and runtime per stage: the build's from its reports, each query's timed here."""
@@ -1181,9 +1140,7 @@ def eval_pair_data(
     directory: Annotated[
         Path, typer.Option("--dir", help="Directory of the dataset's files (local).")
     ] = PAIR_DATA_DIR,
-    models_dir: Annotated[
-        Path, typer.Option("--models", help="Directory of model files (local).")
-    ] = MODELS_DIR,
+    models_dir: ModelsOption = MODELS_DIR,
     report: Annotated[
         Path, typer.Option("--report", help="Metrics JSON (committed).")
     ] = PAIR_REPORT,

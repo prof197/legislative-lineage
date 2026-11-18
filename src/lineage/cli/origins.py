@@ -13,7 +13,12 @@ from typing import Annotated, Any
 import typer
 
 from lineage.cli.app import (
+    AlignModelsOption,
+    LabelsAppendOption,
     MinFreeOption,
+    ModelDocsOption,
+    OriginLabelsOption,
+    ResultsOption,
     TablesOption,
     app,
     eval_app,
@@ -101,9 +106,7 @@ from lineage.origins.withheld import write_report as write_withheld
 @app.command("collect-models")
 def collect_models_command(
     source: Annotated[str, typer.Argument(help="The source's key, as its collector declares it.")],
-    root: Annotated[
-        Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
-    ] = MODELDOCS_DIR,
+    root: ModelDocsOption = MODELDOCS_DIR,
     reports: Annotated[
         Path, typer.Option("--reports", help="Each source's coverage report (committed).")
     ] = COLLECT_REPORTS,
@@ -129,9 +132,7 @@ def collect_models_command(
 @app.command("origins")
 def origins_command(
     tables: TablesOption = DATA / "tables",
-    root: Annotated[
-        Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
-    ] = MODELDOCS_DIR,
+    root: ModelDocsOption = MODELDOCS_DIR,
     min_free_gib: MinFreeOption = 20.0,
     report: Annotated[Path, typer.Option("--report", help="Counts per source and stage.")] = (
         ORIGINS_REPORT
@@ -186,9 +187,7 @@ def origin_sample_command(
         ),
     ] = "tuning",
     tables: TablesOption = DATA / "tables",
-    root: Annotated[
-        Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
-    ] = MODELDOCS_DIR,
+    root: ModelDocsOption = MODELDOCS_DIR,
     final: Annotated[
         bool, typer.Option("--final", help="Matching is final: the reporting sample may be drawn.")
     ] = False,
@@ -234,9 +233,7 @@ def origin_sample_command(
 @app.command("withhold")
 def withhold_command(
     tables: TablesOption = DATA / "tables",
-    root: Annotated[
-        Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
-    ] = MODELDOCS_DIR,
+    root: ModelDocsOption = MODELDOCS_DIR,
     labels: Annotated[
         Path, typer.Option("--labels", help="Origin precision labels (committed).")
     ] = ORIGIN_LABELS,
@@ -294,12 +291,8 @@ def withhold_command(
 def origin_label_command(
     part: Annotated[str, typer.Option("--part", help="The sample labeled.")] = "tuning",
     tables: TablesOption = DATA / "tables",
-    root: Annotated[
-        Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
-    ] = MODELDOCS_DIR,
-    labels: Annotated[
-        Path, typer.Option("--labels", help="Labels file, appended to (committed).")
-    ] = ORIGIN_LABELS,
+    root: ModelDocsOption = MODELDOCS_DIR,
+    labels: LabelsAppendOption = ORIGIN_LABELS,
     spend: Annotated[
         Path, typer.Option("--spend", help="v2's spend ledger (committed).")
     ] = ORIGIN_SPEND,
@@ -309,9 +302,7 @@ def origin_label_command(
     batch_id: Annotated[
         str | None, typer.Option("--batch-id", help="Collect a batch already sent.")
     ] = None,
-    models_dir: Annotated[
-        Path, typer.Option("--models", help="Directory of model files (local), for alignment.")
-    ] = MODELS_DIR,
+    models_dir: AlignModelsOption = MODELS_DIR,
     max_cost: Annotated[
         float,
         typer.Option(
@@ -392,7 +383,7 @@ def eval_origins(
     source: Annotated[
         str, typer.Option("--source", help="The source whose documents are named by act slug.")
     ] = "commission",
-    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+    results: ResultsOption = RESULTS,
     final: Annotated[
         bool, typer.Option("--final", help="The one run of a sealed key per configuration.")
     ] = False,
@@ -433,9 +424,7 @@ def eval_origins(
 @eval_app.command("origin-threshold")
 def eval_origin_threshold(
     tables: TablesOption = DATA / "tables",
-    labels: Annotated[
-        Path, typer.Option("--labels", help="The origin labels (committed).")
-    ] = ORIGIN_LABELS,
+    labels: OriginLabelsOption = ORIGIN_LABELS,
     report: Annotated[
         Path, typer.Option("--report", help="The proposal (committed).")
     ] = ORIGIN_THRESHOLD_REPORT,
@@ -482,14 +471,10 @@ def eval_origin_precision(
             "readings before each change to matching.",
         ),
     ] = "reporting_after_compact_fix",
-    labels: Annotated[
-        Path, typer.Option("--labels", help="The origin labels (committed).")
-    ] = ORIGIN_LABELS,
+    labels: OriginLabelsOption = ORIGIN_LABELS,
     tables: TablesOption = DATA / "tables",
-    root: Annotated[
-        Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
-    ] = MODELDOCS_DIR,
-    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+    root: ModelDocsOption = MODELDOCS_DIR,
+    results: ResultsOption = RESULTS,
     intervals_only: Annotated[
         bool,
         typer.Option(
@@ -575,13 +560,9 @@ def eval_origin_precision(
 def eval_origin_census(
     part: Annotated[str, typer.Option("--part", help="The census read.")] = "census_eppc",
     tables: TablesOption = DATA / "tables",
-    root: Annotated[
-        Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
-    ] = MODELDOCS_DIR,
-    labels: Annotated[
-        Path, typer.Option("--labels", help="The origin labels (committed).")
-    ] = ORIGIN_LABELS,
-    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+    root: ModelDocsOption = MODELDOCS_DIR,
+    labels: OriginLabelsOption = ORIGIN_LABELS,
+    results: ResultsOption = RESULTS,
 ) -> None:
     """A census of one source's listed matches: its precision as a count, and the section pairs
     each wrong match rests on, by kind (DESIGN.md#origin-matches)."""

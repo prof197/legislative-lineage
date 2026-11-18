@@ -11,9 +11,15 @@ from typing import Annotated, Any
 import typer
 
 from lineage.cli.app import (
+    CacheOption,
+    DayOption,
+    LiveExportOption,
     ManifestOption,
     MinFreeOption,
+    ModelsOption,
     RawOption,
+    ResultsOption,
+    SessionsOption,
     TablesOption,
     app,
     publish_app,
@@ -141,9 +147,7 @@ def rebuild_command(
         bool,
         typer.Option("--days-only", help="Lay the days over no archives: the days are the corpus."),
     ] = False,
-    sessions: Annotated[
-        Path, typer.Option("--sessions", help="Session dates CSV (committed).")
-    ] = rebuilding.SESSIONS,
+    sessions: SessionsOption = rebuilding.SESSIONS,
     text_plan: Annotated[
         Path, typer.Option("--text-plan", help="The text layer's fetch plan, as `text merge`.")
     ] = PLAN,
@@ -314,18 +318,13 @@ SiteOption = Annotated[
 def publish_pages_command(
     state: StateOption = "GA",
     tables: TablesOption = DATA / "tables",
-    export: Annotated[
-        Path | None,
-        typer.Option("--export", help="The live export (local); default data/export/<ST>."),
-    ] = None,
+    export: LiveExportOption = None,
     changes: ChangesOption = CHANGES_DIR,
     since: Annotated[
         str | None,
         typer.Option("--since", help="Apply the logged days from this one, YYYY-MM-DD."),
     ] = None,
-    cache: Annotated[
-        Path, typer.Option("--cache", help="Cached explanations (committed).")
-    ] = EXPLAIN_CACHE,
+    cache: CacheOption = EXPLAIN_CACHE,
     paraphrase: Annotated[
         bool,
         typer.Option(
@@ -333,9 +332,7 @@ def publish_pages_command(
             help="Mark paraphrase as the export in place was built (local model).",
         ),
     ] = True,
-    models_dir: Annotated[
-        Path, typer.Option("--models", help="Directory of model files (local).")
-    ] = MODELS_DIR,
+    models_dir: ModelsOption = MODELS_DIR,
     workers: Annotated[
         int, typer.Option("--workers", help="Processes aligning section pairs.")
     ] = EXPORT_WORKERS,
@@ -348,7 +345,7 @@ def publish_pages_command(
     stories_rules: Annotated[
         Path, typer.Option("--stories", help="Which stories each state's site carries (committed).")
     ] = STORIES_RULES,
-    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+    results: ResultsOption = RESULTS,
     min_free_gib: MinFreeOption = 20.0,
 ) -> None:
     """Apply the logged days the export lacks to a staging copy of it, rewriting only the files
@@ -426,10 +423,7 @@ def publish_feed_command(
 @publish_app.command("promote")
 def publish_promote_command(
     state: StateOption = "GA",
-    export: Annotated[
-        Path | None,
-        typer.Option("--export", help="The live export (local); default data/export/<ST>."),
-    ] = None,
+    export: LiveExportOption = None,
 ) -> None:
     """Swap the staging copy in as the live export. Nothing is deployed or published."""
     target = export if export is not None else EXPORT_DIR / state.upper()
@@ -484,10 +478,7 @@ def _deploy_paths(root: Path) -> deploy.DeployPaths:
 @publish_app.command("deploy")
 def publish_deploy_command(
     state: StateOption = "GA",
-    export: Annotated[
-        Path | None,
-        typer.Option("--export", help="The live export (local); default data/export/<ST>."),
-    ] = None,
+    export: LiveExportOption = None,
     changes: ChangesOption = CHANGES_DIR,
     root: DeployRootOption = deploy.DEPLOY_DIR,
     min_free_gib: MinFreeOption = 20.0,
@@ -539,10 +530,7 @@ def publish_release_command(
         ),
     ] = False,
     state: StateOption = "GA",
-    export: Annotated[
-        Path | None,
-        typer.Option("--export", help="The live export (local); default data/export/<ST>."),
-    ] = None,
+    export: LiveExportOption = None,
     min_free_gib: MinFreeOption = 20.0,
 ) -> None:
     """Approve a day the circuit breaker held, once reviewed: its release, or with --repack the
@@ -594,14 +582,9 @@ def _review_names(tables: Path, state: str, site_url: str) -> tuple[Any, dict[st
 def publish_candidate_command(
     site_url: SiteOption,
     state: StateOption = "GA",
-    day: Annotated[
-        str | None, typer.Option("--day", help="The day, YYYY-MM-DD [default: today, UTC].")
-    ] = None,
+    day: DayOption = None,
     tables: TablesOption = DATA / "tables",
-    export: Annotated[
-        Path | None,
-        typer.Option("--export", help="The live export (local); default data/export/<ST>."),
-    ] = None,
+    export: LiveExportOption = None,
     changes: ChangesOption = CHANGES_DIR,
     root: DeployRootOption = deploy.DEPLOY_DIR,
     min_free_gib: MinFreeOption = 20.0,
@@ -666,9 +649,7 @@ def publish_review_command(
 def schedule_daily_command(
     site_url: SiteOption,
     state: StateOption = "GA",
-    day: Annotated[
-        str | None, typer.Option("--day", help="The day, YYYY-MM-DD [default: today, UTC].")
-    ] = None,
+    day: DayOption = None,
     tier: Annotated[str, typer.Option("--tier", help="The intake key's limits.")] = "default",
 ) -> None:
     """The daily job: intake, update, the incremental export and the feed, swapped in only when
@@ -689,9 +670,7 @@ def schedule_daily_command(
 def schedule_weekly_command(
     site_url: SiteOption,
     state: StateOption = "GA",
-    day: Annotated[
-        str | None, typer.Option("--day", help="The day, YYYY-MM-DD [default: today, UTC].")
-    ] = None,
+    day: DayOption = None,
 ) -> None:
     """The weekly job: two full rebuilds over the days the tables have had, then the check,
     which fails the job below 98% agreement (DR-7); then, before session, a release candidate
