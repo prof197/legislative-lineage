@@ -114,8 +114,8 @@ from lineage.stats import (
     GEORGIA_NOTICE,
 )
 from lineage.withheld import NONE as NO_WITHHELD
-from lineage.withheld import REASON as WITHHELD_REASON
 from lineage.withheld import REPORT as WITHHELD_REPORT
+from lineage.withheld import Reason as WithheldReason
 from lineage.withheld import Withheld, load_withheld
 
 EXPORT_DIR = DATA / "export"
@@ -535,14 +535,15 @@ def judged_origins(
 def sources_doc(
     sources: Sequence[Source],
     docs: Mapping[str, tuple[ModelDoc, Source]],
-    withheld: frozenset[str] = frozenset(),
+    withheld: Mapping[str, WithheldReason] | None = None,
 ) -> Sources:
     """The sources page: every library, with how many documents were collected and when, and
     the documents withheld from pages because their matches rest on generic text."""
     entries: list[SourceEntry] = []
     for src in sorted(sources, key=lambda s: s.key):
         held = [d for d, s in docs.values() if s.key == src.key]
-        kept_back = sorted((d for d in held if d.id in withheld), key=lambda d: d.id)
+        reasons = withheld or {}
+        kept_back = sorted((d for d in held if d.id in reasons), key=lambda d: d.id)
         latest = max((d.collected_on for d in held), default=None)
         entries.append(
             SourceEntry(
@@ -560,7 +561,7 @@ def sources_doc(
                 documents=len(held),
                 collected_on=None if latest is None else latest.isoformat(),
                 withheld=[
-                    WithheldDocument(id=d.id, title=d.title, url=d.url, reason=WITHHELD_REASON)
+                    WithheldDocument(id=d.id, title=d.title, url=d.url, reason=reasons[d.id])
                     for d in kept_back
                 ],
             )
@@ -847,7 +848,7 @@ def build_export(
         if story is not None:
             files[ORIGIN_STORY_FILE] = story
 
-    files["sources.json"] = sources_doc(sources, docs, kept_back.ids)
+    files["sources.json"] = sources_doc(sources, docs, kept_back.reasons)
     files["meta.json"] = Meta(
         state=state,
         archives=[

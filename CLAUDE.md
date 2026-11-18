@@ -57,7 +57,7 @@ uv run lineage origins       # collected model documents against the corpus -> d
 uv run lineage eval origins  # origin recall on the development answer key -> reports/results.json (origins_development); --key v1_held_out: v1's held-out acts, opened in v1, extra evidence; --key held_out --final: the sealed key, once per configuration
 uv run lineage origin-sample  # seeded origin precision sample (--part tuning), label cost projected, nothing asked -> evals/origin_precision_tuning.jsonl, reports/origin_precision_sample.json; --part reporting --final once matching is final (--part reporting_after_fix: the fresh sample after the generic-section fix)
 uv run lineage origin-label  # the sample's matches labeled by a model on each one's strongest section pair, v1's passage question; asks only with --live, through the Batches API, under v2's $25 -> evals/origin_precision_labels.jsonl, reports/origin_label_spend.json
-uv run lineage withhold     # model documents whose labeled listed matches are mostly wrong (at least 3, under half correct), withheld from pages, the feed and stories -> reports/withheld_documents.json
+uv run lineage withhold     # model documents whose labeled listed matches are mostly wrong (at least 3, under half correct), withheld from pages, the feed and stories -> reports/withheld_documents.json (--doc ID --note TEXT: withheld by hand after a held day's review, kept on every rewrite)
 uv run lineage eval origin-threshold  # each candidate share floor's precision on the tuning sample, beside its development recall -> reports/origin_threshold_proposal.json
 uv run lineage origin-sample --part census_eppc  # every EPPC match a page lists, a census, label cost projected -> evals/origin_precision_census_eppc.jsonl
 uv run lineage eval origin-census  # the census read: precision as a count, each wrong match's section pairs by generic kind -> reports/results.json (origins_census_eppc)
@@ -77,8 +77,8 @@ uv run lineage publish feed --site-url URL  # the national Atom feed of the live
 uv run lineage publish promote --state GA  # swap the staging copy in as the live export; deploys nothing
 uv run lineage publish weekly --pinned DIR  # the weekly rebuild's check: agreement with the updated tables, failing below 98%, and the drift -> data/schedule/weekly.json
 uv run lineage publish deploy --state GA  # in session: the live export's day packed as a release, gated (contract, local paths, copy, size), the circuit breaker, the pin committed and leak-checked, then the GitHub release, push and Pages dispatch; exits 3 when held -> data/deploy/days/<day>.json
-uv run lineage publish release --day D  # a day the circuit breaker held, published after the maintainer's review
-uv run lineage publish reject --day D  # a held day rejected after review: never published, its data kept, the next day publishes as usual
+uv run lineage publish release --day D  # a day the circuit breaker held, approved after review (--repack: the live export as it stands, after withholding the documents behind bad claims; RUNBOOK.md)
+uv run lineage publish reject --day D  # a held day rejected for an infrastructure problem: never published, its data kept, the next day publishes as usual
 uv run lineage publish candidate --site-url URL  # before session: the live export packed and gated as a release candidate, publishing nothing -> data/deploy/candidates/<tag>/review.txt
 uv run lineage publish review --site-url URL  # in session: the week's new origin claims for the maintainer's review -> data/deploy/reviews/<day>.txt
 uv run lineage schedule daily --site-url URL  # the daily job: intake, update, pages, feed, promote, and from the first day of session (rules/deploy.toml) the deploy; a failed step or held day stops it and alerts -> data/schedule/status.json
@@ -235,6 +235,7 @@ reports/          committed outputs of pipeline commands; README and DESIGN numb
 explanations/cache/  model replies, one JSON file per (model, prompt version, spans) hash; replayed without a key
 DESIGN.md         design, alternatives, scaling limits, failure modes, decision records
 CONTRIBUTING.md   the checks to run before a commit and a push, and the leak check
+RUNBOOK.md        the live track's setup, schedule, and what to do when a job fails or holds a day
 OUTCOMES.md       where the tool has been used on real work, with permission
 data/             local snapshots and derived tables; gitignored, never committed
   raw/<ST>/*.zip  Open States session archives, never edited

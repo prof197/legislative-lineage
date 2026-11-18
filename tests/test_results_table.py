@@ -342,11 +342,16 @@ def test_precision_read_before_documents_were_withheld_says_so() -> None:
     assert "withheld" not in _rendered_origins(
         _origins(), withheld={"withheld": [], "listed_matches_withheld": 0}
     )
-    held = [{"doc_id": f"lib/{n}"} for n in range(6)]
+    held = [{"doc_id": f"lib/{n}"} for n in range(5)]
     block = _rendered_origins(
-        _origins(), withheld={"withheld": held, "listed_matches_withheld": 82}
+        _origins(),
+        withheld={
+            "withheld": held,
+            "reviewed": [{"doc_id": "lib/r"}],
+            "listed_matches_withheld": 82,
+        },
     )
-    assert "before 6 documents whose labeled matches were mostly wrong were withheld" in block
+    assert "before 6 documents whose matches were found mostly wrong were withheld" in block
     assert "82 listed matches in all" in block
     assert "likely understates the precision of what pages show" in block
 

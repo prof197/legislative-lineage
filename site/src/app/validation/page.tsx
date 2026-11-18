@@ -54,7 +54,7 @@ function OriginPrecisionSection({ o }: { o: OriginPrecision | undefined }) {
       {(o.withheld_documents ?? 0) > 0 && (
         <p className="note">
           These figures were measured before {o.withheld_documents === 1 ? "one model document" : `${o.withheld_documents} model documents`} whose
-          checked matches were mostly wrong {o.withheld_documents === 1 ? "was" : "were"} withheld from bill pages ({o.withheld_matches.toLocaleString("en-US")} listed{" "}
+          matches were found mostly wrong {o.withheld_documents === 1 ? "was" : "were"} withheld from bill pages ({o.withheld_matches.toLocaleString("en-US")} listed{" "}
           {o.withheld_matches === 1 ? "match" : "matches"}; the <Link href="/sources/">sources page</Link> names {o.withheld_documents === 1 ? "it" : "them"}). For what pages show now, they likely understate precision.
         </p>
       )}

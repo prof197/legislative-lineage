@@ -412,7 +412,7 @@ withheld: WithheldDocument[]
  */
 export interface WithheldDocument {
 id: string
-reason: "generic_text"
+reason: ("generic_text" | "review")
 title: string
 url: string
 }

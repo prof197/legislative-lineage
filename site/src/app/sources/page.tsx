@@ -34,16 +34,20 @@ function Source({ s }: { s: SourceEntry }) {
         </p>
       )}
       {/* Data from before the withholding rule has no list. */}
-      {(s.withheld ?? []).length > 0 && (
-        <div style={{ marginTop: 12 }}>
-          <p className="note" style={{ overflowWrap: "anywhere" }}>
-            <strong style={{ color: "var(--ink)" }}>Withheld:</strong> {withheldNote(s.withheld.length)}
-          </p>
-          <ul className="note" style={{ margin: "6px 0 0", paddingLeft: 20, overflowWrap: "anywhere" }}>
-            {s.withheld.map((w) => <li key={w.id}><a href={w.url}>{w.title}</a></li>)}
-          </ul>
-        </div>
-      )}
+      {(["generic_text", "review"] as const).map((reason) => {
+        const held = (s.withheld ?? []).filter((w) => w.reason === reason);
+        if (!held.length) return null;
+        return (
+          <div key={reason} style={{ marginTop: 12 }}>
+            <p className="note" style={{ overflowWrap: "anywhere" }}>
+              <strong style={{ color: "var(--ink)" }}>Withheld:</strong> {withheldNote(held.length, reason)}
+            </p>
+            <ul className="note" style={{ margin: "6px 0 0", paddingLeft: 20, overflowWrap: "anywhere" }}>
+              {held.map((w) => <li key={w.id}><a href={w.url}>{w.title}</a></li>)}
+            </ul>
+          </div>
+        );
+      })}
       <dl style={{ margin: "20px 0 0", display: "flex", flexWrap: "wrap", gap: "18px 32px" }}>
         <Field name="Library">
           <a href={s.library_url}>{s.library_url.replace(/^https?:\/\//, "")}</a>

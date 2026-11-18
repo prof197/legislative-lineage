@@ -15,9 +15,15 @@ export const LEAKED_LABEL = "Leaked";
 
 // The sources page's line on a library's withheld documents (lineage.withheld, ruled at the
 // deploy review): what is held back, from where, and why, without naming it a fault of the library.
-export function withheldNote(n: number): string {
+// Two reasons: the labels found most of its matches wrong, resting on generic text; or the
+// maintainer did, reviewing a day's new matches before they were published.
+export function withheldNote(n: number, reason: "generic_text" | "review" = "generic_text"): string {
   const which = n === 1 ? "This document is" : `These ${n} documents are`;
-  return `${which} withheld from bill pages, the feed and stories until matching improves: most of the matches checked for ${n === 1 ? "it" : "them"} rest on generic text, such as definitions or standard clauses many acts share, rather than on a shared provision.`;
+  const it = n === 1 ? "it" : "them";
+  if (reason === "review") {
+    return `${which} withheld from bill pages, the feed and stories: a review of new matches found those listed for ${it} did not share a provision with the bills.`;
+  }
+  return `${which} withheld from bill pages, the feed and stories until matching improves: most of the matches checked for ${it} rest on generic text, such as definitions or standard clauses many acts share, rather than on a shared provision.`;
 }
 
 // A share as a whole percent. Rounding never makes a partial share read as all or none of the

@@ -1601,7 +1601,10 @@
      "type": "string"
     },
     "reason": {
-     "const": "generic_text",
+     "enum": [
+      "generic_text",
+      "review"
+     ],
      "title": "Reason",
      "type": "string"
     },

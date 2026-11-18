@@ -24,7 +24,7 @@ See DESIGN.md#dr-11.
 import json
 from collections import Counter, defaultdict
 from collections.abc import Iterable, Mapping
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Literal
 
@@ -35,7 +35,9 @@ from lineage.origins import FLOOR, OriginMatch, is_listed
 COMMAND = "uv run lineage withhold"
 REPORT = Path("reports/withheld_documents.json")
 MIN_LABELED = 3
-REASON: Literal["generic_text"] = "generic_text"
+Reason = Literal["generic_text", "review"]
+REASON: Reason = "generic_text"
+REVIEW: Reason = "review"
 
 
 @dataclass(frozen=True)
@@ -88,8 +90,23 @@ def tallies(
     ]
 
 
-def report(found: Iterable[Tally]) -> dict[str, Any]:
+@dataclass(frozen=True)
+class Reviewed:
+    """A document the maintainer withheld after reviewing a held day's claims: its matches were
+    found wrong, whatever the labels say (ruled at the deploy review)."""
+
+    doc_id: str
+    title: str
+    listed: int
+    note: str
+    on: str  # ISO 8601
+
+
+def report(found: Iterable[Tally], reviewed: Iterable[Reviewed] = ()) -> dict[str, Any]:
     found = list(found)
+    by_rule = [t for t in found if t.withheld]
+    ruled = {t.doc_id for t in by_rule}
+    by_review = [r for r in reviewed if r.doc_id not in ruled]
     return {
         "command": COMMAND,
         "rule": {
@@ -98,35 +115,64 @@ def report(found: Iterable[Tally]) -> dict[str, Any]:
             "floor": FLOOR,
         },
         "documents_with_labels": len(found),
-        "listed_matches_withheld": sum(t.listed for t in found if t.withheld),
-        "withheld": [{**asdict(t), "reason": REASON} for t in found if t.withheld],
+        "listed_matches_withheld": sum(t.listed for t in by_rule)
+        + sum(r.listed for r in by_review),
+        "withheld": [{**asdict(t), "reason": REASON} for t in by_rule],
+        # Withheld by hand after a held day's review (`lineage withhold --doc`); kept whenever
+        # the rule's part is written again.
+        "reviewed": [{**asdict(r), "reason": REVIEW} for r in by_review],
     }
 
 
-def write_report(found: Iterable[Tally], path: Path = REPORT) -> Path:
+def read_reviewed(path: Path = REPORT) -> list[Reviewed]:
+    if not path.exists():
+        return []
+    rows = json.loads(path.read_text()).get("reviewed", [])
+    return [
+        Reviewed(
+            doc_id=r["doc_id"], title=r["title"], listed=r["listed"], note=r["note"], on=r["on"]
+        )
+        for r in rows
+    ]
+
+
+def write_report(
+    found: Iterable[Tally], path: Path = REPORT, reviewed: Iterable[Reviewed] | None = None
+) -> Path:
+    """The report, its rule's part from `found`, the reviewed part kept as the file has it
+    unless `reviewed` is given."""
+    kept = read_reviewed(path) if reviewed is None else list(reviewed)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(report(found), indent=1) + "\n")
+    path.write_text(json.dumps(report(found, kept), indent=1) + "\n")
     return path
+
+
+def listed_count(matches: Iterable[OriginMatch], doc_id: str) -> int:
+    return sum(1 for m in matches if m.doc_id == doc_id and is_listed(m))
 
 
 @dataclass(frozen=True)
 class Withheld:
-    """The withheld documents as the committed report gives them: their ids, and how many
-    listed matches they held nationally when it was written."""
+    """The withheld documents as the committed report gives them: each one's reason, by id, and
+    how many listed matches they held nationally when it was written."""
 
-    ids: frozenset[str] = frozenset()
+    reasons: Mapping[str, Reason] = field(default_factory=dict[str, Reason])
     matches: int = 0
+
+    @property
+    def ids(self) -> frozenset[str]:
+        return frozenset(self.reasons)
 
 
 NONE = Withheld()
 
 
 def load_withheld(path: Path = REPORT) -> Withheld:
-    """The committed report's withheld documents; none before it exists."""
+    """The committed report's withheld documents, by the rule and by review; none before it
+    exists."""
     if not path.exists():
         return NONE
     doc = json.loads(path.read_text())
-    return Withheld(
-        ids=frozenset(str(d["doc_id"]) for d in doc["withheld"]),
-        matches=int(doc["listed_matches_withheld"]),
-    )
+    reasons: dict[str, Reason] = {str(d["doc_id"]): REASON for d in doc["withheld"]}
+    reasons |= {str(d["doc_id"]): REVIEW for d in doc.get("reviewed", [])}
+    return Withheld(reasons=reasons, matches=int(doc["listed_matches_withheld"]))

@@ -140,4 +140,5 @@ test("a joint document names every publisher, its library's first", () => {
 test("a library's withheld documents are named with why, as its count reads", () => {
   assert.match(withheldNote(1), /^This document is withheld from bill pages, the feed and stories until matching improves: most of the matches checked for it rest on generic text/);
   assert.match(withheldNote(2), /^These 2 documents are withheld .* checked for them rest on generic text/);
+  assert.equal(withheldNote(1, "review"), "This document is withheld from bill pages, the feed and stories: a review of new matches found those listed for it did not share a provision with the bills.");
 });

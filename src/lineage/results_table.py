@@ -294,13 +294,13 @@ def render_origins(
             "by stage as the whole is (`compared`), and each source's own figure is in the "
             "same section (`by_source`)."
         )
-        held = (withheld or {}).get("withheld", [])
+        held = [*(withheld or {}).get("withheld", []), *(withheld or {}).get("reviewed", [])]
         if held:
             n = len(held)
             matches = int((withheld or {})["listed_matches_withheld"])
             intro.append(
-                f"The reading was taken before {_counted(n, 'document')} whose labeled matches "
-                f"were mostly wrong {'was' if n == 1 else 'were'} withheld from pages, "
+                f"The reading was taken before {_counted(n, 'document')} whose matches were "
+                f"found mostly wrong {'was' if n == 1 else 'were'} withheld from pages, "
                 f"{matches:,} listed {'match' if matches == 1 else 'matches'} in all "
                 "(`uv run lineage withhold`, "
                 "`reports/withheld_documents.json`), so it likely understates the precision of "

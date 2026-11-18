@@ -327,6 +327,9 @@ from lineage.vectors import THREADS as EMBED_THREADS
 from lineage.vectors import EmbedError, embed_corpus, vectors_dir
 from lineage.vectors import write_report as write_embed_report
 from lineage.withheld import REPORT as WITHHELD_REPORT
+from lineage.withheld import Reviewed as WithheldReviewed
+from lineage.withheld import listed_count as withheld_listed_count
+from lineage.withheld import read_reviewed as read_withheld_reviewed
 from lineage.withheld import tallies as withheld_tallies
 from lineage.withheld import write_report as write_withheld
 
@@ -993,21 +996,51 @@ def withhold_command(
     out: Annotated[
         Path, typer.Option("--out", help="The withheld documents' report (committed).")
     ] = WITHHELD_REPORT,
+    doc: Annotated[
+        str | None,
+        typer.Option("--doc", help="Withhold this document after reviewing a held day's claims."),
+    ] = None,
+    note: Annotated[
+        str | None, typer.Option("--note", help="Why, for the record: what the review found.")
+    ] = None,
 ) -> None:
     """The model documents withheld from pages, the feed and stories: at least 3 labeled listed
-    matches, fewer than half judged correct (DESIGN.md#origin-matches)."""
+    matches, fewer than half judged correct; and those withheld by hand with --doc after a held
+    day's review, which are kept when the report is written again (DESIGN.md#origin-matches)."""
+    if (doc is None) != (note is None):
+        typer.echo("error: --doc and --note go together", err=True)
+        raise typer.Exit(1)
     try:
         docs = [d for c in collectors().values() for d in read_docs(c.source, root)]
         matches = read_origin_matches(tables)
         found = withheld_tallies(matches, docs, tables, load_origin_labels(labels))
+        reviewed = read_withheld_reviewed(out)
+        if doc is not None and note is not None:
+            titles = {d.id: d.title for d in docs}
+            if doc not in titles:
+                raise ModelDocError(f"no collected document {doc}")
+            reviewed = [r for r in reviewed if r.doc_id != doc] + [
+                WithheldReviewed(
+                    doc_id=doc,
+                    title=titles[doc],
+                    listed=withheld_listed_count(matches, doc),
+                    note=note,
+                    on=datetime.date.today().isoformat(),
+                )
+            ]
     except (OriginPrecisionError, ModelDocError) as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
-    path = write_withheld(found, out)
+    path = write_withheld(found, out, reviewed)
     held = [t for t in found if t.withheld]
     for t in held:
         typer.echo(f"withheld {t.doc_id}: {t.correct} of {t.labeled} labeled matches correct")
-    typer.echo(f"{len(held)} of {len(found)} documents with labeled matches withheld -> {path}")
+    for r in reviewed:
+        typer.echo(f"withheld {r.doc_id} after review on {r.on}: {r.note}")
+    typer.echo(
+        f"{len(held)} of {len(found)} documents with labeled matches withheld, "
+        f"{len(reviewed)} by review -> {path}"
+    )
 
 
 @app.command("origin-label")
@@ -3279,11 +3312,34 @@ def publish_deploy_command(
 def publish_release_command(
     day: Annotated[str, typer.Option("--day", help="The held day, YYYY-MM-DD.")],
     root: DeployRootOption = deploy.DEPLOY_DIR,
+    repack: Annotated[
+        bool,
+        typer.Option(
+            "--repack",
+            help="Pack the live export as it stands now, after withholding the documents behind "
+            "bad claims and running publish pages, feed and promote.",
+        ),
+    ] = False,
+    state: StateOption = "GA",
+    export: Annotated[
+        Path | None,
+        typer.Option("--export", help="The live export (local); default data/export/<ST>."),
+    ] = None,
+    min_free_gib: MinFreeOption = 20.0,
 ) -> None:
-    """Publish a day the circuit breaker held, once reviewed: its own release, the site's gates
-    run again, the pin committed and leak-checked, pushed, and the Pages workflow dispatched."""
+    """Approve a day the circuit breaker held, once reviewed: its release, or with --repack the
+    live export as it now stands; the site's gates run again, the pin committed and
+    leak-checked, pushed, and the Pages workflow dispatched."""
+    state = state.upper()
     try:
-        record = deploy.release_day(datetime.date.fromisoformat(day), paths=_deploy_paths(root))
+        record = deploy.release_day(
+            datetime.date.fromisoformat(day),
+            paths=_deploy_paths(root),
+            repack=repack,
+            export=export if export is not None else EXPORT_DIR / state,
+            state=state,
+            floor=int(min_free_gib * GiB),
+        )
     except (deploy.DeployError, ReleaseError) as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e

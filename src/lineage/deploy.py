@@ -746,6 +746,7 @@ def deploy_day(
             candidate = pack(export, state=state, tag=tag, paths=paths, floor=floor)
             record.gates["contract"] = {"ok": True, "files": len(candidate.checksums.files)}
             record.gates["local_paths"] = {"ok": True}
+            record.gates["withheld"] = {"report": withheld_digest(withheld_report)}
         record.tag, record.asset = tag, candidate.asset.name
         if not resuming:
             _ready_checkout(paths, shell, resuming=False)
@@ -803,26 +804,86 @@ def _supersede(paths: DeployPaths, day: date) -> None:
             write_record(paths, r)
 
 
+def withheld_digest(path: Path = WITHHELD_REPORT) -> str:
+    """The withhold report as it stood when a release was packed, so a release made after the
+    maintainer withholds documents can tell it is out of date."""
+    return _sha256(path) if path.exists() else "none"
+
+
+def exported_withheld(export: Path) -> frozenset[str]:
+    """The documents the export's sources page lists as withheld: what its pages were written
+    under."""
+    doc = json.loads((export / "sources.json").read_text())
+    return frozenset(w["id"] for s in doc["sources"] for w in s.get("withheld", []))
+
+
 def release_day(
     day: date,
     *,
     paths: DeployPaths | None = None,
     rules: DeployRules | None = None,
     shell: Shell = JOB_SHELL,
+    repack: bool = False,
+    export: Path | None = None,
+    state: str = "GA",
+    floor: int = 0,
+    withheld_report: Path = WITHHELD_REPORT,
 ) -> DayRecord:
-    """Publish a held day after the maintainer's review: its own release, packed and gated when
-    it was held, with the site's gates run again on the checkout as it stands. Refused while an
-    earlier day is held on its counts, so no day is published past another."""
+    """Approve a held day after the maintainer's review and publish it, its site gates run
+    again. Refused while an earlier day is held on its counts, so no day is published past
+    another.
+
+    As packed, its own release goes out, unless the withhold report has changed since it was
+    packed: its pages would still list the documents just withheld. With `repack`, after
+    withholding (`lineage withhold --doc`, then `publish pages`, `feed` and `promote`), the live
+    `export` as it now stands is packed instead, as of its own day, and refused unless its
+    sources page lists exactly the report's withheld documents; days held behind the reviewed
+    one up to then go out with it."""
     paths = paths if paths is not None else DeployPaths()
     rules = rules if rules is not None else load_rules()
     record = read_record(paths, day)
     if record is None or record.state != "held":
-        state = "no record" if record is None else record.state
-        raise DeployError(f"{day} is not held ({state}); only a held day is released")
+        state_now = "no record" if record is None else record.state
+        raise DeployError(f"{day} is not held ({state_now}); only a held day is released")
     blocker = blocking_day(paths, day)
     if blocker is not None:
         raise DeployError(f"{blocker.day} is held before it; release that day first")
-    return _publish_held(record, paths=paths, rules=rules, shell=shell, reviewed=True)
+    digest = withheld_digest(withheld_report)
+    if not repack:
+        packed = record.gates.get("withheld", {}).get("report")
+        if packed is not None and packed != digest:
+            raise DeployError(
+                f"the withhold report has changed since {day} was packed; publish pages, feed "
+                "and promote, then release it with --repack"
+            )
+        return _publish_held(record, paths=paths, rules=rules, shell=shell, reviewed=True)
+    if export is None:
+        raise DeployError("--repack packs the live export; name it")
+    through = export_day(export)
+    if through is None or through < day:
+        raise DeployError(f"the live export is not as of {day} or later")
+    later = [r for r in records(paths) if day < r.day <= through and r.held_on_counts
+             and r.state == "held"]  # fmt: skip
+    if later:
+        raise DeployError(f"{later[0].day} is held on its own counts too; review it first")
+    if exported_withheld(export) != load_withheld(withheld_report).ids:
+        raise DeployError(
+            "the live export was not written under the withhold report as it stands; run "
+            "`lineage publish pages`, `publish feed` and `publish promote` first"
+        )
+    candidate = pack(export, state=state, tag=tag_for(state, through), paths=paths, floor=floor)
+    record.tag, record.asset = candidate.tag, candidate.asset.name
+    record.gates["contract"] = {"ok": True, "files": len(candidate.checksums.files)}
+    record.gates["local_paths"] = {"ok": True}
+    record.gates["withheld"] = {"report": digest}
+    record.reasons = [*record.reasons, f"approved after review; repacked as of {through}"]
+    write_record(paths, record)
+    out = _publish_held(record, paths=paths, rules=rules, shell=shell, reviewed=True)
+    for r in records(paths):
+        if day < r.day <= through and r.state == "held":
+            r.state = "superseded"
+            write_record(paths, r)
+    return out
 
 
 def reject_day(day: date, *, paths: DeployPaths | None = None) -> DayRecord:

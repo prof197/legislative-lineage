@@ -427,7 +427,7 @@ def plan_export(
         if carries_origin_story(state, stories_rules)
         else frozenset(),
         stories=stories,
-        sources=sources_doc(sources, docs, kept_back.ids),
+        sources=sources_doc(sources, docs, kept_back.reasons),
         meta=meta,
         cache=cache,
     )

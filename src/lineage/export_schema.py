@@ -320,7 +320,9 @@ class WithheldDocument(_Model):
     id: str
     title: str
     url: str
-    reason: Literal["generic_text"]  # its matches rest on generic text
+    # generic_text: its labeled matches are mostly wrong, resting on generic text; review: the
+    # maintainer found its listed matches wrong on reviewing a held day.
+    reason: Literal["generic_text", "review"]
 
 
 class SourceEntry(_Model):

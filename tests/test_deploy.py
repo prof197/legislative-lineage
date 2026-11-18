@@ -48,6 +48,8 @@ from lineage.origins import FLOOR
 from lineage.publish import export_changes, promote, staging_dir
 from lineage.release import RELEASE_MANIFEST, Checksums, changed_files, read_checksums
 from lineage.updates import OriginGained, OriginLost, RecordAdded, write_changes
+from lineage.withheld import Reviewed
+from lineage.withheld import write_report as write_withheld
 from tests.days import DAYS
 from tests.live import Recorded, export_inputs, full_export, recorded
 from tools.leak_check import LOCAL_PATH
@@ -457,6 +459,58 @@ def test_a_rejected_day_is_never_published_and_the_next_day_publishes_as_usual(
         "data-ga-2026-01-14"
     )
     assert read_record(paths, D2).state == "rejected"  # type: ignore[union-attr]
+
+
+def test_bad_claims_are_withheld_then_the_day_is_approved_repacked(
+    setup: tuple[DeployPaths, Fake, Path], live: dict[int, Path], rec: Recorded, tmp_path: Path
+) -> None:
+    """Ruled at the deploy review: a held day with bad claims is not fixed in the tables. The
+    documents behind them are withheld in the committed report, the live export written again,
+    and the day approved: repacked from the export as it now stands, since its own release still
+    lists the withheld documents."""
+    paths, fake, export = setup
+    report = tmp_path / "withheld.json"
+    write_withheld([], report, [])
+    held = deploy_day(
+        state="GA", export=export, changes_dir=rec.log, paths=paths, shell=fake,
+        rules=_rules(ceiling=10), floor=0, withheld_report=report,
+    )  # fmt: skip
+    assert held.state == "held"
+    _to(export, live[3])
+    behind = deploy_day(
+        state="GA", export=export, changes_dir=rec.log, paths=paths, shell=fake, rules=_rules(),
+        floor=0, withheld_report=report,
+    )  # fmt: skip
+    assert behind.held_behind == D2
+
+    # The maintainer withholds a document: the day's own release is now out of date.
+    gone = Reviewed(doc_id="lib/bad", title="Bad", listed=1, note="wrong", on="2027-01-12")
+    write_withheld([], report, [gone])
+    with pytest.raises(DeployError, match="has changed since 2026-01-13 was packed"):
+        release_day(D2, paths=paths, rules=_rules(), shell=fake, withheld_report=report)
+    # Repacked before the export is written under the new report: refused.
+    with pytest.raises(DeployError, match="not written under the withhold report"):
+        release_day(
+            D2, paths=paths, rules=_rules(), shell=fake, withheld_report=report, repack=True,
+            export=export, state="GA",
+        )  # fmt: skip
+    assert fake.published() == []
+
+    # Written again (here: a report whose list the export's sources page matches), approved.
+    write_withheld([], report, [])
+    report.write_text(
+        report.read_text().replace('"documents_with_labels": 0', '"documents_with_labels": 1')
+    )
+    approved = release_day(
+        D2, paths=paths, rules=_rules(), shell=fake, withheld_report=report, repack=True,
+        export=export, state="GA",
+    )  # fmt: skip
+    assert approved.state == "released"
+    assert approved.tag == "data-ga-2026-01-14"  # the export as it stands, through day 3
+    assert approved.reasons[-1] == "approved after review; repacked as of 2026-01-14"
+    pin = Release.model_validate_json((paths.checkout / RELEASE_MANIFEST).read_text())
+    assert pin.tag == "data-ga-2026-01-14"
+    assert read_record(paths, D3).state == "superseded"  # type: ignore[union-attr]
 
 
 def test_the_reject_command_refuses_a_day_not_held(tmp_path: Path) -> None:
