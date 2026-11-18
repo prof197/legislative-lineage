@@ -51,6 +51,7 @@ from lineage.live.incremental import applied_days
 from lineage.live.publish import staging_dir
 from lineage.live.updates import CHANGES_DIR, DAY_FILE, DayInfo, Relative, Snapshot, snapshot
 from lineage.match.semantic.stage import MODEL
+from lineage.text.inventory import PLAN as TEXT_PLAN
 
 SCHEDULE_DIR = DATA / "schedule"
 STATUS_FILE = "status.json"
@@ -497,14 +498,17 @@ class WeeklyPaths:
     changes: Path = CHANGES_DIR
     export_root: Path = DATA / "export"
     deploy: Path = DEPLOY_DIR
+    plan: Path = TEXT_PLAN  # the text layer's fetch plan, which the rebuilds' merge reads
 
 
 def weekly_steps(as_of: date, *, paths: WeeklyPaths | None = None) -> list[Step]:
-    """The weekly job's steps: the two rebuilds over the days so far, then the check, which
-    fails the job below the floor before anything adopts the refreshed rebuild."""
+    """The weekly job's steps: the fetch plan checked against the code, so a stale plan stops
+    the job before hours of rebuilding; the two rebuilds over the days so far; then the check,
+    which fails the job below the floor before anything adopts the refreshed rebuild."""
     paths = paths if paths is not None else WeeklyPaths()
     days, tables = str(paths.days), str(paths.tables)
     return [
+        Step("check-plan", ("text", "check-plan", "--plan", str(paths.plan)), as_of),
         Step(
             "rebuild-pinned",
             (

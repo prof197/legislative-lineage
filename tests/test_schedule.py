@@ -384,12 +384,14 @@ def test_the_weekly_steps_check_before_anything_is_adopted(tmp_path: Path) -> No
         pinned=tmp_path / "p",
         refreshed=tmp_path / "f",
         report=tmp_path / "w.json",
+        plan=tmp_path / "plan.parquet",
     )
     steps = weekly_steps(D3, paths=paths)
-    assert [s.name for s in steps] == ["rebuild-pinned", "rebuild-refreshed", "check"]
-    assert "--pinned-from" in steps[0].argv
-    assert "--pinned-from" not in steps[1].argv
-    assert steps[2].argv[:2] == ("publish", "weekly")
+    assert [s.name for s in steps] == ["check-plan", "rebuild-pinned", "rebuild-refreshed", "check"]
+    assert steps[0].argv == ("text", "check-plan", "--plan", str(tmp_path / "plan.parquet"))
+    assert "--pinned-from" in steps[1].argv
+    assert "--pinned-from" not in steps[2].argv
+    assert steps[3].argv[:2] == ("publish", "weekly")
     alerts = Alerts()
     status = run_job(
         "weekly",

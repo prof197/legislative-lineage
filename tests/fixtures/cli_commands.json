@@ -4785,6 +4785,24 @@
   "help": "The text layer: bill text fetched from the source.",
   "params": []
  },
+ "lineage text check-plan": {
+  "help": "Fail unless the stored fetch plan was built from the code checked out (or none is\nstored); the weekly job's first step.",
+  "params": [
+   {
+    "default": "<data>/text/plan.parquet",
+    "flag": false,
+    "help": "Fetch plan Parquet (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "plan",
+    "opts": [
+     "--plan"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
  "lineage text fetch": {
   "help": "Fetch every planned record's text, as rules/text_layer.toml says; resumable.",
   "params": [

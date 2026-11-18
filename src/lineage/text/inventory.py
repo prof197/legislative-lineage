@@ -98,6 +98,19 @@ def load_plan(
     return queries.fetch_plan(con, path=path)
 
 
+def check_plan(path: Path = PLAN) -> str | None:
+    """Why the stored plan would be refused, or None: it was built from the code and inputs
+    checked out, or no plan is stored, in which case the merge reads the export's text alone.
+    The weekly job asks this first, so a stale plan stops it before hours of rebuilding."""
+    if not path.exists():
+        return None
+    with db.connect_quiet() as con:
+        stored = queries.fetch_plan_fingerprint(con, path=path)
+    if stored == plan_fingerprint():
+        return None
+    return f"{path} was built from other code or inputs than these; run `{COMMAND}` again"
+
+
 def _versions(raw: list[dict[str, Any]]) -> list[Version]:
     out: list[Version] = []
     for v in raw:
@@ -235,9 +248,8 @@ def build_inventory(
         del records
         plan_path.parent.mkdir(parents=True, exist_ok=True)
         columns = {c: [r[c] for r in rows] for c in PLAN_COLUMNS}
-        queries.write_fetch_plan(
-            con, columns=columns, path=plan_path, fingerprint=plan_fingerprint()
-        )
+        fingerprint = plan_fingerprint()
+        queries.write_fetch_plan(con, columns=columns, path=plan_path, fingerprint=fingerprint)
     origins = {
         _origin(url)
         for r in rows
@@ -250,7 +262,8 @@ def build_inventory(
     for scheme, host in sorted(origins):
         schemes[host] = "https" if "https" in (schemes.get(host), scheme) else scheme
     robots = {host: read(scheme, host) for host, scheme in sorted(schemes.items())}
-    doc: dict[str, Any] = {"command": COMMAND, "plan": str(plan_path)}
+    # The fingerprint the plan was written with, so CI can tell code that would refuse it.
+    doc: dict[str, Any] = {"command": COMMAND, "plan": str(plan_path), "fingerprint": fingerprint}
     totals = Counter(
         f"{'without_text' if r['kind'] != 'usable' else 'with_text'}:{r['outcome']}" for r in rows
     )

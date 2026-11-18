@@ -12,11 +12,12 @@ from lineage.cli.app import (
     TablesOption,
     app,
     exits_on,
+    fail,
     text_app,
 )
 from lineage.core.disk import GiB, InsufficientDiskSpaceError
 from lineage.core.paths import DATA
-from lineage.text.inventory import PLAN, REPORT, StalePlanError, build_inventory
+from lineage.text.inventory import PLAN, REPORT, StalePlanError, build_inventory, check_plan
 from lineage.text.merge import merge_texts
 from lineage.text.quality import REPORT as QUALITY
 from lineage.text.quality import STORE, run_sample
@@ -41,6 +42,16 @@ def split(
         f"text; {result.by_heading:,} split at headings -> {tables / 'sections'} "
         f"({result.output_bytes / GiB:.2f} GiB, {result.seconds:.0f}s)"
     )
+
+
+@text_app.command("check-plan")
+def text_check_plan(plan: PlanOption = PLAN) -> None:
+    """Fail unless the stored fetch plan was built from the code checked out (or none is
+    stored); the weekly job's first step."""
+    problem = check_plan(plan)
+    if problem is not None:
+        fail(f"error: {problem}")
+    typer.echo(f"{plan}: built from this code" if plan.exists() else f"{plan}: none stored")
 
 
 @text_app.command("inventory")

@@ -55,6 +55,7 @@ def _cli_runner(root: Path) -> Callable[[Step], Outcome]:
                     "--text-plan", str(no_plan), "--max-share", REFRESHED_SHARE, "--workers", "1",
                     "--min-free-gib", "0"],
         "publish": ["--model", FAKE_MODEL],
+        "text": [],
     }  # fmt: skip
 
     def run(step: Step) -> Outcome:
@@ -73,11 +74,13 @@ def test_the_weekly_job_rebuilds_twice_and_the_updated_tables_agree(
         pinned=tmp_path / "rebuild" / "pinned",
         refreshed=tmp_path / "rebuild" / "refreshed",
         report=tmp_path / "weekly.json",
+        plan=tmp_path / "no-plan.parquet",  # none stored: the merge reads the export's text
     )
     shutil.copytree(rec.tables[3], paths.tables, symlinks=False)
     alerts = Alerts()
     steps = weekly_job_steps(paths)
     assert [(s.name, s.day) for s in steps] == [
+        ("check-plan", D3),
         ("rebuild-pinned", D3),
         ("rebuild-refreshed", D3),
         ("check", D3),
@@ -102,7 +105,8 @@ def test_the_weekly_job_rebuilds_twice_and_the_updated_tables_agree(
     assert refreshed["vectors"]["shards_embedded"] == 0
     saved = json.loads((tmp_path / "s" / STATUS_FILE).read_text())
     assert saved["ok"] is True
-    assert saved["steps"][0]["argv"][:2] == ["lineage", "rebuild"]
+    assert saved["steps"][0]["argv"][:3] == ["lineage", "text", "check-plan"]
+    assert saved["steps"][1]["argv"][:2] == ["lineage", "rebuild"]
 
 
 def test_the_weekly_job_has_nothing_to_rebuild_before_any_day_is_applied(

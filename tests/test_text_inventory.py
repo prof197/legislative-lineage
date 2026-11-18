@@ -5,12 +5,15 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from typer.testing import CliRunner
 
+from lineage.cli import app
 from lineage.core import db
 from lineage.core.robots import Robots, parse_robots
 from lineage.text.inventory import (
     StalePlanError,
     build_inventory,
+    check_plan,
     load_plan,
     plan_fingerprint,
     plan_row,
@@ -82,6 +85,33 @@ def test_a_plan_built_from_other_code_or_inputs_is_refused(corpus: Path, tmp_pat
         assert len(load_plan(con, plan)) > 0
         with pytest.raises(StalePlanError):
             load_plan(con, plan, expected="0" * 64)
+
+
+def test_the_plan_check_passes_a_plan_from_this_code_and_none_stored(
+    corpus: Path, tmp_path: Path
+) -> None:
+    plan, report = tmp_path / "plan.parquet", tmp_path / "inventory.json"
+    assert check_plan(plan) is None  # none stored: the merge reads the export's text alone
+    doc = build_inventory(corpus, plan_path=plan, report_path=report, read=_robots)
+    assert doc["fingerprint"] == plan_fingerprint()
+    assert check_plan(plan) is None
+
+    runner = CliRunner()
+    ok = runner.invoke(app, ["text", "check-plan", "--plan", str(plan)])
+    assert ok.exit_code == 0, ok.output
+
+
+def test_the_plan_check_fails_fast_on_a_plan_from_other_code(tmp_path: Path) -> None:
+    plan = tmp_path / "plan.parquet"
+    with db.connect_quiet() as con:
+        con.execute(f"COPY (SELECT 'a' AS id) TO '{plan}' (FORMAT parquet)")
+    problem = check_plan(plan)
+    assert problem is not None
+    assert "uv run lineage text inventory" in problem
+
+    stale = CliRunner().invoke(app, ["text", "check-plan", "--plan", str(plan)])
+    assert stale.exit_code == 1
+    assert "built from other code or inputs" in stale.output
 
 
 def test_a_plan_without_a_fingerprint_is_refused(tmp_path: Path) -> None:

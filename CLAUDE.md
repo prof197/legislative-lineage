@@ -70,6 +70,7 @@ uv run lineage intake       # one day of new and changed bills from Open States'
 uv run lineage intake-estimate  # the API requests a January day needs, against each tier, from the snapshot; no network -> reports/intake_estimate.json
 uv run lineage update --day DIR  # apply one day's new and changed records -> data/changes/<as_of>.jsonl and the tables in place, held to a full rebuild over the same days
 uv run lineage rebuild --out DIR [--pinned-from TABLES]  # the folded days laid over the snapshot's archives, the whole pipeline run again, statistics pinned from tables at the same day or counted afresh, vectors reused for the same texts -> DIR, DIR.build/rebuild.json
+uv run lineage text check-plan  # fail unless the stored fetch plan was built from the code checked out (or none is stored); the weekly job's first step
 uv run lineage text inventory  # version to fetch per record, by host, robots.txt read -> data/text/plan.parquet, reports/text_inventory.json
 uv run lineage text sample   # quality test: fetch a seeded sample per state and format -> data/text/sample/, reports/text_quality.json
 uv run lineage text fetch    # fetch every planned record as rules/text_layer.toml says, California from its bulk download; resumable -> data/text/full/, reports/text_fetch.json

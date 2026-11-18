@@ -232,7 +232,13 @@ def test_the_weekly_job_prepares_a_candidate_before_session_and_a_review_during_
     before = weekly_job_steps(
         paths, state="GA", site_url=SITE, day=D3, rules=_rules(date(2027, 1, 11))
     )
-    assert [s.name for s in before] == ["rebuild-pinned", "rebuild-refreshed", "check", "candidate"]
+    assert [s.name for s in before] == [
+        "check-plan",
+        "rebuild-pinned",
+        "rebuild-refreshed",
+        "check",
+        "candidate",
+    ]
     candidate = before[-1].argv
     assert candidate[:2] == ("publish", "candidate")
     assert ("--export", str(tmp_path / "export" / "GA")) == candidate[
@@ -248,6 +254,7 @@ def test_the_weekly_job_prepares_a_candidate_before_session_and_a_review_during_
     assert review[review.index("--through") + 1] == DAYS[2]
     # Without a state the job is the rebuilds and the check alone, as before.
     assert [s.name for s in weekly_job_steps(paths)] == [
+        "check-plan",
         "rebuild-pinned",
         "rebuild-refreshed",
         "check",
