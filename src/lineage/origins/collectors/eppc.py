@@ -306,9 +306,7 @@ def clean_model_text(raw: str) -> str:
     page furniture, footnotes, alternative markers, commentary, back matter or instructions to
     the drafter."""
     lines = drop_instructions(raw.replace("\r\n", "\n").replace("\r", "\n")).split("\n")
-    start = next((i for i, line in enumerate(lines) if is_heading(line)), None)
-    if start is None:
-        raise ModelTextError("no part or section heading: is this the model's text?")
+    start = _first_heading(lines)
     kept: list[str] = []
     marks: set[str] = set()  # footnote numbers marked so far; a footnote must have been marked
     commentary = footnote = False
@@ -324,27 +322,40 @@ def clean_model_text(raw: str) -> str:
             continue
         elif _COMMENTARY.match(line):
             commentary = True
-        elif (
-            (note := _FOOTNOTE.match(line))
-            and note[1] in marks
-            and _footer_comes_first(lines, i + 1)
-        ):
+        elif _opens_footnote(lines, i, marks):
             footnote = True
-        if (
-            commentary
-            or footnote
-            or _ALTERNATIVE.match(line)
-            or _CONTENTS_ENTRY.search(line)
-            or _BARE_ITEM.match(line)
-        ):
+        if commentary or footnote or _never_kept(line):
             continue
-        line = line.strip()
-        if mark := _FOOTNOTE_MARK.search(line):
-            marks.add(mark[1])
-            line = line[: mark.start()]
-        if line:
-            kept.append(line)
+        if text := _unmarked(line, marks):
+            kept.append(text)
     return "\n".join(kept) + "\n"
+
+
+def _first_heading(lines: Sequence[str]) -> int:
+    start = next((i for i, line in enumerate(lines) if is_heading(line)), None)
+    if start is None:
+        raise ModelTextError("no part or section heading: is this the model's text?")
+    return start
+
+
+def _opens_footnote(lines: Sequence[str], i: int, marks: set[str]) -> bool:
+    """Whether line `i` opens a footnote: its number marked before, a page footer after it."""
+    note = _FOOTNOTE.match(lines[i])
+    return note is not None and note[1] in marks and _footer_comes_first(lines, i + 1)
+
+
+def _never_kept(line: str) -> bool:
+    """An alternative's marker, a contents entry, or an item's number left bare."""
+    return bool(_ALTERNATIVE.match(line) or _CONTENTS_ENTRY.search(line) or _BARE_ITEM.match(line))
+
+
+def _unmarked(line: str, marks: set[str]) -> str:
+    """`line` stripped and without a footnote mark at its end, whose number joins `marks`."""
+    line = line.strip()
+    if mark := _FOOTNOTE_MARK.search(line):
+        marks.add(mark[1])
+        line = line[: mark.start()]
+    return line
 
 
 def _footer_comes_first(lines: Sequence[str], start: int) -> bool:
