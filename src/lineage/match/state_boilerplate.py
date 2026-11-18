@@ -18,7 +18,6 @@ recall cannot measure, so it is measured on the precision sample with the flag o
 """
 
 import json
-import shutil
 import time
 from collections import Counter
 from collections.abc import Sequence
@@ -33,8 +32,14 @@ from lineage.core.disk import require_free_space
 from lineage.core.memory import BOUND_BYTES, peak_bytes, require_within
 from lineage.match import queries
 from lineage.match.near import queries as near_queries
-from lineage.match.near.pairs import load_cross_state_pairs, load_families, load_same_state_pairs
-from lineage.match.semantic.pairs import load_semantic_pairs, section_keys
+from lineage.match.near.dirs import rebuild_dir
+from lineage.match.near.pairs import (
+    SectionPairs,
+    load_cross_state_pairs,
+    load_families,
+    load_same_state_pairs,
+)
+from lineage.match.semantic.pairs import SemanticPairs, load_semantic_pairs, section_keys
 from lineage.match.semantic.stage import BUILD_THRESHOLD, MODEL
 from lineage.match.strata import stored_strata
 
@@ -120,6 +125,63 @@ def _histogram(counts: NDArray[np.int64]) -> list[dict[str, Any]]:
     return out
 
 
+def _store_counts(tables_dir: Path, counts: NDArray[np.int64], *, floor_bytes: int) -> None:
+    where = _where(tables_dir)
+    require_free_space(where.parent, needed=counts.size * 8 + (1 << 20), floor=floor_bytes)
+    rebuild_dir(where, lambda d: np.save(d / "families_reached.npy", counts))
+
+
+def _sweep_at(
+    counts: NDArray[np.int64], threshold: int, near: SectionPairs, meaning: SemanticPairs
+) -> dict[str, Any]:
+    """What the flag at `threshold` families would flag, and the cross-state pairs it drops."""
+    flag = flagged(counts, threshold)
+    return {
+        "min_families": threshold,
+        "sections": int(flag.sum()),
+        "cross_state_pairs_dropped": {
+            "near_duplicate": int(_touched(near.left, near.right, flag).sum()),
+            "semantic": int(_touched(meaning.left, meaning.right, flag).sum()),
+        },
+    }
+
+
+def _compact_counts(
+    tables_dir: Path, bills: Sequence[str], ordinals: NDArray[np.int64], counts: NDArray[np.int64]
+) -> NDArray[np.int64]:
+    """The counts of the sections that name a compact (COMPACT_PHRASES)."""
+    with db.connect_quiet() as con:
+        named = queries.sections_naming(
+            con,
+            sections_glob=str(tables_dir / "sections" / "*.parquet"),
+            phrases=COMPACT_PHRASES,
+        )
+    number = {(b, int(o)): s for s, (b, o) in enumerate(zip(bills, ordinals.tolist(), strict=True))}
+    return counts[[number[k] for k in named if k in number]]
+
+
+def _compact_report(compact: NDArray[np.int64], thresholds: list[int]) -> dict[str, Any]:
+    return {
+        "phrases": COMPACT_PHRASES,
+        "sections": int(compact.size),
+        "quantiles": {
+            q: int(np.quantile(compact, float(q))) if compact.size else 0
+            for q in ("0.5", "0.9", "0.99")
+        },
+        "flagged": {str(t): int((compact >= t).sum()) for t in thresholds},
+    }
+
+
+def _strata_sizes(tables_dir: Path, model: str, flag: NDArray[np.bool_]) -> dict[str, Any]:
+    """The precision sample's strata sizes, with the flag off and on."""
+    return {
+        "flag_off": {n: int(k.size) for n, k in stored_strata(tables_dir, model=model).items()},
+        "flag_on": {
+            n: int(k.size) for n, k in stored_strata(tables_dir, model=model, dropped=flag).items()
+        },
+    }
+
+
 def build_state_boilerplate(
     tables_dir: Path,
     *,
@@ -138,16 +200,7 @@ def build_state_boilerplate(
     counts = families_reached(family, same.left, same.right)
     del same
     require_within(bound_bytes, "counting the families each section reaches")
-    where = _where(tables_dir)
-    require_free_space(where.parent, needed=counts.size * 8 + (1 << 20), floor=floor_bytes)
-    building = where.with_name(where.name + ".building")
-    if building.exists():
-        shutil.rmtree(building)
-    building.mkdir(parents=True)
-    np.save(building / "families_reached.npy", counts)
-    if where.exists():
-        shutil.rmtree(where)
-    building.rename(where)
+    _store_counts(tables_dir, counts, floor_bytes=floor_bytes)
 
     near = load_cross_state_pairs(tables_dir)
     meaning = load_semantic_pairs(tables_dir, model, threshold=BUILD_THRESHOLD)
@@ -156,35 +209,12 @@ def build_state_boilerplate(
             con, bills_glob=str(tables_dir / "bills" / "*.parquet")
         )
     states = [state_of_bill[b] for b in bills]
-
-    def at(threshold: int) -> dict[str, Any]:
-        flag = flagged(counts, threshold)
-        return {
-            "min_families": threshold,
-            "sections": int(flag.sum()),
-            "cross_state_pairs_dropped": {
-                "near_duplicate": int(_touched(near.left, near.right, flag).sum()),
-                "semantic": int(_touched(meaning.left, meaning.right, flag).sum()),
-            },
-        }
-
-    with db.connect_quiet() as con:
-        named = queries.sections_naming(
-            con,
-            sections_glob=str(tables_dir / "sections" / "*.parquet"),
-            phrases=COMPACT_PHRASES,
-        )
-    number = {(b, int(o)): s for s, (b, o) in enumerate(zip(bills, ordinals.tolist(), strict=True))}
-    compact = counts[[number[k] for k in named if k in number]]
+    compact = _compact_counts(tables_dir, bills, ordinals, counts)
     flag = flagged(counts, min_families)
-    sizes = {
-        "flag_off": {n: int(k.size) for n, k in stored_strata(tables_dir, model=model).items()},
-        "flag_on": {
-            n: int(k.size) for n, k in stored_strata(tables_dir, model=model, dropped=flag).items()
-        },
-    }
+    sizes = _strata_sizes(tables_dir, model, flag)
     at_flag: list[int] = np.flatnonzero(flag).tolist()
     by_state = Counter(states[i] for i in at_flag).most_common()
+    thresholds = sorted({*SWEEP, min_families})
     return {
         "command": COMMAND,
         "min_families": min_families,
@@ -195,16 +225,8 @@ def build_state_boilerplate(
             q: int(np.quantile(counts[counts > 0], float(q))) if (counts > 0).any() else 0
             for q in ("0.5", "0.9", "0.99", "0.999")
         },
-        "sweep": [at(t) for t in sorted({*SWEEP, min_families})],
-        "compact_sections": {
-            "phrases": COMPACT_PHRASES,
-            "sections": int(compact.size),
-            "quantiles": {
-                q: int(np.quantile(compact, float(q))) if compact.size else 0
-                for q in ("0.5", "0.9", "0.99")
-            },
-            "flagged": {str(t): int((compact >= t).sum()) for t in sorted({*SWEEP, min_families})},
-        },
+        "sweep": [_sweep_at(counts, t, near, meaning) for t in thresholds],
+        "compact_sections": _compact_report(compact, thresholds),
         # The precision sample's strata in the build, as the estimate weights them.
         "precision_strata": sizes,
         "flagged_by_state": [{"state": s, "sections": n} for s, n in by_state[:LARGEST_LISTED]],

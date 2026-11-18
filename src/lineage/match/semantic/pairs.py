@@ -35,6 +35,7 @@ from numpy.typing import NDArray
 from lineage.core import db
 from lineage.core.disk import require_free_space
 from lineage.core.memory import BOUND_BYTES, peak_bytes, require_within
+from lineage.match.near.dirs import rebuild_dir
 from lineage.match.near.signatures import open_signatures, row_labels
 from lineage.match.semantic import queries
 from lineage.match.semantic.stage import BUILD_THRESHOLD, MODEL, THRESHOLD, K
@@ -99,17 +100,6 @@ def _kept_neighbors(tables_dir: Path, model: str, k: int, threshold: float) -> d
     return {"a": a, "b": b, "cosine": cosine}
 
 
-def _replace_dir(final: Path, write: Any) -> None:
-    building = final.with_name(final.name + ".building")
-    if building.exists():
-        shutil.rmtree(building)
-    building.mkdir(parents=True)
-    write(building)
-    if final.exists():
-        shutil.rmtree(final)
-    building.rename(final)
-
-
 def build_semantic_pairs(
     tables_dir: Path,
     *,
@@ -163,7 +153,7 @@ def build_semantic_pairs(
         doc = fingerprint(model, k=k, threshold=threshold)
         (dest / "fingerprint.json").write_text(json.dumps(doc, indent=1) + "\n")
 
-    _replace_dir(final, write)
+    rebuild_dir(final, write)
     shared = int((pairs.cosine >= 1.0 - _FLOAT16_STEP).sum())
     return {
         "command": COMMAND,

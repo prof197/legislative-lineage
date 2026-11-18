@@ -19,3 +19,16 @@ def replace_dir(final: Path, write: Callable[[Path], None]) -> None:
     except BaseException:
         shutil.rmtree(building, ignore_errors=True)
         raise
+
+
+def rebuild_dir(final: Path, write: Callable[[Path], None]) -> None:
+    """Write a table into `<final>.building`, cleared first, then swap it in; a failed write
+    leaves it there for the next build to clear."""
+    building = final.with_name(final.name + ".building")
+    if building.exists():
+        shutil.rmtree(building)
+    building.mkdir(parents=True)
+    write(building)
+    if final.exists():
+        shutil.rmtree(final)
+    building.rename(final)
