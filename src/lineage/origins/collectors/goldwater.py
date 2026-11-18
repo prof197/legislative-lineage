@@ -25,9 +25,9 @@ Cleaning (`clean_text`) keeps what a state would enact: from the first enacting 
 relating to ...", "Section 1.", "Be it enacted"), so a title page or an FAQ set before the bill
 goes; the package's "Proposal 2: ..." labels between its bills go; page numbers go; a drafting
 note or commentary goes up to the next blank line, section or numbered provision; bracketed
-instructions go as `lineage.modeltext` drops them, and with them this library's "[appropriate
-section of the state code]", which names a citation for the drafter to supply. Placeholders a
-state fills in as written, "[STATE]" and "[20XX]", stay.
+instructions go as `lineage.origins.modeltext` drops them, and with them this library's
+"[appropriate section of the state code]", which names a citation for the drafter to supply.
+Placeholders a state fills in as written, "[STATE]" and "[20XX]", stay.
 
 Fetching is on (`SITE_FETCH`): read on 2026-11-15, robots.txt disallows nothing for any agent,
 the terms ask no visitor to accept them and say nothing of automated reading, and the texts are
@@ -41,8 +41,8 @@ from datetime import date, datetime
 from html.parser import HTMLParser
 from pathlib import Path
 
-from lineage.collect import CollectContext, CollectReport
-from lineage.collect_base import (
+from lineage.origins.collect import CollectContext, CollectReport
+from lineage.origins.collect_base import (
     CollectFetchError,
     Collection,
     Fetch,
@@ -53,8 +53,8 @@ from lineage.collect_base import (
     read_robots,
     slugify,
 )
-from lineage.modeldocs import Source
-from lineage.modeltext import ModelTextError, docx_text, drop_instructions
+from lineage.origins.modeldocs import Source
+from lineage.origins.modeltext import ModelTextError, docx_text, drop_instructions
 from lineage.text.extract import ExtractError, pdf_text
 
 SITE = "https://www.goldwaterinstitute.org"

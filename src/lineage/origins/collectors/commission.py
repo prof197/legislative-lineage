@@ -27,18 +27,6 @@ from datetime import date
 from html.parser import HTMLParser
 from pathlib import Path
 
-from lineage.collect import CollectContext, CollectReport
-from lineage.collect_base import (
-    CollectFetchError,
-    Collection,
-    Fetch,
-    Fetched,
-    ReadRobots,
-    fetch_url,
-    provenance,
-    read_robots,
-    slugify,
-)
 from lineage.evals.acts import (
     ACT_NAMES,
     ACTS,
@@ -49,8 +37,20 @@ from lineage.evals.acts import (
     ActTextError,
 )
 from lineage.evals.ulc import ENACTMENTS, HELD_OUT_ENACTMENTS, load_enactments
-from lineage.modeldocs import Source
-from lineage.modeltext import ModelTextError, clean_act, docx_text
+from lineage.origins.collect import CollectContext, CollectReport
+from lineage.origins.collect_base import (
+    CollectFetchError,
+    Collection,
+    Fetch,
+    Fetched,
+    ReadRobots,
+    fetch_url,
+    provenance,
+    read_robots,
+    slugify,
+)
+from lineage.origins.modeldocs import Source
+from lineage.origins.modeltext import ModelTextError, clean_act, docx_text
 from lineage.text.extract import ExtractError, pdf_text
 
 SITE = "https://www.uniformlaws.org"

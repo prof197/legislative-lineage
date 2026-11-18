@@ -13,7 +13,7 @@ export const INCLUSION_RULE =
 
 export const LEAKED_LABEL = "Leaked";
 
-// The sources page's line on a library's withheld documents (lineage.withheld, ruled at the
+// The sources page's line on a library's withheld documents (lineage.origins.withheld, ruled at the
 // deploy review): what is held back, from where, and why, without naming it a fault of the library.
 // Two reasons: the labels found most of its matches wrong, resting on generic text; or the
 // maintainer did, reviewing a day's new matches before they were published.

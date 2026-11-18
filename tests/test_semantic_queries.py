@@ -9,6 +9,7 @@ from lineage.core import db
 from lineage.data import queries as data_queries
 from lineage.match import queries as match_queries
 from lineage.match.near import queries as near_queries
+from lineage.origins import queries as origins_queries
 from lineage.text import queries as text_queries
 
 # id: (state, session, identifier, title, sections as (text, boilerplate), eligible, family)
@@ -67,7 +68,7 @@ def test_only_eligible_non_boilerplate_sections_count(tables: Path) -> None:
     with db.connect_quiet() as con:
         words = match_queries.section_word_counts(con, sections_glob=glob, eligible_path=eligible)
         ids = queries.matchable_bill_ids(con, sections_glob=glob, eligible_path=eligible)
-        texts = queries.matchable_section_texts(
+        texts = origins_queries.matchable_section_texts(
             con, sections_glob=glob, eligible_path=eligible, ids=["b4", "b5"]
         )
 

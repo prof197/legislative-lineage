@@ -22,7 +22,7 @@
 The stoplist and the state boilerplate flag are the base build's, never recounted (DR-7): a
 new section takes no flag until the next full build counts it. Where the tables hold origin
 matches, the model documents are matched again over the updated tables with `lineage
-origins`' own matching (lineage.origin_matching), and the differences logged.
+origins`' own matching (lineage.origins.matching), and the differences logged.
 
 Every table is written into a staging view of the tables, in which an unchanged file is a link
 to the one in place. The view replaces the tables only once everything is built and the day's
@@ -105,7 +105,12 @@ from lineage.match.semantic.vectors import (
     vectors_dir,
     write_plan,
 )
-from lineage.origins import OriginMatch, origins_path, read_origin_matches, write_origin_matches
+from lineage.origins.matches import (
+    OriginMatch,
+    origins_path,
+    read_origin_matches,
+    write_origin_matches,
+)
 from lineage.text import queries as text_queries
 from lineage.text.boilerplate import boilerplate_kind
 from lineage.text.sections import normalize, split_sections
@@ -177,9 +182,9 @@ OriginMatcher = Callable[[Path], list[OriginMatch]]
 
 def _default_origins(model: str, floor_bytes: int) -> OriginMatcher:
     def match(tables_dir: Path) -> list[OriginMatch]:
-        from lineage.collect import collectors
-        from lineage.modeldocs import MODELDOCS_DIR, read_docs
-        from lineage.origin_matching import match_models
+        from lineage.origins.collect import collectors
+        from lineage.origins.matching import match_models
+        from lineage.origins.modeldocs import MODELDOCS_DIR, read_docs
 
         docs = [d for c in collectors().values() for d in read_docs(c.source, MODELDOCS_DIR)]
         return match_models(

@@ -58,6 +58,8 @@ from pydantic import BaseModel, ConfigDict
 from lineage.core.paths import DATA
 from lineage.export_schema import Meta, Release
 from lineage.feed import listed_origin
+from lineage.origins.withheld import REPORT as WITHHELD_REPORT
+from lineage.origins.withheld import load_withheld
 from lineage.release import (
     RELEASE_MANIFEST,
     Checksums,
@@ -68,8 +70,6 @@ from lineage.release import (
     write_release_manifest,
 )
 from lineage.updates import Change, OriginGained, OriginLost, read_changes
-from lineage.withheld import REPORT as WITHHELD_REPORT
-from lineage.withheld import load_withheld
 
 RULES = Path("rules/deploy.toml")
 DEPLOY_DIR = DATA / "deploy"
@@ -1110,8 +1110,8 @@ def document_names(
     modeldocs_root: Path | None = None, collector_package: str | None = None
 ) -> dict[str, dict[str, Any]]:
     """Each collected model document's title and the organization whose library holds it."""
-    from lineage.collect import PACKAGE, collectors
-    from lineage.modeldocs import MODELDOCS_DIR, read_docs
+    from lineage.origins.collect import PACKAGE, collectors
+    from lineage.origins.modeldocs import MODELDOCS_DIR, read_docs
 
     root = modeldocs_root if modeldocs_root is not None else MODELDOCS_DIR
     return {

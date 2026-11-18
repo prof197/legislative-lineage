@@ -27,7 +27,7 @@ from lineage.match.listing import shipped_flag
 from lineage.match.near.pairs import load_families
 from lineage.match.relatives import bill_relatives
 from lineage.match.semantic.stage import MODEL
-from lineage.origins import read_origin_matches
+from lineage.origins.matches import read_origin_matches
 
 DAY_FILE = "day.json"
 BILLS_SUFFIX = "_bills.json"
@@ -211,7 +211,7 @@ class RelativeLost(_Change):
 
 
 class OriginGained(_Change):
-    """A bill found to share wording with a published model document (lineage.origins)."""
+    """A bill found to share wording with a published model document (lineage.origins.matches)."""
 
     kind: Literal["origin_gained"] = "origin_gained"
     doc_id: str

@@ -114,7 +114,7 @@ def test_searching_in_passes_finds_what_one_pass_finds(
     corpus: Path, search: SemanticSearch, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     # A collection of model documents is searched at once, a pass over the vectors per
-    # WINDOWS_PER_PASS windows (lineage.origin_matching).
+    # WINDOWS_PER_PASS windows (lineage.origins.matching).
     with db.connect_quiet() as con:
         rows = con.execute(
             "SELECT text FROM read_parquet($p) ORDER BY bill_id, ordinal LIMIT 40",

@@ -1,10 +1,11 @@
-"""The collector registry: one module per source under `lineage.collectors`, found by name.
+"""The collector registry: one module per source under `lineage.origins.collectors`, found by name.
 
-A collector module declares `SOURCE`, its `lineage.modeldocs.Source`, and `collect(context)`,
-which stores what it finds through `lineage.modeldocs.store` and returns a `CollectReport`. The
-registry imports every module in the package, so a new source is a new file and nothing shared
-is edited. Every request goes through `lineage.core.http.open_url` and its pacing, and a URL that
-robots.txt disallows is reported, never worked around. See DESIGN.md#model-documents.
+A collector module declares `SOURCE`, its `lineage.origins.modeldocs.Source`, and
+`collect(context)`, which stores what it finds through `lineage.origins.modeldocs.store` and returns
+a `CollectReport`. The registry imports every module in the package, so a new source is a new file
+and nothing shared is edited. Every request goes through `lineage.core.http.open_url` and its
+pacing, and a URL that robots.txt disallows is reported, never worked around. See
+DESIGN.md#model-documents.
 
 See DESIGN.md#dr-10.
 """
@@ -20,9 +21,9 @@ from typing import Self, cast
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from lineage.modeldocs import MODELDOCS_DIR, Source
+from lineage.origins.modeldocs import MODELDOCS_DIR, Source
 
-PACKAGE = "lineage.collectors"
+PACKAGE = "lineage.origins.collectors"
 REPORTS_DIR = Path("reports/modeldocs")
 
 
@@ -32,7 +33,7 @@ class CollectError(Exception):
 
 @dataclass(frozen=True, slots=True)
 class CollectContext:
-    root: Path = MODELDOCS_DIR  # lineage.modeldocs stores under root/<source>/
+    root: Path = MODELDOCS_DIR  # lineage.origins.modeldocs stores under root/<source>/
     on: date = field(default_factory=date.today)
     floor_bytes: int = 0
 

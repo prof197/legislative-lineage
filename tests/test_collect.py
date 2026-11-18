@@ -9,7 +9,7 @@ from pydantic import ValidationError
 from typer.testing import CliRunner
 
 from lineage.cli import app
-from lineage.collect import (
+from lineage.origins.collect import (
     CollectContext,
     CollectError,
     CollectReport,

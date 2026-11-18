@@ -39,6 +39,7 @@ from lineage.core import db
 from lineage.core.paths import DATA
 from lineage.match.semantic.embed import BATCH_SIZE, embed, load_model
 from lineage.match.semantic.models import MODELS
+from lineage.origins import queries as origins_queries
 from lineage.text.windows import WINDOW_WORDS, display_windows
 
 SEED = 20261109
@@ -59,7 +60,7 @@ def sample_windows(rng: np.random.Generator) -> list[str]:
     with db.connect_quiet() as con:
         ids = queries.matchable_bill_ids(con, sections_glob=sections_glob, eligible_path=eligible)
         picked: list[str] = sorted(rng.choice(ids, size=SAMPLE_BILLS, replace=False).tolist())
-        rows = queries.matchable_section_texts(
+        rows = origins_queries.matchable_section_texts(
             con, sections_glob=sections_glob, eligible_path=eligible, ids=picked
         )
     windows = sorted(

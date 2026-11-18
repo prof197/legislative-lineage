@@ -3,9 +3,9 @@
 Ruled at the deploy review (2026-11-17), for every source alike: a document with at least
 MIN_LABELED labeled matches, fewer than half of them judged correct, is withheld from bill pages,
 the feed and the origin story until a fix lands. A labeled match is one a page lists (at the
-floor, lineage.origins.is_listed) whose strongest section pair a label under the current prompt
-answers, from whichever sample drew it (lineage.origin_labels.correct_by_sections), so a label on
-sections the match no longer rests on does not count. The sources page names each withheld
+floor, lineage.origins.matches.is_listed) whose strongest section pair a label under the current
+prompt answers, from whichever sample drew it (lineage.origins.labels.correct_by_sections), so a
+label on sections the match no longer rests on does not count. The sources page names each withheld
 document and why: its matches rest on generic text.
 
 The withheld set is a committed report, written by `lineage withhold` after matching changes,
@@ -28,9 +28,9 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Literal
 
-from lineage.modeldocs import MODELDOCS_DIR, ModelDoc
-from lineage.origin_labels import build_items, correct_by_sections
-from lineage.origins import FLOOR, OriginMatch, is_listed
+from lineage.origins.labels import build_items, correct_by_sections
+from lineage.origins.matches import FLOOR, OriginMatch, is_listed
+from lineage.origins.modeldocs import MODELDOCS_DIR, ModelDoc
 
 COMMAND = "uv run lineage withhold"
 REPORT = Path("reports/withheld_documents.json")

@@ -43,8 +43,8 @@ from pathlib import PurePosixPath
 from typing import cast
 from xml.etree import ElementTree
 
-from lineage.collect import CollectContext, CollectReport
-from lineage.collect_base import (
+from lineage.origins.collect import CollectContext, CollectReport
+from lineage.origins.collect_base import (
     CollectFetchError,
     Collection,
     Fetch,
@@ -55,8 +55,8 @@ from lineage.collect_base import (
     read_robots,
     slugify,
 )
-from lineage.modeldocs import Source
-from lineage.modeltext import ModelTextError, docx_text, drop_instructions
+from lineage.origins.modeldocs import Source
+from lineage.origins.modeltext import ModelTextError, docx_text, drop_instructions
 from lineage.text.extract import ExtractError, html_text, pdf_text
 
 SITE = "https://alec.org"
@@ -155,8 +155,8 @@ _NOTE_LINE = re.compile(
     r"^\s*[\[{(]?\s*(?:(?:drafting|legislative|editor'?s?)\s+notes?\b|notes?\s*:)", re.I
 )
 # Instructions to the drafter in braces, as ALEC also writes them, with the commission's words
-# (lineage.modeltext) and "reference", which ALEC uses: "{insert state}", "[reference any state
-# compulsory insurance law]", and the older policies' "{Title, enacting clause, etc.}". Braced
+# (lineage.origins.modeltext) and "reference", which ALEC uses: "{insert state}", "[reference any
+# state compulsory insurance law]", and the older policies' "{Title, enacting clause, etc.}". Braced
 # captions such as "{Title}" or "{Definitions}" are enacted headings and stay.
 _WORDS = (
     r"(?:(?:cite|citation|insert|specify|identify|describe|enter|appropriate|reference)\b"

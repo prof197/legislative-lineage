@@ -14,8 +14,9 @@ from typer.testing import CliRunner
 
 from lineage.cli import app
 from lineage.evals import model_labels
-from lineage.modeldocs import ModelDoc, Source, sha256, store
-from lineage.origin_precision import (
+from lineage.origins.matches import FLOOR, BillSpan, OriginMatch, Stage
+from lineage.origins.modeldocs import ModelDoc, Source, sha256, store
+from lineage.origins.precision import (
     FLOORS,
     PARTS,
     RESULTS_SECTIONS,
@@ -38,7 +39,6 @@ from lineage.origin_precision import (
     without_intervals,
     write_part,
 )
-from lineage.origins import FLOOR, BillSpan, OriginMatch, Stage
 
 UTAH_SB_18 = "ocd-bill/7968b9d9-25ee-4684-a92e-c76167d6f917"
 

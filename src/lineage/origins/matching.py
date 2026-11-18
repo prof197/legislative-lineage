@@ -38,7 +38,6 @@ from pathlib import Path
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage import queries
 from lineage.align import Alignment, align
 from lineage.core import db
 from lineage.core.disk import require_free_space
@@ -54,8 +53,9 @@ from lineage.match.semantic.stage import (
     open_search,
     search_sections,
 )
-from lineage.modeldocs import ModelDoc, ModelDocError, load_text
-from lineage.origins import BillSpan, OriginMatch, SectionPair, Stage
+from lineage.origins import queries
+from lineage.origins.matches import BillSpan, OriginMatch, SectionPair, Stage
+from lineage.origins.modeldocs import ModelDoc, ModelDocError, load_text
 from lineage.text.boilerplate import boilerplate_kind
 from lineage.text.generic_sections import (
     MIN_WORDS,
@@ -477,7 +477,7 @@ def match_models(
         (m.model_copy(update={"doc_id": held}) for m in matched for held in first[m.doc_id]),
         key=lambda m: (m.bill_id, m.doc_id),
     )
-    # The caller writes them (lineage.origins.write_origin_matches); this bounds that write.
+    # The caller writes them (lineage.origins.matches.write_origin_matches); this bounds that write.
     needed = sum(len(m.model_dump_json()) + 1 for m in matches)
     require_free_space(tables_dir, needed=needed, floor=floor_bytes)
     return matches

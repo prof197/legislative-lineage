@@ -48,6 +48,7 @@ from lineage.match import queries as match_queries
 from lineage.match.near import queries as near_queries
 from lineage.match.semantic.embed import embed, load_model
 from lineage.match.semantic.models import MODELS, require_model
+from lineage.origins import queries as origins_queries
 from lineage.text.boilerplate import boilerplate_kind
 from lineage.text.sections import normalize, split_sections
 from lineage.text.windows import WINDOW_STRIDE, WINDOW_WORDS, display_windows, window_counts
@@ -311,7 +312,7 @@ def main() -> None:
     others = sorted(set(pool_ids) - enacting - related)
     sample = sorted(rng.choice(others, size=DISTRACTOR_BILLS, replace=False).tolist())
     with db.connect_quiet() as con:
-        sections = queries.matchable_section_texts(
+        sections = origins_queries.matchable_section_texts(
             con,
             sections_glob=sections_glob,
             eligible_path=eligible,

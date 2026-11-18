@@ -4,7 +4,7 @@ An `OriginMatch` gives both shares, of the model's wording found in the bill and
 wording that comes from the model, since a long model a bill borrows one section from and a short
 model a bill copies whole read differently. Spans are kept on the bill's side only: the model's
 text is never shown, so nothing on the site could point into it. `lineage origins` (lane C,
-lineage.origin_matching) writes the table; the export and the snapshot read it. See
+lineage.origins.matching) writes the table; the export and the snapshot read it. See
 DESIGN.md#origin-matches.
 
 See DESIGN.md#dr-9.
@@ -17,7 +17,7 @@ from typing import Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from lineage.modeldocs import ModelDoc
+from lineage.origins.modeldocs import ModelDoc
 
 Stage = Literal["near_duplicate", "semantic"]
 ORIGINS_FILE = Path("origins") / "matches.jsonl"
@@ -42,10 +42,10 @@ class BillSpan(BaseModel):
 class SectionPair(BaseModel):
     """A model section and a bill section a stage matched, with each stage's best evidence: the
     near-duplicate stage's most band agreements of any window pair, and the best cosine by
-    meaning. Precision labels judge a match on its strongest pair (lineage.origin_precision)."""
+    meaning. Precision labels judge a match on its strongest pair (lineage.origins.precision)."""
 
     model_config = ConfigDict(extra="forbid", frozen=True)
-    model_section: int = Field(ge=0)  # lineage.origin_matching.ModelText.display's index
+    model_section: int = Field(ge=0)  # lineage.origins.matching.ModelText.display's index
     ordinal: int = Field(ge=0)
     agreements: int | None = Field(default=None, gt=0)
     cosine: float | None = None
@@ -60,7 +60,7 @@ class SectionPair(BaseModel):
 class OriginMatch(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
     bill_id: str
-    doc_id: str  # lineage.modeldocs.ModelDoc.id
+    doc_id: str  # lineage.origins.modeldocs.ModelDoc.id
     stages: list[Stage] = Field(min_length=1)
     model_share: float = Field(ge=0, le=1)  # of the model's words, the share found in the bill
     bill_share: float = Field(ge=0, le=1)  # of the bill's words, the share from the model

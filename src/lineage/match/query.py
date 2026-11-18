@@ -179,7 +179,7 @@ def require_index(tables_dir: Path) -> None:
 
 def near_duplicate_hits(query: SignedQuery, tables_dir: Path) -> list[NearHit]:
     """(query section, bill id, ordinal, agreements) for every verified window pair. Model
-    documents are matched through it too (lineage.origin_matching)."""
+    documents are matched through it too (lineage.origins.matching)."""
     if not query.signed:
         return []
     query_rows, rows = _candidates(band_keys(query.values), tables_dir)

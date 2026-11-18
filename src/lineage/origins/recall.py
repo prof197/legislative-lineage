@@ -2,8 +2,8 @@
 
 v1's commission eval asks the same question with an act's text as a query
 (lineage.evals.commission); here the act is a collected model document and the answer is the origin
-matches table (lineage.origins), so recall is measured on what the site would list rather than
-on a query run for the eval. The ground truth is a resolved answer key, the shape of
+matches table (lineage.origins.matches), so recall is measured on what the site would list rather
+than on a query run for the eval. The ground truth is a resolved answer key, the shape of
 `reports/answer_key.csv` (lineage.evals.answer_key): one row per bill a commission list row resolved
 to, and the rows not counted with the reason. Resolution is v1's, so the two evals count the
 same enactments.
@@ -30,7 +30,7 @@ from lineage.core.intervals import wilson
 from lineage.evals.answer_key import ANSWER_KEY, HELD_OUT_KEY, ORIGINS_HELD_OUT_KEY, read_answer_key
 from lineage.evals.commission import MIN_SHARE, SHARE_SWEEP
 from lineage.evals.ulc import ULC_STATES, Stratum
-from lineage.origins import FLOOR, OriginMatch, Stage, is_listed
+from lineage.origins.matches import FLOOR, OriginMatch, Stage, is_listed
 
 COMMAND = "uv run lineage eval origins"
 STAGES: tuple[Stage, ...] = ("near_duplicate", "semantic")
@@ -198,11 +198,11 @@ def evaluate(
 ) -> dict[str, Any]:
     """Recall of each act's enactments from the origin matches of the act's documents.
 
-    `docs` names each act's documents (lineage.modeldocs.ModelDoc.id); a source may hold more
-    than one per act, an edition per revision, so any of them finds an enactment. A match finds
-    one only when a page lists it, its larger share at `floor` or above (lineage.origins.FLOOR);
-    one below is a miss below the threshold, its best share kept, so the floor's cost is read
-    among the misses."""
+    `docs` names each act's documents (lineage.origins.modeldocs.ModelDoc.id); a source may hold
+    more than one per act, an edition per revision, so any of them finds an enactment. A match finds
+    one only when a page lists it, its larger share at `floor` or above
+    (lineage.origins.matches.FLOOR); one below is a miss below the threshold, its best share kept,
+    so the floor's cost is read among the misses."""
     acts = sorted({e.act for e in key.enactments})
     missing = [a for a in acts if not docs.get(a)]
     if missing:

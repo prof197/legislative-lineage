@@ -15,12 +15,18 @@ import pytest
 from typer.testing import CliRunner
 
 from lineage.cli import app
-from lineage.collect import CollectContext, CollectReport, collectors
-from lineage.collect_base import Fetched
-from lineage.collectors import ifs
-from lineage.collectors.eppc import DOCX, Listed, clean_model_text, document_text, is_heading
-from lineage.collectors.ifs import DOCUMENTS, IFS, LIBRARY, SITE_FETCH, SOURCE, collect_from
-from lineage.modeldocs import load_text, raw_path, read_docs, read_versions
+from lineage.origins.collect import CollectContext, CollectReport, collectors
+from lineage.origins.collect_base import Fetched
+from lineage.origins.collectors import ifs
+from lineage.origins.collectors.eppc import (
+    DOCX,
+    Listed,
+    clean_model_text,
+    document_text,
+    is_heading,
+)
+from lineage.origins.collectors.ifs import DOCUMENTS, IFS, LIBRARY, SITE_FETCH, SOURCE, collect_from
+from lineage.origins.modeldocs import load_text, raw_path, read_docs, read_versions
 from tests.recorded_site import COLLECT, RecordedSite, docx_bytes
 
 FIXTURES = COLLECT / "ifs"

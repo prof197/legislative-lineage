@@ -16,20 +16,20 @@ from collections import defaultdict
 from datetime import date
 from pathlib import Path
 
-from lineage import queries
-from lineage.collect import collectors
 from lineage.core import db
 from lineage.evals.labels import SAME_PROVISION, text_sha256
 from lineage.export import RESULTS, build_export
 from lineage.match.query import matchable_sections
 from lineage.match.semantic.pairs import build_semantic_pairs
-from lineage.modeldocs import ModelDoc, Source, sha256, store
-from lineage.origin_labels import PROMPT
-from lineage.origins import BillSpan, OriginMatch, SectionPair, write_origin_matches
+from lineage.origins import queries as origins_queries
+from lineage.origins.collect import collectors
+from lineage.origins.labels import PROMPT
+from lineage.origins.matches import BillSpan, OriginMatch, SectionPair, write_origin_matches
+from lineage.origins.modeldocs import ModelDoc, Source, sha256, store
+from lineage.origins.withheld import Tally
+from lineage.origins.withheld import write_report as write_withheld
 from lineage.text.generic_sections import generic_kind
 from lineage.text.sections import normalize
-from lineage.withheld import Tally
-from lineage.withheld import write_report as write_withheld
 from tests.conftest import (
     COMMISSION,
     FAKE_MODEL,
@@ -53,7 +53,8 @@ DRAWN_FROM = {
         "ocd-bill/370e175f-246b-4076-a6b8-62312800299c",  # Utah HB 181 (2026)
         "Model Electronic Estate Planning Documents Act (synthetic fixture)",
     ),
-    # Matched, then withheld (lineage.withheld), so no page lists it and the sources page does.
+    # Matched, then withheld (lineage.origins.withheld), so no page lists it and the sources page
+    # does.
     "example-library/speech-procedures": (
         "ocd-bill/7968b9d9-25ee-4684-a92e-c76167d6f917",  # Utah SB 18 (2023)
         "Model Speech Procedures Act (synthetic fixture)",
@@ -71,7 +72,7 @@ def hand_made_origins(
     story features only a match judged correct, lineage.origin_story)."""
     ids = [bill for bill, _ in DRAWN_FROM.values()]
     with db.connect_quiet() as con:
-        rows = queries.matchable_section_texts(
+        rows = origins_queries.matchable_section_texts(
             con,
             sections_glob=str(tables / "sections" / "*.parquet"),
             eligible_path=tables / "eligible.parquet",

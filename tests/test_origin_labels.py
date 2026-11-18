@@ -10,7 +10,7 @@ import pytest
 
 from lineage.evals.labels import Item, Pair, Section, SectionKey, SectionRef
 from lineage.evals.model_labels import PASSAGES_HIGH, BatchReply, SameProvision, Schema
-from lineage.origin_labels import (
+from lineage.origins.labels import (
     PROMPT,
     OriginItem,
     correct_by_sections,
@@ -20,8 +20,8 @@ from lineage.origin_labels import (
     record,
     strongest_pair,
 )
-from lineage.origin_precision import BUDGET, OriginPrecisionError
-from lineage.origins import OriginMatch, SectionPair
+from lineage.origins.matches import OriginMatch, SectionPair
+from lineage.origins.precision import BUDGET, OriginPrecisionError
 
 
 def _match(*pairs: SectionPair) -> OriginMatch:

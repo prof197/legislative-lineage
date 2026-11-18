@@ -15,10 +15,11 @@ import pytest
 from typer.testing import CliRunner
 
 from lineage.cli import app
-from lineage.collect import CollectContext, CollectReport, collectors
-from lineage.collect_base import Fetched, provenance
-from lineage.collectors import alec
-from lineage.collectors.alec import (
+from lineage.core.robots import Robots, parse_robots
+from lineage.origins.collect import CollectContext, CollectReport, collectors
+from lineage.origins.collect_base import Fetched, provenance
+from lineage.origins.collectors import alec
+from lineage.origins.collectors.alec import (
     DOCX,
     LIBRARY,
     SOURCE,
@@ -32,8 +33,7 @@ from lineage.collectors.alec import (
     local_measure,
     policy_start,
 )
-from lineage.core.robots import Robots, parse_robots
-from lineage.modeldocs import (
+from lineage.origins.modeldocs import (
     MODELDOCS_DIR,
     ModelDoc,
     load_text,
@@ -43,7 +43,7 @@ from lineage.modeldocs import (
     sha256,
     store,
 )
-from lineage.modeltext import ModelTextError, docx_text
+from lineage.origins.modeltext import ModelTextError, docx_text
 from lineage.text.extract import html_text, pdf_text
 from tests.recorded_site import COLLECT, RecordedSite, docx_bytes
 

@@ -1,7 +1,7 @@
 """Origin precision labels: each sampled origin match judged by a model on its strongest pair.
 
 A match rests on section pairs, a model section and a bill section a stage matched
-(lineage.origins.SectionPair). It is judged, as v1 judges a listed relative
+(lineage.origins.matches.SectionPair). It is judged, as v1 judges a listed relative
 (DESIGN.md#precision-sample), on the pair its listing rests on most: the near-duplicate pair with
 the most band agreements, since copied text is what a page highlights, and failing that the pair
 found by meaning at the best cosine. The two sections are aligned (lineage.align) and the model
@@ -13,7 +13,7 @@ is named or dated, so the judge sees no stage, source or share.
 
 A label row names its match by bill and document and each section by the SHA-256 of its
 normalized text, and holds no text. Spend goes in v2's own ledger, under v2's cap for model
-calls (lineage.origin_precision.BUDGET), apart from v1's precision-label ledger. See
+calls (lineage.origins.precision.BUDGET), apart from v1's precision-label ledger. See
 DESIGN.md#origin-matches.
 
 See DESIGN.md#dr-12.
@@ -25,7 +25,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from lineage import queries
 from lineage.core import db
 from lineage.evals.labels import (
     Item,
@@ -49,9 +48,10 @@ from lineage.evals.model_labels import (
     spent,
 )
 from lineage.match.query import matchable_sections
-from lineage.modeldocs import MODELDOCS_DIR, ModelDoc, load_text
-from lineage.origin_precision import BUDGET, SPEND, MatchKey, OriginPrecisionError, match_key
-from lineage.origins import OriginMatch, SectionPair
+from lineage.origins import queries
+from lineage.origins.matches import OriginMatch, SectionPair
+from lineage.origins.modeldocs import MODELDOCS_DIR, ModelDoc, load_text
+from lineage.origins.precision import BUDGET, SPEND, MatchKey, OriginPrecisionError, match_key
 from lineage.text.generic_sections import generic_kind
 
 PROMPT = PASSAGES_HIGH

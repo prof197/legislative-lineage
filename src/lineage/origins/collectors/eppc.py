@@ -5,7 +5,7 @@ What is collected: the documents EPPC presents as model state legislation, liste
 assisted reproductive technology package, which the library does not list. A document another
 organization publishes with EPPC names it as a co-publisher, as the document or its page names
 it: the 2023 social media bill, written with the Institute for Family Studies (which carries it
-too, and is its own source, `lineage.collectors.ifs`), and the 2025 age verification bill,
+too, and is its own source, `lineage.origins.collectors.ifs`), and the 2025 age verification bill,
 EPPC's with the Center for Renewing America. The library's article on four legislative
 proposals is left out: its bill texts are another publisher's, on another host.
 
@@ -20,9 +20,9 @@ Cleaning (`clean_model_text`) keeps the bill's parts and sections and drops what
 enacts: the cover, author lines and preamble before the first heading, the running page footers,
 program banners and page numbers, footnotes, the capitalized line that introduces an
 alternative section, overviews, commentary and drafting notes, the author biographies after the
-last section, and bracketed instructions to the drafter (`lineage.modeltext.drop_instructions`);
-brackets a state enacts as written stay. The Institute for Family Studies' collector reads its
-bill the same way.
+last section, and bracketed instructions to the drafter
+(`lineage.origins.modeltext.drop_instructions`); brackets a state enacts as written stay. The
+Institute for Family Studies' collector reads its bill the same way.
 
 Fetching is on (`SITE_FETCH`): read on 2026-11-15, EPPC publishes no terms of use and nothing
 asks a visitor to accept terms, and its robots.txt lets this project read the documents' paths.
@@ -38,8 +38,8 @@ from datetime import date
 from html.parser import HTMLParser
 from pathlib import PurePosixPath
 
-from lineage.collect import CollectContext, CollectReport
-from lineage.collect_base import (
+from lineage.origins.collect import CollectContext, CollectReport
+from lineage.origins.collect_base import (
     CollectFetchError,
     Collection,
     Fetch,
@@ -49,8 +49,8 @@ from lineage.collect_base import (
     provenance,
     read_robots,
 )
-from lineage.modeldocs import Source
-from lineage.modeltext import ModelTextError, docx_text, drop_instructions
+from lineage.origins.modeldocs import Source
+from lineage.origins.modeltext import ModelTextError, docx_text, drop_instructions
 from lineage.text.extract import ExtractError, extract
 
 EPPC = "https://eppc.org"
@@ -368,7 +368,7 @@ def media_type(url: str, content_type: str) -> str | None:
 
 
 def document_text(got: Fetched, media: str) -> str:
-    """The text of a fetched model: Word through lineage.modeltext, PDF and HTML through
+    """The text of a fetched model: Word through lineage.origins.modeltext, PDF and HTML through
     lineage.text.extract, as the text layer reads them."""
     if media == DOCX:
         return docx_text(got.body)

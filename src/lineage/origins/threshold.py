@@ -1,11 +1,11 @@
 """`lineage eval origin-threshold`: each candidate floor's precision on the tuning sample, beside
 its development recall, for the ruling that sets origin matching's threshold.
 
-The threshold is a floor on a match's larger share (lineage.origins.share_of): a page
+The threshold is a floor on a match's larger share (lineage.origins.matches.share_of): a page
 lists an origin only at or above it. The tuning sample is drawn apart from each band between the
 candidate floors, so a floor's precision is the bands it keeps, each weighted by its size in the
 matches table (lineage.evals.precision.stratified), and the band just above it is reported on its
-own. Each floor's development recall is the origin recall eval (lineage.origin_recall) on the
+own. Each floor's development recall is the origin recall eval (lineage.origins.recall) on the
 matches the floor keeps, so the two are read from the same table. By stage, a floor's labels are
 counted unweighted, as a reading of where its errors sit, not an estimate. See
 DESIGN.md#origin-matches.
@@ -19,10 +19,10 @@ from lineage.core.intervals import wilson
 from lineage.evals.labels import is_correct
 from lineage.evals.precision import stratified
 from lineage.match.strata import STRATA
-from lineage.origin_labels import PROMPT
-from lineage.origin_precision import BANDS, FLOORS, band_name, estimate
-from lineage.origin_recall import LoadedKey, evaluate
-from lineage.origins import OriginMatch, share_of
+from lineage.origins.labels import PROMPT
+from lineage.origins.matches import OriginMatch, share_of
+from lineage.origins.precision import BANDS, FLOORS, band_name, estimate
+from lineage.origins.recall import LoadedKey, evaluate
 
 COMMAND = "uv run lineage eval origin-threshold"
 REPORT = Path("reports/origin_threshold_proposal.json")

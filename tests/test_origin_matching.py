@@ -13,26 +13,17 @@ from typing import Any
 
 import pytest
 
-from lineage import origin_matching
-from lineage.collect import collectors
 from lineage.data.sessions import load_sessions
 from lineage.evals.acts import ACTS, ACTS_DIR, enacted_text
 from lineage.evals.commission import evaluate
 from lineage.evals.ulc import ENACTMENTS, load_enactments
 from lineage.match.listing import listed_hits
 from lineage.match.semantic.stage import CORROBORATING, THRESHOLD, open_search
-from lineage.modeldocs import (
-    ModelDoc,
-    ModelDocError,
-    Source,
-    load_text,
-    read_docs,
-    sha256,
-    store,
-    text_path,
-)
-from lineage.origin_labels import build_items, strongest_pair
-from lineage.origin_matching import (
+from lineage.origins import matching as origin_matching
+from lineage.origins.collect import collectors
+from lineage.origins.labels import build_items, strongest_pair
+from lineage.origins.matches import BillSpan, OriginMatch, read_origin_matches, write_origin_matches
+from lineage.origins.matching import (
     BillHits,
     BillSection,
     ModelText,
@@ -43,8 +34,17 @@ from lineage.origin_matching import (
     match_of,
     model_text,
 )
-from lineage.origin_precision import OriginPrecisionError
-from lineage.origins import BillSpan, OriginMatch, read_origin_matches, write_origin_matches
+from lineage.origins.modeldocs import (
+    ModelDoc,
+    ModelDocError,
+    Source,
+    load_text,
+    read_docs,
+    sha256,
+    store,
+    text_path,
+)
+from lineage.origins.precision import OriginPrecisionError
 from lineage.text.sections import normalize
 from tests.conftest import COMMISSION, FAKE_MODEL
 from tests.fakes import MARK, bag_of_words

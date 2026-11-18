@@ -79,7 +79,7 @@ from lineage.match.state_boilerplate import (
     has_counts,
     load_families_reached,
 )
-from lineage.origins import origins_path, write_origin_matches
+from lineage.origins.matches import origins_path, write_origin_matches
 from lineage.text.inventory import PLAN as TEXT_PLAN
 from lineage.text.merge import BULK, FETCHED, merge_texts
 from lineage.text.rules import RULES as TEXT_RULES
@@ -341,9 +341,9 @@ def _embed_rest(
 
 
 def _origins(tables: Path, model: str, floor_bytes: int) -> int:
-    from lineage.collect import collectors
-    from lineage.modeldocs import MODELDOCS_DIR, read_docs
-    from lineage.origin_matching import match_models
+    from lineage.origins.collect import collectors
+    from lineage.origins.matching import match_models
+    from lineage.origins.modeldocs import MODELDOCS_DIR, read_docs
 
     docs = [d for c in collectors().values() for d in read_docs(c.source, MODELDOCS_DIR)]
     matches = match_models(

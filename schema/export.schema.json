@@ -1594,7 +1594,7 @@
   },
   "WithheldDocument": {
    "additionalProperties": false,
-   "description": "A model document withheld from bill pages, the feed and stories (lineage.withheld): at\nleast 3 of its listed matches labeled, fewer than half judged correct.",
+   "description": "A model document withheld from bill pages, the feed and stories (lineage.origins.withheld):\nat least 3 of its listed matches labeled, fewer than half judged correct.",
    "properties": {
     "id": {
      "title": "Id",

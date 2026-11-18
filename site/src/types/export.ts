@@ -404,8 +404,8 @@ terms_url: (string | null)
 withheld: WithheldDocument[]
 }
 /**
- * A model document withheld from bill pages, the feed and stories (lineage.withheld): at
- * least 3 of its listed matches labeled, fewer than half judged correct.
+ * A model document withheld from bill pages, the feed and stories (lineage.origins.withheld):
+ * at least 3 of its listed matches labeled, fewer than half judged correct.
  * 
  * This interface was referenced by `LegislativeLineageExport`'s JSON-Schema
  * via the `definition` "WithheldDocument".

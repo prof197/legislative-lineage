@@ -15,10 +15,10 @@ import pytest
 from typer.testing import CliRunner
 
 from lineage.cli import app
-from lineage.collect import CollectContext, CollectReport, collectors
-from lineage.collect_base import Fetched
-from lineage.collectors import eppc
-from lineage.collectors.eppc import (
+from lineage.origins.collect import CollectContext, CollectReport, collectors
+from lineage.origins.collect_base import Fetched
+from lineage.origins.collectors import eppc
+from lineage.origins.collectors.eppc import (
     DOCUMENTS,
     EPPC,
     MEDIA,
@@ -32,8 +32,8 @@ from lineage.collectors.eppc import (
     model_text_link,
     on_media_host,
 )
-from lineage.modeldocs import load_text, raw_path, read_docs, read_versions, sha256
-from lineage.modeltext import ModelTextError
+from lineage.origins.modeldocs import load_text, raw_path, read_docs, read_versions, sha256
+from lineage.origins.modeltext import ModelTextError
 from tests.recorded_site import COLLECT, RecordedSite, pdf_bytes
 
 FIXTURES = COLLECT / "eppc"

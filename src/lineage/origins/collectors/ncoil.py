@@ -46,8 +46,8 @@ from datetime import date
 from html.parser import HTMLParser
 from pathlib import PurePosixPath
 
-from lineage.collect import CollectContext, CollectReport
-from lineage.collect_base import (
+from lineage.origins.collect import CollectContext, CollectReport
+from lineage.origins.collect_base import (
     CollectFetchError,
     Collection,
     Fetch,
@@ -58,8 +58,8 @@ from lineage.collect_base import (
     read_robots,
     slugify,
 )
-from lineage.modeldocs import Source
-from lineage.modeltext import ModelTextError, docx_text, drop_instructions
+from lineage.origins.modeldocs import Source
+from lineage.origins.modeltext import ModelTextError, docx_text, drop_instructions
 from lineage.text.extract import ExtractError, pdf_text
 
 SITE = "https://ncoil.org"

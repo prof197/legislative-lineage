@@ -9,8 +9,8 @@ above or below it where the organization gives one, and the model's text from it
 lettered subsection or "Model Language" label to the page's "Topics" block. A drafting
 recommendation before the model, an "Important Note" for lawmakers after it, share buttons and
 download links are not the model's text and are dropped; bracketed instructions to the drafter
-go as `lineage.modeltext` drops them, and bracketed alternatives stay. A "Model Legislation" link
-off the site, such as to a shared document, is reported failed, not followed.
+go as `lineage.origins.modeltext` drops them, and bracketed alternatives stay. A "Model Legislation"
+link off the site, such as to a shared document, is reported failed, not followed.
 
 Fetching is on (`SITE_FETCH`): read on 2026-11-15, the site's Terms of Use page has no text, its
 footer licenses its text for non-commercial use with attribution, robots.txt allows every path,
@@ -25,8 +25,8 @@ from dataclasses import dataclass
 from datetime import date
 from html.parser import HTMLParser
 
-from lineage.collect import CollectContext, CollectReport
-from lineage.collect_base import (
+from lineage.origins.collect import CollectContext, CollectReport
+from lineage.origins.collect_base import (
     CollectFetchError,
     Collection,
     Fetch,
@@ -37,8 +37,8 @@ from lineage.collect_base import (
     read_robots,
     slugify,
 )
-from lineage.modeldocs import Source
-from lineage.modeltext import drop_instructions
+from lineage.origins.modeldocs import Source
+from lineage.origins.modeltext import drop_instructions
 
 SITE = "https://www.citizen.org"
 LIBRARY = f"{SITE}/article/model-artificial-intelligence-legislation-for-state-lawmakers/"

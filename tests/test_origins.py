@@ -7,8 +7,7 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from lineage.modeldocs import ModelDoc
-from lineage.origins import (
+from lineage.origins.matches import (
     FLOOR,
     BillSpan,
     OriginMatch,
@@ -18,6 +17,7 @@ from lineage.origins import (
     share_of,
     write_origin_matches,
 )
+from lineage.origins.modeldocs import ModelDoc
 
 
 def _match(bill: str, doc: str, model_share: float = 0.4, bill_share: float = 0.9) -> OriginMatch:

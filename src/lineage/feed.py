@@ -7,8 +7,8 @@ Its events, each an entry dated the day it was logged:
 - `relative_gained`: a bill of any state, seen before, that gained relatives that day; one entry
   per bill and day, naming every relative it gained.
 - `origin_gained`: a bill of any state that gained a match to a published model document a
-  page would list (lineage.origins.FLOOR), its document not withheld (lineage.withheld); one
-  entry per bill and day.
+  page would list (lineage.origins.matches.FLOOR), its document not withheld
+  (lineage.origins.withheld); one entry per bill and day.
 - `states_group`: bills from three or more states, linked by relatives, all first seen within
   14 days. Precisely: on day D, take the bills the live track first saw (a `RecordAdded`) from
   D-13 to D, and link two of them when either lists the other as a relative after D's changes.
@@ -45,12 +45,14 @@ from typing import Any, Literal
 
 from lineage import queries
 from lineage.atom import ATOM, violations
-from lineage.collect import PACKAGE as COLLECT_PACKAGE
-from lineage.collect import collectors
 from lineage.core import db
 from lineage.export_schema import Meta
-from lineage.modeldocs import MODELDOCS_DIR, read_docs
-from lineage.origins import FLOOR
+from lineage.origins.collect import PACKAGE as COLLECT_PACKAGE
+from lineage.origins.collect import collectors
+from lineage.origins.matches import FLOOR
+from lineage.origins.modeldocs import MODELDOCS_DIR, read_docs
+from lineage.origins.withheld import REPORT as WITHHELD_REPORT
+from lineage.origins.withheld import load_withheld
 from lineage.publish import FEED_FILE, META, bill_refs, changes_on, logged_days
 from lineage.updates import (
     CHANGES_DIR,
@@ -60,8 +62,6 @@ from lineage.updates import (
     RelativeGained,
     RelativeLost,
 )
-from lineage.withheld import REPORT as WITHHELD_REPORT
-from lineage.withheld import load_withheld
 
 RETENTION_DAYS = 14
 GROUP_DAYS = 14
@@ -254,7 +254,7 @@ class DocInfo:
 
 def listed_origin(c: OriginGained, withheld: frozenset[str] = frozenset()) -> bool:
     """Whether a page would list the gained match: by its larger share, which the log keeps
-    both of, and its document not withheld (lineage.withheld)."""
+    both of, and its document not withheld (lineage.origins.withheld)."""
     return max(c.bill_share, c.model_share) >= FLOOR and c.doc_id not in withheld
 
 

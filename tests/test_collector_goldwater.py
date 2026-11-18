@@ -16,10 +16,11 @@ import pytest
 from typer.testing import CliRunner
 
 from lineage.cli import app
-from lineage.collect import CollectContext, CollectReport, collectors
-from lineage.collect_base import CollectFetchError, Fetched
-from lineage.collectors import goldwater
-from lineage.collectors.goldwater import (
+from lineage.core.robots import Robots, parse_robots
+from lineage.origins.collect import CollectContext, CollectReport, collectors
+from lineage.origins.collect_base import CollectFetchError, Fetched
+from lineage.origins.collectors import goldwater
+from lineage.origins.collectors.goldwater import (
     DOCX,
     LIBRARY,
     SOURCE,
@@ -35,8 +36,7 @@ from lineage.collectors.goldwater import (
     qualifier,
     title_for,
 )
-from lineage.core.robots import Robots, parse_robots
-from lineage.modeldocs import (
+from lineage.origins.modeldocs import (
     MODELDOCS_DIR,
     load_text,
     raw_path,

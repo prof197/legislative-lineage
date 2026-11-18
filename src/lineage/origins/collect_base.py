@@ -18,13 +18,13 @@ from dataclasses import dataclass, field
 from datetime import date
 from typing import Literal
 
-from lineage.collect import CollectContext, CollectFailure, CollectReport
 from lineage.core import robots as robots_txt
 from lineage.core.disk import require_free_space
 from lineage.core.http import open_url
 from lineage.core.pace import MIN_INTERVAL_SECONDS
 from lineage.core.robots import Robots
-from lineage.modeldocs import ModelDoc, Source, sha256, store, withdraw
+from lineage.origins.collect import CollectContext, CollectFailure, CollectReport
+from lineage.origins.modeldocs import ModelDoc, Source, sha256, store, withdraw
 
 RobotsStatus = Literal["allowed", "no_robots_txt"]
 # A model act is a few hundred KiB; anything far larger is not the document asked for.
@@ -175,8 +175,8 @@ class Collection:
         return permission
 
     def keep(self, doc: ModelDoc, *, raw: bytes, text: str) -> bool:
-        """Store a document through `lineage.modeldocs.store`; returns whether anything changed.
-        The disk is checked first against the bytes this could write."""
+        """Store a document through `lineage.origins.modeldocs.store`; returns whether anything
+        changed. The disk is checked first against the bytes this could write."""
         require_free_space(
             self.context.root,
             needed=len(raw) + len(text.encode()) + (1 << 20),

@@ -43,8 +43,6 @@ from pydantic.json_schema import models_json_schema
 
 from lineage import queries
 from lineage.align import Alignment, Embedder, align
-from lineage.collect import PACKAGE as COLLECT_PACKAGE
-from lineage.collect import collectors
 from lineage.core import db
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.core.paths import DATA
@@ -103,22 +101,24 @@ from lineage.match.semantic.embed import load_model
 from lineage.match.semantic.pairs import section_keys
 from lineage.match.semantic.stage import MODEL
 from lineage.match.state_boilerplate import COMPACT_PHRASES
-from lineage.modeldocs import MODELDOCS_DIR, ModelDoc, Source, read_docs
-from lineage.origin_labels import LABELS as ORIGIN_LABELS
-from lineage.origin_labels import judged_correct, load_labels
 from lineage.origin_story import BOTH as BOTH_STAGES
 from lineage.origin_story import FILE as ORIGIN_STORY_FILE
 from lineage.origin_story import STORY as ORIGIN_STORY
 from lineage.origin_story import story_file as origin_story_file
-from lineage.origins import OriginMatch, is_listed, read_origin_matches
+from lineage.origins.collect import PACKAGE as COLLECT_PACKAGE
+from lineage.origins.collect import collectors
+from lineage.origins.labels import LABELS as ORIGIN_LABELS
+from lineage.origins.labels import judged_correct, load_labels
+from lineage.origins.matches import OriginMatch, is_listed, read_origin_matches
+from lineage.origins.modeldocs import MODELDOCS_DIR, ModelDoc, Source, read_docs
+from lineage.origins.withheld import NONE as NO_WITHHELD
+from lineage.origins.withheld import REPORT as WITHHELD_REPORT
+from lineage.origins.withheld import Reason as WithheldReason
+from lineage.origins.withheld import Withheld, load_withheld
 from lineage.release import RELEASE_MANIFEST as RELEASE_MANIFEST
 from lineage.release import ReleaseError as ReleaseError
 from lineage.release import package as package
 from lineage.release import write_release_manifest as write_release_manifest
-from lineage.withheld import NONE as NO_WITHHELD
-from lineage.withheld import REPORT as WITHHELD_REPORT
-from lineage.withheld import Reason as WithheldReason
-from lineage.withheld import Withheld, load_withheld
 
 EXPORT_DIR = DATA / "export"
 REPORT = Path("reports/export.json")
@@ -263,7 +263,7 @@ def _stages(found: _PairFound) -> list[Stage]:
 
 def validation_from(results: Mapping[str, Any], withheld: Withheld = NO_WITHHELD) -> Validation:
     """The validation page's figures, read from the committed results; origin precision with
-    how many documents were withheld after it was measured (lineage.withheld)."""
+    how many documents were withheld after it was measured (lineage.origins.withheld)."""
 
     def recall(r: Mapping[str, Any]) -> Recall:
         return Recall(enactments=r["enactments"], found=r["found"], recall=r["recall"])
@@ -470,9 +470,10 @@ def origins_by_bill(
     hosted: set[str],
     withheld: frozenset[str] = frozenset(),
 ) -> dict[str, list[Origin]]:
-    """Each hosted bill's origins at the listing floor (lineage.origins.FLOOR), the most of its
-    words first, less those to a withheld document (lineage.withheld). A match whose document no
-    source holds is an error: the page would name a model the sources page does not list."""
+    """Each hosted bill's origins at the listing floor (lineage.origins.matches.FLOOR), the most
+    of its words first, less those to a withheld document (lineage.origins.withheld). A match
+    whose document no source holds is an error: the page would name a model the sources page
+    does not list."""
     out: dict[str, list[Origin]] = defaultdict(list)
     for m in matches:
         if m.bill_id not in hosted or not is_listed(m) or m.doc_id in withheld:
@@ -515,7 +516,7 @@ def judged_origins(
 ) -> frozenset[tuple[str, str]]:
     """The origin story's candidates a labeler judged correct, by (bill slug, document id):
     each passed bill's listed origins both stages found, judged on the sections its match's
-    strongest pair rests on now (lineage.origin_labels.judged_correct)."""
+    strongest pair rests on now (lineage.origins.labels.judged_correct)."""
     keys = {
         (bill_id, o.doc.id)
         for bill_id, listed in origins.items()

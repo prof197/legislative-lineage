@@ -1,7 +1,7 @@
 """Which kind of generic section a section is: the clauses any act carries whatever it enacts,
 which say nothing of where its substance came from.
 
-Origin matching leaves them out of a match on both sides (lineage.origin_matching), as ruled at
+Origin matching leaves them out of a match on both sides (lineage.origins.matching), as ruled at
 the step 47 review: of EPPC's 71 listed matches, a census, 54 were wrong, and 52 of those rested
 on two models' severability sections, too long for lineage.text.boilerplate's whole-section patterns
 (a case-law recital runs 500 to 700 words). A section is generic when it is boilerplate as

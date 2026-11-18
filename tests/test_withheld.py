@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 
-from lineage.withheld import (
+from lineage.origins.withheld import (
     REASON,
     REVIEW,
     Reviewed,

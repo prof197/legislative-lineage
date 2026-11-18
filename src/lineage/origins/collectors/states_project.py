@@ -10,7 +10,7 @@ state bills. The pages give no date of their own, so no document is dated.
 
 Matching reads the sample language, not the page's asides: a summary section, an approach's
 description, the "Sample language:" label and the examples line are dropped, as are bracketed
-instructions to the drafter (`lineage.modeltext.drop_instructions`). A heading such as
+instructions to the drafter (`lineage.origins.modeltext.drop_instructions`). A heading such as
 "Section 1 (Title):" is written "Section 1. Title" so that `lineage.text.sections` splits at it.
 
 Fetching is on (`SITE_FETCH`): read on 2026-11-15, the policy pages' terms say nothing on
@@ -25,8 +25,8 @@ from datetime import date
 from html.parser import HTMLParser
 from xml.etree import ElementTree
 
-from lineage.collect import CollectContext, CollectReport
-from lineage.collect_base import (
+from lineage.origins.collect import CollectContext, CollectReport
+from lineage.origins.collect_base import (
     CollectFetchError,
     Collection,
     Fetch,
@@ -36,8 +36,8 @@ from lineage.collect_base import (
     provenance,
     read_robots,
 )
-from lineage.modeldocs import Source
-from lineage.modeltext import drop_instructions
+from lineage.origins.modeldocs import Source
+from lineage.origins.modeltext import drop_instructions
 
 SITE = "https://statesproject.org"
 LIBRARY = f"{SITE}/policywork/policy-library/"

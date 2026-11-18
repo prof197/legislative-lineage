@@ -4,10 +4,10 @@ What is collected: the model bills IFS publishes on its own, listed in `DOCUMENT
 2026-11-15: the App Store Accountability Act, linked from its Family First Technology
 Initiative's Stop Digital Harm page. The 2023 social media bill IFS wrote with the Ethics and
 Public Policy Center stands among IFS's briefs too, but its file is linked from EPPC's page, so
-it is collected once, by `lineage.collectors.eppc`, which names IFS as its co-publisher. Briefs,
-reports and fact sheets are not model legislation and are left out.
+it is collected once, by `lineage.origins.collectors.eppc`, which names IFS as its co-publisher.
+Briefs, reports and fact sheets are not model legislation and are left out.
 
-A document is read as EPPC's are (`lineage.collectors.eppc`): its page's link that names the
+A document is read as EPPC's are (`lineage.origins.collectors.eppc`): its page's link that names the
 model bill, never the fact sheet, on IFS's own host, and the same cleaning, since the two
 organizations' bills share a layout.
 
@@ -19,10 +19,10 @@ See DESIGN.md#model-documents.
 from collections.abc import Sequence
 from datetime import date
 
-from lineage.collect import CollectContext, CollectReport
-from lineage.collect_base import Fetch, ReadRobots, fetch_url, read_robots
-from lineage.collectors.eppc import Listed, collect_documents
-from lineage.modeldocs import Source
+from lineage.origins.collect import CollectContext, CollectReport
+from lineage.origins.collect_base import Fetch, ReadRobots, fetch_url, read_robots
+from lineage.origins.collectors.eppc import Listed, collect_documents
+from lineage.origins.modeldocs import Source
 
 IFS = "https://ifstudies.org"
 LIBRARY = f"{IFS}/family-first-technology-initiative/stop-digital-harm"

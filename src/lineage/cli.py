@@ -16,9 +16,6 @@ from numpy.typing import NDArray
 from lineage import __version__, deploy
 from lineage import rebuild as rebuilding
 from lineage.align import Embedder, align
-from lineage.collect import REPORTS_DIR as COLLECT_REPORTS
-from lineage.collect import CollectContext, CollectError, collectors, run_collector
-from lineage.collect import write_report as write_collect_report
 from lineage.core.disk import GiB, InsufficientDiskSpaceError
 from lineage.core.hashing import file_sha256
 from lineage.core.http import FetchError, open_url
@@ -251,24 +248,35 @@ from lineage.match.state_boilerplate import (
 from lineage.match.state_boilerplate import REPORT as STATE_BOILERPLATE_REPORT
 from lineage.match.state_boilerplate import write_report as write_state_boilerplate_report
 from lineage.match.strata import PrecisionError
-from lineage.modeldocs import MODELDOCS_DIR, ModelDocError, read_docs
-from lineage.origin_labels import LABELS as ORIGIN_LABELS
-from lineage.origin_labels import PROMPT as ORIGIN_PROMPT
-from lineage.origin_labels import build_items as build_origin_items
-from lineage.origin_labels import correct_by_sections as origin_correct_by_sections
-from lineage.origin_labels import label_in_batch as origin_label_in_batch
-from lineage.origin_labels import labelers as origin_labelers
-from lineage.origin_labels import load_labels as load_origin_labels
-from lineage.origin_labels import pair_sections as origin_pair_sections
-from lineage.origin_labels import pending as origin_pending
-from lineage.origin_labels import plan as plan_origin_labels
-from lineage.origin_labels import record as record_origin_spend
-from lineage.origin_matching import match_models
-from lineage.origin_precision import PARTS as ORIGIN_PARTS
-from lineage.origin_precision import REPORT as ORIGIN_SAMPLE_REPORT
-from lineage.origin_precision import RESULTS_SECTIONS as ORIGIN_RESULTS_SECTIONS
-from lineage.origin_precision import SPEND as ORIGIN_SPEND
-from lineage.origin_precision import (
+from lineage.origins.collect import REPORTS_DIR as COLLECT_REPORTS
+from lineage.origins.collect import CollectContext, CollectError, collectors, run_collector
+from lineage.origins.collect import write_report as write_collect_report
+from lineage.origins.labels import LABELS as ORIGIN_LABELS
+from lineage.origins.labels import PROMPT as ORIGIN_PROMPT
+from lineage.origins.labels import build_items as build_origin_items
+from lineage.origins.labels import correct_by_sections as origin_correct_by_sections
+from lineage.origins.labels import label_in_batch as origin_label_in_batch
+from lineage.origins.labels import labelers as origin_labelers
+from lineage.origins.labels import load_labels as load_origin_labels
+from lineage.origins.labels import pair_sections as origin_pair_sections
+from lineage.origins.labels import pending as origin_pending
+from lineage.origins.labels import plan as plan_origin_labels
+from lineage.origins.labels import record as record_origin_spend
+from lineage.origins.matches import FLOOR as ORIGIN_FLOOR
+from lineage.origins.matches import REPORT as ORIGINS_REPORT
+from lineage.origins.matches import (
+    origins_report,
+    read_origin_matches,
+    write_origin_matches,
+    write_origins_report,
+)
+from lineage.origins.matching import match_models
+from lineage.origins.modeldocs import MODELDOCS_DIR, ModelDocError, read_docs
+from lineage.origins.precision import PARTS as ORIGIN_PARTS
+from lineage.origins.precision import REPORT as ORIGIN_SAMPLE_REPORT
+from lineage.origins.precision import RESULTS_SECTIONS as ORIGIN_RESULTS_SECTIONS
+from lineage.origins.precision import SPEND as ORIGIN_SPEND
+from lineage.origins.precision import (
     OriginPrecisionError,
     doc_chars,
     draw_part,
@@ -279,25 +287,23 @@ from lineage.origin_precision import (
     section_chars,
     write_part,
 )
-from lineage.origin_precision import census_reading as origin_census_reading
-from lineage.origin_precision import load_sample as load_origin_sample
-from lineage.origin_precision import reading as origin_precision_reading
-from lineage.origin_precision import retired as origin_retired
-from lineage.origin_precision import without_intervals as without_origin_intervals
-from lineage.origin_recall import KEYS as ORIGIN_KEYS
-from lineage.origin_recall import OriginRecallError, load_key, origin_recall, same_slug
-from lineage.origin_threshold import REPORT as ORIGIN_THRESHOLD_REPORT
-from lineage.origin_threshold import correct_by_match as origin_correct_by_match
-from lineage.origin_threshold import correct_by_pair as origin_correct_by_pair
-from lineage.origin_threshold import proposal as origin_threshold_proposal
-from lineage.origins import FLOOR as ORIGIN_FLOOR
-from lineage.origins import REPORT as ORIGINS_REPORT
-from lineage.origins import (
-    origins_report,
-    read_origin_matches,
-    write_origin_matches,
-    write_origins_report,
-)
+from lineage.origins.precision import census_reading as origin_census_reading
+from lineage.origins.precision import load_sample as load_origin_sample
+from lineage.origins.precision import reading as origin_precision_reading
+from lineage.origins.precision import retired as origin_retired
+from lineage.origins.precision import without_intervals as without_origin_intervals
+from lineage.origins.recall import KEYS as ORIGIN_KEYS
+from lineage.origins.recall import OriginRecallError, load_key, origin_recall, same_slug
+from lineage.origins.threshold import REPORT as ORIGIN_THRESHOLD_REPORT
+from lineage.origins.threshold import correct_by_match as origin_correct_by_match
+from lineage.origins.threshold import correct_by_pair as origin_correct_by_pair
+from lineage.origins.threshold import proposal as origin_threshold_proposal
+from lineage.origins.withheld import REPORT as WITHHELD_REPORT
+from lineage.origins.withheld import Reviewed as WithheldReviewed
+from lineage.origins.withheld import listed_count as withheld_listed_count
+from lineage.origins.withheld import read_reviewed as read_withheld_reviewed
+from lineage.origins.withheld import tallies as withheld_tallies
+from lineage.origins.withheld import write_report as write_withheld
 from lineage.publish import PublishError, export_changes, promote, staging_dir
 from lineage.release import ReleaseError
 from lineage.results_table import (
@@ -332,12 +338,6 @@ from lineage.text.run import REPORT as FETCH_REPORT
 from lineage.text.run import run_fetch
 from lineage.text.sectioning import SectioningError, build_sections
 from lineage.updates import CHANGES_DIR, UpdateError, load_day
-from lineage.withheld import REPORT as WITHHELD_REPORT
-from lineage.withheld import Reviewed as WithheldReviewed
-from lineage.withheld import listed_count as withheld_listed_count
-from lineage.withheld import read_reviewed as read_withheld_reviewed
-from lineage.withheld import tallies as withheld_tallies
-from lineage.withheld import write_report as write_withheld
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
 eval_app = typer.Typer(no_args_is_help=True, help="Run an eval and write its results.")

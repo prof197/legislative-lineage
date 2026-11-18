@@ -251,7 +251,7 @@ def _compared_name(name: str, group: dict[str, Any]) -> str:
     its collector gives it, or every other source's."""
     if name == "rest":
         return "every other source's matches"
-    from lineage.collect import collectors  # the registry imports every collector
+    from lineage.origins.collect import collectors  # the registry imports every collector
 
     (source,) = group["sources"]
     organization = next(
@@ -268,8 +268,8 @@ def render_origins(
     """v2's origin evals, one row each for those in the results and nothing for those not:
     recall on the development key and on the sealed key, precision on the reporting sample
     overall and by stage, and apart from the sealed row, v1's held-out acts, which v1's final
-    run had already opened. With `withheld`, the withheld documents' report (lineage.withheld),
-    precision is said to be read before they were withheld."""
+    run had already opened. With `withheld`, the withheld documents' report
+    (lineage.origins.withheld), precision is said to be read before they were withheld."""
     floor = _origin_floor(results)
     if floor is None:
         return ""

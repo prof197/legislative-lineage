@@ -1,7 +1,7 @@
 """The precision sample for origins: which origin matches are right, and what labeling them costs.
 
-Recall has an answer key (lineage.origin_recall); precision needs labels, so it is measured on a
-sample of the origin matches table (lineage.origins), drawn the way v1 draws its pair sample
+Recall has an answer key (lineage.origins.recall); precision needs labels, so it is measured on a
+sample of the origin matches table (lineage.origins.matches), drawn the way v1 draws its pair sample
 (lineage.evals.precision.draw): the matches fall into three strata by the stages that found them,
 each stratum is sampled apart without replacement under a fixed seed, and the drawn matches are
 shuffled into one labeling order. A sample row names a match by bill and document and holds no
@@ -29,10 +29,10 @@ written yet, so v1's passage prompt (passages-v1-high) stands in for it: its sys
 limit, and as the message the whole model document beside every bill section the match's spans
 touch, or every matchable section of the bill when it has none, which errs high. A run projected
 over MAX_COST, or over v2's BUDGET together with what v2's ledger records as spent, is refused.
-The exact projection, from the prompts as they would be sent, is lineage.origin_labels'.
+The exact projection, from the prompts as they would be sent, is lineage.origins.labels'.
 
-The reporting part draws only what a page lists, the matches at lineage.origins.FLOOR, and is
-read once (`reading`): overall, by stage, each source's, and one source's against the rest,
+The reporting part draws only what a page lists, the matches at lineage.origins.matches.FLOOR, and
+is read once (`reading`): overall, by stage, each source's, and one source's against the rest,
 each weighted by that source's matches per stage, since errors concentrated on one
 organization would be unfair to it whatever the overall figure. See DESIGN.md#precision-sample.
 
@@ -47,7 +47,6 @@ from typing import Any, cast
 
 import numpy as np
 
-from lineage import queries
 from lineage.core import db
 from lineage.core.intervals import wilson
 from lineage.evals.model_labels import MAX_COST, MODEL_ID, PASSAGES_HIGH
@@ -56,8 +55,9 @@ from lineage.evals.precision import PER_STRATUM, draw, stratified
 from lineage.evals.precision import SEED as PRECISION_SEED
 from lineage.explain.spend import PRICES, upper_bound
 from lineage.match.strata import STRATA, PrecisionError, stratum_of
-from lineage.modeldocs import MODELDOCS_DIR, ModelDoc, load_text
-from lineage.origins import FLOOR, OriginMatch, is_listed, share_of
+from lineage.origins import queries
+from lineage.origins.matches import FLOOR, OriginMatch, is_listed, share_of
+from lineage.origins.modeldocs import MODELDOCS_DIR, ModelDoc, load_text
 
 COMMAND = "uv run lineage origin-sample"
 # v1's samples took the precision seed + 0 to + 5 (lineage.evals.relatives_sample).
@@ -112,7 +112,7 @@ class Part:
     source: str | None = None  # drawn only from this source's matches
     census: bool = False  # every match it may draw, not a sample
     # Its labels are found by the sections its rows rest on, whichever part's row took them
-    # (lineage.origin_labels.correct_by_sections): drawn after matching changed, it may share
+    # (lineage.origins.labels.correct_by_sections): drawn after matching changed, it may share
     # matches with a census, and only a label on the sections a row now rests on answers it.
     by_sections: bool = False
 

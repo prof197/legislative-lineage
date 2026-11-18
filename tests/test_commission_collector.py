@@ -10,18 +10,18 @@ import pytest
 from typer.testing import CliRunner
 
 from lineage.cli import app
-from lineage.collect import CollectContext, CollectReport, collectors
-from lineage.collect_base import Fetched
-from lineage.collectors import commission
-from lineage.collectors.commission import (
+from lineage.origins.collect import CollectContext, CollectReport, collectors
+from lineage.origins.collect_base import Fetched
+from lineage.origins.collectors import commission
+from lineage.origins.collectors.commission import (
     DOCX,
     SOURCE,
     act_page,
     collect_from,
     enacted_in_corpus_years,
 )
-from lineage.modeldocs import load_text, raw_path, read_docs, read_versions, sha256
-from lineage.modeltext import clean_act
+from lineage.origins.modeldocs import load_text, raw_path, read_docs, read_versions, sha256
+from lineage.origins.modeltext import clean_act
 from tests.recorded_site import SYNTHETIC_ACT, RecordedSite, docx_bytes, recorded_site
 
 DAY = date(2026, 11, 15)
