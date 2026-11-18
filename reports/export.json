@@ -23,17 +23,17 @@
   "bills": 9066936,
   "bills.json": 1570449,
   "compare": 49843880,
-  "meta.json": 8102,
+  "meta.json": 8147,
   "origin_story.json": 731,
-  "sources.json": 7745,
+  "sources.json": 9099,
   "stories": 35660,
   "texts": 53168886
  },
- "total_bytes": 113702389,
+ "total_bytes": 113703788,
  "share_of_site_limit": 0.1137,
  "largest_file": {
   "path": "bills.json",
   "bytes": 1570449
  },
- "seconds": 6597
+ "seconds": 6873
 }
