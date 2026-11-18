@@ -176,7 +176,12 @@ def _bills() -> dict[str, BillInfo]:
 def test_entries_state_dates_and_shared_text_and_never_a_model_text() -> None:
     model_text = "Section 1. A model's own words, which no entry may carry."
     docs = {
-        "lib/a": DocInfo(title="Model Public Expression Act", organization="A Library", leaked=True)
+        "lib/a": DocInfo(
+            title="Model Public Expression Act",
+            organization="A Library",
+            leaked=True,
+            drafted_by="Example Council",
+        )
     }
     events = [
         Event("new_bill", d(1), "ga", (("ut", "near_duplicate+semantic"), ("tx", "semantic"))),
@@ -201,8 +206,10 @@ def test_entries_state_dates_and_shared_text_and_never_a_model_text() -> None:
     assert gained.link == "https://le.utah.gov/hb2"  # another state's: its text's source
     assert origin.link is None
     assert "60% of the bill's wording appears in it, covering 25% of the model" in origin.content
-    assert "“Model Public Expression Act”, a model published by A Library" in origin.content
-    assert "leaked archive" in origin.content
+    assert (
+        "“Model Public Expression Act”, an Example Council model from a leaked document published "
+        "by A Library" in origin.content
+    )
     assert "(shares wording)" in new.content
     assert "(similar in meaning)" in new.content
     assert group.title == "Bills in 3 states first seen within 14 days share text"
@@ -212,6 +219,23 @@ def test_entries_state_dates_and_shared_text_and_never_a_model_text() -> None:
 
 NCOIL = "National Council of Insurance Legislators (NCOIL)"
 ALEC = "American Legislative Exchange Council (ALEC)"
+
+
+def test_a_model_is_named_with_who_published_it_and_a_leaked_one_with_who_drafted_it() -> None:
+    assert feed.model_named("Model Act", "Org", None, quoted=False) == (
+        "Model Act, a model published by Org"
+    )
+    archive = "Example Archive Project"
+    assert feed.model_named("ALEC Model Act", archive, ALEC, quoted=True) == (
+        f"“Model Act”, an {ALEC} model from a leaked document published by {archive}"
+    )
+    assert feed.model_named("Act", archive, NCOIL, quoted=False).startswith(f"Act, a {NCOIL} model")
+    assert feed.model_named("Act", archive, "Uniform Law Commission", quoted=False).startswith(
+        "Act, a Uniform"
+    )
+    assert feed.model_named("Act", archive, "Institute for Justice", quoted=False).startswith(
+        "Act, an Institute"
+    )
 
 
 @pytest.mark.parametrize(

@@ -629,6 +629,18 @@
      "title": "Co Publishers",
      "type": "array"
     },
+    "drafted_by": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Drafted By"
+    },
     "id": {
      "title": "Id",
      "type": "string"

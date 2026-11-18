@@ -66,17 +66,31 @@ export function shownTitle(title: string, organization: string): string {
   return title;
 }
 
+// "a" or "an" by sound, for the names a library carries: "an ALEC", "an American", "a Uniform".
+// A vowel, but not the "you" of "Uni-", or a letter sounded with one, read out as an acronym.
+const article = (name: string): string => (/^(?:[AEIOaeio]|[Uu](?!ni)|[AEFHILMNORSX](?:[A-Z]|$))/.test(name) ? "an" : "a");
+
+// Who a line says published the model: its library, or for a leaked document the organization that
+// drafted it and the archive that published the leak (ruled at the deploy review).
+export function publishedBy(doc: Origin["doc"]): string {
+  return doc.drafted_by
+    ? `${article(doc.drafted_by)} ${doc.drafted_by} model from a leaked document published by ${doc.organization}`
+    : `a model published by ${doc.organization}`;
+}
+
 // The origin line, ruled at M12's start and reworded at the deploy review: both shares, always,
 // so a bill that takes one section of a long model and a bill that copies a short model whole
 // never read alike.
 //   "34% of this bill's wording appears in [title], a model published by [organization], covering 25% of the model."
+// A leaked document's: "... appears in [title], an [organization] model from a leaked document
+// published by [archive], covering ...".
 // The title is the part a page links to the document in its library. The organization is the
 // library's, as the data names it; co-publishers are credited on the line below, not here.
 export function originLine(o: Origin): { before: string; title: string; after: string } {
   return {
     before: `${capitalized(percent(o.bill_share))} of this bill's wording appears in`,
-    title: shownTitle(o.doc.title, o.doc.organization),
-    after: `, a model published by ${o.doc.organization}, covering ${percent(o.model_share)} of the model.`,
+    title: shownTitle(o.doc.title, o.doc.drafted_by ?? o.doc.organization),
+    after: `, ${publishedBy(o.doc)}, covering ${percent(o.model_share)} of the model.`,
   };
 }
 
@@ -88,7 +102,7 @@ export const originText = (o: Origin): string => {
 // The form every rendered origin line must take, which the copy check holds each page to.
 const SHARE = String.raw`(?:\d{1,3}%|[Uu]nder 1%)`;
 export const ORIGIN_LINE = new RegExp(
-  String.raw`^${SHARE} of this bill's wording appears in .+, a model published by .+, covering ${SHARE} of the model\.$`,
+  String.raw`^${SHARE} of this bill's wording appears in .+, (?:a model published by .+|an? .+ model from a leaked document published by .+), covering ${SHARE} of the model\.$`,
 );
 
 const STAGE: Record<Origin["stages"][number], string> = {

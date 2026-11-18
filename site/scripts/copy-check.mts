@@ -136,12 +136,13 @@ for (const f of files(path.join(OUT, "data", "compare"), (f) => f.endsWith(".jso
 }
 
 // Origin lines (DESIGN.md#origin-matches): each one rendered gives both shares in the ruled form,
-// "N% of this bill's wording appears in [title], a model published by [organization], covering M% of the model.",
+// "N% of this bill's wording appears in [title], a model published by [organization], covering M% of the model."
+// (a leaked document's: "[title], an [organization] model from a leaked document published by [archive]"),
 // and is exactly the line its bill's data gives, so no model text, authorship or label rides in
 // it. A bill page shows a line for every origin its data lists. A line is found by its
 // data-origin-line key, the document's id; its bill is the page's, or a story's data-origin-bill.
 type OriginData = Parameters<typeof originText>[0];
-const DOC_KEYS = new Set(["id", "source", "organization", "title", "url", "published", "leaked", "co_publishers"]);
+const DOC_KEYS = new Set(["id", "source", "organization", "title", "url", "published", "leaked", "co_publishers", "drafted_by"]);
 const ORIGIN_KEYS = new Set(["doc", "stages", "bill_share", "model_share", "sections"]);
 const originProblems: string[] = [];
 const billOrigins = new Map<string, OriginData[]>();

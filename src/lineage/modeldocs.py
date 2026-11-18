@@ -79,6 +79,10 @@ class ModelDoc(BaseModel):
     # Other organizations the document names as publishing it with its source's, as they are
     # named there: a page credits a joint bill to each, though only one library holds it.
     co_publishers: tuple[str, ...] = ()
+    # The organization that drafted a leaked document, as the document or its archive names it:
+    # a leaked archive published it, so a page names both (ruled at the deploy review). None for
+    # a document its own organization published.
+    drafted_by: str | None = Field(default=None, min_length=1)
 
     @model_validator(mode="after")
     def _its_id_names_its_source(self) -> Self:
@@ -88,6 +92,8 @@ class ModelDoc(BaseModel):
             raise ValueError("a co-publisher is named, never blank")
         if len(set(self.co_publishers)) != len(self.co_publishers):
             raise ValueError("a co-publisher is named once")
+        if self.leaked != (self.drafted_by is not None):
+            raise ValueError("a leaked document names who drafted it, and only a leaked one does")
         return self
 
 

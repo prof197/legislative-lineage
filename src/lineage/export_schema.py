@@ -96,6 +96,8 @@ class ModelDocRef(_Model):
     leaked: bool
     # Organizations that published it with `organization`, as the document names them.
     co_publishers: list[str] = Field(default_factory=list[str])
+    # A leaked document's drafting organization; `organization` is then the archive's.
+    drafted_by: str | None = None
 
 
 class Origin(_Model):

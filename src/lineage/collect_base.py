@@ -91,6 +91,7 @@ def provenance(
     collected_on: date,
     published: date | None = None,
     co_publishers: tuple[str, ...] = (),
+    drafted_by: str | None = None,
 ) -> ModelDoc:
     """The record of one collected document: where it came from, what robots.txt said, the
     organizations it names as publishing it with the source's, and the digests of its bytes as
@@ -108,6 +109,7 @@ def provenance(
         media_type=media_type,
         text_sha256=sha256(text.encode()),
         co_publishers=co_publishers,
+        drafted_by=drafted_by,
     )
 
 

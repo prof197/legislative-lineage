@@ -97,6 +97,7 @@ def hand_made_origins(
             collected_on=COLLECTED_ON,
             robots="allowed",
             leaked=source.leaked,
+            drafted_by="Example Council" if source.leaked else None,
             raw_sha256=sha256(raw),
             media_type="text/plain",
             text_sha256=sha256(raw),

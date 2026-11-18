@@ -246,14 +246,37 @@ class BillInfo:
 @dataclass(frozen=True, slots=True)
 class DocInfo:
     title: str
-    organization: str
+    organization: str  # the library's: for a leaked document, the archive that published it
     leaked: bool
+    drafted_by: str | None = None  # a leaked document's drafting organization
 
 
 def listed_origin(c: OriginGained, withheld: frozenset[str] = frozenset()) -> bool:
     """Whether a page would list the gained match: by its larger share, which the log keeps
     both of, and its document not withheld (lineage.withheld)."""
     return max(c.bill_share, c.model_share) >= FLOOR and c.doc_id not in withheld
+
+
+def _article(name: str) -> str:
+    # By sound for the names a library carries: "an ALEC", "an American", but "a Uniform".
+    # A vowel, but not the "you" of "Uni-", or a letter sounded with one, read out as an acronym.
+    vowel = re.match(r"[AEIOaeio]|[Uu](?!ni)|[AEFHILMNORSX](?:[A-Z]|$)", name) is not None
+    return "an" if vowel else "a"
+
+
+def model_named(title: str, organization: str, drafted_by: str | None, *, quoted: bool) -> str:
+    """A model document as an origin line names it, as the site's does (site/src/lib/origins.ts,
+    modelNamed): "[title], a model published by [organization]", or for a leaked document "[title],
+    an [drafting organization] model from a leaked document published by [archive]" (ruled at the
+    deploy review). The title drops an opening name of whoever drafted it."""
+    shown = shown_title(title, drafted_by or organization)
+    named = f"“{shown}”" if quoted else shown
+    if drafted_by is None:
+        return f"{named}, a model published by {organization}"
+    return (
+        f"{named}, {_article(drafted_by)} {drafted_by} model from a leaked document published by "
+        f"{organization}"
+    )
 
 
 def shown_title(title: str, organization: str) -> str:
@@ -332,11 +355,9 @@ def entry(event: Event, bills: Mapping[str, BillInfo], docs: Mapping[str, DocInf
         lines = [f"As of {day}, {_named(bill)}, shares wording with:"]
         for doc_id, shares in event.related:
             doc = docs[doc_id]
-            leaked = ", from a leaked archive" if doc.leaked else ""
             bill_share, model_share = (float(x) for x in shares.split())
             lines.append(
-                f"- “{shown_title(doc.title, doc.organization)}”, a model published by "
-                f"{doc.organization}{leaked}: "
+                f"- {model_named(doc.title, doc.organization, doc.drafted_by, quoted=True)}: "
                 f"{bill_share:.0%} of the bill's wording appears in it, covering "
                 f"{model_share:.0%} of the model"
             )
@@ -530,7 +551,9 @@ def write_feed(
     bills = bill_infos(tables, state=state, site_url=site, ids=_bills_of(events))
     sources = [c.source for c in collectors(collector_package).values()]
     docs = {
-        d.id: DocInfo(title=d.title, organization=s.organization, leaked=d.leaked)
+        d.id: DocInfo(
+            title=d.title, organization=s.organization, leaked=d.leaked, drafted_by=d.drafted_by
+        )
         for s in sources
         for d in read_docs(s, modeldocs_root)
     }

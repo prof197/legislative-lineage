@@ -138,6 +138,7 @@ stages: ("near_duplicate" | "semantic")[]
  */
 export interface ModelDocRef {
 co_publishers?: string[]
+drafted_by?: (string | null)
 id: string
 leaked: boolean
 organization: string

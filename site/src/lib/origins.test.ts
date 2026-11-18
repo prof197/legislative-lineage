@@ -49,6 +49,18 @@ test("the organization is named as the data names it, after the title", () => {
   assert.equal(originLine(o).after, ", a model published by The States Project, covering 50% of the model.");
 });
 
+test("a leaked document names who drafted it and the archive that published the leak", () => {
+  const alec = "American Legislative Exchange Council (ALEC)";
+  const leaked = { ...origin("ALEC Model Act", 0.4, 0.5), doc: { ...origin("A", 0, 0).doc, title: "ALEC Model Act", organization: "Example Archive Project", leaked: true, drafted_by: alec } };
+  const text = originText(leaked);
+  assert.equal(text, `40% of this bill's wording appears in Model Act, an ${alec} model from a leaked document published by Example Archive Project, covering 50% of the model.`);
+  assert.match(text, ORIGIN_LINE);
+  const ncoil = { ...leaked, doc: { ...leaked.doc, drafted_by: "National Council of Insurance Legislators (NCOIL)" } };
+  assert.match(originText(ncoil), /, a National Council of Insurance Legislators \(NCOIL\) model from a leaked document/);
+  const uniform = { ...leaked, doc: { ...leaked.doc, drafted_by: "Uniform Law Commission" } };
+  assert.match(originText(uniform), /, a Uniform Law Commission model/);
+});
+
 test("a title that opens with its organization's name or abbreviation does not repeat it", () => {
   const ncoil = "National Council of Insurance Legislators (NCOIL)";
   assert.equal(shownTitle("NCOIL Insurance Business Transfer Model Act", ncoil), "Insurance Business Transfer Model Act");

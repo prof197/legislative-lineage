@@ -487,6 +487,7 @@ def origins_by_bill(
             published=None if doc.published is None else doc.published.isoformat(),
             leaked=doc.leaked,
             co_publishers=list(doc.co_publishers),
+            drafted_by=doc.drafted_by,
         )
         out[m.bill_id].append(
             Origin(
