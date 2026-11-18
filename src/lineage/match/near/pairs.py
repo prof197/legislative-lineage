@@ -18,10 +18,7 @@ Same-state pairs form families and the state boilerplate flag; they never become
 DESIGN.md#near-duplicate-stage.
 """
 
-import shutil
-import tempfile
-from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, cast
 
@@ -32,11 +29,19 @@ from lineage.core import db
 from lineage.core.disk import require_free_space
 from lineage.match.near import queries
 from lineage.match.near.bands import load_band_index
-from lineage.match.near.families import FAMILY_SHARE, bill_pairs, components, linked
+from lineage.match.near.dirs import replace_dir
+from lineage.match.near.families import (
+    FAMILY_SHARE,
+    BillPairs,
+    bill_pairs,
+    components,
+    linked,
+)
 from lineage.match.near.lsh import (
     BANDS,
     BUCKET_CAP,
     BandIndex,
+    BandPairs,
     band_keys,
     band_pairs,
     bucket_sizes,
@@ -66,6 +71,31 @@ class SectionPairs:
     agreements: NDArray[np.uint8]
 
 
+def pair_codes(
+    left: NDArray[np.integer[Any]], right: NDArray[np.integer[Any]]
+) -> NDArray[np.uint64]:
+    """Pairs as single sortable codes: left in the high 32 bits, right in the low."""
+    return (np.asarray(left).astype(np.uint64) << np.uint64(32)) | np.asarray(right).astype(
+        np.uint64
+    )
+
+
+def split_codes(codes: NDArray[np.uint64]) -> tuple[NDArray[np.uint32], NDArray[np.uint32]]:
+    """Codes back into their left and right halves."""
+    return (
+        (codes >> np.uint64(32)).astype(np.uint32),
+        (codes & np.uint64(0xFFFF_FFFF)).astype(np.uint32),
+    )
+
+
+def _best_per_code(codes: NDArray[np.uint64], best: NDArray[np.uint8]) -> SectionPairs:
+    """Each code once, in code order, with the highest agreement count it was found with."""
+    order = np.lexsort((-best.astype(np.int16), codes))
+    codes, best = codes[order], best[order]
+    first = np.r_[True, codes[1:] != codes[:-1]] if codes.size else np.empty(0, dtype=bool)
+    return SectionPairs(*split_codes(codes[first]), best[first])
+
+
 def section_pairs(
     section_of_row: NDArray[np.int64],
     left: NDArray[np.uint32],
@@ -79,16 +109,7 @@ def section_pairs(
     """
     a, b = section_of_row[left], section_of_row[right]
     apart = a != b
-    codes = (a[apart].astype(np.uint64) << np.uint64(32)) | b[apart].astype(np.uint64)
-    best = counts[apart]
-    order = np.lexsort((-best.astype(np.int16), codes))
-    codes, best = codes[order], best[order]
-    first = np.r_[True, codes[1:] != codes[:-1]] if codes.size else np.empty(0, dtype=bool)
-    return SectionPairs(
-        (codes[first] >> np.uint64(32)).astype(np.uint32),
-        (codes[first] & np.uint64(0xFFFF_FFFF)).astype(np.uint32),
-        best[first],
-    )
+    return _best_per_code(pair_codes(a[apart], b[apart]), counts[apart])
 
 
 def merge_section_pairs(parts: list[SectionPairs]) -> SectionPairs:
@@ -96,37 +117,23 @@ def merge_section_pairs(parts: list[SectionPairs]) -> SectionPairs:
     if not parts:
         empty = np.empty(0, dtype=np.uint32)
         return SectionPairs(empty, empty.copy(), np.empty(0, dtype=np.uint8))
-    codes = np.concatenate(
-        [(p.left.astype(np.uint64) << np.uint64(32)) | p.right.astype(np.uint64) for p in parts]
+    return _best_per_code(
+        np.concatenate([pair_codes(p.left, p.right) for p in parts]),
+        np.concatenate([p.agreements for p in parts]),
     )
-    best = np.concatenate([p.agreements for p in parts])
-    order = np.lexsort((-best.astype(np.int16), codes))
-    codes, best = codes[order], best[order]
-    first = np.r_[True, codes[1:] != codes[:-1]] if codes.size else np.empty(0, dtype=bool)
-    return SectionPairs(
-        (codes[first] >> np.uint64(32)).astype(np.uint32),
-        (codes[first] & np.uint64(0xFFFF_FFFF)).astype(np.uint32),
-        best[first],
-    )
+
+
+def write_section_pairs(directory: Path, found: SectionPairs) -> None:
+    """A pairs table's three vectors."""
+    np.save(directory / "left.npy", np.asarray(found.left, dtype=np.uint32))
+    np.save(directory / "right.npy", np.asarray(found.right, dtype=np.uint32))
+    np.save(directory / "agreements.npy", np.asarray(found.agreements, dtype=np.uint8))
 
 
 def _estimate_histogram(counts: NDArray[np.uint8]) -> NDArray[np.int64]:
     """Pairs per 1/ESTIMATE_BINS of estimated similarity; the last bin includes 1."""
     bins = np.minimum(counts.astype(np.int64) * ESTIMATE_BINS // NUM_PERM, ESTIMATE_BINS - 1)
     return np.bincount(bins, minlength=ESTIMATE_BINS)
-
-
-def _replace_dir(final: Path, write: Callable[[Path], None]) -> None:
-    """Write a table into a fresh directory beside `final`, then swap it in."""
-    building = Path(tempfile.mkdtemp(prefix=f"{final.name}.", dir=final.parent))
-    try:
-        write(building)
-        if final.exists():
-            shutil.rmtree(final)
-        building.rename(final)
-    except BaseException:
-        shutil.rmtree(building, ignore_errors=True)
-        raise
 
 
 def _family_summary(
@@ -145,6 +152,13 @@ def _family_summary(
     }
 
 
+def _histograms() -> dict[str, NDArray[np.int64]]:
+    return {
+        "cross_state": np.zeros(ESTIMATE_BINS, dtype=np.int64),
+        "same_state": np.zeros(ESTIMATE_BINS, dtype=np.int64),
+    }
+
+
 @dataclass
 class _Tally:
     """Counts over the distinct candidate pairs, added to band by band."""
@@ -158,6 +172,201 @@ class _Tally:
     rows_capped: int = 0
     pairs_capped: int = 0
     largest: int = 0
+    # Candidate window pairs before verification, by estimated similarity.
+    histogram: dict[str, NDArray[np.int64]] = field(default_factory=_histograms)
+
+    def add_band(self, found: BandPairs) -> None:
+        """What a band's bucket cap skipped."""
+        self.over += found.buckets_over_cap
+        self.rows_capped += found.rows_in_capped_buckets
+        self.pairs_capped += found.pairs_in_capped_buckets
+        self.largest = max(self.largest, found.largest_bucket)
+
+    def add_verified(
+        self, counts: NDArray[np.uint8], cross: NDArray[np.bool_], kept: NDArray[np.bool_]
+    ) -> None:
+        """A band's new candidates: their agreement counts, which cross state lines, which
+        were kept."""
+        self.candidates += int(counts.size)
+        self.cross += int(cross.sum())
+        self.kept_cross += int((kept & cross).sum())
+        self.kept_same += int((kept & ~cross).sum())
+        self.dropped += int((~kept).sum())
+        self.histogram["cross_state"] += _estimate_histogram(counts[cross])
+        self.histogram["same_state"] += _estimate_histogram(counts[~cross])
+
+
+@dataclass
+class _Held:
+    """The verified section pairs found so far, merged down to each pair once whenever they
+    pass _HELD_SECTION_PAIRS."""
+
+    cross: list[SectionPairs] = field(default_factory=list[SectionPairs])
+    same: list[SectionPairs] = field(default_factory=list[SectionPairs])
+    held: int = 0
+
+    def add(self, cross: SectionPairs, same: SectionPairs) -> None:
+        self.cross.append(cross)
+        self.same.append(same)
+        self.held += cross.left.size + same.left.size
+        if self.held > _HELD_SECTION_PAIRS:
+            self.cross = [merge_section_pairs(self.cross)]
+            self.same = [merge_section_pairs(self.same)]
+            self.held = self.cross[0].left.size + self.same[0].left.size
+
+
+def _new_candidates(
+    index: BandIndex, band: int, seen: NDArray[np.uint64], tally: _Tally, *, cap: int
+) -> tuple[NDArray[np.uint32], NDArray[np.uint32], NDArray[np.uint64]]:
+    """The window pairs band `band` forms that no earlier band did, and `seen` with them."""
+    found = band_pairs(index, band, cap=cap)
+    tally.add_band(found)
+    new = found.codes[unseen(found.codes, seen)]
+    del found
+    left, right = split_codes(new)
+    return left, right, merge_sorted(seen, new)
+
+
+def _verify_bands(
+    index: BandIndex,
+    files: SignatureFiles,
+    section_of_row: NDArray[np.int64],
+    states: NDArray[np.int32],
+    *,
+    cap: int,
+) -> tuple[SectionPairs, SectionPairs, _Tally]:
+    """The verified cross-state and same-state section pairs, and the tally of candidates."""
+    need = min_agreements(THRESHOLD)
+    tally, held = _Tally(), _Held()
+    seen = np.empty(0, dtype=np.uint64)
+
+    def gather(rows: NDArray[np.int64]) -> NDArray[np.uint32]:
+        return signature_values(files, rows)
+
+    for band in range(BANDS):
+        left, right, seen = _new_candidates(index, band, seen, tally, cap=cap)
+        counts = agreements_by(gather, left, right)
+        cross = states[left] != states[right]
+        kept = counts >= need
+        tally.add_verified(counts, cross, kept)
+        cross_part, same_part = (
+            section_pairs(section_of_row, left[mask], right[mask], counts[mask])
+            for mask in (kept & cross, kept & ~cross)
+        )
+        held.add(cross_part, same_part)
+    del seen
+    return merge_section_pairs(held.cross), merge_section_pairs(held.same), tally
+
+
+@dataclass(frozen=True, slots=True)
+class _Families:
+    shares: BillPairs
+    labels: NDArray[np.int32]  # each bill's family at FAMILY_SHARE
+    sweep: list[dict[str, Any]]
+
+
+def _family_sweep(
+    bills: NDArray[np.str_],
+    bill_of_section: NDArray[np.int32],
+    linking: SectionPairs,
+    state_of_bill: dict[str, str],
+) -> _Families:
+    """The families at FAMILY_SHARE, and what each share of the sweep would form."""
+    # Shares count sections, so a section matched through several windows counts once.
+    shares = bill_pairs(bill_of_section, linking.left, linking.right)
+    sweep: list[dict[str, Any]] = []
+    labels = np.arange(bills.size, dtype=np.int32)
+    for share in sorted({*FAMILY_SWEEP, FAMILY_SHARE}):
+        links = linked(shares, share)
+        found_labels = components(bills.size, shares.first[links], shares.second[links])
+        if share == FAMILY_SHARE:
+            labels = found_labels
+        summary = _family_summary(found_labels, bills, state_of_bill)
+        sweep.append(
+            {
+                "share": round(share, 3),
+                "linked_bill_pairs": int(links.sum()),
+                "families_of_two_or_more": summary["families_of_two_or_more"],
+                "bills_in_them": summary["bills_in_them"],
+                "largest_family": summary["largest"][0]["bills"] if summary["largest"] else 0,
+            }
+        )
+    return _Families(shares, labels, sweep)
+
+
+def _write_tables(
+    tables_dir: Path,
+    stored: SectionPairs,
+    linking: SectionPairs,
+    bills: NDArray[np.str_],
+    labels: NDArray[np.int32],
+) -> None:
+    def write_families(directory: Path) -> None:
+        with db.connect_quiet() as con:
+            queries.write_families(
+                con,
+                parquet_path=directory / "families.parquet",
+                bill_ids=bills.tolist(),
+                families=bills[labels].tolist(),
+            )
+
+    replace_dir(tables_dir / "pairs", lambda d: write_section_pairs(d, stored))
+    replace_dir(tables_dir / "same_state_pairs", lambda d: write_section_pairs(d, linking))
+    replace_dir(tables_dir / "families", write_families)
+
+
+def _found_report(tally: _Tally) -> dict[str, Any]:
+    return {
+        "largest_bucket": tally.largest,
+        "capped": {
+            "buckets": tally.over,
+            "window_memberships": tally.rows_capped,
+            "pairs": tally.pairs_capped,
+        },
+        "candidate_pairs": {
+            "all": tally.candidates,
+            "cross_state": tally.cross,
+            "same_state": tally.candidates - tally.cross,
+        },
+    }
+
+
+def _pairs_report(tally: _Tally, stored: SectionPairs, linking: SectionPairs) -> dict[str, Any]:
+    return {
+        "threshold": THRESHOLD,
+        "min_agreements": min_agreements(THRESHOLD),
+        # Pairs of windows.
+        "verified": {
+            "all": tally.kept_cross + tally.kept_same,
+            "cross_state": tally.kept_cross,
+            "same_state": tally.kept_same,
+            "dropped": tally.dropped,
+        },
+        # The verified window pairs as pairs of distinct sections.
+        "section_pairs": {
+            "cross_state": int(stored.left.size),
+            "same_state": int(linking.left.size),
+        },
+        # Candidate window pairs before verification, by estimated similarity in 1/16 steps.
+        "estimate_histogram": {k: v.tolist() for k, v in tally.histogram.items()},
+        "stored_bytes": int(stored.left.size + linking.left.size) * _PAIR_BYTES,
+    }
+
+
+def _families_report(
+    families: _Families, bills: NDArray[np.str_], state_of_bill: dict[str, str]
+) -> dict[str, Any]:
+    shares = families.shares
+    lowest = np.minimum(shares.first_share, shares.second_share)
+    return {
+        "share": FAMILY_SHARE,
+        "same_state_bill_pairs": int(shares.first.size),
+        "linked_bill_pairs": int(linked(shares).sum()),
+        **_family_summary(families.labels, bills, state_of_bill),
+        # Same-state bill pairs by the smaller of their two shares, in steps of 1/20.
+        "min_share_histogram": np.histogram(lowest, bins=SHARE_BINS, range=(0.0, 1.0))[0].tolist(),
+        "sweep": families.sweep,
+    }
 
 
 def build_pairs(
@@ -178,56 +387,8 @@ def build_pairs(
     pairs are held, never every candidate with its signatures (DESIGN.md#dr-3).
     """
     index = load_band_index(tables_dir)
-    section_of_row = owners.section
     bills, inverse = np.unique(np.array(owners.section_bills), return_inverse=True)
-    bill_of_section = inverse.astype(np.int32)
-    need = min_agreements(THRESHOLD)
-    tally = _Tally()
-    histogram = {
-        "cross_state": np.zeros(ESTIMATE_BINS, dtype=np.int64),
-        "same_state": np.zeros(ESTIMATE_BINS, dtype=np.int64),
-    }
-    seen = np.empty(0, dtype=np.uint64)
-    cross_parts: list[SectionPairs] = []
-    same_parts: list[SectionPairs] = []
-    held = 0
-
-    def gather(rows: NDArray[np.int64]) -> NDArray[np.uint32]:
-        return signature_values(files, rows)
-
-    for band in range(BANDS):
-        found = band_pairs(index, band, cap=cap)
-        tally.over += found.buckets_over_cap
-        tally.rows_capped += found.rows_in_capped_buckets
-        tally.pairs_capped += found.pairs_in_capped_buckets
-        tally.largest = max(tally.largest, found.largest_bucket)
-        new = found.codes[unseen(found.codes, seen)]
-        del found
-        seen = merge_sorted(seen, new)
-        left = (new >> np.uint64(32)).astype(np.uint32)
-        right = (new & np.uint64(0xFFFF_FFFF)).astype(np.uint32)
-        del new
-        counts = agreements_by(gather, left, right)
-        cross = states[left] != states[right]
-        kept = counts >= need
-        tally.candidates += int(left.size)
-        tally.cross += int(cross.sum())
-        tally.kept_cross += int((kept & cross).sum())
-        tally.kept_same += int((kept & ~cross).sum())
-        tally.dropped += int((~kept).sum())
-        histogram["cross_state"] += _estimate_histogram(counts[cross])
-        histogram["same_state"] += _estimate_histogram(counts[~cross])
-        for parts, mask in ((cross_parts, kept & cross), (same_parts, kept & ~cross)):
-            part = section_pairs(section_of_row, left[mask], right[mask], counts[mask])
-            parts.append(part)
-            held += part.left.size
-        if held > _HELD_SECTION_PAIRS:
-            cross_parts = [merge_section_pairs(cross_parts)]
-            same_parts = [merge_section_pairs(same_parts)]
-            held = cross_parts[0].left.size + same_parts[0].left.size
-    del seen
-    stored = merge_section_pairs(cross_parts)
-    linking = merge_section_pairs(same_parts)
+    stored, linking, tally = _verify_bands(index, files, owners.section, states, cap=cap)
     require_free_space(
         tables_dir,
         needed=(stored.left.size + linking.left.size) * _PAIR_BYTES
@@ -235,95 +396,14 @@ def build_pairs(
         + (1 << 20),
         floor=floor_bytes,
     )
-
-    # Shares count sections, so a section matched through several windows counts once.
-    shares = bill_pairs(bill_of_section, linking.left, linking.right)
-    sweep: list[dict[str, Any]] = []
-    labels = np.arange(bills.size, dtype=np.int32)
     with db.connect_quiet() as con:
         state_of_bill = queries.bill_states(con, bills_glob=str(tables_dir / "bills" / "*.parquet"))
-    for share in sorted({*FAMILY_SWEEP, FAMILY_SHARE}):
-        links = linked(shares, share)
-        found_labels = components(bills.size, shares.first[links], shares.second[links])
-        if share == FAMILY_SHARE:
-            labels = found_labels
-        summary = _family_summary(found_labels, bills, state_of_bill)
-        sweep.append(
-            {
-                "share": round(share, 3),
-                "linked_bill_pairs": int(links.sum()),
-                "families_of_two_or_more": summary["families_of_two_or_more"],
-                "bills_in_them": summary["bills_in_them"],
-                "largest_family": summary["largest"][0]["bills"] if summary["largest"] else 0,
-            }
-        )
-
-    def write_pairs(found: SectionPairs) -> Callable[[Path], None]:
-        def write(directory: Path) -> None:
-            np.save(directory / "left.npy", found.left)
-            np.save(directory / "right.npy", found.right)
-            np.save(directory / "agreements.npy", found.agreements)
-
-        return write
-
-    def write_families(directory: Path) -> None:
-        with db.connect_quiet() as con:
-            queries.write_families(
-                con,
-                parquet_path=directory / "families.parquet",
-                bill_ids=bills.tolist(),
-                families=bills[labels].tolist(),
-            )
-
-    _replace_dir(tables_dir / "pairs", write_pairs(stored))
-    _replace_dir(tables_dir / "same_state_pairs", write_pairs(linking))
-    _replace_dir(tables_dir / "families", write_families)
-
-    lowest = np.minimum(shares.first_share, shares.second_share)
+    families = _family_sweep(bills, inverse.astype(np.int32), linking, state_of_bill)
+    _write_tables(tables_dir, stored, linking, bills, families.labels)
     return {
-        "found": {
-            "largest_bucket": tally.largest,
-            "capped": {
-                "buckets": tally.over,
-                "window_memberships": tally.rows_capped,
-                "pairs": tally.pairs_capped,
-            },
-            "candidate_pairs": {
-                "all": tally.candidates,
-                "cross_state": tally.cross,
-                "same_state": tally.candidates - tally.cross,
-            },
-        },
-        "pairs": {
-            "threshold": THRESHOLD,
-            "min_agreements": min_agreements(THRESHOLD),
-            # Pairs of windows.
-            "verified": {
-                "all": tally.kept_cross + tally.kept_same,
-                "cross_state": tally.kept_cross,
-                "same_state": tally.kept_same,
-                "dropped": tally.dropped,
-            },
-            # The verified window pairs as pairs of distinct sections.
-            "section_pairs": {
-                "cross_state": int(stored.left.size),
-                "same_state": int(linking.left.size),
-            },
-            # Candidate window pairs before verification, by estimated similarity in 1/16 steps.
-            "estimate_histogram": {k: v.tolist() for k, v in histogram.items()},
-            "stored_bytes": int(stored.left.size + linking.left.size) * _PAIR_BYTES,
-        },
-        "families": {
-            "share": FAMILY_SHARE,
-            "same_state_bill_pairs": int(shares.first.size),
-            "linked_bill_pairs": int(linked(shares).sum()),
-            **_family_summary(labels, bills, state_of_bill),
-            # Same-state bill pairs by the smaller of their two shares, in steps of 1/20.
-            "min_share_histogram": np.histogram(lowest, bins=SHARE_BINS, range=(0.0, 1.0))[
-                0
-            ].tolist(),
-            "sweep": sweep,
-        },
+        "found": _found_report(tally),
+        "pairs": _pairs_report(tally, stored, linking),
+        "families": _families_report(families, bills, state_of_bill),
     }
 
 
@@ -425,12 +505,6 @@ def renumbered(pairs: SectionPairs, section_map: NDArray[np.int64]) -> SectionPa
     )
 
 
-def pair_codes(left: NDArray[np.uint32], right: NDArray[np.uint32]) -> NDArray[np.uint64]:
-    return (np.asarray(left).astype(np.uint64) << np.uint64(32)) | np.asarray(right).astype(
-        np.uint64
-    )
-
-
 def replaced_pairs(
     carried: SectionPairs, recomputed_codes: NDArray[np.uint64], found: SectionPairs
 ) -> SectionPairs:
@@ -441,19 +515,7 @@ def replaced_pairs(
     merged = np.concatenate([codes[keep], pair_codes(found.left, found.right)])
     agreements = np.concatenate([np.asarray(carried.agreements)[keep], found.agreements])
     order = np.argsort(merged, kind="stable")
-    merged = merged[order]
-    return SectionPairs(
-        (merged >> np.uint64(32)).astype(np.uint32),
-        (merged & np.uint64(0xFFFF_FFFF)).astype(np.uint32),
-        agreements[order].astype(np.uint8),
-    )
-
-
-def write_section_pairs(directory: Path, found: SectionPairs) -> None:
-    """A pairs table's three vectors, as `build_pairs` writes them."""
-    np.save(directory / "left.npy", np.asarray(found.left, dtype=np.uint32))
-    np.save(directory / "right.npy", np.asarray(found.right, dtype=np.uint32))
-    np.save(directory / "agreements.npy", np.asarray(found.agreements, dtype=np.uint8))
+    return SectionPairs(*split_codes(merged[order]), agreements[order].astype(np.uint8))
 
 
 def sections_of_window_pairs(
@@ -464,8 +526,4 @@ def sections_of_window_pairs(
     a = section_of_row[(codes >> np.uint64(32)).astype(np.int64)]
     b = section_of_row[(codes & np.uint64(0xFFFF_FFFF)).astype(np.int64)]
     apart = a != b
-    found = np.unique(pair_codes(np.minimum(a, b)[apart], np.maximum(a, b)[apart]))
-    return (
-        (found >> np.uint64(32)).astype(np.uint32),
-        (found & np.uint64(0xFFFF_FFFF)).astype(np.uint32),
-    )
+    return split_codes(np.unique(pair_codes(np.minimum(a, b)[apart], np.maximum(a, b)[apart])))
