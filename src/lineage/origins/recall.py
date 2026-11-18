@@ -24,7 +24,7 @@ from collections import Counter
 from collections.abc import Callable, Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, get_args
 
 from lineage.core.intervals import wilson
 from lineage.evals.answer_key import ANSWER_KEY, HELD_OUT_KEY, ORIGINS_HELD_OUT_KEY, read_answer_key
@@ -37,7 +37,7 @@ STAGES: tuple[Stage, ...] = ("near_duplicate", "semantic")
 STRATA: tuple[Stratum, ...] = ("enacted", "substantially_similar")
 # Ordered by how far an enactment got; an enactment's reason is its furthest bill's.
 MissReason = Literal["not_in_corpus", "not_matched", "below_threshold"]
-MISS_REASONS: tuple[MissReason, ...] = ("not_in_corpus", "not_matched", "below_threshold")
+MISS_REASONS: tuple[MissReason, ...] = get_args(MissReason)
 
 
 class OriginRecallError(Exception):
