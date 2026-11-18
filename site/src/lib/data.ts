@@ -79,7 +79,7 @@ export function precisionSampleState(): string {
   return (JSON.parse(readFileSync(file, "utf8")) as { state: string }).state;
 }
 
-// Whether this build's data carries the live track's Atom feed (lineage.feed writes feed.xml at
+// Whether this build's data carries the live track's Atom feed (lineage.live.feed writes feed.xml at
 // the export's root); a release from before the live track has none, so nothing links to it.
 export const FEED_PATH = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/data/feed.xml`;
 export const hasFeed = (): boolean => existsSync(path.join(DATA, "feed.xml"));

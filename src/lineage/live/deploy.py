@@ -67,10 +67,10 @@ from lineage.export.release import (
     write_release_manifest,
 )
 from lineage.export.schema import Meta, Release
-from lineage.feed import listed_origin
+from lineage.live.feed import listed_origin
+from lineage.live.updates import Change, OriginGained, OriginLost, read_changes
 from lineage.origins.withheld import REPORT as WITHHELD_REPORT
 from lineage.origins.withheld import load_withheld
-from lineage.updates import Change, OriginGained, OriginLost, read_changes
 
 RULES = Path("rules/deploy.toml")
 DEPLOY_DIR = DATA / "deploy"
@@ -534,7 +534,7 @@ def listed_origin_claims(
     changes: Iterable[Change], days: Iterable[date], withheld: frozenset[str] = frozenset()
 ) -> list[OriginGained]:
     """The origin matches the given days gained that a page or the feed lists: by the larger
-    of the two shares, at the listing floor, their document not withheld, as lineage.feed lists
+    of the two shares, at the listing floor, their document not withheld, as lineage.live.feed lists
     them."""
     wanted = set(days)
     return [c for c in changes if isinstance(c, OriginGained) and c.as_of in wanted and
@@ -1095,7 +1095,7 @@ def describe_bills(
     tables: Path, *, state: str, site_url: str
 ) -> Callable[[list[str]], dict[str, dict[str, Any]]]:
     """Each bill a review names, as the feed names it: state, identifier, title and link."""
-    from lineage.feed import bill_infos  # the feed's naming pulls in the export's stack
+    from lineage.live.feed import bill_infos  # the feed's naming pulls in the export's stack
 
     def describe(ids: list[str]) -> dict[str, dict[str, Any]]:
         infos = bill_infos(tables, state=state, site_url=site_url.rstrip("/"), ids=ids)

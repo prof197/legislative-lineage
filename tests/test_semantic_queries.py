@@ -4,9 +4,9 @@ from pathlib import Path
 
 import pytest
 
-from lineage import queries
 from lineage.core import db
 from lineage.data import queries as data_queries
+from lineage.live import queries as live_queries
 from lineage.match import queries as match_queries
 from lineage.match.near import queries as near_queries
 from lineage.origins import queries as origins_queries
@@ -67,7 +67,7 @@ def test_only_eligible_non_boilerplate_sections_count(tables: Path) -> None:
     glob, eligible = str(tables / "s.parquet"), tables / "eligible.parquet"
     with db.connect_quiet() as con:
         words = match_queries.section_word_counts(con, sections_glob=glob, eligible_path=eligible)
-        ids = queries.matchable_bill_ids(con, sections_glob=glob, eligible_path=eligible)
+        ids = live_queries.matchable_bill_ids(con, sections_glob=glob, eligible_path=eligible)
         texts = origins_queries.matchable_section_texts(
             con, sections_glob=glob, eligible_path=eligible, ids=["b4", "b5"]
         )

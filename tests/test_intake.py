@@ -27,7 +27,7 @@ from lineage.cli import app
 from lineage.core import db, pace
 from lineage.core.http import open_url, request_url
 from lineage.core.robots import parse_robots
-from lineage.intake import (
+from lineage.live.intake import (
     IntakeError,
     Tier,
     january_estimate,
@@ -35,11 +35,11 @@ from lineage.intake import (
     requests_per_day,
     run_intake,
 )
-from lineage.openstates_api import INCLUDE, PER_PAGE, Bill, bills_url, bulk_record
+from lineage.live.openstates_api import INCLUDE, PER_PAGE, Bill, bills_url, bulk_record
+from lineage.live.updates import fold, load_day, record_changes, text_hash, write_archives
 from lineage.text import queries as text_queries
 from lineage.text.fetch import Job, fetch_one, host_of, run_host
 from lineage.text.rules import load_rules, usable
-from lineage.updates import fold, load_day, record_changes, text_hash, write_archives
 from tests.conftest import SESSIONS
 
 FIXTURE = json.loads((Path(__file__).parent / "fixtures" / "intake" / "api.json").read_text())

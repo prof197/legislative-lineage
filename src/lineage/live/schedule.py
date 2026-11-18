@@ -8,13 +8,13 @@ that fails stops the job, so the live export stays the last good one: nothing be
 touches it. Each run writes its outcome to a status file under the data directory, and a failed
 run raises a macOS notification, since the job has no outside service to post to. Before the
 hosted state's first day of session (rules/deploy.toml) the job stops there, at a local export
-and feed; from that day it ends with `publish deploy` (lineage.deploy), which publishes the day
+and feed; from that day it ends with `publish deploy` (lineage.live.deploy), which publishes the day
 behind its gates, or holds it: a held day stops the job with status "held", its counts and
 baseline, and an alert, as a failure does.
 
 **The weekly job** compares the updated tables with a full rebuild over the same days and the
-same pinned corpus statistics (`lineage.updates.snapshot`): the share of relatives the two agree
-on must be at least 98%, or the job fails loudly (DR-7). It then reports the drift: how many
+same pinned corpus statistics (`lineage.live.updates.snapshot`): the share of relatives the two
+agree on must be at least 98%, or the job fails loudly (DR-7). It then reports the drift: how many
 relatives changed when the stoplist and the state boilerplate flag were counted afresh. Before
 session it then prepares a release candidate for review (`publish candidate`), and during it
 lists the week's new origin claims for the maintainer (`publish review`).
@@ -44,11 +44,11 @@ from pathlib import Path
 from typing import Any
 
 from lineage.core.paths import DATA
-from lineage.deploy import DEPLOY_DIR, HELD, DeployRules, in_session, load_rules
-from lineage.incremental import applied_days
+from lineage.live.deploy import DEPLOY_DIR, HELD, DeployRules, in_session, load_rules
+from lineage.live.incremental import applied_days
+from lineage.live.publish import staging_dir
+from lineage.live.updates import CHANGES_DIR, DAY_FILE, DayInfo, Relative, Snapshot, snapshot
 from lineage.match.semantic.stage import MODEL
-from lineage.publish import staging_dir
-from lineage.updates import CHANGES_DIR, DAY_FILE, DayInfo, Relative, Snapshot, snapshot
 
 SCHEDULE_DIR = DATA / "schedule"
 STATUS_FILE = "status.json"

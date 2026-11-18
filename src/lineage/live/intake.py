@@ -1,7 +1,7 @@
 """`lineage intake`: one day of new and changed bills from Open States' API v3, with their text.
 
 Each state is asked for its bills updated since its own cursor, oldest update first
-(lineage.openstates_api). Every page is recorded under `<runs>/<day>/<ST>/` as it arrives, and
+(lineage.live.openstates_api). Every page is recorded under `<runs>/<day>/<ST>/` as it arrives, and
 the next request starts from the last bill's update time rather than from a page number, so a
 bill updated while the run pages is read again at the end instead of shifting a later page past
 it. A state's cursor is read from its recorded pages: a state that fails, or that the key's
@@ -12,7 +12,7 @@ Text. The API carries no bill text, so each record's chosen version (lineage.tex
 fetched through the text layer (lineage.text.fetch: robots.txt, pacing, backoff, extraction),
 with its state's format, PDF reading and content element (rules/text_layer.toml), into the
 intake's own store. A fetched text joins the day in the record itself, as `raw_text` and
-`raw_text_url`, the fields an archive's record carries its text in: `lineage.updates.fold`
+`raw_text_url`, the fields an archive's record carries its text in: `lineage.live.updates.fold`
 hashes them, and a rebuild's archives (`write_archives`), `lineage ingest` and
 `lineage text merge` read them, with no other path to join. A record whose new version could not
 be fetched keeps the text it carried before, so a transient error does not erase its matches;
@@ -20,7 +20,7 @@ the next run retries the version, and the record joins that day once it has its 
 `<runs>/<day>/texts.json` names the stored text each record of the day took.
 
 The day directory (`day.json` and `<ST>_<session>_bills.json`, the format
-`lineage.updates.load_day` reads) is assembled from the recorded pages, `texts.json`, the
+`lineage.live.updates.load_day` reads) is assembled from the recorded pages, `texts.json`, the
 store and the earlier days alone. A written day is never changed: running the day again sends
 no request, assembles it again and checks it is the same, byte for byte. States are reported
 in `<reports>/<day>.json`. See DESIGN.md#updates and DESIGN.md#dr-6.
@@ -40,12 +40,12 @@ from http.client import HTTPException, HTTPResponse
 from pathlib import Path
 from typing import Any, Protocol
 
-from lineage import queries
 from lineage.core import db
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.core.http import moved
 from lineage.core.paths import DATA
-from lineage.openstates_api import (
+from lineage.live import queries
+from lineage.live.openstates_api import (
     KEY_ENV,
     KEY_HEADER,
     PER_PAGE,
@@ -57,10 +57,10 @@ from lineage.openstates_api import (
     bulk_record,
     jurisdiction,
 )
+from lineage.live.updates import BILLS_SUFFIX, DAY_FILE, Folded, fold, load_day
 from lineage.text.fetch import Job, fetch_all, host_of, stored
 from lineage.text.rules import RULES, TextRules, load_rules, usable
 from lineage.text.versions import Link, Version, choose_version
-from lineage.updates import BILLS_SUFFIX, DAY_FILE, Folded, fold, load_day
 
 COMMAND = "uv run lineage intake"
 INTAKE = DATA / "intake"

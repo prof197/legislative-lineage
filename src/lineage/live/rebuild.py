@@ -2,18 +2,18 @@
 run again into a tables directory of its own, the reference an update is held to (DR-7).
 
 The weekly job runs it twice over the days the updated tables have had, and compares
-(lineage.schedule): once with the base build's corpus statistics, pinned, which must agree with
+(lineage.live.schedule): once with the base build's corpus statistics, pinned, which must agree with
 the updated tables, and once with them counted afresh, whose difference is the drift.
 
-- **Archives.** The days up to `through` are folded (lineage.updates.fold), each record as last
+- **Archives.** The days up to `through` are folded (lineage.live.updates.fold), each record as last
   seen. An archive of the snapshot no day touches is copied with its README restamped; one a day
   touches takes the day's records in place of its own and the new ones beside them, sorted by
   id as an update sorts it; a session the snapshot lacks gets an archive of its own, named as
-  lineage.updates.write_archives names it. Every archive is stamped as of the fold's last day,
+  lineage.live.updates.write_archives names it. Every archive is stamped as of the fold's last day,
   since an update restamps every bills file, and a status is judged on that day.
 - **Texts.** The text layer's choice is an input, as the archives are: each record takes the
   text `lineage text merge` gives it, but a record a day added or whose text a day replaced,
-  which takes the text it carries, as an update gives it (lineage.queries.merge_texts_file).
+  which takes the text it carries, as an update gives it (lineage.live.queries.merge_texts_file).
 - **Statistics.** With `pinned_from`, the updated tables at the same day, the stoplist is copied
   from them and the state boilerplate counts are carried over to the rebuild's sections by bill
   and ordinal; those tables carry the base build's statistics, never recounted, with no flag on
@@ -43,7 +43,6 @@ from typing import Any
 
 import numpy as np
 
-from lineage import queries
 from lineage.core import db
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.core.hashing import file_sha256
@@ -52,7 +51,9 @@ from lineage.data.doctypes import RULES as DOCUMENT_TYPES
 from lineage.data.doctypes import build_eligibility
 from lineage.data.ingest import ingest
 from lineage.data.snapshot import bills_member, load_manifest, scan, verify, write_manifest
-from lineage.incremental import applied_days, embedder_for
+from lineage.live import queries
+from lineage.live.incremental import applied_days, embedder_for
+from lineage.live.updates import BILLS_SUFFIX, Folded, fold, load_days, text_hash
 from lineage.match.near.index import build_index
 from lineage.match.near.stoplist import build_stoplist
 from lineage.match.semantic import queries as semantic_queries
@@ -86,15 +87,14 @@ from lineage.text.rules import RULES as TEXT_RULES
 from lineage.text.run import QUALITY as TEXT_QUALITY
 from lineage.text.run import STORE as TEXT_STORE
 from lineage.text.sectioning import build_sections
-from lineage.updates import BILLS_SUFFIX, Folded, fold, load_days, text_hash
 
 RAW = DATA / "raw"
 MANIFEST = Path("snapshot/manifest.json")
 SESSIONS = Path("snapshot/sessions.csv")
 MAX_SHARE = 0.001  # the stoplist's share, as `lineage boilerplate` counts it
 REPORT = "rebuild.json"
-# The suffix of an archive for a session the snapshot lacks, as lineage.updates.write_archives
-# and lineage.incremental name it.
+# The suffix of an archive for a session the snapshot lacks, as lineage.live.updates.write_archives
+# and lineage.live.incremental name it.
 NEW_ARCHIVE = "json_days"
 
 
@@ -317,7 +317,7 @@ def _embed_rest(
     tables: Path, model: str, *, models_dir: Path, floor_bytes: int, progress: Callable[[str], None]
 ) -> int:
     """Embed the shards not filled yet: with `lineage embed`'s worker processes for a pinned
-    model, in this process for one registered (lineage.incremental.register_embedder)."""
+    model, in this process for one registered (lineage.live.incremental.register_embedder)."""
     plan = load_plan(tables)
     assert plan is not None
     todo = missing_shards(tables, model, plan)

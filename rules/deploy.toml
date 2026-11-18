@@ -1,4 +1,4 @@
-# The live track's deploy rules (DESIGN.md#updates, DR-13), read by lineage.deploy.
+# The live track's deploy rules (DESIGN.md#updates, DR-13), read by lineage.live.deploy.
 #
 # Before a hosted state's first day of session the site deploys only from a reviewed release:
 # the daily job stops at the local export, and the weekly job packs and gates a release

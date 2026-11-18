@@ -20,9 +20,9 @@ from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
 
-from lineage import queries
 from lineage.core import db
 from lineage.core.paths import DATA
+from lineage.live import queries
 from lineage.match.listing import shipped_flag
 from lineage.match.near.pairs import load_families
 from lineage.match.relatives import bill_relatives

@@ -13,8 +13,7 @@ import numpy as np
 import typer
 from numpy.typing import NDArray
 
-from lineage import __version__, deploy
-from lineage import rebuild as rebuilding
+from lineage import __version__
 from lineage.align import Embedder, align
 from lineage.core.disk import GiB, InsufficientDiskSpaceError
 from lineage.core.hashing import file_sha256
@@ -215,9 +214,11 @@ from lineage.export.results_table import (
     render_stories,
     rendered_readme,
 )
-from lineage.feed import FeedError, write_feed
-from lineage.incremental import update
-from lineage.intake import (
+from lineage.live import deploy
+from lineage.live import rebuild as rebuilding
+from lineage.live.feed import FeedError, write_feed
+from lineage.live.incremental import update
+from lineage.live.intake import (
     DAYS,
     ESTIMATE,
     TIERS,
@@ -227,6 +228,23 @@ from lineage.intake import (
     january_estimate,
     run_intake,
 )
+from lineage.live.publish import PublishError, export_changes, promote, staging_dir
+from lineage.live.schedule import (
+    SCHEDULE,
+    TEMPLATES,
+    WEEKLY_REPORT,
+    ScheduleError,
+    When,
+    calendar_intervals,
+    cli_runner,
+    daily_steps,
+    osascript_notifier,
+    render_template,
+    run_job,
+    weekly_job_steps,
+    weekly_report,
+)
+from lineage.live.updates import CHANGES_DIR, UpdateError, load_day
 from lineage.match.listing import flagged_sections, shipped_flag
 from lineage.match.near.index import build_index
 from lineage.match.near.stoplist import StoplistError, build_stoplist
@@ -314,22 +332,6 @@ from lineage.origins.withheld import listed_count as withheld_listed_count
 from lineage.origins.withheld import read_reviewed as read_withheld_reviewed
 from lineage.origins.withheld import tallies as withheld_tallies
 from lineage.origins.withheld import write_report as write_withheld
-from lineage.publish import PublishError, export_changes, promote, staging_dir
-from lineage.schedule import (
-    SCHEDULE,
-    TEMPLATES,
-    WEEKLY_REPORT,
-    ScheduleError,
-    When,
-    calendar_intervals,
-    cli_runner,
-    daily_steps,
-    osascript_notifier,
-    render_template,
-    run_job,
-    weekly_job_steps,
-    weekly_report,
-)
 from lineage.text.inventory import PLAN, REPORT, StalePlanError, build_inventory
 from lineage.text.merge import merge_texts
 from lineage.text.quality import REPORT as QUALITY
@@ -337,7 +339,6 @@ from lineage.text.quality import STORE, run_sample
 from lineage.text.run import REPORT as FETCH_REPORT
 from lineage.text.run import run_fetch
 from lineage.text.sectioning import SectioningError, build_sections
-from lineage.updates import CHANGES_DIR, UpdateError, load_day
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
 eval_app = typer.Typer(no_args_is_help=True, help="Run an eval and write its results.")

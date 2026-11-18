@@ -3,7 +3,7 @@
 The intake asks `GET /bills` for one state's bills updated since a cursor, oldest update first,
 twenty to a page, with the actions, sponsorships and versions included. Each `Bill` it returns
 is mapped to the record Open States' session archives hold, which `lineage.data.ingest` and
-`lineage.updates` read, so a day of the API's bills folds and rebuilds like an archive.
+`lineage.live.updates` read, so a day of the API's bills folds and rebuilds like an archive.
 Parameter names, the include options, the key's header, the page size and the paging fields are
 those of the API's OpenAPI document (https://v3.openstates.org/docs). See DESIGN.md#updates.
 """

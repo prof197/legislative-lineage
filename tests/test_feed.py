@@ -11,9 +11,9 @@ from pathlib import Path
 
 import pytest
 
-from lineage import feed
 from lineage.export.atom import ATOM, violations
-from lineage.feed import (
+from lineage.live import feed
+from lineage.live.feed import (
     BillInfo,
     DocInfo,
     Event,
@@ -24,8 +24,8 @@ from lineage.feed import (
     render,
     write_feed,
 )
-from lineage.publish import FEED_FILE
-from lineage.updates import (
+from lineage.live.publish import FEED_FILE
+from lineage.live.updates import (
     Change,
     OriginGained,
     RecordAdded,

@@ -11,11 +11,11 @@ from lineage.export.build import RESULTS, carries_origin_story
 from lineage.export.origin_story import FILE as ORIGIN_STORY_FILE
 from lineage.export.origin_story import story_file
 from lineage.export.schema import BillPage, Meta, Sources
+from lineage.live.publish import bill_list, bill_page, plan_export, texts_by_slug
 from lineage.origins.collect import collectors
 from lineage.origins.labels import judged_correct, load_labels
 from lineage.origins.matches import read_origin_matches
 from lineage.origins.modeldocs import read_docs
-from lineage.publish import bill_list, bill_page, plan_export, texts_by_slug
 from tests.conftest import FAKE_MODEL
 from tests.fixture_export import (
     COMMITTED,
@@ -77,7 +77,7 @@ def test_a_match_is_judged_correct_only_on_the_sections_its_label_names(built: P
 
 
 def test_the_live_tracks_rendering_gives_the_exports_pages_byte_for_byte(built: Path) -> None:
-    """Ruled at the step 48 review: until lineage.publish shares the export's rendering, its
+    """Ruled at the step 48 review: until lineage.live.publish shares the export's rendering, its
     own copy must give the same files for the same bills, read from the same tables: every bill
     page, the bill index, every bill's section texts and the origin story."""
     root = built.parent

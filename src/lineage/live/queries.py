@@ -1,7 +1,6 @@
-"""The SQL not yet moved to its package's own queries module (M13; DR-4).
-
-pyright cannot see inside SQL strings, so each query here is exercised against committed
-fixtures in the tests. See DESIGN.md#dr-4.
+"""The SQL lineage.live's modules run: SQL lives only in a package's own queries module, and the
+CLI above may call these. pyright cannot see inside SQL strings, so each query is exercised
+against committed fixtures in the tests. See DESIGN.md#dr-4.
 """
 
 import re

@@ -13,12 +13,12 @@ from pathlib import Path
 
 import pytest
 
-from lineage import deploy
-from lineage.deploy import DeployPaths, DeployRules, Limits, load_rules
-from lineage.feed import write_feed
-from lineage.incremental import update
-from lineage.publish import export_changes, promote, staging_dir
-from lineage.schedule import (
+from lineage.live import deploy
+from lineage.live.deploy import DeployPaths, DeployRules, Limits, load_rules
+from lineage.live.feed import write_feed
+from lineage.live.incremental import update
+from lineage.live.publish import export_changes, promote, staging_dir
+from lineage.live.schedule import (
     STATUS_FILE,
     TEMPLATES,
     DailyPaths,
@@ -29,7 +29,7 @@ from lineage.schedule import (
     run_job,
     weekly_job_steps,
 )
-from lineage.updates import load_day
+from lineage.live.updates import load_day
 from tests.conftest import FAKE_MODEL
 from tests.days import DAYS
 from tests.live import ExportInputs, Recorded, export_inputs, full_export, recorded
@@ -259,7 +259,7 @@ def test_the_runner_script_reads_the_leak_terms_from_the_keychain_and_knows_a_he
     assert "export LEAK_CHECK_TERMS" in script
     assert "uv run --frozen lineage schedule weekly --state" in script
     assert "-ne 3" in script  # a held day is already alerted, like a failed step
-    # The GitHub token is the deploy's to read before each call (lineage.deploy.github_shell).
+    # The GitHub token is the deploy's to read before each call (lineage.live.deploy.github_shell).
     assert "export GH_TOKEN" not in script
     # Held awake for the length of the job, which the Mac is woken for.
     assert "caffeinate -i uv run --frozen lineage schedule daily" in script

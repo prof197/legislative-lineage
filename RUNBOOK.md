@@ -24,7 +24,7 @@ Every run writes `<data>/schedule/status.json` (`<data>` is `LINEAGE_DATA`) and 
    security add-generic-password -a "$USER" -s legislative-lineage-openstates -w
    ```
 
-   The deploy reads the token before every git or gh call and stops without it, so it never uses your own gh login (`lineage.deploy.github_shell`). To replace the token later, run the first command again with `-U` after `add-generic-password`.
+   The deploy reads the token before every git or gh call and stops without it, so it never uses your own gh login (`lineage.live.deploy.github_shell`). To replace the token later, run the first command again with `-U` after `add-generic-password`.
 3. **The job's own clone,** on main, where it builds the site, commits the pin and pushes:
 
    ```sh

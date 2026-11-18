@@ -1,5 +1,5 @@
 """The Atom feed (RFC 4287), `feed.xml` at the export's root: the live track's events, from
-every state, derived from the change log (lineage.updates) and checked before it is written.
+every state, derived from the change log (lineage.live.updates) and checked before it is written.
 
 Its events, each an entry dated the day it was logged:
 
@@ -47,14 +47,8 @@ from lineage.core import db
 from lineage.export import queries as export_queries
 from lineage.export.atom import ATOM, violations
 from lineage.export.schema import Meta
-from lineage.origins.collect import PACKAGE as COLLECT_PACKAGE
-from lineage.origins.collect import collectors
-from lineage.origins.matches import FLOOR
-from lineage.origins.modeldocs import MODELDOCS_DIR, read_docs
-from lineage.origins.withheld import REPORT as WITHHELD_REPORT
-from lineage.origins.withheld import load_withheld
-from lineage.publish import FEED_FILE, META, bill_refs, changes_on, logged_days
-from lineage.updates import (
+from lineage.live.publish import FEED_FILE, META, bill_refs, changes_on, logged_days
+from lineage.live.updates import (
     CHANGES_DIR,
     Change,
     OriginGained,
@@ -62,6 +56,12 @@ from lineage.updates import (
     RelativeGained,
     RelativeLost,
 )
+from lineage.origins.collect import PACKAGE as COLLECT_PACKAGE
+from lineage.origins.collect import collectors
+from lineage.origins.matches import FLOOR
+from lineage.origins.modeldocs import MODELDOCS_DIR, read_docs
+from lineage.origins.withheld import REPORT as WITHHELD_REPORT
+from lineage.origins.withheld import load_withheld
 
 RETENTION_DAYS = 14
 GROUP_DAYS = 14

@@ -11,7 +11,7 @@ import pytest
 
 from lineage.core import db
 from lineage.export.schema import BillPage
-from lineage.publish import (
+from lineage.live.publish import (
     PublishError,
     bill_refs,
     changes_on,
@@ -21,7 +21,7 @@ from lineage.publish import (
     staging_dir,
     touched,
 )
-from lineage.updates import RecordUpdated, RelativeGained, RelativeLost
+from lineage.live.updates import RecordUpdated, RelativeGained, RelativeLost
 from tests.days import DAYS
 from tests.live import Recorded, export_inputs, files_seen, full_export, normalized, recorded
 

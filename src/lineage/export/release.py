@@ -60,8 +60,8 @@ CONTRACT: tuple[tuple[str, type[BaseModel]], ...] = (
     (rf"stories/{_SLUG}\.json", Story),
     (r"origin_story\.json", OriginStory),
 )
-# The live track's feed (lineage.feed), the one file not JSON: held to RFC 4287's required
-# elements, as lineage.feed writes it.
+# The live track's feed (lineage.live.feed), the one file not JSON: held to RFC 4287's required
+# elements, as lineage.live.feed writes it.
 FEED = "feed.xml"
 _CONTRACT = tuple((re.compile(pattern), model) for pattern, model in CONTRACT)
 REQUIRED = ("meta.json", "bills.json", "sources.json")

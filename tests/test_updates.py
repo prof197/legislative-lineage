@@ -9,8 +9,8 @@ from pathlib import Path
 
 import pytest
 
-from lineage.incremental import update
-from lineage.updates import (
+from lineage.live.incremental import update
+from lineage.live.updates import (
     OriginGained,
     OriginLost,
     RecordAdded,

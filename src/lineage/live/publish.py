@@ -1,7 +1,7 @@
 """The incremental export: the hosted state's files a day's changes touch, rebuilt from the
 updated tables, and every other file left as it was, byte for byte and untouched.
 
-The live track's change log (lineage.updates) names each bill a day added, updated or replaced,
+The live track's change log (lineage.live.updates) names each bill a day added, updated or replaced,
 and each relative and origin a bill gained or lost. From it:
 
 - **Bill pages.** A hosted bill's page is rewritten when the log names the bill, or names a
@@ -105,7 +105,13 @@ from lineage.export.schema import (
     StoryRelative,
     TextInfo,
 )
-from lineage.incremental import applied_days
+from lineage.live.incremental import applied_days
+from lineage.live.updates import (
+    CHANGES_DIR,
+    Change,
+    RelativeGained,
+    RelativeLost,
+)
 from lineage.match.listing import listed_pairs, shipped_flag
 from lineage.match.near.pairs import load_families
 from lineage.match.relatives import BillRelatives, bill_relatives
@@ -119,19 +125,13 @@ from lineage.origins.matches import read_origin_matches
 from lineage.origins.modeldocs import MODELDOCS_DIR, read_docs
 from lineage.origins.withheld import REPORT as WITHHELD_REPORT
 from lineage.origins.withheld import load_withheld
-from lineage.updates import (
-    CHANGES_DIR,
-    Change,
-    RelativeGained,
-    RelativeLost,
-)
 
 STAGING_SUFFIX = ".staging"
 OLD_SUFFIX = ".old"
 META = "meta.json"
 BILLS = "bills.json"
 SOURCES = "sources.json"
-FEED_FILE = "feed.xml"  # written by lineage.feed; carried over untouched here
+FEED_FILE = "feed.xml"  # written by lineage.live.feed; carried over untouched here
 _COMPACT = re.compile("|".join(re.escape(p) for p in COMPACT_PHRASES))
 _CHANGE: TypeAdapter[Change] = TypeAdapter(Change)
 
@@ -651,7 +651,7 @@ def _read(root: Path, name: str) -> bytes | None:
 
 
 def _export_files(root: Path) -> set[str]:
-    """The export's JSON files by their published paths; the feed is lineage.feed's."""
+    """The export's JSON files by their published paths; the feed is lineage.live.feed's."""
     return {p.relative_to(root).as_posix() for p in root.rglob("*.json") if p.is_file()}
 
 

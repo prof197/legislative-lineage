@@ -4,7 +4,7 @@ import "./globals.css";
 import { FEED_PATH, hasFeed, meta } from "@/lib/data";
 import { stateName } from "@/lib/format";
 
-// As lineage.feed titles the feed itself.
+// As lineage.live.feed titles the feed itself.
 const FEED_TITLE = "Legislative Lineage: new matches";
 
 // Self-hosted at build time, so a page makes no request to a font service.

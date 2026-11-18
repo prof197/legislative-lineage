@@ -18,10 +18,10 @@ from typer.testing import CliRunner
 
 from lineage.cli import app
 from lineage.core import http
-from lineage.feed import check, write_feed
-from lineage.incremental import update
-from lineage.publish import export_changes, promote, staging_dir
-from lineage.schedule import (
+from lineage.live.feed import check, write_feed
+from lineage.live.incremental import update
+from lineage.live.publish import export_changes, promote, staging_dir
+from lineage.live.schedule import (
     AGREEMENT_FLOOR,
     LOCK_FILE,
     SCHEDULE,
@@ -44,7 +44,7 @@ from lineage.schedule import (
     weekly_report,
     weekly_steps,
 )
-from lineage.updates import Snapshot, load_day, snapshot
+from lineage.live.updates import Snapshot, load_day, snapshot
 from tests.conftest import FAKE_MODEL
 from tests.days import DAYS
 from tests.live import (

@@ -6,7 +6,7 @@
   and the drift when the corpus statistics are counted afresh; then a release candidate for
   review before session, or the week's new origin claims during it. Schedule it at another hour
   than the daily job: the two never run at once. A template: each placeholder, a
-  name between at signs, is filled by lineage.schedule.render_template, and nothing here names
+  name between at signs, is filled by lineage.live.schedule.render_template, and nothing here names
   a real path. Loading it is the operator's step, by hand.
 -->
 <plist version="1.0">

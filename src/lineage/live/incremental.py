@@ -17,7 +17,7 @@
   bucket entries, windows and vectors are retired: a vector no window carries is zeroed.
 - **The log.** Each bill whose relatives can have changed is listed before and after, as a
   page lists it, and the differences, with `record_changes` and the origin matches' own,
-  are the day's changes (lineage.updates.write_changes).
+  are the day's changes (lineage.live.updates.write_changes).
 
 The stoplist and the state boilerplate flag are the base build's, never recounted (DR-7): a
 new section takes no flag until the next full build counts it. Where the tables hold origin
@@ -50,13 +50,28 @@ from typing import Any, cast
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage import queries
 from lineage.core import db
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.data import queries as data_queries
 from lineage.data.doctypes import RULES, decide, load_rules
 from lineage.data.sessions import load_sessions, status_end_date
 from lineage.data.status import OUTCOME_CLASSIFICATIONS, STATUS_WORDING, Action, bill_status
+from lineage.live import queries
+from lineage.live.updates import (
+    CHANGES_DIR,
+    SHARE_PLACES,
+    Change,
+    Day,
+    Folded,
+    Origin,
+    Relative,
+    Snapshot,
+    UpdateError,
+    origin_changes,
+    record_changes,
+    relative_changes,
+    write_changes,
+)
 from lineage.match.listing import shipped_flag
 from lineage.match.near import queries as near_queries
 from lineage.match.near.bands import load_band_index, update_bands
@@ -115,28 +130,13 @@ from lineage.text import queries as text_queries
 from lineage.text.boilerplate import boilerplate_kind
 from lineage.text.sections import normalize, split_sections
 from lineage.text.windows import WINDOW_WORDS, display_windows
-from lineage.updates import (
-    CHANGES_DIR,
-    SHARE_PLACES,
-    Change,
-    Day,
-    Folded,
-    Origin,
-    Relative,
-    Snapshot,
-    UpdateError,
-    origin_changes,
-    record_changes,
-    relative_changes,
-    write_changes,
-)
 
-SESSIONS = Path(__file__).parents[2] / "snapshot" / "sessions.csv"
+SESSIONS = Path(__file__).parents[3] / "snapshot" / "sessions.csv"
 UPDATES_DIR = "updates"
 APPLIED = "applied.jsonl"
 PENDING = "pending.json"
 # The suffix of the bills file a session the corpus has not seen before is written to, as
-# lineage.updates.write_archives names its archives.
+# lineage.live.updates.write_archives names its archives.
 NEW_ARCHIVE = "json_days"
 
 
@@ -922,7 +922,7 @@ def _changed_sections(
 
 
 def _relatives(tables: Path, bills: set[str], model: str) -> dict[str, tuple[Relative, ...]]:
-    """The listed relatives of the wanted matchable bills, as `lineage.updates.snapshot` reads
+    """The listed relatives of the wanted matchable bills, as `lineage.live.updates.snapshot` reads
     them."""
     with db.connect_quiet() as con:
         matchable = set(
@@ -955,7 +955,7 @@ def _relatives(tables: Path, bills: set[str], model: str) -> dict[str, tuple[Rel
 
 
 def _origins(tables: Path) -> dict[str, tuple[Origin, ...]]:
-    """Each bill's origin matches, as `lineage.updates.snapshot` reads them."""
+    """Each bill's origin matches, as `lineage.live.updates.snapshot` reads them."""
     out: dict[str, list[Origin]] = defaultdict(list)
     for o in read_origin_matches(tables):
         out[o.bill_id].append(

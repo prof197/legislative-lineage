@@ -11,7 +11,7 @@ def _defaults(env: dict[str, str]) -> list[str]:
     code = (
         "from lineage.export.build import EXPORT_DIR; "
         "from lineage.origins.modeldocs import MODELDOCS_DIR; "
-        "from lineage.updates import CHANGES_DIR; "
+        "from lineage.live.updates import CHANGES_DIR; "
         "print(EXPORT_DIR, MODELDOCS_DIR, CHANGES_DIR)"
     )
     out = subprocess.run([sys.executable, "-c", code], env=env, check=True, capture_output=True)

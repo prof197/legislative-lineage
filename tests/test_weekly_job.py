@@ -12,7 +12,7 @@ import pytest
 from typer.testing import CliRunner
 
 from lineage.cli import app
-from lineage.schedule import (
+from lineage.live.schedule import (
     STATUS_FILE,
     Outcome,
     Step,

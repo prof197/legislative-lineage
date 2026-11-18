@@ -13,7 +13,7 @@ from typer.testing import CliRunner
 
 from lineage.cli import app
 from lineage.core import db
-from lineage.incremental import register_embedder
+from lineage.live.incremental import register_embedder
 from lineage.match.semantic import queries as semantic_queries
 from lineage.match.semantic.neighbors import build_neighbors
 from lineage.match.semantic.vectors import build_plan, semantic_dir, shard_name, vectors_dir

@@ -16,9 +16,9 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
-from lineage import queries
 from lineage.core import db
-from lineage.incremental import (
+from lineage.live import queries as live_queries
+from lineage.live.incremental import (
     NoEmbedderError,
     applied_days,
     apply_day,
@@ -26,9 +26,7 @@ from lineage.incremental import (
     unregister_embedder,
     update,
 )
-from lineage.match.semantic import queries as semantic_queries
-from lineage.match.semantic.vectors import load_plan, load_vectors, semantic_dir, shard_name
-from lineage.updates import (
+from lineage.live.updates import (
     Change,
     RecordAdded,
     RecordReplaced,
@@ -47,6 +45,8 @@ from lineage.updates import (
     snapshot,
     write_changes,
 )
+from lineage.match.semantic import queries as semantic_queries
+from lineage.match.semantic.vectors import load_plan, load_vectors, semantic_dir, shard_name
 from tests.conftest import FAKE_MODEL
 from tests.days import DAYS, GEORGIA_ID, UTAH_SB_18, rebuild, write_days
 from tests.fakes import MARK, bag_of_words
@@ -179,7 +179,7 @@ def test_the_georgia_record_carries_no_vector_once_its_windows_are_retired(
     assert not vectors[marked].any()  # zeroed: no threshold reached, no neighbor's place taken
     assert _texts(tables, marked) == [""] * len(marked)  # blanked: no later window shares one
     with db.connect_quiet() as con:
-        assert queries.carried_text_ids(con, units_glob=units, text_ids=marked) == []
+        assert live_queries.carried_text_ids(con, units_glob=units, text_ids=marked) == []
         now = [
             t
             for _, t in semantic_queries.semantic_text_ids_of(

@@ -34,9 +34,9 @@ from typing import Any
 import numpy as np
 
 from benchmarks.minhash import machine
-from lineage import queries
 from lineage.core import db
 from lineage.core.paths import DATA
+from lineage.live import queries as live_queries
 from lineage.match.semantic.embed import BATCH_SIZE, embed, load_model
 from lineage.match.semantic.models import MODELS
 from lineage.origins import queries as origins_queries
@@ -58,7 +58,9 @@ def sample_windows(rng: np.random.Generator) -> list[str]:
     sections_glob = str(TABLES / "sections" / "*.parquet")
     eligible = TABLES / "eligible.parquet"
     with db.connect_quiet() as con:
-        ids = queries.matchable_bill_ids(con, sections_glob=sections_glob, eligible_path=eligible)
+        ids = live_queries.matchable_bill_ids(
+            con, sections_glob=sections_glob, eligible_path=eligible
+        )
         picked: list[str] = sorted(rng.choice(ids, size=SAMPLE_BILLS, replace=False).tolist())
         rows = origins_queries.matchable_section_texts(
             con, sections_glob=sections_glob, eligible_path=eligible, ids=picked
