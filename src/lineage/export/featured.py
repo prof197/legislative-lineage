@@ -23,12 +23,13 @@ story's relatives with their titles and pair counts.
 """
 
 import json
-from collections.abc import Collection, Mapping, Sequence
+from collections.abc import Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
 from typing import Any
 
+import duckdb
 import numpy as np
 from numpy.typing import NDArray
 
@@ -178,6 +179,104 @@ def _bill(b: str, details: Details) -> dict[str, Any]:
     }
 
 
+def _anchor_of(con: duckdb.DuckDBPyConnection, story: Story, bills_glob: str) -> str:
+    anchor = queries.bill_id_of(
+        con,
+        bills_glob=bills_glob,
+        state=story.state,
+        session=story.session,
+        identifier=story.identifier,
+    )
+    if anchor is None:
+        raise FeaturedError(
+            f"{story.name}: no bill {story.state} {story.session} {story.identifier}"
+        )
+    return anchor
+
+
+def _relatives_of(
+    con: duckdb.DuckDBPyConnection,
+    story: Story,
+    anchor: str,
+    *,
+    tables_dir: Path,
+    listed: ListedPairs,
+    answer_key: Path,
+    bills_glob: str,
+) -> tuple[list[str], Details]:
+    """The story's relatives by its rule, and their and the anchor's details."""
+    if story.relatives is Relatives.ENACTMENTS:
+        if story.act is None:
+            raise FeaturedError(f"{story.name}: an enactments story names its act")
+        relatives = _enactments(story.act, anchor, answer_key)
+    else:
+        page = bill_relatives(tables_dir, [anchor], listed=listed)[anchor]
+        relatives = [m.bill_id for m in page.matches]
+    details = queries.bill_details(con, bills_glob=bills_glob, ids=[anchor, *relatives])
+    if story.relatives is Relatives.LISTED_LATER:
+        first = {b: d[5] for b, d in details.items()}
+        relatives = introduced_after(relatives, first, first[anchor])
+    return relatives, details
+
+
+def _per_relative(pairs: Iterable[SectionPair]) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for p in pairs:
+        counts[p[1]] = counts.get(p[1], 0) + 1
+    return counts
+
+
+def _add_rows(
+    story: Story,
+    anchor: str,
+    pairs: Sequence[SectionPair],
+    rows: list[dict[str, Any]],
+    seen: set[tuple[str, int, str, int]],
+) -> None:
+    """Each of the story's pairs as a row, but those an earlier story already gave."""
+    for origin, relative, ordinal in pairs:
+        key = (anchor, origin, relative, ordinal)
+        if key in seen:
+            continue
+        seen.add(key)
+        rows.append(
+            {
+                "story": story.name,
+                "origin": {"bill_id": anchor, "ordinal": origin},
+                "descendant": {"bill_id": relative, "ordinal": ordinal},
+            }
+        )
+
+
+def _story_report(
+    story: Story,
+    anchor: str,
+    relatives: Sequence[str],
+    details: Details,
+    pairs: Sequence[SectionPair],
+    every_pair: Sequence[SectionPair],
+) -> dict[str, Any]:
+    by_relative = _per_relative(pairs)
+    out_of_scope = _per_relative(set(every_pair) - set(pairs))
+    return {
+        "anchor": _bill(anchor, details),
+        "relatives_rule": str(story.relatives),
+        "anchor_sections": list(story.sections) or "every section",
+        "scope_note": story.scope_note,
+        "relatives": [
+            _bill(r, details)
+            | {
+                "section_pairs": by_relative.get(r, 0),
+                "section_pairs_out_of_scope": out_of_scope.get(r, 0),
+            }
+            for r in relatives
+        ],
+        "relatives_without_a_pair": sum(1 for r in relatives if r not in by_relative),
+        "section_pairs": len(pairs),
+        "section_pairs_out_of_scope": len(every_pair) - len(pairs),
+    }
+
+
 def build_featured(
     tables_dir: Path, *, answer_key: Path = ANSWER_KEY, stories: Sequence[Story] = STORIES
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -193,28 +292,16 @@ def build_featured(
     report: dict[str, Any] = {"command": COMMAND, "stories": {}}
     with db.connect_quiet() as con:
         for story in stories:
-            anchor = queries.bill_id_of(
+            anchor = _anchor_of(con, story, bills_glob)
+            relatives, details = _relatives_of(
                 con,
+                story,
+                anchor,
+                tables_dir=tables_dir,
+                listed=listed,
+                answer_key=answer_key,
                 bills_glob=bills_glob,
-                state=story.state,
-                session=story.session,
-                identifier=story.identifier,
             )
-            if anchor is None:
-                raise FeaturedError(
-                    f"{story.name}: no bill {story.state} {story.session} {story.identifier}"
-                )
-            if story.relatives is Relatives.ENACTMENTS:
-                if story.act is None:
-                    raise FeaturedError(f"{story.name}: an enactments story names its act")
-                relatives = _enactments(story.act, anchor, answer_key)
-            else:
-                page = bill_relatives(tables_dir, [anchor], listed=listed)[anchor]
-                relatives = [m.bill_id for m in page.matches]
-            details = queries.bill_details(con, bills_glob=bills_glob, ids=[anchor, *relatives])
-            if story.relatives is Relatives.LISTED_LATER:
-                first = {b: d[5] for b, d in details.items()}
-                relatives = introduced_after(relatives, first, first[anchor])
             every_pair = pairs_with(listed, bills, ordinals, anchor, relatives)
             headings = queries.section_headings(
                 con, sections_glob=str(tables_dir / "sections" / "*.parquet"), bill_id=anchor
@@ -223,41 +310,10 @@ def build_featured(
                 pairs = in_scope(every_pair, headings, story.sections)
             except FeaturedError as e:
                 raise FeaturedError(f"{story.name}: {e}") from e
-            out_of_scope: dict[str, int] = {}
-            for p in set(every_pair) - set(pairs):
-                out_of_scope[p[1]] = out_of_scope.get(p[1], 0) + 1
-            by_relative: dict[str, int] = {}
-            for origin, relative, ordinal in pairs:
-                by_relative[relative] = by_relative.get(relative, 0) + 1
-                key = (anchor, origin, relative, ordinal)
-                if key in seen:
-                    continue
-                seen.add(key)
-                rows.append(
-                    {
-                        "story": story.name,
-                        "origin": {"bill_id": anchor, "ordinal": origin},
-                        "descendant": {"bill_id": relative, "ordinal": ordinal},
-                    }
-                )
-
-            report["stories"][story.name] = {
-                "anchor": _bill(anchor, details),
-                "relatives_rule": str(story.relatives),
-                "anchor_sections": list(story.sections) or "every section",
-                "scope_note": story.scope_note,
-                "relatives": [
-                    _bill(r, details)
-                    | {
-                        "section_pairs": by_relative.get(r, 0),
-                        "section_pairs_out_of_scope": out_of_scope.get(r, 0),
-                    }
-                    for r in relatives
-                ],
-                "relatives_without_a_pair": sum(1 for r in relatives if r not in by_relative),
-                "section_pairs": len(pairs),
-                "section_pairs_out_of_scope": len(every_pair) - len(pairs),
-            }
+            _add_rows(story, anchor, pairs, rows, seen)
+            report["stories"][story.name] = _story_report(
+                story, anchor, relatives, details, pairs, every_pair
+            )
     report["section_pairs"] = len(rows)
     return rows, report
 
