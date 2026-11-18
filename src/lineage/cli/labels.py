@@ -62,8 +62,8 @@ from lineage.evals.model_labels import MODEL_ID as LABEL_MODEL
 from lineage.evals.model_labels import PROMPT_VERSION as LABEL_PROMPT_VERSION
 from lineage.evals.model_labels import PROMPTS as LABEL_PROMPTS
 from lineage.evals.model_labels import SPEND as LABEL_SPEND
-from lineage.evals.model_labels import anthropic_ask as anthropic_label_ask
 from lineage.evals.model_labels import (
+    Prompt,
     anthropic_batches,
     batch_usage,
     label_in_batch,
@@ -71,6 +71,7 @@ from lineage.evals.model_labels import (
     model_pending,
     projected_cost,
 )
+from lineage.evals.model_labels import anthropic_ask as anthropic_label_ask
 from lineage.evals.model_labels import record_spend as record_label_spend
 from lineage.evals.model_labels import spent as label_spent
 from lineage.evals.precision import SAMPLE as PRECISION_SAMPLE
@@ -318,7 +319,7 @@ def relatives_sample(
 
 
 @app.command("label-model")
-def label_model(  # noqa: C901  (M13 allow-list, until step 5's lanes)
+def label_model(
     sample: Annotated[
         Path,
         typer.Argument(
@@ -367,6 +368,47 @@ def label_model(  # noqa: C901  (M13 allow-list, until step 5's lanes)
         )
         raise typer.Exit(1)
     prompt = LABEL_PROMPTS[prompt_version]
+    batched = batch or batch_id is not None
+    targets = _label_targets(sample, labels, also, batched=batched)
+    todo, paths = _model_todo(targets, tables, prompt, models_dir)
+    noun = "pair" if len(todo) == 1 else "pairs"
+    try:
+        cost = projected_cost(todo, model=model, batch=batched, prompt=prompt)
+    except ValueError as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    projected = f"projected at most ${cost:,.2f}"
+    already = label_spent(spend)
+    if not live:
+        typer.echo(
+            f"{len(todo)} {noun} would be asked of {model} under {prompt.version}, {projected}; "
+            f"${already:,.2f} of the ${budget:,.2f} budget spent; run with --live to ask."
+        )
+        return
+    asked = f"{len(todo)} {noun} {projected}"
+    _check_label_cost(
+        asked, cost, already=already, max_cost=max_cost, budget=budget, batch_id=batch_id
+    )
+    for _, target_labels in targets:
+        target_labels.parent.mkdir(parents=True, exist_ok=True)
+    today = datetime.date.today().isoformat()
+    if batched:
+        _label_batched(
+            todo, paths, targets, model=model, prompt=prompt, batch_id=batch_id, spend=spend,
+            budget=budget, today=today,
+        )  # fmt: skip
+        return
+    done, unusable = label_with_model(
+        todo, ask=anthropic_label_ask(model, prompt), labels_path=labels, today=today,
+        prompt=prompt,
+    )  # fmt: skip
+    typer.echo(f"{done} labeled by {model}, {unusable} unusable replies -> {labels}")
+
+
+def _label_targets(
+    sample: Path, labels: Path, also: list[str] | None, *, batched: bool
+) -> list[tuple[Path, Path]]:
+    """Each sample asked and the labels file it appends to: SAMPLE first, then each --also."""
     targets = [(sample, labels)]
     for extra in also or []:
         extra_sample, sep, extra_labels = extra.partition("=")
@@ -374,9 +416,17 @@ def label_model(  # noqa: C901  (M13 allow-list, until step 5's lanes)
             typer.echo(f"error: --also takes SAMPLE=LABELS, not {extra!r}", err=True)
             raise typer.Exit(1)
         targets.append((Path(extra_sample), Path(extra_labels)))
-    if len(targets) > 1 and not (batch or batch_id is not None):
+    if len(targets) > 1 and not batched:
         typer.echo("error: --also asks several samples in one batch; add --batch", err=True)
         raise typer.Exit(1)
+    return targets
+
+
+def _model_todo(
+    targets: list[tuple[Path, Path]], tables: Path, prompt: Prompt, models_dir: Path
+) -> tuple[list[Item], dict[str, Path]]:
+    """The pairs no model has labeled under the prompt, across every sample asked, with their
+    passages when the prompt asks about passages, and each pair's labels file by pair id."""
     todo: list[Item] = []
     paths: dict[str, Path] = {}
     try:
@@ -396,63 +446,64 @@ def label_model(  # noqa: C901  (M13 allow-list, until step 5's lanes)
         except ModelError as e:
             typer.echo(f"error: {e}", err=True)
             raise typer.Exit(1) from e
-    noun = "pair" if len(todo) == 1 else "pairs"
-    batched = batch or batch_id is not None
-    try:
-        cost = projected_cost(todo, model=model, batch=batched, prompt=prompt)
-    except ValueError as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
-    projected = f"projected at most ${cost:,.2f}"
-    already = label_spent(spend)
-    if not live:
-        typer.echo(
-            f"{len(todo)} {noun} would be asked of {model} under {prompt.version}, {projected}; "
-            f"${already:,.2f} of the ${budget:,.2f} budget spent; run with --live to ask."
-        )
-        return
+    return todo, paths
+
+
+def _check_label_cost(
+    asked: str,
+    cost: float,
+    *,
+    already: float,
+    max_cost: float,
+    budget: float,
+    batch_id: str | None,
+) -> None:
+    """Refuse a run projected over the cap, or a new one that would take the spend over the
+    budget; collecting a batch already sent spends nothing new."""
     if cost > max_cost:
-        typer.echo(
-            f"error: {len(todo)} {noun} {projected}, over the ${max_cost:,.2f} cap; nothing asked",
-            err=True,
-        )
+        typer.echo(f"error: {asked}, over the ${max_cost:,.2f} cap; nothing asked", err=True)
         raise typer.Exit(1)
     if batch_id is None and already + cost > budget:
         typer.echo(
-            f"error: {len(todo)} {noun} {projected}, with ${already:,.2f} spent, over the "
+            f"error: {asked}, with ${already:,.2f} spent, over the "
             f"${budget:,.2f} budget; nothing asked",
             err=True,
         )
         raise typer.Exit(1)
-    for _, target_labels in targets:
-        target_labels.parent.mkdir(parents=True, exist_ok=True)
-    today = datetime.date.today().isoformat()
-    if batched:
-        batches = anthropic_batches()
-        done, unusable, sent = label_in_batch(
-            todo,
-            batches=batches,
-            model=model,
-            labels_path=paths,
-            today=today,
-            wait=lambda: time.sleep(60),
-            batch_id=batch_id,
-            submitted=lambda b: typer.echo(f"sent as batch {b}; collect with --batch-id {b}"),
-            prompt=prompt,
-        )
-        ledger = record_label_spend(
-            spend, batch_id=sent, model=model, prompt=prompt.version,
-            usage=batch_usage(batches, sent), today=today,
-        )  # fmt: skip
-        files = ", ".join(sorted({str(p) for _, p in targets}))
-        typer.echo(f"{done} labeled from batch {sent}, {unusable} unusable replies -> {files}")
-        typer.echo(f"${ledger['spent']:,.2f} of the ${budget:,.2f} budget spent -> {spend}")
-        return
-    done, unusable = label_with_model(
-        todo, ask=anthropic_label_ask(model, prompt), labels_path=labels, today=today,
+
+
+def _label_batched(
+    todo: list[Item],
+    paths: dict[str, Path],
+    targets: list[tuple[Path, Path]],
+    *,
+    model: str,
+    prompt: Prompt,
+    batch_id: str | None,
+    spend: Path,
+    budget: float,
+    today: str,
+) -> None:
+    """Ask every pair in one batch, or collect `batch_id`, and record the batch's spend."""
+    batches = anthropic_batches()
+    done, unusable, sent = label_in_batch(
+        todo,
+        batches=batches,
+        model=model,
+        labels_path=paths,
+        today=today,
+        wait=lambda: time.sleep(60),
+        batch_id=batch_id,
+        submitted=lambda b: typer.echo(f"sent as batch {b}; collect with --batch-id {b}"),
         prompt=prompt,
+    )
+    ledger = record_label_spend(
+        spend, batch_id=sent, model=model, prompt=prompt.version,
+        usage=batch_usage(batches, sent), today=today,
     )  # fmt: skip
-    typer.echo(f"{done} labeled by {model}, {unusable} unusable replies -> {labels}")
+    files = ", ".join(sorted({str(p) for _, p in targets}))
+    typer.echo(f"{done} labeled from batch {sent}, {unusable} unusable replies -> {files}")
+    typer.echo(f"${ledger['spent']:,.2f} of the ${budget:,.2f} budget spent -> {spend}")
 
 
 @app.command("label-spend")
