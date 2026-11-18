@@ -132,6 +132,25 @@ def update_command(
     typer.echo(f"{len(logged)} changes -> {changes}")
 
 
+# What the whole pipeline, run again by a rebuild, may raise.
+_REBUILD_ERRORS: tuple[type[Exception], ...] = (
+    rebuilding.RebuildError,
+    UpdateError,
+    SnapshotError,
+    InsufficientDiskSpaceError,
+    StoplistError,
+    EmbedError,
+    ModelError,
+    SemanticPairsError,
+    StateBoilerplateError,
+    MemoryBoundError,
+    SectioningError,
+    DocTypesError,
+    ModelDocError,
+    IndexMissingError,
+)
+
+
 @app.command("rebuild")
 def rebuild_command(
     out: Annotated[Path, typer.Option("--out", help="The rebuild's tables directory (local).")],
@@ -190,22 +209,7 @@ def rebuild_command(
 ) -> None:
     """The folded days laid over the snapshot's archives and the whole pipeline run into OUT,
     with pinned or refreshed corpus statistics -> OUT, OUT.build/rebuild.json (DR-7)."""
-    with exits_on(
-        rebuilding.RebuildError,
-        UpdateError,
-        SnapshotError,
-        InsufficientDiskSpaceError,
-        StoplistError,
-        EmbedError,
-        ModelError,
-        SemanticPairsError,
-        StateBoilerplateError,
-        MemoryBoundError,
-        SectioningError,
-        DocTypesError,
-        ModelDocError,
-        IndexMissingError,
-    ):
+    with exits_on(*_REBUILD_ERRORS):
         doc = rebuilding.rebuild(
             out,
             days_dir=days,
@@ -224,8 +228,13 @@ def rebuild_command(
             floor_bytes=int(min_free_gib * GiB),
             progress=typer.echo,
         )
+    typer.echo(_rebuilt(doc, out))
+
+
+def _rebuilt(doc: dict[str, Any], out: Path) -> str:
+    """The rebuild's summary: records, days, statistics, vector shards reused, time."""
     v = doc["vectors"]
-    typer.echo(
+    return (
         f"{doc['records']:,} records as of {doc['as_of']}, {len(doc['days'])} days over "
         f"{doc['archives']['written']} archives, statistics {doc['statistics']}; "
         f"{v['shards_reused']} of {v['shards']} vector shards reused, {v['shards_embedded']} "

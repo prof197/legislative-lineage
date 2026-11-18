@@ -132,22 +132,12 @@ def export_command(
 ) -> None:
     """The static site's JSON for one state's bills, with the stories and the data stamp."""
     if schema_only:
-        EXPORT_SCHEMA.parent.mkdir(parents=True, exist_ok=True)
-        EXPORT_SCHEMA.write_text(export_schema_text())
-        typer.echo(f"-> {EXPORT_SCHEMA}")
+        _write_schema()
         return
     state = state.upper()
     target = out if out is not None else EXPORT_DIR / state
     if package_tag is not None:
-        with exits_on(ExportError, ReleaseError):
-            asset, checksum = package_export(
-                target, state=state, tag=package_tag, out_dir=target.parent
-            )
-            write_release_manifest(asset, tag=package_tag, path=release_manifest)
-        typer.echo(
-            f"{checksum.read_text().strip()} ({asset.stat().st_size / 1e6:.1f} MB) -> {asset}"
-        )
-        typer.echo(f"pinned -> {release_manifest}; commit it to deploy this release")
+        _package(target, state=state, tag=package_tag, release_manifest=release_manifest)
         return
     with exits_on(ExportError, NotCachedError, SemanticPairsError, StateBoilerplateError):
         doc = build_export(
@@ -169,6 +159,22 @@ def export_command(
         f"{doc['total_bytes'] / 1e6:.1f} MB ({doc['share_of_site_limit']:.1%} of the site limit) "
         f"-> {target}, {report}"
     )
+
+
+def _write_schema() -> None:
+    """The export's JSON Schema, the site's contract, where it is committed."""
+    EXPORT_SCHEMA.parent.mkdir(parents=True, exist_ok=True)
+    EXPORT_SCHEMA.write_text(export_schema_text())
+    typer.echo(f"-> {EXPORT_SCHEMA}")
+
+
+def _package(target: Path, *, state: str, tag: str, release_manifest: Path) -> None:
+    """The export at `target` packed as the release asset `tag` and pinned in the manifest."""
+    with exits_on(ExportError, ReleaseError):
+        asset, checksum = package_export(target, state=state, tag=tag, out_dir=target.parent)
+        write_release_manifest(asset, tag=tag, path=release_manifest)
+    typer.echo(f"{checksum.read_text().strip()} ({asset.stat().st_size / 1e6:.1f} MB) -> {asset}")
+    typer.echo(f"pinned -> {release_manifest}; commit it to deploy this release")
 
 
 @eval_app.command("readme")

@@ -89,6 +89,7 @@ from lineage.evals.flag_precision import (
 )
 from lineage.evals.labels import (
     LABELS_PATH,
+    Item,
     LabelError,
     load_sample,
     read_items,
@@ -189,13 +190,7 @@ def eval_commission(
     semantic: SemanticOption = True,
 ) -> None:
     """Commission recall: what share of each uniform act's enactments its text finds."""
-    if held_out and not final:
-        fail(
-            "The held-out acts are evaluated only at the end of M5, once per configuration it "
-            "settled (DESIGN.md#commission-recall). Pass --final for that run."
-        )
-    if final and not held_out:
-        fail("--final applies only with --held-out.")
+    _refuse_unsealed(held_out=held_out, final=final)
     flagged = flagged_sections(tables)
     previous: dict[str, Any] | None = (
         json.loads(results.read_text()).get("commission_held_out")
@@ -229,6 +224,22 @@ def eval_commission(
         if held_out:
             section = with_earlier_runs(section, previous)
     write_results(results, "commission_held_out" if held_out else "commission", section)
+    _echo_recall(section, results)
+
+
+def _refuse_unsealed(*, held_out: bool, final: bool) -> None:
+    """The held-out acts only in the final evaluation, and --final only for them."""
+    if held_out and not final:
+        fail(
+            "The held-out acts are evaluated only at the end of M5, once per configuration it "
+            "settled (DESIGN.md#commission-recall). Pass --final for that run."
+        )
+    if final and not held_out:
+        fail("--final applies only with --held-out.")
+
+
+def _echo_recall(section: dict[str, Any], results: Path) -> None:
+    """Pooled recall over all enactments and those with text, each stage's, and the misses."""
     pooled = section["recall"]["pooled"]
     for label, key in (("all enactments", "all"), ("with text", "with_text")):
         r = pooled[key]
@@ -502,12 +513,37 @@ def eval_precision(
         items, kept = current_items(sample, tables, labels)
         sizes = load_sizes(strata)
         measured = estimate(items, kept, sizes, model_labeler=model_labeler)
-        dropped = (
-            read_items(tables, load_sample(flagged))
-            if flagged.exists() and has_counts(tables)
-            else None
-        )
-        measured["state_boilerplate_flag"] = with_flag(
+        measured |= _flag_readings(
+            tables, items, kept, sizes, flag_report=flag_report, flagged=flagged,
+            flagged_report=flagged_report, model_labeler=model_labeler,
+            flagged_labeler=flagged_labeler,
+        )  # fmt: skip
+    section: dict[str, Any] = {"command": "uv run lineage eval precision", **measured}
+    write_results(results, "precision", section)
+    _echo_precision(section, results)
+
+
+def _flag_readings(
+    tables: Path,
+    items: list[Item],
+    kept: list[dict[str, Any]],
+    sizes: dict[str, int],
+    *,
+    flag_report: Path,
+    flagged: Path,
+    flagged_report: Path,
+    model_labeler: str,
+    flagged_labeler: str,
+) -> dict[str, Any]:
+    """Precision with the state boilerplate flag on, counting the sample of the pairs it
+    drops when there is one, and the pair-level reading at the stage's threshold."""
+    dropped = (
+        read_items(tables, load_sample(flagged))
+        if flagged.exists() and has_counts(tables)
+        else None
+    )
+    out: dict[str, Any] = {
+        "state_boilerplate_flag": with_flag(
             tables,
             items,
             kept,
@@ -518,18 +554,22 @@ def eval_precision(
             model_labeler=model_labeler,
             dropped_labeler=flagged_labeler,
         )
-        if has_counts(tables):
-            measured["at_stage_threshold"] = pair_level_at(
-                tables,
-                items,
-                kept,
-                sizes,
-                labeler=model_labeler,
-                dropped_items=dropped,
-                dropped_labeler=flagged_labeler,
-            )
-    section: dict[str, Any] = {"command": "uv run lineage eval precision", **measured}
-    write_results(results, "precision", section)
+    }
+    if has_counts(tables):
+        out["at_stage_threshold"] = pair_level_at(
+            tables,
+            items,
+            kept,
+            sizes,
+            labeler=model_labeler,
+            dropped_items=dropped,
+            dropped_labeler=flagged_labeler,
+        )
+    return out
+
+
+def _echo_precision(section: dict[str, Any], results: Path) -> None:
+    """Overall precision by people's labels and the model's, each with the flag on too."""
     for who in ("person", "provisional_model"):
         overall = section[who]["overall"]
         shown = (

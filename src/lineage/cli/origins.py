@@ -465,32 +465,18 @@ def eval_origin_precision(
     reporting = ORIGIN_PARTS[part]
     name = ORIGIN_RESULTS_SECTIONS[part]
     with exits_on(OriginPrecisionError, ModelDocError, ValueError):
-        doc: dict[str, Any] = json.loads(results.read_text()) if results.exists() else {}
-        # A reading published before this part existed moves to its own part's name first.
-        moved = origin_retired(doc)
-        if moved != doc:
-            doc = moved
-            results.write_text(json.dumps(doc, indent=1) + "\n")
-        if intervals_only and name not in doc:
-            raise OriginPrecisionError(f"no stored reading in {results} to regenerate")
-        if name in doc and not intervals_only:
-            raise OriginPrecisionError(
-                f"the {part} sample was read once already ({results}, {name}); a second "
-                "reading could be chosen"
-            )
+        doc = _stored_results(results)
+        _refuse_reading_again(
+            doc, part=part, name=name, results=results, intervals_only=intervals_only
+        )
         if not reporting.sample.exists():
             raise OriginPrecisionError(
                 f"no {reporting.sample}; run `lineage origin-sample --part {part} --final`"
             )
         rows = load_origin_sample(reporting.sample)
-        if reporting.by_sections:
-            docs = [d for c in collectors().values() for d in read_docs(c.source, root)]
-            items = build_origin_items(rows, read_origin_matches(tables), docs, tables, root=root)
-            correct = origin_correct_by_sections(items, load_origin_labels(labels))
-            labelers = origin_labelers(items, load_origin_labels(labels))
-        else:
-            correct = origin_correct_by_pair(load_origin_labels(labels))
-            labelers = []
+        correct, labelers = _origin_correct(
+            rows, labels, by_sections=reporting.by_sections, tables=tables, root=root
+        )
         read = origin_precision_reading(
             rows, correct, json.loads(ORIGIN_SAMPLE_REPORT.read_text())[part]
         )
@@ -510,16 +496,55 @@ def eval_origin_precision(
             "it is read once"
         )
     write_results(results, name, section)
-
-    def line(name: str, g: Mapping[str, Any]) -> str:
-        p = g["precision"]
-        shown = "too few labels" if p is None else f"{p['precision']:.2f} {p['interval_95']}"
-        return f"{name}: {shown}, {g['correct']}/{g['labeled']} of {g['matches']:,} listed"
-
-    typer.echo(line("overall", read["overall"]))
-    for name, g in read["compared"].items():
-        typer.echo(line(name, g))
+    typer.echo(_precision_line("overall", read["overall"]))
+    for group, g in read["compared"].items():
+        typer.echo(_precision_line(group, g))
     typer.echo(f"-> {results}")
+
+
+def _stored_results(results: Path) -> dict[str, Any]:
+    """The results file as it stands, a reading published before its part existed moved to
+    its own part's name first (and written back)."""
+    doc: dict[str, Any] = json.loads(results.read_text()) if results.exists() else {}
+    moved = origin_retired(doc)
+    if moved != doc:
+        doc = moved
+        results.write_text(json.dumps(doc, indent=1) + "\n")
+    return doc
+
+
+def _refuse_reading_again(
+    doc: Mapping[str, Any], *, part: str, name: str, results: Path, intervals_only: bool
+) -> None:
+    """A reporting sample is read once: refuse a second reading, and regenerating the
+    intervals of a reading never stored."""
+    if intervals_only and name not in doc:
+        raise OriginPrecisionError(f"no stored reading in {results} to regenerate")
+    if name in doc and not intervals_only:
+        raise OriginPrecisionError(
+            f"the {part} sample was read once already ({results}, {name}); a second "
+            "reading could be chosen"
+        )
+
+
+def _origin_correct(
+    rows: list[dict[str, Any]], labels: Path, *, by_sections: bool, tables: Path, root: Path
+) -> tuple[dict[str, bool], list[str]]:
+    """Each sampled match's answer, from its strongest section pair's label or its pair's,
+    and the labelers counted (named only when read by sections)."""
+    if not by_sections:
+        return origin_correct_by_pair(load_origin_labels(labels)), []
+    docs = [d for c in collectors().values() for d in read_docs(c.source, root)]
+    items = build_origin_items(rows, read_origin_matches(tables), docs, tables, root=root)
+    correct = origin_correct_by_sections(items, load_origin_labels(labels))
+    return correct, origin_labelers(items, load_origin_labels(labels))
+
+
+def _precision_line(group: str, g: Mapping[str, Any]) -> str:
+    """One group's precision, interval and counts, as the reading prints it."""
+    p = g["precision"]
+    shown = "too few labels" if p is None else f"{p['precision']:.2f} {p['interval_95']}"
+    return f"{group}: {shown}, {g['correct']}/{g['labeled']} of {g['matches']:,} listed"
 
 
 @eval_app.command("origin-census")
