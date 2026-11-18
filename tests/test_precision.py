@@ -10,9 +10,16 @@ import pytest
 
 from lineage.core import db
 from lineage.core.intervals import wilson
-from lineage.labels import SAME_PROVISION, Item, Pair, Section, SectionKey, SectionRef, text_sha256
-from lineage.match.strata import STRATA, PrecisionError, pair_keys, strata, stratum_of
-from lineage.precision import (
+from lineage.evals.labels import (
+    SAME_PROVISION,
+    Item,
+    Pair,
+    Section,
+    SectionKey,
+    SectionRef,
+    text_sha256,
+)
+from lineage.evals.precision import (
     draw,
     estimate,
     latest_correct,
@@ -21,6 +28,7 @@ from lineage.precision import (
     sample_rows,
     stratified,
 )
+from lineage.match.strata import STRATA, PrecisionError, pair_keys, strata, stratum_of
 
 
 def _keys(*pairs: tuple[int, int]) -> np.ndarray:
@@ -267,10 +275,10 @@ def test_the_command_writes_the_estimate_into_the_results(corpus: Path, tmp_path
 
 
 def test_the_sample_is_drawn_from_both_stages_stored_pairs(embedded_commission: Path) -> None:
+    from lineage.evals.precision import build_sample
     from lineage.match.near.pairs import load_cross_state_pairs
     from lineage.match.semantic.pairs import build_semantic_pairs, load_semantic_pairs, section_keys
     from lineage.match.semantic.stage import BUILD_THRESHOLD
-    from lineage.precision import build_sample
     from tests.conftest import FAKE_MODEL
 
     tables = embedded_commission

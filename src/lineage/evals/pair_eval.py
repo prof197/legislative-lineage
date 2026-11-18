@@ -12,7 +12,7 @@ A pair counts as positive when annotators labeled it related or closer (2 to 4 o
 scale). Each model's cosine threshold is set on the train and validation splits, never the test
 split, as the lowest cosine whose precision there reaches the target, so it gives the most
 recall at that precision; the test split reports what it gives. Only metrics are written; the
-dataset is not committed (lineage.pair_data). See DESIGN.md#pair-dataset.
+dataset is not committed (lineage.evals.pair_data). See DESIGN.md#pair-dataset.
 """
 
 import json
@@ -24,6 +24,7 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
+from lineage.evals.pair_data import LABELS, PAIR_DATA_DIR, SPLITS, Pair, load_split
 from lineage.match.near.lsh import band_keys
 from lineage.match.near.minhash import permutations, signatures
 from lineage.match.near.shingles import section_shingles
@@ -31,7 +32,6 @@ from lineage.match.near.stoplist import apply_stoplist, load_stoplist
 from lineage.match.near.verify import THRESHOLD, min_agreements
 from lineage.match.semantic.embed import embed, load_model
 from lineage.match.semantic.models import MODELS_DIR
-from lineage.pair_data import LABELS, PAIR_DATA_DIR, SPLITS, Pair, load_split
 from lineage.text.boilerplate import boilerplate_kind
 from lineage.text.sections import normalize
 from lineage.text.windows import WINDOW_WORDS, display_windows, normalized_windows

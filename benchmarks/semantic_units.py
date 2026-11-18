@@ -40,10 +40,10 @@ from tokenizers import Tokenizer
 
 from benchmarks.minhash import machine
 from lineage import queries
-from lineage.acts import ACT_NAMES, ACTS, load_act
 from lineage.core import db
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.core.paths import DATA
+from lineage.evals.acts import ACT_NAMES, ACTS, load_act
 from lineage.match import queries as match_queries
 from lineage.match.near import queries as near_queries
 from lineage.match.semantic.embed import embed, load_model

@@ -1,10 +1,10 @@
 """Origin recall: of the bills that enacted a model, the share whose origin matches name it.
 
 v1's commission eval asks the same question with an act's text as a query
-(lineage.commission); here the act is a collected model document and the answer is the origin
+(lineage.evals.commission); here the act is a collected model document and the answer is the origin
 matches table (lineage.origins), so recall is measured on what the site would list rather than
 on a query run for the eval. The ground truth is a resolved answer key, the shape of
-`reports/answer_key.csv` (lineage.answer_key): one row per bill a commission list row resolved
+`reports/answer_key.csv` (lineage.evals.answer_key): one row per bill a commission list row resolved
 to, and the rows not counted with the reason. Resolution is v1's, so the two evals count the
 same enactments.
 
@@ -16,7 +16,7 @@ each with its Wilson 95% interval (lineage.core.intervals), and at higher minimu
 
 A sealed answer key, one whose matches must not be inspected while matching is tuned, is
 evaluated only with `final`, as v1's held-out acts are only with `--final`, and never twice at
-one configuration (lineage.commission.check_held_out_configuration). See
+one configuration (lineage.evals.commission.check_held_out_configuration). See
 DESIGN.md#commission-recall and DESIGN.md#origin-matches.
 """
 
@@ -26,11 +26,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal
 
-from lineage.answer_key import ANSWER_KEY, HELD_OUT_KEY, ORIGINS_HELD_OUT_KEY, read_answer_key
-from lineage.commission import MIN_SHARE, SHARE_SWEEP
 from lineage.core.intervals import wilson
+from lineage.evals.answer_key import ANSWER_KEY, HELD_OUT_KEY, ORIGINS_HELD_OUT_KEY, read_answer_key
+from lineage.evals.commission import MIN_SHARE, SHARE_SWEEP
+from lineage.evals.ulc import ULC_STATES, Stratum
 from lineage.origins import FLOOR, OriginMatch, Stage, is_listed
-from lineage.ulc import ULC_STATES, Stratum
 
 COMMAND = "uv run lineage eval origins"
 STAGES: tuple[Stage, ...] = ("near_duplicate", "semantic")
@@ -76,7 +76,7 @@ class KeyEnactment:
     year: int
     listed: str
     stratum: Stratum
-    rule: str | None  # the step that resolved it (lineage.ulc.find_bills), None for no bill
+    rule: str | None  # the step that resolved it (lineage.evals.ulc.find_bills), None for no bill
     bill_ids: tuple[str, ...]
 
     @property
@@ -92,7 +92,7 @@ class LoadedKey:
 
 
 def _stratum(status: str) -> Stratum:
-    # As lineage.ulc reads the lists: "Enacted - Substantially Similiar", the lists' own
+    # As lineage.evals.ulc reads the lists: "Enacted - Substantially Similiar", the lists' own
     # spelling, also starts with "Enacted", so the longer prefix is tried first.
     if status.startswith("Enacted - Substantially Simil"):
         return "substantially_similar"

@@ -14,7 +14,7 @@ Z_95 = 1.959963984540054
 
 def wilson(successes: float, n: float, z: float = Z_95) -> tuple[float, float]:
     """The interval for the share successes / n; the whole range when nothing was sampled. A
-    fractional n is an effective sample size (lineage.precision.stratified)."""
+    fractional n is an effective sample size (lineage.evals.precision.stratified)."""
     if n == 0:
         return (0.0, 1.0)
     p = successes / n

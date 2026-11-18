@@ -20,13 +20,13 @@ import shutil
 from pathlib import Path
 from typing import Any
 
-from lineage import queries
-from lineage.commission import FIRST_YEAR
 from lineage.core import db
 from lineage.core.paths import DATA
 from lineage.data.sessions import load_sessions
 from lineage.data.stats import AMENDMENT_CHARS, AMENDMENT_OPENING, AMENDMENT_SUBSTITUTE
-from lineage.ulc import BillRecord, find_bills, load_enactments
+from lineage.evals import queries as evals_queries
+from lineage.evals.commission import FIRST_YEAR
+from lineage.evals.ulc import BillRecord, find_bills, load_enactments
 
 TABLES = DATA / "tables"
 SESSIONS = Path("snapshot/sessions.csv")
@@ -80,7 +80,7 @@ def main() -> None:
     ]
     bills_glob = str(TABLES / "bills" / "*.parquet")
     with db.connect_quiet() as con:
-        bills = queries.enactment_bills(
+        bills = evals_queries.enactment_bills(
             con,
             bills_glob=bills_glob,
             # The fixture copies archive records, which carry the exported text, so its checks

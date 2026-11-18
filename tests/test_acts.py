@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from lineage.acts import ACTS, ActTextError, enacted_text, load_act
+from lineage.evals.acts import ACTS, ActTextError, enacted_text, load_act
 from lineage.text.sections import normalize
 
 ACT = """\

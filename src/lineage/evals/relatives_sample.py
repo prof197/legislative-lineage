@@ -1,7 +1,7 @@
 """The precision of what a bill page lists: a sample of listed relatives, judged on the passages
 that put them there.
 
-Pair-level precision (lineage.precision) counts every cross-state section pair once, so it is
+Pair-level precision (lineage.evals.precision) counts every cross-state section pair once, so it is
 dominated by long sections and compact templates that pair with many others, and it judges
 whole sections where matching compares 94-word windows. It stays as each stage's diagnostic.
 This measure asks what a reader meets instead: of the relatives a bill's page lists, how many
@@ -20,8 +20,8 @@ together, unmarked, alongside both sections. See DESIGN.md#precision-sample.
 
 There are three samples (PARTS), each drawn under its own seed from pages as they were
 listed when it was drawn. The first tuning sample, which the threshold proposal reads
-(lineage.threshold), was drawn at the build's threshold without the state boilerplate flag; each
-of its rows records what a threshold above the build's needs: the relative's best cosine,
+(lineage.evals.threshold), was drawn at the build's threshold without the state boilerplate flag;
+each of its rows records what a threshold above the build's needs: the relative's best cosine,
 whether the near-duplicate stage found it, and the best cosines of every relative its page
 shows by meaning alone. The second was drawn at 0.93 with the flag to report that threshold's
 precision; once read it showed where 0.93 went wrong, the M5 review moved the threshold on it,
@@ -43,15 +43,15 @@ from numpy.typing import NDArray
 from lineage.align import Embedder, align
 from lineage.core import db
 from lineage.core.intervals import weighted_share, wilson
-from lineage.labels import Item
+from lineage.evals.labels import Item
+from lineage.evals.precision import SEED as PRECISION_SEED
+from lineage.evals.precision import latest_correct
 from lineage.match.listing import listed_pairs
 from lineage.match.near import queries as near_queries
 from lineage.match.relatives import RELATIVES_SHOWN, bill_relatives
 from lineage.match.semantic.pairs import section_keys
 from lineage.match.semantic.stage import BUILD_THRESHOLD, CORROBORATING, MODEL, THRESHOLD
 from lineage.match.strata import STRATA, stratum_of
-from lineage.precision import SEED as PRECISION_SEED
-from lineage.precision import latest_correct
 
 STATE = "GA"
 BILLS = 100

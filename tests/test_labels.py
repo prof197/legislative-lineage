@@ -12,7 +12,7 @@ from typer.testing import CliRunner
 
 from lineage.cli import app
 from lineage.core import db
-from lineage.labels import (
+from lineage.evals.labels import (
     CORRECT_FROM,
     Item,
     LabelError,
@@ -30,8 +30,8 @@ from lineage.labels import (
     session,
     text_sha256,
 )
-from lineage.pair_data import LABELS
-from lineage.pair_eval import POSITIVE_FROM
+from lineage.evals.pair_data import LABELS
+from lineage.evals.pair_eval import POSITIVE_FROM
 
 
 def _section(bill: str, ordinal: int, text: str) -> Section:

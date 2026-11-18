@@ -43,7 +43,8 @@ WANTED = {
 
 
 def _disk(tmp_path: Path) -> tuple[Path, Path]:
-    """Synthetic texts saved as two of the acts lineage.acts knows; the other seven are absent."""
+    """Synthetic texts saved as two of the acts lineage.evals.acts knows; the other seven are
+    absent."""
     acts, held_out = tmp_path / "acts", tmp_path / "acts" / "held-out"
     held_out.mkdir(parents=True)
     text = SYNTHETIC_ACT.read_text()

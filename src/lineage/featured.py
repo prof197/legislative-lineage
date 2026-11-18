@@ -33,8 +33,8 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lineage import queries
-from lineage.answer_key import ANSWER_KEY, read_answer_key
 from lineage.core import db
+from lineage.evals.answer_key import ANSWER_KEY, read_answer_key
 from lineage.match.listing import ListedPairs, listed_pairs, shipped_flag
 from lineage.match.relatives import bill_relatives
 from lineage.match.semantic.pairs import section_keys

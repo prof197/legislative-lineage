@@ -1,8 +1,8 @@
 """`lineage eval commission`: what share of a uniform act's enactments its text finds.
 
 Each act's text is the query. An enactment is found when a bill its list row names (see
-`lineage.ulc`) belongs to a family among the query's relatives with a score above the threshold.
-The score is the share of the query's words in the sections the family matches
+`lineage.evals.ulc`) belongs to a family among the query's relatives with a score above the
+threshold. The score is the share of the query's words in the sections the family matches
 (DESIGN.md#bill-scoring), and the commission's standard closing sections are boilerplate, so
 they never count. Rank is reported, not used: an
 act's relatives can outnumber any fixed rank once every state's versions count. Every enactment
@@ -26,11 +26,22 @@ from typing import Any, Literal
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage import queries
-from lineage.acts import ACTS, ACTS_DIR, enacted_text
 from lineage.core import db
 from lineage.data.sessions import Session, load_sessions
 from lineage.data.stats import AMENDMENT_CHARS, AMENDMENT_OPENING, AMENDMENT_SUBSTITUTE
+from lineage.evals import queries
+from lineage.evals.acts import ACTS, ACTS_DIR, enacted_text
+from lineage.evals.ulc import (
+    ENACTMENTS,
+    NO_BILLS,
+    BillRecord,
+    Enactment,
+    Snapshot,
+    canonical_number,
+    development_bills,
+    find_bills,
+    load_enactments,
+)
 from lineage.match.near.bands import load_band_index
 from lineage.match.near.lsh import BUCKET_CAP, band_keys
 from lineage.match.near.minhash import NUM_PERM
@@ -51,17 +62,6 @@ from lineage.match.semantic.stage import (
     best_cosines_to_bills,
 )
 from lineage.match.semantic.stage import THRESHOLD as THRESHOLD_SEMANTIC
-from lineage.ulc import (
-    ENACTMENTS,
-    NO_BILLS,
-    BillRecord,
-    Enactment,
-    Snapshot,
-    canonical_number,
-    development_bills,
-    find_bills,
-    load_enactments,
-)
 
 COMMAND = "uv run lineage eval commission"
 RESULTS = Path("reports/results.json")

@@ -1,6 +1,6 @@
 """Both stages' stored cross-state pairs by stratum: found by the near-duplicate stage only, by
 meaning only, or by both. The precision samples draw from these strata and their estimates weigh
-by them (lineage.precision); the state boilerplate flag counts them with its sections dropped.
+by them (lineage.evals.precision); the state boilerplate flag counts them with its sections dropped.
 See DESIGN.md#precision-sample.
 """
 

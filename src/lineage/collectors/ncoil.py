@@ -29,8 +29,8 @@ open without a login or a click-through. The texts stay local, as every model te
 
 Cleaning: NCOIL's models put a title block, adoption and sponsor lines, sometimes a preamble and
 a table of contents before their text, and drafting notes in the middle of a section, between
-its lettered subsections. `lineage.acts.enacted_text` would drop everything from such a note to
-the next section, law included, and keep a table of contents that has no page numbers, so this
+its lettered subsections. `lineage.evals.acts.enacted_text` would drop everything from such a note
+to the next section, law included, and keep a table of contents that has no page numbers, so this
 module reads its own layouts (`clean_model`) and shares only the bracket rule,
 `drop_instructions`. Forty years of models write their headings many ways ("Section 1.",
 "Section 1:", "Section 1 Short Title", "Section 1 - text", "Section I.", "Section A." within

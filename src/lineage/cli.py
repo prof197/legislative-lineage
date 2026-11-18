@@ -15,54 +15,15 @@ from numpy.typing import NDArray
 
 from lineage import __version__, deploy
 from lineage import rebuild as rebuilding
-from lineage.acts import (
-    ACTS,
-    ACTS_DIR,
-    HELD_OUT_ACTS,
-    HELD_OUT_DIR,
-    ORIGIN_HELD_OUT_ACTS,
-    ActTextError,
-)
-from lineage.agreement import PAIRS as AGREEMENT_PAIRS
-from lineage.agreement import SAMPLE as AGREEMENT_SAMPLE
-from lineage.agreement import SAMPLE_REPORT as AGREEMENT_SAMPLE_REPORT
-from lineage.agreement import SEED as AGREEMENT_SEED
-from lineage.agreement import (
-    AgreementError,
-    agreement,
-    draw_subsample,
-    subsample_report,
-    subsample_rows,
-    write_subsample,
-)
 from lineage.align import Embedder, align
-from lineage.answer_key import (
-    ANSWER_KEY,
-    HELD_OUT_KEY,
-    ORIGINS_HELD_OUT_KEY,
-    build_answer_key,
-    render_answer_key,
-)
 from lineage.collect import REPORTS_DIR as COLLECT_REPORTS
 from lineage.collect import CollectContext, CollectError, collectors, run_collector
 from lineage.collect import write_report as write_collect_report
-from lineage.commission import (
-    RESULTS,
-    CommissionError,
-    check_held_out_configuration,
-    commission_recall,
-    run_configuration,
-    with_earlier_runs,
-    write_results,
-)
 from lineage.core.disk import GiB, InsufficientDiskSpaceError
 from lineage.core.hashing import file_sha256
 from lineage.core.http import FetchError, open_url
 from lineage.core.memory import MemoryBoundError
 from lineage.core.paths import DATA
-from lineage.cost import REPORT as COST_REPORT
-from lineage.cost import cost_report
-from lineage.cost import write_report as write_cost_report
 from lineage.data.archives import SOURCE, fetch_raw
 from lineage.data.doctypes import RULES, DocTypesError, build_eligibility, rule_samples
 from lineage.data.ingest import ingest as run_ingest
@@ -76,6 +37,139 @@ from lineage.data.sessions import (
 )
 from lineage.data.snapshot import SnapshotError, load_manifest, scan, write_manifest
 from lineage.data.stats import write_coverage
+from lineage.evals.acts import (
+    ACTS,
+    ACTS_DIR,
+    HELD_OUT_ACTS,
+    HELD_OUT_DIR,
+    ORIGIN_HELD_OUT_ACTS,
+    ActTextError,
+)
+from lineage.evals.agreement import PAIRS as AGREEMENT_PAIRS
+from lineage.evals.agreement import SAMPLE as AGREEMENT_SAMPLE
+from lineage.evals.agreement import SAMPLE_REPORT as AGREEMENT_SAMPLE_REPORT
+from lineage.evals.agreement import SEED as AGREEMENT_SEED
+from lineage.evals.agreement import (
+    AgreementError,
+    agreement,
+    draw_subsample,
+    subsample_report,
+    subsample_rows,
+    write_subsample,
+)
+from lineage.evals.answer_key import (
+    ANSWER_KEY,
+    HELD_OUT_KEY,
+    ORIGINS_HELD_OUT_KEY,
+    build_answer_key,
+    render_answer_key,
+)
+from lineage.evals.commission import (
+    RESULTS,
+    CommissionError,
+    check_held_out_configuration,
+    commission_recall,
+    run_configuration,
+    with_earlier_runs,
+    write_results,
+)
+from lineage.evals.cost import REPORT as COST_REPORT
+from lineage.evals.cost import cost_report
+from lineage.evals.cost import write_report as write_cost_report
+from lineage.evals.faithfulness import (
+    JUDGE_MODEL,
+    JUDGE_PROMPT,
+    JUDGMENTS,
+    PairView,
+    anthropic_judge,
+    claims_to_judge,
+    faithfulness,
+    judge_claims,
+    judge_name,
+    load_judgments,
+    pair_view,
+)
+from lineage.evals.faithfulness import pending as pending_claims
+from lineage.evals.faithfulness import projected_cost as projected_judge_cost
+from lineage.evals.faithfulness import run_name as faithfulness_run
+from lineage.evals.faithfulness import with_earlier_runs as with_earlier_faithfulness
+from lineage.evals.flag_precision import (
+    FLAGGED_SAMPLE,
+    FLAGGED_SAMPLE_REPORT,
+    build_flagged_sample,
+    with_flag,
+)
+from lineage.evals.label_page import OUT as LABEL_PAGE_OUT
+from lineage.evals.label_page import PAIRS_FILE as LABEL_PAGE_DATA
+from lineage.evals.label_page import append_rows as append_label_rows
+from lineage.evals.label_page import imported_rows as imported_label_rows
+from lineage.evals.label_page import load_saved as load_saved_labels
+from lineage.evals.label_page import page_data as label_page_data
+from lineage.evals.label_page import write_page as write_label_page
+from lineage.evals.labels import (
+    LABELS_PATH,
+    Item,
+    LabelError,
+    current_labels,
+    load_labels,
+    load_sample,
+    pending,
+    person,
+    read_items,
+    section_hashes,
+    session,
+)
+from lineage.evals.labels import PERSON as PERSON_PREFIX
+from lineage.evals.labels import model_labeler as model_labeler_name
+from lineage.evals.model_labels import BUDGET as LABEL_BUDGET
+from lineage.evals.model_labels import MAX_COST as LABEL_MAX_COST
+from lineage.evals.model_labels import MODEL_ID as LABEL_MODEL
+from lineage.evals.model_labels import PROMPT_VERSION as LABEL_PROMPT_VERSION
+from lineage.evals.model_labels import PROMPTS as LABEL_PROMPTS
+from lineage.evals.model_labels import SPEND as LABEL_SPEND
+from lineage.evals.model_labels import anthropic_ask as anthropic_label_ask
+from lineage.evals.model_labels import (
+    anthropic_batches,
+    batch_usage,
+    label_in_batch,
+    label_with_model,
+    model_pending,
+    projected_cost,
+)
+from lineage.evals.model_labels import record_spend as record_label_spend
+from lineage.evals.model_labels import spent as label_spent
+from lineage.evals.pair_data import PAIR_DATA_DIR, PairDataError, fetch_pair_data
+from lineage.evals.pair_eval import REPORT as PAIR_REPORT
+from lineage.evals.pair_eval import evaluate as evaluate_pairs
+from lineage.evals.pair_eval import write_report as write_pair_report
+from lineage.evals.precision import SAMPLE as PRECISION_SAMPLE
+from lineage.evals.precision import SAMPLE_REPORT as PRECISION_SAMPLE_REPORT
+from lineage.evals.precision import build_sample, estimate, load_sizes, write_sample
+from lineage.evals.relatives_sample import LABELS as RELATIVES_LABELS
+from lineage.evals.relatives_sample import PARTS as RELATIVES_PARTS
+from lineage.evals.relatives_sample import SAMPLE as RELATIVES_SAMPLE
+from lineage.evals.relatives_sample import (
+    RelativesSampleError,
+    build_relatives_sample,
+    load_pages,
+    with_passages,
+)
+from lineage.evals.relatives_sample import estimate as relatives_estimate
+from lineage.evals.relatives_sample import write_sample as write_relatives_sample
+from lineage.evals.threshold import CANDIDATES as THRESHOLD_CANDIDATES
+from lineage.evals.threshold import FIRST_CHOICE as THRESHOLD_FIRST_CHOICE
+from lineage.evals.threshold import REPORT as THRESHOLD_REPORT
+from lineage.evals.threshold import (
+    ThresholdError,
+    at_threshold,
+    flag_at_threshold,
+    page_precision,
+    pair_level_at,
+)
+from lineage.evals.threshold import by_band as threshold_by_band
+from lineage.evals.threshold import proposal as threshold_proposal
+from lineage.evals.threshold import sample_inputs as threshold_sample_inputs
+from lineage.evals.ulc import ENACTMENTS, HELD_OUT_ENACTMENTS, UlcError
 from lineage.explain.explain import CACHE_DIR as EXPLAIN_CACHE
 from lineage.explain.explain import (
     GROUNDING_RULES,
@@ -111,33 +205,10 @@ from lineage.export import SCHEMA as EXPORT_SCHEMA
 from lineage.export import WORKERS as EXPORT_WORKERS
 from lineage.export import package as package_export
 from lineage.export import schema_text as export_schema_text
-from lineage.faithfulness import (
-    JUDGE_MODEL,
-    JUDGE_PROMPT,
-    JUDGMENTS,
-    PairView,
-    anthropic_judge,
-    claims_to_judge,
-    faithfulness,
-    judge_claims,
-    judge_name,
-    load_judgments,
-    pair_view,
-)
-from lineage.faithfulness import pending as pending_claims
-from lineage.faithfulness import projected_cost as projected_judge_cost
-from lineage.faithfulness import run_name as faithfulness_run
-from lineage.faithfulness import with_earlier_runs as with_earlier_faithfulness
 from lineage.featured import PAIRS as FEATURED_PAIRS
 from lineage.featured import REPORT as FEATURED_REPORT
 from lineage.featured import FeaturedError, build_featured, write_featured
 from lineage.feed import FeedError, write_feed
-from lineage.flag_precision import (
-    FLAGGED_SAMPLE,
-    FLAGGED_SAMPLE_REPORT,
-    build_flagged_sample,
-    with_flag,
-)
 from lineage.incremental import update
 from lineage.intake import (
     DAYS,
@@ -149,28 +220,6 @@ from lineage.intake import (
     january_estimate,
     run_intake,
 )
-from lineage.label_page import OUT as LABEL_PAGE_OUT
-from lineage.label_page import PAIRS_FILE as LABEL_PAGE_DATA
-from lineage.label_page import append_rows as append_label_rows
-from lineage.label_page import imported_rows as imported_label_rows
-from lineage.label_page import load_saved as load_saved_labels
-from lineage.label_page import page_data as label_page_data
-from lineage.label_page import write_page as write_label_page
-from lineage.labels import (
-    LABELS_PATH,
-    Item,
-    LabelError,
-    current_labels,
-    load_labels,
-    load_sample,
-    pending,
-    person,
-    read_items,
-    section_hashes,
-    session,
-)
-from lineage.labels import PERSON as PERSON_PREFIX
-from lineage.labels import model_labeler as model_labeler_name
 from lineage.match.listing import flagged_sections, shipped_flag
 from lineage.match.near.index import build_index
 from lineage.match.near.stoplist import StoplistError, build_stoplist
@@ -202,23 +251,6 @@ from lineage.match.state_boilerplate import (
 from lineage.match.state_boilerplate import REPORT as STATE_BOILERPLATE_REPORT
 from lineage.match.state_boilerplate import write_report as write_state_boilerplate_report
 from lineage.match.strata import PrecisionError
-from lineage.model_labels import BUDGET as LABEL_BUDGET
-from lineage.model_labels import MAX_COST as LABEL_MAX_COST
-from lineage.model_labels import MODEL_ID as LABEL_MODEL
-from lineage.model_labels import PROMPT_VERSION as LABEL_PROMPT_VERSION
-from lineage.model_labels import PROMPTS as LABEL_PROMPTS
-from lineage.model_labels import SPEND as LABEL_SPEND
-from lineage.model_labels import anthropic_ask as anthropic_label_ask
-from lineage.model_labels import (
-    anthropic_batches,
-    batch_usage,
-    label_in_batch,
-    label_with_model,
-    model_pending,
-    projected_cost,
-)
-from lineage.model_labels import record_spend as record_label_spend
-from lineage.model_labels import spent as label_spent
 from lineage.modeldocs import MODELDOCS_DIR, ModelDocError, read_docs
 from lineage.origin_labels import LABELS as ORIGIN_LABELS
 from lineage.origin_labels import PROMPT as ORIGIN_PROMPT
@@ -266,25 +298,7 @@ from lineage.origins import (
     write_origin_matches,
     write_origins_report,
 )
-from lineage.pair_data import PAIR_DATA_DIR, PairDataError, fetch_pair_data
-from lineage.pair_eval import REPORT as PAIR_REPORT
-from lineage.pair_eval import evaluate as evaluate_pairs
-from lineage.pair_eval import write_report as write_pair_report
-from lineage.precision import SAMPLE as PRECISION_SAMPLE
-from lineage.precision import SAMPLE_REPORT as PRECISION_SAMPLE_REPORT
-from lineage.precision import build_sample, estimate, load_sizes, write_sample
 from lineage.publish import PublishError, export_changes, promote, staging_dir
-from lineage.relatives_sample import LABELS as RELATIVES_LABELS
-from lineage.relatives_sample import PARTS as RELATIVES_PARTS
-from lineage.relatives_sample import SAMPLE as RELATIVES_SAMPLE
-from lineage.relatives_sample import (
-    RelativesSampleError,
-    build_relatives_sample,
-    load_pages,
-    with_passages,
-)
-from lineage.relatives_sample import estimate as relatives_estimate
-from lineage.relatives_sample import write_sample as write_relatives_sample
 from lineage.release import ReleaseError
 from lineage.results_table import (
     EXPORTED_ONLY,
@@ -317,20 +331,6 @@ from lineage.text.quality import STORE, run_sample
 from lineage.text.run import REPORT as FETCH_REPORT
 from lineage.text.run import run_fetch
 from lineage.text.sectioning import SectioningError, build_sections
-from lineage.threshold import CANDIDATES as THRESHOLD_CANDIDATES
-from lineage.threshold import FIRST_CHOICE as THRESHOLD_FIRST_CHOICE
-from lineage.threshold import REPORT as THRESHOLD_REPORT
-from lineage.threshold import (
-    ThresholdError,
-    at_threshold,
-    flag_at_threshold,
-    page_precision,
-    pair_level_at,
-)
-from lineage.threshold import by_band as threshold_by_band
-from lineage.threshold import proposal as threshold_proposal
-from lineage.threshold import sample_inputs as threshold_sample_inputs
-from lineage.ulc import ENACTMENTS, HELD_OUT_ENACTMENTS, UlcError
 from lineage.updates import CHANGES_DIR, UpdateError, load_day
 from lineage.withheld import REPORT as WITHHELD_REPORT
 from lineage.withheld import Reviewed as WithheldReviewed
@@ -1554,7 +1554,7 @@ def relatives_sample(
     part: Annotated[
         str,
         typer.Option(
-            "--part", help="tuning, tuning_093 or reporting (lineage.relatives_sample.PARTS)."
+            "--part", help="tuning, tuning_093 or reporting (lineage.evals.relatives_sample.PARTS)."
         ),
     ] = "tuning",
     sample: Annotated[
@@ -2702,7 +2702,8 @@ def eval_relatives(
         str,
         typer.Option(
             "--part",
-            help="The sample read: reporting, or a tuning part (lineage.relatives_sample.PARTS).",
+            help="The sample read: reporting, or a tuning part "
+            "(lineage.evals.relatives_sample.PARTS).",
         ),
     ] = "reporting",
     tables: TablesOption = DATA / "tables",

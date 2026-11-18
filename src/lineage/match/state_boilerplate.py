@@ -14,7 +14,7 @@ meaning.
 The count is stored per section; the flag is a count of MIN_FAMILIES or more, set from the
 measured distribution before any precision label was counted. It is a precision feature that
 recall cannot measure, so it is measured on the precision sample with the flag on and off
-(lineage.flag_precision). See DESIGN.md#boilerplate.
+(lineage.evals.flag_precision). See DESIGN.md#boilerplate.
 """
 
 import json

@@ -7,10 +7,10 @@ from typing import Any
 
 import pytest
 
-from lineage.acts import ACTS
-from lineage.answer_key import ANSWER_KEY
-from lineage.commission import RESULTS
-from lineage.labels import SAME_PROVISION
+from lineage.evals.acts import ACTS
+from lineage.evals.answer_key import ANSWER_KEY
+from lineage.evals.commission import RESULTS
+from lineage.evals.labels import SAME_PROVISION
 from lineage.origin_precision import BANDS, FLOORS
 from lineage.origin_recall import load_key, matches_from_commission, same_slug
 from lineage.origin_threshold import correct_by_pair, proposal

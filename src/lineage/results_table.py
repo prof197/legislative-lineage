@@ -14,11 +14,11 @@ import tomllib
 from pathlib import Path
 from typing import Any, cast
 
-from lineage.acts import ACT_NAMES
+from lineage.evals.acts import ACT_NAMES
+from lineage.evals.ulc import ULC_STATES
 from lineage.export import STORIES_RULES, stories_for
 from lineage.origin_story import STORY as ORIGIN_STORY
 from lineage.release import RELEASE_MANIFEST
-from lineage.ulc import ULC_STATES
 
 README = Path("README.md")
 EXPORTED_ONLY = Path("reports/results_exported_only.json")

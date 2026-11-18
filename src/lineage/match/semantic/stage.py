@@ -6,7 +6,7 @@ reports/pair_data.json). bge-small-en-v1.5 scored better than all-MiniLM-L6-v2 a
 precision measured and in ROC AUC. The pair dataset's threshold, the lowest cosine whose
 precision on its training and validation pairs reaches 0.9, is BUILD_THRESHOLD: the build keeps
 every match down to it. On this corpus a page listed 0.47 right at it, so the threshold pages
-list at, THRESHOLD, was set higher on samples of Georgia's pages (lineage.threshold,
+list at, THRESHOLD, was set higher on samples of Georgia's pages (lineage.evals.threshold,
 DESIGN.md#choosing-the-threshold). The two have two roles. THRESHOLD is what a match by meaning
 needs to be listed on its own. CORROBORATING, the build's, is enough to corroborate what is
 already there: a pair the near-duplicate stage found too, which the state boilerplate flag then

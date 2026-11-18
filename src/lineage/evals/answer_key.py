@@ -4,7 +4,7 @@ Recall is only as good as the mapping from a list row to the bills it names, so 
 committed in `reports/answer_key.csv` for checking by eye. Each named bill gets its Open States
 id, title, chambers passed and last passage date, the rule that found it, and the listed number
 it matched. Rows that are not counted are kept, with the reason. Resolution is
-`lineage.ulc.find_bills`, the function the recall eval uses, so the two cannot disagree. See
+`lineage.evals.ulc.find_bills`, the function the recall eval uses, so the two cannot disagree. See
 DESIGN.md#commission-recall.
 """
 
@@ -14,11 +14,11 @@ from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 
-from lineage import queries
-from lineage.commission import FIRST_YEAR, excluded_reason, session_years
 from lineage.core import db
 from lineage.data.sessions import load_sessions
-from lineage.ulc import (
+from lineage.evals import queries
+from lineage.evals.commission import FIRST_YEAR, excluded_reason, session_years
+from lineage.evals.ulc import (
     ENACTMENTS,
     NO_BILLS,
     BillRecord,
@@ -31,7 +31,8 @@ from lineage.ulc import (
 
 ANSWER_KEY = Path("reports/answer_key.csv")
 HELD_OUT_KEY = Path("reports/answer_key_heldout.csv")
-# The reserve acts' lists resolved, origin recall's sealed key (lineage.acts.ORIGIN_HELD_OUT_ACTS).
+# The reserve acts' lists resolved, origin recall's sealed key
+# (lineage.evals.acts.ORIGIN_HELD_OUT_ACTS).
 ORIGINS_HELD_OUT_KEY = Path("reports/answer_key_origins_heldout.csv")
 COMMAND = "uv run lineage eval answer-key"
 COLUMNS: tuple[str, ...] = (

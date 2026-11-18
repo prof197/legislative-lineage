@@ -12,7 +12,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from lineage.acts import enacted_text
+from lineage.evals.acts import enacted_text
 from lineage.match.query import query_text
 from lineage.match.semantic.stage import K, SemanticSearch
 

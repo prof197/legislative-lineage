@@ -8,7 +8,7 @@ is still measured, and the draw is the same on every run over the same build. Th
 are shuffled together into one labeling order, so a session stopped part way has labeled every
 stratum about evenly.
 
-A pair is correct when labeled CORRECT_FROM or higher (lineage.labels). Each stratum's
+A pair is correct when labeled CORRECT_FROM or higher (lineage.evals.labels). Each stratum's
 precision gets the Wilson interval (lineage.core.intervals). A stage's precision, and the overall
 one, weight the strata it covers by their sizes in the build: a sample with as many pairs from a
 small stratum as from a large one would otherwise over-count it. The weighted interval is
@@ -27,7 +27,7 @@ from typing import Any
 import numpy as np
 
 from lineage.core.intervals import wilson
-from lineage.labels import CORRECT_FROM, MODEL, PERSON, Item, SectionKey, is_correct
+from lineage.evals.labels import CORRECT_FROM, MODEL, PERSON, Item, SectionKey, is_correct
 from lineage.match.semantic.pairs import section_keys
 from lineage.match.semantic.stage import MODEL as MODEL_NAME
 from lineage.match.strata import (
@@ -71,7 +71,7 @@ def draw(
 def sample_rows(
     drawn: Sequence[tuple[str, int]], section: Callable[[int], SectionKey], *, prefix: str = "p"
 ) -> list[dict[str, Any]]:
-    """The sample file's rows (lineage.labels.load_sample), each section named by bill id and
+    """The sample file's rows (lineage.evals.labels.load_sample), each section named by bill id and
     ordinal through `section`, which maps a section number to where it sits in the build."""
     rows: list[dict[str, Any]] = []
     for n, (name, key) in enumerate(drawn, start=1):
@@ -210,7 +210,7 @@ def latest_correct(
     items: Sequence[Item], labels: Sequence[Mapping[str, Any]], labeler: str, *, exact: bool = False
 ) -> dict[str, bool]:
     """Whether each pair's latest label (latest_rows) counts it correct, on whichever scale it
-    was asked (lineage.labels.is_correct)."""
+    was asked (lineage.evals.labels.is_correct)."""
     return {p: is_correct(r) for p, r in latest_rows(items, labels, labeler, exact=exact).items()}
 
 
@@ -249,7 +249,7 @@ def estimate(
     model_labeler: str | None = None,
 ) -> dict[str, Any]:
     """Precision from people's labels and, apart, from the model's provisional ones, with how
-    often the two agree. `labels` are the current ones (lineage.labels.current_labels);
+    often the two agree. `labels` are the current ones (lineage.evals.labels.current_labels);
     `sizes` is each stratum's pair count in the build the sample was drawn from. With
     `model_labeler`, only that model labeler's labels count as the model's, so labels asked
     under another prompt or effort are not mixed in."""

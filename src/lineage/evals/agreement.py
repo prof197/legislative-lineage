@@ -10,7 +10,7 @@ shows no model label.
 
 Agreement is measured where the person and the named model labeler both labeled a pair: Cohen's
 weighted kappa on the 0 to 4 scale, with linear weights, and the share of pairs on the same side
-of the correct/incorrect cutoff (lineage.labels.CORRECT_FROM). Linear rather than quadratic
+of the correct/incorrect cutoff (lineage.evals.labels.CORRECT_FROM). Linear rather than quadratic
 weights, because quadratic ones discount a one-step disagreement most, and a one-step
 disagreement across the cutoff is the one precision turns on. The bars were set before any
 person's label was given: kappa at least KAPPA_FROM and cutoff agreement at least
@@ -25,11 +25,11 @@ from typing import Any
 import numpy as np
 
 from lineage.core.intervals import wilson
-from lineage.labels import CORRECT_FROM, PERSON, Item, Pair
+from lineage.evals.labels import CORRECT_FROM, PERSON, Item, Pair
+from lineage.evals.pair_data import LABELS
+from lineage.evals.precision import SEED as PRECISION_SEED
+from lineage.evals.precision import latest_labels, stratified
 from lineage.match.strata import STRATA, stratum_of
-from lineage.pair_data import LABELS
-from lineage.precision import SEED as PRECISION_SEED
-from lineage.precision import latest_labels, stratified
 
 PAIRS = 50
 SEED = PRECISION_SEED + 2  # the flagged sample took + 1

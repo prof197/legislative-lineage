@@ -8,8 +8,9 @@ import numpy as np
 import pytest
 
 from lineage.core import db
-from lineage.flag_precision import build_flagged_sample, with_flag
-from lineage.labels import Item, Pair, Section, SectionKey, SectionRef, text_sha256
+from lineage.evals.flag_precision import build_flagged_sample, with_flag
+from lineage.evals.labels import Item, Pair, Section, SectionKey, SectionRef, text_sha256
+from lineage.evals.precision import without_sections
 from lineage.match.near.pairs import load_families, load_same_state_pairs
 from lineage.match.semantic.pairs import build_semantic_pairs, section_keys
 from lineage.match.state_boilerplate import (
@@ -23,7 +24,6 @@ from lineage.match.state_boilerplate import (
     section_families,
 )
 from lineage.match.strata import STRATA, stored_strata
-from lineage.precision import without_sections
 from tests.conftest import FAKE_MODEL
 
 

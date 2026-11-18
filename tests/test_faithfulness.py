@@ -11,10 +11,7 @@ from typing import Any, Literal
 import pytest
 
 from lineage.align import Span
-from lineage.explain.explain import UnusableReplyError, explain, prompt_spans
-from lineage.explain.explanations import ChangeExplanation, Claim
-from lineage.explain.spend import Meter, load_runs
-from lineage.faithfulness import (
+from lineage.evals.faithfulness import (
     CONTEXT_CHARS,
     JUDGE_SYSTEM,
     JudgeAsk,
@@ -33,6 +30,9 @@ from lineage.faithfulness import (
     run_name,
     with_earlier_runs,
 )
+from lineage.explain.explain import UnusableReplyError, explain, prompt_spans
+from lineage.explain.explanations import ChangeExplanation, Claim
+from lineage.explain.spend import Meter, load_runs
 from tests.test_explain import scripted
 
 ORIGIN = "Records are kept. The fee is set for each fiscal year."

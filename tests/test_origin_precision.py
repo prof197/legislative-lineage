@@ -12,8 +12,8 @@ import anthropic
 import pytest
 from typer.testing import CliRunner
 
-from lineage import model_labels
 from lineage.cli import app
+from lineage.evals import model_labels
 from lineage.modeldocs import ModelDoc, Source, sha256, store
 from lineage.origin_precision import (
     FLOORS,

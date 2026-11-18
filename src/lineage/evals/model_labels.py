@@ -1,21 +1,21 @@
 """Provisional precision labels from a model (step 25), recorded apart from people's.
 
 A model labels the precision sample on the same scale, with the same definitions, a person
-sees (lineage.labels.SCALE), so precision has a provisional estimate before volunteers have
+sees (lineage.evals.labels.SCALE), so precision has a provisional estimate before volunteers have
 labeled, and where both have labeled, their agreement says how far the provisional one can be
 trusted. Under the section prompts (v1, v1-high) the model sees the two section texts and
 nothing else: not the stages that found the pair, not the alignment. Under the passage prompt
 (passages-v1-high) it sees the passages the alignment matched, unmarked as copied or
 paraphrased, with both sections for context, and answers whether they state the same provision
-beyond boilerplate: yes or no, recorded on its own scale (lineage.labels.SAME_PROVISION). Never
-the stages. Its reply must fit the prompt's schema, no prose.
+beyond boilerplate: yes or no, recorded on its own scale (lineage.evals.labels.SAME_PROVISION).
+Never the stages. Its reply must fit the prompt's schema, no prose.
 
 Each label is appended to the labels file under `model:<model id>@<prompt version>`, the id of
 the model that served the reply, so a fallback is on record. The file is the cache: a pair
 already labeled under the current prompt version is never asked again, and a new version asks
 every pair afresh. A model's label never takes a pair off a person's list
-(lineage.labels.pending), and the estimate never pools the two (lineage.precision). A declined
-or malformed reply is counted and left for the next run. Nothing is asked without --live.
+(lineage.evals.labels.pending), and the estimate never pools the two (lineage.evals.precision). A
+declined or malformed reply is counted and left for the next run. Nothing is asked without --live.
 """
 
 import json
@@ -26,8 +26,8 @@ from typing import Any, Literal, Protocol, cast
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
+from lineage.evals.labels import MODEL, SAME_PROVISION, Item, model_labeler, scale_lines
 from lineage.explain.spend import CHARS_PER_TOKEN, PRICES
-from lineage.labels import MODEL, SAME_PROVISION, Item, model_labeler, scale_lines
 
 MODEL_ID = "claude-opus-5-5"
 PROMPT_VERSION = "v1"

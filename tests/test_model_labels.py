@@ -10,8 +10,7 @@ from typer.testing import CliRunner
 
 from lineage.cli import app
 from lineage.core import db
-from lineage.explain.spend import CHARS_PER_TOKEN, PRICES
-from lineage.labels import (
+from lineage.evals.labels import (
     SAME_PROVISION,
     Item,
     Pair,
@@ -22,7 +21,7 @@ from lineage.labels import (
     pending,
     text_sha256,
 )
-from lineage.model_labels import (
+from lineage.evals.model_labels import (
     BUDGET,
     MAX_TOKENS,
     PASSAGES_HIGH,
@@ -50,6 +49,7 @@ from lineage.model_labels import (
     spent,
     user_message,
 )
+from lineage.explain.spend import CHARS_PER_TOKEN, PRICES
 
 
 def _item(i: int) -> Item:

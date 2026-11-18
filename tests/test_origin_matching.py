@@ -14,10 +14,11 @@ from typing import Any
 import pytest
 
 from lineage import origin_matching
-from lineage.acts import ACTS, ACTS_DIR, enacted_text
 from lineage.collect import collectors
-from lineage.commission import evaluate
 from lineage.data.sessions import load_sessions
+from lineage.evals.acts import ACTS, ACTS_DIR, enacted_text
+from lineage.evals.commission import evaluate
+from lineage.evals.ulc import ENACTMENTS, load_enactments
 from lineage.match.listing import listed_hits
 from lineage.match.semantic.stage import CORROBORATING, THRESHOLD, open_search
 from lineage.modeldocs import (
@@ -45,7 +46,6 @@ from lineage.origin_matching import (
 from lineage.origin_precision import OriginPrecisionError
 from lineage.origins import BillSpan, OriginMatch, read_origin_matches, write_origin_matches
 from lineage.text.sections import normalize
-from lineage.ulc import ENACTMENTS, load_enactments
 from tests.conftest import COMMISSION, FAKE_MODEL
 from tests.fakes import MARK, bag_of_words
 from tests.fixture_export import PACKAGE

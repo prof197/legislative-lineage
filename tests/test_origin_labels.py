@@ -8,8 +8,8 @@ from typing import Any
 
 import pytest
 
-from lineage.labels import Item, Pair, Section, SectionKey, SectionRef
-from lineage.model_labels import PASSAGES_HIGH, BatchReply, SameProvision, Schema
+from lineage.evals.labels import Item, Pair, Section, SectionKey, SectionRef
+from lineage.evals.model_labels import PASSAGES_HIGH, BatchReply, SameProvision, Schema
 from lineage.origin_labels import (
     PROMPT,
     OriginItem,
@@ -145,7 +145,7 @@ def test_the_command_caps_a_run_at_v1s_cap_unless_raised_explicitly() -> None:
     import inspect
 
     from lineage.cli import origin_label_command
-    from lineage.model_labels import MAX_COST
+    from lineage.evals.model_labels import MAX_COST
 
     default = inspect.signature(origin_label_command).parameters["max_cost"].default
     assert default == MAX_COST == 10.0

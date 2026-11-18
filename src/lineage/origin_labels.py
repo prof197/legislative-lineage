@@ -5,7 +5,7 @@ A match rests on section pairs, a model section and a bill section a stage match
 (DESIGN.md#precision-sample), on the pair its listing rests on most: the near-duplicate pair with
 the most band agreements, since copied text is what a page highlights, and failing that the pair
 found by meaning at the best cosine. The two sections are aligned (lineage.align) and the model
-is asked v1's passage-level question, unchanged (lineage.model_labels.PASSAGES_HIGH): do the
+is asked v1's passage-level question, unchanged (lineage.evals.model_labels.PASSAGES_HIGH): do the
 matched passages state the same provision, beyond boilerplate? Unchanged so that its labels mean
 what v1's mean, the question a person's labels were checked against at the cutoff. The model's
 section is the first, the bill's the second, as a page lists the bill under the model. Neither
@@ -27,7 +27,7 @@ from typing import Any
 
 from lineage import queries
 from lineage.core import db
-from lineage.labels import (
+from lineage.evals.labels import (
     Item,
     Pair,
     Section,
@@ -37,8 +37,7 @@ from lineage.labels import (
     model_labeler,
     text_sha256,
 )
-from lineage.match.query import matchable_sections
-from lineage.model_labels import (
+from lineage.evals.model_labels import (
     MAX_COST,
     MODEL_ID,
     PASSAGES_HIGH,
@@ -49,6 +48,7 @@ from lineage.model_labels import (
     request_params,
     spent,
 )
+from lineage.match.query import matchable_sections
 from lineage.modeldocs import MODELDOCS_DIR, ModelDoc, load_text
 from lineage.origin_precision import BUDGET, SPEND, MatchKey, OriginPrecisionError, match_key
 from lineage.origins import OriginMatch, SectionPair
@@ -94,7 +94,7 @@ def build_items(
     root: Path = MODELDOCS_DIR,
 ) -> list[OriginItem]:
     """Each sample row's strongest pair with both sections' texts, from the matches table, the
-    document store and the sections table; no passages yet (lineage.relatives_sample
+    document store and the sections table; no passages yet (lineage.evals.relatives_sample
     .with_passages aligns them)."""
     by_key: dict[MatchKey, OriginMatch] = {match_key(m): m for m in matches}
     held = {d.id: d for d in docs}
@@ -300,7 +300,7 @@ def plan(
     budget: float = BUDGET,
 ) -> Plan:
     """Each prompt exactly as it would be sent, through the Batches API, every reply at its
-    token limit (lineage.model_labels.projected_cost)."""
+    token limit (lineage.evals.model_labels.projected_cost)."""
     cost = projected_cost([i.item for i in items], model=model, batch=True, prompt=PROMPT)
     return Plan(len(items), cost, spent(spend_path), max_cost, budget)
 

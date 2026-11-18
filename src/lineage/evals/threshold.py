@@ -20,9 +20,9 @@ would list nothing. A page longer than RELATIVES_SHOWN shows only its best, and 
 option could bring a relative from beyond that cut onto the page; the sample never drew those.
 
 Development recall for each option comes from the commission eval (`recall_by_semantic_
-threshold`, lineage.commission), counted on each query's own hits, so no option needs a search.
-The proposal reads the tuning sample only; the reporting sample is read once the threshold is
-final.
+threshold`, lineage.evals.commission), counted on each query's own hits, so no option needs a
+search. The proposal reads the tuning sample only; the reporting sample is read once the threshold
+is final.
 """
 
 from collections.abc import Callable, Mapping, Sequence
@@ -35,14 +35,14 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lineage.core.intervals import weighted_share, wilson
-from lineage.flag_precision import dropped_strata
-from lineage.labels import Item
+from lineage.evals.flag_precision import dropped_strata
+from lineage.evals.labels import Item
+from lineage.evals.precision import latest_correct, restratified
 from lineage.match.listing import ListedPairs, listed_pairs, shipped_flag
 from lineage.match.relatives import bill_relatives
 from lineage.match.semantic.pairs import section_keys
 from lineage.match.semantic.stage import BUILD_THRESHOLD, CORROBORATING, MODEL, THRESHOLD
 from lineage.match.strata import STRATA, pair_keys, stored_strata, strata
-from lineage.precision import latest_correct, restratified
 
 # Up to 0.97, the first step at which development recall falls: the two enactments found by
 # meaning alone reach 0.9677 and 0.9632 (reports/results.json, each bill's best_cosine).
@@ -392,10 +392,10 @@ def pair_level_at(
 ) -> dict[str, Any]:
     """The pair-level diagnostic at the stage's threshold: the precision sample, drawn from
     every pair the build stores, re-weighted to the pairs found at `threshold` with the flag off
-    and as shipped (lineage.precision.restratified); and the sample of the pairs the flag drops,
-    re-weighted to the pairs it drops at `threshold` and to the pairs its exemption keeps: all of
-    them, and apart those it keeps only because the semantic stage found them at the cosine that
-    corroborates a match, not at `threshold`."""
+    and as shipped (lineage.evals.precision.restratified); and the sample of the pairs the flag
+    drops, re-weighted to the pairs it drops at `threshold` and to the pairs its exemption keeps:
+    all of them, and apart those it keeps only because the semantic stage found them at the cosine
+    that corroborates a match, not at `threshold`."""
     flag = shipped_flag(tables_dir)
     if flag is None:
         raise ThresholdError("no state boilerplate counts; run `uv run lineage state-boilerplate`")

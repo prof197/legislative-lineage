@@ -1,6 +1,6 @@
 """`lineage label-page` and `lineage label-import`: label a sample on a phone, not a terminal.
 
-The page is the labeling session of lineage.labels in another form. `label-page` reads the
+The page is the labeling session of lineage.evals.labels in another form. `label-page` reads the
 sample's pairs from the tables exactly as `lineage label` does and writes the page and its data
 to a local directory (gitignored, since it holds section text): each pending pair's two display
 texts, the keys a label names them by, and the aligned spans, so the page marks copied,
@@ -25,8 +25,8 @@ from typing import Any
 
 from lineage.align import Embedder, align
 from lineage.core.paths import DATA
-from lineage.labels import PERSON, SCALE, Item, LabelError, person
-from lineage.pair_data import LABELS
+from lineage.evals.labels import PERSON, SCALE, Item, LabelError, person
+from lineage.evals.pair_data import LABELS
 
 TEMPLATE = Path(__file__).parent / "pages" / "label.html"
 OUT = DATA / "label_page"

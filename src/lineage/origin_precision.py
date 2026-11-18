@@ -2,8 +2,8 @@
 
 Recall has an answer key (lineage.origin_recall); precision needs labels, so it is measured on a
 sample of the origin matches table (lineage.origins), drawn the way v1 draws its pair sample
-(lineage.precision.draw): the matches fall into three strata by the stages that found them, each
-stratum is sampled apart without replacement under a fixed seed, and the drawn matches are
+(lineage.evals.precision.draw): the matches fall into three strata by the stages that found them,
+each stratum is sampled apart without replacement under a fixed seed, and the drawn matches are
 shuffled into one labeling order. A sample row names a match by bill and document and holds no
 text, of the bill or of the model.
 
@@ -21,7 +21,7 @@ overstated precision there. The tuning sample may be drawn and read while matchi
 reporting sample is drawn only once matching is final, from matches the tuning sample did not
 draw, and only once; what it says is the published number.
 
-Labels would come from a model, as v1's provisional labels do (lineage.model_labels). Nothing
+Labels would come from a model, as v1's provisional labels do (lineage.evals.model_labels). Nothing
 here asks one. A run is projected before anything could be sent, as v1 projects its label runs:
 each prompt's tokens from its characters at CHARS_PER_TOKEN, each reply at its token limit,
 thinking included, and half that when sent through the Batches API. The origin prompt is not
@@ -50,22 +50,22 @@ import numpy as np
 from lineage import queries
 from lineage.core import db
 from lineage.core.intervals import wilson
+from lineage.evals.model_labels import MAX_COST, MODEL_ID, PASSAGES_HIGH
+from lineage.evals.model_labels import spent as label_spent
+from lineage.evals.precision import PER_STRATUM, draw, stratified
+from lineage.evals.precision import SEED as PRECISION_SEED
 from lineage.explain.spend import PRICES, upper_bound
 from lineage.match.strata import STRATA, PrecisionError, stratum_of
-from lineage.model_labels import MAX_COST, MODEL_ID, PASSAGES_HIGH
-from lineage.model_labels import spent as label_spent
 from lineage.modeldocs import MODELDOCS_DIR, ModelDoc, load_text
 from lineage.origins import FLOOR, OriginMatch, is_listed, share_of
-from lineage.precision import PER_STRATUM, draw, stratified
-from lineage.precision import SEED as PRECISION_SEED
 
 COMMAND = "uv run lineage origin-sample"
-# v1's samples took the precision seed + 0 to + 5 (lineage.relatives_sample).
+# v1's samples took the precision seed + 0 to + 5 (lineage.evals.relatives_sample).
 SEED = PRECISION_SEED + 6
 REPORTING_SEED = PRECISION_SEED + 7
 REPORT = Path("reports/origin_precision_sample.json")
 # v2's model calls are capped at $25 together, spent and projected, in v2's own ledger, apart
-# from v1's precision labels' (lineage.model_labels.SPEND).
+# from v1's precision labels' (lineage.evals.model_labels.SPEND).
 SPEND = Path("reports/origin_label_spend.json")
 BUDGET = 25.0
 # The question an origin's label would ask is v1's passage question: do the passages state the
@@ -370,7 +370,7 @@ def projected_cost(
     max_tokens: int = STAND_IN.max_tokens,
     batch: bool = False,
 ) -> float:
-    """At most what asking each prompt once costs, as lineage.model_labels.projected_cost
+    """At most what asking each prompt once costs, as lineage.evals.model_labels.projected_cost
     counts it: its tokens from its characters, its reply at the token limit, at half the price
     through the Batches API."""
     if model not in PRICES:
@@ -446,7 +446,7 @@ def estimate(
     rows: Sequence[Mapping[str, Any]], correct: Mapping[str, bool], sizes: Mapping[str, int]
 ) -> dict[str, Any]:
     """Each stratum's precision with its Wilson interval, and the overall precision with the
-    strata weighted by their sizes in the table (lineage.precision.stratified), from the rows
+    strata weighted by their sizes in the table (lineage.evals.precision.stratified), from the rows
     labeled in `correct`, by pair id; the strata are those `sizes` names, by stage or by band.
     The overall is None until every stratum with matches has a label."""
     per: dict[str, dict[str, Any]] = {}

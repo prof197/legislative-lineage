@@ -5,8 +5,8 @@ from collections.abc import Sequence
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage.pair_data import Pair
-from lineage.pair_eval import (
+from lineage.evals.pair_data import Pair
+from lineage.evals.pair_eval import (
     best_cosines,
     near_duplicate_scores,
     precision_recall,

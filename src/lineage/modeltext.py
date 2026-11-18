@@ -4,9 +4,10 @@ A published model act carries more than its sections: front matter, commentary, 
 legislative notes that tell a state how to adapt a section, and bracketed instructions to the
 drafter such as "[cite to the state's commercial code]" or "[specify the court]". No bill
 carries those words, so leaving them in would lower the share of a model's words any bill can
-match. The commission's acts already have a reader for their layout, `lineage.acts.enacted_text`,
-which keeps the numbered sections and drops front matter, comments and notes; it is reused here,
-so the eval's query and the collected document drop the same commentary.
+match. The commission's acts already have a reader for their layout,
+`lineage.evals.acts.enacted_text`, which keeps the numbered sections and drops front matter,
+comments and notes; it is reused here, so the eval's query and the collected document drop the same
+commentary.
 
 Brackets are dropped only where they hold an instruction. The commission brackets much that a
 state enacts as written: "[act]", "[this state]", alternatives such as "[shall][may]", periods
@@ -21,7 +22,7 @@ import re
 import zipfile
 from xml.etree import ElementTree
 
-from lineage.acts import enacted_text
+from lineage.evals.acts import enacted_text
 
 # A bracket whose first word tells the drafter what to put there, or a bracketed gap. An
 # instruction can hold an enacted bracket ("[cite to the law ... of this [act]]"), so one level
@@ -58,8 +59,8 @@ def drop_instructions(text: str) -> str:
 
 
 def clean_act(raw: str) -> str:
-    """A commission act's text as matching reads it: its numbered sections (lineage.acts), with
-    no comment, note or instruction to the drafter."""
+    """A commission act's text as matching reads it: its numbered sections
+    (lineage.evals.acts), with no comment, note or instruction to the drafter."""
     # A note that stood on its own line leaves an empty one behind.
     return re.sub(r"\n{3,}", "\n\n", drop_instructions(enacted_text(raw))).strip() + "\n"
 

@@ -11,7 +11,8 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage.labels import Item, SectionKey
+from lineage.evals.labels import Item, SectionKey
+from lineage.evals.precision import SEED, draw, estimate, sample_rows, without_sections
 from lineage.match.semantic.pairs import section_keys
 from lineage.match.semantic.stage import MODEL
 from lineage.match.state_boilerplate import (
@@ -24,7 +25,6 @@ from lineage.match.state_boilerplate import (
     load_families_reached,
 )
 from lineage.match.strata import STRATA, stored_strata, stratum_of
-from lineage.precision import SEED, draw, estimate, sample_rows, without_sections
 
 # The pairs the flag drops, sampled apart so their precision is measured directly: a third of
 # the main sample's size, under its own seed. Pair ids start with "f".

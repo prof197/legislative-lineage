@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from lineage.ulc import (
+from lineage.evals.ulc import (
     ULC_STATES,
     BillRecord,
     UlcError,

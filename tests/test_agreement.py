@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from lineage.agreement import (
+from lineage.evals.agreement import (
     CUTOFF_AGREEMENT_FROM,
     KAPPA_FROM,
     PAIRS,
@@ -16,7 +16,7 @@ from lineage.agreement import (
     weighted_kappa,
     write_subsample,
 )
-from lineage.labels import (
+from lineage.evals.labels import (
     Item,
     Pair,
     Section,
@@ -26,8 +26,8 @@ from lineage.labels import (
     model_labeler,
     text_sha256,
 )
+from lineage.evals.precision import stratified
 from lineage.match.strata import STRATA, stratum_of
-from lineage.precision import stratified
 
 MODEL = model_labeler("claude-opus-5-5", "v1")
 

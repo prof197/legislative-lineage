@@ -9,7 +9,7 @@ from typer.testing import CliRunner
 
 from lineage.cli import app
 from lineage.core import db
-from lineage.label_page import (
+from lineage.evals.label_page import (
     PAGE,
     PAIRS_FILE,
     TEMPLATE,
@@ -18,7 +18,7 @@ from lineage.label_page import (
     page_data,
     write_page,
 )
-from lineage.labels import (
+from lineage.evals.labels import (
     SCALE,
     Item,
     LabelError,
@@ -30,7 +30,7 @@ from lineage.labels import (
     marked,
     text_sha256,
 )
-from lineage.pair_data import LABELS
+from lineage.evals.pair_data import LABELS
 
 SHARED = "the board shall adopt rules to carry out this act within ninety days"
 

@@ -6,10 +6,16 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from lineage.answer_key import ANSWER_KEY, HELD_OUT_KEY, KeyBill, answer_key_rows, read_answer_key
 from lineage.cli import app
-from lineage.commission import RESULTS
-from lineage.ulc import BillRecord, development_bills, load_enactments
+from lineage.evals.answer_key import (
+    ANSWER_KEY,
+    HELD_OUT_KEY,
+    KeyBill,
+    answer_key_rows,
+    read_answer_key,
+)
+from lineage.evals.commission import RESULTS
+from lineage.evals.ulc import BillRecord, development_bills, load_enactments
 from tests.conftest import COMMISSION
 
 SNAPSHOT = """\

@@ -9,13 +9,8 @@ import numpy as np
 import pytest
 
 from lineage.core import db
-from lineage.labels import Item, Pair, Section, SectionKey, SectionRef, text_sha256
-from lineage.match.near import queries as near_queries
-from lineage.match.near.pairs import load_cross_state_pairs
-from lineage.match.relatives import bill_relatives
-from lineage.match.semantic.pairs import build_semantic_pairs, load_semantic_pairs, section_keys
-from lineage.match.semantic.stage import BUILD_THRESHOLD, THRESHOLD
-from lineage.relatives_sample import (
+from lineage.evals.labels import Item, Pair, Section, SectionKey, SectionRef, text_sha256
+from lineage.evals.relatives_sample import (
     BILLS,
     DISCARDED,
     PARTS,
@@ -25,6 +20,11 @@ from lineage.relatives_sample import (
     estimate,
     with_passages,
 )
+from lineage.match.near import queries as near_queries
+from lineage.match.near.pairs import load_cross_state_pairs
+from lineage.match.relatives import bill_relatives
+from lineage.match.semantic.pairs import build_semantic_pairs, load_semantic_pairs, section_keys
+from lineage.match.semantic.stage import BUILD_THRESHOLD, THRESHOLD
 from tests.conftest import FAKE_MODEL
 
 STATE = "UT"  # the fixture state with the most bills

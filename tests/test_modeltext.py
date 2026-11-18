@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from lineage.acts import (
+from lineage.evals.acts import (
     ACTS,
     ACTS_DIR,
     HELD_OUT_ACTS,

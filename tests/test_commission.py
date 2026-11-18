@@ -15,9 +15,11 @@ import numpy as np
 import pytest
 from typer.testing import CliRunner
 
-from lineage.acts import ACTS, HELD_OUT_ACTS
 from lineage.cli import app
-from lineage.commission import (
+from lineage.core import db
+from lineage.data.sessions import load_sessions
+from lineage.evals.acts import ACTS, HELD_OUT_ACTS
+from lineage.evals.commission import (
     MISS_REASONS,
     CommissionError,
     Probe,
@@ -29,13 +31,11 @@ from lineage.commission import (
     target_reason,
     with_earlier_runs,
 )
-from lineage.core import db
-from lineage.data.sessions import load_sessions
+from lineage.evals.queries import EnactmentBill
+from lineage.evals.ulc import ENACTMENTS, load_enactments
 from lineage.match.near.lsh import BANDS, BUCKET_CAP, ROWS
 from lineage.match.near.minhash import NUM_PERM
 from lineage.match.semantic.stage import BUILD_THRESHOLD, THRESHOLD
-from lineage.queries import EnactmentBill
-from lineage.ulc import ENACTMENTS, load_enactments
 from tests.conftest import COMMISSION
 from tests.fakes import bag_of_words_search
 from tests.test_acts import ACT

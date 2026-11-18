@@ -6,7 +6,7 @@ from pathlib import Path
 from typer.testing import CliRunner
 
 from lineage.cli import app
-from lineage.cost import build_costs
+from lineage.evals.cost import build_costs
 
 ROOT = Path(__file__).parents[1]
 

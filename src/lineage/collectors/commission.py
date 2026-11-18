@@ -1,7 +1,7 @@
 """The Uniform Law Commission's acts, the first library of model legislation collected.
 
-The acts already on disk come first: `lineage.acts` knows the development and held-out acts the
-commission eval reads from `data/acts/`, and the two reserve acts origin recall's sealed key
+The acts already on disk come first: `lineage.evals.acts` knows the development and held-out acts
+the commission eval reads from `data/acts/`, and the two reserve acts origin recall's sealed key
 reads, each saved by hand from the commission's download as plain text. They are collected as
 they are, without a request beyond robots.txt, so a collected document and the eval's query come
 from the same file. The rest come from the commission's site:
@@ -9,7 +9,7 @@ the current-acts catalog, one page per initial letter, then each act's page, its
 library document, and the file attached to it, the edition without comments where there is one.
 
 Which of the rest are collected: the acts the commission's committed enactment lists show
-enacted in 2023-2026, the corpus years (`lineage.ulc`). Those lists load only in a browser, so
+enacted in 2023-2026, the corpus years (`lineage.evals.ulc`). Those lists load only in a browser, so
 they are hand copies, and an act missing from them is not collected; `wanted=None` collects the
 whole catalog.
 
@@ -27,15 +27,6 @@ from datetime import date
 from html.parser import HTMLParser
 from pathlib import Path
 
-from lineage.acts import (
-    ACT_NAMES,
-    ACTS,
-    ACTS_DIR,
-    HELD_OUT_ACTS,
-    HELD_OUT_DIR,
-    ORIGIN_HELD_OUT_ACTS,
-    ActTextError,
-)
 from lineage.collect import CollectContext, CollectReport
 from lineage.collect_base import (
     CollectFetchError,
@@ -48,10 +39,19 @@ from lineage.collect_base import (
     read_robots,
     slugify,
 )
+from lineage.evals.acts import (
+    ACT_NAMES,
+    ACTS,
+    ACTS_DIR,
+    HELD_OUT_ACTS,
+    HELD_OUT_DIR,
+    ORIGIN_HELD_OUT_ACTS,
+    ActTextError,
+)
+from lineage.evals.ulc import ENACTMENTS, HELD_OUT_ENACTMENTS, load_enactments
 from lineage.modeldocs import Source
 from lineage.modeltext import ModelTextError, clean_act, docx_text
 from lineage.text.extract import ExtractError, pdf_text
-from lineage.ulc import ENACTMENTS, HELD_OUT_ENACTMENTS, load_enactments
 
 SITE = "https://www.uniformlaws.org"
 CATALOG = f"{SITE}/acts/catalog/current"
@@ -123,7 +123,7 @@ def act_page(key: str) -> str:
 
 
 def act_slug(name: str) -> str:
-    """ "Health-Care Decisions Act" -> "health-care-decisions", as lineage.acts names acts."""
+    """ "Health-Care Decisions Act" -> "health-care-decisions", as lineage.evals.acts names acts."""
     return slugify(name).removesuffix("-act")
 
 

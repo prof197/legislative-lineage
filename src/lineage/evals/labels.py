@@ -6,7 +6,7 @@ drawn from. It holds no text; the sections are read from the tables when the pai
 aligned (lineage.align) so copied, paraphrased and unmatched spans stand out.
 
 Each pair gets a label on the labeled pair dataset's scale, unrelated (0) to identical (4)
-(lineage.pair_data). A match counts as correct from CORRECT_FROM, related, up: the bar the
+(lineage.evals.pair_data). A match counts as correct from CORRECT_FROM, related, up: the bar the
 semantic stage's threshold was set to (DESIGN.md#precision-sample).
 
 A label is keyed by what survives a re-split of the corpus: each side's Open States bill id and
@@ -16,7 +16,7 @@ its bill is dropped when the labels are loaded, and counted. Labelers are named 
 handle, or for a provisional model label by model id and prompt version, never by name; only a
 person's label takes a pair off the list. A session is blind to the stages that found each
 pair. Each label is appended as it is given, so a session stops and resumes at will. Nothing
-here calls a model; provisional model labels come from lineage.model_labels.
+here calls a model; provisional model labels come from lineage.evals.model_labels.
 """
 
 import hashlib
@@ -29,13 +29,15 @@ from typing import Any
 
 import typer
 
-from lineage import queries
 from lineage.align import Embedder, Kind, align
 from lineage.core import db
+from lineage.evals import queries
+from lineage.evals.pair_data import LABELS
 from lineage.explain import queries as explain_queries
-from lineage.pair_data import LABELS
 
-CORRECT_FROM = 2  # related; the pair evaluation's positive bar (lineage.pair_eval.POSITIVE_FROM)
+CORRECT_FROM = (
+    2  # related; the pair evaluation's positive bar (lineage.evals.pair_eval.POSITIVE_FROM)
+)
 # What each label means, shown to a person at the start of a session and to a model in its
 # prompt, so both label on the same scale. The names are the pair dataset's.
 SCALE = (
