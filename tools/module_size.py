@@ -12,10 +12,7 @@ from collections.abc import Mapping
 from pathlib import Path
 
 LIMIT = 800
-ALLOWED: dict[str, str] = {
-    "src/lineage/live/incremental.py": "the update's three parts; step 5's live lane splits it",
-    "src/lineage/live/deploy.py": "the release, its gates and the review; step 5's live lane",
-}
+ALLOWED: dict[str, str] = {}
 
 
 def problems(

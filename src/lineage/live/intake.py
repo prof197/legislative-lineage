@@ -457,6 +457,125 @@ def _fetch_texts(jobs: Mapping[str, Job], store: Path, fetch_texts: TextFetcher)
     return wanted
 
 
+def _run_states(
+    states: Sequence[str],
+    as_of: date,
+    day_dir: Path,
+    *,
+    runs: Path,
+    start: datetime,
+    opener: Opener,
+    key: str,
+    root: str,
+    tier: Tier,
+    pause: float,
+    floor: int,
+) -> tuple[dict[str, StateRun], _Budget]:
+    """Ask each state's updated bills, under the tier's daily budget; returns each state's run
+    and the budget as spent."""
+    # The states furthest behind go first, so a limit that stops the run starves none for good.
+    following = {s: cursor(runs, s, as_of, start) for s in states}
+    order = sorted(
+        states, key=lambda s: (following[s] or (datetime.max.replace(tzinfo=start.tzinfo), 0), s)
+    )
+    budget = _Budget(left=tier.per_day)
+    results: dict[str, StateRun] = {}
+    stopped: str | None = None
+    for state in order:
+        nxt = following[state]
+        if stopped is not None:
+            results[state] = StateRun("not_run", error=stopped)
+        elif nxt is None:
+            results[state] = StateRun("complete")
+        else:
+            results[state] = _run_state(
+                state, nxt, day_dir, opener=opener, key=key, root=root, tier=tier,
+                pause=pause, budget=budget, floor=floor,
+            )  # fmt: skip
+            if results[state].outcome == "rate_limited":
+                stopped = "the key's rate limit stopped the run"
+    return results, budget
+
+
+_Earlier = Mapping[str, tuple[str, str, Mapping[str, Any]]]
+
+
+def _text_jobs(
+    records: Mapping[str, tuple[str, Mapping[str, Any]]], earlier: _Earlier, rules: TextRules
+) -> tuple[dict[str, Job], dict[str, str]]:
+    """The text to fetch for today's records, and earlier ones still without their chosen
+    version's text; with the reason a record of today's has none to fetch."""
+    jobs: dict[str, Job] = {}
+    reasons: dict[str, str] = {}
+    for bill_id, (state, record) in records.items():
+        job = job_for(record, state, rules)
+        if isinstance(job, Job):
+            jobs[bill_id] = job
+        else:
+            reasons[bill_id] = job
+    for bill_id, (state, _, row) in earlier.items():
+        if bill_id in records:
+            continue
+        job = job_for(row, state, rules)
+        if isinstance(job, Job) and moved(job.url) != row.get("raw_text_url"):
+            jobs[bill_id] = job
+    return jobs, reasons
+
+
+def _text_outcomes(
+    records: Mapping[str, tuple[str, Mapping[str, Any]]],
+    texts: Mapping[str, Any],
+    earlier: _Earlier,
+    why_none: Callable[[str], str],
+) -> dict[str, Counter[str]]:
+    """Each state's records by what text they have: fetched, kept from earlier, or none, with
+    the reason."""
+    per_state: dict[str, Counter[str]] = defaultdict(Counter)
+    for bill_id, (state, _) in records.items():
+        if bill_id in texts:
+            kind = "fetched"
+        elif bill_id in earlier and earlier[bill_id][2].get("raw_text"):
+            kind = "kept_earlier_text"
+        else:
+            kind = f"none: {why_none(bill_id)}"
+        per_state[state][kind] += 1
+    return per_state
+
+
+def _report(
+    as_of: date,
+    *,
+    tier: Tier,
+    budget: _Budget,
+    results: Mapping[str, StateRun],
+    records: Mapping[str, Any],
+    texts: Mapping[str, Any],
+    per_state: Mapping[str, Counter[str]],
+) -> dict[str, Any]:
+    return {
+        "command": COMMAND,
+        "as_of": as_of.isoformat(),
+        "day": "written",
+        "tier": {"per_minute": tier.per_minute, "per_day": tier.per_day},
+        "requests": budget.used,
+        "outcomes": dict(sorted(Counter(r.outcome for r in results.values()).items())),
+        "records": len(records),
+        "texts": dict(sorted(sum(per_state.values(), Counter[str]()).items())),
+        "earlier_records_given_text": len(set(texts) - set(records)),
+        "states": {
+            state: {
+                "outcome": run.outcome,
+                "since": run.since,
+                "pages": run.pages,
+                "error": run.error,
+                "records": sum(per_state[state].values()),
+                "texts": dict(sorted(per_state[state].items())),
+            }
+            for state, run in sorted(results.items())
+        },
+    }
+
+
 def run_intake(
     as_of: date,
     *,
@@ -487,46 +606,16 @@ def run_intake(
         return {"command": COMMAND, "as_of": as_of.isoformat(), "day": "unchanged"}
     before = _before(days, as_of, later_allowed=False)
     rules = load_rules(rules_path)
-
-    # The states furthest behind go first, so a limit that stops the run starves none for good.
-    following = {s: cursor(runs, s, as_of, start) for s in states}
-    order = sorted(
-        states, key=lambda s: (following[s] or (datetime.max.replace(tzinfo=start.tzinfo), 0), s)
-    )
-    budget = _Budget(left=tier.per_day)
-    results: dict[str, StateRun] = {}
-    stopped: str | None = None
-    for state in order:
-        nxt = following[state]
-        if stopped is not None:
-            results[state] = StateRun("not_run", error=stopped)
-        elif nxt is None:
-            results[state] = StateRun("complete")
-        else:
-            results[state] = _run_state(
-                state, nxt, day_dir, opener=opener, key=key, root=root, tier=tier,
-                pause=pause, budget=budget, floor=floor_bytes,
-            )  # fmt: skip
-            if results[state].outcome == "rate_limited":
-                stopped = "the key's rate limit stopped the run"
+    results, budget = _run_states(
+        states, as_of, day_dir, runs=runs, start=start, opener=opener, key=key, root=root,
+        tier=tier, pause=pause, floor=floor_bytes,
+    )  # fmt: skip
 
     # Text: today's records, and earlier ones still without their chosen version's text.
     bills = seen(day_dir)
     records = {bill_id: (state, bulk_record(bill)) for bill_id, (state, bill) in bills.items()}
-    jobs: dict[str, Job] = {}
-    reasons: dict[str, str] = {}
-    for bill_id, (state, record) in records.items():
-        job = job_for(record, state, rules)
-        if isinstance(job, Job):
-            jobs[bill_id] = job
-        else:
-            reasons[bill_id] = job
-    for bill_id, (state, _, row) in _earlier(before).items():
-        if bill_id in records:
-            continue
-        job = job_for(row, state, rules)
-        if isinstance(job, Job) and moved(job.url) != row.get("raw_text_url"):
-            jobs[bill_id] = job
+    earlier = _earlier(before)
+    jobs, reasons = _text_jobs(records, earlier, rules)
     wanted = _fetch_texts(jobs, store, fetch_texts or default_fetch_texts(rules, floor_bytes))
     ok, latest = _scan(store, wanted)
     texts = {
@@ -537,38 +626,21 @@ def run_intake(
     (day_dir / TEXTS_FILE).write_text(json.dumps(texts, indent=1) + "\n")
     _write_day(days, as_of, assemble(as_of, day_dir, store, before), floor_bytes)
 
-    earlier = _earlier(before)
-    per_state: dict[str, Counter[str]] = defaultdict(Counter)
-    for bill_id, (state, _) in records.items():
-        if bill_id in texts:
-            kind = "fetched"
-        elif bill_id in earlier and earlier[bill_id][2].get("raw_text"):
-            kind = "kept_earlier_text"
-        else:
-            kind = f"none: {reasons.get(bill_id) or latest.get(bill_id) or 'not_fetched'}"
-        per_state[state][kind] += 1
-    report: dict[str, Any] = {
-        "command": COMMAND,
-        "as_of": as_of.isoformat(),
-        "day": "written",
-        "tier": {"per_minute": tier.per_minute, "per_day": tier.per_day},
-        "requests": budget.used,
-        "outcomes": dict(sorted(Counter(r.outcome for r in results.values()).items())),
-        "records": len(records),
-        "texts": dict(sorted(sum(per_state.values(), Counter[str]()).items())),
-        "earlier_records_given_text": len(set(texts) - set(records)),
-        "states": {
-            state: {
-                "outcome": run.outcome,
-                "since": run.since,
-                "pages": run.pages,
-                "error": run.error,
-                "records": sum(per_state[state].values()),
-                "texts": dict(sorted(per_state[state].items())),
-            }
-            for state, run in sorted(results.items())
-        },
-    }
+    per_state = _text_outcomes(
+        records,
+        texts,
+        earlier,
+        lambda bill_id: reasons.get(bill_id) or latest.get(bill_id) or "not_fetched",
+    )
+    report = _report(
+        as_of,
+        tier=tier,
+        budget=budget,
+        results=results,
+        records=records,
+        texts=texts,
+        per_state=per_state,
+    )
     reports.mkdir(parents=True, exist_ok=True)
     (reports / f"{as_of.isoformat()}.json").write_text(json.dumps(report, indent=1) + "\n")
     return report

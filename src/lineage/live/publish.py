@@ -34,8 +34,8 @@ import os
 import shutil
 import time
 from collections import defaultdict
-from collections.abc import Callable, Iterable, Mapping
-from dataclasses import dataclass
+from collections.abc import Callable, Iterable, Mapping, Sequence
+from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -251,7 +251,189 @@ def days_to_apply(
     return days
 
 
-def export_changes(  # noqa: C901  (M13 allow-list, until step 5's lanes)
+@dataclass
+class _Writes:
+    """The files a run writes into the staging copy, by published path: each only when its
+    bytes differ from the file there."""
+
+    target: Path
+    files: dict[str, bytes] = field(default_factory=dict[str, bytes])
+
+    def put(self, name: str, model: BaseModel) -> None:
+        data = _bytes(model)
+        if data != _read(self.target, name):
+            self.files[name] = data
+
+
+def _bill_pages(plan: Plan, log: Touched, writes: _Writes, through: date | None) -> list[str]:
+    """Each hosted bill's page: rewritten when the log names the bill or a relative it shows,
+    and otherwise when it differs from the page in place; returns the pages written beyond the
+    log."""
+    beyond: list[str] = []
+    for bill_id in plan.hosted:
+        name = f"bills/{plan.refs[bill_id].slug}.json"
+        days_named = [log.bills.get(bill_id)] + [
+            log.records.get(m.bill_id) for m in plan.relatives[bill_id].matches
+        ]
+        named = [d for d in days_named if d is not None]
+        if named:
+            writes.put(name, bill_page(plan, bill_id, max(named)))
+            continue
+        old = _read(writes.target, name)
+        page = bill_page(plan, bill_id)
+        if (
+            old is None
+            or BillPage.model_validate_json(old).model_copy(update={"updated_on": None}) != page
+        ):
+            beyond.append(name)
+            stamped = None if through is None else through.isoformat()
+            writes.put(name, page.model_copy(update={"updated_on": stamped}))
+    return beyond
+
+
+def _comparisons_to_rebuild(
+    plan: Plan, log: Touched, target: Path
+) -> tuple[list[BillPair], list[str]]:
+    """The comparisons the log names, and any other whose bills, texts or pairs moved; with
+    the names of those beyond the log."""
+    rebuild: list[BillPair] = []
+    beyond: list[str] = []
+    for pair in sorted(plan.found):
+        name = comparison_name(plan, pair)
+        if pair[0] in log.bills or pair[1] in log.bills:
+            rebuild.append(pair)
+            continue
+        old = _read(target, name)
+        if old is None or _signature(Comparison.model_validate_json(old)) != _planned_signature(
+            plan, pair
+        ):
+            beyond.append(name)
+            rebuild.append(pair)
+    return rebuild, beyond
+
+
+def _kept_alignments(
+    plan: Plan, rebuild: Sequence[BillPair], target: Path
+) -> tuple[dict[BillPair, dict[OrdinalPair, Alignment]], list[tuple[BillPair, OrdinalPair]], int]:
+    """The alignments kept where both texts are the ones the export already shows, the section
+    pairs left to align, and how many were kept."""
+    old_texts: dict[str, dict[int, str]] = {}
+
+    def shown_before(bill_slug: str) -> dict[int, str]:
+        if bill_slug not in old_texts:
+            data = _read(target, f"texts/{bill_slug}.json")
+            old_texts[bill_slug] = (
+                {}
+                if data is None
+                else {s.ordinal: s.text for s in BillTexts.model_validate_json(data).sections}
+            )
+        return old_texts[bill_slug]
+
+    kept: dict[BillPair, dict[OrdinalPair, Alignment]] = defaultdict(dict)
+    todo: list[tuple[BillPair, OrdinalPair]] = []
+    reused = 0
+    for pair in rebuild:
+        a, b = pair
+        sa, sb = plan.refs[a].slug, plan.refs[b].slug
+        data = _read(target, comparison_name(plan, pair))
+        reusable = (
+            {(p.ordinal_a, p.ordinal_b): p for p in Comparison.model_validate_json(data).pairs}
+            if data is not None
+            else {}
+        )
+        for oa, ob in sorted(plan.found[pair]):
+            was = reusable.get((oa, ob))
+            same = (
+                was is not None
+                and shown_before(sa).get(oa) == plan.shown[(a, oa)][1]
+                and shown_before(sb).get(ob) == plan.shown[(b, ob)][1]
+            )
+            if was is not None and same:
+                reused += 1
+                kept[pair][(oa, ob)] = Alignment(
+                    spans=[AlignSpan(id=s.id, kind=s.kind, a=s.a, b=s.b) for s in was.spans],
+                    copied_share_a=was.copied_share_a,
+                    copied_share_b=was.copied_share_b,
+                )
+            else:
+                todo.append((pair, (oa, ob)))
+    return kept, todo, reused
+
+
+def _comparisons(
+    plan: Plan,
+    rebuild: Sequence[BillPair],
+    writes: _Writes,
+    *,
+    models_dir: Path | None,
+    workers: int,
+    progress: Callable[[str], None],
+) -> tuple[int, int]:
+    """Write the rebuilt comparisons, aligning only the section pairs with a new text; returns
+    the pairs aligned and the pairs kept."""
+    kept, todo, reused = _kept_alignments(plan, rebuild, writes.target)
+    progress(f"{len(rebuild)} comparisons to rebuild, {len(todo)} section pairs to align")
+    aligned = align_all(
+        [(plan.shown[(p[0], oa)][1], plan.shown[(p[1], ob)][1]) for p, (oa, ob) in todo],
+        models_dir=models_dir,
+        workers=workers,
+        progress=progress,
+    )
+    for (pair, ordinals), alignment in zip(todo, aligned, strict=True):
+        kept[pair][ordinals] = alignment
+    for pair in rebuild:
+        writes.put(comparison_name(plan, pair), comparison(plan, pair, kept[pair]))
+    return len(todo), reused
+
+
+def _section_texts(
+    plan: Plan, rebuild: Sequence[BillPair], dropped: Sequence[str], writes: _Writes
+) -> set[str]:
+    """Write the section texts of every bill in a rebuilt or dropped comparison; returns every
+    bill's slug the export holds texts for."""
+    texts = texts_by_slug(plan)
+    candidates = {plan.refs[x].slug for pair in rebuild for x in pair}
+    for name in dropped:
+        candidates |= set(name.removeprefix("compare/").removesuffix(".json").split("--"))
+    for bill_slug in sorted(candidates & set(texts)):
+        writes.put(f"texts/{bill_slug}.json", texts[bill_slug])
+    return set(texts)
+
+
+def _index_files(
+    plan: Plan, writes: _Writes, *, state: str, stories_rules: Path, through: date | None
+) -> set[str]:
+    """Write the bill index, the stories, the sources list and the data stamp; returns the
+    origin story's file when the state carries one."""
+    writes.put(BILLS, bill_list(plan))
+    for key, story in plan.stories.items():
+        writes.put(f"stories/{key}.json", story)
+    # The origin story, chosen afresh from the hosted pages as a full export chooses it.
+    origin_story: set[str] = set()
+    if carries_origin_story(state, stories_rules):
+        chosen = origin_story_file((bill_page(plan, b) for b in plan.hosted), plan.judged)
+        if chosen is not None:
+            writes.put(ORIGIN_STORY_FILE, chosen)
+            origin_story.add(ORIGIN_STORY_FILE)
+    writes.put(SOURCES, plan.sources)
+    writes.put(
+        META,
+        plan.meta.model_copy(update={"as_of": None if through is None else through.isoformat()}),
+    )
+    return origin_story
+
+
+def _apply_writes(target: Path, writes: _Writes, removed: Sequence[str], *, floor: int) -> None:
+    require_free_space(
+        target.parent, needed=sum(map(len, writes.files.values())) + (16 << 20), floor=floor
+    )
+    for name, data in sorted(writes.files.items()):
+        _put(target, name, data)
+    for name in removed:
+        (target / name).unlink()
+
+
+def export_changes(
     tables: Path,
     *,
     state: str,
@@ -301,126 +483,18 @@ def export_changes(  # noqa: C901  (M13 allow-list, until step 5's lanes)
         withheld_report=withheld_report,
     )
     before = _export_files(target)
-    writes: dict[str, bytes] = {}
-    beyond: list[str] = []
-
-    def put(name: str, model: BaseModel) -> None:
-        data = _bytes(model)
-        if data != _read(target, name):
-            writes[name] = data
-
-    # Bill pages.
-    for bill_id in plan.hosted:
-        name = f"bills/{plan.refs[bill_id].slug}.json"
-        days_named = [log.bills.get(bill_id)] + [
-            log.records.get(m.bill_id) for m in plan.relatives[bill_id].matches
-        ]
-        named = [d for d in days_named if d is not None]
-        if named:
-            put(name, bill_page(plan, bill_id, max(named)))
-            continue
-        old = _read(target, name)
-        page = bill_page(plan, bill_id)
-        if (
-            old is None
-            or BillPage.model_validate_json(old).model_copy(update={"updated_on": None}) != page
-        ):
-            beyond.append(name)
-            stamped = None if through is None else through.isoformat()
-            put(name, page.model_copy(update={"updated_on": stamped}))
-
-    # Comparisons: those the log names, and any other whose bills, texts or pairs moved.
-    rebuild: list[BillPair] = []
-    for pair in sorted(plan.found):
-        name = comparison_name(plan, pair)
-        if pair[0] in log.bills or pair[1] in log.bills:
-            rebuild.append(pair)
-            continue
-        old = _read(target, name)
-        if old is None or _signature(Comparison.model_validate_json(old)) != _planned_signature(
-            plan, pair
-        ):
-            beyond.append(name)
-            rebuild.append(pair)
+    writes = _Writes(target)
+    beyond = _bill_pages(plan, log, writes, through)
+    rebuild, beyond_comparisons = _comparisons_to_rebuild(plan, log, target)
+    beyond += beyond_comparisons
     names_now = {comparison_name(plan, p) for p in plan.found}
     dropped = sorted(n for n in before if n.startswith("compare/") and n not in names_now)
-
-    # Alignments kept where both texts are the ones the export already shows.
-    old_texts: dict[str, dict[int, str]] = {}
-
-    def shown_before(bill_slug: str) -> dict[int, str]:
-        if bill_slug not in old_texts:
-            data = _read(target, f"texts/{bill_slug}.json")
-            old_texts[bill_slug] = (
-                {}
-                if data is None
-                else {s.ordinal: s.text for s in BillTexts.model_validate_json(data).sections}
-            )
-        return old_texts[bill_slug]
-
-    kept: dict[BillPair, dict[OrdinalPair, Alignment]] = defaultdict(dict)
-    todo: list[tuple[BillPair, OrdinalPair]] = []
-    reused = 0
-    for pair in rebuild:
-        a, b = pair
-        sa, sb = plan.refs[a].slug, plan.refs[b].slug
-        data = _read(target, comparison_name(plan, pair))
-        reusable = (
-            {(p.ordinal_a, p.ordinal_b): p for p in Comparison.model_validate_json(data).pairs}
-            if data is not None
-            else {}
-        )
-        for oa, ob in sorted(plan.found[pair]):
-            was = reusable.get((oa, ob))
-            same = (
-                was is not None
-                and shown_before(sa).get(oa) == plan.shown[(a, oa)][1]
-                and shown_before(sb).get(ob) == plan.shown[(b, ob)][1]
-            )
-            if was is not None and same:
-                reused += 1
-                kept[pair][(oa, ob)] = Alignment(
-                    spans=[AlignSpan(id=s.id, kind=s.kind, a=s.a, b=s.b) for s in was.spans],
-                    copied_share_a=was.copied_share_a,
-                    copied_share_b=was.copied_share_b,
-                )
-            else:
-                todo.append((pair, (oa, ob)))
-    progress(f"{len(rebuild)} comparisons to rebuild, {len(todo)} section pairs to align")
-    aligned = align_all(
-        [(plan.shown[(p[0], oa)][1], plan.shown[(p[1], ob)][1]) for p, (oa, ob) in todo],
-        models_dir=models_dir,
-        workers=workers,
-        progress=progress,
+    aligned, reused = _comparisons(
+        plan, rebuild, writes, models_dir=models_dir, workers=workers, progress=progress
     )
-    for (pair, ordinals), alignment in zip(todo, aligned, strict=True):
-        kept[pair][ordinals] = alignment
-    for pair in rebuild:
-        put(comparison_name(plan, pair), comparison(plan, pair, kept[pair]))
-
-    # Section texts of every bill in a rebuilt or dropped comparison.
-    texts = texts_by_slug(plan)
-    candidates = {plan.refs[x].slug for pair in rebuild for x in pair}
-    for name in dropped:
-        candidates |= set(name.removeprefix("compare/").removesuffix(".json").split("--"))
-    for bill_slug in sorted(candidates & set(texts)):
-        put(f"texts/{bill_slug}.json", texts[bill_slug])
-
-    # The bill index, the stories, the sources list and the data stamp.
-    put(BILLS, bill_list(plan))
-    for key, story in plan.stories.items():
-        put(f"stories/{key}.json", story)
-    # The origin story, chosen afresh from the hosted pages as a full export chooses it.
-    origin_story: set[str] = set()
-    if carries_origin_story(state, stories_rules):
-        chosen = origin_story_file((bill_page(plan, b) for b in plan.hosted), plan.judged)
-        if chosen is not None:
-            put(ORIGIN_STORY_FILE, chosen)
-            origin_story.add(ORIGIN_STORY_FILE)
-    put(SOURCES, plan.sources)
-    put(
-        META,
-        plan.meta.model_copy(update={"as_of": None if through is None else through.isoformat()}),
+    texts = _section_texts(plan, rebuild, dropped, writes)
+    origin_story = _index_files(
+        plan, writes, state=state, stories_rules=stories_rules, through=through
     )
 
     expected = (
@@ -432,15 +506,9 @@ def export_changes(  # noqa: C901  (M13 allow-list, until step 5's lanes)
         | {BILLS, SOURCES, META}
     )
     removed = sorted(before - expected)
-    require_free_space(
-        target.parent, needed=sum(map(len, writes.values())) + (16 << 20), floor=floor
-    )
-    for name, data in sorted(writes.items()):
-        _put(target, name, data)
-    for name in removed:
-        (target / name).unlink()
+    _apply_writes(target, writes, removed, floor=floor)
     written: dict[str, int] = defaultdict(int)
-    for name in writes:
+    for name in writes.files:
         written[name.split("/")[0] if "/" in name else name] += 1
     return {
         "state": state,
@@ -450,10 +518,10 @@ def export_changes(  # noqa: C901  (M13 allow-list, until step 5's lanes)
         "files_written": dict(sorted(written.items())),
         "files_removed": len(removed),
         "comparisons_rebuilt": len(rebuild),
-        "section_pairs_aligned": len(todo),
+        "section_pairs_aligned": aligned,
         "section_pairs_kept": reused,
         "beyond_log": sorted(beyond),
-        "written": sorted(writes),
+        "written": sorted(writes.files),
         "removed": removed,
         "staging": str(target),
         "seconds": round(time.monotonic() - started, 1),
