@@ -41,15 +41,9 @@ if [[ -z "${LEAK_CHECK_TERMS:-}" ]]; then
   fi
 fi
 
-# The job's GitHub access: a fine-grained token scoped to this repository alone (contents and
-# actions), from the keychain, not the maintainer's own gh login. gh reads GH_TOKEN, and git
-# reaches GitHub through gh's credential helper (set in the job's checkout once), so the token
-# is in no file. Only the deploy uses it; without it the deploy step fails, recorded and alerted.
-if [[ -z "${GH_TOKEN:-}" ]]; then
-  if GH_TOKEN="$(security find-generic-password -w -s legislative-lineage-gh-token 2>/dev/null)"; then
-    export GH_TOKEN
-  fi
-fi
+# The job's GitHub access is not set here: the deploy reads its own token from the keychain
+# (legislative-lineage-gh-token) before every git or gh call and stops without it, so it never
+# falls back to the maintainer's login (lineage.deploy.github_shell).
 
 # caffeinate holds off idle sleep while the job runs: the Mac is woken for it (pmset), and a
 # rebuild runs for hours, longer than the Mac stays awake on its own.

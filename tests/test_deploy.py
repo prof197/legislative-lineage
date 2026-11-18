@@ -2,6 +2,7 @@
 the gates, the circuit breaker, a held day and its release, and the review files, with every
 command that would leave this machine (git, gh, npm, the leak check) run by a fake."""
 
+import inspect
 import json
 import re
 import shutil
@@ -16,6 +17,8 @@ from typer.testing import CliRunner
 from lineage import deploy
 from lineage.cli import app
 from lineage.deploy import (
+    JOB_SHELL,
+    TOKEN_SERVICE,
     Breaker,
     Call,
     DeployError,
@@ -25,6 +28,7 @@ from lineage.deploy import (
     Result,
     breaker,
     deploy_day,
+    github_shell,
     in_session,
     listed_origin_claims,
     load_rules,
@@ -461,6 +465,70 @@ def test_the_reject_command_refuses_a_day_not_held(tmp_path: Path) -> None:
     )
     assert result.exit_code == 1
     assert "2027-01-12 is not held (no record); only a held day is rejected" in result.output
+
+
+def test_every_git_and_gh_call_carries_the_keychain_token_and_no_other_login(
+    tmp_path: Path,
+) -> None:
+    """Ruled at the deploy review: the job exports its own token before every git or gh call,
+    read afresh, so it can never fall back to the maintainer's gh login."""
+    seen: list[Call] = []
+    reads: list[int] = []
+
+    def inner(call: Call) -> Result:
+        seen.append(call)
+        return Result(0, "")
+
+    def token() -> str:
+        reads.append(1)
+        return "job-token"
+
+    shell = github_shell(inner, token, tmp_path / "gh-config")
+    shell(Call(("git", "push", "origin", "HEAD:main"), tmp_path))
+    shell(Call(("gh", "release", "create", "t"), tmp_path))
+    shell(Call(("npm", "ci"), tmp_path))
+
+    push, release, npm = seen
+    assert push.argv == (
+        "git", "-c", "credential.helper=", "-c", "credential.helper=!gh auth git-credential",
+        "push", "origin", "HEAD:main",
+    )  # fmt: skip
+    for call in (push, release):
+        assert call.env["GH_TOKEN"] == "job-token"
+        assert call.env["GH_CONFIG_DIR"] == str(tmp_path / "gh-config")  # no stored login there
+        assert call.env["GIT_TERMINAL_PROMPT"] == "0"
+        assert call.env["GH_PROMPT_DISABLED"] == "1"
+    assert release.argv == ("gh", "release", "create", "t")
+    assert npm == Call(("npm", "ci"), tmp_path)  # nothing else gets the token
+    assert len(reads) == 2  # read before each git or gh call
+
+
+def test_without_the_token_no_git_or_gh_call_runs(tmp_path: Path) -> None:
+    ran: list[Call] = []
+    shell = github_shell(lambda c: (ran.append(c), Result(0, ""))[1], lambda: None, tmp_path)
+    with pytest.raises(DeployError, match=TOKEN_SERVICE):
+        shell(Call(("gh", "workflow", "run", "pages.yml"), tmp_path))
+    with pytest.raises(DeployError, match="uses no other login"):
+        shell(Call(("git", "pull", "--ff-only", "origin", "main"), tmp_path))
+    assert ran == []
+
+
+def test_the_deploy_stops_before_anything_when_the_keychain_holds_no_token(
+    setup: tuple[DeployPaths, Fake, Path], rec: Recorded
+) -> None:
+    paths, fake, export = setup
+    with pytest.raises(DeployError, match=TOKEN_SERVICE):
+        deploy_day(
+            state="GA", export=export, changes_dir=rec.log, paths=paths, rules=_rules(), floor=0,
+            shell=github_shell(fake, lambda: None, paths.root / "gh-config"),
+        )  # fmt: skip
+    assert fake.lines() == []  # not even the pull
+    assert read_record(paths, D2).state == "failed"  # type: ignore[union-attr]
+
+
+def test_the_commands_publish_through_the_token_shell_by_default() -> None:
+    for fn in (deploy_day, release_day, prepare_candidate):
+        assert inspect.signature(fn).parameters["shell"].default is JOB_SHELL
 
 
 def test_a_failed_leak_check_undoes_the_commit_and_publishes_nothing(
