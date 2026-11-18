@@ -43,6 +43,7 @@ from lineage.answer_key import (
     build_answer_key,
     render_answer_key,
 )
+from lineage.archives import SOURCE, fetch_raw
 from lineage.collect import REPORTS_DIR as COLLECT_REPORTS
 from lineage.collect import CollectContext, CollectError, collectors, run_collector
 from lineage.collect import write_report as write_collect_report
@@ -114,7 +115,7 @@ from lineage.featured import PAIRS as FEATURED_PAIRS
 from lineage.featured import REPORT as FEATURED_REPORT
 from lineage.featured import FeaturedError, build_featured, write_featured
 from lineage.feed import FeedError, write_feed
-from lineage.fetch import SOURCE, FetchError, fetch_raw, open_url
+from lineage.fetch import FetchError, open_url
 from lineage.flag_precision import (
     FLAGGED_SAMPLE,
     FLAGGED_SAMPLE_REPORT,

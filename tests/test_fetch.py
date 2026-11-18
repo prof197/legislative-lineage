@@ -7,8 +7,9 @@ from pathlib import Path
 import pytest
 
 from lineage import fetch
+from lineage.archives import fetch_raw
 from lineage.disk import InsufficientDiskSpaceError
-from lineage.fetch import USER_AGENT, fetch_raw, moved, request_url, tls_context
+from lineage.fetch import USER_AGENT, moved, request_url, tls_context
 from lineage.snapshot import load_manifest, scan, verify, write_manifest
 from tests.conftest import Upstream
 

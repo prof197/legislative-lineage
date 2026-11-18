@@ -1,8 +1,7 @@
-"""Download the archives the manifest pins, so anyone can rebuild `data/raw/` byte for byte.
-
-Open States publishes the session archives without an account or key. Each file lands only if
-its SHA-256 matches the manifest; `repin` accepts a changed file and records its new hash. See
-DESIGN.md#data-snapshot.
+"""HTTP as this project makes it: its User-Agent, the TLS intermediates some legislature servers
+omit, hosts that moved, retries, the host's turn (lineage.pace), and downloads streamed to disk
+under the free-space floor. Every request the pipeline makes goes through open_url.
+See DESIGN.md#data-snapshot.
 """
 
 import hashlib
@@ -12,18 +11,14 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-import zipfile
 from collections.abc import Mapping
-from dataclasses import dataclass, field, replace
 from http.client import HTTPResponse
 from pathlib import Path
 
 from lineage import __version__, pace
 from lineage.disk import require_free_space
 from lineage.pace import MIN_INTERVAL_SECONDS
-from lineage.snapshot import Archive, SnapshotError, load_manifest, read_archive, write_manifest
 
-SOURCE = "https://data.openstates.org/json/latest/"
 USER_AGENT = f"legislative-lineage/{__version__} (+https://github.com/prof197/legislative-lineage)"
 
 _CHUNK = 1 << 20
@@ -47,15 +42,6 @@ _TLS = tls_context()
 
 class FetchError(Exception):
     pass
-
-
-@dataclass(slots=True)
-class FetchResult:
-    fetched: int = 0
-    present: int = 0
-    bytes: int = 0
-    repinned: list[str] = field(default_factory=list[str])
-    problems: list[str] = field(default_factory=list[str])
 
 
 # Illinois retired beta.ilga.gov; the same paths are served from ilga.gov.
@@ -92,11 +78,6 @@ _URL_SAFE = ":/?#[]@!$&'()*+,;=%~"
 
 def request_url(url: str) -> str:
     return urllib.parse.quote(url, safe=_URL_SAFE)
-
-
-def url_for(archive: Archive, source: str) -> str:
-    # A few session names contain spaces, which a request line cannot carry unencoded.
-    return source + urllib.parse.quote(Path(archive.path).name)
 
 
 def _retry_after(error: urllib.error.HTTPError, default: float) -> float:
@@ -143,7 +124,7 @@ def open_url(
     raise AssertionError("unreachable")
 
 
-def _stream(response: HTTPResponse, part: Path, *, cap: int, floor: int) -> str:
+def stream(response: HTTPResponse, part: Path, *, cap: int, floor: int) -> str:
     """Write the body to `part`, refusing more than `cap` bytes; return its SHA-256."""
     digest = hashlib.sha256()
     written = 0
@@ -177,82 +158,8 @@ def download(url: str, dest: Path, *, floor: int, pause: float = 1.0) -> tuple[i
                 raise FetchError(f"{url} declares no Content-Length")
             size = int(length)
             require_free_space(dest.parent, needed=size, floor=floor)
-            sha256 = _stream(response, part, cap=size, floor=floor)
+            sha256 = stream(response, part, cap=size, floor=floor)
         part.rename(dest)
     finally:
         part.unlink(missing_ok=True)
     return size, sha256
-
-
-def _fetch_one(
-    archive: Archive, raw_dir: Path, *, source: str, floor: int, repin: bool, pause: float
-) -> Archive:
-    """Download one archive into place; return the archive as it now stands on disk."""
-    dest = raw_dir / archive.path
-    part = dest.with_name(dest.name + ".part")
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    try:
-        with open_url(url_for(archive, source), pause, interval=pause) as response:
-            length = response.headers.get("Content-Length")
-            size = int(length) if length is not None else archive.bytes
-            if size != archive.bytes and not repin:
-                raise FetchError(f"server offers {size} bytes, manifest pins {archive.bytes}")
-            require_free_space(dest.parent, needed=size, floor=floor)
-            sha256 = _stream(response, part, cap=size, floor=floor)
-        if sha256 == archive.sha256:
-            landed = archive
-        elif repin:
-            with zipfile.ZipFile(part) as z:
-                if (bad := z.testzip()) is not None:
-                    raise FetchError(f"CRC failure in {bad}")
-            # Re-read the README too: a regenerated archive carries a new Generated At.
-            landed = replace(read_archive(raw_dir, part), path=archive.path)
-        else:
-            raise FetchError("SHA-256 differs from the manifest")
-        part.rename(dest)
-    finally:
-        part.unlink(missing_ok=True)
-    return landed
-
-
-def fetch_raw(
-    raw_dir: Path,
-    manifest_path: Path,
-    *,
-    source: str = SOURCE,
-    floor_bytes: int,
-    repin: bool = False,
-    pause: float = 1.0,
-) -> FetchResult:
-    """Download every pinned archive missing from `raw_dir`, one at a time, `pause` apart
-    (lineage.pace)."""
-    pinned = load_manifest(manifest_path)
-    result = FetchResult()
-    todo = [a for a in pinned if not (raw_dir / a.path).exists()]
-    result.present = len(pinned) - len(todo)
-    # The manifest knows every size, so the whole run is checked before the first request.
-    require_free_space(raw_dir, needed=sum(a.bytes for a in todo), floor=floor_bytes)
-
-    current = {a.path: a for a in pinned}
-    try:
-        for archive in todo:
-            try:
-                landed = _fetch_one(
-                    archive, raw_dir, source=source, floor=floor_bytes, repin=repin, pause=pause
-                )
-            except (FetchError, SnapshotError, urllib.error.URLError) as e:
-                if isinstance(e, urllib.error.HTTPError):
-                    e.close()
-                result.problems.append(f"{archive.path}: {e}")
-                continue
-            result.fetched += 1
-            result.bytes += landed.bytes
-            if landed != archive:
-                current[archive.path] = landed
-                result.repinned.append(archive.path)
-    finally:
-        # Even if the disk floor stops the run, files already re-pinned must reach the manifest,
-        # or the next ingest would reject them as changed.
-        if result.repinned:
-            write_manifest(list(current.values()), manifest_path)
-    return result
