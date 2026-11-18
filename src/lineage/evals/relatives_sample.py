@@ -46,6 +46,7 @@ from lineage.core.intervals import weighted_share, wilson
 from lineage.evals.labels import Item
 from lineage.evals.precision import SEED as PRECISION_SEED
 from lineage.evals.precision import latest_correct
+from lineage.evals.precision import write_sample as write_precision_sample
 from lineage.match.listing import ListedPairs, listed_pairs
 from lineage.match.near import queries as near_queries
 from lineage.match.relatives import RELATIVES_SHOWN, BillRelatives, bill_relatives
@@ -379,8 +380,7 @@ def write_sample(
     sample_path: Path = SAMPLE,
     report_path: Path = SAMPLE_REPORT,
 ) -> None:
-    sample_path.write_text("".join(json.dumps(r) + "\n" for r in rows))
-    report_path.write_text(json.dumps(report, indent=1) + "\n")
+    write_precision_sample(rows, report, sample_path=sample_path, report_path=report_path)
 
 
 def load_pages(path: Path = SAMPLE) -> dict[str, dict[str, Any]]:
