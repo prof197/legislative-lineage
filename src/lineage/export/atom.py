@@ -23,7 +23,16 @@ def _q(tag: str) -> str:
     return f"{{{ATOM}}}{tag}"
 
 
-def _check_common(node: ET.Element, where: str, problems: list[str]) -> None:
+def _is_rfc3339(text: str) -> bool:
+    try:
+        ok = bool(_RFC3339.match(text))
+        datetime.fromisoformat(text)  # a valid month, day and time, too
+    except ValueError:
+        return False
+    return ok
+
+
+def _check_required(node: ET.Element, where: str, problems: list[str]) -> None:
     for tag in ("id", "title", "updated"):
         found = node.findall(_q(tag))
         if len(found) != 1:
@@ -33,13 +42,11 @@ def _check_common(node: ET.Element, where: str, problems: list[str]) -> None:
             problems.append(f"{where}: atom:id {found.text!r} is not an absolute IRI")
     for found in node.findall(_q("updated")):
         text = (found.text or "").strip()
-        try:
-            ok = bool(_RFC3339.match(text))
-            datetime.fromisoformat(text)  # a valid month, day and time, too
-        except ValueError:
-            ok = False
-        if not ok:
+        if not _is_rfc3339(text):
             problems.append(f"{where}: atom:updated {text!r} is not an RFC 3339 date-time")
+
+
+def _check_links_and_authors(node: ET.Element, where: str, problems: list[str]) -> None:
     alternates: set[tuple[str, str]] = set()
     for link in node.findall(_q("link")):
         if not link.get("href"):
@@ -54,6 +61,38 @@ def _check_common(node: ET.Element, where: str, problems: list[str]) -> None:
             problems.append(f"{where}: an atom:author without exactly one atom:name")
 
 
+def _check_common(node: ET.Element, where: str, problems: list[str]) -> None:
+    _check_required(node, where, problems)
+    _check_links_and_authors(node, where, problems)
+
+
+def _check_once(node: ET.Element, where: str, tags: tuple[str, ...], problems: list[str]) -> None:
+    for tag in tags:
+        if len(node.findall(_q(tag))) > 1:
+            problems.append(f"{where}: more than one atom:{tag}")
+
+
+def _check_entry(
+    node: ET.Element, where: str, *, feed_author: bool, ids: set[str], problems: list[str]
+) -> None:
+    _check_common(node, where, problems)
+    _check_once(node, where, _ENTRY_ONCE, problems)
+    if not feed_author and not node.findall(_q("author")):
+        problems.append(f"{where}: no atom:author, and the feed has none")
+    has_content = bool(node.findall(_q("content")))
+    alternate = [ln for ln in node.findall(_q("link")) if ln.get("rel", "alternate") == "alternate"]
+    if not has_content and not alternate:
+        problems.append(f"{where}: neither atom:content nor an alternate atom:link")
+    for content in node.findall(_q("content")):
+        if content.get("src") and not node.findall(_q("summary")):
+            problems.append(f"{where}: atom:content has src but the entry has no summary")
+    for found in node.findall(_q("id")):
+        text = (found.text or "").strip()
+        if text in ids:
+            problems.append(f"{where}: atom:id {text} is another entry's")
+        ids.add(text)
+
+
 def violations(data: bytes) -> list[str]:
     """Each way the document breaks RFC 4287's rules for a feed's and an entry's elements."""
     try:
@@ -64,31 +103,9 @@ def violations(data: bytes) -> list[str]:
         return [f"the root is {root.tag}, not atom:feed"]
     problems: list[str] = []
     _check_common(root, "feed", problems)
-    for tag in _FEED_ONCE:
-        if len(root.findall(_q(tag))) > 1:
-            problems.append(f"feed: more than one atom:{tag}")
+    _check_once(root, "feed", _FEED_ONCE, problems)
     feed_author = bool(root.findall(_q("author")))
     ids: set[str] = set()
     for n, node in enumerate(root.findall(_q("entry")), start=1):
-        where = f"entry {n}"
-        _check_common(node, where, problems)
-        for tag in _ENTRY_ONCE:
-            if len(node.findall(_q(tag))) > 1:
-                problems.append(f"{where}: more than one atom:{tag}")
-        if not feed_author and not node.findall(_q("author")):
-            problems.append(f"{where}: no atom:author, and the feed has none")
-        has_content = bool(node.findall(_q("content")))
-        alternate = [
-            ln for ln in node.findall(_q("link")) if ln.get("rel", "alternate") == "alternate"
-        ]
-        if not has_content and not alternate:
-            problems.append(f"{where}: neither atom:content nor an alternate atom:link")
-        for content in node.findall(_q("content")):
-            if content.get("src") and not node.findall(_q("summary")):
-                problems.append(f"{where}: atom:content has src but the entry has no summary")
-        for found in node.findall(_q("id")):
-            text = (found.text or "").strip()
-            if text in ids:
-                problems.append(f"{where}: atom:id {text} is another entry's")
-            ids.add(text)
+        _check_entry(node, f"entry {n}", feed_author=feed_author, ids=ids, problems=problems)
     return problems

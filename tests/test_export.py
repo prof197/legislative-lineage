@@ -20,9 +20,9 @@ from lineage.export.pages import (
     comparison_slug,
     slug,
     stories_for,
-    validation_from,
 )
 from lineage.export.schema import BillList, BillPage, BillTexts, Comparison, Meta
+from lineage.export.validation import validation_from
 from lineage.match.semantic.pairs import build_semantic_pairs
 from tests.conftest import FAKE_MODEL
 from tests.test_explain import scripted

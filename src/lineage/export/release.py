@@ -109,13 +109,9 @@ def _model_for(name: str) -> type[BaseModel] | None:
     return next((model for pattern, model in _CONTRACT if pattern.fullmatch(name)), None)
 
 
-def check_export(export: Path, *, state: str) -> Checksums:
-    """Every file in `export`, checked against the contract and summed. Refused: a file whose
-    path the contract does not name, anything but a regular file, a JSON file its model rejects
-    (strictly, and with no field the model lacks), a missing meta.json, bills.json or
-    sources.json, and another state's export."""
-    if not (export / "meta.json").is_file():
-        raise ReleaseError(f"{export} holds no meta.json; run `uv run lineage export` first")
+def _contract_files(export: Path) -> list[tuple[str, Path]]:
+    """The export's files by relative path, sorted, refused unless each is a regular file the
+    contract names and the required ones are all there."""
     entries = sorted(
         ((p.relative_to(export).as_posix(), p) for p in export.rglob("*")), key=lambda e: e[0]
     )
@@ -130,26 +126,41 @@ def check_export(export: Path, *, state: str) -> Checksums:
     for name in REQUIRED:
         if name not in present:
             raise ReleaseError(f"{export} holds no {name}")
+    return files
+
+
+def _check_file(name: str, data: bytes, *, state: str) -> None:
+    """Refused unless the feed is valid Atom, or the JSON file validates strictly against its
+    model, and meta.json is `state`'s."""
+    if name == FEED:
+        if problems := violations(data):
+            raise ReleaseError(f"{FEED} is not a valid Atom feed: {problems[0]}")
+        return
+    model = _model_for(name)
+    assert model is not None
+    try:
+        doc = model.model_validate_json(data, strict=True)
+    except ValidationError as e:
+        first = e.errors()[0]
+        where = ".".join(str(x) for x in first["loc"]) or "the file"
+        raise ReleaseError(
+            f"{name} is not a valid {model.__name__}: {where}: {first['msg']}"
+        ) from e
+    if isinstance(doc, Meta) and doc.state != state:
+        raise ReleaseError(f"meta.json is {doc.state}'s export, not {state}'s")
+
+
+def check_export(export: Path, *, state: str) -> Checksums:
+    """Every file in `export`, checked against the contract and summed. Refused: a file whose
+    path the contract does not name, anything but a regular file, a JSON file its model rejects
+    (strictly, and with no field the model lacks), a missing meta.json, bills.json or
+    sources.json, and another state's export."""
+    if not (export / "meta.json").is_file():
+        raise ReleaseError(f"{export} holds no meta.json; run `uv run lineage export` first")
     sums: list[FileSum] = []
-    for name, path in files:
+    for name, path in _contract_files(export):
         data = path.read_bytes()
-        if name == FEED:
-            if problems := violations(data):
-                raise ReleaseError(f"{FEED} is not a valid Atom feed: {problems[0]}")
-            sums.append(FileSum(path=name, size=len(data), sha256=hashlib.sha256(data).hexdigest()))
-            continue
-        model = _model_for(name)
-        assert model is not None
-        try:
-            doc = model.model_validate_json(data, strict=True)
-        except ValidationError as e:
-            first = e.errors()[0]
-            where = ".".join(str(x) for x in first["loc"]) or "the file"
-            raise ReleaseError(
-                f"{name} is not a valid {model.__name__}: {where}: {first['msg']}"
-            ) from e
-        if isinstance(doc, Meta) and doc.state != state:
-            raise ReleaseError(f"meta.json is {doc.state}'s export, not {state}'s")
+        _check_file(name, data, state=state)
         sums.append(FileSum(path=name, size=len(data), sha256=hashlib.sha256(data).hexdigest()))
     return Checksums(files=sums)
 

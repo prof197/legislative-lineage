@@ -52,6 +52,7 @@ from lineage.export.pages import (
     STORIES_RULES,
     BillPair,
     OrdinalPair,
+    Plan,
     bill_list,
     bill_page,
     carries_origin_story,
@@ -172,6 +173,108 @@ def _write(root: Path, files: Mapping[str, BaseModel]) -> _Written:
     return _Written(dict(sorted(count.items())), dict(sorted(size.items())), largest)
 
 
+def _aligned(
+    plan: Plan,
+    *,
+    models_dir: Path | None,
+    workers: int,
+    progress: Callable[[str], None],
+) -> dict[BillPair, dict[OrdinalPair, Alignment]]:
+    """Every section pair the plan found, aligned, by bill pair and ordinals."""
+    ordered = [
+        (pair, ordinals) for pair, ps in sorted(plan.found.items()) for ordinals in sorted(ps)
+    ]
+    alignments = align_all(
+        [(plan.shown[(a, oa)][1], plan.shown[(b, ob)][1]) for (a, b), (oa, ob) in ordered],
+        models_dir=models_dir,
+        workers=workers,
+        progress=progress,
+    )
+    aligned: dict[BillPair, dict[OrdinalPair, Alignment]] = defaultdict(dict)
+    for (pair, ordinals), alignment in zip(ordered, alignments, strict=True):
+        aligned[pair][ordinals] = alignment
+    return aligned
+
+
+@dataclass(frozen=True, slots=True)
+class _Files:
+    files: dict[str, BaseModel]  # by path in the export
+    explained: int  # featured pairs with an explanation
+    withheld: int  # their claims withheld
+
+
+def _files(
+    plan: Plan,
+    aligned: Mapping[BillPair, Mapping[OrdinalPair, Alignment]],
+    *,
+    state: str,
+    stories_rules: Path,
+) -> _Files:
+    """Every file the export writes, rendered from the plan and the alignments."""
+    files: dict[str, BaseModel] = {}
+    explained = 0
+    withheld = 0
+    for pair in sorted(plan.found):
+        compared = comparison(plan, pair, aligned[pair])
+        files[comparison_name(plan, pair)] = compared
+        for p in compared.pairs:
+            if p.explanation is not None:
+                explained += 1
+                withheld += p.explanation.withheld
+    for name, texts in texts_by_slug(plan).items():
+        files[f"texts/{name}.json"] = texts
+    pages = [bill_page(plan, bill_id) for bill_id in plan.hosted]
+    for page in pages:
+        files[f"bills/{page.bill.slug}.json"] = page
+    files["bills.json"] = bill_list(plan)
+    for key, story in plan.stories.items():
+        files[f"stories/{key}.json"] = story
+    if carries_origin_story(state, stories_rules):
+        chosen = origin_story_file(pages, plan.judged)
+        if chosen is not None:
+            files[ORIGIN_STORY_FILE] = chosen
+    files["sources.json"] = plan.sources
+    files["meta.json"] = plan.meta
+    return _Files(files, explained, withheld)
+
+
+def _swap_in(out: Path, files: Mapping[str, BaseModel]) -> _Written:
+    """The files written to a fresh directory beside `out`, then swapped in whole."""
+    partial = out.with_name(out.name + ".partial")
+    if partial.exists():
+        shutil.rmtree(partial)
+    written = _write(partial, files)
+    if out.exists():
+        shutil.rmtree(out)
+    partial.rename(out)
+    return written
+
+
+def _report(
+    plan: Plan, written: _Written, rendered: _Files, *, n_pairs: int, started: float
+) -> dict[str, Any]:
+    total = sum(written.bytes.values())
+    relatives = plan.relatives.values()
+    return {
+        "command": COMMAND.format(state=plan.state),
+        "state": plan.state,
+        "schema": str(SCHEMA),
+        "hosted_bills": len(plan.hosted),
+        "bills_with_relatives": sum(1 for r in relatives if r.matches),
+        "relatives_listed": sum(len(r.matches) for r in relatives),
+        "comparisons": len(plan.found),
+        "section_pairs_aligned": n_pairs,
+        "featured_pairs_explained": rendered.explained,
+        "featured_pairs_withheld": rendered.withheld,
+        "files": written.files,
+        "bytes": written.bytes,
+        "total_bytes": total,
+        "share_of_site_limit": round(total / SITE_LIMIT, 4),
+        "largest_file": {"path": written.largest[0], "bytes": written.largest[1]},
+        "seconds": round(time.monotonic() - started),
+    }
+
+
 def build_export(
     tables: Path,
     *,
@@ -220,69 +323,7 @@ def build_export(
     # Each text written once, spans at most a few hundred bytes a pair, and the pages.
     require_free_space(out.parent, needed=2 * text_bytes + 4096 * n_pairs + (64 << 20), floor=floor)
     progress(f"{len(plan.found)} comparisons, {n_pairs} section pairs to align")
-
-    ordered = [
-        (pair, ordinals) for pair, ps in sorted(plan.found.items()) for ordinals in sorted(ps)
-    ]
-    alignments = align_all(
-        [(plan.shown[(a, oa)][1], plan.shown[(b, ob)][1]) for (a, b), (oa, ob) in ordered],
-        models_dir=models_dir,
-        workers=workers,
-        progress=progress,
-    )
-    aligned: dict[BillPair, dict[OrdinalPair, Alignment]] = defaultdict(dict)
-    for (pair, ordinals), alignment in zip(ordered, alignments, strict=True):
-        aligned[pair][ordinals] = alignment
-
-    files: dict[str, BaseModel] = {}
-    featured_explained = 0
-    withheld = 0
-    for pair in sorted(plan.found):
-        compared = comparison(plan, pair, aligned[pair])
-        files[comparison_name(plan, pair)] = compared
-        for p in compared.pairs:
-            if p.explanation is not None:
-                featured_explained += 1
-                withheld += p.explanation.withheld
-    for name, texts in texts_by_slug(plan).items():
-        files[f"texts/{name}.json"] = texts
-    pages = [bill_page(plan, bill_id) for bill_id in plan.hosted]
-    for page in pages:
-        files[f"bills/{page.bill.slug}.json"] = page
-    files["bills.json"] = bill_list(plan)
-    for key, story in plan.stories.items():
-        files[f"stories/{key}.json"] = story
-    if carries_origin_story(state, stories_rules):
-        chosen = origin_story_file(pages, plan.judged)
-        if chosen is not None:
-            files[ORIGIN_STORY_FILE] = chosen
-    files["sources.json"] = plan.sources
-    files["meta.json"] = plan.meta
-
-    partial = out.with_name(out.name + ".partial")
-    if partial.exists():
-        shutil.rmtree(partial)
-    written = _write(partial, files)
-    if out.exists():
-        shutil.rmtree(out)
-    partial.rename(out)
-    total = sum(written.bytes.values())
-    relatives = plan.relatives.values()
-    return {
-        "command": COMMAND.format(state=state),
-        "state": state,
-        "schema": str(SCHEMA),
-        "hosted_bills": len(plan.hosted),
-        "bills_with_relatives": sum(1 for r in relatives if r.matches),
-        "relatives_listed": sum(len(r.matches) for r in relatives),
-        "comparisons": len(plan.found),
-        "section_pairs_aligned": n_pairs,
-        "featured_pairs_explained": featured_explained,
-        "featured_pairs_withheld": withheld,
-        "files": written.files,
-        "bytes": written.bytes,
-        "total_bytes": total,
-        "share_of_site_limit": round(total / SITE_LIMIT, 4),
-        "largest_file": {"path": written.largest[0], "bytes": written.largest[1]},
-        "seconds": round(time.monotonic() - started),
-    }
+    aligned = _aligned(plan, models_dir=models_dir, workers=workers, progress=progress)
+    rendered = _files(plan, aligned, state=state, stories_rules=stories_rules)
+    written = _swap_in(out, rendered.files)
+    return _report(plan, written, rendered, n_pairs=n_pairs, started=started)

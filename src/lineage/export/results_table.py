@@ -260,24 +260,32 @@ def _compared_name(name: str, group: dict[str, Any]) -> str:
     return f"{organization}'s matches"
 
 
-def render_origins(
-    results: dict[str, Any],
-    sealed_note: str = SEALED_NOTE,
-    withheld: dict[str, Any] | None = None,
-) -> str:
-    """v2's origin evals, one row each for those in the results and nothing for those not:
-    recall on the development key and on the sealed key, precision on the reporting sample
-    overall and by stage, and apart from the sealed row, v1's held-out acts, which v1's final
-    run had already opened. With `withheld`, the withheld documents' report
-    (lineage.origins.withheld), precision is said to be read before they were withheld."""
-    floor = _origin_floor(results)
-    if floor is None:
-        return ""
-    recall = [results[n] for n in (ORIGIN_DEVELOPMENT, ORIGIN_SEALED) if n in results]
-    precision = results.get(ORIGIN_PRECISION)
-    v1 = results.get(ORIGIN_V1_HELD_OUT)
+def _withheld_sentence(withheld: dict[str, Any] | None) -> list[str]:
+    """The sentence saying precision was read before documents were withheld, if any were."""
+    held = [*(withheld or {}).get("withheld", []), *(withheld or {}).get("reviewed", [])]
+    if not held:
+        return []
+    n = len(held)
+    matches = int((withheld or {})["listed_matches_withheld"])
+    return [
+        f"The reading was taken before {_counted(n, 'document')} whose matches were "
+        f"found mostly wrong {'was' if n == 1 else 'were'} withheld from pages, "
+        f"{matches:,} listed {'match' if matches == 1 else 'matches'} in all "
+        "(`uv run lineage withhold`, "
+        "`reports/withheld_documents.json`), so it likely understates the precision of "
+        "what pages show."
+    ]
+
+
+def _origins_intro(
+    floor: float,
+    *,
+    has_recall: bool,
+    precision: dict[str, Any] | None,
+    withheld: dict[str, Any] | None,
+) -> list[str]:
     intro: list[str] = []
-    if recall or v1:
+    if has_recall:
         intro.append(
             "Origin recall: each uniform act's published text is matched against the corpus "
             "as a model document, through both stages and the rule a page lists by, and an "
@@ -294,23 +302,17 @@ def render_origins(
             "by stage as the whole is (`compared`), and each source's own figure is in the "
             "same section (`by_source`)."
         )
-        held = [*(withheld or {}).get("withheld", []), *(withheld or {}).get("reviewed", [])]
-        if held:
-            n = len(held)
-            matches = int((withheld or {})["listed_matches_withheld"])
-            intro.append(
-                f"The reading was taken before {_counted(n, 'document')} whose matches were "
-                f"found mostly wrong {'was' if n == 1 else 'were'} withheld from pages, "
-                f"{matches:,} listed {'match' if matches == 1 else 'matches'} in all "
-                "(`uv run lineage withhold`, "
-                "`reports/withheld_documents.json`), so it likely understates the precision of "
-                "what pages show."
-            )
+        intro += _withheld_sentence(withheld)
     intro.append(
         "Each result carries its 95% Wilson interval, and each command writes "
         "`reports/results.json` ([DESIGN.md](DESIGN.md#origin-matches))."
     )
-    head = ["| | Result | Reproduce |", "|---|---|---|"]
+    return intro
+
+
+def _origin_recall_rows(
+    recall: list[dict[str, Any]], sealed_note: str
+) -> list[tuple[str, str, str]]:
     rows: list[tuple[str, str, str]] = []
     for s in recall:
         acts = _counted(len(s["documents"]), "act")
@@ -320,55 +322,87 @@ def render_origins(
         else:
             label = f"Recall on the development key, {acts}"
         rows.append((label, _origin_recall(s), _origin_recall_command(s)))
-    if precision:
-        overall = precision["overall"]
-        rows.append(
-            (
-                f"Precision, model-judged, all stages ({overall['labeled']} labels of "
-                f"{overall['matches']:,} matches)",
-                _origin_precision(overall),
-                precision["command"],
-            )
+    return rows
+
+
+def _origin_precision_rows(precision: dict[str, Any]) -> list[tuple[str, str, str]]:
+    overall = precision["overall"]
+    rows = [
+        (
+            f"Precision, model-judged, all stages ({overall['labeled']} labels of "
+            f"{overall['matches']:,} matches)",
+            _origin_precision(overall),
+            precision["command"],
         )
-        rows += [
-            (
-                f"Precision, {_ORIGIN_STAGES[stage]} ({g['labeled']} labels of "
-                f"{g['size']:,} matches)",
-                _origin_precision(g),
-                precision["command"],
-            )
-            for stage, g in overall["by_stage"].items()
-        ]
-        compared: dict[str, Any] = precision["compared"]
-        rows += [
-            (
-                f"Precision, {_compared_name(name, g)} ({g['labeled']} labels of "
-                f"{g['matches']:,} matches)",
-                _origin_precision(g),
-                precision["command"],
-            )
-            for name, g in compared.items()
-        ]
+    ]
+    rows += [
+        (
+            f"Precision, {_ORIGIN_STAGES[stage]} ({g['labeled']} labels of {g['size']:,} matches)",
+            _origin_precision(g),
+            precision["command"],
+        )
+        for stage, g in overall["by_stage"].items()
+    ]
+    compared: dict[str, Any] = precision["compared"]
+    rows += [
+        (
+            f"Precision, {_compared_name(name, g)} ({g['labeled']} labels of "
+            f"{g['matches']:,} matches)",
+            _origin_precision(g),
+            precision["command"],
+        )
+        for name, g in compared.items()
+    ]
+    return rows
+
+
+def _v1_held_out_lines(v1: dict[str, Any], head: list[str]) -> list[str]:
+    if v1["status"] != V1_HELD_OUT_STATUS:
+        raise ResultsTableError(
+            f"v1's held-out acts are reported as {V1_HELD_OUT_STATUS!r}, not {v1['status']!r}"
+        )
+    acts = _counted(len(v1["documents"]), "held-out act")
+    return [
+        "",
+        "Apart from the sealed key, v1's held-out acts: v1's final run looked at their "
+        "matches, so they test nothing sealed.",
+        "",
+        *head,
+        f"| Recall on v1's {acts}: {V1_HELD_OUT_STATUS} | {_origin_recall(v1)} | "
+        f"`{_origin_recall_command(v1)}` |",
+    ]
+
+
+def render_origins(
+    results: dict[str, Any],
+    sealed_note: str = SEALED_NOTE,
+    withheld: dict[str, Any] | None = None,
+) -> str:
+    """v2's origin evals, one row each for those in the results and nothing for those not:
+    recall on the development key and on the sealed key, precision on the reporting sample
+    overall and by stage, and apart from the sealed row, v1's held-out acts, which v1's final
+    run had already opened. With `withheld`, the withheld documents' report
+    (lineage.origins.withheld), precision is said to be read before they were withheld."""
+    floor = _origin_floor(results)
+    if floor is None:
+        return ""
+    recall = [results[n] for n in (ORIGIN_DEVELOPMENT, ORIGIN_SEALED) if n in results]
+    precision = results.get(ORIGIN_PRECISION)
+    v1 = results.get(ORIGIN_V1_HELD_OUT)
+    intro = _origins_intro(
+        floor, has_recall=bool(recall or v1), precision=precision, withheld=withheld
+    )
+    head = ["| | Result | Reproduce |", "|---|---|---|"]
+    rows = _origin_recall_rows(recall, sealed_note)
+    if precision:
+        rows += _origin_precision_rows(precision)
     lines = [" ".join(intro)]
     if rows:
         lines += ["", *head, *(f"| {label} | {r} | `{c}` |" for label, r, c in rows)]
     if sealed_note and ORIGIN_SEALED in results:
         lines += ["", f"[^sealed]: {sealed_note}"]
     if v1:
-        if v1["status"] != V1_HELD_OUT_STATUS:
-            raise ResultsTableError(
-                f"v1's held-out acts are reported as {V1_HELD_OUT_STATUS!r}, not {v1['status']!r}"
-            )
-        acts = _counted(len(v1["documents"]), "held-out act")
-        lines += [
-            "",
-            "Apart from the sealed key, v1's held-out acts: v1's final run looked at their "
-            "matches, so they test nothing sealed.",
-            "",
-            *head,
-            f"| Recall on v1's {acts}: {V1_HELD_OUT_STATUS} | {_origin_recall(v1)} | "
-            f"`{_origin_recall_command(v1)}` |",
-        ]
+        lines += _v1_held_out_lines(v1, head)
     return "\n".join(lines)
 
 
