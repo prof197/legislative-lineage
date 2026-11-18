@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from lineage import queries
+from lineage.core import db
 from lineage.pairs import load_cross_state_pairs
 from lineage.query import Match, query_text
 from lineage.relatives import RELATIVES_SHOWN, bill_relatives
@@ -24,7 +24,7 @@ def tables(embedded_commission: Path) -> Path:
 
 
 def bill_of(tables: Path, bill_id: str) -> tuple[str, str]:
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         rows = con.execute(
             "SELECT state, text FROM read_parquet($p) WHERE id = $i",
             {"p": str(tables / "bills" / "*.parquet"), "i": bill_id},

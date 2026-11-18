@@ -53,7 +53,8 @@ from numpy.typing import NDArray
 from lineage import queries
 from lineage.bands import load_band_index, update_bands
 from lineage.boilerplate import boilerplate_kind
-from lineage.disk import DEFAULT_FLOOR_BYTES, require_free_space
+from lineage.core import db
+from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.doctypes import RULES, decide, load_rules
 from lineage.families import update_families
 from lineage.listing import shipped_flag
@@ -367,7 +368,7 @@ def _records(
     sessions = load_sessions(sessions_path)
     bills_glob = str(tables / "bills" / "*.parquet")
     ids = sorted(str(r["id"]) for rows in day.records.values() for r in rows)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         stored = {
             i: (st, se, text)
             for i, st, se, text in queries.stored_records(con, bills_glob=bills_glob, ids=ids)
@@ -396,7 +397,7 @@ def _records(
     view.own("texts")
     by_archive: dict[tuple[str, str], Sequence[Mapping[str, Any]]] = dict(day.records)
     names: dict[tuple[str, str], str] = {}
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for (state, session), rows in sorted(by_archive.items()):
             name, archive = files.get(
                 (state, session),
@@ -499,7 +500,7 @@ def _records(
     # Sections: the retired records' rows dropped from the files holding them, and the records
     # split again written to one new file per archive.
     new_parts: dict[str, str] = {}
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         holding = (
             queries.files_holding(
                 con,
@@ -565,7 +566,7 @@ def _signatures(
     dest = view.own("signatures")
     old_files = sorted((tables / "signatures").glob("*.npy"))
     kept = {p.stem: np.ones(int(np.load(p, mmap_mode="r").shape[0]), dtype=bool) for p in old_files}
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         # Only the files that hold a retired record's rows are read and written again.
         holding = (
             queries.files_holding(
@@ -668,7 +669,7 @@ def _near_duplicates(
         left,
         right,
     )
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         state_of = queries.bill_states(con, bills_glob=str(view.root / "bills" / "*.parquet"))
     states = np.array([state_of[b] for b in after.section_bills], dtype=object)
     cross = states[found.left] != states[found.right] if found.left.size else np.empty(0, bool)
@@ -706,7 +707,7 @@ def _near_duplicates(
         families_before, bills, bill_of_section, new_same.left, new_same.right, affected
     )
     view.fresh_dir("families")
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         queries.write_families(
             con,
             parquet_path=view.root / "families" / "families.parquet",
@@ -764,7 +765,7 @@ def _semantic(
     view.own(f"{SEMANTIC_DIR}/{model}")
     units_glob_before = str(semantic_dir(tables) / "units" / "*.parquet")
     candidates: set[int] = set()
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         holding = (
             queries.files_holding(
                 con, glob=units_glob_before, column="bill_id", ids=sorted(retired)
@@ -914,7 +915,7 @@ def _changed_sections(
 def _relatives(tables: Path, bills: set[str], model: str) -> dict[str, tuple[Relative, ...]]:
     """The listed relatives of the wanted matchable bills, as `lineage.updates.snapshot` reads
     them."""
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         matchable = set(
             queries.matchable_bill_ids(
                 con,
@@ -1059,7 +1060,7 @@ def _staged_bytes(tables_dir: Path, day: Day, model: str) -> int:
     whole = sum(_bytes(tables_dir / name) for name in _WRITTEN_WHOLE)
     whole += _bytes(vectors_dir(tables_dir, model) / "neighbors")
     whole += _bytes(pairs_dir(tables_dir, model))
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         files = queries.bills_files(con, bills_glob=str(tables_dir / "bills" / "*.parquet"))
     stems = {Path(n).stem for n, st, se, _ in files if (st, se) in day.records}
     archives = sum(
@@ -1105,7 +1106,7 @@ def apply_day(
         raise UpdateError(
             f"an update stopped partway in {tables_dir} ({updates / PENDING}); rebuild the tables"
         )
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         stamp = queries.latest_stamp(con, bills_glob=str(tables_dir / "bills" / "*.parquet"))
     if stamp is not None and day.as_of <= stamp.date():
         raise UpdateError(f"the corpus already stands as of {stamp.date()}, not before {day.as_of}")

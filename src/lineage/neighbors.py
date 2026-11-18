@@ -42,8 +42,8 @@ from lineage.ann import (
     set_threads,
     train_index,
 )
-from lineage.disk import require_free_space
-from lineage.memory import BOUND_BYTES, MemoryBoundError, peak_bytes, require_within
+from lineage.core.disk import require_free_space
+from lineage.core.memory import BOUND_BYTES, MemoryBoundError, peak_bytes, require_within
 from lineage.semantic import BUILD_THRESHOLD as THRESHOLD
 from lineage.semantic import MODEL, K
 from lineage.vectors import EmbedError, load_plan, load_vectors, rows_of, vectors_dir

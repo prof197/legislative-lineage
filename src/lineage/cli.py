@@ -56,10 +56,14 @@ from lineage.commission import (
     with_earlier_runs,
     write_results,
 )
+from lineage.core.disk import GiB, InsufficientDiskSpaceError
+from lineage.core.hashing import file_sha256
+from lineage.core.http import FetchError, open_url
+from lineage.core.memory import MemoryBoundError
+from lineage.core.paths import DATA
 from lineage.cost import REPORT as COST_REPORT
 from lineage.cost import cost_report
 from lineage.cost import write_report as write_cost_report
-from lineage.disk import GiB, InsufficientDiskSpaceError
 from lineage.doctypes import RULES, DocTypesError, build_eligibility, rule_samples
 from lineage.embed import embed as embed_texts
 from lineage.embed import load_model
@@ -115,14 +119,12 @@ from lineage.featured import PAIRS as FEATURED_PAIRS
 from lineage.featured import REPORT as FEATURED_REPORT
 from lineage.featured import FeaturedError, build_featured, write_featured
 from lineage.feed import FeedError, write_feed
-from lineage.fetch import FetchError, open_url
 from lineage.flag_precision import (
     FLAGGED_SAMPLE,
     FLAGGED_SAMPLE_REPORT,
     build_flagged_sample,
     with_flag,
 )
-from lineage.hashing import file_sha256
 from lineage.incremental import update
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
@@ -159,7 +161,6 @@ from lineage.labels import (
 from lineage.labels import PERSON as PERSON_PREFIX
 from lineage.labels import model_labeler as model_labeler_name
 from lineage.listing import flagged_sections, shipped_flag
-from lineage.memory import MemoryBoundError
 from lineage.model_labels import BUDGET as LABEL_BUDGET
 from lineage.model_labels import MAX_COST as LABEL_MAX_COST
 from lineage.model_labels import MODEL_ID as LABEL_MODEL
@@ -233,7 +234,6 @@ from lineage.pair_data import PAIR_DATA_DIR, PairDataError, fetch_pair_data
 from lineage.pair_eval import REPORT as PAIR_REPORT
 from lineage.pair_eval import evaluate as evaluate_pairs
 from lineage.pair_eval import write_report as write_pair_report
-from lineage.paths import DATA
 from lineage.precision import SAMPLE as PRECISION_SAMPLE
 from lineage.precision import SAMPLE_REPORT as PRECISION_SAMPLE_REPORT
 from lineage.precision import build_sample, estimate, load_sizes, write_sample

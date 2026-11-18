@@ -1,4 +1,4 @@
-"""All SQL the pipeline runs, kept in one module so it can be reviewed and tested as a unit.
+"""The SQL not yet moved to its package's own queries module (M13; DR-4).
 
 pyright cannot see inside SQL strings, so each query here is exercised against committed
 fixtures in the tests. See DESIGN.md#dr-4.
@@ -12,7 +12,7 @@ from typing import Any
 
 import duckdb
 
-from lineage.disk import spill_budget
+from lineage.core.db import sql_string, struct_literal
 
 # The fields of Open States' JSON export (format 1.0) that the pipeline reads. Declaring the
 # schema instead of letting DuckDB infer it per file keeps every archive's Parquet identical in
@@ -36,39 +36,6 @@ BILL_JSON_COLUMNS: dict[str, str] = {
 }
 
 
-def _sql_string(value: str) -> str:
-    return "'" + value.replace("'", "''") + "'"
-
-
-def _struct_literal(columns: dict[str, str]) -> str:
-    return "{" + ", ".join(f"{_sql_string(k)}: {_sql_string(v)}" for k, v in columns.items()) + "}"
-
-
-def _cap_spill(con: duckdb.DuckDBPyConnection, directory: Path) -> None:
-    # DuckDB lets a query that outgrows memory spill up to 90% of the free disk. Capping it at
-    # the floor makes such a query fail with an out-of-memory error instead of filling the disk.
-    # The cap is per connection; the worker processes scan one file each and do not spill.
-    con.execute(f"SET max_temp_directory_size = '{spill_budget(directory)}B'")
-
-
-def connect_quiet() -> duckdb.DuckDBPyConnection:
-    """A connection that prints no progress bar, which would interleave across processes."""
-    con = duckdb.connect()
-    con.execute("SET enable_progress_bar = false")
-    # Without a temp_directory setting, DuckDB spills to .tmp under the working directory.
-    _cap_spill(con, Path.cwd())
-    return con
-
-
-def connect(*, memory_limit: str, temp_directory: Path) -> duckdb.DuckDBPyConnection:
-    con = connect_quiet()
-    con.execute(f"SET memory_limit = {_sql_string(memory_limit)}")
-    # Spill to the data disk, which the caller has checked for space, not the system temp dir.
-    con.execute(f"SET temp_directory = {_sql_string(str(temp_directory))}")
-    _cap_spill(con, temp_directory)
-    return con
-
-
 def outcome_actions(
     con: duckdb.DuckDBPyConnection, *, json_path: Path, kinds: list[str], wording: str
 ) -> list[tuple[str, list[str], list[dict[str, Any]]]]:
@@ -84,7 +51,7 @@ def outcome_actions(
                                               OR regexp_matches(coalesce(a.description, ''),
                                                                 $wording))
         FROM read_json($json_path, format = 'array',
-                       columns = {_struct_literal(BILL_JSON_COLUMNS)})
+                       columns = {struct_literal(BILL_JSON_COLUMNS)})
     """
     rows: list[tuple[str, list[str], list[dict[str, Any]]]] = con.execute(
         query, {"json_path": str(json_path), "kinds": kinds, "wording": wording}
@@ -149,9 +116,9 @@ def copy_bills_to_parquet(
                 CAST($generated_at AS TIMESTAMP) AS generated_at,
                 $archive AS archive
             FROM read_json($json_path, format = 'array',
-                           columns = {_struct_literal(BILL_JSON_COLUMNS)}) AS b
+                           columns = {struct_literal(BILL_JSON_COLUMNS)}) AS b
             LEFT JOIN s USING (id)
-        ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
+        ) TO {sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
     """
     params = {
         "state": state,
@@ -195,7 +162,7 @@ def write_texts(
                      ))[1].note END AS text_version
             FROM read_parquet($bills) AS b
             LEFT JOIN f USING (id)
-        ) TO {_sql_string(str(out_path))} (FORMAT parquet, COMPRESSION zstd)
+        ) TO {sql_string(str(out_path))} (FORMAT parquet, COMPRESSION zstd)
     """
     con.execute(query, {"bills": str(bills_path), "fetched": str(fetched_path)})
 
@@ -263,7 +230,7 @@ def write_sections(
                 CAST(unnest($normalized) AS VARCHAR) AS normalized,
                 CAST(unnest($by_heading) AS BOOLEAN) AS by_heading,
                 CAST(unnest($boilerplate) AS VARCHAR) AS boilerplate
-        ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
+        ) TO {sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
     """
     con.execute(
         query,
@@ -288,7 +255,7 @@ def write_stoplist(
                 CAST(unnest($hashes) AS UINTEGER) AS hash,
                 CAST(unnest($sections) AS BIGINT) AS sections
             ORDER BY hash
-        ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
+        ) TO {sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
     """
     con.execute(query, {"hashes": hashes, "sections": sections})
 
@@ -374,7 +341,7 @@ def write_signature_keys(
                 CAST(unnest($bill_ids) AS VARCHAR) AS bill_id,
                 CAST(unnest($ordinals) AS INTEGER) AS ordinal,
                 CAST(unnest($windows) AS INTEGER) AS window_number
-        ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
+        ) TO {sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
     """
     con.execute(query, {"bill_ids": bill_ids, "ordinals": ordinals, "windows": windows})
 
@@ -406,7 +373,7 @@ def write_semantic_units(
                 CAST(unnest($ordinals) AS INTEGER) AS ordinal,
                 CAST(unnest($windows) AS INTEGER) AS window_number,
                 CAST(unnest($text_ids) AS BIGINT) AS text_id
-        ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
+        ) TO {sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
     """
     con.execute(
         query,
@@ -421,7 +388,7 @@ def write_semantic_texts(
     query = f"""
         COPY (
             SELECT CAST(unnest($ids) AS BIGINT) AS text_id, CAST(unnest($texts) AS VARCHAR) AS text
-        ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
+        ) TO {sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
     """
     con.execute(query, {"ids": list(range(first_id, first_id + len(texts))), "texts": texts})
 
@@ -766,7 +733,7 @@ def write_eligibility(
                 CAST(unnest($ids) AS VARCHAR) AS id,
                 CAST(unnest($eligible) AS BOOLEAN) AS eligible,
                 CAST(unnest($rules) AS INTEGER) AS rule
-        ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
+        ) TO {sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
     """
     con.execute(query, {"ids": ids, "eligible": eligible, "rules": rules})
 
@@ -779,7 +746,7 @@ def write_families(
             SELECT
                 CAST(unnest($ids) AS VARCHAR) AS bill_id,
                 CAST(unnest($families) AS VARCHAR) AS family
-        ) TO {_sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
+        ) TO {sql_string(str(parquet_path))} (FORMAT parquet, COMPRESSION zstd)
     """
     con.execute(query, {"ids": bill_ids, "families": families})
 
@@ -1165,8 +1132,8 @@ def write_fetch_plan(
     """
     names = list(columns)
     select = ", ".join(f"unnest(${n})::VARCHAR AS {n}" for n in names)
-    options = f"FORMAT parquet, KV_METADATA {{fingerprint: {_sql_string(fingerprint)}}}"
-    con.execute(f"COPY (SELECT {select}) TO {_sql_string(str(path))} ({options})", columns)
+    options = f"FORMAT parquet, KV_METADATA {{fingerprint: {sql_string(fingerprint)}}}"
+    con.execute(f"COPY (SELECT {select}) TO {sql_string(str(path))} ({options})", columns)
 
 
 def fetch_plan_fingerprint(con: duckdb.DuckDBPyConnection, *, path: Path) -> str | None:
@@ -1593,9 +1560,9 @@ def merged_records_json(
             {stored}
             SELECT id, legislative_session, identifier, title, chamber, classification, actions,
                    versions, raw_text, raw_text_url
-            FROM read_json($day, format = 'array', columns = {_struct_literal(BILL_JSON_COLUMNS)})
+            FROM read_json($day, format = 'array', columns = {struct_literal(BILL_JSON_COLUMNS)})
             ORDER BY id
-        ) TO {_sql_string(str(out_path))} (FORMAT json, ARRAY true)
+        ) TO {sql_string(str(out_path))} (FORMAT json, ARRAY true)
     """
     params: dict[str, Any] = {"day": str(day_path)}
     if bills_path is not None:
@@ -1646,7 +1613,7 @@ def restamp_bills(
                 CAST($generated_at AS TIMESTAMP) AS generated_at
             )
             FROM read_parquet($bills) b LEFT JOIN s USING (id)
-        ) TO {_sql_string(str(out_path))} (FORMAT parquet, COMPRESSION zstd)
+        ) TO {sql_string(str(out_path))} (FORMAT parquet, COMPRESSION zstd)
     """
     con.execute(
         query,
@@ -1692,7 +1659,7 @@ def merge_texts_file(
             FROM read_parquet($bills) AS b
             WHERE b.id IN (SELECT unnest($fresh))
             ORDER BY id
-        ) TO {_sql_string(str(out_path))} (FORMAT parquet, COMPRESSION zstd)
+        ) TO {sql_string(str(out_path))} (FORMAT parquet, COMPRESSION zstd)
     """
     params: dict[str, Any] = {"bills": str(bills_path), "fresh": fresh}
     if texts_path is not None:
@@ -1720,7 +1687,7 @@ def copy_without(
         raise ValueError(f"not a column name: {column}")
     row = con.execute(
         f"COPY (SELECT * FROM read_parquet($p) WHERE {column} NOT IN (SELECT unnest($ids))) "
-        f"TO {_sql_string(str(out_path))} (FORMAT parquet, COMPRESSION zstd)",
+        f"TO {sql_string(str(out_path))} (FORMAT parquet, COMPRESSION zstd)",
         {"p": str(path), "ids": ids},
     ).fetchone()
     return int(row[0]) if row else 0

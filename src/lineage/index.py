@@ -3,7 +3,7 @@
 The report also records the build's wall time and peak memory beside the machine's memory, the
 figures DR-3's bound is checked against: a full build within half the reference laptop's 32 GiB.
 The main process bands and verifies the signatures through memory-mapped files, which the
-operating system pages in and out, and is measured by its physical footprint (lineage.memory),
+operating system pages in and out, and is measured by its physical footprint (lineage.core.memory),
 which counts what the process holds and not those pages. The signing workers, gone by the end,
 are measured by the largest resident set among them. See DESIGN.md#dr-3.
 """
@@ -17,8 +17,8 @@ import time
 from pathlib import Path
 from typing import Any
 
-from lineage import memory
 from lineage.bands import build_bands, lsh_report, row_states
+from lineage.core import memory
 from lineage.pairs import build_pairs
 from lineage.signatures import build_signatures, open_signatures, row_labels
 

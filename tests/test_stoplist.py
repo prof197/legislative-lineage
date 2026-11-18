@@ -5,6 +5,7 @@ import numpy as np
 import pytest
 
 from lineage import queries
+from lineage.core import db
 from lineage.shingles import shingle_hashes
 from lineage.stoplist import (
     StoplistError,
@@ -58,7 +59,7 @@ def _write_sections(tables: Path, texts: list[str], eligible: list[bool] | None 
         by_heading=[False] * len(texts),
         boilerplate=["enacting clause" if t == ENACTING else None for t in texts],
     )
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         queries.write_sections(con, parquet_path=tables / "sections" / "s.parquet", columns=columns)
         queries.write_eligibility(
             con,

@@ -15,7 +15,6 @@ import numpy as np
 import pytest
 from typer.testing import CliRunner
 
-from lineage import queries
 from lineage.acts import ACTS, HELD_OUT_ACTS
 from lineage.cli import app
 from lineage.commission import (
@@ -30,6 +29,7 @@ from lineage.commission import (
     target_reason,
     with_earlier_runs,
 )
+from lineage.core import db
 from lineage.lsh import BANDS, BUCKET_CAP, ROWS
 from lineage.minhash import NUM_PERM
 from lineage.queries import EnactmentBill
@@ -126,7 +126,7 @@ def test_found_is_a_score_above_the_threshold_whatever_the_rank() -> None:
 
 
 def _raw_text(tables: Path, bill_id: str) -> str:
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         row = con.execute(
             "SELECT text FROM read_parquet($p) WHERE id = $i",
             {"p": str(tables / "bills" / "*.parquet"), "i": bill_id},
@@ -158,7 +158,7 @@ def test_pipeline_regression_the_enacting_bills_are_found_among_distractors(
     build = json.loads((COMMISSION / "build.json").read_text())
     act_texts = {act: _raw_text(commission_corpus, bill) for act, bill in build["queries"].items()}
     snapshot = load_enactments(ENACTMENTS)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         own = {
             (act, row[0], row[1])
             for act, bill in build["queries"].items()

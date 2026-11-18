@@ -16,7 +16,8 @@ from pathlib import Path
 from typing import Any
 
 from lineage import queries
-from lineage.hashing import file_sha256
+from lineage.core import db
+from lineage.core.hashing import file_sha256
 
 COMMAND = "uv run lineage eligible"
 SAMPLES_COMMAND = "uv run lineage stats --samples"
@@ -112,7 +113,7 @@ def build_eligibility(tables_dir: Path, *, rules_path: Path, report_path: Path) 
     """Write `<tables>/eligible.parquet` (id, eligible, rule) and the report of counts."""
     rules = load_rules(rules_path)
     bills = str(tables_dir / "bills" / "*.parquet")
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         records = queries.record_types(con, bills_glob=bills)
         decided = [(r, decide(rules, r.state, r.type, r.title)) for r in records]
         partial = tables_dir / "eligible.parquet.partial"
@@ -192,7 +193,7 @@ def rule_samples(tables_dir: Path, *, rules_path: Path) -> dict[str, Any]:
     reproduce the file from the pinned snapshot, but commemorations name private people.
     """
     rules = load_rules(rules_path)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         records = queries.record_types(con, bills_glob=str(tables_dir / "bills" / "*.parquet"))
     samples: dict[int, list[tuple[str, str, str]]] = defaultdict(list)
     spared: dict[int, set[tuple[str, str]]] = defaultdict(set)

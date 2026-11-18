@@ -42,10 +42,11 @@ from benchmarks.minhash import machine
 from lineage import queries
 from lineage.acts import ACT_NAMES, ACTS, load_act
 from lineage.boilerplate import boilerplate_kind
-from lineage.disk import DEFAULT_FLOOR_BYTES, require_free_space
+from lineage.core import db
+from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
+from lineage.core.paths import DATA
 from lineage.embed import embed, load_model
 from lineage.models import MODELS, require_model
-from lineage.paths import DATA
 from lineage.sections import normalize, split_sections
 from lineage.windows import WINDOW_STRIDE, WINDOW_WORDS, display_windows, window_counts
 
@@ -169,7 +170,7 @@ def distinct_units(sections_glob: str, eligible: Path) -> dict[str, dict[str, in
     an identical text needs one vector, however many bills carry it."""
     hashes: dict[str, list[NDArray[np.uint64]]] = defaultdict(list)
     for path in sorted(Path().glob(sections_glob)):
-        with queries.connect_quiet() as con:
+        with db.connect_quiet() as con:
             cursor = queries.matchable_sections(
                 con, sections_path=path, eligible_path=eligible, display=True
             )
@@ -286,7 +287,7 @@ def main() -> None:
         for act in ACTS
         for r in commission["queries"][act]["relatives"]
     ]
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         words = np.array(
             queries.section_word_counts(con, sections_glob=sections_glob, eligible_path=eligible),
             dtype=np.int64,
@@ -305,7 +306,7 @@ def main() -> None:
         )
     others = sorted(set(pool_ids) - enacting - related)
     sample = sorted(rng.choice(others, size=DISTRACTOR_BILLS, replace=False).tolist())
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         sections = queries.matchable_section_texts(
             con,
             sections_glob=sections_glob,

@@ -44,10 +44,12 @@ from typing import Any
 import numpy as np
 
 from lineage import queries
-from lineage.disk import DEFAULT_FLOOR_BYTES, require_free_space
+from lineage.core import db
+from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
+from lineage.core.hashing import file_sha256
+from lineage.core.paths import DATA
 from lineage.doctypes import RULES as DOCUMENT_TYPES
 from lineage.doctypes import build_eligibility
-from lineage.hashing import file_sha256
 from lineage.incremental import applied_days, embedder_for
 from lineage.index import build_index
 from lineage.ingest import ingest
@@ -55,7 +57,6 @@ from lineage.models import MODELS, MODELS_DIR
 from lineage.neighbors import EF_SEARCH as NEIGHBORS_EF_SEARCH
 from lineage.neighbors import RECALL_FLOOR, SPEC, build_neighbors
 from lineage.origins import origins_path, write_origin_matches
-from lineage.paths import DATA
 from lineage.sectioning import build_sections
 from lineage.semantic import MODEL
 from lineage.semantic_pairs import build_semantic_pairs, section_keys
@@ -217,7 +218,7 @@ def _exported_for_fresh(tables: Path, fresh: Mapping[str, frozenset[str]]) -> in
     """Give each record a day brought the text it carries, as an update does; the rest keep
     the merge's choice. Returns the files rewritten."""
     rewritten = 0
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for name, ids in sorted(fresh.items()):
             texts, bills = tables / "texts" / name, tables / "bills" / name
             if not ids or not texts.exists():
@@ -265,7 +266,7 @@ def _vector_index(
     blocks = load_vectors(source, model, plan)
     found: list[bytes] = []
     ids: list[int] = []
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for s in range(plan.shards):
             texts = queries.read_semantic_texts(
                 con, parquet_path=semantic_dir(source) / "texts" / f"{shard_name(s)}.parquet"
@@ -287,7 +288,7 @@ def _reuse_vectors(tables: Path, source: Path, model: str) -> dict[str, int]:
     out = vectors_dir(tables, model)
     out.mkdir(parents=True, exist_ok=True)
     filled = texts_reused = 0
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for s in range(plan.shards):
             texts = queries.read_semantic_texts(
                 con, parquet_path=semantic_dir(tables) / "texts" / f"{shard_name(s)}.parquet"
@@ -325,7 +326,7 @@ def _embed_rest(
     embed = embedder_for(model, models_dir)()
     out = vectors_dir(tables, model)
     out.mkdir(parents=True, exist_ok=True)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for s in todo:
             texts = queries.read_semantic_texts(
                 con, parquet_path=semantic_dir(tables) / "texts" / f"{shard_name(s)}.parquet"

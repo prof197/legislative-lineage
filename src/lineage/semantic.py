@@ -31,6 +31,7 @@ from numpy.typing import NDArray
 
 from lineage import queries
 from lineage.ann import Neighbors, exact_search
+from lineage.core import db
 from lineage.vectors import EmbedError, load_plan, load_vectors, rows_of, semantic_dir
 from lineage.windows import WINDOW_WORDS, display_windows
 
@@ -121,7 +122,7 @@ def search_sections(
     if not rows.size:
         return []
     text_ids = found.ids[rows, cols]
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         units = queries.semantic_units_of(
             con, units_glob=search.units_glob, text_ids=sorted(set(text_ids.tolist()))
         )
@@ -146,7 +147,7 @@ def best_cosines_to_bills(
     windows, _ = query_windows(sections)
     if not windows or not bill_ids:
         return {}
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         rows = queries.semantic_text_ids_of(
             con, units_glob=search.units_glob, bill_ids=sorted(set(bill_ids))
         )

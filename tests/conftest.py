@@ -13,6 +13,7 @@ from typer.testing import CliRunner
 
 from lineage import queries
 from lineage.cli import app
+from lineage.core import db
 from lineage.incremental import register_embedder
 from lineage.neighbors import build_neighbors
 from lineage.vectors import build_plan, semantic_dir, shard_name, vectors_dir
@@ -160,7 +161,7 @@ def embed_with_stand_in(built: Path, out: Path) -> Path:
     plan = build_plan(out, floor_bytes=0)
     vectors = vectors_dir(out, FAKE_MODEL)
     vectors.mkdir(parents=True)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for s in range(plan.shards):
             texts = queries.read_semantic_texts(
                 con, parquet_path=semantic_dir(out) / "texts" / f"{shard_name(s)}.parquet"

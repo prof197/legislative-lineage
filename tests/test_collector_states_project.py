@@ -28,6 +28,7 @@ from lineage.collectors.states_project import (
     model_policy,
     policy_url,
 )
+from lineage.core.robots import Robots, parse_robots
 from lineage.modeldocs import (
     MODELDOCS_DIR,
     ModelDoc,
@@ -38,7 +39,6 @@ from lineage.modeldocs import (
     read_versions,
     sha256,
 )
-from lineage.robots import Robots, parse_robots
 from lineage.sections import split_sections
 
 FIXTURES = Path(__file__).parent / "fixtures" / "collect" / "states-project"

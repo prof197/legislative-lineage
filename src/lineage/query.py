@@ -29,6 +29,7 @@ from numpy.typing import NDArray
 from lineage import queries
 from lineage.bands import load_band_index
 from lineage.boilerplate import boilerplate_kind
+from lineage.core import db
 from lineage.listing import MeaningHit, NearHit, SectionKey, listed_hits
 from lineage.lsh import BANDS, BUCKET_CAP, BandIndex, band_keys
 from lineage.minhash import NUM_PERM, permutations, signatures
@@ -208,7 +209,7 @@ def group_matches(
     cosine); `words` gives each query section's words, and `words_searched` the share's
     denominator. A corpus bill's relatives are scored by the same function (lineage.relatives),
     so a bill and a query scored alike agree."""
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         summaries = queries.bill_summaries(
             con,
             bills_glob=str(tables_dir / "bills" / "*.parquet"),

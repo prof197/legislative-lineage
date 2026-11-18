@@ -42,7 +42,8 @@ from numpy.typing import NDArray
 
 from lineage import queries
 from lineage.align import Embedder, align
-from lineage.intervals import weighted_share, wilson
+from lineage.core import db
+from lineage.core.intervals import weighted_share, wilson
 from lineage.labels import Item
 from lineage.listing import listed_pairs
 from lineage.precision import SEED as PRECISION_SEED
@@ -169,7 +170,7 @@ def build_relatives_sample(
     listed at `threshold` with `flag` and its exemption at `exempt_at` (lineage.listing), pair
     ids numbered from `first`."""
     section_bills, ordinals = section_keys(tables_dir)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         states = queries.bill_states(con, bills_glob=str(tables_dir / "bills" / "*.parquet"))
     in_state = np.fromiter(
         (states.get(b) == state for b in section_bills), dtype=bool, count=len(section_bills)

@@ -12,7 +12,7 @@ An enactment is found when a document of its act has a match with one of its bil
 share, the share of the model's words in the sections matched, is above MIN_SHARE: the score v1
 calls a family's share (DESIGN.md#bill-scoring), at v1's threshold of one matched section.
 Recall is reported pooled, per act and per stratum, for each stage alone and both together,
-each with its Wilson 95% interval (lineage.intervals), and at higher minimum shares.
+each with its Wilson 95% interval (lineage.core.intervals), and at higher minimum shares.
 
 A sealed answer key, one whose matches must not be inspected while matching is tuned, is
 evaluated only with `final`, as v1's held-out acts are only with `--final`, and never twice at
@@ -28,7 +28,7 @@ from typing import Any, Literal
 
 from lineage.answer_key import ANSWER_KEY, HELD_OUT_KEY, ORIGINS_HELD_OUT_KEY, read_answer_key
 from lineage.commission import MIN_SHARE, SHARE_SWEEP
-from lineage.intervals import wilson
+from lineage.core.intervals import wilson
 from lineage.origins import FLOOR, OriginMatch, Stage, is_listed
 from lineage.ulc import ULC_STATES, Stratum
 

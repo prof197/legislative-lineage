@@ -9,7 +9,7 @@ from pathlib import Path
 from xml.sax.saxutils import escape
 
 from lineage.collect_base import CollectFetchError, Fetched
-from lineage.robots import Robots, parse_robots
+from lineage.core.robots import Robots, parse_robots
 
 COLLECT = Path(__file__).parent / "fixtures" / "collect"
 SYNTHETIC_ACT = COLLECT / "synthetic_act.txt"

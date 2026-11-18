@@ -11,6 +11,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lineage import queries
+from lineage.core import db
 from lineage.semantic import SemanticSearch
 from lineage.vectors import build_plan, semantic_dir, shard_name
 
@@ -31,7 +32,7 @@ def bag_of_words(texts: Sequence[str]) -> NDArray[np.float32]:
 def bag_of_words_search(tables: Path) -> SemanticSearch:
     """Plan the tables' windows and embed them with the stand-in, in memory."""
     plan = build_plan(tables, floor_bytes=0)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         texts = [
             t
             for s in range(plan.shards)

@@ -9,7 +9,7 @@ import pytest
 from lineage.acts import ACTS, HELD_OUT_ACTS, ORIGIN_HELD_OUT_ACTS
 from lineage.answer_key import ANSWER_KEY, COLUMNS, render_answer_key
 from lineage.commission import RESULTS
-from lineage.intervals import wilson
+from lineage.core.intervals import wilson
 from lineage.origin_recall import (
     KEYS,
     V1_OPENED,

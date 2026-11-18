@@ -6,7 +6,8 @@ import pytest
 
 from lineage import bands, queries
 from lineage.bands import SWEEP_CAPS, load_band_index
-from lineage.disk import InsufficientDiskSpaceError
+from lineage.core import db
+from lineage.core.disk import InsufficientDiskSpaceError
 from lineage.index import build_index
 from lineage.lsh import BANDS, BUCKET_CAP, build_band_index
 from lineage.pairs import (
@@ -35,7 +36,7 @@ def tables(tmp_path: Path) -> Path:
     ids = sorted(SECTIONS)
     texts = [SECTIONS[b][1] for b in ids]
     n = len(ids)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         queries.write_sections(
             con,
             parquet_path=tables / "sections" / "s.parquet",
@@ -189,7 +190,7 @@ def test_a_provision_inside_another_states_long_section_is_a_verified_pair(
     (tables / "sections").mkdir(parents=True)
     (tables / "bills").mkdir()
     ids, states, texts = ["a1", "k1"], ["AL", "AK"], [provision, long]
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         queries.write_sections(
             con,
             parquet_path=tables / "sections" / "s.parquet",

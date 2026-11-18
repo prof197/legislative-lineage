@@ -1,5 +1,5 @@
 """HTTP as this project makes it: its User-Agent, the TLS intermediates some legislature servers
-omit, hosts that moved, retries, the host's turn (lineage.pace), and downloads streamed to disk
+omit, hosts that moved, retries, the host's turn (lineage.core.pace), and downloads streamed to disk
 under the free-space floor. Every request the pipeline makes goes through open_url.
 See DESIGN.md#data-snapshot.
 """
@@ -15,9 +15,10 @@ from collections.abc import Mapping
 from http.client import HTTPResponse
 from pathlib import Path
 
-from lineage import __version__, pace
-from lineage.disk import require_free_space
-from lineage.pace import MIN_INTERVAL_SECONDS
+from lineage import __version__
+from lineage.core import pace
+from lineage.core.disk import require_free_space
+from lineage.core.pace import MIN_INTERVAL_SECONDS
 
 USER_AGENT = f"legislative-lineage/{__version__} (+https://github.com/prof197/legislative-lineage)"
 
@@ -94,7 +95,7 @@ def open_url(
 ) -> HTTPResponse:
     """GET `url` as this project, retrying overload and server errors with backoff `pause`.
 
-    Every attempt waits for the host's turn (lineage.pace), at least `interval` after the last
+    Every attempt waits for the host's turn (lineage.core.pace), at least `interval` after the last
     request any process sent it. `headers` go with the User-Agent, which they cannot replace:
     an API key travels this way, never in a URL that could be logged.
     """

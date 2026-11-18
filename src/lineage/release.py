@@ -26,7 +26,7 @@ from pathlib import Path
 from pydantic import BaseModel, ConfigDict, ValidationError
 
 from lineage.atom import violations
-from lineage.disk import DEFAULT_FLOOR_BYTES, require_free_space
+from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.export_schema import (
     BillList,
     BillPage,

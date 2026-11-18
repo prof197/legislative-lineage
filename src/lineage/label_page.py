@@ -24,9 +24,9 @@ from pathlib import Path
 from typing import Any
 
 from lineage.align import Embedder, align
+from lineage.core.paths import DATA
 from lineage.labels import PERSON, SCALE, Item, LabelError, person
 from lineage.pair_data import LABELS
-from lineage.paths import DATA
 
 TEMPLATE = Path(__file__).parent / "pages" / "label.html"
 OUT = DATA / "label_page"

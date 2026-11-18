@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from lineage import queries
+from lineage.core import db
 from lineage.export_schema import BillPage
 from lineage.publish import (
     PublishError,
@@ -40,7 +40,7 @@ def _named_pages(rec: Recorded, n: int, export: Path) -> set[str]:
         c.relative_id for c in log if isinstance(c, RelativeGained | RelativeLost)
     }
     records = {c.bill_id for c in log if c.kind in ("added", "updated", "replaced")}
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         refs, _ = bill_refs(con, rec.tables[n], sorted(named))
     named_slugs = {refs[b].slug for b in named}
     record_slugs = {refs[b].slug for b in records}

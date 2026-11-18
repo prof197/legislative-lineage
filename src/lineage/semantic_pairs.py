@@ -33,8 +33,9 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lineage import queries
-from lineage.disk import require_free_space
-from lineage.memory import BOUND_BYTES, peak_bytes, require_within
+from lineage.core import db
+from lineage.core.disk import require_free_space
+from lineage.core.memory import BOUND_BYTES, peak_bytes, require_within
 from lineage.semantic import BUILD_THRESHOLD, MODEL, THRESHOLD, K
 from lineage.signatures import open_signatures, row_labels
 from lineage.vectors import semantic_dir, vectors_dir
@@ -132,7 +133,7 @@ def build_semantic_pairs(
     final = pairs_dir(tables_dir, model)
     spill = final.with_name(final.name + ".spill")
     spill.mkdir(parents=True, exist_ok=True)
-    with queries.connect(memory_limit=_DUCKDB_MEMORY, temp_directory=spill) as con:
+    with db.connect(memory_limit=_DUCKDB_MEMORY, temp_directory=spill) as con:
         found = queries.semantic_section_pairs(
             con,
             units_glob=units_glob,
@@ -282,7 +283,7 @@ def update_semantic_pairs(
     bills, ordinals = section_keys(tables_dir)
     number = {(b, int(o)): i for i, (b, o) in enumerate(zip(bills, ordinals.tolist(), strict=True))}
     units_glob = str(semantic_dir(tables_dir) / "units" / "*.parquet")
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         units = queries.semantic_units_of(con, units_glob=units_glob, text_ids=texts.tolist())
         touched = sorted({number[(b, o)] for _, b, o in units if (b, o) in number})
         if not touched:

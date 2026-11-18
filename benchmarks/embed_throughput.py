@@ -34,9 +34,10 @@ import numpy as np
 
 from benchmarks.minhash import machine
 from lineage import queries
+from lineage.core import db
+from lineage.core.paths import DATA
 from lineage.embed import BATCH_SIZE, embed, load_model
 from lineage.models import MODELS
-from lineage.paths import DATA
 from lineage.windows import WINDOW_WORDS, display_windows
 
 SEED = 20261109
@@ -54,7 +55,7 @@ WARMUP = 32
 def sample_windows(rng: np.random.Generator) -> list[str]:
     sections_glob = str(TABLES / "sections" / "*.parquet")
     eligible = TABLES / "eligible.parquet"
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         ids = queries.matchable_bill_ids(con, sections_glob=sections_glob, eligible_path=eligible)
         picked: list[str] = sorted(rng.choice(ids, size=SAMPLE_BILLS, replace=False).tolist())
         rows = queries.matchable_section_texts(

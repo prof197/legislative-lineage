@@ -47,7 +47,7 @@ LIBRARY_PAGES = (LIBRARY,)
 # On: see the module docstring. Tests pass `site=` either way.
 SITE_FETCH = True
 # robots.txt's "Crawl-delay: 10" stands before its "User-agent: *" group, so
-# `lineage.robots` reads no delay; the collector honors it anyway (read 2026-11-15).
+# `lineage.core.robots` reads no delay; the collector honors it anyway (read 2026-11-15).
 CRAWL_DELAY_SECONDS = 10.0
 HOSTS = frozenset({"www.citizen.org", "citizen.org"})
 

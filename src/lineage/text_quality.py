@@ -18,7 +18,8 @@ from pathlib import Path
 from typing import Any
 
 from lineage import queries
-from lineage.paths import DATA
+from lineage.core import db
+from lineage.core.paths import DATA
 from lineage.sections import clean, normalize, split_sections
 from lineage.text_fetch import Job, fetch_all, host_of
 from lineage.text_inventory import load_plan
@@ -205,14 +206,14 @@ def run_sample(
     rules_path: Path = RULES,
 ) -> dict[str, Any]:
     rules = load_rules(rules_path)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         plan = load_plan(con, plan_path)
     sample = draw_sample(plan)
     if fetch:
         # PDFs are also read by word position, so the report can choose the reading per state.
         fetch_all((job for _, job in sample), store, layout_too=True, containers=rules.containers)
     ids = sorted({job.id for _, job in sample})
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         theirs = queries.stored_text(
             con, bills_glob=str(tables_dir / "bills" / "*.parquet"), ids=ids
         )

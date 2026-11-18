@@ -45,7 +45,9 @@ from lineage import queries
 from lineage.align import Alignment, Embedder, align
 from lineage.collect import PACKAGE as COLLECT_PACKAGE
 from lineage.collect import collectors
-from lineage.disk import DEFAULT_FLOOR_BYTES, require_free_space
+from lineage.core import db
+from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
+from lineage.core.paths import DATA
 from lineage.embed import embed as embed_texts
 from lineage.embed import load_model
 from lineage.explain import CACHE_DIR, explain, prompt_spans
@@ -97,7 +99,6 @@ from lineage.origin_story import STORY as ORIGIN_STORY
 from lineage.origin_story import story_file as origin_story_file
 from lineage.origins import OriginMatch, is_listed, read_origin_matches
 from lineage.pairs import load_families
-from lineage.paths import DATA
 from lineage.relatives import bill_relatives
 from lineage.release import RELEASE_MANIFEST as RELEASE_MANIFEST
 from lineage.release import ReleaseError as ReleaseError
@@ -610,7 +611,7 @@ def build_export(
     flag = shipped_flag(tables)
     if flag is None and require_flag:
         raise ExportError("no state boilerplate counts; run `uv run lineage state-boilerplate`")
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         hosted = queries.hosted_bill_ids(
             con, bills_glob=bills_glob, eligible_path=tables / "eligible.parquet", state=state
         )
@@ -644,7 +645,7 @@ def build_export(
         {(a, oa) for (a, _), ps in found.items() for oa, _ in ps}
         | {(b, ob) for (_, b), ps in found.items() for _, ob in ps}
     )
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         refs, text_infos = _refs(con, tables, ids)
         section_rows = queries.section_infos(
             con, sections_glob=str(tables / "sections" / "*.parquet"), ids=ids

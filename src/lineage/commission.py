@@ -29,6 +29,7 @@ from numpy.typing import NDArray
 from lineage import queries
 from lineage.acts import ACTS, ACTS_DIR, enacted_text
 from lineage.bands import load_band_index
+from lineage.core import db
 from lineage.lsh import BUCKET_CAP, band_keys
 from lineage.minhash import NUM_PERM
 from lineage.query import (
@@ -258,7 +259,7 @@ def evaluate(
     if unknown:
         raise CommissionError(f"no query text for {', '.join(unknown)}")
 
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         bills = queries.enactment_bills(
             con,
             bills_glob=str(tables_dir / "bills" / "*.parquet"),
@@ -281,7 +282,7 @@ def evaluate(
     target_ids = sorted({b.id for f in found for b in f.bills})
 
     files = open_signatures(tables_dir)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         located = queries.signature_rows_of(con, keys_paths=files.keys, bill_ids=target_ids)
     rows_of: dict[str, list[tuple[int, int]]] = {}
     sections_of: dict[str, set[int]] = {}

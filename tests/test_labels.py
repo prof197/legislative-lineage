@@ -10,8 +10,8 @@ from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 
-from lineage import queries
 from lineage.cli import app
+from lineage.core import db
 from lineage.labels import (
     CORRECT_FROM,
     Item,
@@ -149,7 +149,7 @@ def test_alignment_is_marked_in_plain_text() -> None:
 
 
 def _corpus_sample(corpus: Path, tmp_path: Path) -> Path:
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         rows: list[tuple[str, int]] = con.execute(
             "SELECT bill_id, ordinal FROM read_parquet($p) ORDER BY bill_id, ordinal LIMIT 2",
             {"p": str(corpus / "sections" / "*.parquet")},

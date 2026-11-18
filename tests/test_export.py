@@ -10,6 +10,7 @@ import pytest
 
 from lineage import queries
 from lineage.align import align
+from lineage.core import db
 from lineage.explain import NotCachedError, explain, prompt_spans
 from lineage.explanations import ChangeExplanation, Claim
 from lineage.export import (
@@ -174,7 +175,7 @@ def _one_pair(out: Path) -> tuple[Comparison, Any]:
 
 
 def _bill_id(tables: Path, state: str, session: str, identifier: str) -> str:
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         found = queries.bill_id_of(
             con,
             bills_glob=str(tables / "bills" / "*.parquet"),

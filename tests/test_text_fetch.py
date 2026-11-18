@@ -12,7 +12,7 @@ from typing import Any, cast
 
 import pytest
 
-from lineage.robots import Robots, parse_robots
+from lineage.core.robots import Robots, parse_robots
 from lineage.text_fetch import (
     ExtractionWorkersError,
     Fetched,

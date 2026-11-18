@@ -4,11 +4,11 @@ and the coverage report.
 A collector finds documents and hands each to a `Collection`, which settles it one way: stored
 (new, or with a changed text), unchanged, blocked by robots.txt, or failed. `found` is counted
 from those outcomes, so the report accounts for every document by construction. robots.txt is
-read through `lineage.robots`, once per host per run, and every request goes through
-`lineage.fetch.open_url`, which waits for the host's turn across every process
-(`lineage.pace`), at least the host's crawl delay apart. A URL robots.txt disallows is reported,
-never fetched; one whose robots.txt could not be read is a failure to try again in a later run,
-not a block. See DESIGN.md#model-documents.
+read through `lineage.core.robots`, once per host per run, and every request goes through
+`lineage.core.http.open_url`, which waits for the host's turn across every process
+(`lineage.core.pace`), at least the host's crawl delay apart. A URL robots.txt disallows is
+reported, never fetched; one whose robots.txt could not be read is a failure to try again in a later
+run, not a block. See DESIGN.md#model-documents.
 """
 
 import urllib.error
@@ -18,13 +18,13 @@ from dataclasses import dataclass, field
 from datetime import date
 from typing import Literal
 
-from lineage import robots as robots_txt
 from lineage.collect import CollectContext, CollectFailure, CollectReport
-from lineage.disk import require_free_space
-from lineage.fetch import open_url
+from lineage.core import robots as robots_txt
+from lineage.core.disk import require_free_space
+from lineage.core.http import open_url
+from lineage.core.pace import MIN_INTERVAL_SECONDS
+from lineage.core.robots import Robots
 from lineage.modeldocs import ModelDoc, Source, sha256, store, withdraw
-from lineage.pace import MIN_INTERVAL_SECONDS
-from lineage.robots import Robots
 
 RobotsStatus = Literal["allowed", "no_robots_txt"]
 # A model act is a few hundred KiB; anything far larger is not the document asked for.
@@ -46,7 +46,7 @@ class Fetched:
 
 # (url, interval) -> the response. `fetch_url` in a run, recorded responses in tests.
 Fetch = Callable[[str, float], Fetched]
-# (scheme, host) -> the host's rules. `lineage.robots.read_robots` in a run.
+# (scheme, host) -> the host's rules. `lineage.core.robots.read_robots` in a run.
 ReadRobots = Callable[[str, str], Robots]
 
 

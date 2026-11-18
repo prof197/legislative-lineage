@@ -15,7 +15,7 @@ from collections.abc import Collection, Iterable, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
-from lineage.intervals import wilson
+from lineage.core.intervals import wilson
 from lineage.labels import is_correct
 from lineage.origin_labels import PROMPT
 from lineage.origin_precision import BANDS, FLOORS, band_name, estimate

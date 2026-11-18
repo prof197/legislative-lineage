@@ -2,7 +2,7 @@
 
 Each candidate is pinned to a Hugging Face repository at a commit, and each of its files to a
 hash: the SHA-256 Hugging Face records for a large file, the git blob id for a small one. The
-files are fetched through the project's own HTTP client (lineage.fetch), paced like every other
+files are fetched through the project's own HTTP client (lineage.core.http), paced like every other
 request, into `data/models/<name>/`, and a file lands only if its hash matches. fastembed then
 loads the model from that directory and never touches the network. The repositories are the
 ONNX exports fastembed itself uses. See DESIGN.md#semantic-stage.
@@ -13,9 +13,9 @@ import urllib.error
 from dataclasses import dataclass
 from pathlib import Path
 
-from lineage.disk import DEFAULT_FLOOR_BYTES
-from lineage.fetch import FetchError, download
-from lineage.paths import DATA
+from lineage.core.disk import DEFAULT_FLOOR_BYTES
+from lineage.core.http import FetchError, download
+from lineage.core.paths import DATA
 
 MODELS_DIR = DATA / "models"
 

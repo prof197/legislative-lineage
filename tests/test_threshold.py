@@ -4,7 +4,7 @@ from typing import Any
 
 import pytest
 
-from lineage.intervals import wilson
+from lineage.core.intervals import wilson
 from lineage.semantic import BUILD_THRESHOLD
 from lineage.threshold import (
     CANDIDATES,

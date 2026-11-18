@@ -5,13 +5,13 @@ from pathlib import Path
 import duckdb
 import pytest
 
-from lineage import disk, queries
-from lineage.disk import InsufficientDiskSpaceError, check_free_space
+from lineage.core import db, disk
+from lineage.core.disk import InsufficientDiskSpaceError, check_free_space
 
 GiB = 1 << 30
 ROOT = Path(__file__).parents[1]
 # Opening DuckDB any other way skips the spill cap, and one such query filled the disk once.
-_GUARDED = ROOT / "src" / "lineage" / "queries.py"
+_GUARDED = ROOT / "src" / "lineage" / "core" / "db.py"
 
 
 def test_allows_a_write_that_leaves_the_floor_intact() -> None:
@@ -44,14 +44,14 @@ def _spill_limit(con: duckdb.DuckDBPyConnection) -> str:
 def test_a_query_may_spill_only_down_to_the_floor(monkeypatch: pytest.MonkeyPatch) -> None:
     _with_free_space(monkeypatch, disk.DEFAULT_FLOOR_BYTES + 6 * GiB)
 
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         assert _spill_limit(con) == "6.0 GiB"
 
 
 def test_a_query_may_not_spill_at_all_below_the_floor(monkeypatch: pytest.MonkeyPatch) -> None:
     _with_free_space(monkeypatch, disk.DEFAULT_FLOOR_BYTES - GiB)
 
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         assert _spill_limit(con) == "0 bytes"
         con.execute("SET memory_limit = '32MB'")
         with pytest.raises(duckdb.OutOfMemoryException, match="max_temp_directory_size"):
@@ -63,7 +63,7 @@ def test_the_spill_directory_is_held_to_the_same_floor(
 ) -> None:
     _with_free_space(monkeypatch, disk.DEFAULT_FLOOR_BYTES + 2 * GiB)
 
-    with queries.connect(memory_limit="1GB", temp_directory=tmp_path) as con:
+    with db.connect(memory_limit="1GB", temp_directory=tmp_path) as con:
         assert _spill_limit(con) == "2.0 GiB"
 
 

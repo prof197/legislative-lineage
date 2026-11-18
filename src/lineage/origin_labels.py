@@ -26,6 +26,7 @@ from pathlib import Path
 from typing import Any
 
 from lineage import queries
+from lineage.core import db
 from lineage.generic_sections import generic_kind
 from lineage.labels import (
     Item,
@@ -111,7 +112,7 @@ def build_items(
             raise OriginPrecisionError(f"no source holds {doc_id}")
         _, matchable = matchable_sections(load_text(held[doc_id], root))
         model_sections[doc_id] = matchable
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         found = queries.matchable_sections_of(
             con,
             sections_glob=str(tables_dir / "sections" / "*.parquet"),
@@ -161,7 +162,7 @@ def pair_sections(
     model: dict[str, list[tuple[str, str]]] = {}
     for doc_id in sorted({d for _, d in by_key}):
         model[doc_id] = matchable_sections(load_text(held[doc_id], root))[1]
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         found = queries.matchable_sections_of(
             con,
             sections_glob=str(tables_dir / "sections" / "*.parquet"),

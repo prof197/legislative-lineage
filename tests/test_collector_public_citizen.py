@@ -27,6 +27,7 @@ from lineage.collectors.public_citizen import (
     doc_slug,
     read_page,
 )
+from lineage.core.robots import Robots, parse_robots
 from lineage.modeldocs import (
     MODELDOCS_DIR,
     ModelDoc,
@@ -36,7 +37,6 @@ from lineage.modeldocs import (
     read_versions,
     sha256,
 )
-from lineage.robots import Robots, parse_robots
 from tests.recorded_site import RecordedSite
 
 FIXTURES = Path(__file__).parent / "fixtures" / "collect" / "public-citizen"

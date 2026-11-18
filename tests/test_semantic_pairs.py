@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from lineage import queries
+from lineage.core import db
 from lineage.semantic import BUILD_THRESHOLD, THRESHOLD, K
 from lineage.semantic_pairs import (
     SemanticPairs,
@@ -28,7 +28,7 @@ def tables(embedded_commission: Path) -> Path:
 def _expected(tables: Path) -> dict[tuple[tuple[str, int], tuple[str, int]], float]:
     """Every cross-state section pair two windows' texts imply, at its best cosine, by brute
     force: the same text, or one text among the other's kept neighbors."""
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         units = con.execute(
             "SELECT u.bill_id, u.ordinal, u.text_id, b.state "
             "FROM read_parquet($u) u JOIN read_parquet($b) b ON b.id = u.bill_id",
@@ -115,7 +115,7 @@ def test_each_pair_names_the_window_pair_that_gave_its_best_cosine(tables: Path)
 
     pairs = load_semantic_pairs(tables, model=MODEL)
     bills, ordinals = section_keys(tables)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         rows = con.execute(
             "SELECT bill_id, ordinal, window_number, text_id FROM read_parquet($u)",
             {"u": str(semantic_dir(tables) / "units" / "*.parquet")},

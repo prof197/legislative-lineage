@@ -11,8 +11,8 @@ from typer.testing import CliRunner
 
 from lineage import models
 from lineage.cli import app
+from lineage.core.http import FetchError
 from lineage.embed import embed
-from lineage.fetch import FetchError
 from lineage.models import MODELS, Model, ModelError, ModelFile, fetch_model, git_blob_id
 
 ONNX = b"onnx bytes"

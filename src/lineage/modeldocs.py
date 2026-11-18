@@ -20,7 +20,7 @@ from typing import Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from lineage.paths import DATA
+from lineage.core.paths import DATA
 
 MODELDOCS_DIR = DATA / "modeldocs"
 SLUG = r"^[a-z0-9]+(-[a-z0-9]+)*$"

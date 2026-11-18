@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pytest
 
-from lineage.paths import DATA
+from lineage.core.paths import DATA
 from lineage.release import CHECKSUMS, package
 from tests.fixture_export import COMMITTED
 

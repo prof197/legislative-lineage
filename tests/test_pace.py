@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 
-from lineage import pace
+from lineage.core import pace
 
 INTERVAL = 0.2
 WORKERS = 4
@@ -84,8 +84,8 @@ def arrivals() -> Iterator[tuple[str, list[float]]]:
 # Each worker does what a fetch run does: robots.txt first, then the documents.
 _WORKER = f"""
 import sys
-from lineage.fetch import open_url
-from lineage.robots import read_robots
+from lineage.core.http import open_url
+from lineage.core.robots import read_robots
 
 host = sys.argv[1]
 read_robots("http", host, pause=0, interval={INTERVAL}, retry_seconds=())

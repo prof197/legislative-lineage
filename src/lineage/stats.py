@@ -10,8 +10,9 @@ from pathlib import Path
 from typing import Any
 
 from lineage import queries
-from lineage.hashing import file_sha256
-from lineage.paths import DATA
+from lineage.core import db
+from lineage.core.hashing import file_sha256
+from lineage.core.paths import DATA
 from lineage.sessions import CARRYOVER, load_sessions, status_end_date
 from lineage.status import ENACTED_IN_WORDS, Status
 
@@ -69,7 +70,7 @@ def _nest(rows: list[tuple[str, str, int]]) -> dict[str, dict[str, int]]:
 
 def georgia_local_notices(bills_glob: str) -> dict[str, int]:
     """Georgia records per session whose stored text is a local bill's notice alone."""
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         rows = queries.notice_only_by_session(
             con,
             bills_glob=bills_glob,
@@ -82,7 +83,7 @@ def georgia_local_notices(bills_glob: str) -> dict[str, int]:
 
 def amendment_only(bills_glob: str) -> dict[tuple[str, str], tuple[int, int]]:
     """Per (state, session): records stored as an amendment, and how many replace the bill."""
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         rows = queries.amendment_only_by_session(
             con,
             bills_glob=bills_glob,
@@ -120,7 +121,7 @@ def coverage(
     texts = str(tables_dir / "texts" / "*.parquet")
     sections = str(tables_dir / "sections" / "*.parquet")
     session_dates = load_sessions(sessions_path)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         per_session = queries.coverage_by_session(
             con,
             bills_glob=bills,

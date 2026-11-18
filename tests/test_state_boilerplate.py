@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from lineage import queries
+from lineage.core import db
 from lineage.flag_precision import build_flagged_sample, with_flag
 from lineage.labels import Item, Pair, Section, SectionKey, SectionRef, text_sha256
 from lineage.pairs import load_families, load_same_state_pairs
@@ -87,7 +87,7 @@ def test_the_build_stores_each_sections_count_and_the_strata_with_the_flag(
     assert counts.tolist() == [len(r) for r in reached]
     assert any(reached), "the fixture should have same-state near-duplicates across families"
     assert sum(h["sections"] for h in doc["histogram"]) == len(bills)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         texts: list[tuple[str, int, str]] = con.execute(
             "SELECT bill_id, ordinal, normalized FROM read_parquet($p)",
             {"p": str(tables / "sections" / "*.parquet")},

@@ -55,9 +55,9 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict
 
+from lineage.core.paths import DATA
 from lineage.export_schema import Meta, Release
 from lineage.feed import listed_origin
-from lineage.paths import DATA
 from lineage.release import (
     RELEASE_MANIFEST,
     Checksums,

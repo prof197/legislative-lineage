@@ -3,8 +3,8 @@ from pathlib import Path
 import duckdb
 import pytest
 
-from lineage import queries
-from lineage.disk import InsufficientDiskSpaceError
+from lineage.core import db
+from lineage.core.disk import InsufficientDiskSpaceError
 from lineage.ingest import ingest
 from lineage.sectioning import SectioningError, build_sections
 from lineage.snapshot import scan, write_manifest
@@ -23,7 +23,7 @@ def tables(raw_dir: Path, tmp_path: Path) -> Path:
 
 
 def _sections(tables: Path) -> duckdb.DuckDBPyConnection:
-    con = queries.connect_quiet()
+    con = db.connect_quiet()
     con.execute(
         f"CREATE VIEW sections AS SELECT * FROM read_parquet('{tables / 'sections' / '*.parquet'}')"
     )
@@ -93,7 +93,7 @@ def test_each_file_is_split_by_its_own_state_rules(tmp_path: Path) -> None:
     (tables / "bills").mkdir(parents=True)
     (tables / "texts").mkdir()
     text = "Section A. Enacted as follows:\n474.540. The first.\n474.542. The second.\n"
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for state in ("MO", "KS"):
             con.execute(
                 f"COPY (SELECT '{state}-1' AS id, '{state}' AS state) "

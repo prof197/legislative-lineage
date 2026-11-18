@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 from lineage import queries
+from lineage.core import db
 
 # id: (state, session, identifier, title, sections as (text, boilerplate), eligible, family)
 BILLS = {
@@ -25,7 +26,7 @@ def tables(tmp_path: Path) -> Path:
     ]
     ids = [r[0] for r in rows]
     n = len(rows)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         queries.write_sections(
             con,
             parquet_path=tmp_path / "s.parquet",
@@ -59,7 +60,7 @@ def tables(tmp_path: Path) -> Path:
 
 def test_only_eligible_non_boilerplate_sections_count(tables: Path) -> None:
     glob, eligible = str(tables / "s.parquet"), tables / "eligible.parquet"
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         words = queries.section_word_counts(con, sections_glob=glob, eligible_path=eligible)
         ids = queries.matchable_bill_ids(con, sections_glob=glob, eligible_path=eligible)
         texts = queries.matchable_section_texts(
@@ -74,7 +75,7 @@ def test_only_eligible_non_boilerplate_sections_count(tables: Path) -> None:
 def test_related_bills_are_the_named_ones_the_titled_ones_and_their_families(
     tables: Path,
 ) -> None:
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         got = queries.related_bill_ids(
             con, bills_glob=str(tables / "b.parquet"), families_path=tables / "families.parquet",
             listed=[("OH", "135", "SB 237")], title_regex="slapp",

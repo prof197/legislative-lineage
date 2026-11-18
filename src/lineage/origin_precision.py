@@ -48,7 +48,8 @@ from typing import Any, cast
 import numpy as np
 
 from lineage import queries
-from lineage.intervals import wilson
+from lineage.core import db
+from lineage.core.intervals import wilson
 from lineage.model_labels import MAX_COST, MODEL_ID, PASSAGES_HIGH
 from lineage.model_labels import spent as label_spent
 from lineage.modeldocs import MODELDOCS_DIR, ModelDoc, load_text
@@ -320,7 +321,7 @@ def write_part(
 
 def section_chars(tables_dir: Path, bill_ids: Sequence[str]) -> dict[str, dict[int, int]]:
     """Each bill's matchable sections' lengths in characters, by ordinal."""
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         rows = queries.matchable_section_texts(
             con,
             sections_glob=str(tables_dir / "sections" / "*.parquet"),

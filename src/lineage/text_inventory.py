@@ -22,9 +22,10 @@ from urllib.parse import urlsplit
 import duckdb
 
 from lineage import doctypes, queries
-from lineage.fetch import HOST_MOVES, moved
-from lineage.paths import DATA
-from lineage.robots import Robots, read_robots
+from lineage.core import db
+from lineage.core.http import HOST_MOVES, moved
+from lineage.core.paths import DATA
+from lineage.core.robots import Robots, read_robots
 from lineage.sections import split_sections
 from lineage.stats import (
     AMENDMENT_CHARS,
@@ -216,7 +217,7 @@ def build_inventory(
     report_path: Path,
     read: Callable[[str, str], Robots] = read_robots,
 ) -> dict[str, Any]:
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         con.execute("SET memory_limit = '6GB'")
         texts = tables_dir / "texts"
         bills_glob = str(tables_dir / "bills" / "*.parquet")

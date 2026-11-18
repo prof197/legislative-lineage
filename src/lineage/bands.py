@@ -18,7 +18,8 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lineage import queries
-from lineage.disk import require_free_space
+from lineage.core import db
+from lineage.core.disk import require_free_space
 from lineage.lsh import (
     BANDS,
     BUCKET_CAP,
@@ -42,7 +43,7 @@ _CHUNK_ROWS = 1 << 20
 
 def row_states(tables_dir: Path, labels: RowLabels) -> NDArray[np.int32]:
     """Each signature row's state, as a code that is equal exactly when the states are."""
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         by_bill = queries.bill_states(con, bills_glob=str(tables_dir / "bills" / "*.parquet"))
     code = {state: i for i, state in enumerate(sorted(set(by_bill.values())))}
     per_section = np.fromiter(

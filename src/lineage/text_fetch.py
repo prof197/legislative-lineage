@@ -1,11 +1,11 @@
 """Fetch planned bill versions from the legislatures, politely, and keep only their text.
 
 Each host gets one worker, and hosts run in parallel. A host sees at most one request a second,
-or its robots.txt crawl delay if longer, from every process together (lineage.pace). Every URL
+or its robots.txt crawl delay if longer, from every process together (lineage.core.pace). Every URL
 is checked against the host's robots.txt for this project's User-Agent before it is requested;
 each read of robots.txt is recorded in `<store>/robots/<host>.jsonl`, and a host whose
 robots.txt refuses only for now is left untouched, for a later run. Overload and server errors
-are retried with backoff (lineage.fetch.open_url), and a host that keeps failing is stopped for
+are retried with backoff (lineage.core.http.open_url), and a host that keeps failing is stopped for
 the run. The response body is extracted in memory and dropped: the store keeps the text, its
 SHA-256, the URL fetched and the version's label, one JSON line per document in
 `<store>/<host>.jsonl`. A rerun skips what is stored, except network and server failures, which
@@ -31,11 +31,11 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 
-from lineage.disk import DEFAULT_FLOOR_BYTES, require_free_space
+from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
+from lineage.core.http import moved, open_url
+from lineage.core.pace import MIN_INTERVAL_SECONDS
+from lineage.core.robots import Robots, read_robots
 from lineage.extract import ExtractError, extract
-from lineage.fetch import moved, open_url
-from lineage.pace import MIN_INTERVAL_SECONDS
-from lineage.robots import Robots, read_robots
 
 # A bill's PDF is rarely over a few megabytes; an appropriations act can pass 30.
 MAX_BODY_BYTES = 64 << 20
@@ -176,7 +176,7 @@ def fetch_one(
 def stored(path: Path) -> set[tuple[str, str, str]]:
     """(id, format, address requested) already in a host's store and not worth retrying.
 
-    The address is the one the request went to, so a link that has since moved (lineage.fetch,
+    The address is the one the request went to, so a link that has since moved (lineage.core.http,
     moved) is fetched again from where it now leads."""
     done: set[tuple[str, str, str]] = set()
     if path.exists():

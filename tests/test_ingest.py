@@ -5,7 +5,8 @@ import duckdb
 import pytest
 
 from lineage import queries
-from lineage.disk import InsufficientDiskSpaceError
+from lineage.core import db
+from lineage.core.disk import InsufficientDiskSpaceError
 from lineage.ingest import ingest
 from lineage.snapshot import SnapshotError, scan, write_manifest
 from lineage.status import ENACTED_WORDING, OUTCOME_CLASSIFICATIONS
@@ -20,7 +21,7 @@ def manifest(raw_dir: Path, tmp_path: Path) -> Path:
 
 
 def _bills(out: Path) -> duckdb.DuckDBPyConnection:
-    con = queries.connect_quiet()
+    con = db.connect_quiet()
     con.execute(f"CREATE VIEW bills AS SELECT * FROM read_parquet('{out / 'bills' / '*.parquet'}')")
     return con
 
@@ -183,7 +184,7 @@ def test_status_reads_unclassified_actions_whose_wording_records_an_enactment(
     path = tmp_path / "bills.json"
     path.write_text(json.dumps([bill]))
 
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         ((_, _, actions),) = queries.outcome_actions(
             con, json_path=path, kinds=sorted(OUTCOME_CLASSIFICATIONS), wording=ENACTED_WORDING
         )

@@ -8,7 +8,8 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from lineage.intervals import wilson
+from lineage.core import db
+from lineage.core.intervals import wilson
 from lineage.labels import SAME_PROVISION, Item, Pair, Section, SectionKey, SectionRef, text_sha256
 from lineage.precision import (
     draw,
@@ -223,10 +224,9 @@ def test_a_sample_pair_from_an_unknown_stratum_is_refused(tmp_path: Path) -> Non
 def test_the_command_writes_the_estimate_into_the_results(corpus: Path, tmp_path: Path) -> None:
     from typer.testing import CliRunner
 
-    from lineage import queries
     from lineage.cli import app
 
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         rows: list[tuple[str, int]] = con.execute(
             "SELECT bill_id, ordinal FROM read_parquet($p) ORDER BY bill_id, ordinal LIMIT 2",
             {"p": str(corpus / "sections" / "*.parquet")},

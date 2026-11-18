@@ -4,7 +4,8 @@ import numpy as np
 import pytest
 
 from lineage import queries
-from lineage.disk import InsufficientDiskSpaceError
+from lineage.core import db
+from lineage.core.disk import InsufficientDiskSpaceError
 from lineage.minhash import NUM_PERM, permutations, signatures
 from lineage.shingles import section_shingles
 from lineage.signatures import (
@@ -40,7 +41,7 @@ def tables(tmp_path: Path) -> Path:
     keys = sorted(TEXTS)
     # Two sections files, as the real table has one or more per archive.
     halves = {"a.parquet": keys[:3], "b.parquet": keys[3:]}
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for name, part in halves.items():
             columns = queries.SectionColumns(
                 bill_id=[b for b, _ in part],
@@ -87,7 +88,7 @@ def test_signs_every_matchable_section_that_has_a_shingle(tables: Path) -> None:
 def test_the_stoplist_is_applied_before_signing(tables: Path) -> None:
     text = TEXTS[("b1", 1)] + " " + STOPLISTED
     (tables / "sections" / "b.parquet").unlink()
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         columns = queries.SectionColumns(["b9"], [1], [None], [text], [text], [True], [None])
         queries.write_sections(con, parquet_path=tables / "sections" / "b.parquet", columns=columns)
         queries.write_eligibility(
@@ -157,7 +158,7 @@ def test_a_long_section_is_signed_window_by_window(tables: Path) -> None:
     words = [f"w{i}" for i in range(WINDOW_WORDS + 1)]
     text = " ".join(words)
     (tables / "sections" / "b.parquet").unlink()
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         columns = queries.SectionColumns(["b9"], [4], [None], [text], [text], [True], [None])
         queries.write_sections(con, parquet_path=tables / "sections" / "b.parquet", columns=columns)
         queries.write_eligibility(
@@ -199,7 +200,7 @@ def test_the_mapped_files_give_what_the_table_in_memory_gives(tables: Path) -> N
     words = [f"w{i}" for i in range(3 * WINDOW_WORDS)]
     text = " ".join(words)
     (tables / "sections" / "b.parquet").unlink()
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         columns = queries.SectionColumns(["b9"], [4], [None], [text], [text], [True], [None])
         queries.write_sections(con, parquet_path=tables / "sections" / "b.parquet", columns=columns)
         queries.write_eligibility(

@@ -16,8 +16,8 @@ import urllib.error
 from dataclasses import dataclass
 from pathlib import Path
 
-from lineage.fetch import FetchError, download
-from lineage.paths import DATA
+from lineage.core.http import FetchError, download
+from lineage.core.paths import DATA
 
 PAIR_DATA_DIR = DATA / "pair_data"
 REPO = "hikoseon12/learning-bill-similarity"

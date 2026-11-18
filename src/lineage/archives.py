@@ -2,7 +2,7 @@
 
 Open States publishes the session archives without an account or key. Each file lands only if
 its SHA-256 matches the manifest; `repin` accepts a changed file and records its new hash. Every
-request goes through lineage.fetch. See DESIGN.md#data-snapshot.
+request goes through lineage.core.http. See DESIGN.md#data-snapshot.
 """
 
 import urllib.error
@@ -11,8 +11,8 @@ import zipfile
 from dataclasses import dataclass, field, replace
 from pathlib import Path
 
-from lineage.disk import require_free_space
-from lineage.fetch import FetchError, open_url, stream
+from lineage.core.disk import require_free_space
+from lineage.core.http import FetchError, open_url, stream
 from lineage.snapshot import Archive, SnapshotError, load_manifest, read_archive, write_manifest
 
 SOURCE = "https://data.openstates.org/json/latest/"
@@ -73,7 +73,7 @@ def fetch_raw(
     pause: float = 1.0,
 ) -> FetchResult:
     """Download every pinned archive missing from `raw_dir`, one at a time, `pause` apart
-    (lineage.pace)."""
+    (lineage.core.pace)."""
     pinned = load_manifest(manifest_path)
     result = FetchResult()
     todo = [a for a in pinned if not (raw_dir / a.path).exists()]

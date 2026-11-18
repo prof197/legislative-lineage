@@ -3,7 +3,7 @@
 A collector module declares `SOURCE`, its `lineage.modeldocs.Source`, and `collect(context)`,
 which stores what it finds through `lineage.modeldocs.store` and returns a `CollectReport`. The
 registry imports every module in the package, so a new source is a new file and nothing shared
-is edited. Every request goes through `lineage.fetch.open_url` and its pacing, and a URL that
+is edited. Every request goes through `lineage.core.http.open_url` and its pacing, and a URL that
 robots.txt disallows is reported, never worked around. See DESIGN.md#model-documents.
 
 See DESIGN.md#dr-10.

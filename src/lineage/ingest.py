@@ -16,7 +16,8 @@ from pathlib import Path
 import duckdb
 
 from lineage import queries
-from lineage.disk import require_free_space
+from lineage.core import db
+from lineage.core.disk import require_free_space
 from lineage.sessions import Session, load_sessions, status_end_date
 from lineage.snapshot import Archive, bills_member, load_manifest, verify
 from lineage.status import OUTCOME_CLASSIFICATIONS, STATUS_WORDING, Action, bill_status
@@ -118,7 +119,7 @@ def ingest(
     building = Path(tempfile.mkdtemp(prefix="bills.", dir=out_dir))
     try:
         with tempfile.TemporaryDirectory(dir=out_dir) as scratch:
-            con = queries.connect(memory_limit=_MEMORY_LIMIT, temp_directory=Path(scratch))
+            con = db.connect(memory_limit=_MEMORY_LIMIT, temp_directory=Path(scratch))
             try:
                 rows = sum(
                     _ingest_archive(con, raw_dir, a, sessions, building, Path(scratch))

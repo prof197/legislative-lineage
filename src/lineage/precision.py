@@ -9,7 +9,7 @@ are shuffled together into one labeling order, so a session stopped part way has
 stratum about evenly.
 
 A pair is correct when labeled CORRECT_FROM or higher (lineage.labels). Each stratum's
-precision gets the Wilson interval (lineage.intervals). A stage's precision, and the overall
+precision gets the Wilson interval (lineage.core.intervals). A stage's precision, and the overall
 one, weight the strata it covers by their sizes in the build: a sample with as many pairs from a
 small stratum as from a large one would otherwise over-count it. The weighted interval is
 Agresti and Coull's: each stratum's share with two successes and two failures added, at 95%,
@@ -26,7 +26,7 @@ from typing import Any
 
 import numpy as np
 
-from lineage.intervals import wilson
+from lineage.core.intervals import wilson
 from lineage.labels import CORRECT_FROM, MODEL, PERSON, Item, SectionKey, is_correct
 from lineage.semantic import MODEL as MODEL_NAME
 from lineage.semantic_pairs import section_keys

@@ -23,7 +23,8 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lineage import queries
-from lineage.disk import require_free_space
+from lineage.core import db
+from lineage.core.disk import require_free_space
 from lineage.minhash import NUM_PERM, SEED, Permutations, permutations, signatures
 from lineage.shingles import section_shingles
 from lineage.stoplist import apply_stoplist, load_stoplist
@@ -85,7 +86,7 @@ def _sign_part(
     windows: list[int] = []
     rows: list[NDArray[np.uint32]] = []
     sizes: list[int] = []
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         scan = queries.matchable_sections(
             con, sections_path=part, eligible_path=eligible, display=True
         )
@@ -151,7 +152,7 @@ def build_signatures(tables_dir: Path, *, workers: int, floor_bytes: int) -> dic
     )
     eligible = tables_dir / "eligible.parquet"
     stoplist = load_stoplist(tables_dir)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         # Windows overlap by half, so a section yields at most one per stride of its words,
         # plus the last.
         windows = queries.window_bound(
@@ -226,7 +227,7 @@ def load_signatures(tables_dir: Path) -> SignatureTable:
     ordinals: list[int] = []
     windows: list[int] = []
     matrices: list[NDArray[np.uint32]] = []
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for path in files:
             ids, ords, wins = queries.read_signature_keys(
                 con, parquet_path=path.with_suffix(".parquet")
@@ -275,7 +276,7 @@ def row_labels(files: SignatureFiles) -> RowLabels:
     ordinals_of: list[int] = []
     previous: tuple[str, int] | None = None
     following = 0
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for path in files.keys:
             ids, ords, _ = queries.read_signature_keys(con, parquet_path=path)
             if not ids:
@@ -320,7 +321,7 @@ def signature_sections(files: SignatureFiles, rows: NDArray[np.int64]) -> list[t
     out: list[tuple[str, int]] = [("", 0)] * rows.size
     which = _by_file(files, rows)
     used: list[int] = np.unique(which).tolist()
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for f in used:
             positions = np.flatnonzero(which == f)
             local = (rows[positions] - files.starts[f]).tolist()

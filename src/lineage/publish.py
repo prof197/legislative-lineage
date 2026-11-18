@@ -49,7 +49,8 @@ from lineage.align import Alignment
 from lineage.align import Span as AlignSpan
 from lineage.collect import PACKAGE as COLLECT_PACKAGE
 from lineage.collect import collectors
-from lineage.disk import DEFAULT_FLOOR_BYTES, require_free_space
+from lineage.core import db
+from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.explain import CACHE_DIR, explain, prompt_spans
 from lineage.explain import MODEL as EXPLAIN_MODEL
 from lineage.export import (
@@ -319,7 +320,7 @@ def plan_export(
     flag = shipped_flag(tables)
     if flag is None and require_flag:
         raise ExportError("no state boilerplate counts; run `uv run lineage state-boilerplate`")
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         hosted = queries.hosted_bill_ids(
             con, bills_glob=bills_glob, eligible_path=tables / "eligible.parquet", state=state
         )
@@ -352,7 +353,7 @@ def plan_export(
         | {(b, ob) for (_, b), ps in found.items() for _, ob in ps}
     )
     sections_glob = str(tables / "sections" / "*.parquet")
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         refs, text_infos = bill_refs(con, tables, ids)
         section_rows = queries.section_infos(con, sections_glob=sections_glob, ids=ids)
         shown = queries.sections_at(con, sections_glob=sections_glob, keys=shown_keys)

@@ -18,6 +18,7 @@ from pathlib import Path
 
 from lineage import queries
 from lineage.collect import collectors
+from lineage.core import db
 from lineage.export import RESULTS, build_export
 from lineage.generic_sections import generic_kind
 from lineage.labels import SAME_PROVISION, text_sha256
@@ -69,7 +70,7 @@ def hand_made_origins(
     would on its strongest pair, so the fixture's origin story can feature it (a featured
     story features only a match judged correct, lineage.origin_story)."""
     ids = [bill for bill, _ in DRAWN_FROM.values()]
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         rows = queries.matchable_section_texts(
             con,
             sections_glob=str(tables / "sections" / "*.parquet"),

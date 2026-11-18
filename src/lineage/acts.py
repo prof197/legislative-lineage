@@ -14,7 +14,7 @@ See DESIGN.md#commission-recall.
 import re
 from pathlib import Path
 
-from lineage.paths import DATA
+from lineage.core.paths import DATA
 
 ACTS = (
     "public-expression-protection",

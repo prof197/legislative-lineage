@@ -4,8 +4,8 @@ from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 
-from lineage import queries
 from lineage.cli import app
+from lineage.core import db
 from lineage.doctypes import (
     RULES,
     DocTypesError,
@@ -311,7 +311,7 @@ def test_writes_eligibility_and_a_report_counting_each_rule(tables: Path, tmp_pa
 
     doc = build_eligibility(tables, rules_path=RULES, report_path=report)
 
-    con = queries.connect_quiet()
+    con = db.connect_quiet()
     rows = con.execute(
         f"SELECT b.state, b.identifier, e.eligible, e.rule "
         f"FROM read_parquet('{tables / 'eligible.parquet'}') e "

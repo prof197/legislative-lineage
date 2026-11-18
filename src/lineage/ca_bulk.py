@@ -21,9 +21,9 @@ from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
-from lineage.disk import DEFAULT_FLOOR_BYTES, require_free_space
+from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
+from lineage.core.http import download
 from lineage.extract import ExtractError, html_text
-from lineage.fetch import download
 from lineage.text_fetch import Fetched
 
 HOST = "downloads.leginfo.legislature.ca.gov"

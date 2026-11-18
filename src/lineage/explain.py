@@ -37,6 +37,7 @@ from pydantic import ValidationError
 
 from lineage import queries
 from lineage.align import Span
+from lineage.core import db
 from lineage.explanations import (
     ChangeExplanation,
     Claim,
@@ -448,7 +449,7 @@ def load_pairs(path: Path) -> list[PairToExplain]:
 def pair_texts(tables_dir: Path, pairs: Sequence[PairToExplain]) -> list[tuple[str, str]]:
     """Each pair's origin and descendant display texts, read in one pass."""
     keys = sorted({k for p in pairs for k in (p.origin, p.descendant)})
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         found = queries.sections_at(
             con, sections_glob=str(tables_dir / "sections" / "*.parquet"), keys=keys
         )

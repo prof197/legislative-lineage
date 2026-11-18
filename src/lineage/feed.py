@@ -47,6 +47,7 @@ from lineage import queries
 from lineage.atom import ATOM, violations
 from lineage.collect import PACKAGE as COLLECT_PACKAGE
 from lineage.collect import collectors
+from lineage.core import db
 from lineage.export_schema import Meta
 from lineage.modeldocs import MODELDOCS_DIR, read_docs
 from lineage.origins import FLOOR
@@ -520,7 +521,7 @@ def bill_infos(tables: Path, *, state: str, site_url: str, ids: list[str]) -> di
     if not ids:
         return {}
     bills_glob = str(tables / "bills" / "*.parquet")
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         refs, texts = bill_refs(con, tables, ids)
         hosted = set(
             queries.hosted_bill_ids(

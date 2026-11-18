@@ -46,8 +46,8 @@ from lineage.ann import (
     set_threads,
     train_index,
 )
-from lineage.memory import peak_bytes
-from lineage.paths import DATA
+from lineage.core.memory import peak_bytes
+from lineage.core.paths import DATA
 from lineage.semantic import BUILD_THRESHOLD as THRESHOLD
 from lineage.semantic import MODEL
 from lineage.vectors import embedded_shards, load_plan, rows_of

@@ -22,7 +22,8 @@ from typing import Any
 
 from lineage import queries
 from lineage.commission import FIRST_YEAR
-from lineage.paths import DATA
+from lineage.core import db
+from lineage.core.paths import DATA
 from lineage.sessions import load_sessions
 from lineage.stats import AMENDMENT_CHARS, AMENDMENT_OPENING, AMENDMENT_SUBSTITUTE
 from lineage.ulc import BillRecord, find_bills, load_enactments
@@ -78,7 +79,7 @@ def main() -> None:
         if r.stratum is not None and r.state is not None and r.year >= FIRST_YEAR
     ]
     bills_glob = str(TABLES / "bills" / "*.parquet")
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         bills = queries.enactment_bills(
             con,
             bills_glob=bills_glob,

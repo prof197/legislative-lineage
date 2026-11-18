@@ -22,8 +22,8 @@ from collections.abc import Callable
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime
 
-from lineage.fetch import USER_AGENT, open_url
-from lineage.pace import MIN_INTERVAL_SECONDS
+from lineage.core.http import USER_AGENT, open_url
+from lineage.core.pace import MIN_INTERVAL_SECONDS
 
 # RFC 9309 asks crawlers to parse at least the first 500 KiB.
 _MAX_BYTES = 512 * 1024

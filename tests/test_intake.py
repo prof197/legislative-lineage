@@ -2,7 +2,7 @@
 
 The API is never called: `FakeApi` answers from constructed bills (tests/fixtures/intake/api.json)
 the way the API's own code does (updated_at at or after `updated_since`, sorted, paged), and a
-local server stands in for it where `lineage.fetch.open_url`'s pacing and backoff are tested.
+local server stands in for it where `lineage.core.http.open_url`'s pacing and backoff are tested.
 """
 
 import json
@@ -23,9 +23,11 @@ from urllib.parse import parse_qs, urlsplit
 import pytest
 from typer.testing import CliRunner
 
-from lineage import pace, queries
+from lineage import queries
 from lineage.cli import app
-from lineage.fetch import open_url, request_url
+from lineage.core import db, pace
+from lineage.core.http import open_url, request_url
+from lineage.core.robots import parse_robots
 from lineage.intake import (
     IntakeError,
     Tier,
@@ -35,7 +37,6 @@ from lineage.intake import (
     run_intake,
 )
 from lineage.openstates_api import INCLUDE, PER_PAGE, Bill, bills_url, bulk_record
-from lineage.robots import parse_robots
 from lineage.text_fetch import Job, fetch_one, host_of, run_host
 from lineage.text_rules import load_rules, usable
 from lineage.updates import fold, load_day, record_changes, text_hash, write_archives
@@ -352,7 +353,7 @@ def test_the_rebuild_reads_the_fetched_text(tmp_path: Path) -> None:
         result = runner.invoke(app, args)
         assert result.exit_code == 0, result.output
 
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         stored = queries.stored_texts(
             con, bills_glob=str(tables / "bills" / "*.parquet"), ids=[DE_HB1, MI_HB4001]
         )
@@ -554,7 +555,7 @@ def _through_open_url(
 
 def _waits(monkeypatch: pytest.MonkeyPatch) -> list[float]:
     waits: list[float] = []
-    monkeypatch.setattr("lineage.fetch.time.sleep", waits.append)
+    monkeypatch.setattr("lineage.core.http.time.sleep", waits.append)
     return waits
 
 

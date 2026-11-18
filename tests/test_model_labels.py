@@ -9,6 +9,7 @@ import pytest
 from typer.testing import CliRunner
 
 from lineage.cli import app
+from lineage.core import db
 from lineage.labels import (
     SAME_PROVISION,
     Item,
@@ -117,9 +118,8 @@ def test_a_label_under_an_older_prompt_is_asked_again() -> None:
 
 
 def _one_pair_sample(corpus: Path, tmp_path: Path) -> Path:
-    from lineage import queries
 
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         rows: list[tuple[str, int]] = con.execute(
             "SELECT bill_id, ordinal FROM read_parquet($p) ORDER BY bill_id, ordinal LIMIT 2",
             {"p": str(corpus / "sections" / "*.parquet")},

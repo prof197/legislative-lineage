@@ -2,7 +2,7 @@
 
 import pytest
 
-from lineage.intervals import weighted_share, wilson
+from lineage.core.intervals import weighted_share, wilson
 
 
 def test_the_wilson_interval_stays_inside_zero_to_one() -> None:

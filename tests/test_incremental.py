@@ -17,6 +17,7 @@ import pytest
 from numpy.typing import NDArray
 
 from lineage import queries
+from lineage.core import db
 from lineage.incremental import (
     NoEmbedderError,
     applied_days,
@@ -158,7 +159,7 @@ def test_the_georgia_record_carries_no_vector_once_its_windows_are_retired(
     tables = tmp_path / "tables"
     shutil.copytree(rebuilt[4], tables, symlinks=False)
     units = str(semantic_dir(tables) / "units" / "*.parquet")
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         marked = [
             t for _, t in queries.semantic_text_ids_of(con, units_glob=units, bill_ids=[GEORGIA_ID])
         ]
@@ -173,7 +174,7 @@ def test_the_georgia_record_carries_no_vector_once_its_windows_are_retired(
     vectors = np.concatenate([np.asarray(v) for v in load_vectors(tables, FAKE_MODEL, plan)])
     assert not vectors[marked].any()  # zeroed: no threshold reached, no neighbor's place taken
     assert _texts(tables, marked) == [""] * len(marked)  # blanked: no later window shares one
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         assert queries.carried_text_ids(con, units_glob=units, text_ids=marked) == []
         now = [
             t for _, t in queries.semantic_text_ids_of(con, units_glob=units, bill_ids=[GEORGIA_ID])
@@ -186,7 +187,7 @@ def _texts(tables: Path, ids: list[int]) -> list[str]:
     plan = load_plan(tables)
     assert plan is not None
     texts: list[str] = []
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for s in range(plan.shards):
             texts += queries.read_semantic_texts(
                 con, parquet_path=semantic_dir(tables) / "texts" / f"{shard_name(s)}.parquet"

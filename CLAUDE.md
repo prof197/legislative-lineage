@@ -266,10 +266,10 @@ data/             local snapshots and derived tables; gitignored, never committe
 - Fix random seeds. The snapshot is pinned by `snapshot/manifest.json`; an archive's as-of date is its README's Generated At.
 - Before a large write, call `disk.require_free_space` with an upper bound on the bytes written. The default floor is 20 GiB free.
 - Every run that touches the network goes through the `lineage` CLI, never a one-off script or `python -c`: archives, robots.txt and bill text alike. If no command does what is needed, add one to the CLI first. The CLI's spawned extraction workers never re-run a fetch, and `fetch_all` refuses to run inside one.
-- Every HTTP request goes through `fetch.open_url`, which waits for the host's turn in `lineage.pace`. Never pace requests any other way.
+- Every HTTP request goes through `fetch.open_url`, which waits for the host's turn in `lineage.core.pace`. Never pace requests any other way.
 - Open DuckDB only through `queries.connect_quiet` or `queries.connect`, which cap a query's spill to disk at the same floor. This holds for tests and one-off probes too; a test fails on any other `duckdb.*()` call.
 - Secrets come only from environment variables. `.env` is gitignored.
-- Default paths to local data start at `lineage.paths.DATA`, never a literal `data/...`. Set `LINEAGE_DATA` to an absolute directory in `.claude/settings.local.json` (gitignored) so worktrees share the data.
+- Default paths to local data start at `lineage.core.paths.DATA`, never a literal `data/...`. Set `LINEAGE_DATA` to an absolute directory in `.claude/settings.local.json` (gitignored) so worktrees share the data.
 - In v2 lanes, edit only the files your lane owns (DESIGN.md#lanes); add SQL only in your lane's region of `queries.py`.
 - Model calls happen only in the explanation step and the provisional precision labels. Retrieval runs with no API key.
 - Commits use conventional messages, one build step per commit. The body gives the engineering reason: the tradeoff, the measurement, the alternative rejected.

@@ -5,7 +5,8 @@ import pytest
 
 from lineage import queries
 from lineage.ann import Neighbors
-from lineage.memory import MemoryBoundError, current_bytes
+from lineage.core import db
+from lineage.core.memory import MemoryBoundError, current_bytes
 from lineage.neighbors import build_neighbors, check_at, keep_neighbors, projected_bytes
 from lineage.semantic import BUILD_THRESHOLD, THRESHOLD, K
 from lineage.vectors import EmbedError, build_plan, load_plan, semantic_dir, shard_name, vectors_dir
@@ -35,7 +36,7 @@ def test_every_text_gets_its_nearest_texts_above_the_threshold(
     plan = build_plan(tables, floor_bytes=0)
     out = vectors_dir(tables, "fake")
     out.mkdir(parents=True)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for s in range(plan.shards):
             texts = queries.read_semantic_texts(
                 con, parquet_path=semantic_dir(tables) / "texts" / f"{shard_name(s)}.parquet"
@@ -65,7 +66,7 @@ def _embedded(corpus: Path, tmp_path: Path) -> Path:
     plan = build_plan(tables, floor_bytes=0)
     out = vectors_dir(tables, "fake")
     out.mkdir(parents=True)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for s in range(plan.shards):
             texts = queries.read_semantic_texts(
                 con, parquet_path=semantic_dir(tables) / "texts" / f"{shard_name(s)}.parquet"

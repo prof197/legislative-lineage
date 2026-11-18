@@ -32,9 +32,9 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict
 
 from lineage.align import Span
+from lineage.core.intervals import wilson
 from lineage.explain import CACHE_DIR, explain, explanation_key
 from lineage.explanations import Claim, Side, grounding_spans
-from lineage.intervals import wilson
 from lineage.spend import Meter, upper_bound
 from lineage.structured import UnusableReplyError, ask_structured
 

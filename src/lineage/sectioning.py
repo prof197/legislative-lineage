@@ -19,7 +19,8 @@ import duckdb
 
 from lineage import queries
 from lineage.boilerplate import boilerplate_kind
-from lineage.disk import require_free_space
+from lineage.core import db
+from lineage.core.disk import require_free_space
 from lineage.sections import normalize, split_sections
 
 _FETCH_BILLS = 500
@@ -71,8 +72,8 @@ def _split_file(texts_file: Path, dest: Path, state: str | None) -> FileCounts:
             parts += 1
             columns = _empty()
 
-    reader = queries.connect_quiet()
-    writer = queries.connect_quiet()
+    reader = db.connect_quiet()
+    writer = db.connect_quiet()
     try:
         scan = queries.open_bill_texts(reader, parquet_path=texts_file)
         while batch := scan.fetchmany(_FETCH_BILLS):
@@ -111,7 +112,7 @@ def build_sections(tables_dir: Path, *, workers: int, floor_bytes: int) -> Secti
     )
     if not files:
         raise SectioningError(f"no texts table in {tables_dir}; run `lineage text merge` first")
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         text = queries.text_bytes(con, bills_glob=str(tables_dir / "texts" / "*.parquet"))
         # A texts file and the bills file it came from share a name, and each holds one archive,
         # so one state: its heading rules apply to the whole file.

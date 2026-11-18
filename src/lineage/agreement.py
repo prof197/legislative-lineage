@@ -24,7 +24,7 @@ from typing import Any
 
 import numpy as np
 
-from lineage.intervals import wilson
+from lineage.core.intervals import wilson
 from lineage.labels import CORRECT_FROM, PERSON, Item, Pair
 from lineage.pair_data import LABELS
 from lineage.precision import SEED as PRECISION_SEED

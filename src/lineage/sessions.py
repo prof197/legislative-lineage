@@ -14,7 +14,7 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 
-from lineage.fetch import open_url
+from lineage.core.http import open_url
 
 SCRAPERS_REPO = "https://github.com/openstates/openstates-scrapers"
 _RAW_URL = "https://raw.githubusercontent.com/openstates/openstates-scrapers/{commit}/scrapers/{state}/__init__.py"

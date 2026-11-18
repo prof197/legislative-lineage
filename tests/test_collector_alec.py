@@ -32,6 +32,7 @@ from lineage.collectors.alec import (
     local_measure,
     policy_start,
 )
+from lineage.core.robots import Robots, parse_robots
 from lineage.extract import html_text, pdf_text
 from lineage.modeldocs import (
     MODELDOCS_DIR,
@@ -44,7 +45,6 @@ from lineage.modeldocs import (
     store,
 )
 from lineage.modeltext import ModelTextError, docx_text
-from lineage.robots import Robots, parse_robots
 from tests.recorded_site import COLLECT, RecordedSite, docx_bytes
 
 DAY = date(2026, 11, 15)

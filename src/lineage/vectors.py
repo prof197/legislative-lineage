@@ -33,9 +33,10 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lineage import queries
-from lineage.disk import require_free_space
+from lineage.core import db
+from lineage.core.disk import require_free_space
+from lineage.core.memory import peak_bytes
 from lineage.embed import embed, load_model
-from lineage.memory import peak_bytes
 from lineage.models import MODELS, MODELS_DIR, require_model
 from lineage.windows import WINDOW_WORDS, display_windows
 
@@ -148,7 +149,7 @@ def build_plan(tables_dir: Path, *, floor_bytes: int) -> Plan:
             )
             shards += 1
 
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for part in files:
             bill_ids: list[str] = []
             ordinals: list[int] = []
@@ -226,7 +227,7 @@ def _worker_setup(model: str, models_dir: Path, threads: int) -> None:
 def _embed_shard(texts_path: Path, dest: Path) -> tuple[int, int]:
     """Embed one shard into `dest`; return its texts and the worker's peak memory. Runs in a
     worker process."""
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         texts = queries.read_semantic_texts(con, parquet_path=texts_path)
     vectors = embed(_WORKER["model"], texts).astype(np.float16)
     partial = dest.with_name(dest.name + ".partial")
@@ -445,7 +446,7 @@ def extend_store(
     shards = -(-total // SHARD_TEXTS)
     touched = {i // SHARD_TEXTS for i in range(first, total)} | {i // SHARD_TEXTS for i in retired}
     texts_dir, out = semantic_dir(tables_dir) / "texts", vectors_dir(tables_dir, model)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for shard in sorted(touched):
             name = shard_name(shard)
             start, stop = shard * SHARD_TEXTS, min((shard + 1) * SHARD_TEXTS, total)

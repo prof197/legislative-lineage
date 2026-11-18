@@ -16,8 +16,8 @@ from typing import Any
 import pytest
 from typer.testing import CliRunner
 
-from lineage import fetch
 from lineage.cli import app
+from lineage.core import http
 from lineage.feed import check, write_feed
 from lineage.incremental import update
 from lineage.publish import export_changes, promote, staging_dir
@@ -80,7 +80,7 @@ def no_network(monkeypatch: pytest.MonkeyPatch) -> None:
     def refuse(*_: object, **__: object) -> Any:
         raise AssertionError("a dry run sends no request")
 
-    monkeypatch.setattr(fetch, "open_url", refuse)
+    monkeypatch.setattr(http, "open_url", refuse)
     monkeypatch.setattr(socket.socket, "connect", refuse)
 
 

@@ -34,6 +34,7 @@ from numpy.typing import NDArray
 
 from lineage import queries
 from lineage.answer_key import ANSWER_KEY, read_answer_key
+from lineage.core import db
 from lineage.listing import ListedPairs, listed_pairs, shipped_flag
 from lineage.relatives import bill_relatives
 from lineage.semantic_pairs import section_keys
@@ -190,7 +191,7 @@ def build_featured(
     rows: list[dict[str, Any]] = []
     seen: set[tuple[str, int, str, int]] = set()
     report: dict[str, Any] = {"command": COMMAND, "stories": {}}
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for story in stories:
             anchor = queries.bill_id_of(
                 con,

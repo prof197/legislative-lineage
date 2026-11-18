@@ -4,8 +4,8 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from lineage import queries
 from lineage.cli import app
+from lineage.core import db
 from lineage.query import matchable_sections, query_text
 
 runner = CliRunner()
@@ -18,7 +18,7 @@ def _run(*args: str) -> str:
 
 
 def _raw_text(tables: Path, identifier: str) -> str:
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         row = con.execute(
             "SELECT text FROM read_parquet($p) WHERE identifier = $i",
             {"p": str(tables / "bills" / "*.parquet"), "i": identifier},

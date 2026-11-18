@@ -21,10 +21,11 @@ from typing import Annotated, Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
 
 from lineage import queries
+from lineage.core import db
+from lineage.core.paths import DATA
 from lineage.listing import shipped_flag
 from lineage.origins import read_origin_matches
 from lineage.pairs import load_families
-from lineage.paths import DATA
 from lineage.relatives import bill_relatives
 from lineage.semantic import MODEL
 
@@ -318,7 +319,7 @@ SHARE_PLACES = 9
 
 def snapshot(tables_dir: Path, *, model: str = MODEL) -> Snapshot:
     """A build's snapshot, read from its tables the way pages read them (lineage.relatives)."""
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         statuses = queries.bill_statuses(con, bills_glob=str(tables_dir / "bills" / "*.parquet"))
         matchable = queries.matchable_bill_ids(
             con,

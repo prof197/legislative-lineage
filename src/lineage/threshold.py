@@ -34,8 +34,8 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
+from lineage.core.intervals import weighted_share, wilson
 from lineage.flag_precision import dropped_strata
-from lineage.intervals import weighted_share, wilson
 from lineage.labels import Item
 from lineage.listing import ListedPairs, listed_pairs, shipped_flag
 from lineage.precision import latest_correct, restratified

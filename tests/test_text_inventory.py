@@ -6,8 +6,8 @@ from typing import Any
 
 import pytest
 
-from lineage import queries
-from lineage.robots import Robots, parse_robots
+from lineage.core import db
+from lineage.core.robots import Robots, parse_robots
 from lineage.text_inventory import (
     StalePlanError,
     build_inventory,
@@ -64,7 +64,7 @@ def test_the_inventory_counts_the_fixture_corpus_and_writes_the_plan(
 
     assert json.loads(report.read_text()) == doc
     assert doc["totals"]["eligible"] == sum(s["eligible"] for s in doc["states"].values())
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         (rows,) = con.execute(f"SELECT count(*) FROM '{plan}'").fetchone() or (0,)
     assert rows == doc["totals"]["eligible"]
     for host in doc["hosts"].values():
@@ -78,7 +78,7 @@ def test_a_plan_built_from_other_code_or_inputs_is_refused(corpus: Path, tmp_pat
     plan, report = tmp_path / "plan.parquet", tmp_path / "inventory.json"
     build_inventory(corpus, plan_path=plan, report_path=report, read=_robots)
 
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         assert len(load_plan(con, plan)) > 0
         with pytest.raises(StalePlanError):
             load_plan(con, plan, expected="0" * 64)
@@ -86,7 +86,7 @@ def test_a_plan_built_from_other_code_or_inputs_is_refused(corpus: Path, tmp_pat
 
 def test_a_plan_without_a_fingerprint_is_refused(tmp_path: Path) -> None:
     plan = tmp_path / "plan.parquet"
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         con.execute(f"COPY (SELECT 'a' AS id) TO '{plan}' (FORMAT parquet)")
 
         with pytest.raises(StalePlanError):
@@ -113,7 +113,7 @@ def test_stored_text_the_sections_no_longer_hold_is_split_again(tmp_path: Path) 
     from lineage.text_inventory import _rechecked  # pyright: ignore[reportPrivateUsage]
 
     bills = tmp_path / "bills.parquet"
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         con.execute(
             "COPY (SELECT * FROM (VALUES ('a', 'Section 1. Fees. Section 2. Rules.'), "
             "('b', '   ')) t(id, text)) TO '" + str(bills) + "' (FORMAT parquet)"

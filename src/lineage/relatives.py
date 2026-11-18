@@ -22,6 +22,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lineage import queries
+from lineage.core import db
 from lineage.listing import ListedPairs, listed_pairs
 from lineage.query import Match, group_matches
 from lineage.semantic import CORROBORATING, MODEL, THRESHOLD
@@ -84,7 +85,7 @@ def bill_relatives(
     signed: dict[str, set[int]] = defaultdict(set)
     for number in np.flatnonzero(own).tolist():
         signed[bills[number]].add(int(ordinals[number]))
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         rows = queries.matchable_section_normalized(
             con,
             sections_glob=str(tables_dir / "sections" / "*.parquet"),

@@ -41,7 +41,8 @@ from numpy.typing import NDArray
 from lineage import queries
 from lineage.align import Alignment, align
 from lineage.boilerplate import boilerplate_kind
-from lineage.disk import require_free_space
+from lineage.core import db
+from lineage.core.disk import require_free_space
 from lineage.embed import embed as embed_texts
 from lineage.embed import load_model
 from lineage.generic_sections import MIN_WORDS, Inside, generic_inside, generic_kind, words_outside
@@ -259,7 +260,7 @@ def match_texts(
     if not hits:
         return []
 
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         rows = queries.matchable_sections_of(
             con,
             sections_glob=str(tables_dir / "sections" / "*.parquet"),

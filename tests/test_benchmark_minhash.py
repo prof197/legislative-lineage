@@ -4,7 +4,8 @@ import numpy as np
 import pytest
 
 from benchmarks.minhash import ENGINES, run_engine, run_lsh
-from lineage import memory, queries
+from lineage import queries
+from lineage.core import db, memory
 from lineage.minhash import NUM_PERM
 from lineage.signatures import build_signatures
 
@@ -21,7 +22,7 @@ def tables(tmp_path: Path) -> Path:
     (tables / "sections").mkdir(parents=True)
     ids = [f"b{i}" for i in range(len(TEXTS))]
     n = len(TEXTS)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         queries.write_sections(
             con,
             parquet_path=tables / "sections" / "s.parquet",

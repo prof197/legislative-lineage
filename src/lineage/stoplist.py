@@ -21,6 +21,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lineage import queries
+from lineage.core import db
 from lineage.shingles import SHINGLE_WORDS, section_shingles, shingle_hashes
 
 # Fork is Linux's default, and forking after DuckDB has started threads can deadlock the
@@ -79,7 +80,7 @@ def load_stoplist(tables_dir: Path) -> NDArray[np.uint32]:
     path = tables_dir / "stoplist.parquet"
     if not path.exists():
         raise StoplistError(f"no stoplist in {tables_dir}; run `lineage boilerplate` first")
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         return np.array(queries.read_stoplist(con, parquet_path=path), dtype=np.uint32)
 
 
@@ -87,7 +88,7 @@ def _part_shingles(part: Path, eligible: Path) -> tuple[int, list[NDArray[np.uin
     """All matchable section shingle sets of one sections file, split into hash partitions."""
     sets: list[NDArray[np.uint32]] = []
     sections = 0
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         scan = queries.matchable_sections(con, sections_path=part, eligible_path=eligible)
         while batch := scan.fetchmany(_FETCH_SECTIONS):
             texts = [t for *_, t in batch]
@@ -102,7 +103,7 @@ def _texts_of(parts: list[Path], eligible: Path, wanted: set[int]) -> dict[int, 
     """Recover one example text for each wanted hash, scanning sections until all are found."""
     found: dict[int, str] = {}
     wanted_array = np.array(sorted(wanted), dtype=np.uint32)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for part in parts:
             scan = queries.matchable_sections(con, sections_path=part, eligible_path=eligible)
             while batch := scan.fetchmany(_FETCH_SECTIONS):
@@ -160,7 +161,7 @@ def build_stoplist(
     stoplist = np.concatenate(stop_hashes)
     dfs = np.concatenate(stop_counts)
 
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         # Written beside the old file and renamed, so a failure never leaves half a stoplist.
         partial = tables_dir / "stoplist.parquet.partial"
         queries.write_stoplist(

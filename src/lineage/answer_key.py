@@ -16,6 +16,7 @@ from pathlib import Path
 
 from lineage import queries
 from lineage.commission import FIRST_YEAR, excluded_reason, session_years
+from lineage.core import db
 from lineage.sessions import load_sessions
 from lineage.ulc import (
     ENACTMENTS,
@@ -134,7 +135,7 @@ def build_answer_key(
         development_bills(load_enactments(development_path)) if development_path else NO_BILLS
     )
     states = sorted({r.state for r in snapshot.rows if r.state is not None})
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         found = queries.listed_bills(
             con, bills_glob=str(tables_dir / "bills" / "*.parquet"), states=states
         )

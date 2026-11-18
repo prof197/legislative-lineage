@@ -30,7 +30,8 @@ from numpy.typing import NDArray
 
 from lineage import queries
 from lineage.bands import load_band_index
-from lineage.disk import require_free_space
+from lineage.core import db
+from lineage.core.disk import require_free_space
 from lineage.families import FAMILY_SHARE, bill_pairs, components, linked
 from lineage.lsh import (
     BANDS,
@@ -239,7 +240,7 @@ def build_pairs(
     shares = bill_pairs(bill_of_section, linking.left, linking.right)
     sweep: list[dict[str, Any]] = []
     labels = np.arange(bills.size, dtype=np.int32)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         state_of_bill = queries.bill_states(con, bills_glob=str(tables_dir / "bills" / "*.parquet"))
     for share in sorted({*FAMILY_SWEEP, FAMILY_SHARE}):
         links = linked(shares, share)
@@ -266,7 +267,7 @@ def build_pairs(
         return write
 
     def write_families(directory: Path) -> None:
-        with queries.connect_quiet() as con:
+        with db.connect_quiet() as con:
             queries.write_families(
                 con,
                 parquet_path=directory / "families.parquet",
@@ -349,7 +350,7 @@ def load_same_state_pairs(tables_dir: Path) -> SectionPairs:
 
 def load_families(tables_dir: Path) -> dict[str, str]:
     """Every signed bill's family, by bill id."""
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         return queries.read_families(con, parquet_path=tables_dir / "families" / "families.parquet")
 
 

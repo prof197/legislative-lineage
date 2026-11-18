@@ -41,8 +41,10 @@ from pathlib import Path
 from typing import Any, Protocol
 
 from lineage import queries
-from lineage.disk import DEFAULT_FLOOR_BYTES, require_free_space
-from lineage.fetch import moved
+from lineage.core import db
+from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
+from lineage.core.http import moved
+from lineage.core.paths import DATA
 from lineage.openstates_api import (
     KEY_ENV,
     KEY_HEADER,
@@ -55,7 +57,6 @@ from lineage.openstates_api import (
     bulk_record,
     jurisdiction,
 )
-from lineage.paths import DATA
 from lineage.text_fetch import Job, fetch_all, host_of, stored
 from lineage.text_rules import RULES, TextRules, load_rules, usable
 from lineage.updates import BILLS_SUFFIX, DAY_FILE, Folded, fold, load_day
@@ -106,7 +107,7 @@ ESTIMATE = Path("reports/intake_estimate.json")
 
 
 class Opener(Protocol):
-    """`lineage.fetch.open_url`'s signature, with the request headers the key travels in."""
+    """`lineage.core.http.open_url`'s signature, with the request headers the key travels in."""
 
     def __call__(
         self,
@@ -603,7 +604,7 @@ def january_estimate(tables_dir: Path, year: int, tiers: Sequence[Tier] = ()) ->
     """January `year`'s requests a day, from the bills table: a bill counts as updated on each
     day it has an action, a lower bound on what the API reports as updated."""
     days = [f"{year}-01-{d:02}" for d in range(1, 32)]
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         counts = queries.bills_acted_per_day(
             con, bills_glob=str(tables_dir / "bills" / "*.parquet"), month=f"{year}-01"
         )

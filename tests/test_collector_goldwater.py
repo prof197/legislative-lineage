@@ -35,6 +35,7 @@ from lineage.collectors.goldwater import (
     qualifier,
     title_for,
 )
+from lineage.core.robots import Robots, parse_robots
 from lineage.modeldocs import (
     MODELDOCS_DIR,
     load_text,
@@ -43,7 +44,6 @@ from lineage.modeldocs import (
     read_versions,
     sha256,
 )
-from lineage.robots import Robots, parse_robots
 from tests.recorded_site import docx_bytes, pdf_bytes
 
 FIXTURES = Path(__file__).parent / "fixtures" / "collect" / "goldwater"

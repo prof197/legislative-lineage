@@ -15,8 +15,9 @@ from typing import Any
 
 from lineage import queries
 from lineage.ca_bulk import fetch_california
-from lineage.disk import DEFAULT_FLOOR_BYTES
-from lineage.paths import DATA
+from lineage.core import db
+from lineage.core.disk import DEFAULT_FLOOR_BYTES
+from lineage.core.paths import DATA
 from lineage.text_fetch import Job, fetch_all, host_of
 from lineage.text_inventory import load_plan
 from lineage.text_rules import RULES, TextRules, load_rules, replaced_states, usable
@@ -87,7 +88,7 @@ def run_fetch(
 ) -> dict[str, Any]:
     rules = load_rules(rules_path)
     replace = set(replaced_states(json.loads(quality_path.read_text()), rules))
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         plan = load_plan(con, plan_path)
     jobs, bulk, left = plan_jobs(plan, rules, replace)
     if fetch:
@@ -98,7 +99,7 @@ def run_fetch(
             check=lambda text: usable(text, rules),
             floor_bytes=floor_bytes,
         )
-        with queries.connect_quiet() as con:
+        with db.connect_quiet() as con:
             records = queries.identifiers(
                 con, bills_glob=str(tables_dir / "bills" / "*.parquet"), ids=bulk
             )

@@ -6,6 +6,7 @@ import pytest
 from numpy.typing import NDArray
 
 from lineage import queries, vectors
+from lineage.core import db
 from lineage.vectors import (
     EmbedError,
     build_plan,
@@ -36,7 +37,7 @@ def tables(tmp_path: Path) -> Path:
     (tables / "sections").mkdir(parents=True)
     keys = sorted(TEXTS)
     halves = {"a.parquet": keys[:2], "b.parquet": keys[2:]}
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for name, part in halves.items():
             columns = queries.SectionColumns(
                 bill_id=[b for b, _ in part],
@@ -60,7 +61,7 @@ def tables(tmp_path: Path) -> Path:
 
 
 def _units(tables: Path) -> list[tuple[str, int, int, int]]:
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         rows: list[tuple[str, int, int, int]] = con.execute(
             "SELECT bill_id, ordinal, window_number, text_id FROM read_parquet($p) "
             "ORDER BY bill_id, ordinal, window_number",
@@ -70,7 +71,7 @@ def _units(tables: Path) -> list[tuple[str, int, int, int]]:
 
 
 def _texts(tables: Path, plan_shards: int) -> list[str]:
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         return [
             t
             for s in range(plan_shards)
@@ -169,7 +170,7 @@ def test_the_report_counts_a_stopped_run_up_to_its_last_shard(tables: Path) -> N
 
 def test_a_change_of_eligibility_makes_the_plan_stale(tables: Path) -> None:
     current_plan(tables, floor_bytes=0)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         queries.write_eligibility(
             con,
             parquet_path=tables / "eligible.parquet",
