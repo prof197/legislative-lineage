@@ -39,7 +39,7 @@ from lineage.evals.flag_precision import dropped_strata
 from lineage.evals.labels import Item
 from lineage.evals.precision import latest_correct, restratified
 from lineage.match.listing import ListedPairs, listed_pairs, shipped_flag
-from lineage.match.relatives import bill_relatives
+from lineage.match.relatives import BillRelatives, bill_relatives
 from lineage.match.semantic.pairs import section_keys
 from lineage.match.semantic.stage import BUILD_THRESHOLD, CORROBORATING, MODEL, THRESHOLD
 from lineage.match.strata import STRATA, pair_keys, stored_strata, strata
@@ -269,6 +269,67 @@ def _pair_key(a: int, b: int) -> int:
     return (lo << 32) | hi
 
 
+def _standing(listed: ListedPairs, keys: Sequence[int]) -> list[bool]:
+    """Whether each pair, by its key (_pair_key), is among the pairs `listed` keeps."""
+    standing = np.unique(
+        np.concatenate(
+            [
+                (np.asarray(p.left).astype(np.uint64) << np.uint64(32))
+                | np.asarray(p.right).astype(np.uint64)
+                for p in (listed.near, listed.meaning)
+            ]
+        )
+    )
+    return np.isin(np.array(keys, dtype=np.uint64), standing).tolist()
+
+
+def _relisted(
+    ids: Sequence[str],
+    judged: Mapping[str, int],
+    got: Mapping[str, bool],
+    pages: Mapping[str, Mapping[str, Any]],
+    listed: ListedPairs,
+    relatives: Mapping[str, BillRelatives],
+    page_bills: Sequence[str],
+) -> dict[str, Any]:
+    """The sampled pages as `listed` lists them: each drawn relative kept with its label,
+    dropped, relisted on another pair, or unlabeled; and the kept ones' precision."""
+    stands = dict(zip(ids, _standing(listed, [judged[p] for p in ids]), strict=True))
+    kept: list[tuple[float, bool]] = []
+    relisted = dropped = unlabeled = 0
+    for p in ids:
+        page = pages[p]
+        now = relatives[str(page["bill_id"])].matches
+        if page["family"] not in {m.family for m in now}:
+            dropped += 1
+        elif not stands[p]:
+            relisted += 1
+        elif got.get(p) is None:
+            unlabeled += 1
+        else:
+            kept.append((int(page["listed"]) / len(now), bool(got[p])))
+    hits = sum(c for _, c in kept)
+    share, interval = weighted_share([w for w, _ in kept], [c for _, c in kept])
+    emptied = sum(not relatives[b].matches for b in page_bills)
+    return {
+        "labeled": len(kept),
+        "correct": hits,
+        "precision": round(hits / len(kept), 4) if kept else None,
+        "interval_95": [round(v, 4) for v in wilson(hits, len(kept))],
+        "page_weighted": {
+            "precision": None if share is None else round(share, 4),
+            "interval_95": [round(v, 4) for v in interval],
+        },
+        "relatives_dropped": dropped,
+        "relisted_on_another_pair": relisted,
+        "unlabeled": unlabeled,
+        "pages_listing": len(page_bills) - emptied,
+        "pages_emptied": emptied,
+        "relatives_listed": sum(len(relatives[b].matches) for b in page_bills),
+        "build_pairs_exempted": listed.exempted,
+    }
+
+
 def flag_at_threshold(
     tables_dir: Path,
     items: Sequence[Item],
@@ -288,17 +349,9 @@ def flag_at_threshold(
     flag = shipped_flag(tables_dir)
     if flag is None:
         raise ThresholdError("no state boilerplate counts; run `uv run lineage state-boilerplate`")
-    bills, ordinals = section_keys(tables_dir)
-    number = {(b, o): i for i, (b, o) in enumerate(zip(bills, ordinals.tolist(), strict=True))}
+    judged = _keys_of(items, tables_dir)
     got = latest_correct(items, labels, labeler, exact=True)
     ids = [i.pair.pair for i in items]
-    judged = {
-        i.pair.pair: _pair_key(
-            number[(i.pair.query.bill_id, i.pair.query.ordinal)],
-            number[(i.pair.match.bill_id, i.pair.match.ordinal)],
-        )
-        for i in items
-    }
     page_bills = sorted({str(pages[p]["bill_id"]) for p in ids})
     variants: dict[str, Any] = {}
     for name, on, rule in FLAG_VARIANTS:
@@ -306,56 +359,8 @@ def flag_at_threshold(
             tables_dir, model=model, threshold=threshold, flag=flag if on else None,
             exempt_at=_exempt_at(rule, threshold),
         )  # fmt: skip
-        standing = np.unique(
-            np.concatenate(
-                [
-                    (np.asarray(p.left).astype(np.uint64) << np.uint64(32))
-                    | np.asarray(p.right).astype(np.uint64)
-                    for p in (listed.near, listed.meaning)
-                ]
-            )
-        )
-        stands = dict(
-            zip(
-                ids,
-                np.isin(np.array([judged[p] for p in ids], dtype=np.uint64), standing).tolist(),
-                strict=True,
-            )
-        )
         relatives = bill_relatives(tables_dir, page_bills, model=model, listed=listed)
-        kept: list[tuple[float, bool]] = []
-        relisted = dropped = unlabeled = 0
-        for p in ids:
-            page = pages[p]
-            now = relatives[str(page["bill_id"])].matches
-            if page["family"] not in {m.family for m in now}:
-                dropped += 1
-            elif not stands[p]:
-                relisted += 1
-            elif got.get(p) is None:
-                unlabeled += 1
-            else:
-                kept.append((int(page["listed"]) / len(now), bool(got[p])))
-        hits = sum(c for _, c in kept)
-        share, interval = weighted_share([w for w, _ in kept], [c for _, c in kept])
-        emptied = sum(not relatives[b].matches for b in page_bills)
-        variants[name] = {
-            "labeled": len(kept),
-            "correct": hits,
-            "precision": round(hits / len(kept), 4) if kept else None,
-            "interval_95": [round(v, 4) for v in wilson(hits, len(kept))],
-            "page_weighted": {
-                "precision": None if share is None else round(share, 4),
-                "interval_95": [round(v, 4) for v in interval],
-            },
-            "relatives_dropped": dropped,
-            "relisted_on_another_pair": relisted,
-            "unlabeled": unlabeled,
-            "pages_listing": len(page_bills) - emptied,
-            "pages_emptied": emptied,
-            "relatives_listed": sum(len(relatives[b].matches) for b in page_bills),
-            "build_pairs_exempted": listed.exempted,
-        }
+        variants[name] = _relisted(ids, judged, got, pages, listed, relatives, page_bills)
     return {"threshold": threshold, "labeler": labeler, "sampled": len(items), **variants}
 
 
