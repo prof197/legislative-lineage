@@ -25,7 +25,7 @@ import multiprocessing
 import time
 from collections.abc import Callable, Sequence
 from concurrent.futures import FIRST_COMPLETED, Future, ProcessPoolExecutor, wait
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -117,12 +117,8 @@ def _embedded_shards(tables_dir: Path) -> list[Path]:
     return sorted(p for d in root.iterdir() if d.is_dir() for p in d.glob("[0-9]*.npy"))
 
 
-def build_plan(tables_dir: Path, *, floor_bytes: int) -> Plan:
-    """Cut every matchable section into windows and number the distinct texts."""
-    files = _sections_files(tables_dir)
-    if not files:
-        raise EmbedError(f"no sections in {tables_dir / 'sections'}; run `lineage split`")
-    eligible = tables_dir / "eligible.parquet"
+def _fresh_plan_dirs(tables_dir: Path) -> tuple[Path, Path]:
+    """The plan's units and texts directories, emptied; refused over vectors already embedded."""
     root = semantic_dir(tables_dir)
     if root.exists() and _embedded_shards(tables_dir):
         # A new plan numbers the texts afresh, so vectors embedded under another would be read
@@ -133,61 +129,101 @@ def build_plan(tables_dir: Path, *, floor_bytes: int) -> Plan:
         d.mkdir(parents=True, exist_ok=True)
         for old in d.glob("*.parquet"):
             old.unlink()
-    ids: dict[bytes, int] = {}
-    pending: list[str] = []
-    shards = windows = 0
+    return units_dir, texts_dir
 
-    def flush(con: Any, *, final: bool) -> None:
-        nonlocal shards, pending
-        while len(pending) >= SHARD_TEXTS or (final and pending):
-            batch, pending = pending[:SHARD_TEXTS], pending[SHARD_TEXTS:]
-            require_free_space(texts_dir, needed=len(batch) * _TEXT_BYTES, floor=floor_bytes)
+
+@dataclass
+class _Texts:
+    """The distinct texts numbered so far, written SHARD_TEXTS to a shard as they fill one."""
+
+    texts_dir: Path
+    floor_bytes: int
+    ids: dict[bytes, int] = field(default_factory=dict[bytes, int])
+    pending: list[str] = field(default_factory=list[str])
+    shards: int = 0
+
+    def number(self, window: str) -> int:
+        """The window's text id, a new one for a text not seen before."""
+        key = digest(window)
+        text_id = self.ids.get(key)
+        if text_id is None:
+            text_id = self.ids[key] = len(self.ids)
+            self.pending.append(window)
+        return text_id
+
+    def flush(self, con: Any, *, final: bool) -> None:
+        """Write every full shard pending, and with `final` the last, partial one."""
+        while len(self.pending) >= SHARD_TEXTS or (final and self.pending):
+            batch, self.pending = self.pending[:SHARD_TEXTS], self.pending[SHARD_TEXTS:]
+            require_free_space(
+                self.texts_dir, needed=len(batch) * _TEXT_BYTES, floor=self.floor_bytes
+            )
             queries.write_semantic_texts(
                 con,
-                parquet_path=texts_dir / f"{shard_name(shards)}.parquet",
-                first_id=shards * SHARD_TEXTS,
+                parquet_path=self.texts_dir / f"{shard_name(self.shards)}.parquet",
+                first_id=self.shards * SHARD_TEXTS,
                 texts=batch,
             )
-            shards += 1
+            self.shards += 1
 
+
+def _plan_part(con: Any, part: Path, eligible: Path, units_dir: Path, texts: _Texts) -> int:
+    """Cut one sections file's matchable sections into windows, number their texts, and write
+    its units; return its windows."""
+    bill_ids: list[str] = []
+    ordinals: list[int] = []
+    numbers: list[int] = []
+    text_ids: list[int] = []
+    scan = near_queries.matchable_sections(
+        con, sections_path=part, eligible_path=eligible, display=True
+    )
+    while batch := scan.fetchmany(_FETCH_SECTIONS):
+        for bill_id, ordinal, text, _ in batch:
+            cut = display_windows(text, size=WINDOW_WORDS, stride=WINDOW_WORDS)
+            for number, window in enumerate(cut):
+                text_ids.append(texts.number(window))
+                bill_ids.append(bill_id)
+                ordinals.append(ordinal)
+                numbers.append(number)
+    if text_ids:
+        queries.write_semantic_units(
+            con,
+            parquet_path=units_dir / part.name,
+            bill_ids=bill_ids,
+            ordinals=ordinals,
+            windows=numbers,
+            text_ids=text_ids,
+        )
+    return len(text_ids)
+
+
+def build_plan(tables_dir: Path, *, floor_bytes: int) -> Plan:
+    """Cut every matchable section into windows and number the distinct texts."""
+    files = _sections_files(tables_dir)
+    if not files:
+        raise EmbedError(f"no sections in {tables_dir / 'sections'}; run `lineage split`")
+    eligible = tables_dir / "eligible.parquet"
+    units_dir, texts_dir = _fresh_plan_dirs(tables_dir)
+    texts = _Texts(texts_dir, floor_bytes)
+    windows = 0
     with db.connect_quiet() as con:
         for part in files:
-            bill_ids: list[str] = []
-            ordinals: list[int] = []
-            numbers: list[int] = []
-            text_ids: list[int] = []
-            scan = near_queries.matchable_sections(
-                con, sections_path=part, eligible_path=eligible, display=True
-            )
-            while batch := scan.fetchmany(_FETCH_SECTIONS):
-                for bill_id, ordinal, text, _ in batch:
-                    cut = display_windows(text, size=WINDOW_WORDS, stride=WINDOW_WORDS)
-                    for number, window in enumerate(cut):
-                        key = digest(window)
-                        text_id = ids.get(key)
-                        if text_id is None:
-                            text_id = ids[key] = len(ids)
-                            pending.append(window)
-                        bill_ids.append(bill_id)
-                        ordinals.append(ordinal)
-                        numbers.append(number)
-                        text_ids.append(text_id)
-            windows += len(text_ids)
-            if text_ids:
-                queries.write_semantic_units(
-                    con,
-                    parquet_path=units_dir / part.name,
-                    bill_ids=bill_ids,
-                    ordinals=ordinals,
-                    windows=numbers,
-                    text_ids=text_ids,
-                )
-            flush(con, final=False)
-        flush(con, final=True)
-    sections_files, eligible_sha256 = _inputs(tables_dir)
-    plan = Plan(sections_files, eligible_sha256, windows, len(ids), shards)
-    _plan_path(tables_dir).write_text(json.dumps(_plan_doc(plan), indent=1) + "\n")
+            windows += _plan_part(con, part, eligible, units_dir, texts)
+            texts.flush(con, final=False)
+        texts.flush(con, final=True)
+    plan = _plan_now(tables_dir, windows=windows, distinct=len(texts.ids), shards=texts.shards)
+    _write_plan_doc(_plan_path(tables_dir), plan)
     return plan
+
+
+def _plan_now(tables_dir: Path, *, windows: int, distinct: int, shards: int) -> Plan:
+    """The plan, with its inputs read as they stand now."""
+    sections_files, eligible_sha256 = _inputs(tables_dir)
+    return Plan(sections_files, eligible_sha256, windows, distinct, shards)
+
+
+def _write_plan_doc(path: Path, plan: Plan) -> None:
+    path.write_text(json.dumps(_plan_doc(plan), indent=1) + "\n")
 
 
 def _plan_doc(plan: Plan) -> dict[str, Any]:
@@ -251,6 +287,88 @@ def shard_order(shards: list[int]) -> list[int]:
     return [int(s) for s in order]
 
 
+@dataclass(frozen=True, slots=True)
+class _RunLog:
+    """A run's events in `runs.jsonl`, each stamped with the run's start and its own time."""
+
+    path: Path
+    started: float
+
+    def record(self, event: dict[str, Any]) -> None:
+        with self.path.open("a") as f:
+            f.write(
+                json.dumps({"run": round(self.started, 3), "at": round(time.time(), 3)} | event)
+            )
+            f.write("\n")
+
+
+def _progress_line(plan: Plan, left: int, done_texts: int, started: float) -> str:
+    elapsed = time.time() - started
+    rate = done_texts / elapsed if elapsed else 0.0
+    eta = left * SHARD_TEXTS / rate / 3600 if rate else float("nan")
+    return (
+        f"{plan.shards - left} of {plan.shards} shards, {rate:.1f} texts/s "
+        f"this run, about {eta:.1f} h left"
+    )
+
+
+def _embed_shards(
+    tables_dir: Path,
+    model: str,
+    plan: Plan,
+    todo: list[int],
+    log: _RunLog,
+    *,
+    models_dir: Path,
+    processes: int,
+    threads: int,
+    progress: Callable[[str], None],
+) -> None:
+    """Embed the `todo` shards in worker processes, in shard_order, logging each one done."""
+    texts_dir, out = semantic_dir(tables_dir) / "texts", vectors_dir(tables_dir, model)
+    done_texts = 0
+    with ProcessPoolExecutor(
+        max_workers=processes,
+        mp_context=_SPAWN,
+        initializer=_worker_setup,
+        initargs=(model, models_dir, threads),
+    ) as pool:
+        queue = shard_order(todo)
+        running: dict[Future[tuple[int, int]], int] = {}
+        while queue or running:
+            while queue and len(running) < processes:
+                s = queue.pop(0)
+                name = shard_name(s)
+                future = pool.submit(
+                    _embed_shard, texts_dir / f"{name}.parquet", out / f"{name}.npy"
+                )
+                running[future] = s
+            finished, _ = wait(running, return_when=FIRST_COMPLETED)
+            for future in finished:
+                shard = running.pop(future)
+                count, worker_peak = future.result()
+                log.record(
+                    {
+                        "event": "shard",
+                        "shard": shard,
+                        "texts": count,
+                        "worker_peak_bytes": worker_peak,
+                        "main_peak_bytes": peak_bytes(),
+                    }
+                )
+                done_texts += count
+                progress(_progress_line(plan, len(queue) + len(running), done_texts, log.started))
+
+
+def _vectors_out(tables_dir: Path, model: str) -> Path:
+    """The model's vectors directory, without the partial shards of a run that stopped."""
+    out = vectors_dir(tables_dir, model)
+    out.mkdir(parents=True, exist_ok=True)
+    for stale in out.glob("*.partial"):
+        stale.unlink()
+    return out
+
+
 def embed_corpus(
     tables_dir: Path,
     model: str,
@@ -265,72 +383,32 @@ def embed_corpus(
     if model not in MODELS:
         raise EmbedError(f"unknown model {model}; known: {', '.join(MODELS)}")
     require_model(model, models_dir)
-    started = time.time()
-    log = vectors_dir(tables_dir, model) / "runs.jsonl"
-    log.parent.mkdir(parents=True, exist_ok=True)
-
-    def record(event: dict[str, Any]) -> None:
-        with log.open("a") as f:
-            f.write(json.dumps({"run": round(started, 3), "at": round(time.time(), 3)} | event))
-            f.write("\n")
-
-    record({"event": "start", "processes": processes, "threads": threads})
+    log = _RunLog(vectors_dir(tables_dir, model) / "runs.jsonl", time.time())
+    log.path.parent.mkdir(parents=True, exist_ok=True)
+    log.record({"event": "start", "processes": processes, "threads": threads})
     plan, planned = current_plan(tables_dir, floor_bytes=floor_bytes)
     if planned:
         progress(
             f"planned {plan.windows:,} windows, {plan.distinct:,} distinct, {plan.shards} shards"
         )
-    out = vectors_dir(tables_dir, model)
-    out.mkdir(parents=True, exist_ok=True)
-    for stale in out.glob("*.partial"):
-        stale.unlink()
+    out = _vectors_out(tables_dir, model)
     todo = missing_shards(tables_dir, model, plan)
     dim = MODELS[model].dim
     require_free_space(out, needed=len(todo) * SHARD_TEXTS * dim * 2, floor=floor_bytes)
-    texts_dir = semantic_dir(tables_dir) / "texts"
-    done_texts = 0
     if todo:
         progress(f"{len(todo)} of {plan.shards} shards to embed with {model}")
-        with ProcessPoolExecutor(
-            max_workers=processes,
-            mp_context=_SPAWN,
-            initializer=_worker_setup,
-            initargs=(model, models_dir, threads),
-        ) as pool:
-            queue = shard_order(todo)
-            running: dict[Future[tuple[int, int]], int] = {}
-            while queue or running:
-                while queue and len(running) < processes:
-                    s = queue.pop(0)
-                    name = shard_name(s)
-                    running[
-                        pool.submit(
-                            _embed_shard, texts_dir / f"{name}.parquet", out / f"{name}.npy"
-                        )
-                    ] = s
-                finished, _ = wait(running, return_when=FIRST_COMPLETED)
-                for future in finished:
-                    shard = running.pop(future)
-                    count, worker_peak = future.result()
-                    record(
-                        {
-                            "event": "shard",
-                            "shard": shard,
-                            "texts": count,
-                            "worker_peak_bytes": worker_peak,
-                            "main_peak_bytes": peak_bytes(),
-                        }
-                    )
-                    done_texts += count
-                    elapsed = time.time() - started
-                    left = len(queue) + len(running)
-                    rate = done_texts / elapsed if elapsed else 0.0
-                    eta = left * SHARD_TEXTS / rate / 3600 if rate else float("nan")
-                    progress(
-                        f"{plan.shards - left} of {plan.shards} shards, {rate:.1f} texts/s "
-                        f"this run, about {eta:.1f} h left"
-                    )
-    record({"event": "end"})
+        _embed_shards(
+            tables_dir,
+            model,
+            plan,
+            todo,
+            log,
+            models_dir=models_dir,
+            processes=processes,
+            threads=threads,
+            progress=progress,
+        )
+    log.record({"event": "end"})
     return report(tables_dir, model, plan)
 
 
@@ -483,8 +561,6 @@ def extend_store(
 def write_plan(tables_dir: Path, *, windows: int, distinct: int, shards: int) -> Plan:
     """The plan as it stands after an update, its inputs read afresh, so `lineage embed` takes
     the tables as current."""
-    sections_files, eligible_sha256 = _inputs(tables_dir)
-    plan = Plan(sections_files, eligible_sha256, windows, distinct, shards)
-    path = _replace_file(_plan_path(tables_dir))
-    path.write_text(json.dumps(_plan_doc(plan), indent=1) + "\n")
+    plan = _plan_now(tables_dir, windows=windows, distinct=distinct, shards=shards)
+    _write_plan_doc(_replace_file(_plan_path(tables_dir)), plan)
     return plan
