@@ -3,6 +3,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import type { BillList, BillPage, Meta, Release, Sources, Story } from "@/types/export";
+import { type OriginRecall, originRecallFrom } from "./recall";
 
 const DATA = path.join(process.cwd(), "public", "data");
 const cache = new Map<string, unknown>();
@@ -82,3 +83,9 @@ export function precisionSampleState(): string {
 // the export's root); a release from before the live track has none, so nothing links to it.
 export const FEED_PATH = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/data/feed.xml`;
 export const hasFeed = (): boolean => existsSync(path.join(DATA, "feed.xml"));
+
+// Origin recall on its three answer keys, from the committed results (lib/recall.ts).
+export function originRecall(): OriginRecall {
+  const file = path.join(process.cwd(), "..", "reports", "results.json");
+  return originRecallFrom(JSON.parse(readFileSync(file, "utf8")) as Record<string, unknown>);
+}
