@@ -33,6 +33,7 @@ from numpy.typing import NDArray
 from lineage.core.disk import require_free_space
 from lineage.core.memory import BOUND_BYTES, MemoryBoundError, peak_bytes, require_within
 from lineage.match.semantic.ann import (
+    Index,
     Neighbors,
     add,
     exact_search,
@@ -102,25 +103,36 @@ def seeded_draws(n: int) -> tuple[NDArray[np.int64], NDArray[np.int64]]:
     return train, checked
 
 
+def _load_shards(tables_dir: Path, model: str) -> list[NDArray[np.float16]]:
+    plan = load_plan(tables_dir)
+    if plan is None:
+        raise EmbedError(f"no semantic plan in {tables_dir}; run `lineage embed`")
+    return load_vectors(tables_dir, model, plan)
+
+
+def _exact_truth(
+    shards: Sequence[NDArray[Any]], checked: NDArray[np.int64], threshold: float
+) -> Neighbors:
+    """The checked texts' K nearest at or above `threshold`, by exact search."""
+    return keep_neighbors(
+        exact_search(shards, rows_of(shards, checked), K + 1), checked, K, threshold
+    )
+
+
 def check_at(tables_dir: Path, threshold: float, *, model: str = MODEL) -> dict[str, Any]:
     """The stored neighbors' recall at a threshold at or above the build's: of each checked
     text's K nearest at or above it by exact search, the share the stored neighbors at or above
     it hold. Exact, since the build keeps each text's K nearest before its threshold applies."""
     if threshold < THRESHOLD:
         raise EmbedError(f"the neighbors were kept down to {THRESHOLD}, not {threshold}")
-    plan = load_plan(tables_dir)
-    if plan is None:
-        raise EmbedError(f"no semantic plan in {tables_dir}; run `lineage embed`")
-    shards = load_vectors(tables_dir, model, plan)
+    shards = _load_shards(tables_dir, model)
     n = sum(s.shape[0] for s in shards)
     _, checked = seeded_draws(n)
     where = vectors_dir(tables_dir, model) / "neighbors"
     ids = np.asarray(np.load(where / "ids.npy", mmap_mode="r")[checked]).astype(np.int64)
     scores = np.asarray(np.load(where / "scores.npy", mmap_mode="r")[checked])
     stored = np.where(scores >= threshold, ids, -1)
-    truth = keep_neighbors(
-        exact_search(shards, rows_of(shards, checked), K + 1), checked, K, threshold
-    )
+    truth = _exact_truth(shards, checked, threshold)
     return {
         "threshold": threshold,
         "texts": int(checked.shape[0]),
@@ -129,39 +141,28 @@ def check_at(tables_dir: Path, threshold: float, *, model: str = MODEL) -> dict[
     }
 
 
-def build_neighbors(
-    tables_dir: Path,
-    *,
-    model: str = MODEL,
-    spec: str = SPEC,
-    ef_search: int | None = EF_SEARCH,  # for HNSW
-    nprobe: int | None = None,  # for IVF
-    candidates: int | None = None,  # re-scored per text, for an index of compressed codes
-    floor_bytes: int,
-    bound_bytes: int = BOUND_BYTES,
-    progress: Any = print,
-) -> dict[str, Any]:
-    """Build the neighbors and report on them. The process's memory is checked against
-    `bound_bytes` before the build, from a projection, and after every batch while it runs."""
-    started = time.time()
-    plan = load_plan(tables_dir)
-    if plan is None:
-        raise EmbedError(f"no semantic plan in {tables_dir}; run `lineage embed`")
-    shards = load_vectors(tables_dir, model, plan)
-    n = sum(s.shape[0] for s in shards)
-    out = vectors_dir(tables_dir, model) / "neighbors"
-    out.mkdir(parents=True, exist_ok=True)
-    require_free_space(out, needed=n * K * (4 + 2), floor=floor_bytes)
-    dim = shards[0].shape[1]
+def _require_projected_within(spec: str, n: int, dim: int, bound_bytes: int) -> int:
+    """The build's projected peak; refused when it is over the bound."""
     projected = projected_bytes(n, dim)
     if projected > bound_bytes:
         raise MemoryBoundError(
             f"{spec} over {n:,} vectors is projected at {projected / 1024**3:.2f} GiB, over "
             f"the {bound_bytes / 1024**3:.0f} GiB bound; not started"
         )
-    set_threads(THREADS)
+    return projected
 
-    train_rows, checked = seeded_draws(n)
+
+def _built_index(
+    shards: Sequence[NDArray[Any]],
+    train_rows: NDArray[np.int64],
+    *,
+    spec: str,
+    nprobe: int | None,
+    ef_search: int | None,
+    bound_bytes: int,
+) -> Index:
+    """The index over every vector, trained on `train_rows` if it needs training, set to
+    search."""
     train = rows_of(shards, train_rows)
     index = train_index(spec, train.shape[1], train)  # a no-op for an index needing no training
     del train
@@ -171,9 +172,21 @@ def build_neighbors(
             add(index, block[i : i + _ADD_CHUNK])
             require_within(bound_bytes, f"indexing {spec}")
     set_search(index, nprobe=nprobe, ef_search=ef_search)
-    built = time.time() - started
-    progress(f"{spec}: {n:,} vectors indexed in {built:.0f}s")
+    return index
 
+
+def _search_all(
+    index: Index,
+    shards: Sequence[NDArray[Any]],
+    out: Path,
+    *,
+    spec: str,
+    candidates: int | None,
+    bound_bytes: int,
+    progress: Any,
+) -> NDArray[np.int32]:
+    """Every text's kept neighbors, written to `out` as the build stores them; returns the ids."""
+    n = sum(s.shape[0] for s in shards)
     ids = np.lib.format.open_memmap(out / "ids.npy", mode="w+", dtype=np.int32, shape=(n, K))
     scores = np.lib.format.open_memmap(
         out / "scores.npy", mode="w+", dtype=np.float16, shape=(n, K)
@@ -196,11 +209,50 @@ def build_neighbors(
         progress(f"{at:,} of {n:,} searched")
     ids.flush()
     scores.flush()
+    return ids
+
+
+def build_neighbors(
+    tables_dir: Path,
+    *,
+    model: str = MODEL,
+    spec: str = SPEC,
+    ef_search: int | None = EF_SEARCH,  # for HNSW
+    nprobe: int | None = None,  # for IVF
+    candidates: int | None = None,  # re-scored per text, for an index of compressed codes
+    floor_bytes: int,
+    bound_bytes: int = BOUND_BYTES,
+    progress: Any = print,
+) -> dict[str, Any]:
+    """Build the neighbors and report on them. The process's memory is checked against
+    `bound_bytes` before the build, from a projection, and after every batch while it runs."""
+    started = time.time()
+    shards = _load_shards(tables_dir, model)
+    n = sum(s.shape[0] for s in shards)
+    out = vectors_dir(tables_dir, model) / "neighbors"
+    out.mkdir(parents=True, exist_ok=True)
+    require_free_space(out, needed=n * K * (4 + 2), floor=floor_bytes)
+    projected = _require_projected_within(spec, n, shards[0].shape[1], bound_bytes)
+    set_threads(THREADS)
+
+    train_rows, checked = seeded_draws(n)
+    index = _built_index(
+        shards, train_rows, spec=spec, nprobe=nprobe, ef_search=ef_search, bound_bytes=bound_bytes
+    )
+    built = time.time() - started
+    progress(f"{spec}: {n:,} vectors indexed in {built:.0f}s")
+    ids = _search_all(
+        index,
+        shards,
+        out,
+        spec=spec,
+        candidates=candidates,
+        bound_bytes=bound_bytes,
+        progress=progress,
+    )
     found = int((np.asarray(ids) >= 0).sum())
     progress(f"checking {min(CHECKED, n):,} texts against exact search")
-    truth = keep_neighbors(
-        exact_search(shards, rows_of(shards, checked), K + 1), checked, K, THRESHOLD
-    )
+    truth = _exact_truth(shards, checked, THRESHOLD)
     return {
         "command": COMMAND,
         "model": model,
@@ -287,6 +339,119 @@ def best_of(
     return owner[kept], ids[kept], kept
 
 
+def _carried(
+    ids: NDArray[np.int32], scores: NDArray[np.float16], n: int, k: int, retired: NDArray[np.int64]
+) -> tuple[NDArray[np.int32], NDArray[np.float16]]:
+    """The stored lists, one row per text after the update, the retired texts' own emptied."""
+    old_n = ids.shape[0]
+    out_ids = np.full((n, k), -1, dtype=np.int32)
+    out_scores = np.zeros((n, k), dtype=np.float16)
+    out_ids[:old_n] = ids
+    out_scores[:old_n] = scores
+    out_ids[retired] = -1
+    out_scores[retired] = 0
+    return out_ids, out_scores
+
+
+def _drop_retired(
+    out_ids: NDArray[np.int32],
+    out_scores: NDArray[np.float16],
+    gone: NDArray[np.bool_],
+    ids: NDArray[np.int32],
+) -> tuple[NDArray[np.bool_], NDArray[np.int64]]:
+    """Which lists held a retired text, and which of the stored ones (`ids`) were full and are
+    to be searched again. A list with room loses the retired text in place."""
+    old_n = ids.shape[0]
+    holds_retired = (out_ids >= 0) & gone[np.maximum(out_ids, 0)]
+    lost = holds_retired.any(axis=1)
+    full = (np.asarray(ids) >= 0).all(axis=1) if old_n else np.zeros(0, dtype=bool)
+    research = np.flatnonzero(lost[:old_n] & full)
+    for row in np.flatnonzero(lost[:old_n] & ~full).tolist():
+        keep = ~holds_retired[row] & (out_ids[row] >= 0)
+        m = int(keep.sum())
+        out_ids[row, :m], out_scores[row, :m] = out_ids[row, keep], out_scores[row, keep]
+        out_ids[row, m:], out_scores[row, m:] = -1, 0
+    return lost, research
+
+
+def _search_again(
+    blocks: Sequence[NDArray[Any]],
+    out_ids: NDArray[np.int32],
+    out_scores: NDArray[np.float16],
+    searched: NDArray[np.int64],
+    gone: NDArray[np.bool_],
+    *,
+    k: int,
+    threshold: float,
+) -> Hits | None:
+    """The `searched` texts' lists from an exact search, written in place; returns its hits."""
+    if not searched.size:
+        return None
+    hits = scan(blocks, rows_of(blocks, searched), searched, threshold)
+    live = ~gone[hits.text]
+    owner, text, at = best_of(searched[hits.query[live]], hits.text[live], hits.score[live], k)
+    out_ids[searched] = -1
+    out_scores[searched] = 0
+    slot = np.arange(owner.size) - np.searchsorted(owner, owner)
+    out_ids[owner, slot] = text
+    out_scores[owner, slot] = hits.score[live][at].astype(np.float16)
+    return hits
+
+
+def _take_in(
+    blocks: Sequence[NDArray[Any]],
+    out_ids: NDArray[np.int32],
+    out_scores: NDArray[np.float16],
+    row: int,
+    entering: NDArray[np.int64],
+    score: NDArray[np.float32],
+    k: int,
+) -> None:
+    """A stored list with the fresh texts entering it, the best k kept, in place."""
+    have = out_ids[row][out_ids[row] >= 0].astype(np.int64)
+    candidates = np.concatenate([have, entering])
+    vector = rows_of(blocks, np.array([row], dtype=np.int64))[0]
+    # Rescored together, so the stored and the entering candidates are ordered by one
+    # computation; the stored ones keep their stored scores.
+    exact = rows_of(blocks, candidates) @ vector
+    _, chosen, at = best_of(np.zeros(candidates.size, dtype=np.int64), candidates, exact, k)
+    stored_score = np.concatenate([out_scores[row][: have.size], score.astype(np.float16)])
+    out_ids[row] = -1
+    out_scores[row] = 0
+    out_ids[row, : chosen.size] = chosen
+    out_scores[row, : chosen.size] = stored_score[at]
+
+
+def _enter_fresh(
+    blocks: Sequence[NDArray[Any]],
+    out_ids: NDArray[np.int32],
+    out_scores: NDArray[np.float16],
+    hits: Hits,
+    fresh: NDArray[np.int64],
+    searched: NDArray[np.int64],
+    gone: NDArray[np.bool_],
+    k: int,
+) -> list[int]:
+    """The stored lists each fresh text enters, brought up to date in place; returns them.
+
+    They come from the fresh queries' own hits, since a cosine is the same both ways."""
+    from_fresh = hits.query < fresh.size
+    target = hits.text[from_fresh]
+    entering = fresh[hits.query[from_fresh]]
+    score = hits.score[from_fresh]
+    stored = ~np.isin(target, searched) & ~gone[target]
+    target, entering, score = target[stored], entering[stored], score[stored]
+    order = np.argsort(target, kind="stable")
+    target, entering, score = target[order], entering[order], score[order]
+    bounds = np.flatnonzero(np.r_[True, target[1:] != target[:-1], True])
+    rows: list[int] = []
+    for lo, hi in zip(bounds[:-1].tolist(), bounds[1:].tolist(), strict=True):
+        row = int(target[lo])
+        _take_in(blocks, out_ids, out_scores, row, entering[lo:hi], score[lo:hi], k)
+        rows.append(row)
+    return rows
+
+
 def update_neighbors(
     blocks: Sequence[NDArray[Any]],
     ids: NDArray[np.int32],
@@ -306,37 +471,12 @@ def update_neighbors(
     list that loses a retired text is searched again, since the text it had pushed out comes
     back; a list with room only loses it."""
     n = sum(int(b.shape[0]) for b in blocks)
-    old_n = ids.shape[0]
-    out_ids = np.full((n, k), -1, dtype=np.int32)
-    out_scores = np.zeros((n, k), dtype=np.float16)
-    out_ids[:old_n] = ids
-    out_scores[:old_n] = scores
+    out_ids, out_scores = _carried(ids, scores, n, k, retired)
     gone = np.zeros(n, dtype=bool)
     gone[retired] = True
-    out_ids[retired] = -1
-    out_scores[retired] = 0
-    holds_retired = (out_ids >= 0) & gone[np.maximum(out_ids, 0)]
-    lost = holds_retired.any(axis=1)
-    full = (np.asarray(ids) >= 0).all(axis=1) if old_n else np.zeros(0, dtype=bool)
-    research = np.flatnonzero(lost[:old_n] & full)
-    for row in np.flatnonzero(lost[:old_n] & ~full).tolist():
-        keep = ~holds_retired[row] & (out_ids[row] >= 0)
-        m = int(keep.sum())
-        out_ids[row, :m], out_scores[row, :m] = out_ids[row, keep], out_scores[row, keep]
-        out_ids[row, m:], out_scores[row, m:] = -1, 0
-
+    lost, research = _drop_retired(out_ids, out_scores, gone, ids)
     searched = np.concatenate([fresh, research]).astype(np.int64)
-    hits = scan(blocks, rows_of(blocks, searched), searched, threshold) if searched.size else None
-    if hits is not None:
-        hits = Hits(hits.query, hits.text, hits.score)
-        live = ~gone[hits.text]
-        owner, text, at = best_of(searched[hits.query[live]], hits.text[live], hits.score[live], k)
-        out_ids[searched] = -1
-        out_scores[searched] = 0
-        slot = np.arange(owner.size) - np.searchsorted(owner, owner)
-        out_ids[owner, slot] = text
-        out_scores[owner, slot] = hits.score[live][at].astype(np.float16)
-
+    hits = _search_again(blocks, out_ids, out_scores, searched, gone, k=k, threshold=threshold)
     changed = {
         *fresh.tolist(),
         *research.tolist(),
@@ -344,32 +484,5 @@ def update_neighbors(
         *np.flatnonzero(lost).tolist(),
     }
     if hits is not None and fresh.size:
-        # The stored lists each fresh text enters: from the fresh queries' own hits, since a
-        # cosine is the same both ways.
-        from_fresh = hits.query < fresh.size
-        target = hits.text[from_fresh]
-        entering = fresh[hits.query[from_fresh]]
-        score = hits.score[from_fresh]
-        stored = ~np.isin(target, searched) & ~gone[target]
-        target, entering, score = target[stored], entering[stored], score[stored]
-        order = np.argsort(target, kind="stable")
-        target, entering, score = target[order], entering[order], score[order]
-        bounds = np.flatnonzero(np.r_[True, target[1:] != target[:-1], True])
-        for lo, hi in zip(bounds[:-1].tolist(), bounds[1:].tolist(), strict=True):
-            row = int(target[lo])
-            have = out_ids[row][out_ids[row] >= 0].astype(np.int64)
-            candidates = np.concatenate([have, entering[lo:hi]])
-            vector = rows_of(blocks, np.array([row], dtype=np.int64))[0]
-            # Rescored together, so the stored and the entering candidates are ordered by one
-            # computation; the stored ones keep their stored scores.
-            exact = rows_of(blocks, candidates) @ vector
-            _, chosen, at = best_of(np.zeros(candidates.size, dtype=np.int64), candidates, exact, k)
-            stored_score = np.concatenate(
-                [out_scores[row][: have.size], score[lo:hi].astype(np.float16)]
-            )
-            out_ids[row] = -1
-            out_scores[row] = 0
-            out_ids[row, : chosen.size] = chosen
-            out_scores[row, : chosen.size] = stored_score[at]
-            changed.add(row)
+        changed.update(_enter_fresh(blocks, out_ids, out_scores, hits, fresh, searched, gone, k))
     return out_ids, out_scores, np.array(sorted(changed), dtype=np.int64)
