@@ -4,7 +4,7 @@ file keeps the spans' grounding form (DESIGN.md#explanations)."""
 
 from pathlib import Path
 
-from lineage.explain import CACHE_DIR, check_cache
+from lineage.explain.explain import CACHE_DIR, check_cache
 
 ROOT = Path(__file__).resolve().parents[1]
 

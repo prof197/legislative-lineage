@@ -10,6 +10,7 @@ from typer.testing import CliRunner
 
 from lineage.cli import app
 from lineage.core import db
+from lineage.explain.spend import CHARS_PER_TOKEN, PRICES
 from lineage.labels import (
     SAME_PROVISION,
     Item,
@@ -49,7 +50,6 @@ from lineage.model_labels import (
     spent,
     user_message,
 )
-from lineage.spend import CHARS_PER_TOKEN, PRICES
 
 
 def _item(i: int) -> Item:

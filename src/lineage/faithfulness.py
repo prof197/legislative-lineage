@@ -1,7 +1,7 @@
 """The faithfulness eval: does each kept claim describe the spans it cites correctly?
 
-Grounding in code (lineage.explanations) is the hard check: every kept claim cites spans that
-exist and differ between the two texts, and CI checks it on every committed explanation. What
+Grounding in code (lineage.explain.explanations) is the hard check: every kept claim cites spans
+that exist and differ between the two texts, and CI checks it on every committed explanation. What
 code cannot check is whether the claim's words are true of those spans. A model judges that,
 one claim at a time, seeing what a reader of the comparison panel sees: each span the claim
 cites, on the side it cites it, marked within the aligned text around it, CONTEXT_CHARS
@@ -17,7 +17,7 @@ and the SHA-256 of the claim with the grounding form of the spans it cites, so a
 explanation is never counted against an old verdict. Verdicts are appended to a committed file
 that holds no text, one per claim and judge prompt, so a rerun asks only for claims not yet
 judged. A reply that is declined or off the schema is asked again once, then recorded as
-unusable and counted apart. Every call is metered against M6's budget (lineage.spend). See
+unusable and counted apart. Every call is metered against M6's budget (lineage.explain.spend). See
 DESIGN.md#explanations.
 """
 
@@ -33,10 +33,10 @@ from pydantic import BaseModel, ConfigDict
 
 from lineage.align import Span
 from lineage.core.intervals import wilson
-from lineage.explain import CACHE_DIR, explain, explanation_key
-from lineage.explanations import Claim, Side, grounding_spans
-from lineage.spend import Meter, upper_bound
-from lineage.structured import UnusableReplyError, ask_structured
+from lineage.explain.explain import CACHE_DIR, explain, explanation_key
+from lineage.explain.explanations import Claim, Side, grounding_spans
+from lineage.explain.spend import Meter, upper_bound
+from lineage.explain.structured import UnusableReplyError, ask_structured
 
 JUDGE_MODEL = "claude-opus-5-5"
 JUDGE_PROMPT = "judge-v2"
@@ -98,7 +98,7 @@ class PairView:
 
 
 def pair_view(spans: Sequence[Span], a: str, b: str, *, origin_side: Side) -> PairView:
-    """The pair's texts by role, as lineage.explain.prompt_spans gives its spans."""
+    """The pair's texts by role, as lineage.explain.explain.prompt_spans gives its spans."""
     if origin_side == "a":
         return PairView(a, b, {s.id: (s.a, s.b) for s in spans})
     return PairView(b, a, {s.id: (s.b, s.a) for s in spans})
@@ -374,7 +374,7 @@ def with_earlier_runs(
 
 def anthropic_judge(model: str = JUDGE_MODEL) -> JudgeAsk:
     """Ask through the Anthropic SDK for JSON fitting ClaimVerdict, at medium effort, every
-    reply metered (lineage.structured)."""
+    reply metered (lineage.explain.structured)."""
     import anthropic
 
     client = anthropic.Anthropic()

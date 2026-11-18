@@ -6,8 +6,8 @@ from types import SimpleNamespace
 
 import pytest
 
-from lineage.explanations import ChangeExplanation
-from lineage.structured import UnusableReplyError, reply_text, sent_schema, validated
+from lineage.explain.explanations import ChangeExplanation
+from lineage.explain.structured import UnusableReplyError, reply_text, sent_schema, validated
 
 CLAIM = {"kind": "added", "summary": "x", "origin_span_ids": [], "descendant_span_ids": ["s1"]}
 

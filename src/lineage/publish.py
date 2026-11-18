@@ -58,8 +58,9 @@ from lineage.data.stats import (
     GEORGIA_ENACTING,
     GEORGIA_NOTICE,
 )
-from lineage.explain import CACHE_DIR, explain, prompt_spans
-from lineage.explain import MODEL as EXPLAIN_MODEL
+from lineage.explain import queries as explain_queries
+from lineage.explain.explain import CACHE_DIR, explain, prompt_spans
+from lineage.explain.explain import MODEL as EXPLAIN_MODEL
 from lineage.export import (
     FEATURED_PAIRS,
     FEATURED_REPORT,
@@ -356,7 +357,7 @@ def plan_export(
     with db.connect_quiet() as con:
         refs, text_infos = bill_refs(con, tables, ids)
         section_rows = queries.section_infos(con, sections_glob=sections_glob, ids=ids)
-        shown = queries.sections_at(con, sections_glob=sections_glob, keys=shown_keys)
+        shown = explain_queries.sections_at(con, sections_glob=sections_glob, keys=shown_keys)
     sections_of: dict[str, list[tuple[int, str | None, int, str | None]]] = defaultdict(list)
     for bill_id, ordinal, heading, words, boilerplate in section_rows:
         sections_of[bill_id].append((ordinal, heading, words, boilerplate))

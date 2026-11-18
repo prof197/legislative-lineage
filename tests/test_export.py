@@ -11,8 +11,8 @@ import pytest
 from lineage import queries
 from lineage.align import align
 from lineage.core import db
-from lineage.explain import NotCachedError, explain, prompt_spans
-from lineage.explanations import ChangeExplanation, Claim
+from lineage.explain.explain import NotCachedError, explain, prompt_spans
+from lineage.explain.explanations import ChangeExplanation, Claim
 from lineage.export import (
     RESULTS,
     SCHEMA,

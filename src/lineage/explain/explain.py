@@ -2,8 +2,8 @@
 
 The model sees a pair's aligned spans (lineage.align), each with its id, kind and text on the
 origin's and descendant's sides, never the raw bills. Its reply must fit ChangeExplanation, and
-each claim is checked against the spans in code (lineage.explanations.ground). A reply that is
-unusable (refused, malformed, or making claims none of which is grounded) or has a claim that
+each claim is checked against the spans in code (lineage.explain.explanations.ground). A reply that
+is unusable (refused, malformed, or making claims none of which is grounded) or has a claim that
 fails grounding is asked again once, with why. The better of the usable replies is kept, one
 whose every claim is grounded first, its failing claims dropped; with none, the explanation is
 withheld. A reply of no claims says nothing of substance changed, and is kept as such.
@@ -21,9 +21,9 @@ id, the prompt version and the spans, so a rerun pays only for pairs it has not 
 users replay the cache, and a changed prompt or alignment can never be served a stale answer.
 A cached reply is re-grounded each time it is read. Without --live, a pair with no cached
 outcome is an error, never a call. A cache file holds no bill text: beside the reply it keeps
-each span's grounding form (lineage.explanations.GroundingSpan) and what grounding kept and
+each span's grounding form (lineage.explain.explanations.GroundingSpan) and what grounding kept and
 dropped, so CI grounds every committed reply again with no corpus (check_cache). Every call is
-metered against M6's budget (lineage.spend). See DESIGN.md#explanations.
+metered against M6's budget (lineage.explain.spend). See DESIGN.md#explanations.
 """
 
 import hashlib
@@ -35,10 +35,10 @@ from typing import Any
 
 from pydantic import ValidationError
 
-from lineage import queries
 from lineage.align import Span
 from lineage.core import db
-from lineage.explanations import (
+from lineage.explain import queries
+from lineage.explain.explanations import (
     ChangeExplanation,
     Claim,
     GroundingSpan,
@@ -47,8 +47,8 @@ from lineage.explanations import (
     grounding_spans,
     reasons,
 )
-from lineage.spend import Meter, upper_bound
-from lineage.structured import UnusableReplyError, ask_structured
+from lineage.explain.spend import Meter, upper_bound
+from lineage.explain.structured import UnusableReplyError, ask_structured
 
 MODEL = "claude-opus-5-5"
 PROMPT_VERSION = "v1"
@@ -399,7 +399,7 @@ def projected_cost(
 
 def anthropic_ask(model: str = MODEL) -> Ask:
     """Ask through the Anthropic SDK for JSON fitting ChangeExplanation, at medium effort,
-    every reply metered (lineage.structured). The key comes from the environment, as every
+    every reply metered (lineage.explain.structured). The key comes from the environment, as every
     secret here does."""
     import anthropic
 

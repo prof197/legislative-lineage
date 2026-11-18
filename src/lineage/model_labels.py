@@ -26,8 +26,8 @@ from typing import Any, Literal, Protocol, cast
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
+from lineage.explain.spend import CHARS_PER_TOKEN, PRICES
 from lineage.labels import MODEL, SAME_PROVISION, Item, model_labeler, scale_lines
-from lineage.spend import CHARS_PER_TOKEN, PRICES
 
 MODEL_ID = "claude-opus-5-5"
 PROMPT_VERSION = "v1"

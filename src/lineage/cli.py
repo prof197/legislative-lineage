@@ -76,8 +76,8 @@ from lineage.data.sessions import (
 )
 from lineage.data.snapshot import SnapshotError, load_manifest, scan, write_manifest
 from lineage.data.stats import write_coverage
-from lineage.explain import CACHE_DIR as EXPLAIN_CACHE
-from lineage.explain import (
+from lineage.explain.explain import CACHE_DIR as EXPLAIN_CACHE
+from lineage.explain.explain import (
     GROUNDING_RULES,
     NotCachedError,
     PairToExplain,
@@ -90,10 +90,14 @@ from lineage.explain import (
     prompt_spans,
     reground_cache,
 )
-from lineage.explain import MODEL as EXPLAIN_MODEL
-from lineage.explain import PROMPT_VERSION as EXPLAIN_PROMPT
-from lineage.explain import cache_path as explanation_cache_path
-from lineage.explain import projected_cost as projected_explain_cost
+from lineage.explain.explain import MODEL as EXPLAIN_MODEL
+from lineage.explain.explain import PROMPT_VERSION as EXPLAIN_PROMPT
+from lineage.explain.explain import cache_path as explanation_cache_path
+from lineage.explain.explain import projected_cost as projected_explain_cost
+from lineage.explain.spend import BUDGET as CALL_BUDGET
+from lineage.explain.spend import SPEND as CALL_SPEND
+from lineage.explain.spend import BudgetError, Meter, check_projection
+from lineage.explain.spend import spent as spent_on_calls
 from lineage.export import (
     EXPORT_DIR,
     RELEASE_MANIFEST,
@@ -306,10 +310,6 @@ from lineage.schedule import (
     weekly_job_steps,
     weekly_report,
 )
-from lineage.spend import BUDGET as CALL_BUDGET
-from lineage.spend import SPEND as CALL_SPEND
-from lineage.spend import BudgetError, Meter, check_projection
-from lineage.spend import spent as spent_on_calls
 from lineage.text.inventory import PLAN, REPORT, StalePlanError, build_inventory
 from lineage.text.merge import merge_texts
 from lineage.text.quality import REPORT as QUALITY

@@ -50,6 +50,7 @@ import numpy as np
 from lineage import queries
 from lineage.core import db
 from lineage.core.intervals import wilson
+from lineage.explain.spend import PRICES, upper_bound
 from lineage.match.strata import STRATA, PrecisionError, stratum_of
 from lineage.model_labels import MAX_COST, MODEL_ID, PASSAGES_HIGH
 from lineage.model_labels import spent as label_spent
@@ -57,7 +58,6 @@ from lineage.modeldocs import MODELDOCS_DIR, ModelDoc, load_text
 from lineage.origins import FLOOR, OriginMatch, is_listed, share_of
 from lineage.precision import PER_STRATUM, draw, stratified
 from lineage.precision import SEED as PRECISION_SEED
-from lineage.spend import PRICES, upper_bound
 
 COMMAND = "uv run lineage origin-sample"
 # v1's samples took the precision seed + 0 to + 5 (lineage.relatives_sample).

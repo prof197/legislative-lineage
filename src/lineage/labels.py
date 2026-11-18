@@ -32,6 +32,7 @@ import typer
 from lineage import queries
 from lineage.align import Embedder, Kind, align
 from lineage.core import db
+from lineage.explain import queries as explain_queries
 from lineage.pair_data import LABELS
 
 CORRECT_FROM = 2  # related; the pair evaluation's positive bar (lineage.pair_eval.POSITIVE_FROM)
@@ -206,7 +207,7 @@ def read_items(tables_dir: Path, pairs: Sequence[Pair]) -> list[Item]:
     """Every pair's two sections, read in one pass; a missing section is refused."""
     keys = sorted({(k.bill_id, k.ordinal) for p in pairs for k in (p.query, p.match)})
     with db.connect_quiet() as con:
-        found = queries.sections_at(
+        found = explain_queries.sections_at(
             con, sections_glob=str(tables_dir / "sections" / "*.parquet"), keys=keys
         )
     missing = [k for k in keys if k not in found]

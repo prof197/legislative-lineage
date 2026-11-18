@@ -13,7 +13,7 @@ from typer.testing import CliRunner
 from lineage.align import Span, align
 from lineage.cli import app
 from lineage.core import db as core_db
-from lineage.explain import (
+from lineage.explain.explain import (
     ATTEMPTS,
     GROUNDING_RULES,
     MODEL,
@@ -33,8 +33,8 @@ from lineage.explain import (
     prompt_spans,
     reground_cache,
 )
-from lineage.explanations import ChangeExplanation, Claim
-from lineage.spend import BUDGET, BudgetError, Meter, load_runs
+from lineage.explain.explanations import ChangeExplanation, Claim
+from lineage.explain.spend import BUDGET, BudgetError, Meter, load_runs
 
 ORIGIN = "The fee is set for each fiscal year. Records are kept."
 DESCENDANT = "The fee is set every biennium. Records are kept. Appeals go to the board."

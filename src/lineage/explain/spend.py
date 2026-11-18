@@ -44,7 +44,7 @@ class BudgetError(Exception):
 
 def _prices(model: str) -> tuple[float, float]:
     if model not in PRICES:
-        raise BudgetError(f"no price for {model}; add it to lineage.spend.PRICES first")
+        raise BudgetError(f"no price for {model}; add it to lineage.explain.spend.PRICES first")
     return PRICES[model]
 
 

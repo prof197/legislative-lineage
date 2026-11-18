@@ -11,7 +11,7 @@ the JSON Schema those models emit is the site's contract (DR-1). One build write
   shares with the hosted bill.
 - `compare/<a>--<b>.json`: each listed relative's, and each featured story pair's, matched
   sections aligned (lineage.align), with a featured pair's grounded explanation from the cache
-  (lineage.explain); a pair is never sent to a model here.
+  (lineage.explain.explain); a pair is never sent to a model here.
 - `texts/<slug>.json`: the display text of each section some comparison shows, once per bill.
   A section is shown beside many relatives, so keeping its text out of the comparisons keeps
   the site's size to its distinct text (measured in reports/export.json).
@@ -55,8 +55,9 @@ from lineage.data.stats import (
     GEORGIA_ENACTING,
     GEORGIA_NOTICE,
 )
-from lineage.explain import CACHE_DIR, explain, prompt_spans
-from lineage.explain import MODEL as EXPLAIN_MODEL
+from lineage.explain import queries as explain_queries
+from lineage.explain.explain import CACHE_DIR, explain, prompt_spans
+from lineage.explain.explain import MODEL as EXPLAIN_MODEL
 from lineage.export_schema import (
     TOP_LEVEL,
     AlignedPair,
@@ -650,7 +651,7 @@ def build_export(
         section_rows = queries.section_infos(
             con, sections_glob=str(tables / "sections" / "*.parquet"), ids=ids
         )
-        shown = queries.sections_at(
+        shown = explain_queries.sections_at(
             con, sections_glob=str(tables / "sections" / "*.parquet"), keys=keys
         )
     text_bytes = sum(len(t.encode()) for _, t, _ in shown.values())
