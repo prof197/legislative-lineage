@@ -11,8 +11,11 @@ from typing import Annotated, Any
 import typer
 
 from lineage.cli.app import (
+    AlignWorkersOption,
     CacheOption,
     DayOption,
+    FeaturedPairsOption,
+    FeaturedReportOption,
     LiveExportOption,
     ManifestOption,
     MinFreeOption,
@@ -20,8 +23,11 @@ from lineage.cli.app import (
     RawOption,
     ResultsOption,
     SessionsOption,
+    StoriesOption,
     TablesOption,
     app,
+    exits_on,
+    fail,
     publish_app,
     schedule_app,
 )
@@ -89,6 +95,18 @@ from lineage.origins.modeldocs import ModelDocError
 from lineage.text.inventory import PLAN
 from lineage.text.sectioning import SectioningError
 
+PUBLISH_REPORTS = DATA / "publish"
+
+StateOption = Annotated[str, typer.Option("--state", help="The hosted state, by postal code.")]
+ChangesOption = Annotated[
+    Path, typer.Option("--changes", help="The change log, one file per day (local).")
+]
+SiteOption = Annotated[
+    str, typer.Option("--site-url", help="The site's address, absolute, for the feed's links.")
+]
+EmbeddingModelOption = Annotated[str, typer.Option("--model", help="The embedding model.")]
+HeldDayOption = Annotated[str, typer.Option("--day", help="The held day, YYYY-MM-DD.")]
+
 
 @app.command("update")
 def update_command(
@@ -96,9 +114,7 @@ def update_command(
         Path, typer.Option("--day", help="A day's directory: day.json and its records (local).")
     ],
     tables: TablesOption = DATA / "tables",
-    changes: Annotated[
-        Path, typer.Option("--changes", help="The change log, one file per day (local).")
-    ] = CHANGES_DIR,
+    changes: ChangesOption = CHANGES_DIR,
     min_free_gib: MinFreeOption = 20.0,
 ) -> None:
     """Apply one day's new and changed records to the built corpus, matching in both
@@ -114,6 +130,25 @@ def update_command(
         typer.echo(f"error: not built yet: {e}", err=True)
         raise typer.Exit(1) from e
     typer.echo(f"{len(logged)} changes -> {changes}")
+
+
+# What the whole pipeline, run again by a rebuild, may raise.
+_REBUILD_ERRORS: tuple[type[Exception], ...] = (
+    rebuilding.RebuildError,
+    UpdateError,
+    SnapshotError,
+    InsufficientDiskSpaceError,
+    StoplistError,
+    EmbedError,
+    ModelError,
+    SemanticPairsError,
+    StateBoilerplateError,
+    MemoryBoundError,
+    SectioningError,
+    DocTypesError,
+    ModelDocError,
+    IndexMissingError,
+)
 
 
 @app.command("rebuild")
@@ -162,7 +197,7 @@ def rebuild_command(
             help="Match the model documents [default: when the tables reused hold matches].",
         ),
     ] = None,
-    model: Annotated[str, typer.Option("--model", help="The embedding model.")] = SEMANTIC_MODEL,
+    model: EmbeddingModelOption = SEMANTIC_MODEL,
     exact: Annotated[
         bool,
         typer.Option("--exact", help="Search neighbors exactly, not by HNSW (small corpora)."),
@@ -174,7 +209,7 @@ def rebuild_command(
 ) -> None:
     """The folded days laid over the snapshot's archives and the whole pipeline run into OUT,
     with pinned or refreshed corpus statistics -> OUT, OUT.build/rebuild.json (DR-7)."""
-    try:
+    with exits_on(*_REBUILD_ERRORS):
         doc = rebuilding.rebuild(
             out,
             days_dir=days,
@@ -193,26 +228,13 @@ def rebuild_command(
             floor_bytes=int(min_free_gib * GiB),
             progress=typer.echo,
         )
-    except (
-        rebuilding.RebuildError,
-        UpdateError,
-        SnapshotError,
-        InsufficientDiskSpaceError,
-        StoplistError,
-        EmbedError,
-        ModelError,
-        SemanticPairsError,
-        StateBoilerplateError,
-        MemoryBoundError,
-        SectioningError,
-        DocTypesError,
-        ModelDocError,
-        IndexMissingError,
-    ) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
+    typer.echo(_rebuilt(doc, out))
+
+
+def _rebuilt(doc: dict[str, Any], out: Path) -> str:
+    """The rebuild's summary: records, days, statistics, vector shards reused, time."""
     v = doc["vectors"]
-    typer.echo(
+    return (
         f"{doc['records']:,} records as of {doc['as_of']}, {len(doc['days'])} days over "
         f"{doc['archives']['written']} archives, statistics {doc['statistics']}; "
         f"{v['shards_reused']} of {v['shards']} vector shards reused, {v['shards_embedded']} "
@@ -244,8 +266,7 @@ def intake_command(
     -> <days>/<day>/ and <data>/intake/reports/<day>.json (DESIGN.md#updates). The key comes
     from OPENSTATES_API_KEY."""
     if tier not in TIERS:
-        typer.echo(f"error: no tier {tier!r}; one of {', '.join(TIERS)}", err=True)
-        raise typer.Exit(1)
+        fail(f"error: no tier {tier!r}; one of {', '.join(TIERS)}")
     day = (
         datetime.date.fromisoformat(as_of) if as_of else datetime.datetime.now(datetime.UTC).date()
     )
@@ -256,7 +277,7 @@ def intake_command(
             day - datetime.timedelta(days=1), datetime.time.min, datetime.UTC
         )
     )
-    try:
+    with exits_on(IntakeError, InsufficientDiskSpaceError):
         report = run_intake(
             day,
             opener=open_url,
@@ -266,9 +287,6 @@ def intake_command(
             tier=TIERS[tier],
             floor_bytes=int(min_free_gib * GiB),
         )
-    except (IntakeError, InsufficientDiskSpaceError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     outcomes = ", ".join(f"{k} {v}" for k, v in report.get("outcomes", {}).items())
     typer.echo(f"{report['as_of']}: day {report['day']}" + (f"; {outcomes}" if outcomes else ""))
 
@@ -303,17 +321,6 @@ def intake_estimate_command(
     typer.echo(f"-> {out}")
 
 
-PUBLISH_REPORTS = DATA / "publish"
-
-StateOption = Annotated[str, typer.Option("--state", help="The hosted state, by postal code.")]
-ChangesOption = Annotated[
-    Path, typer.Option("--changes", help="The change log, one file per day (local).")
-]
-SiteOption = Annotated[
-    str, typer.Option("--site-url", help="The site's address, absolute, for the feed's links.")
-]
-
-
 @publish_app.command("pages")
 def publish_pages_command(
     state: StateOption = "GA",
@@ -333,18 +340,10 @@ def publish_pages_command(
         ),
     ] = True,
     models_dir: ModelsOption = MODELS_DIR,
-    workers: Annotated[
-        int, typer.Option("--workers", help="Processes aligning section pairs.")
-    ] = EXPORT_WORKERS,
-    featured_pairs: Annotated[
-        Path, typer.Option("--featured-pairs", help="The featured pairs (committed).")
-    ] = FEATURED_PAIRS,
-    featured_report: Annotated[
-        Path, typer.Option("--featured-report", help="Each story's relatives (committed).")
-    ] = FEATURED_REPORT,
-    stories_rules: Annotated[
-        Path, typer.Option("--stories", help="Which stories each state's site carries (committed).")
-    ] = STORIES_RULES,
+    workers: AlignWorkersOption = EXPORT_WORKERS,
+    featured_pairs: FeaturedPairsOption = FEATURED_PAIRS,
+    featured_report: FeaturedReportOption = FEATURED_REPORT,
+    stories_rules: StoriesOption = STORIES_RULES,
     results: ResultsOption = RESULTS,
     min_free_gib: MinFreeOption = 20.0,
 ) -> None:
@@ -352,7 +351,15 @@ def publish_pages_command(
     they touch -> <export>.staging/, data/publish/<ST>.json (DESIGN.md#updates)."""
     state = state.upper()
     target = export if export is not None else EXPORT_DIR / state
-    try:
+    with exits_on(
+        PublishError,
+        ExportError,
+        NotCachedError,
+        SemanticPairsError,
+        StateBoilerplateError,
+        UpdateError,
+        InsufficientDiskSpaceError,
+    ):
         doc = export_changes(
             tables,
             state=state,
@@ -369,17 +376,6 @@ def publish_pages_command(
             floor=int(min_free_gib * GiB),
             progress=typer.echo,
         )
-    except (
-        PublishError,
-        ExportError,
-        NotCachedError,
-        SemanticPairsError,
-        StateBoilerplateError,
-        UpdateError,
-        InsufficientDiskSpaceError,
-    ) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     PUBLISH_REPORTS.mkdir(parents=True, exist_ok=True)
     report = PUBLISH_REPORTS / f"{state}.json"
     report.write_text(json.dumps(doc, indent=1) + "\n")
@@ -408,11 +404,8 @@ def publish_feed_command(
     -> <export>/feed.xml (DESIGN.md#updates)."""
     state = state.upper()
     target = export if export is not None else staging_dir(EXPORT_DIR / state)
-    try:
+    with exits_on(FeedError, PublishError, ExportError, FileNotFoundError):
         doc = write_feed(tables, state=state, export=target, site_url=site_url, changes_dir=changes)
-    except (FeedError, PublishError, ExportError, FileNotFoundError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     kinds = ", ".join(f"{k} {v}" for k, v in doc["by_kind"].items())
     typer.echo(
         f"{doc['entries']} entries through {doc['through']} ({kinds or 'none'}), "
@@ -427,11 +420,8 @@ def publish_promote_command(
 ) -> None:
     """Swap the staging copy in as the live export. Nothing is deployed or published."""
     target = export if export is not None else EXPORT_DIR / state.upper()
-    try:
+    with exits_on(PublishError):
         promote(target)
-    except PublishError as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     typer.echo(f"-> {target}")
 
 
@@ -449,15 +439,12 @@ def publish_weekly_command(
     report: Annotated[
         Path, typer.Option("--report", help="The weekly report (local).")
     ] = WEEKLY_REPORT,
-    model: Annotated[str, typer.Option("--model", help="The embedding model.")] = SEMANTIC_MODEL,
+    model: EmbeddingModelOption = SEMANTIC_MODEL,
 ) -> None:
     """The weekly rebuild's check: the share of relatives the updated tables and the rebuild
     agree on, failing below 98%, and the drift when the statistics are refreshed (DR-7)."""
-    try:
+    with exits_on(ScheduleError):
         doc = weekly_report(updated, pinned, refreshed, model=model, report=report)
-    except ScheduleError as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     a, d = doc["agreement"], doc["drift"]
     drifted = "" if d is None else f"; {d['relatives_changed']} relatives drift when refreshed"
     typer.echo(
@@ -488,7 +475,7 @@ def publish_deploy_command(
     Exits 3 when the day is held for review, printing its counts and baseline last."""
     state = state.upper()
     target = export if export is not None else EXPORT_DIR / state
-    try:
+    with exits_on(deploy.DeployError, ReleaseError):
         record = deploy.deploy_day(
             state=state,
             export=target,
@@ -496,9 +483,6 @@ def publish_deploy_command(
             paths=_deploy_paths(root),
             floor=int(min_free_gib * GiB),
         )
-    except (deploy.DeployError, ReleaseError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     if record.state == "held":
         typer.echo(
             json.dumps(
@@ -519,7 +503,7 @@ def publish_deploy_command(
 
 @publish_app.command("release")
 def publish_release_command(
-    day: Annotated[str, typer.Option("--day", help="The held day, YYYY-MM-DD.")],
+    day: HeldDayOption,
     root: DeployRootOption = deploy.DEPLOY_DIR,
     repack: Annotated[
         bool,
@@ -537,7 +521,7 @@ def publish_release_command(
     live export as it now stands; the site's gates run again, the pin committed and
     leak-checked, pushed, and the Pages workflow dispatched."""
     state = state.upper()
-    try:
+    with exits_on(deploy.DeployError, ReleaseError):
         record = deploy.release_day(
             datetime.date.fromisoformat(day),
             paths=_deploy_paths(root),
@@ -546,25 +530,19 @@ def publish_release_command(
             state=state,
             floor=int(min_free_gib * GiB),
         )
-    except (deploy.DeployError, ReleaseError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     typer.echo(f"{record.day}: {record.state} as {record.tag}")
 
 
 @publish_app.command("reject")
 def publish_reject_command(
-    day: Annotated[str, typer.Option("--day", help="The held day, YYYY-MM-DD.")],
+    day: HeldDayOption,
     root: DeployRootOption = deploy.DEPLOY_DIR,
 ) -> None:
     """Reject a day the circuit breaker held, once reviewed: its release is never published and
     nothing leaves this machine. The live track keeps its data, and the next day's run publishes
     as usual, with it."""
-    try:
+    with exits_on(deploy.DeployError):
         record = deploy.reject_day(datetime.date.fromisoformat(day), paths=_deploy_paths(root))
-    except deploy.DeployError as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     typer.echo(
         f"{record.day}: rejected; {record.tag} stays unpublished, and the next day's run "
         "publishes as usual"
@@ -595,7 +573,7 @@ def publish_candidate_command(
     state = state.upper()
     as_of = datetime.date.fromisoformat(day) if day else datetime.datetime.now(datetime.UTC).date()
     describe, documents = _review_names(tables, state, site_url)
-    try:
+    with exits_on(deploy.DeployError, ReleaseError):
         doc = deploy.prepare_candidate(
             as_of,
             state=state,
@@ -606,9 +584,6 @@ def publish_candidate_command(
             documents=documents,
             floor=int(min_free_gib * GiB),
         )
-    except (deploy.DeployError, ReleaseError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     files = doc["files"]
     typer.echo(
         f"{doc['tag']} against {doc['pinned']}: {len(files['added'])} added, "
@@ -705,8 +680,7 @@ def schedule_plist_command(
     """Fill a launchd template with this checkout, the data directory and the PATH it runs
     under -> OUT. Loading it with launchctl is the operator's step."""
     if job not in ("daily", "weekly"):
-        typer.echo("error: the job is daily or weekly", err=True)
-        raise typer.Exit(1)
+        fail("error: the job is daily or weekly")
     ruled = SCHEDULE[job]
     when = When(
         hour=ruled.hour if hour is None else hour,
@@ -724,10 +698,7 @@ def schedule_plist_command(
         "INTERVALS": calendar_intervals(when),
         "LABEL": label,
     }
-    try:
+    with exits_on(ScheduleError):
         text = render_template((TEMPLATES / f"lineage-{job}.plist.template").read_text(), values)
-    except ScheduleError as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     out.write_text(text)
     typer.echo(f"-> {out}; load it with launchctl when ready")

@@ -19,6 +19,8 @@ from lineage.cli.app import (
     SemanticOption,
     TablesOption,
     app,
+    exits_on,
+    fail,
     model_app,
     semantic_search,
 )
@@ -73,7 +75,7 @@ def boilerplate(
     ),
 ) -> None:
     """Build the shingle stoplist from the sections table and report the boilerplate found."""
-    try:
+    with exits_on(StoplistError, bare=True):
         result = build_stoplist(
             tables,
             max_share=max_share,
@@ -82,9 +84,6 @@ def boilerplate(
             manifest_sha256=file_sha256(manifest),
             rules_sha256=file_sha256(rules),
         )
-    except StoplistError as e:
-        typer.echo(str(e), err=True)
-        raise typer.Exit(1) from None
     typer.echo(
         f"{result.stoplisted:,} of {result.distinct_shingles:,} shingles stoplisted, removing "
         f"{result.occurrences_removed / max(result.occurrences, 1):.1%} of occurrences across "
@@ -110,7 +109,7 @@ def embed_command(
     report: ReportOption = (EMBED_REPORT),
 ) -> None:
     """Embed every distinct semantic window, float16, resumable -> <tables>/semantic/."""
-    try:
+    with exits_on(EmbedError, ModelError, InsufficientDiskSpaceError):
         doc = embed_corpus(
             tables,
             model,
@@ -120,9 +119,6 @@ def embed_command(
             floor_bytes=int(min_free_gib * GiB),
             progress=typer.echo,
         )
-    except (EmbedError, ModelError, InsufficientDiskSpaceError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     write_embed_report(doc, report)
     typer.echo(
         f"{doc['distinct_texts']:,} distinct texts of {doc['windows']:,} windows, "
@@ -149,11 +145,8 @@ def neighbors_command(
 ) -> None:
     """Every distinct window's nearest neighbors by meaning -> <tables>/semantic/<model>/."""
     if check_at_stage:
-        try:
+        with exits_on(EmbedError):
             checked = check_neighbors_at(tables, THRESHOLD_STAGE)
-        except EmbedError as e:
-            typer.echo(f"error: {e}", err=True)
-            raise typer.Exit(1) from e
         doc = json.loads(report.read_text()) | {"exact_check_at_stage_threshold": checked}
         write_neighbors_report(doc, report)
         typer.echo(
@@ -161,19 +154,15 @@ def neighbors_command(
             f"searched exactly ({checked['true_neighbors']:,} true neighbors) -> {report}"
         )
         if checked["recall"] < RECALL_FLOOR:
-            typer.echo(f"error: recall {checked['recall']} is below {RECALL_FLOOR}", err=True)
-            raise typer.Exit(1)
+            fail(f"error: recall {checked['recall']} is below {RECALL_FLOOR}")
         return
-    try:
+    with exits_on(EmbedError, InsufficientDiskSpaceError, MemoryBoundError):
         doc = build_neighbors(
             tables,
             ef_search=ef_search,
             floor_bytes=int(min_free_gib * GiB),
             progress=typer.echo,
         )
-    except (EmbedError, InsufficientDiskSpaceError, MemoryBoundError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     write_neighbors_report(doc, report)
     check = doc["exact_check"]
     typer.echo(
@@ -183,15 +172,12 @@ def neighbors_command(
         f"{doc['peak_memory_bytes'] / GiB:.2f} GiB; {doc['seconds']}s -> {report}"
     )
     if not doc["within_memory_bound"]:
-        typer.echo("error: the build's peak memory crossed the bound", err=True)
-        raise typer.Exit(1)
+        fail("error: the build's peak memory crossed the bound")
     if check["recall"] < RECALL_FLOOR:
-        typer.echo(
+        fail(
             f"error: recall {check['recall']} is below {RECALL_FLOOR}; rerun with a larger "
-            f"--ef-search than {ef_search}",
-            err=True,
+            f"--ef-search than {ef_search}"
         )
-        raise typer.Exit(1)
 
 
 @app.command("semantic-pairs")
@@ -202,11 +188,8 @@ def semantic_pairs_command(
 ) -> None:
     """The neighbors as cross-state section pairs, best cosine and window pair each ->
     <tables>/semantic/<model>/pairs/."""
-    try:
+    with exits_on(SemanticPairsError, InsufficientDiskSpaceError, MemoryBoundError):
         doc = build_semantic_pairs(tables, floor_bytes=int(min_free_gib * GiB))
-    except (SemanticPairsError, InsufficientDiskSpaceError, MemoryBoundError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     write_semantic_pairs_report(doc, report)
     typer.echo(
         f"{doc['pairs']:,} cross-state section pairs from {doc['neighbors_read']:,} neighbors; "
@@ -223,17 +206,14 @@ def state_boilerplate_command(
 ) -> None:
     """Count the families of its own state each section's near-duplicates reach ->
     <tables>/state_boilerplate/; flagged at MIN_FAMILIES or more."""
-    try:
-        doc = build_state_boilerplate(tables, floor_bytes=int(min_free_gib * GiB))
-    except (
+    with exits_on(
         StateBoilerplateError,
         SemanticPairsError,
         FileNotFoundError,
         InsufficientDiskSpaceError,
         MemoryBoundError,
-    ) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
+    ):
+        doc = build_state_boilerplate(tables, floor_bytes=int(min_free_gib * GiB))
     write_state_boilerplate_report(doc, report)
     at = next(r for r in doc["sweep"] if r["min_families"] == MIN_FAMILIES)
     typer.echo(
@@ -254,13 +234,10 @@ def index(
 ) -> None:
     """Build the search index: signatures, LSH bands, verified pairs, families."""
     started = time.monotonic()
-    try:
+    with exits_on(StoplistError, InsufficientDiskSpaceError, bare=True):
         doc = build_index(
             tables, workers=workers, floor_bytes=int(min_free_gib * GiB), report_path=report
         )
-    except (StoplistError, InsufficientDiskSpaceError) as e:
-        typer.echo(str(e), err=True)
-        raise typer.Exit(1) from None
     counts, lsh = doc["sections"], doc["lsh"]
     pairs, capped = lsh["candidate_pairs"], lsh["capped"]
     verified, families = doc["pairs"]["verified"], doc["families"]
@@ -293,15 +270,12 @@ def query(
 ) -> None:
     """Find a bill's relatives in the index, offline: bills that share its text, by section."""
     started = time.monotonic()
-    try:
+    with exits_on(IndexMissingError, StoplistError, EmbedError, ModelError, bare=True):
         require_index(tables)
         search = semantic_search(tables) if semantic else None
         result = query_text(
             file.read_text(), tables, semantic=search, flagged=flagged_sections(tables)
         )
-    except (IndexMissingError, StoplistError, EmbedError, ModelError) as e:
-        typer.echo(str(e), err=True)
-        raise typer.Exit(1) from None
     typer.echo(f"{file}: {result.sections} sections, {result.searched} searched")
     if not result.matches:
         typer.echo("No relatives found in the index.")
@@ -353,10 +327,7 @@ def model_fetch(
     wanted = names or list(MODELS)
     unknown = [n for n in wanted if n not in MODELS]
     if unknown:
-        typer.echo(
-            f"error: unknown model {', '.join(unknown)}; known: {', '.join(MODELS)}", err=True
-        )
-        raise typer.Exit(1)
+        fail(f"error: unknown model {', '.join(unknown)}; known: {', '.join(MODELS)}")
     for name in wanted:
         try:
             fetched, present = fetch_model(name, models_dir, floor=int(min_free_gib * GiB))

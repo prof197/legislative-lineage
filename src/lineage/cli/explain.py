@@ -9,10 +9,12 @@ import typer
 
 from lineage.cli.app import (
     CacheOption,
+    CallSpendOption,
     ModelsOption,
     ParaphraseOption,
     TablesOption,
     app,
+    exits_on,
     pair_alignments,
 )
 from lineage.core.paths import DATA
@@ -20,7 +22,9 @@ from lineage.explain.explain import CACHE_DIR as EXPLAIN_CACHE
 from lineage.explain.explain import MODEL as EXPLAIN_MODEL
 from lineage.explain.explain import PROMPT_VERSION as EXPLAIN_PROMPT
 from lineage.explain.explain import (
+    Ask,
     NotCachedError,
+    Outcome,
     PairToExplain,
     anthropic_ask,
     asks_needed,
@@ -61,9 +65,7 @@ def explain_command(
     cache: CacheOption = EXPLAIN_CACHE,
     paraphrase: ParaphraseOption = True,
     models_dir: ModelsOption = MODELS_DIR,
-    spend: Annotated[
-        Path, typer.Option("--spend", help="M6's model-call ledger (committed).")
-    ] = CALL_SPEND,
+    spend: CallSpendOption = CALL_SPEND,
     again: Annotated[
         bool,
         typer.Option(
@@ -93,19 +95,11 @@ def explain_command(
     if reground:
         typer.echo(f"{reground_cache(cache)} cache files regrounded under the current rules")
         return
-    try:
+    with exits_on(ValueError, NotCachedError, ModelError, BudgetError):
         todo = load_pairs(pairs)
         prompts = _pair_prompts(todo, tables, models_dir if paraphrase else None)
         uncached = [p for p in prompts if not explanation_cache_path(p, cache).exists()]
-        asks = [asks_needed(p, cache, again=again, afresh=afresh) for p in prompts]
-        # Pairs with the same spans share one cache file, asked for once.
-        due = list(
-            {
-                explanation_cache_path(p, cache): (p, n)
-                for p, n in zip(prompts, asks, strict=True)
-                if n
-            }.values()
-        )
+        due = _due(prompts, cache, again=again, afresh=afresh)
         projected = projected_explain_cost([p for p, _ in due], [n for _, n in due])
         again_files = sum(explanation_cache_path(p, cache).exists() for p, _ in due)
         typer.echo(
@@ -113,38 +107,62 @@ def explain_command(
             f"{again_files} cache files to ask again, projected at most "
             f"${projected:.2f}; ${spent_on_calls(spend):.2f} of ${CALL_BUDGET:.2f} spent"
         )
-        if uncached and not live:
-            raise NotCachedError(f"{len(uncached)} pairs not cached; run with --live to ask")
-        if again and not live:
-            raise NotCachedError("--again asks the model; run with --live")
-        if afresh and not again:
-            raise NotCachedError("--afresh is a way of asking again; run with --live --again")
-        meter = None
-        ask = None
-        if due:
-            check_projection(projected, spend)
-            meter = Meter(
-                spend,
-                "explain",
-                EXPLAIN_MODEL,
-                EXPLAIN_PROMPT,
-                datetime.date.today().isoformat(),
-                projected=projected,
-            )
-            ask = anthropic_ask()
+        _refuse_unasked(len(uncached), live=live, again=again, afresh=afresh)
+        meter, ask = _metered_ask(projected, spend) if due else (None, None)
         for pair, for_prompt in zip(todo, prompts, strict=True):
             outcome = explain(
                 for_prompt, ask=ask, cache=cache, meter=meter, again=again, afresh=afresh
             )
-            (ob, oo), (db, do) = pair.origin, pair.descendant
-            typer.echo(f"\n{ob} section {oo} -> {db} section {do}")
-            if outcome.withheld:
-                typer.echo("  withheld: no grounded account after one retry")
-            for claim in outcome.claims:
-                cited = ", ".join([*claim.origin_span_ids, *claim.descendant_span_ids])
-                typer.echo(f"  {claim.kind}: {claim.summary} [{cited}]")
-            for claim, why in outcome.dropped:
-                typer.echo(f"  dropped ({why}): {claim.summary}")
-    except (ValueError, NotCachedError, ModelError, BudgetError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
+            _echo_outcome(pair, outcome)
+
+
+def _due(
+    prompts: Sequence[list[dict[str, Any]]], cache: Path, *, again: bool, afresh: bool
+) -> list[tuple[list[dict[str, Any]], int]]:
+    """Each prompt the model is to be asked, with how many asks it needs."""
+    asks = [asks_needed(p, cache, again=again, afresh=afresh) for p in prompts]
+    # Pairs with the same spans share one cache file, asked for once.
+    return list(
+        {
+            explanation_cache_path(p, cache): (p, n)
+            for p, n in zip(prompts, asks, strict=True)
+            if n
+        }.values()
+    )
+
+
+def _refuse_unasked(uncached: int, *, live: bool, again: bool, afresh: bool) -> None:
+    """Refuse what would ask the model without --live, and --afresh without --again."""
+    if uncached and not live:
+        raise NotCachedError(f"{uncached} pairs not cached; run with --live to ask")
+    if again and not live:
+        raise NotCachedError("--again asks the model; run with --live")
+    if afresh and not again:
+        raise NotCachedError("--afresh is a way of asking again; run with --live --again")
+
+
+def _metered_ask(projected: float, spend: Path) -> tuple[Meter, Ask]:
+    """The model's ask and the meter it spends against, once the projection fits the cap."""
+    check_projection(projected, spend)
+    meter = Meter(
+        spend,
+        "explain",
+        EXPLAIN_MODEL,
+        EXPLAIN_PROMPT,
+        datetime.date.today().isoformat(),
+        projected=projected,
+    )
+    return meter, anthropic_ask()
+
+
+def _echo_outcome(pair: PairToExplain, outcome: Outcome) -> None:
+    """A pair's explanation: its kept claims with the spans they cite, and those dropped."""
+    (ob, oo), (db, do) = pair.origin, pair.descendant
+    typer.echo(f"\n{ob} section {oo} -> {db} section {do}")
+    if outcome.withheld:
+        typer.echo("  withheld: no grounded account after one retry")
+    for claim in outcome.claims:
+        cited = ", ".join([*claim.origin_span_ids, *claim.descendant_span_ids])
+        typer.echo(f"  {claim.kind}: {claim.summary} [{cited}]")
+    for claim, why in outcome.dropped:
+        typer.echo(f"  dropped ({why}): {claim.summary}")

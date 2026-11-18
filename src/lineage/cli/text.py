@@ -11,6 +11,7 @@ from lineage.cli.app import (
     PlanOption,
     TablesOption,
     app,
+    exits_on,
     text_app,
 )
 from lineage.core.disk import GiB, InsufficientDiskSpaceError
@@ -33,11 +34,8 @@ def split(
     min_free_gib: MinFreeOption = 20.0,
 ) -> None:
     """Split every bill's text into sections and write the `sections` table."""
-    try:
+    with exits_on(SectioningError, InsufficientDiskSpaceError, bare=True):
         result = build_sections(tables, workers=workers, floor_bytes=int(min_free_gib * GiB))
-    except (SectioningError, InsufficientDiskSpaceError) as e:
-        typer.echo(str(e), err=True)
-        raise typer.Exit(1) from None
     typer.echo(
         f"{result.sections:,} sections from {result.with_text:,} of {result.bills:,} bills with "
         f"text; {result.by_heading:,} split at headings -> {tables / 'sections'} "
@@ -71,11 +69,8 @@ def text_sample(
     fetch: Annotated[bool, typer.Option(help="Fetch what the store lacks before judging.")] = True,
 ) -> None:
     """Fetch a seeded sample per state and format and judge its text against Open States'."""
-    try:
+    with exits_on(StalePlanError):
         doc = run_sample(tables, plan_path=plan, store=store, report_path=out, fetch=fetch)
-    except StalePlanError as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     cells = [c for formats in doc["states"].values() for c in formats.values()]
     sampled = sum(sum(c["sampled"].values()) for c in cells)
     ok = sum(c["outcomes"].get("ok", 0) for c in cells)
@@ -92,11 +87,8 @@ def text_fetch(
     fetch: Annotated[bool, typer.Option(help="Fetch what the store lacks before counting.")] = True,
 ) -> None:
     """Fetch every planned record's text, as rules/text_layer.toml says; resumable."""
-    try:
+    with exits_on(InsufficientDiskSpaceError, StalePlanError):
         doc = run_fetch(tables, plan_path=plan, report_path=out, fetch=fetch)
-    except (InsufficientDiskSpaceError, StalePlanError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     ok = doc["outcomes"].get("ok", 0)
     left = sum(doc["left_out"].values())
     typer.echo(
@@ -114,13 +106,10 @@ def text_merge(
     min_free_gib: MinFreeOption = 20.0,
 ) -> None:
     """Choose each record's text, fetched or exported -> data/tables/texts/."""
-    try:
+    with exits_on(InsufficientDiskSpaceError, StalePlanError):
         counts = merge_texts(
             tables, plan_path=plan, exported_only=exported_only,
             floor_bytes=int(min_free_gib * GiB),
         )  # fmt: skip
-    except (InsufficientDiskSpaceError, StalePlanError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     shown = ", ".join(f"{source} {n:,}" for source, n in counts.items())
     typer.echo(f"{sum(counts.values()):,} records by text source: {shown} -> {tables / 'texts'}")

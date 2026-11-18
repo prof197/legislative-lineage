@@ -12,11 +12,15 @@ import typer
 
 from lineage.cli.app import (
     AlignModelsOption,
+    BatchIdOption,
     LabelsAppendOption,
     ModelsOption,
     ParaphraseOption,
+    PrecisionSampleArgument,
     TablesOption,
     app,
+    exits_on,
+    fail,
     model_embedder,
 )
 from lineage.core.paths import DATA
@@ -62,8 +66,8 @@ from lineage.evals.model_labels import MODEL_ID as LABEL_MODEL
 from lineage.evals.model_labels import PROMPT_VERSION as LABEL_PROMPT_VERSION
 from lineage.evals.model_labels import PROMPTS as LABEL_PROMPTS
 from lineage.evals.model_labels import SPEND as LABEL_SPEND
-from lineage.evals.model_labels import anthropic_ask as anthropic_label_ask
 from lineage.evals.model_labels import (
+    Prompt,
     anthropic_batches,
     batch_usage,
     label_in_batch,
@@ -71,6 +75,7 @@ from lineage.evals.model_labels import (
     model_pending,
     projected_cost,
 )
+from lineage.evals.model_labels import anthropic_ask as anthropic_label_ask
 from lineage.evals.model_labels import record_spend as record_label_spend
 from lineage.evals.model_labels import spent as label_spent
 from lineage.evals.precision import SAMPLE as PRECISION_SAMPLE
@@ -92,18 +97,22 @@ from lineage.match.state_boilerplate import (
 )
 from lineage.match.strata import PrecisionError
 
+LabelerOption = Annotated[
+    str, typer.Option("--labeler", help="Your GitHub handle; labels are never kept by name.")
+]
+DrawReportOption = Annotated[
+    Path | None, typer.Option("--report", help="The draw's report JSON (committed).")
+]
+LabelModelOption = Annotated[str, typer.Option("--model", help="The model asked.")]
+LabelSpendOption = Annotated[
+    Path, typer.Option("--spend", help="The batches' spend ledger (committed).")
+]
+
 
 @app.command()
 def label(
-    sample: Annotated[
-        Path,
-        typer.Argument(
-            help="The precision sample, one pair per line.", exists=True, dir_okay=False
-        ),
-    ],
-    labeler: Annotated[
-        str, typer.Option("--labeler", help="Your GitHub handle; labels are never kept by name.")
-    ],
+    sample: PrecisionSampleArgument,
+    labeler: LabelerOption,
     tables: TablesOption = DATA / "tables",
     labels: LabelsAppendOption = LABELS_PATH,
     color: Annotated[bool, typer.Option("--color/--no-color", help="Mark spans in color.")] = True,
@@ -111,13 +120,10 @@ def label(
     models_dir: ModelsOption = MODELS_DIR,
 ) -> None:
     """Label sampled matches by hand, unrelated (0) to identical (4); stop and resume at will."""
-    try:
+    with exits_on(LabelError, ModelError):
         who = person(labeler)
         embedder = model_embedder(models_dir) if paraphrase else None
         items, kept = current_items(sample, tables, labels)
-    except (LabelError, ModelError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     todo = pending(items, kept)
     if not todo:
         typer.echo(f"Every pair in {sample} has a label in {labels}.")
@@ -140,15 +146,8 @@ def label(
 
 @app.command("label-page")
 def label_page(
-    sample: Annotated[
-        Path,
-        typer.Argument(
-            help="The precision sample, one pair per line.", exists=True, dir_okay=False
-        ),
-    ],
-    labeler: Annotated[
-        str, typer.Option("--labeler", help="Your GitHub handle; labels are never kept by name.")
-    ],
+    sample: PrecisionSampleArgument,
+    labeler: LabelerOption,
     tables: TablesOption = DATA / "tables",
     labels: Annotated[
         Path, typer.Option("--labels", help="Labels file; pairs a person labeled are left out.")
@@ -160,13 +159,10 @@ def label_page(
     models_dir: ModelsOption = MODELS_DIR,
 ) -> None:
     """Write a labeling page for a phone: the pending pairs, blind to stages, for an artifact."""
-    try:
+    with exits_on(LabelError, ModelError):
         embedder = model_embedder(models_dir) if paraphrase else None
         items, kept = current_items(sample, tables, labels)
         data = label_page_data(pending(items, kept), handle=labeler, sample=sample, embed=embedder)
-    except (LabelError, ModelError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     page = write_label_page(data, out)
     typer.echo(f"{len(data['pairs'])} pending pairs -> {page} and {out / LABEL_PAGE_DATA}")
 
@@ -190,12 +186,9 @@ def label_import(
     labels: LabelsAppendOption = LABELS_PATH,
 ) -> None:
     """Append a labeling page's saved labels to the labels file, each checked against the sample."""
-    try:
+    with exits_on(LabelError):
         items, kept = current_items(sample, tables, labels)
         rows = imported_label_rows(load_saved_labels(saved), items, kept, handle=labeler)
-    except LabelError as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     append_label_rows(labels, rows)
     left = len(pending(items, [*kept, *rows]))
     typer.echo(f"{len(rows)} labels imported, {left} pairs of {sample} left -> {labels}")
@@ -207,9 +200,7 @@ def precision_sample(
     sample: Annotated[
         Path, typer.Option("--sample", help="The sample file, one pair per line (committed).")
     ] = PRECISION_SAMPLE,
-    report: Annotated[
-        Path | None, typer.Option("--report", help="The draw's report JSON (committed).")
-    ] = None,
+    report: DrawReportOption = None,
     flagged: Annotated[
         bool,
         typer.Option(
@@ -222,11 +213,8 @@ def precision_sample(
         sample = FLAGGED_SAMPLE if sample == PRECISION_SAMPLE else sample
         report = report or FLAGGED_SAMPLE_REPORT
     report = report or PRECISION_SAMPLE_REPORT
-    try:
+    with exits_on(PrecisionError, SemanticPairsError, StateBoilerplateError):
         rows, doc = build_flagged_sample(tables) if flagged else build_sample(tables)
-    except (PrecisionError, SemanticPairsError, StateBoilerplateError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     write_sample(rows, doc, sample_path=sample, report_path=report)
     sizes = ", ".join(f"{name} {s['drawn']} of {s['size']:,}" for name, s in doc["strata"].items())
     typer.echo(f"{len(rows)} pairs drawn: {sizes} -> {sample}, {report}")
@@ -234,12 +222,7 @@ def precision_sample(
 
 @app.command("agreement-sample")
 def agreement_sample(
-    source: Annotated[
-        Path,
-        typer.Argument(
-            help="The precision sample, one pair per line.", exists=True, dir_okay=False
-        ),
-    ] = PRECISION_SAMPLE,
+    source: PrecisionSampleArgument = PRECISION_SAMPLE,
     sample: Annotated[
         Path, typer.Option("--sample", help="The subsample file, one pair per line (committed).")
     ] = AGREEMENT_SAMPLE,
@@ -248,11 +231,8 @@ def agreement_sample(
     ] = AGREEMENT_SAMPLE_REPORT,
 ) -> None:
     """Draw the pairs a person labels to check the model's labels, stratified by stage."""
-    try:
+    with exits_on(LabelError, PrecisionError, AgreementError):
         drawn = draw_subsample(load_sample(source))
-    except (LabelError, PrecisionError, AgreementError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     doc = subsample_report(drawn, source=source, size=AGREEMENT_PAIRS, seed=AGREEMENT_SEED)
     write_subsample(subsample_rows(drawn), doc, sample_path=sample, report_path=report)
     counts = ", ".join(f"{name} {n}" for name, n in doc["strata"].items())
@@ -272,9 +252,7 @@ def relatives_sample(
         Path | None,
         typer.Option("--sample", help="The sample file, one relative per line (committed)."),
     ] = None,
-    report: Annotated[
-        Path | None, typer.Option("--report", help="The draw's report JSON (committed).")
-    ] = None,
+    report: DrawReportOption = None,
     excluded_samples: Annotated[
         list[Path] | None,
         typer.Option("--excluded", help="A sample whose bills this part never draws (repeat)."),
@@ -282,12 +260,11 @@ def relatives_sample(
 ) -> None:
     """Draw listed relatives of random bills of one state, to measure what a page lists."""
     if part not in RELATIVES_PARTS:
-        typer.echo(f"error: --part is one of {', '.join(RELATIVES_PARTS)}, not {part!r}", err=True)
-        raise typer.Exit(1)
+        fail(f"error: --part is one of {', '.join(RELATIVES_PARTS)}, not {part!r}")
     chosen = RELATIVES_PARTS[part]
     sample = sample or chosen.sample
     report = report or chosen.report
-    try:
+    with exits_on(RelativesSampleError, SemanticPairsError, StateBoilerplateError):
         excluded = {
             str(p["bill_id"])
             for other in (excluded_samples or chosen.excludes)
@@ -307,9 +284,6 @@ def relatives_sample(
             first=chosen.first,
             exempt_at=chosen.exempt_at,
         )
-    except (RelativesSampleError, SemanticPairsError, StateBoilerplateError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     write_relatives_sample(rows, doc, sample_path=sample, report_path=report)
     typer.echo(
         f"{len(rows)} relatives drawn from {doc['state_bills_with_a_relative']:,} "
@@ -318,16 +292,11 @@ def relatives_sample(
 
 
 @app.command("label-model")
-def label_model(  # noqa: C901  (M13 allow-list, until step 5's lanes)
-    sample: Annotated[
-        Path,
-        typer.Argument(
-            help="The precision sample, one pair per line.", exists=True, dir_okay=False
-        ),
-    ] = PRECISION_SAMPLE,
+def label_model(
+    sample: PrecisionSampleArgument = PRECISION_SAMPLE,
     tables: TablesOption = DATA / "tables",
     labels: LabelsAppendOption = LABELS_PATH,
-    model: Annotated[str, typer.Option("--model", help="The model asked.")] = LABEL_MODEL,
+    model: LabelModelOption = LABEL_MODEL,
     prompt_version: Annotated[
         str,
         typer.Option("--prompt", help=f"The prompt and effort asked: {', '.join(LABEL_PROMPTS)}."),
@@ -342,15 +311,11 @@ def label_model(  # noqa: C901  (M13 allow-list, until step 5's lanes)
         float,
         typer.Option("--budget", help="Dollars every batch may cost, spent and projected."),
     ] = LABEL_BUDGET,
-    spend: Annotated[
-        Path, typer.Option("--spend", help="The batches' spend ledger (committed).")
-    ] = LABEL_SPEND,
+    spend: LabelSpendOption = LABEL_SPEND,
     batch: Annotated[
         bool, typer.Option("--batch", help="Ask through the Batches API, at half price.")
     ] = False,
-    batch_id: Annotated[
-        str | None, typer.Option("--batch-id", help="Collect a batch already sent.")
-    ] = None,
+    batch_id: BatchIdOption = None,
     models_dir: AlignModelsOption = MODELS_DIR,
     also: Annotated[
         list[str] | None,
@@ -362,47 +327,14 @@ def label_model(  # noqa: C901  (M13 allow-list, until step 5's lanes)
 ) -> None:
     """Provisional labels from a model, kept apart from people's; asks only with --live."""
     if prompt_version not in LABEL_PROMPTS:
-        typer.echo(
-            f"error: no prompt {prompt_version!r}; one of {', '.join(LABEL_PROMPTS)}", err=True
-        )
-        raise typer.Exit(1)
+        fail(f"error: no prompt {prompt_version!r}; one of {', '.join(LABEL_PROMPTS)}")
     prompt = LABEL_PROMPTS[prompt_version]
-    targets = [(sample, labels)]
-    for extra in also or []:
-        extra_sample, sep, extra_labels = extra.partition("=")
-        if not sep or not extra_sample or not extra_labels:
-            typer.echo(f"error: --also takes SAMPLE=LABELS, not {extra!r}", err=True)
-            raise typer.Exit(1)
-        targets.append((Path(extra_sample), Path(extra_labels)))
-    if len(targets) > 1 and not (batch or batch_id is not None):
-        typer.echo("error: --also asks several samples in one batch; add --batch", err=True)
-        raise typer.Exit(1)
-    todo: list[Item] = []
-    paths: dict[str, Path] = {}
-    try:
-        for target_sample, target_labels in targets:
-            items, kept = current_items(target_sample, tables, target_labels)
-            for item in model_pending(items, kept, prompt):
-                if item.pair.pair in paths:
-                    raise LabelError(f"pair id {item.pair.pair} is in two of the samples asked")
-                paths[item.pair.pair] = target_labels
-                todo.append(item)
-    except LabelError as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
-    if prompt.passages:
-        try:
-            todo = with_passages(todo, model_embedder(models_dir))
-        except ModelError as e:
-            typer.echo(f"error: {e}", err=True)
-            raise typer.Exit(1) from e
-    noun = "pair" if len(todo) == 1 else "pairs"
     batched = batch or batch_id is not None
-    try:
+    targets = _label_targets(sample, labels, also, batched=batched)
+    todo, paths = _model_todo(targets, tables, prompt, models_dir)
+    noun = "pair" if len(todo) == 1 else "pairs"
+    with exits_on(ValueError):
         cost = projected_cost(todo, model=model, batch=batched, prompt=prompt)
-    except ValueError as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     projected = f"projected at most ${cost:,.2f}"
     already = label_spent(spend)
     if not live:
@@ -411,42 +343,18 @@ def label_model(  # noqa: C901  (M13 allow-list, until step 5's lanes)
             f"${already:,.2f} of the ${budget:,.2f} budget spent; run with --live to ask."
         )
         return
-    if cost > max_cost:
-        typer.echo(
-            f"error: {len(todo)} {noun} {projected}, over the ${max_cost:,.2f} cap; nothing asked",
-            err=True,
-        )
-        raise typer.Exit(1)
-    if batch_id is None and already + cost > budget:
-        typer.echo(
-            f"error: {len(todo)} {noun} {projected}, with ${already:,.2f} spent, over the "
-            f"${budget:,.2f} budget; nothing asked",
-            err=True,
-        )
-        raise typer.Exit(1)
+    asked = f"{len(todo)} {noun} {projected}"
+    _check_label_cost(
+        asked, cost, already=already, max_cost=max_cost, budget=budget, batch_id=batch_id
+    )
     for _, target_labels in targets:
         target_labels.parent.mkdir(parents=True, exist_ok=True)
     today = datetime.date.today().isoformat()
     if batched:
-        batches = anthropic_batches()
-        done, unusable, sent = label_in_batch(
-            todo,
-            batches=batches,
-            model=model,
-            labels_path=paths,
-            today=today,
-            wait=lambda: time.sleep(60),
-            batch_id=batch_id,
-            submitted=lambda b: typer.echo(f"sent as batch {b}; collect with --batch-id {b}"),
-            prompt=prompt,
-        )
-        ledger = record_label_spend(
-            spend, batch_id=sent, model=model, prompt=prompt.version,
-            usage=batch_usage(batches, sent), today=today,
+        _label_batched(
+            todo, paths, targets, model=model, prompt=prompt, batch_id=batch_id, spend=spend,
+            budget=budget, today=today,
         )  # fmt: skip
-        files = ", ".join(sorted({str(p) for _, p in targets}))
-        typer.echo(f"{done} labeled from batch {sent}, {unusable} unusable replies -> {files}")
-        typer.echo(f"${ledger['spent']:,.2f} of the ${budget:,.2f} budget spent -> {spend}")
         return
     done, unusable = label_with_model(
         todo, ask=anthropic_label_ask(model, prompt), labels_path=labels, today=today,
@@ -455,16 +363,104 @@ def label_model(  # noqa: C901  (M13 allow-list, until step 5's lanes)
     typer.echo(f"{done} labeled by {model}, {unusable} unusable replies -> {labels}")
 
 
+def _label_targets(
+    sample: Path, labels: Path, also: list[str] | None, *, batched: bool
+) -> list[tuple[Path, Path]]:
+    """Each sample asked and the labels file it appends to: SAMPLE first, then each --also."""
+    targets = [(sample, labels)]
+    for extra in also or []:
+        extra_sample, sep, extra_labels = extra.partition("=")
+        if not sep or not extra_sample or not extra_labels:
+            fail(f"error: --also takes SAMPLE=LABELS, not {extra!r}")
+        targets.append((Path(extra_sample), Path(extra_labels)))
+    if len(targets) > 1 and not batched:
+        fail("error: --also asks several samples in one batch; add --batch")
+    return targets
+
+
+def _model_todo(
+    targets: list[tuple[Path, Path]], tables: Path, prompt: Prompt, models_dir: Path
+) -> tuple[list[Item], dict[str, Path]]:
+    """The pairs no model has labeled under the prompt, across every sample asked, with their
+    passages when the prompt asks about passages, and each pair's labels file by pair id."""
+    todo: list[Item] = []
+    paths: dict[str, Path] = {}
+    with exits_on(LabelError):
+        for target_sample, target_labels in targets:
+            items, kept = current_items(target_sample, tables, target_labels)
+            for item in model_pending(items, kept, prompt):
+                if item.pair.pair in paths:
+                    raise LabelError(f"pair id {item.pair.pair} is in two of the samples asked")
+                paths[item.pair.pair] = target_labels
+                todo.append(item)
+    if prompt.passages:
+        with exits_on(ModelError):
+            todo = with_passages(todo, model_embedder(models_dir))
+    return todo, paths
+
+
+def _check_label_cost(
+    asked: str,
+    cost: float,
+    *,
+    already: float,
+    max_cost: float,
+    budget: float,
+    batch_id: str | None,
+) -> None:
+    """Refuse a run projected over the cap, or a new one that would take the spend over the
+    budget; collecting a batch already sent spends nothing new."""
+    if cost > max_cost:
+        fail(f"error: {asked}, over the ${max_cost:,.2f} cap; nothing asked")
+    if batch_id is None and already + cost > budget:
+        fail(
+            f"error: {asked}, with ${already:,.2f} spent, over the "
+            f"${budget:,.2f} budget; nothing asked"
+        )
+
+
+def _label_batched(
+    todo: list[Item],
+    paths: dict[str, Path],
+    targets: list[tuple[Path, Path]],
+    *,
+    model: str,
+    prompt: Prompt,
+    batch_id: str | None,
+    spend: Path,
+    budget: float,
+    today: str,
+) -> None:
+    """Ask every pair in one batch, or collect `batch_id`, and record the batch's spend."""
+    batches = anthropic_batches()
+    done, unusable, sent = label_in_batch(
+        todo,
+        batches=batches,
+        model=model,
+        labels_path=paths,
+        today=today,
+        wait=lambda: time.sleep(60),
+        batch_id=batch_id,
+        submitted=lambda b: typer.echo(f"sent as batch {b}; collect with --batch-id {b}"),
+        prompt=prompt,
+    )
+    ledger = record_label_spend(
+        spend, batch_id=sent, model=model, prompt=prompt.version,
+        usage=batch_usage(batches, sent), today=today,
+    )  # fmt: skip
+    files = ", ".join(sorted({str(p) for _, p in targets}))
+    typer.echo(f"{done} labeled from batch {sent}, {unusable} unusable replies -> {files}")
+    typer.echo(f"${ledger['spent']:,.2f} of the ${budget:,.2f} budget spent -> {spend}")
+
+
 @app.command("label-spend")
 def label_spend(
     batch_id: Annotated[str, typer.Option("--batch-id", help="An ended batch to record.")],
     prompt_version: Annotated[
         str, typer.Option("--prompt", help="The prompt the batch was asked under.")
     ] = LABEL_PROMPT_VERSION,
-    model: Annotated[str, typer.Option("--model", help="The model asked.")] = LABEL_MODEL,
-    spend: Annotated[
-        Path, typer.Option("--spend", help="The batches' spend ledger (committed).")
-    ] = LABEL_SPEND,
+    model: LabelModelOption = LABEL_MODEL,
+    spend: LabelSpendOption = LABEL_SPEND,
 ) -> None:
     """Record what an ended batch cost, from its results' token counts; labels nothing."""
     batches = anthropic_batches()
