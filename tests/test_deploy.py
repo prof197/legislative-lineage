@@ -17,33 +17,28 @@ from typer.testing import CliRunner
 from lineage.cli import app
 from lineage.export.release import RELEASE_MANIFEST, Checksums, changed_files, read_checksums
 from lineage.export.schema import Release
-from lineage.live import deploy
+from lineage.live import deploy, deploy_gates
 from lineage.live.deploy import (
-    JOB_SHELL,
-    TOKEN_SERVICE,
-    Breaker,
-    Call,
-    DeployError,
-    DeployPaths,
-    DeployRules,
-    Limits,
-    Result,
-    breaker,
     deploy_day,
-    github_shell,
-    in_session,
-    listed_origin_claims,
-    load_rules,
-    local_paths,
     origin_claims_review,
     prepare_candidate,
-    read_record,
     reject_day,
     release_day,
-    tag_for,
     weekly_review,
     write_review,
 )
+from lineage.live.deploy_gates import local_paths, tag_for
+from lineage.live.deploy_ledger import DeployError, DeployPaths, read_record
+from lineage.live.deploy_rules import (
+    Breaker,
+    DeployRules,
+    Limits,
+    breaker,
+    in_session,
+    listed_origin_claims,
+    load_rules,
+)
+from lineage.live.deploy_shell import JOB_SHELL, TOKEN_SERVICE, Call, Result, github_shell
 from lineage.live.feed import write_feed
 from lineage.live.publish import export_changes, promote, staging_dir
 from lineage.live.updates import OriginGained, OriginLost, RecordAdded, write_changes
@@ -716,7 +711,7 @@ def test_a_web_address_under_home_is_not_a_local_path(tmp_path: Path) -> None:
 
 
 def test_the_local_path_pattern_is_the_leak_checks() -> None:
-    assert deploy.LOCAL_PATH.pattern == LOCAL_PATH.pattern
+    assert deploy_gates.LOCAL_PATH.pattern == LOCAL_PATH.pattern
 
 
 # The circuit breaker's rule.

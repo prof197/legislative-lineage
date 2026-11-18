@@ -14,7 +14,8 @@ from pathlib import Path
 import pytest
 
 from lineage.live import deploy
-from lineage.live.deploy import DeployPaths, DeployRules, Limits, load_rules
+from lineage.live.deploy_ledger import DeployPaths
+from lineage.live.deploy_rules import DeployRules, Limits, load_rules
 from lineage.live.feed import write_feed
 from lineage.live.incremental import update
 from lineage.live.publish import export_changes, promote, staging_dir

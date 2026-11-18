@@ -44,7 +44,9 @@ from pathlib import Path
 from typing import Any
 
 from lineage.core.paths import DATA
-from lineage.live.deploy import DEPLOY_DIR, HELD, DeployRules, in_session, load_rules
+from lineage.live.deploy import HELD
+from lineage.live.deploy_ledger import DEPLOY_DIR
+from lineage.live.deploy_rules import DeployRules, in_session, load_rules
 from lineage.live.incremental import applied_days
 from lineage.live.publish import staging_dir
 from lineage.live.updates import CHANGES_DIR, DAY_FILE, DayInfo, Relative, Snapshot, snapshot
