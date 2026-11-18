@@ -1,0 +1,5159 @@
+{
+ "lineage": {
+  "help": "Trace provisions shared between state bills.",
+  "params": [
+   {
+    "default": "False",
+    "flag": true,
+    "help": "Show the version and exit.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "version",
+    "opts": [
+     "--version"
+    ],
+    "required": false,
+    "type": "boolean"
+   }
+  ]
+ },
+ "lineage agreement-sample": {
+  "help": "Draw the pairs a person labels to check the model's labels, stratified by stage.",
+  "params": [
+   {
+    "default": "evals/precision_sample.jsonl",
+    "flag": false,
+    "help": "The precision sample, one pair per line.",
+    "kind": "TyperArgument",
+    "multiple": false,
+    "name": "source",
+    "opts": [
+     "source"
+    ],
+    "required": false,
+    "type": "file"
+   },
+   {
+    "default": "evals/agreement_sample.jsonl",
+    "flag": false,
+    "help": "The subsample file, one pair per line (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "sample",
+    "opts": [
+     "--sample"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/agreement_sample.json",
+    "flag": false,
+    "help": "The draw's report JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "report",
+    "opts": [
+     "--report"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage boilerplate": {
+  "help": "Build the shingle stoplist from the sections table and report the boilerplate found.",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "snapshot/manifest.json",
+    "flag": false,
+    "help": "Snapshot manifest (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "manifest",
+    "opts": [
+     "--manifest"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<repo>/rules/document_types.csv",
+    "flag": false,
+    "help": "Document-type rules (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "rules",
+    "opts": [
+     "--rules"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "0.001",
+    "flag": false,
+    "help": "Stoplist shingles found in more than this share of sections.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "max_share",
+    "opts": [
+     "--max-share"
+    ],
+    "required": false,
+    "type": "float"
+   },
+   {
+    "default": "reports/boilerplate.json",
+    "flag": false,
+    "help": "Report JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "report",
+    "opts": [
+     "--report"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "10",
+    "flag": false,
+    "help": "Worker processes.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "workers",
+    "opts": [
+     "--workers"
+    ],
+    "required": false,
+    "type": "int"
+   }
+  ]
+ },
+ "lineage collect-models": {
+  "help": "Collect one source's model legislation through its collector, honoring robots.txt ->\n<modeldocs>/<source>/, <reports>/<source>.json (DESIGN.md#model-documents).",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "The source's key, as its collector declares it.",
+    "kind": "TyperArgument",
+    "multiple": false,
+    "name": "source",
+    "opts": [
+     "source"
+    ],
+    "required": true,
+    "type": "str"
+   },
+   {
+    "default": "<data>/modeldocs",
+    "flag": false,
+    "help": "Where documents are kept (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "root",
+    "opts": [
+     "--modeldocs"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/modeldocs",
+    "flag": false,
+    "help": "Each source's coverage report (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "reports",
+    "opts": [
+     "--reports"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "20.0",
+    "flag": false,
+    "help": "Refuse to run if disk would drop below this.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "min_free_gib",
+    "opts": [
+     "--min-free-gib"
+    ],
+    "required": false,
+    "type": "float"
+   }
+  ]
+ },
+ "lineage eligible": {
+  "help": "Decide which records are matched, by the document-type rules, and count each rule.",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<repo>/rules/document_types.csv",
+    "flag": false,
+    "help": "Document-type rules (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "rules",
+    "opts": [
+     "--rules"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/document_types.json",
+    "flag": false,
+    "help": "Report JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "report",
+    "opts": [
+     "--report"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage embed": {
+  "help": "Embed every distinct semantic window, float16, resumable -> <tables>/semantic/.",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "bge-small-en-v1.5",
+    "flag": false,
+    "help": "Embedding model: bge-small-en-v1.5, all-MiniLM-L6-v2.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "model",
+    "opts": [
+     "--model"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "<data>/models",
+    "flag": false,
+    "help": "Directory of model files (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "models_dir",
+    "opts": [
+     "--models"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "4",
+    "flag": false,
+    "help": "Worker processes.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "processes",
+    "opts": [
+     "--processes"
+    ],
+    "required": false,
+    "type": "int"
+   },
+   {
+    "default": "2",
+    "flag": false,
+    "help": "Threads per worker.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "threads",
+    "opts": [
+     "--threads"
+    ],
+    "required": false,
+    "type": "int"
+   },
+   {
+    "default": "20.0",
+    "flag": false,
+    "help": "Refuse to run if disk would drop below this.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "min_free_gib",
+    "opts": [
+     "--min-free-gib"
+    ],
+    "required": false,
+    "type": "float"
+   },
+   {
+    "default": "reports/embedding.json",
+    "flag": false,
+    "help": "Report JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "report",
+    "opts": [
+     "--report"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage eval": {
+  "help": "Run an eval and write its results.",
+  "params": []
+ },
+ "lineage eval agreement": {
+  "help": "A person's labels against a model's on the subsample: weighted kappa, cutoff agreement,\nand the precision each gives on the same pairs.",
+  "params": [
+   {
+    "default": "evals/agreement_sample.jsonl",
+    "flag": false,
+    "help": "The agreement subsample, one pair per line.",
+    "kind": "TyperArgument",
+    "multiple": false,
+    "name": "sample",
+    "opts": [
+     "sample"
+    ],
+    "required": false,
+    "type": "file"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "evals/precision_labels.jsonl",
+    "flag": false,
+    "help": "Labels file (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "labels",
+    "opts": [
+     "--labels"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "model:claude-opus-5-5@v1",
+    "flag": false,
+    "help": "The model labeler compared, model id@prompt.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "model_labeler",
+    "opts": [
+     "--model-labeler"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "reports/precision_sample.json",
+    "flag": false,
+    "help": "The precision sample's draw report, its strata.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "strata",
+    "opts": [
+     "--strata"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/results.json",
+    "flag": false,
+    "help": "Results JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "results",
+    "opts": [
+     "--results"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage eval answer-key": {
+  "help": "The bills each commission list row resolved to, for checking the mapping by eye.\n\nResolving the held-out lists runs no matching, so it may run before the final evaluation.",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "The commission's enactment lists (committed) [default: the development lists, or the held-out lists with --held-out].",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "enactments",
+    "opts": [
+     "--enactments"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "snapshot/sessions.csv",
+    "flag": false,
+    "help": "Session dates CSV (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "sessions",
+    "opts": [
+     "--sessions"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "Answer key CSV (committed) [default: reports/answer_key.csv, or reports/answer_key_heldout.csv with --held-out].",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "out",
+    "opts": [
+     "--out"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "Resolve the held-out lists, skipping the development set's bills.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "held_out",
+    "opts": [
+     "--held-out"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "With --held-out: resolve the reserve acts, origin recall's sealed key [default out: reports/answer_key_origins_heldout.csv].",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "origins",
+    "opts": [
+     "--origins"
+    ],
+    "required": false,
+    "type": "boolean"
+   }
+  ]
+ },
+ "lineage eval commission": {
+  "help": "Commission recall: what share of each uniform act's enactments its text finds.",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "Directory of uniform act texts (local, gitignored) [default: data/acts/, or data/acts/held-out/ with --held-out].",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "acts",
+    "opts": [
+     "--acts"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "The commission's enactment lists (committed) [default: the development lists, or the held-out lists with --held-out].",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "enactments",
+    "opts": [
+     "--enactments"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "snapshot/sessions.csv",
+    "flag": false,
+    "help": "Session dates CSV (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "sessions",
+    "opts": [
+     "--sessions"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/results.json",
+    "flag": false,
+    "help": "Results JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "results",
+    "opts": [
+     "--results"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "Evaluate the held-out acts (with --final only).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "held_out",
+    "opts": [
+     "--held-out"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "The final evaluation of the held-out acts, once per settled configuration.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "final",
+    "opts": [
+     "--final"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "True",
+    "flag": true,
+    "help": "Search by meaning too, over the embedded corpus (`lineage embed`).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "semantic",
+    "opts": [
+     "--semantic",
+     "--no-semantic"
+    ],
+    "required": false,
+    "type": "boolean"
+   }
+  ]
+ },
+ "lineage eval cost": {
+  "help": "Cost and runtime per stage: the build's from its reports, each query's timed here.",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/acts",
+    "flag": false,
+    "help": "Directory of the development act texts (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "acts",
+    "opts": [
+     "--acts"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports",
+    "flag": false,
+    "help": "The committed reports the build wrote.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "reports",
+    "opts": [
+     "--reports"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/cost.json",
+    "flag": false,
+    "help": "Report JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "report",
+    "opts": [
+     "--report"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "True",
+    "flag": true,
+    "help": "Search by meaning too, over the embedded corpus (`lineage embed`).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "semantic",
+    "opts": [
+     "--semantic",
+     "--no-semantic"
+    ],
+    "required": false,
+    "type": "boolean"
+   }
+  ]
+ },
+ "lineage eval faithfulness": {
+  "help": "Faithfulness, model-judged: the share of kept claims that describe their cited spans\ncorrectly, beside the hard check that every kept claim cites spans that exist and differ.",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "The pairs explained, one per line: the featured scope.",
+    "kind": "TyperArgument",
+    "multiple": false,
+    "name": "pairs",
+    "opts": [
+     "pairs"
+    ],
+    "required": true,
+    "type": "file"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "Ask the judge about unjudged claims (costs money).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "live",
+    "opts": [
+     "--live"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "explanations/cache",
+    "flag": false,
+    "help": "Cached explanations (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "cache",
+    "opts": [
+     "--cache"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "evals/faithfulness_judgments.jsonl",
+    "flag": false,
+    "help": "The judge's verdicts, appended to (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "judgments",
+    "opts": [
+     "--judgments"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "True",
+    "flag": true,
+    "help": "Mark paraphrased sentences, with the semantic stage's model (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "paraphrase",
+    "opts": [
+     "--paraphrase",
+     "--no-paraphrase"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "<data>/models",
+    "flag": false,
+    "help": "Directory of model files (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "models_dir",
+    "opts": [
+     "--models"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/explanation_spend.json",
+    "flag": false,
+    "help": "M6's model-call ledger (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "spend",
+    "opts": [
+     "--spend"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/results.json",
+    "flag": false,
+    "help": "Results JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "results",
+    "opts": [
+     "--results"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage eval origin-census": {
+  "help": "A census of one source's listed matches: its precision as a count, and the section pairs\neach wrong match rests on, by kind (DESIGN.md#origin-matches).",
+  "params": [
+   {
+    "default": "census_eppc",
+    "flag": false,
+    "help": "The census read.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "part",
+    "opts": [
+     "--part"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/modeldocs",
+    "flag": false,
+    "help": "Where documents are kept (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "root",
+    "opts": [
+     "--modeldocs"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "evals/origin_precision_labels.jsonl",
+    "flag": false,
+    "help": "The origin labels (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "labels",
+    "opts": [
+     "--labels"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/results.json",
+    "flag": false,
+    "help": "Results JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "results",
+    "opts": [
+     "--results"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage eval origin-precision": {
+  "help": "Origin precision on a reporting sample, read once: overall, by stage, by source, and\nALEC's against the rest (DESIGN.md#origin-matches).",
+  "params": [
+   {
+    "default": "reporting_after_compact_fix",
+    "flag": false,
+    "help": "reporting_after_compact_fix; reporting_after_fix and reporting are the readings before each change to matching.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "part",
+    "opts": [
+     "--part"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "evals/origin_precision_labels.jsonl",
+    "flag": false,
+    "help": "The origin labels (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "labels",
+    "opts": [
+     "--labels"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/modeldocs",
+    "flag": false,
+    "help": "Where documents are kept (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "root",
+    "opts": [
+     "--modeldocs"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/results.json",
+    "flag": false,
+    "help": "Results JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "results",
+    "opts": [
+     "--results"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "Regenerate the stored reading's intervals; refused if anything else would move.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "intervals_only",
+    "opts": [
+     "--intervals-only"
+    ],
+    "required": false,
+    "type": "boolean"
+   }
+  ]
+ },
+ "lineage eval origin-threshold": {
+  "help": "Each candidate floor's precision on the origin tuning sample, beside its development\nrecall (DESIGN.md#origin-matches).",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "evals/origin_precision_labels.jsonl",
+    "flag": false,
+    "help": "The origin labels (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "labels",
+    "opts": [
+     "--labels"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/origin_threshold_proposal.json",
+    "flag": false,
+    "help": "The proposal (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "report",
+    "opts": [
+     "--report"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage eval origins": {
+  "help": "Origin recall: what share of each model's enactments its origin matches name\n(DESIGN.md#origin-matches).",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "development",
+    "flag": false,
+    "help": "The answer key: development, v1_held_out (v1's held-out acts, opened in v1), or held_out (sealed, with --final).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "key",
+    "opts": [
+     "--key"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "commission",
+    "flag": false,
+    "help": "The source whose documents are named by act slug.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "source",
+    "opts": [
+     "--source"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "reports/results.json",
+    "flag": false,
+    "help": "Results JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "results",
+    "opts": [
+     "--results"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "The one run of a sealed key per configuration.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "final",
+    "opts": [
+     "--final"
+    ],
+    "required": false,
+    "type": "boolean"
+   }
+  ]
+ },
+ "lineage eval pair-data": {
+  "help": "Score both matching stages on the labeled pair dataset -> reports/pair_data.json.",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "Embedding models to score; all when none: bge-small-en-v1.5, all-MiniLM-L6-v2.",
+    "kind": "TyperOption",
+    "multiple": true,
+    "name": "model",
+    "opts": [
+     "--model"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/pair_data",
+    "flag": false,
+    "help": "Directory of the dataset's files (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "directory",
+    "opts": [
+     "--dir"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/models",
+    "flag": false,
+    "help": "Directory of model files (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "models_dir",
+    "opts": [
+     "--models"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/pair_data.json",
+    "flag": false,
+    "help": "Metrics JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "report",
+    "opts": [
+     "--report"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage eval precision": {
+  "help": "Precision per stratum, stage and overall, from people's labels and, apart, a model's,\nwith the state boilerplate flag off and on.",
+  "params": [
+   {
+    "default": "evals/precision_sample.jsonl",
+    "flag": false,
+    "help": "The precision sample, one pair per line.",
+    "kind": "TyperArgument",
+    "multiple": false,
+    "name": "sample",
+    "opts": [
+     "sample"
+    ],
+    "required": false,
+    "type": "file"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "evals/precision_labels.jsonl",
+    "flag": false,
+    "help": "Labels file (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "labels",
+    "opts": [
+     "--labels"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/precision_sample.json",
+    "flag": false,
+    "help": "The draw's report, with each stratum's size.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "strata",
+    "opts": [
+     "--strata"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/state_boilerplate.json",
+    "flag": false,
+    "help": "The state boilerplate flag's report.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "flag_report",
+    "opts": [
+     "--flag-report"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "evals/precision_sample_flagged.jsonl",
+    "flag": false,
+    "help": "The sample of the pairs the flag drops.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "flagged",
+    "opts": [
+     "--flagged"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/precision_sample_flagged.json",
+    "flag": false,
+    "help": "That sample's draw report.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "flagged_report",
+    "opts": [
+     "--flagged-report"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "model:claude-opus-5-5@v1",
+    "flag": false,
+    "help": "The model labeler counted, model id@prompt.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "model_labeler",
+    "opts": [
+     "--model-labeler"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "model:claude-opus-5-5@passages-v1-high",
+    "flag": false,
+    "help": "The model labeler counted on the flag's dropped pairs.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "flagged_labeler",
+    "opts": [
+     "--flagged-labeler"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "reports/results.json",
+    "flag": false,
+    "help": "Results JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "results",
+    "opts": [
+     "--results"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage eval readme": {
+  "help": "Regenerate the README's results table from the results files.",
+  "params": [
+   {
+    "default": "README.md",
+    "flag": false,
+    "help": "The README to update.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "readme",
+    "opts": [
+     "--readme"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/results.json",
+    "flag": false,
+    "help": "Results JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "results",
+    "opts": [
+     "--results"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/results_exported_only.json",
+    "flag": false,
+    "help": "Results on Open States' text alone (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "exported_only",
+    "opts": [
+     "--exported-only"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage eval relatives": {
+  "help": "The precision of what a page lists, from the reporting sample's labels; with --part, a\ntuning sample's, recorded apart.",
+  "params": [
+   {
+    "default": "reporting",
+    "flag": false,
+    "help": "The sample read: reporting, or a tuning part (lineage.evals.relatives_sample.PARTS).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "part",
+    "opts": [
+     "--part"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "evals/relatives_labels.jsonl",
+    "flag": false,
+    "help": "Labels file (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "labels",
+    "opts": [
+     "--labels"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "model:claude-opus-5-5@passages-v1-high",
+    "flag": false,
+    "help": "The model labeler counted, model id@prompt.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "model_labeler",
+    "opts": [
+     "--model-labeler"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "<data>/models",
+    "flag": false,
+    "help": "Directory of model files (local), for alignment.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "models_dir",
+    "opts": [
+     "--models"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/results.json",
+    "flag": false,
+    "help": "Results JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "results",
+    "opts": [
+     "--results"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage eval threshold": {
+  "help": "Each semantic threshold option's page precision on the tuning sample, with its recall.",
+  "params": [
+   {
+    "default": "evals/relatives_tuning.jsonl",
+    "flag": false,
+    "help": "The tuning sample of relatives.",
+    "kind": "TyperArgument",
+    "multiple": false,
+    "name": "sample",
+    "opts": [
+     "sample"
+    ],
+    "required": false,
+    "type": "file"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "evals/relatives_labels.jsonl",
+    "flag": false,
+    "help": "Labels file (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "labels",
+    "opts": [
+     "--labels"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "model:claude-opus-5-5@passages-v1-high",
+    "flag": false,
+    "help": "The model labeler counted, model id@prompt.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "model_labeler",
+    "opts": [
+     "--model-labeler"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "reports/results.json",
+    "flag": false,
+    "help": "Results JSON, read for development recall.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "results",
+    "opts": [
+     "--results"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/threshold_proposal.json",
+    "flag": false,
+    "help": "The proposal's report JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "report",
+    "opts": [
+     "--report"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage explain": {
+  "help": "Explain what each descendant changed, grounded in aligned spans; cached, or --live.",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "Pairs to explain, one per line: origin and descendant sections.",
+    "kind": "TyperArgument",
+    "multiple": false,
+    "name": "pairs",
+    "opts": [
+     "pairs"
+    ],
+    "required": true,
+    "type": "file"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "Ask the model for pairs not in the cache (costs money).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "live",
+    "opts": [
+     "--live"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "explanations/cache",
+    "flag": false,
+    "help": "Cached explanations (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "cache",
+    "opts": [
+     "--cache"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "True",
+    "flag": true,
+    "help": "Mark paraphrased sentences, with the semantic stage's model (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "paraphrase",
+    "opts": [
+     "--paraphrase",
+     "--no-paraphrase"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "<data>/models",
+    "flag": false,
+    "help": "Directory of model files (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "models_dir",
+    "opts": [
+     "--models"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/explanation_spend.json",
+    "flag": false,
+    "help": "M6's model-call ledger (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "spend",
+    "opts": [
+     "--spend"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "With --live, ask once more for cached explanations written under earlier grounding rules: withheld ones, and ones keeping a claim the rules now drop.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "again",
+    "opts": [
+     "--again"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "With --live --again, give every cached explanation written under earlier grounding rules a new round of its own, whatever it held.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "afresh",
+    "opts": [
+     "--afresh"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "Rewrite each cache file's record of what grounding keeps under the current rules, with no call, and stop.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "reground",
+    "opts": [
+     "--reground"
+    ],
+    "required": false,
+    "type": "boolean"
+   }
+  ]
+ },
+ "lineage export": {
+  "help": "The static site's JSON for one state's bills, with the stories and the data stamp.",
+  "params": [
+   {
+    "default": "GA",
+    "flag": false,
+    "help": "The state to host, by its postal code.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "state",
+    "opts": [
+     "--state"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "Where the site data goes (local); default data/export/<ST>.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "out",
+    "opts": [
+     "--out"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "explanations/cache",
+    "flag": false,
+    "help": "Cached explanations (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "cache",
+    "opts": [
+     "--cache"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "True",
+    "flag": true,
+    "help": "Mark paraphrased sentences, with the semantic stage's model (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "paraphrase",
+    "opts": [
+     "--paraphrase",
+     "--no-paraphrase"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "<data>/models",
+    "flag": false,
+    "help": "Directory of model files (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "models_dir",
+    "opts": [
+     "--models"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/export.json",
+    "flag": false,
+    "help": "The export's sizes and counts (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "report",
+    "opts": [
+     "--report"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "evals/featured_pairs.jsonl",
+    "flag": false,
+    "help": "The featured pairs (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "featured_pairs",
+    "opts": [
+     "--featured-pairs"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/featured_pairs.json",
+    "flag": false,
+    "help": "Each story's relatives (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "featured_report",
+    "opts": [
+     "--featured-report"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "rules/stories.toml",
+    "flag": false,
+    "help": "Which stories each state's site carries (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "stories_rules",
+    "opts": [
+     "--stories"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/results.json",
+    "flag": false,
+    "help": "Results JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "results",
+    "opts": [
+     "--results"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "Write the export's JSON Schema (committed) and stop.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "schema_only",
+    "opts": [
+     "--schema"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "8",
+    "flag": false,
+    "help": "Processes aligning section pairs.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "workers",
+    "opts": [
+     "--workers"
+    ],
+    "required": false,
+    "type": "int"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "Package the existing export as a release asset under this tag (data-<st>-YYYY-MM-DD), refused unless every file is one the export contract names and valid against its model, with checksums.json inside and its SHA-256 beside it; pin it in the release manifest, and stop.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "package_tag",
+    "opts": [
+     "--package"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "site/data-release.json",
+    "flag": false,
+    "help": "The data release the deploy builds from (committed), written by --package.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "release_manifest",
+    "opts": [
+     "--release-manifest"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage featured": {
+  "help": "The featured stories' section pairs: each anchor against its listed relatives.",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/answer_key.csv",
+    "flag": false,
+    "help": "The commission's lists resolved (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "answer_key",
+    "opts": [
+     "--answer-key"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "evals/featured_pairs.jsonl",
+    "flag": false,
+    "help": "The featured pairs, one per line (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "out",
+    "opts": [
+     "--out"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/featured_pairs.json",
+    "flag": false,
+    "help": "Each story's relatives (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "report",
+    "opts": [
+     "--report"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage fetch-raw": {
+  "help": "Download the archives the manifest pins that are missing from RAW.",
+  "params": [
+   {
+    "default": "<data>/raw",
+    "flag": false,
+    "help": "Directory of Open States archives.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "raw",
+    "opts": [
+     "--raw"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "snapshot/manifest.json",
+    "flag": false,
+    "help": "Snapshot manifest (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "manifest",
+    "opts": [
+     "--manifest"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "Keep archives whose SHA-256 changed and record them in the manifest.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "repin",
+    "opts": [
+     "--repin"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "https://data.openstates.org/json/latest/",
+    "flag": false,
+    "help": "Base URL of the archives.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "source",
+    "opts": [
+     "--source"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "1.0",
+    "flag": false,
+    "help": "Seconds between requests.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "pause",
+    "opts": [
+     "--pause"
+    ],
+    "required": false,
+    "type": "float"
+   },
+   {
+    "default": "20.0",
+    "flag": false,
+    "help": "Refuse to run if disk would drop below this.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "min_free_gib",
+    "opts": [
+     "--min-free-gib"
+    ],
+    "required": false,
+    "type": "float"
+   }
+  ]
+ },
+ "lineage index": {
+  "help": "Build the search index: signatures, LSH bands, verified pairs, families.",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "10",
+    "flag": false,
+    "help": "Worker processes.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "workers",
+    "opts": [
+     "--workers"
+    ],
+    "required": false,
+    "type": "int"
+   },
+   {
+    "default": "20.0",
+    "flag": false,
+    "help": "Refuse to run if disk would drop below this.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "min_free_gib",
+    "opts": [
+     "--min-free-gib"
+    ],
+    "required": false,
+    "type": "float"
+   },
+   {
+    "default": "reports/index.json",
+    "flag": false,
+    "help": "Report JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "report",
+    "opts": [
+     "--report"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage ingest": {
+  "help": "Verify the raw archives against the manifest and load them into the `bills` table.",
+  "params": [
+   {
+    "default": "<data>/raw",
+    "flag": false,
+    "help": "Directory of Open States archives.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "raw",
+    "opts": [
+     "--raw"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "snapshot/manifest.json",
+    "flag": false,
+    "help": "Snapshot manifest (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "manifest",
+    "opts": [
+     "--manifest"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory for Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "out",
+    "opts": [
+     "--out"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "snapshot/sessions.csv",
+    "flag": false,
+    "help": "Session dates CSV (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "sessions",
+    "opts": [
+     "--sessions"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "20.0",
+    "flag": false,
+    "help": "Refuse to run if disk would drop below this.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "min_free_gib",
+    "opts": [
+     "--min-free-gib"
+    ],
+    "required": false,
+    "type": "float"
+   }
+  ]
+ },
+ "lineage intake": {
+  "help": "Take in one day of new and changed bills from Open States' API v3, with their text\n-> <days>/<day>/ and <data>/intake/reports/<day>.json (DESIGN.md#updates). The key comes\nfrom OPENSTATES_API_KEY.",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "The day's date, YYYY-MM-DD [default: today, UTC].",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "as_of",
+    "opts": [
+     "--day"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "Where a state with no recorded page starts, ISO 8601 with an offset [default: the start of the day before].",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "start",
+    "opts": [
+     "--start"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "default",
+    "flag": false,
+    "help": "The key's limits: default, bronze, silver.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tier",
+    "opts": [
+     "--tier"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "<data>/days",
+    "flag": false,
+    "help": "Days directory (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "days",
+    "opts": [
+     "--days"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "20.0",
+    "flag": false,
+    "help": "Refuse to run if disk would drop below this.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "min_free_gib",
+    "opts": [
+     "--min-free-gib"
+    ],
+    "required": false,
+    "type": "float"
+   }
+  ]
+ },
+ "lineage intake-estimate": {
+  "help": "The API requests a January day needs, from the snapshot's actions, against each tier's\nlimit; no network (DESIGN.md#updates).",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "A January to estimate; repeatable.",
+    "kind": "TyperOption",
+    "multiple": true,
+    "name": "years",
+    "opts": [
+     "--year"
+    ],
+    "required": false,
+    "type": "int"
+   },
+   {
+    "default": "reports/intake_estimate.json",
+    "flag": false,
+    "help": "Report (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "out",
+    "opts": [
+     "--out"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage label": {
+  "help": "Label sampled matches by hand, unrelated (0) to identical (4); stop and resume at will.",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "The precision sample, one pair per line.",
+    "kind": "TyperArgument",
+    "multiple": false,
+    "name": "sample",
+    "opts": [
+     "sample"
+    ],
+    "required": true,
+    "type": "file"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "Your GitHub handle; labels are never kept by name.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "labeler",
+    "opts": [
+     "--labeler"
+    ],
+    "required": true,
+    "type": "str"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "evals/precision_labels.jsonl",
+    "flag": false,
+    "help": "Labels file, appended to (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "labels",
+    "opts": [
+     "--labels"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "True",
+    "flag": true,
+    "help": "Mark spans in color.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "color",
+    "opts": [
+     "--color",
+     "--no-color"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "True",
+    "flag": true,
+    "help": "Mark paraphrased sentences, with the semantic stage's model (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "paraphrase",
+    "opts": [
+     "--paraphrase",
+     "--no-paraphrase"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "<data>/models",
+    "flag": false,
+    "help": "Directory of model files (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "models_dir",
+    "opts": [
+     "--models"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage label-import": {
+  "help": "Append a labeling page's saved labels to the labels file, each checked against the sample.",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "The page's saved labels, one JSON object per line.",
+    "kind": "TyperArgument",
+    "multiple": false,
+    "name": "saved",
+    "opts": [
+     "saved"
+    ],
+    "required": true,
+    "type": "file"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "The sample the page was written for.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "sample",
+    "opts": [
+     "--sample"
+    ],
+    "required": true,
+    "type": "path"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "The GitHub handle the page was written for.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "labeler",
+    "opts": [
+     "--labeler"
+    ],
+    "required": true,
+    "type": "str"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "evals/precision_labels.jsonl",
+    "flag": false,
+    "help": "Labels file, appended to (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "labels",
+    "opts": [
+     "--labels"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage label-model": {
+  "help": "Provisional labels from a model, kept apart from people's; asks only with --live.",
+  "params": [
+   {
+    "default": "evals/precision_sample.jsonl",
+    "flag": false,
+    "help": "The precision sample, one pair per line.",
+    "kind": "TyperArgument",
+    "multiple": false,
+    "name": "sample",
+    "opts": [
+     "sample"
+    ],
+    "required": false,
+    "type": "file"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "evals/precision_labels.jsonl",
+    "flag": false,
+    "help": "Labels file, appended to (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "labels",
+    "opts": [
+     "--labels"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "claude-opus-5-5",
+    "flag": false,
+    "help": "The model asked.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "model",
+    "opts": [
+     "--model"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "v1",
+    "flag": false,
+    "help": "The prompt and effort asked: v1, v1-high, relatives-v1, relatives-v1-high, passages-v1-high.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "prompt_version",
+    "opts": [
+     "--prompt"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "Ask the model; without it nothing is sent.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "live",
+    "opts": [
+     "--live"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "10.0",
+    "flag": false,
+    "help": "Dollars the run may be projected to cost.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "max_cost",
+    "opts": [
+     "--max-cost"
+    ],
+    "required": false,
+    "type": "float"
+   },
+   {
+    "default": "30.0",
+    "flag": false,
+    "help": "Dollars every batch may cost, spent and projected.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "budget",
+    "opts": [
+     "--budget"
+    ],
+    "required": false,
+    "type": "float"
+   },
+   {
+    "default": "reports/label_spend.json",
+    "flag": false,
+    "help": "The batches' spend ledger (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "spend",
+    "opts": [
+     "--spend"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "Ask through the Batches API, at half price.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "batch",
+    "opts": [
+     "--batch"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "Collect a batch already sent.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "batch_id",
+    "opts": [
+     "--batch-id"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "<data>/models",
+    "flag": false,
+    "help": "Directory of model files (local), for alignment.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "models_dir",
+    "opts": [
+     "--models"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "Another SAMPLE=LABELS asked in the same batch under the same prompt; repeatable.",
+    "kind": "TyperOption",
+    "multiple": true,
+    "name": "also",
+    "opts": [
+     "--also"
+    ],
+    "required": false,
+    "type": "str"
+   }
+  ]
+ },
+ "lineage label-page": {
+  "help": "Write a labeling page for a phone: the pending pairs, blind to stages, for an artifact.",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "The precision sample, one pair per line.",
+    "kind": "TyperArgument",
+    "multiple": false,
+    "name": "sample",
+    "opts": [
+     "sample"
+    ],
+    "required": true,
+    "type": "file"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "Your GitHub handle; labels are never kept by name.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "labeler",
+    "opts": [
+     "--labeler"
+    ],
+    "required": true,
+    "type": "str"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "evals/precision_labels.jsonl",
+    "flag": false,
+    "help": "Labels file; pairs a person labeled are left out.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "labels",
+    "opts": [
+     "--labels"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/label_page",
+    "flag": false,
+    "help": "Directory for the page and its data (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "out",
+    "opts": [
+     "--out"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "True",
+    "flag": true,
+    "help": "Mark paraphrased sentences, with the semantic stage's model (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "paraphrase",
+    "opts": [
+     "--paraphrase",
+     "--no-paraphrase"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "<data>/models",
+    "flag": false,
+    "help": "Directory of model files (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "models_dir",
+    "opts": [
+     "--models"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage label-spend": {
+  "help": "Record what an ended batch cost, from its results' token counts; labels nothing.",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "An ended batch to record.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "batch_id",
+    "opts": [
+     "--batch-id"
+    ],
+    "required": true,
+    "type": "str"
+   },
+   {
+    "default": "v1",
+    "flag": false,
+    "help": "The prompt the batch was asked under.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "prompt_version",
+    "opts": [
+     "--prompt"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "claude-opus-5-5",
+    "flag": false,
+    "help": "The model asked.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "model",
+    "opts": [
+     "--model"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "reports/label_spend.json",
+    "flag": false,
+    "help": "The batches' spend ledger (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "spend",
+    "opts": [
+     "--spend"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage model": {
+  "help": "The embedding models the semantic stage runs, pinned by hash.",
+  "params": []
+ },
+ "lineage model fetch": {
+  "help": "Download each model's pinned files that are missing or changed -> data/models/<name>/.",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "Models to fetch; all when none: bge-small-en-v1.5, all-MiniLM-L6-v2.",
+    "kind": "TyperArgument",
+    "multiple": false,
+    "name": "names",
+    "opts": [
+     "names"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "<data>/models",
+    "flag": false,
+    "help": "Directory of model files (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "models_dir",
+    "opts": [
+     "--models"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "20.0",
+    "flag": false,
+    "help": "Refuse to run if disk would drop below this.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "min_free_gib",
+    "opts": [
+     "--min-free-gib"
+    ],
+    "required": false,
+    "type": "float"
+   }
+  ]
+ },
+ "lineage neighbors": {
+  "help": "Every distinct window's nearest neighbors by meaning -> <tables>/semantic/<model>/.",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "20.0",
+    "flag": false,
+    "help": "Refuse to run if disk would drop below this.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "min_free_gib",
+    "opts": [
+     "--min-free-gib"
+    ],
+    "required": false,
+    "type": "float"
+   },
+   {
+    "default": "reports/neighbors.json",
+    "flag": false,
+    "help": "Report JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "report",
+    "opts": [
+     "--report"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "256",
+    "flag": false,
+    "help": "HNSW's search width; wider finds more.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "ef_search",
+    "opts": [
+     "--ef-search"
+    ],
+    "required": false,
+    "type": "int"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "Build nothing: check the built neighbors' recall at the stage's threshold.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "check_at_stage",
+    "opts": [
+     "--check-at-stage"
+    ],
+    "required": false,
+    "type": "boolean"
+   }
+  ]
+ },
+ "lineage origin-label": {
+  "help": "Label an origin sample's matches by a model on each one's strongest section pair; asks\nonly with --live (DESIGN.md#origin-matches).",
+  "params": [
+   {
+    "default": "tuning",
+    "flag": false,
+    "help": "The sample labeled.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "part",
+    "opts": [
+     "--part"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/modeldocs",
+    "flag": false,
+    "help": "Where documents are kept (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "root",
+    "opts": [
+     "--modeldocs"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "evals/origin_precision_labels.jsonl",
+    "flag": false,
+    "help": "Labels file, appended to (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "labels",
+    "opts": [
+     "--labels"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/origin_label_spend.json",
+    "flag": false,
+    "help": "v2's spend ledger (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "spend",
+    "opts": [
+     "--spend"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "Ask, through the Batches API; else nothing is sent.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "live",
+    "opts": [
+     "--live"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "Collect a batch already sent.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "batch_id",
+    "opts": [
+     "--batch-id"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "<data>/models",
+    "flag": false,
+    "help": "Directory of model files (local), for alignment.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "models_dir",
+    "opts": [
+     "--models"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "10.0",
+    "flag": false,
+    "help": "Dollars the run may be projected to cost; v2's budget still applies.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "max_cost",
+    "opts": [
+     "--max-cost"
+    ],
+    "required": false,
+    "type": "float"
+   }
+  ]
+ },
+ "lineage origin-sample": {
+  "help": "Draw an origin precision sample and project what labeling it would cost; asks nothing\n(DESIGN.md#origin-matches).",
+  "params": [
+   {
+    "default": "tuning",
+    "flag": false,
+    "help": "tuning, reporting (once matching is final), or census_eppc (every EPPC match listed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "part",
+    "opts": [
+     "--part"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/modeldocs",
+    "flag": false,
+    "help": "Where documents are kept (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "root",
+    "opts": [
+     "--modeldocs"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "Matching is final: the reporting sample may be drawn.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "final",
+    "opts": [
+     "--final"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "Project at the Batches API's half price.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "batch",
+    "opts": [
+     "--batch"
+    ],
+    "required": false,
+    "type": "boolean"
+   }
+  ]
+ },
+ "lineage origins": {
+  "help": "Match every collected model document against the corpus -> <tables>/origins/matches.jsonl,\nreports/origins.json (DESIGN.md#origin-matches).",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/modeldocs",
+    "flag": false,
+    "help": "Where documents are kept (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "root",
+    "opts": [
+     "--modeldocs"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "20.0",
+    "flag": false,
+    "help": "Refuse to run if disk would drop below this.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "min_free_gib",
+    "opts": [
+     "--min-free-gib"
+    ],
+    "required": false,
+    "type": "float"
+   },
+   {
+    "default": "reports/origins.json",
+    "flag": false,
+    "help": "Counts per source and stage.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "report",
+    "opts": [
+     "--report"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "Count the table as it stands; match nothing.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "report_only",
+    "opts": [
+     "--report-only"
+    ],
+    "required": false,
+    "type": "boolean"
+   }
+  ]
+ },
+ "lineage pair-data": {
+  "help": "The labeled pair dataset (Kim et al., EMNLP 2021), local and for evaluation only.",
+  "params": []
+ },
+ "lineage pair-data fetch": {
+  "help": "Download the human-annotated pair files at their pinned commit -> data/pair_data/.",
+  "params": [
+   {
+    "default": "<data>/pair_data",
+    "flag": false,
+    "help": "Directory of the dataset's files (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "directory",
+    "opts": [
+     "--dir"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "20.0",
+    "flag": false,
+    "help": "Refuse to run if disk would drop below this.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "min_free_gib",
+    "opts": [
+     "--min-free-gib"
+    ],
+    "required": false,
+    "type": "float"
+   }
+  ]
+ },
+ "lineage precision-sample": {
+  "help": "Draw the precision sample from both stages' cross-state pairs, stratified by stage.",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "evals/precision_sample.jsonl",
+    "flag": false,
+    "help": "The sample file, one pair per line (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "sample",
+    "opts": [
+     "--sample"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "The draw's report JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "report",
+    "opts": [
+     "--report"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "Draw from the pairs the state boilerplate flag drops instead.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "flagged",
+    "opts": [
+     "--flagged"
+    ],
+    "required": false,
+    "type": "boolean"
+   }
+  ]
+ },
+ "lineage publish": {
+  "help": "The live track's publishing: the incremental export, the feed and the swap.",
+  "params": []
+ },
+ "lineage publish candidate": {
+  "help": "Before session: the live export packed and gated as a release candidate, with a review\nsummary against the pinned release -> <deploy>/candidates/<tag>/review.txt. Publishes\nnothing.",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "The site's address, absolute, for the feed's links.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "site_url",
+    "opts": [
+     "--site-url"
+    ],
+    "required": true,
+    "type": "str"
+   },
+   {
+    "default": "GA",
+    "flag": false,
+    "help": "The hosted state, by postal code.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "state",
+    "opts": [
+     "--state"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "The day, YYYY-MM-DD [default: today, UTC].",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "day",
+    "opts": [
+     "--day"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "The live export (local); default data/export/<ST>.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "export",
+    "opts": [
+     "--export"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/changes",
+    "flag": false,
+    "help": "The change log, one file per day (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "changes",
+    "opts": [
+     "--changes"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/deploy",
+    "flag": false,
+    "help": "The deploy's records and releases (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "root",
+    "opts": [
+     "--deploy-dir"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "20.0",
+    "flag": false,
+    "help": "Refuse to run if disk would drop below this.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "min_free_gib",
+    "opts": [
+     "--min-free-gib"
+    ],
+    "required": false,
+    "type": "float"
+   }
+  ]
+ },
+ "lineage publish deploy": {
+  "help": "Deploy the live export's day: pack the release, the gates, the circuit breaker, then\nthe GitHub release, the pin's commit, the push and the Pages workflow (DESIGN.md#updates).\nExits 3 when the day is held for review, printing its counts and baseline last.",
+  "params": [
+   {
+    "default": "GA",
+    "flag": false,
+    "help": "The hosted state, by postal code.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "state",
+    "opts": [
+     "--state"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "The live export (local); default data/export/<ST>.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "export",
+    "opts": [
+     "--export"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/changes",
+    "flag": false,
+    "help": "The change log, one file per day (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "changes",
+    "opts": [
+     "--changes"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/deploy",
+    "flag": false,
+    "help": "The deploy's records and releases (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "root",
+    "opts": [
+     "--deploy-dir"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "20.0",
+    "flag": false,
+    "help": "Refuse to run if disk would drop below this.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "min_free_gib",
+    "opts": [
+     "--min-free-gib"
+    ],
+    "required": false,
+    "type": "float"
+   }
+  ]
+ },
+ "lineage publish feed": {
+  "help": "The Atom feed of the live track's events from every state, checked against RFC 4287\n-> <export>/feed.xml (DESIGN.md#updates).",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "The site's address, absolute, for the feed's links.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "site_url",
+    "opts": [
+     "--site-url"
+    ],
+    "required": true,
+    "type": "str"
+   },
+   {
+    "default": "GA",
+    "flag": false,
+    "help": "The hosted state, by postal code.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "state",
+    "opts": [
+     "--state"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "The export to write feed.xml into; default the staging copy.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "export",
+    "opts": [
+     "--export"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/changes",
+    "flag": false,
+    "help": "The change log, one file per day (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "changes",
+    "opts": [
+     "--changes"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage publish pages": {
+  "help": "Apply the logged days the export lacks to a staging copy of it, rewriting only the files\nthey touch -> <export>.staging/, data/publish/<ST>.json (DESIGN.md#updates).",
+  "params": [
+   {
+    "default": "GA",
+    "flag": false,
+    "help": "The hosted state, by postal code.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "state",
+    "opts": [
+     "--state"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "The live export (local); default data/export/<ST>.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "export",
+    "opts": [
+     "--export"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/changes",
+    "flag": false,
+    "help": "The change log, one file per day (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "changes",
+    "opts": [
+     "--changes"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "Apply the logged days from this one, YYYY-MM-DD.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "since",
+    "opts": [
+     "--since"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "explanations/cache",
+    "flag": false,
+    "help": "Cached explanations (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "cache",
+    "opts": [
+     "--cache"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "True",
+    "flag": true,
+    "help": "Mark paraphrase as the export in place was built (local model).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "paraphrase",
+    "opts": [
+     "--paraphrase",
+     "--no-paraphrase"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "<data>/models",
+    "flag": false,
+    "help": "Directory of model files (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "models_dir",
+    "opts": [
+     "--models"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "8",
+    "flag": false,
+    "help": "Processes aligning section pairs.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "workers",
+    "opts": [
+     "--workers"
+    ],
+    "required": false,
+    "type": "int"
+   },
+   {
+    "default": "evals/featured_pairs.jsonl",
+    "flag": false,
+    "help": "The featured pairs (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "featured_pairs",
+    "opts": [
+     "--featured-pairs"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/featured_pairs.json",
+    "flag": false,
+    "help": "Each story's relatives (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "featured_report",
+    "opts": [
+     "--featured-report"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "rules/stories.toml",
+    "flag": false,
+    "help": "Which stories each state's site carries (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "stories_rules",
+    "opts": [
+     "--stories"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/results.json",
+    "flag": false,
+    "help": "Results JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "results",
+    "opts": [
+     "--results"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "20.0",
+    "flag": false,
+    "help": "Refuse to run if disk would drop below this.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "min_free_gib",
+    "opts": [
+     "--min-free-gib"
+    ],
+    "required": false,
+    "type": "float"
+   }
+  ]
+ },
+ "lineage publish promote": {
+  "help": "Swap the staging copy in as the live export. Nothing is deployed or published.",
+  "params": [
+   {
+    "default": "GA",
+    "flag": false,
+    "help": "The hosted state, by postal code.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "state",
+    "opts": [
+     "--state"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "The live export (local); default data/export/<ST>.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "export",
+    "opts": [
+     "--export"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage publish reject": {
+  "help": "Reject a day the circuit breaker held, once reviewed: its release is never published and\nnothing leaves this machine. The live track keeps its data, and the next day's run publishes\nas usual, with it.",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "The held day, YYYY-MM-DD.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "day",
+    "opts": [
+     "--day"
+    ],
+    "required": true,
+    "type": "str"
+   },
+   {
+    "default": "<data>/deploy",
+    "flag": false,
+    "help": "The deploy's records and releases (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "root",
+    "opts": [
+     "--deploy-dir"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage publish release": {
+  "help": "Approve a day the circuit breaker held, once reviewed: its release, or with --repack the\nlive export as it now stands; the site's gates run again, the pin committed and\nleak-checked, pushed, and the Pages workflow dispatched.",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "The held day, YYYY-MM-DD.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "day",
+    "opts": [
+     "--day"
+    ],
+    "required": true,
+    "type": "str"
+   },
+   {
+    "default": "<data>/deploy",
+    "flag": false,
+    "help": "The deploy's records and releases (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "root",
+    "opts": [
+     "--deploy-dir"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "Pack the live export as it stands now, after withholding the documents behind bad claims and running publish pages, feed and promote.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "repack",
+    "opts": [
+     "--repack"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "GA",
+    "flag": false,
+    "help": "The hosted state, by postal code.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "state",
+    "opts": [
+     "--state"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "The live export (local); default data/export/<ST>.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "export",
+    "opts": [
+     "--export"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "20.0",
+    "flag": false,
+    "help": "Refuse to run if disk would drop below this.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "min_free_gib",
+    "opts": [
+     "--min-free-gib"
+    ],
+    "required": false,
+    "type": "float"
+   }
+  ]
+ },
+ "lineage publish review": {
+  "help": "During session: the week's new origin claims, each with its bill, document, shares,\nstages and the day first listed, for the maintainer's weekly review ->\n<deploy>/reviews/<day>.txt.",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "The site's address, absolute, for the feed's links.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "site_url",
+    "opts": [
+     "--site-url"
+    ],
+    "required": true,
+    "type": "str"
+   },
+   {
+    "default": "GA",
+    "flag": false,
+    "help": "The hosted state, by postal code.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "state",
+    "opts": [
+     "--state"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "The week's last day [default: today, UTC].",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "through",
+    "opts": [
+     "--through"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/changes",
+    "flag": false,
+    "help": "The change log, one file per day (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "changes",
+    "opts": [
+     "--changes"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/deploy",
+    "flag": false,
+    "help": "The deploy's records and releases (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "root",
+    "opts": [
+     "--deploy-dir"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage publish weekly": {
+  "help": "The weekly rebuild's check: the share of relatives the updated tables and the rebuild\nagree on, failing below 98%, and the drift when the statistics are refreshed (DR-7).",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "A full rebuild with the base build's statistics.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "pinned",
+    "opts": [
+     "--pinned"
+    ],
+    "required": true,
+    "type": "path"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "The updated tables (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "updated",
+    "opts": [
+     "--updated"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "A full rebuild with the statistics counted afresh.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "refreshed",
+    "opts": [
+     "--refreshed"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/schedule/weekly.json",
+    "flag": false,
+    "help": "The weekly report (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "report",
+    "opts": [
+     "--report"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "bge-small-en-v1.5",
+    "flag": false,
+    "help": "The embedding model.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "model",
+    "opts": [
+     "--model"
+    ],
+    "required": false,
+    "type": "str"
+   }
+  ]
+ },
+ "lineage query": {
+  "help": "Find a bill's relatives in the index, offline: bills that share its text, by section.",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "The bill's text, as a plain-text file.",
+    "kind": "TyperArgument",
+    "multiple": false,
+    "name": "file",
+    "opts": [
+     "file"
+    ],
+    "required": true,
+    "type": "file"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "20",
+    "flag": false,
+    "help": "Families to show.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "limit",
+    "opts": [
+     "--limit"
+    ],
+    "required": false,
+    "type": "int"
+   },
+   {
+    "default": "True",
+    "flag": true,
+    "help": "Search by meaning too, over the embedded corpus (`lineage embed`).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "semantic",
+    "opts": [
+     "--semantic",
+     "--no-semantic"
+    ],
+    "required": false,
+    "type": "boolean"
+   }
+  ]
+ },
+ "lineage rebuild": {
+  "help": "The folded days laid over the snapshot's archives and the whole pipeline run into OUT,\nwith pinned or refreshed corpus statistics -> OUT, OUT.build/rebuild.json (DR-7).",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "The rebuild's tables directory (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "out",
+    "opts": [
+     "--out"
+    ],
+    "required": true,
+    "type": "path"
+   },
+   {
+    "default": "<data>/days",
+    "flag": false,
+    "help": "The days taken in, one directory each (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "days",
+    "opts": [
+     "--days"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "Fold the days up to this one, YYYY-MM-DD [default: all].",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "through",
+    "opts": [
+     "--through"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "Tables at the same day whose stoplist and state boilerplate counts to keep; without it they are counted afresh.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "pinned_from",
+    "opts": [
+     "--pinned-from"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "Tables whose vectors to reuse for the same texts [default: --pinned-from].",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "vectors_from",
+    "opts": [
+     "--vectors-from"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/raw",
+    "flag": false,
+    "help": "Directory of Open States archives.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "raw",
+    "opts": [
+     "--raw"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "snapshot/manifest.json",
+    "flag": false,
+    "help": "Snapshot manifest (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "manifest",
+    "opts": [
+     "--manifest"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "Lay the days over no archives: the days are the corpus.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "days_only",
+    "opts": [
+     "--days-only"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "snapshot/sessions.csv",
+    "flag": false,
+    "help": "Session dates CSV (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "sessions",
+    "opts": [
+     "--sessions"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/text/plan.parquet",
+    "flag": false,
+    "help": "The text layer's fetch plan, as `text merge`.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "text_plan",
+    "opts": [
+     "--text-plan"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "0.001",
+    "flag": false,
+    "help": "A refreshed stoplist's share, as `lineage boilerplate`.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "max_share",
+    "opts": [
+     "--max-share"
+    ],
+    "required": false,
+    "type": "float"
+   },
+   {
+    "default": null,
+    "flag": true,
+    "help": "Match the model documents [default: when the tables reused hold matches].",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "origins",
+    "opts": [
+     "--origins",
+     "--no-origins"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "bge-small-en-v1.5",
+    "flag": false,
+    "help": "The embedding model.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "model",
+    "opts": [
+     "--model"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "Search neighbors exactly, not by HNSW (small corpora).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "exact",
+    "opts": [
+     "--exact"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "10",
+    "flag": false,
+    "help": "Worker processes.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "workers",
+    "opts": [
+     "--workers"
+    ],
+    "required": false,
+    "type": "int"
+   },
+   {
+    "default": "20.0",
+    "flag": false,
+    "help": "Refuse to run if disk would drop below this.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "min_free_gib",
+    "opts": [
+     "--min-free-gib"
+    ],
+    "required": false,
+    "type": "float"
+   }
+  ]
+ },
+ "lineage relatives-sample": {
+  "help": "Draw listed relatives of random bills of one state, to measure what a page lists.",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "tuning",
+    "flag": false,
+    "help": "tuning, tuning_093 or reporting (lineage.evals.relatives_sample.PARTS).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "part",
+    "opts": [
+     "--part"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "The sample file, one relative per line (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "sample",
+    "opts": [
+     "--sample"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "The draw's report JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "report",
+    "opts": [
+     "--report"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "A sample whose bills this part never draws (repeat).",
+    "kind": "TyperOption",
+    "multiple": true,
+    "name": "excluded_samples",
+    "opts": [
+     "--excluded"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage schedule": {
+  "help": "The live track's scheduled jobs, as launchd runs them.",
+  "params": []
+ },
+ "lineage schedule daily": {
+  "help": "The daily job: intake, update, the incremental export and the feed, swapped in only when\nevery step succeeds, and from the first day of session the deploy (rules/deploy.toml); a\nfailure or a held day is recorded in data/schedule/status.json and alerted. Exits 3 when\nthe day is held for review.",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "The site's address, absolute, for the feed's links.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "site_url",
+    "opts": [
+     "--site-url"
+    ],
+    "required": true,
+    "type": "str"
+   },
+   {
+    "default": "GA",
+    "flag": false,
+    "help": "The hosted state, by postal code.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "state",
+    "opts": [
+     "--state"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "The day, YYYY-MM-DD [default: today, UTC].",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "day",
+    "opts": [
+     "--day"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "default",
+    "flag": false,
+    "help": "The intake key's limits.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tier",
+    "opts": [
+     "--tier"
+    ],
+    "required": false,
+    "type": "str"
+   }
+  ]
+ },
+ "lineage schedule plist": {
+  "help": "Fill a launchd template with this checkout, the data directory and the PATH it runs\nunder -> OUT. Loading it with launchctl is the operator's step.",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "daily or weekly.",
+    "kind": "TyperArgument",
+    "multiple": false,
+    "name": "job",
+    "opts": [
+     "job"
+    ],
+    "required": true,
+    "type": "str"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "Where the filled plist goes (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "out",
+    "opts": [
+     "--out"
+    ],
+    "required": true,
+    "type": "path"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "The site's address, absolute, for the feed's links.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "site_url",
+    "opts": [
+     "--site-url"
+    ],
+    "required": true,
+    "type": "str"
+   },
+   {
+    "default": "GA",
+    "flag": false,
+    "help": "The hosted state, by postal code.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "state",
+    "opts": [
+     "--state"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "The hour it runs, local time; else as ruled.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "hour",
+    "opts": [
+     "--hour"
+    ],
+    "required": false,
+    "type": "int"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "The minute it runs; else as ruled.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "minute",
+    "opts": [
+     "--minute"
+    ],
+    "required": false,
+    "type": "int"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "Days it runs, 0 Sunday to 6 Saturday, comma-separated.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "weekdays",
+    "opts": [
+     "--weekdays"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": "local.legislative-lineage",
+    "flag": false,
+    "help": "launchd's label prefix.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "label",
+    "opts": [
+     "--label"
+    ],
+    "required": false,
+    "type": "str"
+   }
+  ]
+ },
+ "lineage schedule weekly": {
+  "help": "The weekly job: two full rebuilds over the days the tables have had, then the check,\nwhich fails the job below 98% agreement (DR-7); then, before session, a release candidate\nfor review, and during it the week's new origin claims (DESIGN.md#updates).",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "The site's address, absolute, for the feed's links.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "site_url",
+    "opts": [
+     "--site-url"
+    ],
+    "required": true,
+    "type": "str"
+   },
+   {
+    "default": "GA",
+    "flag": false,
+    "help": "The hosted state, by postal code.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "state",
+    "opts": [
+     "--state"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "The day, YYYY-MM-DD [default: today, UTC].",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "day",
+    "opts": [
+     "--day"
+    ],
+    "required": false,
+    "type": "str"
+   }
+  ]
+ },
+ "lineage semantic-pairs": {
+  "help": "The neighbors as cross-state section pairs, best cosine and window pair each ->\n<tables>/semantic/<model>/pairs/.",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "20.0",
+    "flag": false,
+    "help": "Refuse to run if disk would drop below this.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "min_free_gib",
+    "opts": [
+     "--min-free-gib"
+    ],
+    "required": false,
+    "type": "float"
+   },
+   {
+    "default": "reports/semantic_pairs.json",
+    "flag": false,
+    "help": "Report JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "report",
+    "opts": [
+     "--report"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage sessions": {
+  "help": "Pin start and end dates for every session in the manifest, from Open States' scrapers.",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "Full openstates-scrapers commit SHA to read from.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "commit",
+    "opts": [
+     "--commit"
+    ],
+    "required": true,
+    "type": "str"
+   },
+   {
+    "default": "snapshot/manifest.json",
+    "flag": false,
+    "help": "Snapshot manifest (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "manifest",
+    "opts": [
+     "--manifest"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "snapshot/sessions.csv",
+    "flag": false,
+    "help": "Session dates CSV (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "out",
+    "opts": [
+     "--out"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage snapshot": {
+  "help": "Pin the archives in RAW: write each one's size, SHA-256 and Generated At to the manifest.",
+  "params": [
+   {
+    "default": "<data>/raw",
+    "flag": false,
+    "help": "Directory of Open States archives.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "raw",
+    "opts": [
+     "--raw"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "snapshot/manifest.json",
+    "flag": false,
+    "help": "Snapshot manifest (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "manifest",
+    "opts": [
+     "--manifest"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage split": {
+  "help": "Split every bill's text into sections and write the `sections` table.",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "10",
+    "flag": false,
+    "help": "Worker processes.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "workers",
+    "opts": [
+     "--workers"
+    ],
+    "required": false,
+    "type": "int"
+   },
+   {
+    "default": "20.0",
+    "flag": false,
+    "help": "Refuse to run if disk would drop below this.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "min_free_gib",
+    "opts": [
+     "--min-free-gib"
+    ],
+    "required": false,
+    "type": "float"
+   }
+  ]
+ },
+ "lineage state-boilerplate": {
+  "help": "Count the families of its own state each section's near-duplicates reach ->\n<tables>/state_boilerplate/; flagged at MIN_FAMILIES or more.",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "20.0",
+    "flag": false,
+    "help": "Refuse to run if disk would drop below this.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "min_free_gib",
+    "opts": [
+     "--min-free-gib"
+    ],
+    "required": false,
+    "type": "float"
+   },
+   {
+    "default": "reports/state_boilerplate.json",
+    "flag": false,
+    "help": "Report JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "report",
+    "opts": [
+     "--report"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage stats": {
+  "help": "Measure text coverage, sections, document types and status per state and session.",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "snapshot/manifest.json",
+    "flag": false,
+    "help": "Snapshot manifest (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "manifest",
+    "opts": [
+     "--manifest"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "snapshot/sessions.csv",
+    "flag": false,
+    "help": "Session dates CSV (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "sessions",
+    "opts": [
+     "--sessions"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/coverage.json",
+    "flag": false,
+    "help": "Report JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "report",
+    "opts": [
+     "--report"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<repo>/rules/document_types.csv",
+    "flag": false,
+    "help": "Document-type rules (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "rules",
+    "opts": [
+     "--rules"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "Also write sample titles for each document-type rule to a local file.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "samples",
+    "opts": [
+     "--samples"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "<data>/reports/document_type_samples.json",
+    "flag": false,
+    "help": "Sample titles JSON (local, gitignored).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "samples_report",
+    "opts": [
+     "--samples-report"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage text": {
+  "help": "The text layer: bill text fetched from the source.",
+  "params": []
+ },
+ "lineage text fetch": {
+  "help": "Fetch every planned record's text, as rules/text_layer.toml says; resumable.",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/text/plan.parquet",
+    "flag": false,
+    "help": "Fetch plan Parquet (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "plan",
+    "opts": [
+     "--plan"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/text_fetch.json",
+    "flag": false,
+    "help": "Fetch report JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "out",
+    "opts": [
+     "--out"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "True",
+    "flag": true,
+    "help": "Fetch what the store lacks before counting.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "fetch",
+    "opts": [
+     "--fetch",
+     "--no-fetch"
+    ],
+    "required": false,
+    "type": "boolean"
+   }
+  ]
+ },
+ "lineage text inventory": {
+  "help": "Choose each eligible record's version to fetch, count by host, and read robots.txt.",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/text/plan.parquet",
+    "flag": false,
+    "help": "Fetch plan Parquet (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "plan",
+    "opts": [
+     "--plan"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/text_inventory.json",
+    "flag": false,
+    "help": "Inventory JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "out",
+    "opts": [
+     "--out"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
+ "lineage text merge": {
+  "help": "Choose each record's text, fetched or exported -> data/tables/texts/.",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/text/plan.parquet",
+    "flag": false,
+    "help": "Fetch plan Parquet (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "plan",
+    "opts": [
+     "--plan"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "False",
+    "flag": true,
+    "help": "Use only the exported text, to measure without the fetch.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "exported_only",
+    "opts": [
+     "--exported-only",
+     "--no-exported-only"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "20.0",
+    "flag": false,
+    "help": "Refuse to run if disk would drop below this.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "min_free_gib",
+    "opts": [
+     "--min-free-gib"
+    ],
+    "required": false,
+    "type": "float"
+   }
+  ]
+ },
+ "lineage text sample": {
+  "help": "Fetch a seeded sample per state and format and judge its text against Open States'.",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/text/plan.parquet",
+    "flag": false,
+    "help": "Fetch plan Parquet (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "plan",
+    "opts": [
+     "--plan"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/text/sample",
+    "flag": false,
+    "help": "Fetched sample (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "store",
+    "opts": [
+     "--store"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/text_quality.json",
+    "flag": false,
+    "help": "Quality report JSON (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "out",
+    "opts": [
+     "--out"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "True",
+    "flag": true,
+    "help": "Fetch what the store lacks before judging.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "fetch",
+    "opts": [
+     "--fetch",
+     "--no-fetch"
+    ],
+    "required": false,
+    "type": "boolean"
+   }
+  ]
+ },
+ "lineage update": {
+  "help": "Apply one day's new and changed records to the built corpus, matching in both\ndirections, and log what changed -> <changes>/<as_of>.jsonl (DESIGN.md#updates).",
+  "params": [
+   {
+    "default": null,
+    "flag": false,
+    "help": "A day's directory: day.json and its records (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "day",
+    "opts": [
+     "--day"
+    ],
+    "required": true,
+    "type": "path"
+   },
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/changes",
+    "flag": false,
+    "help": "The change log, one file per day (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "changes",
+    "opts": [
+     "--changes"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "20.0",
+    "flag": false,
+    "help": "Refuse to run if disk would drop below this.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "min_free_gib",
+    "opts": [
+     "--min-free-gib"
+    ],
+    "required": false,
+    "type": "float"
+   }
+  ]
+ },
+ "lineage withhold": {
+  "help": "The model documents withheld from pages, the feed and stories: at least 3 labeled listed\nmatches, fewer than half judged correct; and those withheld by hand with --doc after a held\nday's review, which are kept when the report is written again (DESIGN.md#origin-matches).",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/modeldocs",
+    "flag": false,
+    "help": "Where documents are kept (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "root",
+    "opts": [
+     "--modeldocs"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "evals/origin_precision_labels.jsonl",
+    "flag": false,
+    "help": "Origin precision labels (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "labels",
+    "opts": [
+     "--labels"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/withheld_documents.json",
+    "flag": false,
+    "help": "The withheld documents' report (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "out",
+    "opts": [
+     "--out"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "Withhold this document after reviewing a held day's claims.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "doc",
+    "opts": [
+     "--doc"
+    ],
+    "required": false,
+    "type": "str"
+   },
+   {
+    "default": null,
+    "flag": false,
+    "help": "Why, for the record: what the review found.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "note",
+    "opts": [
+     "--note"
+    ],
+    "required": false,
+    "type": "str"
+   }
+  ]
+ }
+}
