@@ -21,7 +21,7 @@ from collections import Counter
 from collections.abc import Collection, Sequence
 from dataclasses import dataclass, replace
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, get_args
 
 import numpy as np
 from numpy.typing import NDArray
@@ -77,17 +77,6 @@ MIN_SHARE = 0.0
 SHARE_SWEEP = (0.0, 0.1, 0.25, 0.5)
 
 # Ordered by how far through the pipeline a bill got; an enactment's reason is its furthest bill's.
-MISS_REASONS = (
-    "not_in_corpus",
-    "no_text_in_source",
-    "amendment_only",
-    "excluded_type",
-    "no_usable_text",
-    "not_proposed",
-    "bucket_cap",
-    "verification",
-    "below_threshold",
-)
 MissReason = Literal[
     "not_in_corpus",
     "no_text_in_source",
@@ -99,6 +88,7 @@ MissReason = Literal[
     "verification",
     "below_threshold",
 ]
+MISS_REASONS: tuple[MissReason, ...] = get_args(MissReason)
 Stage = Literal["verified", "bucket_cap", "verification", "not_proposed"]
 
 
