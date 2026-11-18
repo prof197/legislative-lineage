@@ -704,7 +704,7 @@ The package is eleven layers, set at M13's step 1 review (2026-11-18). A module 
 |---|---|---|
 | CLI | `lineage.cli` | `app` (the Typer apps, shared options), and one module of commands per layer below: `data`, `text`, `match`, `explain`, `evals` (with the labeling commands apart, in `labels`), `origins`, `export`, `live` |
 | Live track | `lineage.live` | Intake from Open States' API, the update contracts and the incremental core (`incremental` and its parts: `staging`, `incremental_records`, `incremental_near`, `incremental_semantic`, `incremental_relatives`), the rebuild, publishing, the feed, the scheduled jobs and the deploy (`deploy` and its parts: `deploy_ledger`, `deploy_shell`, `deploy_gates`, `deploy_rules`, `deploy_publish`) |
-| Export | `lineage.export` | The data contract (`schema`), the export (`build`), the stories, the data release, the Atom rules, the README's tables |
+| Export | `lineage.export` | The data contract (`schema`), the export (`build`, rendering through `pages`), the validation page's figures (`validation`), the stories, the data release, the Atom rules, the README's tables |
 | Origins | `lineage.origins` | Model documents and their collectors, origin matching (`matching`, into `matches`), origin recall and precision, the withheld documents |
 | Evals | `lineage.evals` | Act texts and the commission's lists, recall, the threshold, the pair dataset, precision samples and labels, agreement, faithfulness, cost |
 | Explain | `lineage.explain` | The reply schema and grounding check, the explanation call and cache, structured requests, the spend meter |

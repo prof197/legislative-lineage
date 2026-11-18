@@ -212,6 +212,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   export/         what leaves the pipeline: the data contract, the export, stories, the release
     schema.py       the site's data contract: every exported file as a Pydantic model, which emits the JSON Schema
     build.py        `lineage export`: bill pages, comparisons, section texts, stories and the data stamp for one state
+    validation.py   the validation page's figures, read from the committed results and the withheld report
     featured.py     `lineage featured`: the three featured stories, their anchors and relatives rules, and the section pairs they explain
     origin_story.py the origin story's rule, which names no organization, and its file (DESIGN.md#export)
     release.py      the data release: the export contract's files, packing with its checksum manifest, pinning (DESIGN.md#export)
