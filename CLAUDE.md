@@ -158,6 +158,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
       verify.py       re-estimate candidates from full signatures; the verification threshold
       families.py     same-state families: bill match shares, connected components (pure functions)
       pairs.py        verify window candidates, store cross-state and same-state section pairs, write families
+      dirs.py         a table directory written aside and swapped in, two ways a failed write is left
       index.py        `lineage index`: signatures, bands, pairs and families, then reports/index.json
       queries.py      this package's SQL, and only its own (DR-4)
   match/semantic/ the semantic stage
@@ -221,12 +222,22 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
     openstates_api.py API v3's bills request and its bills mapped into the bulk archive's record shape
     intake.py       `lineage intake`: paged by updated_at, pages recorded, text through the text layer, days written once; the January estimate
     updates.py      the live track's contracts (DR-7): days, records over time, the change log, the snapshot an update must equal
-    incremental.py  `lineage update`'s body, one day applied in both directions in a staging view, journaled per day
+    incremental.py  `lineage update`'s body: apply_day and update, the journal, the embedder registry, the free-space bound
+    incremental_records.py  the day's bills, eligibility, texts and sections written into the staging view
+    incremental_near.py  signatures renumbered, the band index, both pairs tables, families, the carried boilerplate counts
+    incremental_semantic.py  the day's windows, vectors, neighbors and semantic section pairs
+    incremental_relatives.py  the bills whose relatives can have changed, and their relatives and origins before and after
+    staging.py      the view an update builds the tables in before swapping it in
     rebuild.py      `lineage rebuild`: the folded days over the snapshot's archives, the pipeline run again with pinned or refreshed statistics (DR-7)
     publish.py      `lineage publish pages|promote`: the pages a day's changes touch, rewritten in a staging copy, and the swap (DESIGN.md#updates)
     feed.py         `lineage publish feed`: the national Atom feed of the live track's events, checked against RFC 4287
     schedule.py     `lineage schedule`: the daily and weekly jobs under launchd, their status (held included) and alerts; the weekly agreement check and drift
-    deploy.py       `lineage publish deploy|release|candidate|review`: the day's release, its gates and circuit breaker, a held day's release, the candidate and the origin-claims review; every external command through an injectable shell (DR-13)
+    deploy.py       `lineage publish deploy|release|reject|candidate|review`: the day's release, a held day's release or rejection, the candidate and the origin-claims review (DR-13)
+    deploy_ledger.py  the deploy's day records and paths
+    deploy_shell.py  every external command through an injectable shell; the keychain token and github_shell
+    deploy_gates.py  packing the release and its gates: contract, local paths, the deny list, the site's checks
+    deploy_rules.py  rules/deploy.toml and the circuit breaker
+    deploy_publish.py  the publish: commit, leak check, release, push, Pages dispatch
     queries.py      this package's SQL, and only its own (DR-4)
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
 scheduling/       the live track's launchd templates and run.sh; nothing loads them

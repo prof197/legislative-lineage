@@ -66,9 +66,6 @@ from lineage.live.deploy_gates import (
     tag_day,
     tag_for,
 )
-
-# Named here too: `lineage publish`'s commands take their default directory from this module.
-from lineage.live.deploy_ledger import DEPLOY_DIR as DEPLOY_DIR
 from lineage.live.deploy_ledger import (
     DayRecord,
     DeployError,

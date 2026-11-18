@@ -52,6 +52,7 @@ from lineage.export.pages import STORIES_RULES, ExportError
 from lineage.export.release import ReleaseError
 from lineage.live import deploy
 from lineage.live import rebuild as rebuilding
+from lineage.live.deploy_ledger import DEPLOY_DIR
 from lineage.live.feed import FeedError, write_feed
 from lineage.live.incremental import update
 from lineage.live.intake import (
@@ -467,7 +468,7 @@ def publish_deploy_command(
     state: StateOption = "GA",
     export: LiveExportOption = None,
     changes: ChangesOption = CHANGES_DIR,
-    root: DeployRootOption = deploy.DEPLOY_DIR,
+    root: DeployRootOption = DEPLOY_DIR,
     min_free_gib: MinFreeOption = 20.0,
 ) -> None:
     """Deploy the live export's day: pack the release, the gates, the circuit breaker, then
@@ -504,7 +505,7 @@ def publish_deploy_command(
 @publish_app.command("release")
 def publish_release_command(
     day: HeldDayOption,
-    root: DeployRootOption = deploy.DEPLOY_DIR,
+    root: DeployRootOption = DEPLOY_DIR,
     repack: Annotated[
         bool,
         typer.Option(
@@ -536,7 +537,7 @@ def publish_release_command(
 @publish_app.command("reject")
 def publish_reject_command(
     day: HeldDayOption,
-    root: DeployRootOption = deploy.DEPLOY_DIR,
+    root: DeployRootOption = DEPLOY_DIR,
 ) -> None:
     """Reject a day the circuit breaker held, once reviewed: its release is never published and
     nothing leaves this machine. The live track keeps its data, and the next day's run publishes
@@ -564,7 +565,7 @@ def publish_candidate_command(
     tables: TablesOption = DATA / "tables",
     export: LiveExportOption = None,
     changes: ChangesOption = CHANGES_DIR,
-    root: DeployRootOption = deploy.DEPLOY_DIR,
+    root: DeployRootOption = DEPLOY_DIR,
     min_free_gib: MinFreeOption = 20.0,
 ) -> None:
     """Before session: the live export packed and gated as a release candidate, with a review
@@ -602,7 +603,7 @@ def publish_review_command(
     ] = None,
     tables: TablesOption = DATA / "tables",
     changes: ChangesOption = CHANGES_DIR,
-    root: DeployRootOption = deploy.DEPLOY_DIR,
+    root: DeployRootOption = DEPLOY_DIR,
 ) -> None:
     """During session: the week's new origin claims, each with its bill, document, shares,
     stages and the day first listed, for the maintainer's weekly review ->

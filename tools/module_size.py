@@ -1,8 +1,8 @@
 """CI check: no module in the package is longer than LIMIT lines, but those allow-listed here.
 
-Ruled at M13's step 1 review: 800 lines, with incremental and deploy allowed until step 5's
-lanes pay them down. An allowed module back under the limit is an error too, so the list only
-shrinks.
+Ruled at M13's step 1 review: 800 lines. Incremental and deploy were allowed until step 5's
+lanes split them; the list is empty now. An allowed module back under the limit is an error,
+so the list only shrinks.
 
     uv run python -m tools.module_size
 """
