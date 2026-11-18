@@ -22,11 +22,9 @@ from lineage.labels import (
 )
 from lineage.model_labels import (
     BUDGET,
-    CHARS_PER_TOKEN,
     MAX_TOKENS,
     PASSAGES_HIGH,
     PASSAGES_SYSTEM,
-    PRICES,
     PROMPT_VERSION,
     PROMPTS,
     RELATIVES,
@@ -50,6 +48,7 @@ from lineage.model_labels import (
     spent,
     user_message,
 )
+from lineage.spend import CHARS_PER_TOKEN, PRICES
 
 
 def _item(i: int) -> Item:

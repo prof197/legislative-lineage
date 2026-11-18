@@ -19,7 +19,16 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from lineage.model_labels import CHARS_PER_TOKEN, PRICES
+# Standard prices in dollars per million tokens, input and output, from the platform's model
+# list as of November 2026; the Batches API charges half. A model not listed is not projected.
+PRICES: dict[str, tuple[float, float]] = {
+    "claude-opus-5-5": (4.0, 20.0),
+    "claude-sonnet-5-5": (2.0, 10.0),
+}
+# The first batch's prompts ran 2.77 characters a token (8.67 million characters, 3,134,052
+# input tokens; reports/label_spend.json): legal text tokenizes finer than prose. Fewer than
+# that, so the projection errs high.
+CHARS_PER_TOKEN = 2.5
 
 SPEND = Path("reports/explanation_spend.json")
 # Dollars every M6 model call may cost together, explanations and judge, spent and projected,
@@ -35,7 +44,7 @@ class BudgetError(Exception):
 
 def _prices(model: str) -> tuple[float, float]:
     if model not in PRICES:
-        raise BudgetError(f"no price for {model}; add it to lineage.model_labels.PRICES first")
+        raise BudgetError(f"no price for {model}; add it to lineage.spend.PRICES first")
     return PRICES[model]
 
 

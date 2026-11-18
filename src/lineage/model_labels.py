@@ -27,6 +27,7 @@ from typing import Any, Literal, Protocol, cast
 from pydantic import BaseModel, ConfigDict, ValidationError
 
 from lineage.labels import MODEL, SAME_PROVISION, Item, model_labeler, scale_lines
+from lineage.spend import CHARS_PER_TOKEN, PRICES
 
 MODEL_ID = "claude-opus-5-5"
 PROMPT_VERSION = "v1"
@@ -35,16 +36,6 @@ PROMPT_VERSION = "v1"
 MAX_TOKENS = 1024
 Effort = Literal["low", "medium", "high", "xhigh", "max"]
 EFFORT: Effort = "low"
-# Standard prices in dollars per million tokens, input and output, from the platform's model
-# list as of November 2026; the Batches API charges half. A model not listed is not projected.
-PRICES: dict[str, tuple[float, float]] = {
-    "claude-opus-5-5": (4.0, 20.0),
-    "claude-sonnet-5-5": (2.0, 10.0),
-}
-# The first batch's prompts ran 2.77 characters a token (8.67 million characters, 3,134,052
-# input tokens; reports/label_spend.json): legal text tokenizes finer than prose. Fewer than
-# that, so the projection errs high.
-CHARS_PER_TOKEN = 2.5
 MAX_COST = 10.0  # dollars a run may be projected to cost before it is refused
 # Declines are rerun on the fallback model the API picks for the refusal's category; the label
 # records which model served it.
