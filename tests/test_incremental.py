@@ -23,6 +23,7 @@ from lineage.incremental import (
     apply_day,
     register_embedder,
     unregister_embedder,
+    update,
 )
 from lineage.updates import (
     Change,
@@ -41,7 +42,6 @@ from lineage.updates import (
     record_changes,
     relative_changes,
     snapshot,
-    update,
     write_changes,
 )
 from lineage.vectors import load_plan, load_vectors, semantic_dir, shard_name

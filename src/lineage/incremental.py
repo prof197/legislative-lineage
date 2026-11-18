@@ -1,6 +1,6 @@
 """Lane L1's incremental core: one day applied to a built corpus, matched in both directions.
 
-`apply_day` meets `lineage.updates.update` (DESIGN.md#updates, DR-7). It works in three parts:
+`apply_day` meets `update`, the contract (DESIGN.md#updates, DR-7). It works in three parts:
 
 - **Records.** The day's records join their archives' bills files through the reader ingest
   uses, and every bills file is stamped as of the day, so each status is judged on it. A
@@ -53,7 +53,7 @@ from numpy.typing import NDArray
 from lineage import queries
 from lineage.bands import load_band_index, update_bands
 from lineage.boilerplate import boilerplate_kind
-from lineage.disk import require_free_space
+from lineage.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.doctypes import RULES, decide, load_rules
 from lineage.families import update_families
 from lineage.listing import shipped_flag
@@ -76,7 +76,7 @@ from lineage.pairs import (
 )
 from lineage.relatives import bill_relatives
 from lineage.sections import normalize, split_sections
-from lineage.semantic import BUILD_THRESHOLD, Embedder, K
+from lineage.semantic import BUILD_THRESHOLD, MODEL, Embedder, K
 from lineage.semantic_pairs import (
     SemanticPairs,
     changed_texts,
@@ -95,6 +95,7 @@ from lineage.signatures import (
 from lineage.status import OUTCOME_CLASSIFICATIONS, STATUS_WORDING, Action, bill_status
 from lineage.stoplist import load_stoplist
 from lineage.updates import (
+    CHANGES_DIR,
     SHARE_PLACES,
     Change,
     Day,
@@ -1087,7 +1088,7 @@ def apply_day(
     embed: Embedder | None = None,
     match_origins: OriginMatcher | None = None,
 ) -> list[Change]:
-    """See `lineage.updates.update`. `embed` embeds the day's new windows, by default with the
+    """See `update`. `embed` embeds the day's new windows, by default with the
     model's pinned files or the embedder registered for it (`register_embedder`);
     `match_origins` matches the model documents against the tables, by default with
     `lineage origins`' own matching, run only when the tables hold origin matches."""
@@ -1202,3 +1203,23 @@ def _staged_changes(
         *relative_changes(before, after, day.as_of),
         *origin_changes(before, after, day.as_of),
     ]
+
+
+def update(
+    tables_dir: Path,
+    day: Day,
+    *,
+    model: str = MODEL,
+    changes_dir: Path = CHANGES_DIR,
+    floor_bytes: int = DEFAULT_FLOOR_BYTES,
+) -> list[Change]:
+    """Apply one day to a built corpus in place and log its changes; returns them.
+
+    The contract lane L1 builds to (DESIGN.md#updates): the tables afterwards give the same
+    `snapshot` as a full rebuild over every day so far with the same pinned corpus statistics;
+    the log holds `record_changes` for the day, then `relative_changes` and `origin_changes`
+    between the snapshots before and after it; each new text is matched against the whole corpus
+    and the model documents, and every existing bill it matches gains it as a relative; a day
+    already applied changes nothing and returns no changes; every large write first checks
+    `floor_bytes` of free space."""
+    return apply_day(tables_dir, day, model=model, changes_dir=changes_dir, floor_bytes=floor_bytes)

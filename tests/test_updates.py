@@ -9,6 +9,7 @@ from pathlib import Path
 
 import pytest
 
+from lineage.incremental import update
 from lineage.updates import (
     OriginGained,
     OriginLost,
@@ -27,7 +28,6 @@ from lineage.updates import (
     record_changes,
     relative_changes,
     snapshot,
-    update,
     write_changes,
 )
 from tests.conftest import FAKE_MODEL

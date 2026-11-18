@@ -122,6 +122,7 @@ from lineage.flag_precision import (
     with_flag,
 )
 from lineage.hashing import file_sha256
+from lineage.incremental import update
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
 from lineage.intake import (
@@ -324,7 +325,7 @@ from lineage.threshold import by_band as threshold_by_band
 from lineage.threshold import proposal as threshold_proposal
 from lineage.threshold import sample_inputs as threshold_sample_inputs
 from lineage.ulc import ENACTMENTS, HELD_OUT_ENACTMENTS, UlcError
-from lineage.updates import CHANGES_DIR, UpdateError, load_day, update
+from lineage.updates import CHANGES_DIR, UpdateError, load_day
 from lineage.vectors import PROCESSES as EMBED_PROCESSES
 from lineage.vectors import REPORT as EMBED_REPORT
 from lineage.vectors import THREADS as EMBED_THREADS

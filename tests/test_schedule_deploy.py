@@ -16,6 +16,7 @@ import pytest
 from lineage import deploy
 from lineage.deploy import DeployPaths, DeployRules, Limits, load_rules
 from lineage.feed import write_feed
+from lineage.incremental import update
 from lineage.publish import export_changes, promote, staging_dir
 from lineage.schedule import (
     STATUS_FILE,
@@ -28,7 +29,7 @@ from lineage.schedule import (
     run_job,
     weekly_job_steps,
 )
-from lineage.updates import load_day, update
+from lineage.updates import load_day
 from tests.conftest import FAKE_MODEL
 from tests.days import DAYS
 from tests.live import ExportInputs, Recorded, export_inputs, full_export, recorded

@@ -21,7 +21,6 @@ from typing import Annotated, Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
 
 from lineage import queries
-from lineage.disk import DEFAULT_FLOOR_BYTES
 from lineage.listing import shipped_flag
 from lineage.origins import read_origin_matches
 from lineage.pairs import load_families
@@ -403,25 +402,3 @@ def origin_changes(before: Snapshot | None, after: Snapshot, as_of: date) -> lis
         for doc in sorted(set(old) - set(new)):
             out.append(OriginLost(as_of=as_of, bill_id=bill_id, doc_id=doc))
     return out
-
-
-def update(
-    tables_dir: Path,
-    day: Day,
-    *,
-    model: str = MODEL,
-    changes_dir: Path = CHANGES_DIR,
-    floor_bytes: int = DEFAULT_FLOOR_BYTES,
-) -> list[Change]:
-    """Apply one day to a built corpus in place and log its changes; returns them.
-
-    The contract lane L1 builds to (DESIGN.md#updates): the tables afterwards give the same
-    `snapshot` as a full rebuild over every day so far with the same pinned corpus statistics;
-    the log holds `record_changes` for the day, then `relative_changes` and `origin_changes`
-    between the snapshots before and after it; each new text is matched against the whole corpus
-    and the model documents, and every existing bill it matches gains it as a relative; a day
-    already applied changes nothing and returns no changes; every large write first checks
-    `floor_bytes` of free space."""
-    from lineage.incremental import apply_day  # lane L1's module; it imports these contracts
-
-    return apply_day(tables_dir, day, model=model, changes_dir=changes_dir, floor_bytes=floor_bytes)
