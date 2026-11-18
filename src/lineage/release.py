@@ -25,6 +25,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
+from lineage.atom import violations
 from lineage.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.export_schema import (
     BillList,
@@ -132,8 +133,6 @@ def check_export(export: Path, *, state: str) -> Checksums:
     for name, path in files:
         data = path.read_bytes()
         if name == FEED:
-            from lineage.feed import violations  # the feed's check pulls in the export's stack
-
             if problems := violations(data):
                 raise ReleaseError(f"{FEED} is not a valid Atom feed: {problems[0]}")
             sums.append(FileSum(path=name, size=len(data), sha256=hashlib.sha256(data).hexdigest()))
