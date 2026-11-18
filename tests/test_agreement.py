@@ -26,7 +26,8 @@ from lineage.labels import (
     model_labeler,
     text_sha256,
 )
-from lineage.precision import STRATA, stratified, stratum_of
+from lineage.precision import stratified
+from lineage.strata import STRATA, stratum_of
 
 MODEL = model_labeler("claude-opus-5-5", "v1")
 

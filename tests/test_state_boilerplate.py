@@ -8,22 +8,22 @@ import numpy as np
 import pytest
 
 from lineage import queries
+from lineage.flag_precision import build_flagged_sample, with_flag
 from lineage.labels import Item, Pair, Section, SectionKey, SectionRef, text_sha256
 from lineage.pairs import load_families, load_same_state_pairs
-from lineage.precision import STRATA, stored_strata, without_sections
+from lineage.precision import without_sections
 from lineage.semantic_pairs import build_semantic_pairs, section_keys
 from lineage.state_boilerplate import (
     COMPACT_PHRASES,
     MIN_FAMILIES,
     StateBoilerplateError,
-    build_flagged_sample,
     build_state_boilerplate,
     families_reached,
     flagged,
     load_families_reached,
     section_families,
-    with_flag,
 )
+from lineage.strata import STRATA, stored_strata
 from tests.conftest import FAKE_MODEL
 
 

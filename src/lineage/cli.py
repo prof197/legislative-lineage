@@ -115,6 +115,12 @@ from lineage.featured import REPORT as FEATURED_REPORT
 from lineage.featured import FeaturedError, build_featured, write_featured
 from lineage.feed import FeedError, write_feed
 from lineage.fetch import SOURCE, FetchError, fetch_raw, open_url
+from lineage.flag_precision import (
+    FLAGGED_SAMPLE,
+    FLAGGED_SAMPLE_REPORT,
+    build_flagged_sample,
+    with_flag,
+)
 from lineage.hashing import file_sha256
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
@@ -228,7 +234,7 @@ from lineage.pair_eval import write_report as write_pair_report
 from lineage.paths import DATA
 from lineage.precision import SAMPLE as PRECISION_SAMPLE
 from lineage.precision import SAMPLE_REPORT as PRECISION_SAMPLE_REPORT
-from lineage.precision import PrecisionError, build_sample, estimate, load_sizes, write_sample
+from lineage.precision import build_sample, estimate, load_sizes, write_sample
 from lineage.publish import PublishError, export_changes, promote, staging_dir
 from lineage.query import IndexMissingError, query_text, require_index
 from lineage.relatives_sample import LABELS as RELATIVES_LABELS
@@ -288,19 +294,16 @@ from lineage.spend import SPEND as CALL_SPEND
 from lineage.spend import BudgetError, Meter, check_projection
 from lineage.spend import spent as spent_on_calls
 from lineage.state_boilerplate import (
-    FLAGGED_SAMPLE,
-    FLAGGED_SAMPLE_REPORT,
     MIN_FAMILIES,
     StateBoilerplateError,
-    build_flagged_sample,
     build_state_boilerplate,
     has_counts,
-    with_flag,
 )
 from lineage.state_boilerplate import REPORT as STATE_BOILERPLATE_REPORT
 from lineage.state_boilerplate import write_report as write_state_boilerplate_report
 from lineage.stats import write_coverage
 from lineage.stoplist import StoplistError, build_stoplist
+from lineage.strata import PrecisionError
 from lineage.text_inventory import PLAN, REPORT, StalePlanError, build_inventory
 from lineage.text_merge import merge_texts
 from lineage.text_quality import REPORT as QUALITY

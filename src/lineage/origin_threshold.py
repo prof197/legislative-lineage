@@ -21,7 +21,8 @@ from lineage.origin_labels import PROMPT
 from lineage.origin_precision import BANDS, FLOORS, band_name, estimate
 from lineage.origin_recall import LoadedKey, evaluate
 from lineage.origins import OriginMatch, share_of
-from lineage.precision import STRATA, stratified
+from lineage.precision import stratified
+from lineage.strata import STRATA
 
 COMMAND = "uv run lineage eval origin-threshold"
 REPORT = Path("reports/origin_threshold_proposal.json")

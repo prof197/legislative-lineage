@@ -34,14 +34,15 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
+from lineage.flag_precision import dropped_strata
 from lineage.intervals import weighted_share, wilson
 from lineage.labels import Item
 from lineage.listing import ListedPairs, listed_pairs, shipped_flag
-from lineage.precision import STRATA, latest_correct, pair_keys, restratified, stored_strata, strata
+from lineage.precision import latest_correct, restratified
 from lineage.relatives import bill_relatives
 from lineage.semantic import BUILD_THRESHOLD, CORROBORATING, MODEL, THRESHOLD
 from lineage.semantic_pairs import section_keys
-from lineage.state_boilerplate import dropped_strata
+from lineage.strata import STRATA, pair_keys, stored_strata, strata
 
 # Up to 0.97, the first step at which development recall falls: the two enactments found by
 # meaning alone reach 0.9677 and 0.9632 (reports/results.json, each bill's best_cosine).
