@@ -163,7 +163,7 @@ export function bySource(sources: readonly SourceEntry[]): SourceEntry[] {
 }
 
 // The origin story (DESIGN.md#export): one passed bill and the listed model document both stages
-// found holding the most of its wording, chosen by lineage.origin_story's rule, which names no
+// found holding the most of its wording, chosen by lineage.export.origin_story's rule, which names no
 // organization and features only a match a labeler judged correct; its file's type is the export
 // schema's.
 export type { OriginStory };

@@ -7,10 +7,10 @@ from pathlib import Path
 
 import pytest
 
-from lineage.export import RESULTS, carries_origin_story
-from lineage.export_schema import BillPage, Meta, Sources
-from lineage.origin_story import FILE as ORIGIN_STORY_FILE
-from lineage.origin_story import story_file
+from lineage.export.build import RESULTS, carries_origin_story
+from lineage.export.origin_story import FILE as ORIGIN_STORY_FILE
+from lineage.export.origin_story import story_file
+from lineage.export.schema import BillPage, Meta, Sources
 from lineage.origins.collect import collectors
 from lineage.origins.labels import judged_correct, load_labels
 from lineage.origins.matches import read_origin_matches

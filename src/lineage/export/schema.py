@@ -353,8 +353,8 @@ class Sources(_Model):
 
 class OriginStory(_Model):
     """`origin_story.json`: the origin story (DESIGN.md#export), the passed bill and listed origin
-    lineage.origin_story's rule chooses; not written when no passed bill has a listed origin both
-    stages found that a labeler judged correct."""
+    lineage.export.origin_story's rule chooses; not written when no passed bill has a listed origin
+    both stages found that a labeler judged correct."""
 
     bill: BillRef
     origin: Origin  # its first origin in the rule's order judged correct, as its page lists it

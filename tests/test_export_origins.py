@@ -5,7 +5,7 @@ from datetime import date
 
 import pytest
 
-from lineage.export import ExportError, origins_by_bill
+from lineage.export.build import ExportError, origins_by_bill
 from lineage.origins.matches import FLOOR, BillSpan, OriginMatch
 from lineage.origins.modeldocs import ModelDoc, Source
 

@@ -16,9 +16,9 @@ from typing import Any, cast
 
 from lineage.evals.acts import ACT_NAMES
 from lineage.evals.ulc import ULC_STATES
-from lineage.export import STORIES_RULES, stories_for
-from lineage.origin_story import STORY as ORIGIN_STORY
-from lineage.release import RELEASE_MANIFEST
+from lineage.export.build import STORIES_RULES, stories_for
+from lineage.export.origin_story import STORY as ORIGIN_STORY
+from lineage.export.release import RELEASE_MANIFEST
 
 README = Path("README.md")
 EXPORTED_ONLY = Path("reports/results_exported_only.json")
@@ -447,7 +447,7 @@ def hosted_state(manifest: Path = RELEASE_MANIFEST) -> str:
 def render_stories(state: str, rules: Path = STORIES_RULES) -> str:
     """The stories `state`'s site carries, counted from the stories rules: its featured stories,
     and the origin story when the rules place it, which a site shows only once a labeler has
-    judged its match correct (lineage.origin_story)."""
+    judged its match correct (lineage.export.origin_story)."""
     listed: dict[str, Any] = tomllib.loads(rules.read_text()).get("stories", {})
     carried = stories_for(state, listed, rules)
     n = len(carried - {ORIGIN_STORY})

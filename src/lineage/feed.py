@@ -43,10 +43,10 @@ from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any, Literal
 
-from lineage import queries
-from lineage.atom import ATOM, violations
 from lineage.core import db
-from lineage.export_schema import Meta
+from lineage.export import queries as export_queries
+from lineage.export.atom import ATOM, violations
+from lineage.export.schema import Meta
 from lineage.origins.collect import PACKAGE as COLLECT_PACKAGE
 from lineage.origins.collect import collectors
 from lineage.origins.matches import FLOOR
@@ -524,7 +524,7 @@ def bill_infos(tables: Path, *, state: str, site_url: str, ids: list[str]) -> di
     with db.connect_quiet() as con:
         refs, texts = bill_refs(con, tables, ids)
         hosted = set(
-            queries.hosted_bill_ids(
+            export_queries.hosted_bill_ids(
                 con, bills_glob=bills_glob, eligible_path=tables / "eligible.parquet", state=state
             )
         )

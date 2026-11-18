@@ -10,7 +10,7 @@ from pathlib import Path
 import pytest
 
 from lineage.core import db
-from lineage.export_schema import BillPage
+from lineage.export.schema import BillPage
 from lineage.publish import (
     PublishError,
     bill_refs,

@@ -1,6 +1,6 @@
 """Atom (RFC 4287): the namespace, and each way a document breaks the rules for a feed's and an
 entry's elements. lineage.feed writes the live track's feed and checks it here; the data
-release's packing checks the feed it ships the same way (lineage.release).
+release's packing checks the feed it ships the same way (lineage.export.release).
 """
 
 import re

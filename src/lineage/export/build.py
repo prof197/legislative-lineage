@@ -1,6 +1,6 @@
 """`lineage export --state ST`: the static site's JSON for one state's bills (DESIGN.md#export).
 
-Every file is an instance of a model in lineage.export_schema, validated as it is written, and
+Every file is an instance of a model in lineage.export.schema, validated as it is written, and
 the JSON Schema those models emit is the site's contract (DR-1). One build writes:
 
 - `meta.json`: the data stamp (each hosted archive's Generated At), the stories, and the
@@ -41,7 +41,6 @@ from numpy.typing import NDArray
 from pydantic import BaseModel
 from pydantic.json_schema import models_json_schema
 
-from lineage import queries
 from lineage.align import Alignment, Embedder, align
 from lineage.core import db
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
@@ -56,7 +55,16 @@ from lineage.data.stats import (
 from lineage.explain import queries as explain_queries
 from lineage.explain.explain import CACHE_DIR, explain, prompt_spans
 from lineage.explain.explain import MODEL as EXPLAIN_MODEL
-from lineage.export_schema import (
+from lineage.export import queries
+from lineage.export.origin_story import BOTH as BOTH_STAGES
+from lineage.export.origin_story import FILE as ORIGIN_STORY_FILE
+from lineage.export.origin_story import STORY as ORIGIN_STORY
+from lineage.export.origin_story import story_file as origin_story_file
+from lineage.export.release import RELEASE_MANIFEST as RELEASE_MANIFEST
+from lineage.export.release import ReleaseError as ReleaseError
+from lineage.export.release import package as package
+from lineage.export.release import write_release_manifest as write_release_manifest
+from lineage.export.schema import (
     TOP_LEVEL,
     AlignedPair,
     ArchiveStamp,
@@ -101,10 +109,6 @@ from lineage.match.semantic.embed import load_model
 from lineage.match.semantic.pairs import section_keys
 from lineage.match.semantic.stage import MODEL
 from lineage.match.state_boilerplate import COMPACT_PHRASES
-from lineage.origin_story import BOTH as BOTH_STAGES
-from lineage.origin_story import FILE as ORIGIN_STORY_FILE
-from lineage.origin_story import STORY as ORIGIN_STORY
-from lineage.origin_story import story_file as origin_story_file
 from lineage.origins.collect import PACKAGE as COLLECT_PACKAGE
 from lineage.origins.collect import collectors
 from lineage.origins.labels import LABELS as ORIGIN_LABELS
@@ -115,10 +119,6 @@ from lineage.origins.withheld import NONE as NO_WITHHELD
 from lineage.origins.withheld import REPORT as WITHHELD_REPORT
 from lineage.origins.withheld import Reason as WithheldReason
 from lineage.origins.withheld import Withheld, load_withheld
-from lineage.release import RELEASE_MANIFEST as RELEASE_MANIFEST
-from lineage.release import ReleaseError as ReleaseError
-from lineage.release import package as package
-from lineage.release import write_release_manifest as write_release_manifest
 
 EXPORT_DIR = DATA / "export"
 REPORT = Path("reports/export.json")

@@ -6,8 +6,8 @@ first candidate in the rule's order judged correct is shown, and none when none 
 
 import random
 
-from lineage.export_schema import BillPage, BillRef, ModelDocRef, Origin, Stage, Status
-from lineage.origin_story import Chosen, HostedBill, ListedOrigin, choose, hosted_bill
+from lineage.export.origin_story import Chosen, HostedBill, ListedOrigin, choose, hosted_bill
+from lineage.export.schema import BillPage, BillRef, ModelDocRef, Origin, Stage, Status
 
 BOTH: tuple[Stage, ...] = ("near_duplicate", "semantic")
 

@@ -20,8 +20,8 @@ window can push one section pair of a kept relative out of a bucket under the ca
 other page and comparison is also checked against its file in place, which needs no alignment,
 and any that differ are rebuilt and reported as `beyond_log`; the recorded days have none.
 
-The pages are rendered as `lineage.export.build_export` renders them, from its functions, and a
-test holds the result equal to a full export of the same tables. The live export is never
+The pages are rendered as `lineage.export.build.build_export` renders them, from its functions, and
+a test holds the result equal to a full export of the same tables. The live export is never
 written: the day is applied to a staging copy whose unchanged files are hard links to the live
 ones, and `promote` swaps it in only once every step has succeeded.
 
@@ -44,7 +44,6 @@ from typing import Any, Protocol
 
 from pydantic import BaseModel, TypeAdapter
 
-from lineage import queries
 from lineage.align import Alignment
 from lineage.align import Span as AlignSpan
 from lineage.core import db
@@ -59,7 +58,8 @@ from lineage.data.stats import (
 from lineage.explain import queries as explain_queries
 from lineage.explain.explain import CACHE_DIR, explain, prompt_spans
 from lineage.explain.explain import MODEL as EXPLAIN_MODEL
-from lineage.export import (
+from lineage.export import queries as export_queries
+from lineage.export.build import (
     FEATURED_PAIRS,
     FEATURED_REPORT,
     RESULTS,
@@ -78,7 +78,9 @@ from lineage.export import (
     stories_for,
     validation_from,
 )
-from lineage.export_schema import (
+from lineage.export.origin_story import FILE as ORIGIN_STORY_FILE
+from lineage.export.origin_story import story_file as origin_story_file
+from lineage.export.schema import (
     AlignedPair,
     ArchiveStamp,
     BillList,
@@ -110,8 +112,6 @@ from lineage.match.relatives import BillRelatives, bill_relatives
 from lineage.match.semantic.pairs import section_keys
 from lineage.match.semantic.stage import MODEL
 from lineage.match.state_boilerplate import COMPACT_PHRASES
-from lineage.origin_story import FILE as ORIGIN_STORY_FILE
-from lineage.origin_story import story_file as origin_story_file
 from lineage.origins.collect import PACKAGE as COLLECT_PACKAGE
 from lineage.origins.collect import collectors
 from lineage.origins.labels import LABELS as ORIGIN_LABELS
@@ -144,7 +144,7 @@ class PublishError(Exception):
 
 
 class Found(Protocol):
-    """What the stages found of one section pair (lineage.export.pairs_between)."""
+    """What the stages found of one section pair (lineage.export.build.pairs_between)."""
 
     stages: set[str]
     estimate: float | None
@@ -195,7 +195,7 @@ def touched(changes: Iterable[Change]) -> Touched:
     return Touched(bills=bills, records=records)
 
 
-# The export's files, rendered as lineage.export.build_export renders them.
+# The export's files, rendered as lineage.export.build.build_export renders them.
 
 
 def _load_featured(path: Path) -> dict[str, set[Featured]]:
@@ -214,7 +214,7 @@ def bill_refs(
 ) -> tuple[dict[str, BillRef], dict[str, TextInfo]]:
     """Each wanted bill as a page names it, and the text matching read, as the export gives
     them; a bill missing from the tables or two bills sharing a file name are errors."""
-    rows = queries.export_bills(
+    rows = export_queries.export_bills(
         con,
         bills_glob=str(tables / "bills" / "*.parquet"),
         texts_glob=str(tables / "texts" / "*.parquet"),
@@ -279,7 +279,9 @@ class Plan:
     sections_of: Mapping[str, list[tuple[int, str | None, int, str | None]]]
     shown: Mapping[SectionKey, tuple[str | None, str, str]]
     origins: Mapping[str, list[Origin]]
-    judged: frozenset[tuple[str, str]]  # origins a labeler judged correct (lineage.origin_story)
+    judged: frozenset[
+        tuple[str, str]
+    ]  # origins a labeler judged correct (lineage.export.origin_story)
     stories: Mapping[str, Story]
     sources: Sources
     meta: Meta
@@ -322,11 +324,11 @@ def plan_export(
     if flag is None and require_flag:
         raise ExportError("no state boilerplate counts; run `uv run lineage state-boilerplate`")
     with db.connect_quiet() as con:
-        hosted = queries.hosted_bill_ids(
+        hosted = export_queries.hosted_bill_ids(
             con, bills_glob=bills_glob, eligible_path=tables / "eligible.parquet", state=state
         )
-        stamps = queries.archive_stamps(con, bills_glob=bills_glob, state=state)
-        indexed = queries.states_indexed(con, bills_glob=bills_glob)
+        stamps = export_queries.archive_stamps(con, bills_glob=bills_glob, state=state)
+        indexed = export_queries.states_indexed(con, bills_glob=bills_glob)
     if not hosted:
         raise ExportError(f"no {state} bill is matched by the document-type rules")
     listed = listed_pairs(tables, model=model, flag=flag)
@@ -356,7 +358,7 @@ def plan_export(
     sections_glob = str(tables / "sections" / "*.parquet")
     with db.connect_quiet() as con:
         refs, text_infos = bill_refs(con, tables, ids)
-        section_rows = queries.section_infos(con, sections_glob=sections_glob, ids=ids)
+        section_rows = export_queries.section_infos(con, sections_glob=sections_glob, ids=ids)
         shown = explain_queries.sections_at(con, sections_glob=sections_glob, keys=shown_keys)
     sections_of: dict[str, list[tuple[int, str | None, int, str | None]]] = defaultdict(list)
     for bill_id, ordinal, heading, words, boilerplate in section_rows:

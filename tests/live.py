@@ -16,7 +16,7 @@ import pytest
 from typer.testing import CliRunner
 
 from lineage.cli import app
-from lineage.export import RESULTS, build_export
+from lineage.export.build import RESULTS, build_export
 from lineage.incremental import update
 from lineage.match.semantic.pairs import build_semantic_pairs
 from lineage.match.state_boilerplate import build_state_boilerplate

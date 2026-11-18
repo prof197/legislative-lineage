@@ -221,7 +221,7 @@ rules/document_types.csv  which document types are matched, per state; first fit
 rules/text_layer.toml  the text layer's rules: usable bar, per-state format and PDF reading, content elements, replacement
 rules/stories.toml  which featured stories each hosted state's site carries
 rules/deploy.toml  each hosted state's first day of session, from which the daily job deploys, and the circuit breaker's and size gate's numbers
-schema/export.schema.json  the export's JSON Schema, generated from lineage.export_schema; a test fails when it drifts
+schema/export.schema.json  the export's JSON Schema, generated from lineage.export.schema; a test fails when it drifts
 reports/          committed outputs of pipeline commands; README and DESIGN numbers cite them
   results.json    eval results, one section per eval; the README results table reads it
   results_exported_only.json  commission recall on the export's text alone, for the comparison in DR-6

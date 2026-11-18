@@ -357,8 +357,8 @@ sources: string[]
 }
 /**
  * `origin_story.json`: the origin story (DESIGN.md#export), the passed bill and listed origin
- * lineage.origin_story's rule chooses; not written when no passed bill has a listed origin both
- * stages found that a labeler judged correct.
+ * lineage.export.origin_story's rule chooses; not written when no passed bill has a listed origin
+ * both stages found that a labeler judged correct.
  * 
  * This interface was referenced by `LegislativeLineageExport`'s JSON-Schema
  * via the `definition` "OriginStory".

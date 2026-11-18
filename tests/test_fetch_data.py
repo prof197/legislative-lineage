@@ -15,7 +15,7 @@ from pathlib import Path
 import pytest
 
 from lineage.core.paths import DATA
-from lineage.release import CHECKSUMS, package
+from lineage.export.release import CHECKSUMS, package
 from tests.fixture_export import COMMITTED
 
 REPO = Path(__file__).parent.parent

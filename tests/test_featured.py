@@ -4,7 +4,7 @@ and the relatives introduced after it (DESIGN.md#explanations)."""
 import numpy as np
 import pytest
 
-from lineage.featured import (
+from lineage.export.featured import (
     GEORGIA_SECTIONS,
     STORIES,
     FeaturedError,

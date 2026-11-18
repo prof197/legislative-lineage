@@ -25,9 +25,9 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
-from lineage.atom import violations
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
-from lineage.export_schema import (
+from lineage.export.atom import violations
+from lineage.export.schema import (
     BillList,
     BillPage,
     BillTexts,
@@ -45,8 +45,8 @@ RELEASE_MANIFEST = Path("site/data-release.json")
 # The checksum manifest inside the tarball; never a file the export writes.
 CHECKSUMS = "checksums.json"
 
-# A bill's file name as lineage.export.slug makes it: runs of [a-z0-9_] joined by one hyphen, so
-# a comparison's `--` between two slugs is unambiguous. Story keys are slugs too.
+# A bill's file name as lineage.export.build.slug makes it: runs of [a-z0-9_] joined by one hyphen,
+# so a comparison's `--` between two slugs is unambiguous. Story keys are slugs too.
 _SLUG = r"[a-z0-9_]+(?:-[a-z0-9_]+)*"
 # Every file the export writes, by path, and the model it must validate against. release.json
 # is the site build's, written beside the export when it is fetched, so it is not here.

@@ -20,7 +20,7 @@ near-duplicate and the semantic stage found the match, the evidence least likely
 from collections.abc import Container, Iterable, Sequence
 from dataclasses import dataclass
 
-from lineage.export_schema import BillPage, OriginStory, Stage, Status
+from lineage.export.schema import BillPage, OriginStory, Stage, Status
 
 BOTH: frozenset[Stage] = frozenset({"near_duplicate", "semantic"})
 

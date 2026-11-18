@@ -8,12 +8,12 @@ from typing import Any
 
 import pytest
 
-from lineage import queries
 from lineage.align import align
 from lineage.core import db
 from lineage.explain.explain import NotCachedError, explain, prompt_spans
 from lineage.explain.explanations import ChangeExplanation, Claim
-from lineage.export import (
+from lineage.export import queries as export_queries
+from lineage.export.build import (
     RESULTS,
     SCHEMA,
     ExportError,
@@ -25,7 +25,7 @@ from lineage.export import (
     stories_for,
     validation_from,
 )
-from lineage.export_schema import BillList, BillPage, BillTexts, Comparison, Meta
+from lineage.export.schema import BillList, BillPage, BillTexts, Comparison, Meta
 from lineage.match.semantic.pairs import build_semantic_pairs
 from tests.conftest import FAKE_MODEL
 from tests.test_explain import scripted
@@ -176,7 +176,7 @@ def _one_pair(out: Path) -> tuple[Comparison, Any]:
 
 def _bill_id(tables: Path, state: str, session: str, identifier: str) -> str:
     with db.connect_quiet() as con:
-        found = queries.bill_id_of(
+        found = export_queries.bill_id_of(
             con,
             bills_glob=str(tables / "bills" / "*.parquet"),
             state=state,

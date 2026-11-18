@@ -18,7 +18,7 @@ import {
 import { originStory } from "./data";
 
 // The origin story (DESIGN.md#export): one passed bill of the hosted state and the published model
-// both stages found holding the most of its wording, chosen by lineage.origin_story's rule. The
+// both stages found holding the most of its wording, chosen by lineage.export.origin_story's rule. The
 // organization is named only where the data names it, in the origin line and its publishers; the
 // copy says what the two shares count and how the bill was chosen, never who wrote it.
 

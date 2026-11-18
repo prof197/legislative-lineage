@@ -12,7 +12,7 @@ from pathlib import Path
 import pytest
 
 from lineage import feed
-from lineage.atom import ATOM, violations
+from lineage.export.atom import ATOM, violations
 from lineage.feed import (
     BillInfo,
     DocInfo,

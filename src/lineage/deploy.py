@@ -7,7 +7,8 @@ candidate, packed and gated with a short review summary, and publishes nothing
 (`prepare_candidate`). From that day the daily job deploys after promoting the export
 (`deploy_day`):
 
-1. **Pack** the export as release `data-<st>-<as of>` (lineage.release), which refuses any file
+1. **Pack** the export as release `data-<st>-<as of>` (lineage.export.release), which refuses any
+file
    or field the export contract does not name, and check every file for a local path.
 2. **Build the site** from the unpacked release in the job's own checkout of the repository, as
    the Pages workflow builds it, and run the copy check; then measure it with
@@ -56,11 +57,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict
 
 from lineage.core.paths import DATA
-from lineage.export_schema import Meta, Release
-from lineage.feed import listed_origin
-from lineage.origins.withheld import REPORT as WITHHELD_REPORT
-from lineage.origins.withheld import load_withheld
-from lineage.release import (
+from lineage.export.release import (
     RELEASE_MANIFEST,
     Checksums,
     ReleaseError,
@@ -69,6 +66,10 @@ from lineage.release import (
     read_checksums,
     write_release_manifest,
 )
+from lineage.export.schema import Meta, Release
+from lineage.feed import listed_origin
+from lineage.origins.withheld import REPORT as WITHHELD_REPORT
+from lineage.origins.withheld import load_withheld
 from lineage.updates import Change, OriginGained, OriginLost, read_changes
 
 RULES = Path("rules/deploy.toml")
@@ -363,7 +364,7 @@ def local_paths(export: Path) -> list[str]:
 
 def pack(export: Path, *, state: str, tag: str, paths: DeployPaths, floor: int) -> Candidate:
     """The export as release `tag`, under `<deploy>/candidates/<tag>/`: the contract's check
-    (lineage.release.check_export, inside `package`) and the local-path check."""
+    (lineage.export.release.check_export, inside `package`) and the local-path check."""
     found = local_paths(export)
     if found:
         shown = ", ".join(found[:_SHOWN])

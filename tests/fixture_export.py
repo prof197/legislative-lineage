@@ -18,7 +18,7 @@ from pathlib import Path
 
 from lineage.core import db
 from lineage.evals.labels import SAME_PROVISION, text_sha256
-from lineage.export import RESULTS, build_export
+from lineage.export.build import RESULTS, build_export
 from lineage.match.query import matchable_sections
 from lineage.match.semantic.pairs import build_semantic_pairs
 from lineage.origins import queries as origins_queries
@@ -69,7 +69,7 @@ def hand_made_origins(
 ) -> list[OriginMatch]:
     """The hand-made matches, and in `labels` a label judging the first correct, as a labeler
     would on its strongest pair, so the fixture's origin story can feature it (a featured
-    story features only a match judged correct, lineage.origin_story)."""
+    story features only a match judged correct, lineage.export.origin_story)."""
     ids = [bill for bill, _ in DRAWN_FROM.values()]
     with db.connect_quiet() as con:
         rows = origins_queries.matchable_section_texts(
@@ -83,7 +83,7 @@ def hand_made_origins(
         by_bill[bill_id].append((ordinal, text))
     out: list[OriginMatch] = []
     # The first is found by both stages, so the fixture carries an origin story
-    # (lineage.origin_story), and the rest by wording alone.
+    # (lineage.export.origin_story), and the rest by wording alone.
     first = next(iter(DRAWN_FROM))
     for doc_id, (bill_id, title) in DRAWN_FROM.items():
         sections = by_bill[bill_id]

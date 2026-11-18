@@ -42,13 +42,13 @@ from lineage.deploy import (
     weekly_review,
     write_review,
 )
-from lineage.export_schema import Release
+from lineage.export.release import RELEASE_MANIFEST, Checksums, changed_files, read_checksums
+from lineage.export.schema import Release
 from lineage.feed import write_feed
 from lineage.origins.matches import FLOOR
 from lineage.origins.withheld import Reviewed
 from lineage.origins.withheld import write_report as write_withheld
 from lineage.publish import export_changes, promote, staging_dir
-from lineage.release import RELEASE_MANIFEST, Checksums, changed_files, read_checksums
 from lineage.updates import OriginGained, OriginLost, RecordAdded, write_changes
 from tests.days import DAYS
 from tests.live import Recorded, export_inputs, full_export, recorded

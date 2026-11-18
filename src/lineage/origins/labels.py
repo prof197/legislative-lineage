@@ -390,7 +390,7 @@ def judged_correct(
 ) -> set[MatchKey]:
     """Of the matches `keys` names, those a label under this prompt judged correct on the
     sections their strongest pair rests on now: the matches a featured story may feature
-    (lineage.origin_story, ruled at the step 48 review). A match never labeled, or labeled on
+    (lineage.export.origin_story, ruled at the step 48 review). A match never labeled, or labeled on
     sections it no longer rests on, is not judged."""
     rows: list[dict[str, Any]] = [
         {"pair": f"{bill_id} {doc_id}", "bill_id": bill_id, "doc_id": doc_id, "stages": ()}
