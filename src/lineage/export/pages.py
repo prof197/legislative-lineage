@@ -59,6 +59,7 @@ from lineage.export.schema import (
     Story,
     StoryRelative,
     TextInfo,
+    Validation,
     WithheldDocument,
 )
 from lineage.export.validation import validation_from
@@ -77,7 +78,7 @@ from lineage.origins.matches import OriginMatch, is_listed, read_origin_matches
 from lineage.origins.modeldocs import MODELDOCS_DIR, ModelDoc, Source, read_docs
 from lineage.origins.withheld import REPORT as WITHHELD_REPORT
 from lineage.origins.withheld import Reason as WithheldReason
-from lineage.origins.withheld import load_withheld
+from lineage.origins.withheld import Withheld, load_withheld
 
 FEATURED_PAIRS = Path("evals/featured_pairs.jsonl")
 STORIES_RULES = Path("rules/stories.toml")
@@ -386,58 +387,45 @@ class Plan:
         return sum(1 for *_, bp in self.sections_of.get(bill_id, []) if bp is None)
 
 
-def plan_export(
-    tables: Path,
-    *,
-    state: str,
-    cache: Path = CACHE_DIR,
-    featured_pairs: Path = FEATURED_PAIRS,
-    featured_report: Path = FEATURED_REPORT,
-    stories_rules: Path = STORIES_RULES,
-    results: Path = RESULTS,
-    modeldocs_root: Path = MODELDOCS_DIR,
-    collector_package: str = COLLECT_PACKAGE,
-    model: str = MODEL,
-    require_flag: bool = True,
-    origin_labels: Path = ORIGIN_LABELS,
-    withheld_report: Path = WITHHELD_REPORT,
-    progress: Callable[[str], None] = lambda _: None,
-) -> Plan:
-    """What the export reads before it aligns anything, with its inputs and checks: everything
-    its files hold but the alignments (lineage.export.build.build_export)."""
-    inputs = (featured_pairs, featured_report, stories_rules, results)
+SectionRow = tuple[int, str | None, int, str | None]  # (ordinal, heading, words, boilerplate)
+
+
+def _committed(
+    inputs: Sequence[Path], results: Path, withheld_report: Path
+) -> tuple[Withheld, Validation]:
+    """The withheld documents and the validation, refused when a committed input is missing or
+    the results are older than this code."""
     missing = [str(p) for p in inputs if not p.exists()]
     if missing:
         raise ExportError(f"committed inputs not found: {', '.join(missing)}")
     kept_back = load_withheld(withheld_report)
     try:
-        validation = validation_from(json.loads(results.read_text()), kept_back)
+        return kept_back, validation_from(json.loads(results.read_text()), kept_back)
     except KeyError as e:
         raise ExportError(f"{results} lacks {e}; is it older than this code?") from e
-    sources = [c.source for c in collectors(collector_package).values()]
-    docs = {d.id: (d, src) for src in sources for d in read_docs(src, modeldocs_root)}
-    bills_glob = str(tables / "bills" / "*.parquet")
-    flag = shipped_flag(tables)
-    if flag is None and require_flag:
-        raise ExportError("no state boilerplate counts; run `uv run lineage state-boilerplate`")
-    with db.connect_quiet() as con:
-        hosted = queries.hosted_bill_ids(
-            con, bills_glob=bills_glob, eligible_path=tables / "eligible.parquet", state=state
-        )
-        stamps = queries.archive_stamps(con, bills_glob=bills_glob, state=state)
-        indexed = queries.states_indexed(con, bills_glob=bills_glob)
-    if not hosted:
-        raise ExportError(f"no {state} bill is matched by the document-type rules")
-    progress(f"{len(hosted)} hosted bills")
-    listed = listed_pairs(tables, model=model, flag=flag)
-    relatives = bill_relatives(tables, hosted, model=model, listed=listed)
 
+
+def _carried_stories(
+    state: str, featured_report: Path, featured_pairs: Path, stories_rules: Path
+) -> tuple[dict[str, Any], set[Featured]]:
+    """The featured report's stories `state`'s site carries, and their featured pairs."""
     all_stories: dict[str, Any] = json.loads(featured_report.read_text())["stories"]
     by_story = load_featured(featured_pairs)
     keys = set(all_stories) | set(by_story)
     carried: set[str] = stories_for(state, keys, stories_rules) if keys else set()
     stories_doc = {k: v for k, v in all_stories.items() if k in carried}
     featured = {pair for key in carried for pair in by_story.get(key, set())}
+    return stories_doc, featured
+
+
+def _found_pairs(
+    tables: Path,
+    listed: ListedPairs,
+    relatives: Mapping[str, BillRelatives],
+    featured: set[Featured],
+) -> tuple[set[BillPair], dict[BillPair, dict[OrdinalPair, _PairFound]], int]:
+    """The bill pairs the pages compare, their listed section pairs, and how many sections are
+    signed; a featured pair this build does not list is an error."""
     wanted: set[BillPair] = {(b, m.bill_id) for b, r in relatives.items() for m in r.matches}
     wanted |= {(a, b) for a, _, b, _ in featured}
     bills, ordinals = section_keys(tables)
@@ -445,10 +433,19 @@ def plan_export(
     for a, oa, b, ob in sorted(featured):
         if (oa, ob) not in found.get((a, b), {}):
             raise ExportError(f"featured pair {a} §{oa} / {b} §{ob} is not listed in this build")
-    story_ids = {
-        str(r["bill_id"]) for s in stories_doc.values() for r in [s["anchor"], *s["relatives"]]
-    }
-    ids = sorted(set(hosted) | {x for pair in wanted for x in pair} | story_ids)
+    return wanted, found, len(bills)
+
+
+def _sections(
+    tables: Path, ids: list[str], found: Mapping[BillPair, Mapping[OrdinalPair, Found]]
+) -> tuple[
+    dict[str, BillRef],
+    dict[str, TextInfo],
+    dict[str, list[SectionRow]],
+    dict[SectionKey, tuple[str | None, str, str]],
+]:
+    """The bills as pages name them, their texts, every section of each, and the text of each
+    section a comparison shows."""
     shown_keys = sorted(
         {(a, oa) for (a, _), ps in found.items() for oa, _ in ps}
         | {(b, ob) for (_, b), ps in found.items() for _, ob in ps}
@@ -458,15 +455,27 @@ def plan_export(
         refs, text_infos = bill_refs(con, tables, ids)
         section_rows = queries.section_infos(con, sections_glob=sections_glob, ids=ids)
         shown = explain_queries.sections_at(con, sections_glob=sections_glob, keys=shown_keys)
-    sections_of: dict[str, list[tuple[int, str | None, int, str | None]]] = defaultdict(list)
+    sections_of: dict[str, list[SectionRow]] = defaultdict(list)
     for bill_id, ordinal, heading, words, boilerplate in section_rows:
         sections_of[bill_id].append((ordinal, heading, words, boilerplate))
+    return refs, text_infos, dict(sections_of), shown
 
+
+def _stories(
+    tables: Path,
+    stories_doc: Mapping[str, Any],
+    refs: Mapping[str, BillRef],
+    *,
+    model: str,
+    listed: ListedPairs,
+    signed: int,
+) -> dict[str, Story]:
+    """Each carried story's file, each relative with its share of the anchor's page."""
     anchors = sorted({str(st["anchor"]["bill_id"]) for st in stories_doc.values()})
     anchor_scores: dict[str, dict[str, float]] = {}
     family_of: dict[str, str] = {}
     if anchors:
-        listed_for = bill_relatives(tables, anchors, model=model, listed=listed, shown=len(bills))
+        listed_for = bill_relatives(tables, anchors, model=model, listed=listed, shown=signed)
         family_of = load_families(tables)
         anchor_scores = {x: {m.family: m.share for m in r.matches} for x, r in listed_for.items()}
 
@@ -494,6 +503,56 @@ def plan_export(
                 for rel in s["relatives"]
             ],
         )
+    return stories
+
+
+def plan_export(
+    tables: Path,
+    *,
+    state: str,
+    cache: Path = CACHE_DIR,
+    featured_pairs: Path = FEATURED_PAIRS,
+    featured_report: Path = FEATURED_REPORT,
+    stories_rules: Path = STORIES_RULES,
+    results: Path = RESULTS,
+    modeldocs_root: Path = MODELDOCS_DIR,
+    collector_package: str = COLLECT_PACKAGE,
+    model: str = MODEL,
+    require_flag: bool = True,
+    origin_labels: Path = ORIGIN_LABELS,
+    withheld_report: Path = WITHHELD_REPORT,
+    progress: Callable[[str], None] = lambda _: None,
+) -> Plan:
+    """What the export reads before it aligns anything, with its inputs and checks: everything
+    its files hold but the alignments (lineage.export.build.build_export)."""
+    kept_back, validation = _committed(
+        (featured_pairs, featured_report, stories_rules, results), results, withheld_report
+    )
+    sources = [c.source for c in collectors(collector_package).values()]
+    docs = {d.id: (d, src) for src in sources for d in read_docs(src, modeldocs_root)}
+    bills_glob = str(tables / "bills" / "*.parquet")
+    flag = shipped_flag(tables)
+    if flag is None and require_flag:
+        raise ExportError("no state boilerplate counts; run `uv run lineage state-boilerplate`")
+    with db.connect_quiet() as con:
+        hosted = queries.hosted_bill_ids(
+            con, bills_glob=bills_glob, eligible_path=tables / "eligible.parquet", state=state
+        )
+        stamps = queries.archive_stamps(con, bills_glob=bills_glob, state=state)
+        indexed = queries.states_indexed(con, bills_glob=bills_glob)
+    if not hosted:
+        raise ExportError(f"no {state} bill is matched by the document-type rules")
+    progress(f"{len(hosted)} hosted bills")
+    listed = listed_pairs(tables, model=model, flag=flag)
+    relatives = bill_relatives(tables, hosted, model=model, listed=listed)
+    stories_doc, featured = _carried_stories(state, featured_report, featured_pairs, stories_rules)
+    wanted, found, signed = _found_pairs(tables, listed, relatives, featured)
+    story_ids = {
+        str(r["bill_id"]) for s in stories_doc.values() for r in [s["anchor"], *s["relatives"]]
+    }
+    ids = sorted(set(hosted) | {x for pair in wanted for x in pair} | story_ids)
+    refs, text_infos, sections_of, shown = _sections(tables, ids, found)
+    stories = _stories(tables, stories_doc, refs, model=model, listed=listed, signed=signed)
     meta = Meta(
         state=state,
         archives=[
@@ -506,18 +565,8 @@ def plan_export(
     )
     matches = read_origin_matches(tables)
     origins = origins_by_bill(matches, docs, set(hosted), kept_back.ids)
-    return Plan(
-        state=state,
-        hosted=list(hosted),
-        relatives=relatives,
-        found=found,
-        featured=frozenset(featured),
-        refs=refs,
-        text_infos=text_infos,
-        sections_of=dict(sections_of),
-        shown=shown,
-        origins=origins,
-        judged=judged_origins(
+    judged = (
+        judged_origins(
             tables,
             origins,
             refs,
@@ -527,7 +576,20 @@ def plan_export(
             labels=origin_labels,
         )
         if carries_origin_story(state, stories_rules)
-        else frozenset(),
+        else frozenset[tuple[str, str]]()
+    )
+    return Plan(
+        state=state,
+        hosted=list(hosted),
+        relatives=relatives,
+        found=found,
+        featured=frozenset(featured),
+        refs=refs,
+        text_infos=text_infos,
+        sections_of=sections_of,
+        shown=shown,
+        origins=origins,
+        judged=judged,
         stories=stories,
         sources=sources_doc(sources, docs, kept_back.reasons),
         meta=meta,
