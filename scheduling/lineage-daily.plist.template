@@ -31,12 +31,7 @@
     <string>@PATH@</string>
   </dict>
   <key>StartCalendarInterval</key>
-  <dict>
-    <key>Hour</key>
-    <integer>@HOUR@</integer>
-    <key>Minute</key>
-    <integer>@MINUTE@</integer>
-  </dict>
+  @INTERVALS@
   <key>StandardOutPath</key>
   <string>@DATA@/schedule/daily.log</string>
   <key>StandardErrorPath</key>

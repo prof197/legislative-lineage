@@ -615,19 +615,33 @@ def weekly_job_steps(
 
 @dataclass(frozen=True, slots=True)
 class When:
-    """When launchd starts a job, in the Mac's local time: launchd's Weekday counts from 0,
-    Sunday, and a job with none runs every day."""
+    """When launchd starts a job, in the Mac's local time, on each of `weekdays`: launchd counts
+    them from 0, Sunday, to 6, Saturday."""
 
     hour: int
     minute: int
-    weekday: int | None = None
+    weekdays: tuple[int, ...]
 
 
-# Ruled at the deploy review (2026-11-17), Eastern time, the Mac's own zone: the daily job at
-# 05:30, and the weekly job's rebuilds on Saturday at 22:00, so they run overnight. The two never
-# run at once: a daily run that finds the weekly still going stops on the lock, alerted, and the
-# next day's intake resumes each state from its own cursor, so no day's changes are lost.
-SCHEDULE = {"daily": When(hour=5, minute=30), "weekly": When(hour=22, minute=0, weekday=6)}
+# Ruled at the deploy review (2026-11-17), Eastern time, the Mac's own zone: the daily job Monday
+# to Saturday at 05:30, and the weekly job's rebuilds on Saturday at 20:00, so they run overnight
+# with no daily run on Sunday morning to meet. A day the daily job does not run is not lost: the
+# next intake resumes each state from its own cursor. The two never run at once: a run that finds
+# the other still going stops on the lock, alerted.
+SCHEDULE = {
+    "daily": When(hour=5, minute=30, weekdays=(1, 2, 3, 4, 5, 6)),
+    "weekly": When(hour=20, minute=0, weekdays=(6,)),
+}
+
+
+def calendar_intervals(when: When) -> str:
+    """launchd's StartCalendarInterval for `when`: one entry per weekday, as a plist array."""
+    entries = "".join(
+        f"<dict><key>Weekday</key><integer>{d}</integer><key>Hour</key>"
+        f"<integer>{when.hour}</integer><key>Minute</key><integer>{when.minute}</integer></dict>"
+        for d in when.weekdays
+    )
+    return f"<array>{entries}</array>"
 
 
 def render_template(template: str, values: Mapping[str, str]) -> str:

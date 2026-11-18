@@ -34,6 +34,7 @@ from lineage.schedule import (
     WeeklyPaths,
     When,
     agreement,
+    calendar_intervals,
     daily_steps,
     placeholders,
     render_template,
@@ -403,35 +404,44 @@ def test_the_weekly_steps_check_before_anything_is_adopted(tmp_path: Path) -> No
 # The launchd templates.
 
 
-def test_the_jobs_run_when_ruled_daily_at_0530_and_weekly_saturday_at_2200() -> None:
-    assert SCHEDULE["daily"] == When(hour=5, minute=30)
-    assert SCHEDULE["weekly"] == When(hour=22, minute=0, weekday=6)  # launchd's 6 is Saturday
+def test_the_jobs_run_when_ruled_daily_monday_to_saturday_and_weekly_saturday_evening() -> None:
+    # launchd counts weekdays from 0, Sunday: no daily run on Sunday.
+    assert SCHEDULE["daily"] == When(hour=5, minute=30, weekdays=(1, 2, 3, 4, 5, 6))
+    assert SCHEDULE["weekly"] == When(hour=20, minute=0, weekdays=(6,))
+
+
+def _times(plist: dict[str, Any]) -> list[tuple[int, int, int]]:
+    return [(w["Weekday"], w["Hour"], w["Minute"]) for w in plist["StartCalendarInterval"]]
 
 
 def test_the_plist_command_fills_the_ruled_times(tmp_path: Path) -> None:
-    for job, expected in (("daily", (5, 30, None)), ("weekly", (22, 0, 6))):
+    daily = [(d, 5, 30) for d in range(1, 7)]
+    for job, expected in (("daily", daily), ("weekly", [(6, 20, 0)])):
         out = tmp_path / f"{job}.plist"
         result = CliRunner().invoke(
             app, ["schedule", "plist", job, "--out", str(out), "--site-url", SITE]
         )
         assert result.exit_code == 0, result.output
-        when = plistlib.loads(out.read_bytes())["StartCalendarInterval"]
-        assert (when["Hour"], when["Minute"], when.get("Weekday")) == expected
+        assert _times(plistlib.loads(out.read_bytes())) == expected
+    out = tmp_path / "custom.plist"
+    custom = ["--hour", "6", "--minute", "5", "--weekdays", "0,3"]
+    result = CliRunner().invoke(
+        app, ["schedule", "plist", "weekly", "--out", str(out), "--site-url", SITE, *custom]
+    )
+    assert result.exit_code == 0, result.output
+    assert _times(plistlib.loads(out.read_bytes())) == [(0, 6, 5), (3, 6, 5)]
 
 
 @pytest.mark.parametrize("job", ["daily", "weekly"])
 def test_a_launchd_template_names_no_real_path_and_renders_to_a_property_list(job: str) -> None:
     template = (TEMPLATES / f"lineage-{job}.plist.template").read_text()
     assert not LOCAL_PATH.search(template)
-    timed = ["HOUR", "MINUTE"] + (["WEEKDAY"] if job == "weekly" else [])
-    assert placeholders(template) == sorted(
-        ["DATA", "LABEL", "PATH", "REPO", "SITE_URL", "STATE", *timed]
-    )
+    assert placeholders(template) == [
+        "DATA", "INTERVALS", "LABEL", "PATH", "REPO", "SITE_URL", "STATE",
+    ]  # fmt: skip
     values = {
         "DATA": "/srv/lineage-data",
-        "HOUR": "6",
-        "MINUTE": "30",
-        "WEEKDAY": "6",
+        "INTERVALS": calendar_intervals(When(hour=6, minute=30, weekdays=(2, 6))),
         "LABEL": "org.example.lineage",
         "PATH": "/usr/bin:/bin",
         "REPO": "/srv/legislative-lineage",
@@ -441,12 +451,7 @@ def test_a_launchd_template_names_no_real_path_and_renders_to_a_property_list(jo
     plist = plistlib.loads(render_template(template, values).encode())
 
     assert plist["Label"] == f"org.example.lineage.{job}"
-    when = plist["StartCalendarInterval"]
-    assert (when["Hour"], when["Minute"], when.get("Weekday")) == (
-        6,
-        30,
-        6 if job == "weekly" else None,
-    )
+    assert _times(plist) == [(2, 6, 30), (6, 6, 30)]
     assert plist["ProgramArguments"] == [
         "/bin/bash",
         "/srv/legislative-lineage/scheduling/run.sh",
@@ -454,7 +459,6 @@ def test_a_launchd_template_names_no_real_path_and_renders_to_a_property_list(jo
     ]
     assert plist["EnvironmentVariables"]["LINEAGE_STATE"] == "GA"
     assert "OPENSTATES_API_KEY" not in plist["EnvironmentVariables"]  # read from the keychain
-    assert plist["StartCalendarInterval"]["Hour"] == 6
     with pytest.raises(ScheduleError, match="@STATE@"):
         render_template(template, {k: v for k, v in values.items() if k != "STATE"})
 

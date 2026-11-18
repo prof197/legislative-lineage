@@ -256,6 +256,8 @@ from lineage.schedule import (
     TEMPLATES,
     WEEKLY_REPORT,
     ScheduleError,
+    When,
+    calendar_intervals,
     cli_runner,
     daily_steps,
     osascript_notifier,
@@ -3439,9 +3441,9 @@ def schedule_plist_command(
     minute: Annotated[
         int | None, typer.Option("--minute", help="The minute it runs; else as ruled.")
     ] = None,
-    weekday: Annotated[
-        int | None,
-        typer.Option("--weekday", help="The weekly job's day, 0 for Sunday; else as ruled."),
+    weekdays: Annotated[
+        str | None,
+        typer.Option("--weekdays", help="Days it runs, 0 Sunday to 6 Saturday, comma-separated."),
     ] = None,
     label: Annotated[str, typer.Option("--label", help="launchd's label prefix.")] = (
         "local.legislative-lineage"
@@ -3452,19 +3454,23 @@ def schedule_plist_command(
     if job not in ("daily", "weekly"):
         typer.echo("error: the job is daily or weekly", err=True)
         raise typer.Exit(1)
-    when = SCHEDULE[job]
+    ruled = SCHEDULE[job]
+    when = When(
+        hour=ruled.hour if hour is None else hour,
+        minute=ruled.minute if minute is None else minute,
+        weekdays=ruled.weekdays
+        if weekdays is None
+        else tuple(int(d) for d in weekdays.split(",") if d.strip()),
+    )
     values = {
         "REPO": str(Path.cwd().resolve()),
         "DATA": str(DATA.resolve()),
         "STATE": state.upper(),
         "SITE_URL": site_url,
         "PATH": os.environ.get("PATH", "/usr/bin:/bin"),
-        "HOUR": str(when.hour if hour is None else hour),
-        "MINUTE": str(when.minute if minute is None else minute),
+        "INTERVALS": calendar_intervals(when),
         "LABEL": label,
     }
-    if job == "weekly":
-        values["WEEKDAY"] = str(when.weekday if weekday is None else weekday)
     try:
         text = render_template((TEMPLATES / f"lineage-{job}.plist.template").read_text(), values)
     except ScheduleError as e:
