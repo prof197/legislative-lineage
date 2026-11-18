@@ -11,8 +11,11 @@ from typing import Annotated, Any
 import typer
 
 from lineage.cli.app import (
+    AlignWorkersOption,
     CacheOption,
     DayOption,
+    FeaturedPairsOption,
+    FeaturedReportOption,
     LiveExportOption,
     ManifestOption,
     MinFreeOption,
@@ -20,6 +23,7 @@ from lineage.cli.app import (
     RawOption,
     ResultsOption,
     SessionsOption,
+    StoriesOption,
     TablesOption,
     app,
     exits_on,
@@ -91,6 +95,18 @@ from lineage.origins.modeldocs import ModelDocError
 from lineage.text.inventory import PLAN
 from lineage.text.sectioning import SectioningError
 
+PUBLISH_REPORTS = DATA / "publish"
+
+StateOption = Annotated[str, typer.Option("--state", help="The hosted state, by postal code.")]
+ChangesOption = Annotated[
+    Path, typer.Option("--changes", help="The change log, one file per day (local).")
+]
+SiteOption = Annotated[
+    str, typer.Option("--site-url", help="The site's address, absolute, for the feed's links.")
+]
+EmbeddingModelOption = Annotated[str, typer.Option("--model", help="The embedding model.")]
+HeldDayOption = Annotated[str, typer.Option("--day", help="The held day, YYYY-MM-DD.")]
+
 
 @app.command("update")
 def update_command(
@@ -98,9 +114,7 @@ def update_command(
         Path, typer.Option("--day", help="A day's directory: day.json and its records (local).")
     ],
     tables: TablesOption = DATA / "tables",
-    changes: Annotated[
-        Path, typer.Option("--changes", help="The change log, one file per day (local).")
-    ] = CHANGES_DIR,
+    changes: ChangesOption = CHANGES_DIR,
     min_free_gib: MinFreeOption = 20.0,
 ) -> None:
     """Apply one day's new and changed records to the built corpus, matching in both
@@ -164,7 +178,7 @@ def rebuild_command(
             help="Match the model documents [default: when the tables reused hold matches].",
         ),
     ] = None,
-    model: Annotated[str, typer.Option("--model", help="The embedding model.")] = SEMANTIC_MODEL,
+    model: EmbeddingModelOption = SEMANTIC_MODEL,
     exact: Annotated[
         bool,
         typer.Option("--exact", help="Search neighbors exactly, not by HNSW (small corpora)."),
@@ -298,17 +312,6 @@ def intake_estimate_command(
     typer.echo(f"-> {out}")
 
 
-PUBLISH_REPORTS = DATA / "publish"
-
-StateOption = Annotated[str, typer.Option("--state", help="The hosted state, by postal code.")]
-ChangesOption = Annotated[
-    Path, typer.Option("--changes", help="The change log, one file per day (local).")
-]
-SiteOption = Annotated[
-    str, typer.Option("--site-url", help="The site's address, absolute, for the feed's links.")
-]
-
-
 @publish_app.command("pages")
 def publish_pages_command(
     state: StateOption = "GA",
@@ -328,18 +331,10 @@ def publish_pages_command(
         ),
     ] = True,
     models_dir: ModelsOption = MODELS_DIR,
-    workers: Annotated[
-        int, typer.Option("--workers", help="Processes aligning section pairs.")
-    ] = EXPORT_WORKERS,
-    featured_pairs: Annotated[
-        Path, typer.Option("--featured-pairs", help="The featured pairs (committed).")
-    ] = FEATURED_PAIRS,
-    featured_report: Annotated[
-        Path, typer.Option("--featured-report", help="Each story's relatives (committed).")
-    ] = FEATURED_REPORT,
-    stories_rules: Annotated[
-        Path, typer.Option("--stories", help="Which stories each state's site carries (committed).")
-    ] = STORIES_RULES,
+    workers: AlignWorkersOption = EXPORT_WORKERS,
+    featured_pairs: FeaturedPairsOption = FEATURED_PAIRS,
+    featured_report: FeaturedReportOption = FEATURED_REPORT,
+    stories_rules: StoriesOption = STORIES_RULES,
     results: ResultsOption = RESULTS,
     min_free_gib: MinFreeOption = 20.0,
 ) -> None:
@@ -435,7 +430,7 @@ def publish_weekly_command(
     report: Annotated[
         Path, typer.Option("--report", help="The weekly report (local).")
     ] = WEEKLY_REPORT,
-    model: Annotated[str, typer.Option("--model", help="The embedding model.")] = SEMANTIC_MODEL,
+    model: EmbeddingModelOption = SEMANTIC_MODEL,
 ) -> None:
     """The weekly rebuild's check: the share of relatives the updated tables and the rebuild
     agree on, failing below 98%, and the drift when the statistics are refreshed (DR-7)."""
@@ -499,7 +494,7 @@ def publish_deploy_command(
 
 @publish_app.command("release")
 def publish_release_command(
-    day: Annotated[str, typer.Option("--day", help="The held day, YYYY-MM-DD.")],
+    day: HeldDayOption,
     root: DeployRootOption = deploy.DEPLOY_DIR,
     repack: Annotated[
         bool,
@@ -531,7 +526,7 @@ def publish_release_command(
 
 @publish_app.command("reject")
 def publish_reject_command(
-    day: Annotated[str, typer.Option("--day", help="The held day, YYYY-MM-DD.")],
+    day: HeldDayOption,
     root: DeployRootOption = deploy.DEPLOY_DIR,
 ) -> None:
     """Reject a day the circuit breaker held, once reviewed: its release is never published and

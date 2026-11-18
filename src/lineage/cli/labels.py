@@ -12,9 +12,11 @@ import typer
 
 from lineage.cli.app import (
     AlignModelsOption,
+    BatchIdOption,
     LabelsAppendOption,
     ModelsOption,
     ParaphraseOption,
+    PrecisionSampleArgument,
     TablesOption,
     app,
     exits_on,
@@ -95,18 +97,22 @@ from lineage.match.state_boilerplate import (
 )
 from lineage.match.strata import PrecisionError
 
+LabelerOption = Annotated[
+    str, typer.Option("--labeler", help="Your GitHub handle; labels are never kept by name.")
+]
+DrawReportOption = Annotated[
+    Path | None, typer.Option("--report", help="The draw's report JSON (committed).")
+]
+LabelModelOption = Annotated[str, typer.Option("--model", help="The model asked.")]
+LabelSpendOption = Annotated[
+    Path, typer.Option("--spend", help="The batches' spend ledger (committed).")
+]
+
 
 @app.command()
 def label(
-    sample: Annotated[
-        Path,
-        typer.Argument(
-            help="The precision sample, one pair per line.", exists=True, dir_okay=False
-        ),
-    ],
-    labeler: Annotated[
-        str, typer.Option("--labeler", help="Your GitHub handle; labels are never kept by name.")
-    ],
+    sample: PrecisionSampleArgument,
+    labeler: LabelerOption,
     tables: TablesOption = DATA / "tables",
     labels: LabelsAppendOption = LABELS_PATH,
     color: Annotated[bool, typer.Option("--color/--no-color", help="Mark spans in color.")] = True,
@@ -140,15 +146,8 @@ def label(
 
 @app.command("label-page")
 def label_page(
-    sample: Annotated[
-        Path,
-        typer.Argument(
-            help="The precision sample, one pair per line.", exists=True, dir_okay=False
-        ),
-    ],
-    labeler: Annotated[
-        str, typer.Option("--labeler", help="Your GitHub handle; labels are never kept by name.")
-    ],
+    sample: PrecisionSampleArgument,
+    labeler: LabelerOption,
     tables: TablesOption = DATA / "tables",
     labels: Annotated[
         Path, typer.Option("--labels", help="Labels file; pairs a person labeled are left out.")
@@ -201,9 +200,7 @@ def precision_sample(
     sample: Annotated[
         Path, typer.Option("--sample", help="The sample file, one pair per line (committed).")
     ] = PRECISION_SAMPLE,
-    report: Annotated[
-        Path | None, typer.Option("--report", help="The draw's report JSON (committed).")
-    ] = None,
+    report: DrawReportOption = None,
     flagged: Annotated[
         bool,
         typer.Option(
@@ -225,12 +222,7 @@ def precision_sample(
 
 @app.command("agreement-sample")
 def agreement_sample(
-    source: Annotated[
-        Path,
-        typer.Argument(
-            help="The precision sample, one pair per line.", exists=True, dir_okay=False
-        ),
-    ] = PRECISION_SAMPLE,
+    source: PrecisionSampleArgument = PRECISION_SAMPLE,
     sample: Annotated[
         Path, typer.Option("--sample", help="The subsample file, one pair per line (committed).")
     ] = AGREEMENT_SAMPLE,
@@ -260,9 +252,7 @@ def relatives_sample(
         Path | None,
         typer.Option("--sample", help="The sample file, one relative per line (committed)."),
     ] = None,
-    report: Annotated[
-        Path | None, typer.Option("--report", help="The draw's report JSON (committed).")
-    ] = None,
+    report: DrawReportOption = None,
     excluded_samples: Annotated[
         list[Path] | None,
         typer.Option("--excluded", help="A sample whose bills this part never draws (repeat)."),
@@ -303,15 +293,10 @@ def relatives_sample(
 
 @app.command("label-model")
 def label_model(
-    sample: Annotated[
-        Path,
-        typer.Argument(
-            help="The precision sample, one pair per line.", exists=True, dir_okay=False
-        ),
-    ] = PRECISION_SAMPLE,
+    sample: PrecisionSampleArgument = PRECISION_SAMPLE,
     tables: TablesOption = DATA / "tables",
     labels: LabelsAppendOption = LABELS_PATH,
-    model: Annotated[str, typer.Option("--model", help="The model asked.")] = LABEL_MODEL,
+    model: LabelModelOption = LABEL_MODEL,
     prompt_version: Annotated[
         str,
         typer.Option("--prompt", help=f"The prompt and effort asked: {', '.join(LABEL_PROMPTS)}."),
@@ -326,15 +311,11 @@ def label_model(
         float,
         typer.Option("--budget", help="Dollars every batch may cost, spent and projected."),
     ] = LABEL_BUDGET,
-    spend: Annotated[
-        Path, typer.Option("--spend", help="The batches' spend ledger (committed).")
-    ] = LABEL_SPEND,
+    spend: LabelSpendOption = LABEL_SPEND,
     batch: Annotated[
         bool, typer.Option("--batch", help="Ask through the Batches API, at half price.")
     ] = False,
-    batch_id: Annotated[
-        str | None, typer.Option("--batch-id", help="Collect a batch already sent.")
-    ] = None,
+    batch_id: BatchIdOption = None,
     models_dir: AlignModelsOption = MODELS_DIR,
     also: Annotated[
         list[str] | None,
@@ -478,10 +459,8 @@ def label_spend(
     prompt_version: Annotated[
         str, typer.Option("--prompt", help="The prompt the batch was asked under.")
     ] = LABEL_PROMPT_VERSION,
-    model: Annotated[str, typer.Option("--model", help="The model asked.")] = LABEL_MODEL,
-    spend: Annotated[
-        Path, typer.Option("--spend", help="The batches' spend ledger (committed).")
-    ] = LABEL_SPEND,
+    model: LabelModelOption = LABEL_MODEL,
+    spend: LabelSpendOption = LABEL_SPEND,
 ) -> None:
     """Record what an ended batch cost, from its results' token counts; labels nothing."""
     batches = anthropic_batches()

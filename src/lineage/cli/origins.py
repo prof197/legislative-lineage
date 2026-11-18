@@ -14,6 +14,7 @@ import typer
 
 from lineage.cli.app import (
     AlignModelsOption,
+    BatchIdOption,
     LabelsAppendOption,
     MinFreeOption,
     ModelDocsOption,
@@ -287,9 +288,7 @@ def origin_label_command(
     live: Annotated[
         bool, typer.Option("--live", help="Ask, through the Batches API; else nothing is sent.")
     ] = False,
-    batch_id: Annotated[
-        str | None, typer.Option("--batch-id", help="Collect a batch already sent.")
-    ] = None,
+    batch_id: BatchIdOption = None,
     models_dir: AlignModelsOption = MODELS_DIR,
     max_cost: Annotated[
         float,

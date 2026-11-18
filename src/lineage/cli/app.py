@@ -95,6 +95,29 @@ OriginLabelsOption = Annotated[
 DayOption = Annotated[
     str | None, typer.Option("--day", help="The day, YYYY-MM-DD [default: today, UTC].")
 ]
+PrecisionSampleArgument = Annotated[
+    Path,
+    typer.Argument(help="The precision sample, one pair per line.", exists=True, dir_okay=False),
+]
+CallSpendOption = Annotated[
+    Path, typer.Option("--spend", help="M6's model-call ledger (committed).")
+]
+BatchIdOption = Annotated[
+    str | None, typer.Option("--batch-id", help="Collect a batch already sent.")
+]
+# The export's inputs, which the live track's pages read too.
+FeaturedPairsOption = Annotated[
+    Path, typer.Option("--featured-pairs", help="The featured pairs (committed).")
+]
+FeaturedReportOption = Annotated[
+    Path, typer.Option("--featured-report", help="Each story's relatives (committed).")
+]
+StoriesOption = Annotated[
+    Path, typer.Option("--stories", help="Which stories each state's site carries (committed).")
+]
+AlignWorkersOption = Annotated[
+    int, typer.Option("--workers", help="Processes aligning section pairs.")
+]
 
 
 def fail(message: str) -> NoReturn:

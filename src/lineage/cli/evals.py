@@ -12,10 +12,12 @@ import typer
 from lineage.cli.app import (
     AlignModelsOption,
     CacheOption,
+    CallSpendOption,
     LabelsOption,
     MinFreeOption,
     ModelsOption,
     ParaphraseOption,
+    PrecisionSampleArgument,
     ReportOption,
     ResultsOption,
     SemanticOption,
@@ -147,6 +149,18 @@ from lineage.match.state_boilerplate import (
 )
 from lineage.match.strata import PrecisionError
 
+EnactmentsOption = Annotated[
+    Path | None,
+    typer.Option(
+        "--enactments",
+        help="The commission's enactment lists (committed) [default: the development "
+        "lists, or the held-out lists with --held-out].",
+    ),
+]
+PairDataDirOption = Annotated[
+    Path, typer.Option("--dir", help="Directory of the dataset's files (local).")
+]
+
 
 @eval_app.command("commission")
 def eval_commission(
@@ -159,14 +173,7 @@ def eval_commission(
             "or data/acts/held-out/ with --held-out].",
         ),
     ] = None,
-    enactments: Annotated[
-        Path | None,
-        typer.Option(
-            "--enactments",
-            help="The commission's enactment lists (committed) [default: the development "
-            "lists, or the held-out lists with --held-out].",
-        ),
-    ] = None,
+    enactments: EnactmentsOption = None,
     sessions: SessionsOption = Path("snapshot/sessions.csv"),
     results: ResultsOption = RESULTS,
     held_out: Annotated[
@@ -239,14 +246,7 @@ def eval_commission(
 @eval_app.command("answer-key")
 def eval_answer_key(
     tables: TablesOption = DATA / "tables",
-    enactments: Annotated[
-        Path | None,
-        typer.Option(
-            "--enactments",
-            help="The commission's enactment lists (committed) [default: the development "
-            "lists, or the held-out lists with --held-out].",
-        ),
-    ] = None,
+    enactments: EnactmentsOption = None,
     sessions: SessionsOption = Path("snapshot/sessions.csv"),
     out: Annotated[
         Path | None,
@@ -296,9 +296,7 @@ def eval_answer_key(
 
 @pair_data_app.command("fetch")
 def pair_data_fetch(
-    directory: Annotated[
-        Path, typer.Option("--dir", help="Directory of the dataset's files (local).")
-    ] = PAIR_DATA_DIR,
+    directory: PairDataDirOption = PAIR_DATA_DIR,
     min_free_gib: MinFreeOption = 20.0,
 ) -> None:
     """Download the human-annotated pair files at their pinned commit -> data/pair_data/."""
@@ -472,12 +470,7 @@ def eval_threshold(
 
 @eval_app.command("precision")
 def eval_precision(
-    sample: Annotated[
-        Path,
-        typer.Argument(
-            help="The precision sample, one pair per line.", exists=True, dir_okay=False
-        ),
-    ] = PRECISION_SAMPLE,
+    sample: PrecisionSampleArgument = PRECISION_SAMPLE,
     tables: TablesOption = DATA / "tables",
     labels: LabelsOption = LABELS_PATH,
     strata: Annotated[
@@ -579,9 +572,7 @@ def eval_faithfulness(
     ] = JUDGMENTS,
     paraphrase: ParaphraseOption = True,
     models_dir: ModelsOption = MODELS_DIR,
-    spend: Annotated[
-        Path, typer.Option("--spend", help="M6's model-call ledger (committed).")
-    ] = CALL_SPEND,
+    spend: CallSpendOption = CALL_SPEND,
     results: ResultsOption = RESULTS,
 ) -> None:
     """Faithfulness, model-judged: the share of kept claims that describe their cited spans
@@ -662,9 +653,7 @@ def eval_pair_data(
         ),
     ] = None,
     tables: TablesOption = DATA / "tables",
-    directory: Annotated[
-        Path, typer.Option("--dir", help="Directory of the dataset's files (local).")
-    ] = PAIR_DATA_DIR,
+    directory: PairDataDirOption = PAIR_DATA_DIR,
     models_dir: ModelsOption = MODELS_DIR,
     report: Annotated[
         Path, typer.Option("--report", help="Metrics JSON (committed).")

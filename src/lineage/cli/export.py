@@ -9,10 +9,14 @@ from typing import Annotated
 import typer
 
 from lineage.cli.app import (
+    AlignWorkersOption,
     CacheOption,
+    FeaturedPairsOption,
+    FeaturedReportOption,
     ModelsOption,
     ParaphraseOption,
     ResultsOption,
+    StoriesOption,
     TablesOption,
     app,
     eval_app,
@@ -99,23 +103,15 @@ def export_command(
     report: Annotated[
         Path, typer.Option("--report", help="The export's sizes and counts (committed).")
     ] = EXPORT_REPORT,
-    featured_pairs: Annotated[
-        Path, typer.Option("--featured-pairs", help="The featured pairs (committed).")
-    ] = FEATURED_PAIRS,
-    featured_report: Annotated[
-        Path, typer.Option("--featured-report", help="Each story's relatives (committed).")
-    ] = FEATURED_REPORT,
-    stories_rules: Annotated[
-        Path, typer.Option("--stories", help="Which stories each state's site carries (committed).")
-    ] = STORIES_RULES,
+    featured_pairs: FeaturedPairsOption = FEATURED_PAIRS,
+    featured_report: FeaturedReportOption = FEATURED_REPORT,
+    stories_rules: StoriesOption = STORIES_RULES,
     results: ResultsOption = RESULTS,
     schema_only: Annotated[
         bool,
         typer.Option("--schema", help="Write the export's JSON Schema (committed) and stop."),
     ] = False,
-    workers: Annotated[
-        int, typer.Option("--workers", help="Processes aligning section pairs.")
-    ] = EXPORT_WORKERS,
+    workers: AlignWorkersOption = EXPORT_WORKERS,
     package_tag: Annotated[
         str | None,
         typer.Option(

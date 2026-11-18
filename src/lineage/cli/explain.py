@@ -9,6 +9,7 @@ import typer
 
 from lineage.cli.app import (
     CacheOption,
+    CallSpendOption,
     ModelsOption,
     ParaphraseOption,
     TablesOption,
@@ -62,9 +63,7 @@ def explain_command(
     cache: CacheOption = EXPLAIN_CACHE,
     paraphrase: ParaphraseOption = True,
     models_dir: ModelsOption = MODELS_DIR,
-    spend: Annotated[
-        Path, typer.Option("--spend", help="M6's model-call ledger (committed).")
-    ] = CALL_SPEND,
+    spend: CallSpendOption = CALL_SPEND,
     again: Annotated[
         bool,
         typer.Option(
