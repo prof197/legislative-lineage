@@ -59,7 +59,6 @@ from lineage.data.status import OUTCOME_CLASSIFICATIONS, STATUS_WORDING, Action,
 from lineage.live import queries
 from lineage.live.updates import (
     CHANGES_DIR,
-    SHARE_PLACES,
     Change,
     Day,
     Folded,
@@ -68,8 +67,10 @@ from lineage.live.updates import (
     Snapshot,
     UpdateError,
     origin_changes,
+    origins_of,
     record_changes,
     relative_changes,
+    relatives_of,
     write_changes,
 )
 from lineage.match.listing import shipped_flag
@@ -127,8 +128,8 @@ from lineage.origins.matches import (
     write_origin_matches,
 )
 from lineage.text import queries as text_queries
-from lineage.text.boilerplate import boilerplate_kind
-from lineage.text.sections import normalize, split_sections
+from lineage.text.sectioning import append_sections
+from lineage.text.sections import split_sections
 from lineage.text.windows import WINDOW_WORDS, display_windows
 
 SESSIONS = Path(__file__).parents[3] / "snapshot" / "sessions.csv"
@@ -538,15 +539,7 @@ def _records(
             columns = text_queries.SectionColumns([], [], [], [], [], [], [])
             for bill_id, text in found:
                 split = split_sections(text, state)
-                for s in split.sections:
-                    normalized = normalize(s.text)
-                    columns.bill_id.append(bill_id)
-                    columns.ordinal.append(s.ordinal)
-                    columns.heading.append(s.heading)
-                    columns.text.append(s.text)
-                    columns.normalized.append(normalized)
-                    columns.by_heading.append(split.by_heading)
-                    columns.boilerplate.append(boilerplate_kind(normalized))
+                append_sections(columns, bill_id, split)
             if columns.bill_id:
                 part = _next_part(tables / "sections", Path(name).stem)
                 text_queries.write_sections(
@@ -938,35 +931,12 @@ def _relatives(tables: Path, bills: set[str], model: str) -> dict[str, tuple[Rel
     found = bill_relatives(
         tables, wanted, model=model, shown=sys.maxsize, flag=shipped_flag(tables)
     )
-    return {
-        bill_id: tuple(
-            sorted(
-                (
-                    m.bill_id,
-                    tuple(sorted(m.sections_by_stage)),
-                    m.sections_matched,
-                    round(m.share, SHARE_PLACES),
-                )
-                for m in r.matches
-            )
-        )
-        for bill_id, r in found.items()
-    }
+    return relatives_of(found)
 
 
 def _origins(tables: Path) -> dict[str, tuple[Origin, ...]]:
     """Each bill's origin matches, as `lineage.live.updates.snapshot` reads them."""
-    out: dict[str, list[Origin]] = defaultdict(list)
-    for o in read_origin_matches(tables):
-        out[o.bill_id].append(
-            (
-                o.doc_id,
-                tuple(sorted(o.stages)),
-                round(o.model_share, SHARE_PLACES),
-                round(o.bill_share, SHARE_PLACES),
-            )
-        )
-    return {b: tuple(sorted(os)) for b, os in out.items()}
+    return origins_of(read_origin_matches(tables))
 
 
 def _members(families: Mapping[str, str]) -> dict[str, frozenset[str]]:

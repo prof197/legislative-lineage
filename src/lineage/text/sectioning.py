@@ -21,7 +21,7 @@ from lineage.core import db
 from lineage.core.disk import require_free_space
 from lineage.text import queries
 from lineage.text.boilerplate import boilerplate_kind
-from lineage.text.sections import normalize, split_sections
+from lineage.text.sections import Split, normalize, split_sections
 
 _FETCH_BILLS = 500
 _PART_SECTIONS = 10_000
@@ -54,6 +54,20 @@ class SectioningResult:
     seconds: float
 
 
+def append_sections(columns: queries.SectionColumns, bill_id: str, split: Split) -> None:
+    """One bill's sections onto the sections table's columns, each normalized and classed as
+    the table holds it; the live track's update appends a day's bills the same way."""
+    for s in split.sections:
+        normalized = normalize(s.text)
+        columns.bill_id.append(bill_id)
+        columns.ordinal.append(s.ordinal)
+        columns.heading.append(s.heading)
+        columns.text.append(s.text)
+        columns.normalized.append(normalized)
+        columns.by_heading.append(split.by_heading)
+        columns.boilerplate.append(boilerplate_kind(normalized))
+
+
 def _empty() -> queries.SectionColumns:
     return queries.SectionColumns([], [], [], [], [], [], [])
 
@@ -84,15 +98,7 @@ def _split_file(texts_file: Path, dest: Path, state: str | None) -> FileCounts:
                     continue
                 with_text += 1
                 by_heading += split.by_heading
-                for s in split.sections:
-                    normalized = normalize(s.text)
-                    columns.bill_id.append(bill_id)
-                    columns.ordinal.append(s.ordinal)
-                    columns.heading.append(s.heading)
-                    columns.text.append(s.text)
-                    columns.normalized.append(normalized)
-                    columns.by_heading.append(split.by_heading)
-                    columns.boilerplate.append(boilerplate_kind(normalized))
+                append_sections(columns, bill_id, split)
                 sections += len(split.sections)
             if len(columns.bill_id) >= _PART_SECTIONS:
                 flush(writer)

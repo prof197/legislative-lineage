@@ -25,9 +25,9 @@ from lineage.core.paths import DATA
 from lineage.live import queries
 from lineage.match.listing import shipped_flag
 from lineage.match.near.pairs import load_families
-from lineage.match.relatives import bill_relatives
+from lineage.match.relatives import BillRelatives, bill_relatives
 from lineage.match.semantic.stage import MODEL
-from lineage.origins.matches import read_origin_matches
+from lineage.origins.matches import OriginMatch, read_origin_matches
 
 DAY_FILE = "day.json"
 BILLS_SUFFIX = "_bills.json"
@@ -317,6 +317,39 @@ class Snapshot:
 SHARE_PLACES = 9
 
 
+def relatives_of(found: Mapping[str, BillRelatives]) -> dict[str, tuple[Relative, ...]]:
+    """Each bill's listed relatives as a snapshot holds them, in order."""
+    return {
+        bill_id: tuple(
+            sorted(
+                (
+                    m.bill_id,
+                    tuple(sorted(m.sections_by_stage)),
+                    m.sections_matched,
+                    round(m.share, SHARE_PLACES),
+                )
+                for m in r.matches
+            )
+        )
+        for bill_id, r in found.items()
+    }
+
+
+def origins_of(matches: Iterable[OriginMatch]) -> dict[str, tuple[Origin, ...]]:
+    """Each bill's origin matches as a snapshot holds them, in order."""
+    out: dict[str, list[Origin]] = defaultdict(list)
+    for o in matches:
+        out[o.bill_id].append(
+            (
+                o.doc_id,
+                tuple(sorted(o.stages)),
+                round(o.model_share, SHARE_PLACES),
+                round(o.bill_share, SHARE_PLACES),
+            )
+        )
+    return {b: tuple(sorted(os)) for b, os in out.items()}
+
+
 def snapshot(tables_dir: Path, *, model: str = MODEL) -> Snapshot:
     """A build's snapshot, read from its tables the way pages read them
     (lineage.match.relatives)."""
@@ -333,35 +366,11 @@ def snapshot(tables_dir: Path, *, model: str = MODEL) -> Snapshot:
     found = bill_relatives(
         tables_dir, matchable, model=model, shown=len(statuses), flag=shipped_flag(tables_dir)
     )
-    relatives = {
-        bill_id: tuple(
-            sorted(
-                (
-                    m.bill_id,
-                    tuple(sorted(m.sections_by_stage)),
-                    m.sections_matched,
-                    round(m.share, SHARE_PLACES),
-                )
-                for m in r.matches
-            )
-        )
-        for bill_id, r in found.items()
-    }
-    origins: dict[str, list[Origin]] = defaultdict(list)
-    for o in read_origin_matches(tables_dir):
-        origins[o.bill_id].append(
-            (
-                o.doc_id,
-                tuple(sorted(o.stages)),
-                round(o.model_share, SHARE_PLACES),
-                round(o.bill_share, SHARE_PLACES),
-            )
-        )
     return Snapshot(
         statuses=statuses,
         families=frozenset(frozenset(m) for m in members.values()),
-        relatives=relatives,
-        origins={b: tuple(sorted(os)) for b, os in origins.items()},
+        relatives=relatives_of(found),
+        origins=origins_of(read_origin_matches(tables_dir)),
     )
 
 
