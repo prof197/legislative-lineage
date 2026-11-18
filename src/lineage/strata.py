@@ -10,7 +10,7 @@ from pathlib import Path
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage.pairs import load_cross_state_pairs
+from lineage.match.near.pairs import load_cross_state_pairs
 from lineage.semantic import BUILD_THRESHOLD
 from lineage.semantic import MODEL as MODEL_NAME
 from lineage.semantic_pairs import load_semantic_pairs

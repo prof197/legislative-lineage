@@ -20,9 +20,9 @@ from pathlib import Path
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage import queries
 from lineage.core import db
-from lineage.shingles import SHINGLE_WORDS, section_shingles, shingle_hashes
+from lineage.match.near import queries
+from lineage.match.near.shingles import SHINGLE_WORDS, section_shingles, shingle_hashes
 
 # Fork is Linux's default, and forking after DuckDB has started threads can deadlock the
 # child. Spawn starts each worker clean on every platform.

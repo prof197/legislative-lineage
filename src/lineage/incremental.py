@@ -51,20 +51,18 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lineage import queries
-from lineage.bands import load_band_index, update_bands
 from lineage.core import db
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.data import queries as data_queries
 from lineage.data.doctypes import RULES, decide, load_rules
 from lineage.data.sessions import load_sessions, status_end_date
 from lineage.data.status import OUTCOME_CLASSIFICATIONS, STATUS_WORDING, Action, bill_status
-from lineage.families import update_families
 from lineage.listing import shipped_flag
-from lineage.minhash import NUM_PERM
-from lineage.models import MODELS, MODELS_DIR, require_model
-from lineage.neighbors import update_neighbors
-from lineage.origins import OriginMatch, origins_path, read_origin_matches, write_origin_matches
-from lineage.pairs import (
+from lineage.match.near import queries as near_queries
+from lineage.match.near.bands import load_band_index, update_bands
+from lineage.match.near.families import update_families
+from lineage.match.near.minhash import NUM_PERM
+from lineage.match.near.pairs import (
     SectionPairs,
     load_cross_state_pairs,
     load_families,
@@ -77,6 +75,15 @@ from lineage.pairs import (
     sections_of_window_pairs,
     write_section_pairs,
 )
+from lineage.match.near.signatures import (
+    open_signatures,
+    row_labels,
+    sign_part,
+)
+from lineage.match.near.stoplist import load_stoplist
+from lineage.models import MODELS, MODELS_DIR, require_model
+from lineage.neighbors import update_neighbors
+from lineage.origins import OriginMatch, origins_path, read_origin_matches, write_origin_matches
 from lineage.relatives import bill_relatives
 from lineage.semantic import BUILD_THRESHOLD, MODEL, Embedder, K
 from lineage.semantic_pairs import (
@@ -88,12 +95,6 @@ from lineage.semantic_pairs import (
     update_semantic_pairs,
     write_semantic_pairs,
 )
-from lineage.signatures import (
-    open_signatures,
-    row_labels,
-    sign_part,
-)
-from lineage.stoplist import load_stoplist
 from lineage.text import queries as text_queries
 from lineage.text.boilerplate import boilerplate_kind
 from lineage.text.sections import normalize, split_sections
@@ -582,7 +583,7 @@ def _signatures(
         )
         for name in holding:
             path = (tables / "signatures" / name).with_suffix(".npy")
-            ids, ordinals, windows = queries.read_signature_keys(
+            ids, ordinals, windows = near_queries.read_signature_keys(
                 con, parquet_path=path.with_suffix(".parquet")
             )
             keep = np.fromiter((b not in retired for b in ids), dtype=bool, count=len(ids))
@@ -592,7 +593,7 @@ def _signatures(
             if keep.any():
                 np.save(dest / path.name, np.asarray(np.load(path, mmap_mode="r"))[keep])
                 at = np.flatnonzero(keep).tolist()
-                queries.write_signature_keys(
+                near_queries.write_signature_keys(
                     con,
                     parquet_path=dest / f"{path.stem}.parquet",
                     bill_ids=[ids[i] for i in at],
@@ -672,7 +673,7 @@ def _near_duplicates(
         right,
     )
     with db.connect_quiet() as con:
-        state_of = queries.bill_states(con, bills_glob=str(view.root / "bills" / "*.parquet"))
+        state_of = near_queries.bill_states(con, bills_glob=str(view.root / "bills" / "*.parquet"))
     states = np.array([state_of[b] for b in after.section_bills], dtype=object)
     cross = states[found.left] != states[found.right] if found.left.size else np.empty(0, bool)
     recomputed = pair_codes(left, right)
@@ -710,7 +711,7 @@ def _near_duplicates(
     )
     view.fresh_dir("families")
     with db.connect_quiet() as con:
-        queries.write_families(
+        near_queries.write_families(
             con,
             parquet_path=view.root / "families" / "families.parquet",
             bill_ids=list(families_after),
@@ -791,7 +792,7 @@ def _semantic(
         # The new sections' windows, as the plan cuts them, each text with the id it has.
         cut: list[tuple[str, str, int, int, str]] = []  # (part, bill, ordinal, window, text)
         for part in new_parts:
-            scan = queries.matchable_sections(
+            scan = near_queries.matchable_sections(
                 con,
                 sections_path=view.root / "sections" / f"{part}.parquet",
                 eligible_path=view.root / "eligible.parquet",

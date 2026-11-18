@@ -8,10 +8,10 @@ from typing import Any
 import numpy as np
 import pytest
 
-from lineage import queries
 from lineage.core import db
 from lineage.labels import Item, Pair, Section, SectionKey, SectionRef, text_sha256
-from lineage.pairs import load_cross_state_pairs
+from lineage.match.near import queries as near_queries
+from lineage.match.near.pairs import load_cross_state_pairs
 from lineage.relatives import bill_relatives
 from lineage.relatives_sample import (
     BILLS,
@@ -38,7 +38,7 @@ def tables(embedded_commission: Path) -> Path:
 
 def _states(tables: Path) -> dict[str, str]:
     with db.connect_quiet() as con:
-        return queries.bill_states(con, bills_glob=str(tables / "bills" / "*.parquet"))
+        return near_queries.bill_states(con, bills_glob=str(tables / "bills" / "*.parquet"))
 
 
 def _expected_pair(tables: Path, query_bill: str, match_bill: str) -> tuple[int, int]:

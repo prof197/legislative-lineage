@@ -3,7 +3,7 @@ from itertools import pairwise
 import numpy as np
 import pytest
 
-from lineage.shingles import section_shingles
+from lineage.match.near.shingles import section_shingles
 from lineage.text.sections import normalize
 from lineage.text.windows import (
     WINDOW_STRIDE,

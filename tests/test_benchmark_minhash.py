@@ -4,11 +4,11 @@ import numpy as np
 import pytest
 
 from benchmarks.minhash import ENGINES, run_engine, run_lsh
-from lineage import queries
 from lineage.core import db, memory
 from lineage.data import queries as data_queries
-from lineage.minhash import NUM_PERM
-from lineage.signatures import build_signatures
+from lineage.match.near import queries as near_queries
+from lineage.match.near.minhash import NUM_PERM
+from lineage.match.near.signatures import build_signatures
 from lineage.text import queries as text_queries
 
 TEXTS = [
@@ -39,7 +39,7 @@ def tables(tmp_path: Path) -> Path:
             eligible=[True] * n,
             rules=[1] * n,
         )
-        queries.write_stoplist(
+        near_queries.write_stoplist(
             con, parquet_path=tables / "stoplist.parquet", hashes=[], sections=[]
         )
     return tables

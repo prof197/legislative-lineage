@@ -31,8 +31,8 @@ from lineage.commission import (
 )
 from lineage.core import db
 from lineage.data.sessions import load_sessions
-from lineage.lsh import BANDS, BUCKET_CAP, ROWS
-from lineage.minhash import NUM_PERM
+from lineage.match.near.lsh import BANDS, BUCKET_CAP, ROWS
+from lineage.match.near.minhash import NUM_PERM
 from lineage.queries import EnactmentBill
 from lineage.semantic import BUILD_THRESHOLD, THRESHOLD
 from lineage.ulc import ENACTMENTS, load_enactments

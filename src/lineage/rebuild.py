@@ -53,7 +53,8 @@ from lineage.data.doctypes import build_eligibility
 from lineage.data.ingest import ingest
 from lineage.data.snapshot import bills_member, load_manifest, scan, verify, write_manifest
 from lineage.incremental import applied_days, embedder_for
-from lineage.index import build_index
+from lineage.match.near.index import build_index
+from lineage.match.near.stoplist import build_stoplist
 from lineage.models import MODELS, MODELS_DIR
 from lineage.neighbors import EF_SEARCH as NEIGHBORS_EF_SEARCH
 from lineage.neighbors import RECALL_FLOOR, SPEC, build_neighbors
@@ -61,7 +62,6 @@ from lineage.origins import origins_path, write_origin_matches
 from lineage.semantic import MODEL
 from lineage.semantic_pairs import build_semantic_pairs, section_keys
 from lineage.state_boilerplate import build_state_boilerplate, has_counts, load_families_reached
-from lineage.stoplist import build_stoplist
 from lineage.text.inventory import PLAN as TEXT_PLAN
 from lineage.text.merge import BULK, FETCHED, merge_texts
 from lineage.text.rules import RULES as TEXT_RULES

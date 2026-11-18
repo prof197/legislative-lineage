@@ -28,12 +28,14 @@ from numpy.typing import NDArray
 
 from lineage import queries
 from lineage.acts import ACTS, ACTS_DIR, enacted_text
-from lineage.bands import load_band_index
 from lineage.core import db
 from lineage.data.sessions import Session, load_sessions
 from lineage.data.stats import AMENDMENT_CHARS, AMENDMENT_OPENING, AMENDMENT_SUBSTITUTE
-from lineage.lsh import BUCKET_CAP, band_keys
-from lineage.minhash import NUM_PERM
+from lineage.match.near.bands import load_band_index
+from lineage.match.near.lsh import BUCKET_CAP, band_keys
+from lineage.match.near.minhash import NUM_PERM
+from lineage.match.near.signatures import open_signatures
+from lineage.match.near.verify import THRESHOLD, min_agreements
 from lineage.query import (
     bucket_sizes,
     matchable_sections,
@@ -44,7 +46,6 @@ from lineage.query import (
 )
 from lineage.semantic import BUILD_THRESHOLD, CORROBORATING, SemanticSearch, best_cosines_to_bills
 from lineage.semantic import THRESHOLD as THRESHOLD_SEMANTIC
-from lineage.signatures import open_signatures
 from lineage.ulc import (
     ENACTMENTS,
     NO_BILLS,
@@ -56,7 +57,6 @@ from lineage.ulc import (
     find_bills,
     load_enactments,
 )
-from lineage.verify import THRESHOLD, min_agreements
 
 COMMAND = "uv run lineage eval commission"
 RESULTS = Path("reports/results.json")

@@ -106,12 +106,12 @@ from lineage.export_schema import (
 )
 from lineage.incremental import applied_days
 from lineage.listing import listed_pairs, shipped_flag
+from lineage.match.near.pairs import load_families
 from lineage.modeldocs import MODELDOCS_DIR, read_docs
 from lineage.origin_labels import LABELS as ORIGIN_LABELS
 from lineage.origin_story import FILE as ORIGIN_STORY_FILE
 from lineage.origin_story import story_file as origin_story_file
 from lineage.origins import read_origin_matches
-from lineage.pairs import load_families
 from lineage.relatives import BillRelatives, bill_relatives
 from lineage.semantic import MODEL
 from lineage.semantic_pairs import section_keys

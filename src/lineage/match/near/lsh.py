@@ -13,12 +13,12 @@ from dataclasses import dataclass
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage.minhash import NUM_PERM
+from lineage.match.near.minhash import NUM_PERM
 
 BANDS = 32
 ROWS = 4
-# The smallest cap in the sweep (lineage.bands.SWEEP_CAPS) that removes cross-state candidates
-# from no more than one bucket (reports/index.json, lsh.cap_sweep). Signed by window, one
+# The smallest cap in the sweep (lineage.match.near.bands.SWEEP_CAPS) that removes cross-state
+# candidates from no more than one bucket (reports/index.json, lsh.cap_sweep). Signed by window, one
 # interstate compact's sections fill buckets of over 1,000 windows in 47 to 49 states.
 BUCKET_CAP = 2000
 
@@ -191,8 +191,8 @@ def merge_sorted(a: NDArray[np.uint64], b: NDArray[np.uint64]) -> NDArray[np.uin
 def candidate_pairs(index: BandIndex, *, cap: int = BUCKET_CAP) -> Candidates:
     """Every pair that shares a band key in a bucket of at most `cap` rows, all in memory.
 
-    The build forms the same pairs band by band (lineage.pairs), verifying each band's new
-    ones before the next; this is the reference it is tested against.
+    The build forms the same pairs band by band (lineage.match.near.pairs), verifying each band's
+    new ones before the next; this is the reference it is tested against.
     """
     seen = np.empty(0, dtype=np.uint64)
     over = rows = skipped = largest = 0

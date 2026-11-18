@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 
 from lineage.listing import listed_hits, listed_pairs
-from lineage.pairs import load_cross_state_pairs
+from lineage.match.near.pairs import load_cross_state_pairs
 from lineage.query import Match, query_text
 from lineage.relatives import bill_relatives
 from lineage.semantic import BUILD_THRESHOLD, CORROBORATING, THRESHOLD

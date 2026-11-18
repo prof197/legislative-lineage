@@ -17,10 +17,10 @@ import time
 from pathlib import Path
 from typing import Any
 
-from lineage.bands import build_bands, lsh_report, row_states
 from lineage.core import memory
-from lineage.pairs import build_pairs
-from lineage.signatures import build_signatures, open_signatures, row_labels
+from lineage.match.near.bands import build_bands, lsh_report, row_states
+from lineage.match.near.pairs import build_pairs
+from lineage.match.near.signatures import build_signatures, open_signatures, row_labels
 
 COMMAND = "uv run lineage index"
 

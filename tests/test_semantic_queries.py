@@ -7,6 +7,7 @@ import pytest
 from lineage import queries
 from lineage.core import db
 from lineage.data import queries as data_queries
+from lineage.match.near import queries as near_queries
 from lineage.text import queries as text_queries
 
 # id: (state, session, identifier, title, sections as (text, boilerplate), eligible, family)
@@ -43,7 +44,7 @@ def tables(tmp_path: Path) -> Path:
             eligible=[BILLS[b][5] for b in bills], rules=[1] * len(bills),
         )  # fmt: skip
         in_family = [b for b in bills if BILLS[b][6]]
-        queries.write_families(
+        near_queries.write_families(
             con, parquet_path=tmp_path / "families.parquet",
             bill_ids=in_family, families=[str(BILLS[b][6]) for b in in_family],
         )  # fmt: skip

@@ -11,7 +11,7 @@ from collections.abc import Callable
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage.minhash import NUM_PERM
+from lineage.match.near.minhash import NUM_PERM
 
 # Proposed. At 0.5 the S-curve proposes 87% of pairs, and above it a pair's chance of being a
 # candidate at all is high, so what is kept does not hinge on luck. The estimates' distribution

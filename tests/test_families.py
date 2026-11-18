@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from lineage.families import FAMILY_SHARE, bill_pairs, components, families
+from lineage.match.near.families import FAMILY_SHARE, bill_pairs, components, families
 
 
 def _rows(*values: int) -> np.ndarray:

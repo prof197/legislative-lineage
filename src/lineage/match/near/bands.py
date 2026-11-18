@@ -17,10 +17,10 @@ from typing import Any, cast
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage import queries
 from lineage.core import db
 from lineage.core.disk import require_free_space
-from lineage.lsh import (
+from lineage.match.near import queries
+from lineage.match.near.lsh import (
     BANDS,
     BUCKET_CAP,
     ROWS,
@@ -32,7 +32,7 @@ from lineage.lsh import (
     threshold,
     touched_pairs,
 )
-from lineage.signatures import RowLabels, SignatureFiles
+from lineage.match.near.signatures import RowLabels, SignatureFiles
 
 # Each row (a window) costs a uint64 key and a uint32 row number in every band.
 INDEX_ROW_BYTES = BANDS * (8 + 4)
@@ -68,7 +68,7 @@ def build_bands(
     The index is written straight into memory-mapped files, and the cap sweep's per-row tables
     live in files beside it, so the operating system pages them rather than the process
     holding them (DESIGN.md#dr-3). Candidate pairs and what the cap skips are counted when the
-    pairs are formed and verified (lineage.pairs).
+    pairs are formed and verified (lineage.match.near.pairs).
     """
     n = int(sum(m.shape[0] for m in files.matrices))
     # The index, and the cap sweep's tables of the same size while it runs.
@@ -165,7 +165,8 @@ def update_bands(
 ) -> NDArray[np.uint64]:
     """Write the band index after an update into `dest`, as `build_bands` would write it over
     the updated signatures, and return the window pairs whose candidacy the update may have
-    changed (lineage.lsh.touched_pairs), as sorted distinct codes over the new row numbers.
+    changed (lineage.match.near.lsh.touched_pairs), as sorted distinct codes over the new row
+    numbers.
 
     `row_map` gives each old row's new number, -1 where it was retired; `new_values` are the
     signatures of the rows added, numbered `new_rows`. Each band is merged in turn, so only one

@@ -22,12 +22,12 @@ from typing import Any, cast
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage import queries
 from lineage.core import db
 from lineage.core.disk import require_free_space
-from lineage.minhash import NUM_PERM, SEED, Permutations, permutations, signatures
-from lineage.shingles import section_shingles
-from lineage.stoplist import apply_stoplist, load_stoplist
+from lineage.match.near import queries
+from lineage.match.near.minhash import NUM_PERM, SEED, Permutations, permutations, signatures
+from lineage.match.near.shingles import section_shingles
+from lineage.match.near.stoplist import apply_stoplist, load_stoplist
 from lineage.text.windows import WINDOW_STRIDE, WINDOW_WORDS, normalized_windows
 
 # Fork after DuckDB has started threads can deadlock the child; spawn starts each worker clean.

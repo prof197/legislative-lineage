@@ -9,11 +9,11 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
-from lineage.bands import load_band_index, update_bands
-from lineage.families import families, update_families
-from lineage.lsh import BANDS, ROWS, build_band_index, candidate_pairs
-from lineage.minhash import NUM_PERM
-from lineage.pairs import (
+from lineage.match.near.bands import load_band_index, update_bands
+from lineage.match.near.families import families, update_families
+from lineage.match.near.lsh import BANDS, ROWS, build_band_index, candidate_pairs
+from lineage.match.near.minhash import NUM_PERM
+from lineage.match.near.pairs import (
     SectionPairs,
     pair_codes,
     recompute_section_pairs,
@@ -23,8 +23,8 @@ from lineage.pairs import (
     section_pairs,
     sections_of_window_pairs,
 )
-from lineage.signatures import SignatureFiles, section_numbers
-from lineage.verify import THRESHOLD, agreements, min_agreements
+from lineage.match.near.signatures import SignatureFiles, section_numbers
+from lineage.match.near.verify import THRESHOLD, agreements, min_agreements
 
 CAP = 6
 

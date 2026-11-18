@@ -267,7 +267,7 @@ def test_the_command_writes_the_estimate_into_the_results(corpus: Path, tmp_path
 
 
 def test_the_sample_is_drawn_from_both_stages_stored_pairs(embedded_commission: Path) -> None:
-    from lineage.pairs import load_cross_state_pairs
+    from lineage.match.near.pairs import load_cross_state_pairs
     from lineage.precision import build_sample
     from lineage.semantic import BUILD_THRESHOLD
     from lineage.semantic_pairs import build_semantic_pairs, load_semantic_pairs, section_keys

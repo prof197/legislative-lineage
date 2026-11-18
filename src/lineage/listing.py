@@ -18,7 +18,7 @@ from pathlib import Path
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage.pairs import SectionPairs, load_cross_state_pairs
+from lineage.match.near.pairs import SectionPairs, load_cross_state_pairs
 from lineage.semantic import CORROBORATING, MODEL, THRESHOLD
 from lineage.semantic_pairs import SemanticPairs, load_semantic_pairs, section_keys
 from lineage.state_boilerplate import MIN_FAMILIES, flagged, has_counts, load_families_reached

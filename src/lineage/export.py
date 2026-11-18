@@ -96,7 +96,8 @@ from lineage.export_schema import (
     WithheldDocument,
 )
 from lineage.listing import ListedPairs, listed_pairs, shipped_flag
-from lineage.minhash import NUM_PERM
+from lineage.match.near.minhash import NUM_PERM
+from lineage.match.near.pairs import load_families
 from lineage.modeldocs import MODELDOCS_DIR, ModelDoc, Source, read_docs
 from lineage.origin_labels import LABELS as ORIGIN_LABELS
 from lineage.origin_labels import judged_correct, load_labels
@@ -105,7 +106,6 @@ from lineage.origin_story import FILE as ORIGIN_STORY_FILE
 from lineage.origin_story import STORY as ORIGIN_STORY
 from lineage.origin_story import story_file as origin_story_file
 from lineage.origins import OriginMatch, is_listed, read_origin_matches
-from lineage.pairs import load_families
 from lineage.relatives import bill_relatives
 from lineage.release import RELEASE_MANIFEST as RELEASE_MANIFEST
 from lineage.release import ReleaseError as ReleaseError

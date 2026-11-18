@@ -45,6 +45,7 @@ from lineage.core import db
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.core.paths import DATA
 from lineage.embed import embed, load_model
+from lineage.match.near import queries as near_queries
 from lineage.models import MODELS, require_model
 from lineage.text.boilerplate import boilerplate_kind
 from lineage.text.sections import normalize, split_sections
@@ -171,7 +172,7 @@ def distinct_units(sections_glob: str, eligible: Path) -> dict[str, dict[str, in
     hashes: dict[str, list[NDArray[np.uint64]]] = defaultdict(list)
     for path in sorted(Path().glob(sections_glob)):
         with db.connect_quiet() as con:
-            cursor = queries.matchable_sections(
+            cursor = near_queries.matchable_sections(
                 con, sections_path=path, eligible_path=eligible, display=True
             )
             while rows := cursor.fetchmany(100_000):

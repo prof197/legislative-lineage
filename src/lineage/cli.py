@@ -137,7 +137,6 @@ from lineage.flag_precision import (
     with_flag,
 )
 from lineage.incremental import update
-from lineage.index import build_index
 from lineage.intake import (
     DAYS,
     ESTIMATE,
@@ -171,6 +170,8 @@ from lineage.labels import (
 from lineage.labels import PERSON as PERSON_PREFIX
 from lineage.labels import model_labeler as model_labeler_name
 from lineage.listing import flagged_sections, shipped_flag
+from lineage.match.near.index import build_index
+from lineage.match.near.stoplist import StoplistError, build_stoplist
 from lineage.model_labels import BUDGET as LABEL_BUDGET
 from lineage.model_labels import MAX_COST as LABEL_MAX_COST
 from lineage.model_labels import MODEL_ID as LABEL_MODEL
@@ -303,7 +304,6 @@ from lineage.state_boilerplate import (
 )
 from lineage.state_boilerplate import REPORT as STATE_BOILERPLATE_REPORT
 from lineage.state_boilerplate import write_report as write_state_boilerplate_report
-from lineage.stoplist import StoplistError, build_stoplist
 from lineage.strata import PrecisionError
 from lineage.text.inventory import PLAN, REPORT, StalePlanError, build_inventory
 from lineage.text.merge import merge_texts

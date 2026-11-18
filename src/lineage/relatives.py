@@ -1,9 +1,9 @@
 """A corpus bill's relatives in other states, read from the build's stored pairs.
 
 A new text is searched (lineage.query). A bill already in the corpus has its matches stored:
-the near-duplicate stage's cross-state section pairs (lineage.pairs) and the semantic stage's
-(lineage.semantic_pairs), so its relatives are read from them with no search, as a page lists
-them (lineage.listing). They are scored by
+the near-duplicate stage's cross-state section pairs (lineage.match.near.pairs) and the semantic
+stage's (lineage.semantic_pairs), so its relatives are read from them with no search, as a page
+lists them (lineage.listing). They are scored by
 the query's own function, `lineage.query.group_matches`: the share of the bill's words in the
 sections a family matches, of the words of every section either stage searched, each family
 counted once. So a bill and a query of its text score alike.

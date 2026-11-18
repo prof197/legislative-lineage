@@ -28,12 +28,12 @@ from typing import Any, cast
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage import queries
-from lineage.bands import load_band_index
 from lineage.core import db
 from lineage.core.disk import require_free_space
-from lineage.families import FAMILY_SHARE, bill_pairs, components, linked
-from lineage.lsh import (
+from lineage.match.near import queries
+from lineage.match.near.bands import load_band_index
+from lineage.match.near.families import FAMILY_SHARE, bill_pairs, components, linked
+from lineage.match.near.lsh import (
     BANDS,
     BUCKET_CAP,
     BandIndex,
@@ -44,9 +44,9 @@ from lineage.lsh import (
     merge_sorted,
     unseen,
 )
-from lineage.minhash import NUM_PERM
-from lineage.signatures import RowLabels, SignatureFiles, signature_values
-from lineage.verify import THRESHOLD, agreements_by, min_agreements
+from lineage.match.near.minhash import NUM_PERM
+from lineage.match.near.signatures import RowLabels, SignatureFiles, signature_values
+from lineage.match.near.verify import THRESHOLD, agreements_by, min_agreements
 
 ESTIMATE_BINS = 16
 SHARE_BINS = 20

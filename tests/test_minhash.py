@@ -6,7 +6,7 @@ import pytest
 from datasketch import MinHash  # pyright: ignore[reportMissingTypeStubs]
 from numpy.typing import NDArray
 
-from lineage.minhash import (
+from lineage.match.near.minhash import (
     NUM_PERM,
     PRIME,
     _splitmix64,  # pyright: ignore[reportPrivateUsage]

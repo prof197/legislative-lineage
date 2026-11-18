@@ -36,8 +36,8 @@ from lineage import queries
 from lineage.core import db
 from lineage.core.disk import require_free_space
 from lineage.core.memory import BOUND_BYTES, peak_bytes, require_within
+from lineage.match.near.signatures import open_signatures, row_labels
 from lineage.semantic import BUILD_THRESHOLD, MODEL, THRESHOLD, K
-from lineage.signatures import open_signatures, row_labels
 from lineage.vectors import semantic_dir, vectors_dir
 
 REPORT = Path("reports/semantic_pairs.json")

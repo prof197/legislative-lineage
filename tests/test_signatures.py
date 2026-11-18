@@ -3,20 +3,20 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from lineage import queries
 from lineage.core import db
 from lineage.core.disk import InsufficientDiskSpaceError
 from lineage.data import queries as data_queries
-from lineage.minhash import NUM_PERM, permutations, signatures
-from lineage.shingles import section_shingles
-from lineage.signatures import (
+from lineage.match.near import queries as near_queries
+from lineage.match.near.minhash import NUM_PERM, permutations, signatures
+from lineage.match.near.shingles import section_shingles
+from lineage.match.near.signatures import (
     build_signatures,
     load_signatures,
     open_signatures,
     row_labels,
     signature_values,
 )
-from lineage.stoplist import StoplistError, apply_stoplist
+from lineage.match.near.stoplist import StoplistError, apply_stoplist
 from lineage.text import queries as text_queries
 from lineage.text.windows import WINDOW_WORDS, normalized_windows, window_starts
 
@@ -66,7 +66,7 @@ def tables(tmp_path: Path) -> Path:
             rules=[1] * len(bills),
         )
         stoplist = section_shingles([STOPLISTED])[0]
-        queries.write_stoplist(
+        near_queries.write_stoplist(
             con,
             parquet_path=tables / "stoplist.parquet",
             hashes=stoplist.tolist(),
@@ -105,7 +105,8 @@ def test_the_stoplist_is_applied_before_signing(tables: Path) -> None:
             rules=[1, 1],
         )
         stoplist = np.array(
-            queries.read_stoplist(con, parquet_path=tables / "stoplist.parquet"), dtype=np.uint32
+            near_queries.read_stoplist(con, parquet_path=tables / "stoplist.parquet"),
+            dtype=np.uint32,
         )
 
     build_signatures(tables, workers=1, floor_bytes=0)

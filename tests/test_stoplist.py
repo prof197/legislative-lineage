@@ -6,8 +6,8 @@ import pytest
 
 from lineage.core import db
 from lineage.data import queries as data_queries
-from lineage.shingles import shingle_hashes
-from lineage.stoplist import (
+from lineage.match.near.shingles import shingle_hashes
+from lineage.match.near.stoplist import (
     StoplistError,
     apply_stoplist,
     build_stoplist,

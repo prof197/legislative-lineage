@@ -40,12 +40,12 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage import queries
 from lineage.align import Embedder, align
 from lineage.core import db
 from lineage.core.intervals import weighted_share, wilson
 from lineage.labels import Item
 from lineage.listing import listed_pairs
+from lineage.match.near import queries as near_queries
 from lineage.precision import SEED as PRECISION_SEED
 from lineage.precision import latest_correct
 from lineage.relatives import RELATIVES_SHOWN, bill_relatives
@@ -171,7 +171,7 @@ def build_relatives_sample(
     ids numbered from `first`."""
     section_bills, ordinals = section_keys(tables_dir)
     with db.connect_quiet() as con:
-        states = queries.bill_states(con, bills_glob=str(tables_dir / "bills" / "*.parquet"))
+        states = near_queries.bill_states(con, bills_glob=str(tables_dir / "bills" / "*.parquet"))
     in_state = np.fromiter(
         (states.get(b) == state for b in section_bills), dtype=bool, count=len(section_bills)
     )

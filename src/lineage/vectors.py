@@ -37,6 +37,7 @@ from lineage.core import db
 from lineage.core.disk import require_free_space
 from lineage.core.memory import peak_bytes
 from lineage.embed import embed, load_model
+from lineage.match.near import queries as near_queries
 from lineage.models import MODELS, MODELS_DIR, require_model
 from lineage.text.windows import WINDOW_WORDS, display_windows
 
@@ -155,7 +156,7 @@ def build_plan(tables_dir: Path, *, floor_bytes: int) -> Plan:
             ordinals: list[int] = []
             numbers: list[int] = []
             text_ids: list[int] = []
-            scan = queries.matchable_sections(
+            scan = near_queries.matchable_sections(
                 con, sections_path=part, eligible_path=eligible, display=True
             )
             while batch := scan.fetchmany(_FETCH_SECTIONS):

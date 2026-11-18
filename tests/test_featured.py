@@ -14,7 +14,7 @@ from lineage.featured import (
     pairs_with,
 )
 from lineage.listing import ListedPairs
-from lineage.pairs import SectionPairs
+from lineage.match.near.pairs import SectionPairs
 from lineage.semantic_pairs import SemanticPairs
 
 # Sections 0-1 are the anchor's, 2-3 relative r's, 4 another bill's.
