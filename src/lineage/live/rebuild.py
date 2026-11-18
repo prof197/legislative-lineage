@@ -94,7 +94,7 @@ SESSIONS = Path("snapshot/sessions.csv")
 MAX_SHARE = 0.001  # the stoplist's share, as `lineage boilerplate` counts it
 REPORT = "rebuild.json"
 # The suffix of an archive for a session the snapshot lacks, as lineage.live.updates.write_archives
-# and lineage.live.incremental name it.
+# and lineage.live.incremental_records name it.
 NEW_ARCHIVE = "json_days"
 
 
