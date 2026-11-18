@@ -27,7 +27,6 @@ from typing import Any
 
 from lineage import queries
 from lineage.core import db
-from lineage.generic_sections import generic_kind
 from lineage.labels import (
     Item,
     Pair,
@@ -53,6 +52,7 @@ from lineage.modeldocs import MODELDOCS_DIR, ModelDoc, load_text
 from lineage.origin_precision import BUDGET, SPEND, MatchKey, OriginPrecisionError, match_key
 from lineage.origins import OriginMatch, SectionPair
 from lineage.query import matchable_sections
+from lineage.text.generic_sections import generic_kind
 
 PROMPT = PASSAGES_HIGH
 COMMAND = "uv run lineage origin-label --live"
@@ -155,7 +155,7 @@ def pair_sections(
     root: Path = MODELDOCS_DIR,
 ) -> dict[MatchKey, list[dict[str, Any]]]:
     """Every section pair each match rests on, the strongest (the one labeled) marked, each
-    side's length in words and its generic kind (lineage.generic_sections), with no text."""
+    side's length in words and its generic kind (lineage.text.generic_sections), with no text."""
     wanted = set(keys)
     by_key = {match_key(m): m for m in matches if match_key(m) in wanted}
     held = {d.id: d for d in docs}

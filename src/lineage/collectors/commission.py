@@ -48,9 +48,9 @@ from lineage.collect_base import (
     read_robots,
     slugify,
 )
-from lineage.extract import ExtractError, pdf_text
 from lineage.modeldocs import Source
 from lineage.modeltext import ModelTextError, clean_act, docx_text
+from lineage.text.extract import ExtractError, pdf_text
 from lineage.ulc import ENACTMENTS, HELD_OUT_ENACTMENTS, load_enactments
 
 SITE = "https://www.uniformlaws.org"

@@ -38,7 +38,7 @@ from lineage.core import db
 from lineage.core.paths import DATA
 from lineage.embed import BATCH_SIZE, embed, load_model
 from lineage.models import MODELS
-from lineage.windows import WINDOW_WORDS, display_windows
+from lineage.text.windows import WINDOW_WORDS, display_windows
 
 SEED = 20261109
 TABLES = DATA / "tables"

@@ -7,6 +7,7 @@ import pytest
 from lineage import queries
 from lineage.core import db
 from lineage.data import queries as data_queries
+from lineage.text import queries as text_queries
 
 # id: (state, session, identifier, title, sections as (text, boilerplate), eligible, family)
 BILLS = {
@@ -28,10 +29,10 @@ def tables(tmp_path: Path) -> Path:
     ids = [r[0] for r in rows]
     n = len(rows)
     with db.connect_quiet() as con:
-        queries.write_sections(
+        text_queries.write_sections(
             con,
             parquet_path=tmp_path / "s.parquet",
-            columns=queries.SectionColumns(
+            columns=text_queries.SectionColumns(
                 ids, [r[1] for r in rows], [None] * n, [r[2] for r in rows],
                 [r[2] for r in rows], [True] * n, [r[3] for r in rows],
             ),

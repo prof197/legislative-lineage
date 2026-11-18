@@ -41,14 +41,14 @@ from tokenizers import Tokenizer
 from benchmarks.minhash import machine
 from lineage import queries
 from lineage.acts import ACT_NAMES, ACTS, load_act
-from lineage.boilerplate import boilerplate_kind
 from lineage.core import db
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.core.paths import DATA
 from lineage.embed import embed, load_model
 from lineage.models import MODELS, require_model
-from lineage.sections import normalize, split_sections
-from lineage.windows import WINDOW_STRIDE, WINDOW_WORDS, display_windows, window_counts
+from lineage.text.boilerplate import boilerplate_kind
+from lineage.text.sections import normalize, split_sections
+from lineage.text.windows import WINDOW_STRIDE, WINDOW_WORDS, display_windows, window_counts
 
 COMMAND = "uv run python -m benchmarks.semantic_units"
 REPORT = Path("reports/semantic_sizing.json")

@@ -5,6 +5,7 @@ from pathlib import Path
 
 from lineage import queries
 from lineage.core import db
+from lineage.text import queries as text_queries
 
 
 def _bills(path: Path) -> None:
@@ -30,7 +31,7 @@ def test_fetched_text_replaces_the_exported_text_and_names_its_source(tmp_path: 
     fetched.write_text(json.dumps(row) + "\n")
 
     with db.connect_quiet() as con:
-        queries.write_texts(con, bills_path=bills, fetched_path=fetched, out_path=out)
+        text_queries.write_texts(con, bills_path=bills, fetched_path=fetched, out_path=out)
         rows = con.execute(
             "SELECT id, text, text_source, text_url, text_version FROM read_parquet($p) "
             "ORDER BY id",

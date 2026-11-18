@@ -24,17 +24,17 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage.boilerplate import boilerplate_kind
 from lineage.embed import embed, load_model
 from lineage.lsh import band_keys
 from lineage.minhash import permutations, signatures
 from lineage.models import MODELS_DIR
 from lineage.pair_data import LABELS, PAIR_DATA_DIR, SPLITS, Pair, load_split
-from lineage.sections import normalize
 from lineage.shingles import section_shingles
 from lineage.stoplist import apply_stoplist, load_stoplist
+from lineage.text.boilerplate import boilerplate_kind
+from lineage.text.sections import normalize
+from lineage.text.windows import WINDOW_WORDS, display_windows, normalized_windows
 from lineage.verify import THRESHOLD, min_agreements
-from lineage.windows import WINDOW_WORDS, display_windows, normalized_windows
 
 COMMAND = "uv run lineage eval pair-data"
 REPORT = Path("reports/pair_data.json")

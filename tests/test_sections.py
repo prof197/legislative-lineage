@@ -1,6 +1,6 @@
 import pytest
 
-from lineage.sections import WINDOW_WORDS, clean, normalize, split_sections
+from lineage.text.sections import WINDOW_WORDS, clean, normalize, split_sections
 
 
 def _words(n: int, word: str = "word") -> str:

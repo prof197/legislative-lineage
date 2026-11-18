@@ -17,13 +17,13 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
 
-from lineage import queries
 from lineage.core import db
 from lineage.core.paths import DATA
-from lineage.sections import clean, normalize, split_sections
-from lineage.text_fetch import Job, fetch_all, host_of
-from lineage.text_inventory import load_plan
-from lineage.text_rules import RULES, TextRules, load_rules, usable
+from lineage.text import queries
+from lineage.text.fetch import Job, fetch_all, host_of
+from lineage.text.inventory import load_plan
+from lineage.text.rules import RULES, TextRules, load_rules, usable
+from lineage.text.sections import clean, normalize, split_sections
 
 COMMAND = "uv run lineage text sample"
 REPORT = Path("reports/text_quality.json")
@@ -225,9 +225,9 @@ def run_sample(
         "with_text_per_cell": WITH_TEXT,
         "usable_means": (
             f"at least {rules.min_words} words, at least {rules.min_real_word_share:.0%} of them "
-            "real words (lineage.text_rules.usable)"
+            "real words (lineage.text.rules.usable)"
         ),
-        "clean_means": "the text splits at section headings (lineage.sections.split_sections)",
+        "clean_means": "the text splits at section headings (lineage.text.sections.split_sections)",
         "states": evaluate(sample, _read_store(store), theirs, states, rules),
     }
     report_path.parent.mkdir(parents=True, exist_ok=True)

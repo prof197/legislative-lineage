@@ -8,8 +8,8 @@ it. A state's cursor is read from its recorded pages: a state that fails, or tha
 daily limit stops, resumes on the next run from its last recorded page, and the others are not
 held back. A 401 or 403 stops the whole run, since no state would fare better with that key.
 
-Text. The API carries no bill text, so each record's chosen version (lineage.versions) is
-fetched through the text layer (lineage.text_fetch: robots.txt, pacing, backoff, extraction),
+Text. The API carries no bill text, so each record's chosen version (lineage.text.versions) is
+fetched through the text layer (lineage.text.fetch: robots.txt, pacing, backoff, extraction),
 with its state's format, PDF reading and content element (rules/text_layer.toml), into the
 intake's own store. A fetched text joins the day in the record itself, as `raw_text` and
 `raw_text_url`, the fields an archive's record carries its text in: `lineage.updates.fold`
@@ -57,10 +57,10 @@ from lineage.openstates_api import (
     bulk_record,
     jurisdiction,
 )
-from lineage.text_fetch import Job, fetch_all, host_of, stored
-from lineage.text_rules import RULES, TextRules, load_rules, usable
+from lineage.text.fetch import Job, fetch_all, host_of, stored
+from lineage.text.rules import RULES, TextRules, load_rules, usable
+from lineage.text.versions import Link, Version, choose_version
 from lineage.updates import BILLS_SUFFIX, DAY_FILE, Folded, fold, load_day
-from lineage.versions import Link, Version, choose_version
 
 COMMAND = "uv run lineage intake"
 INTAKE = DATA / "intake"

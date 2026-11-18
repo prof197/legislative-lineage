@@ -40,19 +40,25 @@ from numpy.typing import NDArray
 
 from lineage import queries
 from lineage.align import Alignment, align
-from lineage.boilerplate import boilerplate_kind
 from lineage.core import db
 from lineage.core.disk import require_free_space
 from lineage.embed import embed as embed_texts
 from lineage.embed import load_model
-from lineage.generic_sections import MIN_WORDS, Inside, generic_inside, generic_kind, words_outside
 from lineage.listing import MeaningHit, NearHit, SectionKey, flagged_sections
 from lineage.modeldocs import ModelDoc, ModelDocError, load_text
 from lineage.models import MODELS_DIR
 from lineage.origins import BillSpan, OriginMatch, SectionPair, Stage
 from lineage.query import near_duplicate_hits, require_index, sign_query
-from lineage.sections import normalize, split_sections
 from lineage.semantic import CORROBORATING, THRESHOLD, Embedder, open_search, search_sections
+from lineage.text.boilerplate import boilerplate_kind
+from lineage.text.generic_sections import (
+    MIN_WORDS,
+    Inside,
+    generic_inside,
+    generic_kind,
+    words_outside,
+)
+from lineage.text.sections import normalize, split_sections
 
 SHARE_PLACES = 4  # as the export and the results round a share
 COSINE_PLACES = 4
@@ -66,9 +72,9 @@ class ModelText:
     raw: str
     display: list[str]
     words: list[int]  # each section's normalized words, the shares' unit
-    # Sections a match leaves out on the model's side (lineage.generic_sections)
+    # Sections a match leaves out on the model's side (lineage.text.generic_sections)
     generic: frozenset[int] = frozenset()
-    # Generic text inside a section that is not generic (lineage.generic_sections), by section
+    # Generic text inside a section that is not generic (lineage.text.generic_sections), by section
     inside: dict[int, Inside] = field(default_factory=dict[int, Inside])
 
     def counted(self, q: int) -> int:
@@ -291,7 +297,7 @@ def match_texts(
 class BillSection:
     display: str
     words: int
-    generic: bool  # left out of a match on the bill's side (lineage.generic_sections)
+    generic: bool  # left out of a match on the bill's side (lineage.text.generic_sections)
     inside: Inside | None = None  # generic text inside a section that is not generic
 
     @property

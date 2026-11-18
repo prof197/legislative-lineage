@@ -35,7 +35,7 @@ from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.core.http import moved, open_url
 from lineage.core.pace import MIN_INTERVAL_SECONDS
 from lineage.core.robots import Robots, read_robots
-from lineage.extract import ExtractError, extract
+from lineage.text.extract import ExtractError, extract
 
 # A bill's PDF is rarely over a few megabytes; an appropriations act can pass 30.
 MAX_BODY_BYTES = 64 << 20
@@ -62,7 +62,7 @@ class Job:
     format: str  # "html" or "pdf": the link's format as the export lists it
     note: str  # the version's label
     date: str
-    layout: bool = False  # read a PDF by word position (lineage.extract.pdf_text)
+    layout: bool = False  # read a PDF by word position (lineage.text.extract.pdf_text)
 
 
 @dataclass(frozen=True, slots=True)
@@ -74,7 +74,7 @@ class Fetched:
     note: str
     date: str
     outcome: str  # ok, not_usable, robots, too_large, http_error, server_error, network_error,
-    # extract_error; not_in_bulk (lineage.ca_bulk)
+    # extract_error; not_in_bulk (lineage.text.ca_bulk)
     status: int | None  # the response's HTTP status; for outcome robots, robots.txt's
     error: str | None
     body_bytes: int

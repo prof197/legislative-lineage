@@ -58,9 +58,9 @@ from lineage.collect_base import (
     read_robots,
     slugify,
 )
-from lineage.extract import ExtractError, pdf_text
 from lineage.modeldocs import Source
 from lineage.modeltext import ModelTextError, docx_text, drop_instructions
+from lineage.text.extract import ExtractError, pdf_text
 
 SITE = "https://ncoil.org"
 LIBRARY = f"{SITE}/model-laws-resolutions/model-laws-library/"

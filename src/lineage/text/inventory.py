@@ -2,7 +2,7 @@
 
 Open States stays the source for bills, actions and version links; its stored text is unusable
 for about a third of eligible records. The inventory chooses each eligible record's version to
-fetch (lineage.versions), groups the records by host and link format, and reads each host's
+fetch (lineage.text.versions), groups the records by host and link format, and reads each host's
 robots.txt for this project's User-Agent. It writes the fetch plan to `data/text/plan.parquet`
 and the counts to `reports/text_inventory.json`. Only robots.txt is requested. The plan carries
 a fingerprint of what built it, and the commands that read it refuse one built from anything
@@ -21,7 +21,6 @@ from urllib.parse import urlsplit
 
 import duckdb
 
-from lineage import queries
 from lineage.core import db
 from lineage.core.http import HOST_MOVES, moved
 from lineage.core.paths import DATA
@@ -35,13 +34,14 @@ from lineage.data.stats import (
     GEORGIA_ENACTING,
     GEORGIA_NOTICE,
 )
-from lineage.sections import split_sections
-from lineage.versions import Link, Version, choose_version
+from lineage.text import queries
+from lineage.text.sections import split_sections
+from lineage.text.versions import Link, Version, choose_version
 
 COMMAND = "uv run lineage text inventory"
 REPORT = Path("reports/text_inventory.json")
 PLAN = DATA / "text/plan.parquet"
-MANIFEST = Path(__file__).parents[2] / "snapshot" / "manifest.json"
+MANIFEST = Path(__file__).parents[3] / "snapshot" / "manifest.json"
 PATTERNS = queries.TextPatterns(
     blank=BLANK_PATTERN,
     notice=GEORGIA_NOTICE,

@@ -28,19 +28,19 @@ from numpy.typing import NDArray
 
 from lineage import queries
 from lineage.bands import load_band_index
-from lineage.boilerplate import boilerplate_kind
 from lineage.core import db
 from lineage.listing import MeaningHit, NearHit, SectionKey, listed_hits
 from lineage.lsh import BANDS, BUCKET_CAP, BandIndex, band_keys
 from lineage.minhash import NUM_PERM, permutations, signatures
-from lineage.sections import normalize, split_sections
 from lineage.semantic import CORROBORATING, SemanticSearch, search_sections
 from lineage.semantic import THRESHOLD as SEMANTIC_THRESHOLD
 from lineage.shingles import section_shingles
 from lineage.signatures import open_signatures, signature_sections, signature_values
 from lineage.stoplist import apply_stoplist, load_stoplist
+from lineage.text.boilerplate import boilerplate_kind
+from lineage.text.sections import normalize, split_sections
+from lineage.text.windows import normalized_windows
 from lineage.verify import THRESHOLD, min_agreements
-from lineage.windows import normalized_windows
 
 
 class IndexMissingError(Exception):

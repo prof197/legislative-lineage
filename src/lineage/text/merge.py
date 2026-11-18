@@ -1,7 +1,7 @@
 """`lineage text merge`: each record's text, and where it came from, in the `texts` table.
 
 A record takes the text the text layer fetched for it when the fetch kept usable text and the
-current rules still call for it (lineage.text_run.plan_jobs); otherwise the text the source
+current rules still call for it (lineage.text.run.plan_jobs); otherwise the text the source
 exported. `texts/<name>.parquet` mirrors `bills/<name>.parquet`, one row per record, so the
 splitter keeps its one worker per file. Later stages read text only from here, and each row
 names its source, so coverage and recall can be counted both ways. See DESIGN.md#dr-6.
@@ -13,13 +13,13 @@ import tempfile
 from collections.abc import Iterator
 from pathlib import Path
 
-from lineage import queries
-from lineage.ca_bulk import HOST as BULK_HOST
 from lineage.core import db
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
-from lineage.text_inventory import PLAN, load_plan
-from lineage.text_rules import RULES, load_rules, replaced_states
-from lineage.text_run import QUALITY, STORE, plan_jobs
+from lineage.text import queries
+from lineage.text.ca_bulk import HOST as BULK_HOST
+from lineage.text.inventory import PLAN, load_plan
+from lineage.text.rules import RULES, load_rules, replaced_states
+from lineage.text.run import QUALITY, STORE, plan_jobs
 
 # Values of texts.text_source.
 EXPORTED = "openstates"

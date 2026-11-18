@@ -31,7 +31,6 @@ from lineage.collectors.ncoil import (
     model_file,
     model_name,
 )
-from lineage.extract import pdf_text
 from lineage.modeldocs import (
     MODELDOCS_DIR,
     load_text,
@@ -41,6 +40,7 @@ from lineage.modeldocs import (
     sha256,
 )
 from lineage.modeltext import docx_text
+from lineage.text.extract import pdf_text
 from tests.recorded_site import COLLECT, RecordedSite, docx_bytes, pdf_bytes
 
 DAY = date(2026, 11, 15)

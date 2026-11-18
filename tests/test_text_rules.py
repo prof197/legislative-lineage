@@ -6,7 +6,7 @@ from typing import Any
 
 import pytest
 
-from lineage.text_rules import TextRules, load_rules, replaced_states, usable
+from lineage.text.rules import TextRules, load_rules, replaced_states, usable
 
 RULES_FILE = """
 [usable]
@@ -101,7 +101,7 @@ def test_the_committed_rules_agree_with_the_committed_quality_report() -> None:
 
 
 def test_full_run_jobs_follow_each_states_rule(rules: TextRules) -> None:
-    from lineage.text_run import plan_jobs
+    from lineage.text.run import plan_jobs
 
     def row(i: str, state: str, kind: str, html: bool = True) -> dict[str, Any]:
         return {

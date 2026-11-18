@@ -11,7 +11,7 @@ from pathlib import Path
 import pytest
 
 from lineage.acts import ACTS, ActTextError, enacted_text, load_act
-from lineage.sections import normalize
+from lineage.text.sections import normalize
 
 ACT = """\
 Uniform Widget Registration Act

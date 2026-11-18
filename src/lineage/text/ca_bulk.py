@@ -23,8 +23,8 @@ from pathlib import Path
 
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.core.http import download
-from lineage.extract import ExtractError, html_text
-from lineage.text_fetch import Fetched
+from lineage.text.extract import ExtractError, html_text
+from lineage.text.fetch import Fetched
 
 HOST = "downloads.leginfo.legislature.ca.gov"
 VERSIONS_TABLE = "BILL_VERSION_TBL.dat"

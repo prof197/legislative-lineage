@@ -17,11 +17,11 @@ from pathlib import Path
 
 import duckdb
 
-from lineage import queries
-from lineage.boilerplate import boilerplate_kind
 from lineage.core import db
 from lineage.core.disk import require_free_space
-from lineage.sections import normalize, split_sections
+from lineage.text import queries
+from lineage.text.boilerplate import boilerplate_kind
+from lineage.text.sections import normalize, split_sections
 
 _FETCH_BILLS = 500
 _PART_SECTIONS = 10_000

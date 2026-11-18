@@ -175,7 +175,8 @@ def test_each_document_is_stored_with_provenance(tmp_path: Path) -> None:
     assert (lantern.robots, lantern.leaked, lantern.collected_on) == ("allowed", False, DAY)
     assert lantern.raw_sha256 == sha256(fetched)
     assert raw_path(lantern, root).read_bytes() == fetched
-    # The PDF's text layer is read as lineage.extract reads it; words, not layout, are compared.
+    # The PDF's text layer is read as lineage.text.extract reads it; words, not layout, are
+    # compared.
     assert load_text(lantern, root).split() == LANTERN_CLEANED.split()
 
     mooring = docs["goldwater/harbor-fairness-act-mooring"]

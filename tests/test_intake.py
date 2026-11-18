@@ -23,7 +23,6 @@ from urllib.parse import parse_qs, urlsplit
 import pytest
 from typer.testing import CliRunner
 
-from lineage import queries
 from lineage.cli import app
 from lineage.core import db, pace
 from lineage.core.http import open_url, request_url
@@ -37,8 +36,9 @@ from lineage.intake import (
     run_intake,
 )
 from lineage.openstates_api import INCLUDE, PER_PAGE, Bill, bills_url, bulk_record
-from lineage.text_fetch import Job, fetch_one, host_of, run_host
-from lineage.text_rules import load_rules, usable
+from lineage.text import queries as text_queries
+from lineage.text.fetch import Job, fetch_one, host_of, run_host
+from lineage.text.rules import load_rules, usable
 from lineage.updates import fold, load_day, record_changes, text_hash, write_archives
 from tests.conftest import SESSIONS
 
@@ -354,7 +354,7 @@ def test_the_rebuild_reads_the_fetched_text(tmp_path: Path) -> None:
         assert result.exit_code == 0, result.output
 
     with db.connect_quiet() as con:
-        stored = queries.stored_texts(
+        stored = text_queries.stored_texts(
             con, bills_glob=str(tables / "bills" / "*.parquet"), ids=[DE_HB1, MI_HB4001]
         )
     latest = records(tmp_path / "days" / "2026-01-13")

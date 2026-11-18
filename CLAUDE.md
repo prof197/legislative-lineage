@@ -196,7 +196,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   origin_recall.py  `lineage eval origins`: model-to-bill recall from the resolved answer keys; a sealed key only with --final
   origin_precision.py  `lineage origin-sample` and `eval origin-precision`: seeded samples of origin matches, the tuning part by share band, the reporting part by stage at the floor; v2's label budget; the reporting reading by source
   origin_labels.py  `lineage origin-label`: a match's strongest section pair, both sections and their passages, asked in one batch; rows by text hash
-  generic_sections.py  a section's generic kind by its heading or opening, within its kind's bound: definitions, short title, findings, severability and the rest, or lineage.boilerplate's kinds
+  generic_sections.py  a section's generic kind by its heading or opening, within its kind's bound: definitions, short title, findings, severability and the rest, or lineage.text.boilerplate's kinds
   withheld.py     `lineage withhold`: the documents withheld from pages because their labeled matches are mostly wrong, as a committed report the export, the live track and the feed read
   origin_threshold.py  `lineage eval origin-threshold`: each candidate floor's weighted precision and development recall
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)

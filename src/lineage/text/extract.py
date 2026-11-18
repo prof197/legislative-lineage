@@ -1,6 +1,6 @@
 """Bill text from a legislature's HTML or PDF, as plain lines for the splitter.
 
-Extraction keeps lines and drops presentation. It does not clean: lineage.sections.clean strips
+Extraction keeps lines and drops presentation. It does not clean: lineage.text.sections.clean strips
 line-number gutters, running headers and invisible characters from fetched and exported text
 alike, so both are split the same way. Struck text is dropped. In a bill it is current law the
 bill deletes, which is not the bill's own language, and matching it would link bills that

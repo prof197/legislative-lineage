@@ -39,7 +39,7 @@ from lineage.modeldocs import (
     read_versions,
     sha256,
 )
-from lineage.sections import split_sections
+from lineage.text.sections import split_sections
 
 FIXTURES = Path(__file__).parent / "fixtures" / "collect" / "states-project"
 DAY = date(2026, 11, 15)

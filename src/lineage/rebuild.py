@@ -58,16 +58,16 @@ from lineage.models import MODELS, MODELS_DIR
 from lineage.neighbors import EF_SEARCH as NEIGHBORS_EF_SEARCH
 from lineage.neighbors import RECALL_FLOOR, SPEC, build_neighbors
 from lineage.origins import origins_path, write_origin_matches
-from lineage.sectioning import build_sections
 from lineage.semantic import MODEL
 from lineage.semantic_pairs import build_semantic_pairs, section_keys
 from lineage.state_boilerplate import build_state_boilerplate, has_counts, load_families_reached
 from lineage.stoplist import build_stoplist
-from lineage.text_inventory import PLAN as TEXT_PLAN
-from lineage.text_merge import BULK, FETCHED, merge_texts
-from lineage.text_rules import RULES as TEXT_RULES
-from lineage.text_run import QUALITY as TEXT_QUALITY
-from lineage.text_run import STORE as TEXT_STORE
+from lineage.text.inventory import PLAN as TEXT_PLAN
+from lineage.text.merge import BULK, FETCHED, merge_texts
+from lineage.text.rules import RULES as TEXT_RULES
+from lineage.text.run import QUALITY as TEXT_QUALITY
+from lineage.text.run import STORE as TEXT_STORE
+from lineage.text.sectioning import build_sections
 from lineage.updates import BILLS_SUFFIX, Folded, fold, load_days, text_hash
 from lineage.vectors import (
     SHARD_TEXTS,

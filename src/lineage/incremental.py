@@ -52,7 +52,6 @@ from numpy.typing import NDArray
 
 from lineage import queries
 from lineage.bands import load_band_index, update_bands
-from lineage.boilerplate import boilerplate_kind
 from lineage.core import db
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.data import queries as data_queries
@@ -79,7 +78,6 @@ from lineage.pairs import (
     write_section_pairs,
 )
 from lineage.relatives import bill_relatives
-from lineage.sections import normalize, split_sections
 from lineage.semantic import BUILD_THRESHOLD, MODEL, Embedder, K
 from lineage.semantic_pairs import (
     SemanticPairs,
@@ -96,6 +94,10 @@ from lineage.signatures import (
     sign_part,
 )
 from lineage.stoplist import load_stoplist
+from lineage.text import queries as text_queries
+from lineage.text.boilerplate import boilerplate_kind
+from lineage.text.sections import normalize, split_sections
+from lineage.text.windows import WINDOW_WORDS, display_windows
 from lineage.updates import (
     CHANGES_DIR,
     SHARE_PLACES,
@@ -121,7 +123,6 @@ from lineage.vectors import (
     vectors_dir,
     write_plan,
 )
-from lineage.windows import WINDOW_WORDS, display_windows
 
 SESSIONS = Path(__file__).parents[2] / "snapshot" / "sessions.csv"
 UPDATES_DIR = "updates"
@@ -527,7 +528,7 @@ def _records(
             if not wanted:
                 continue
             found = queries.texts_of(con, texts_path=view.root / "texts" / name, ids=wanted)
-            columns = queries.SectionColumns([], [], [], [], [], [], [])
+            columns = text_queries.SectionColumns([], [], [], [], [], [], [])
             for bill_id, text in found:
                 split = split_sections(text, state)
                 for s in split.sections:
@@ -541,7 +542,7 @@ def _records(
                     columns.boilerplate.append(boilerplate_kind(normalized))
             if columns.bill_id:
                 part = _next_part(tables / "sections", Path(name).stem)
-                queries.write_sections(
+                text_queries.write_sections(
                     con, parquet_path=view.fresh(f"sections/{part}.parquet"), columns=columns
                 )
                 new_parts[name] = part

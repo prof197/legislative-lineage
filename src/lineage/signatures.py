@@ -1,7 +1,7 @@
 """Build the signatures table: one MinHash signature for every window of a matchable section.
 
 A section of up to `WINDOW_WORDS` words is one window; a longer one is cut into overlapping
-windows (lineage.windows). Sections files are signed in parallel, one per worker process. Each
+windows (lineage.text.windows). Sections files are signed in parallel, one per worker process. Each
 writes a dense uint32 matrix with one row per window (`<stem>.npy`, which memory-maps without
 conversion) and the keys of those rows (`<stem>.parquet`: bill id, section ordinal, window).
 Shingles are stoplisted before signing. A window left with no shingle has no signature. A
@@ -28,7 +28,7 @@ from lineage.core.disk import require_free_space
 from lineage.minhash import NUM_PERM, SEED, Permutations, permutations, signatures
 from lineage.shingles import section_shingles
 from lineage.stoplist import apply_stoplist, load_stoplist
-from lineage.windows import WINDOW_STRIDE, WINDOW_WORDS, normalized_windows
+from lineage.text.windows import WINDOW_STRIDE, WINDOW_WORDS, normalized_windows
 
 # Fork after DuckDB has started threads can deadlock the child; spawn starts each worker clean.
 _SPAWN = multiprocessing.get_context("spawn")

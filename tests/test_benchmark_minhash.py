@@ -9,6 +9,7 @@ from lineage.core import db, memory
 from lineage.data import queries as data_queries
 from lineage.minhash import NUM_PERM
 from lineage.signatures import build_signatures
+from lineage.text import queries as text_queries
 
 TEXTS = [
     "the department of revenue shall publish the rates each year",
@@ -24,10 +25,10 @@ def tables(tmp_path: Path) -> Path:
     ids = [f"b{i}" for i in range(len(TEXTS))]
     n = len(TEXTS)
     with db.connect_quiet() as con:
-        queries.write_sections(
+        text_queries.write_sections(
             con,
             parquet_path=tables / "sections" / "s.parquet",
-            columns=queries.SectionColumns(
+            columns=text_queries.SectionColumns(
                 ids, [1] * n, [None] * n, TEXTS, TEXTS, [True] * n, [None] * n
             ),
         )

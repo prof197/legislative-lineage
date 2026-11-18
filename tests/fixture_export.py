@@ -20,14 +20,14 @@ from lineage import queries
 from lineage.collect import collectors
 from lineage.core import db
 from lineage.export import RESULTS, build_export
-from lineage.generic_sections import generic_kind
 from lineage.labels import SAME_PROVISION, text_sha256
 from lineage.modeldocs import ModelDoc, Source, sha256, store
 from lineage.origin_labels import PROMPT
 from lineage.origins import BillSpan, OriginMatch, SectionPair, write_origin_matches
 from lineage.query import matchable_sections
-from lineage.sections import normalize
 from lineage.semantic_pairs import build_semantic_pairs
+from lineage.text.generic_sections import generic_kind
+from lineage.text.sections import normalize
 from lineage.withheld import Tally
 from lineage.withheld import write_report as write_withheld
 from tests.conftest import (
@@ -104,7 +104,7 @@ def hand_made_origins(
             text_sha256=sha256(raw),
         )
         store(source, doc, raw=raw, text=text, root=modeldocs)
-        # Generic sections are left out of a match's shares (lineage.generic_sections).
+        # Generic sections are left out of a match's shares (lineage.text.generic_sections).
         words = sum(len(t.split()) for _, t in sections if generic_kind(normalize(t)) is None)
         model_sections = [norm for _, norm in matchable_sections(text)[1]]
         pairs = [

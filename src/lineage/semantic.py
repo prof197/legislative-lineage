@@ -32,8 +32,8 @@ from numpy.typing import NDArray
 from lineage import queries
 from lineage.ann import Neighbors, exact_search
 from lineage.core import db
+from lineage.text.windows import WINDOW_WORDS, display_windows
 from lineage.vectors import EmbedError, load_plan, load_vectors, rows_of, semantic_dir
-from lineage.windows import WINDOW_WORDS, display_windows
 
 MODEL = "bge-small-en-v1.5"
 # reports/pair_data.json: semantic.models[MODEL].at_precision["0.9"].threshold

@@ -30,8 +30,8 @@ from typing import Literal
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage.sections import normalize
 from lineage.semantic import CORROBORATING
+from lineage.text.sections import normalize
 
 THRESHOLD = CORROBORATING
 

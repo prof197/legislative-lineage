@@ -285,7 +285,6 @@ from lineage.schedule import (
     weekly_job_steps,
     weekly_report,
 )
-from lineage.sectioning import SectioningError, build_sections
 from lineage.semantic import MODEL as SEMANTIC_MODEL
 from lineage.semantic import THRESHOLD as THRESHOLD_STAGE
 from lineage.semantic import SemanticSearch, open_search
@@ -306,12 +305,13 @@ from lineage.state_boilerplate import REPORT as STATE_BOILERPLATE_REPORT
 from lineage.state_boilerplate import write_report as write_state_boilerplate_report
 from lineage.stoplist import StoplistError, build_stoplist
 from lineage.strata import PrecisionError
-from lineage.text_inventory import PLAN, REPORT, StalePlanError, build_inventory
-from lineage.text_merge import merge_texts
-from lineage.text_quality import REPORT as QUALITY
-from lineage.text_quality import STORE, run_sample
-from lineage.text_run import REPORT as FETCH_REPORT
-from lineage.text_run import run_fetch
+from lineage.text.inventory import PLAN, REPORT, StalePlanError, build_inventory
+from lineage.text.merge import merge_texts
+from lineage.text.quality import REPORT as QUALITY
+from lineage.text.quality import STORE, run_sample
+from lineage.text.run import REPORT as FETCH_REPORT
+from lineage.text.run import run_fetch
+from lineage.text.sectioning import SectioningError, build_sections
 from lineage.threshold import CANDIDATES as THRESHOLD_CANDIDATES
 from lineage.threshold import FIRST_CHOICE as THRESHOLD_FIRST_CHOICE
 from lineage.threshold import REPORT as THRESHOLD_REPORT

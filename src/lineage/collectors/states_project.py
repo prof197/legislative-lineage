@@ -11,7 +11,7 @@ state bills. The pages give no date of their own, so no document is dated.
 Matching reads the sample language, not the page's asides: a summary section, an approach's
 description, the "Sample language:" label and the examples line are dropped, as are bracketed
 instructions to the drafter (`lineage.modeltext.drop_instructions`). A heading such as
-"Section 1 (Title):" is written "Section 1. Title" so that `lineage.sections` splits at it.
+"Section 1 (Title):" is written "Section 1. Title" so that `lineage.text.sections` splits at it.
 
 Fetching is on (`SITE_FETCH`): read on 2026-11-15, the policy pages' terms say nothing on
 automated reading, bind a visitor by use alone, with nothing to accept first, and robots.txt

@@ -16,8 +16,8 @@ from lineage.data.doctypes import (
 )
 from lineage.data.ingest import ingest
 from lineage.data.snapshot import scan, write_manifest
-from lineage.sectioning import build_sections
-from lineage.text_merge import merge_texts
+from lineage.text.merge import merge_texts
+from lineage.text.sectioning import build_sections
 from tests.conftest import SESSIONS
 
 HEADER = "state,type,title,unless,decision,reason\n"

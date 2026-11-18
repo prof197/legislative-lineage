@@ -3,10 +3,10 @@ which say nothing of where its substance came from.
 
 Origin matching leaves them out of a match on both sides (lineage.origin_matching), as ruled at
 the step 47 review: of EPPC's 71 listed matches, a census, 54 were wrong, and 52 of those rested
-on two models' severability sections, too long for lineage.boilerplate's whole-section patterns
+on two models' severability sections, too long for lineage.text.boilerplate's whole-section patterns
 (a case-law recital runs 500 to 700 words). A section is generic when it is boilerplate as
-lineage.boilerplate flags it, or when its heading, right after its number, names a generic kind:
-definitions, a short title, findings or purpose, severability, an effective date, rules of
+lineage.text.boilerplate flags it, or when its heading, right after its number, names a generic
+kind: definitions, a short title, findings or purpose, severability, an effective date, rules of
 construction, or a standard article of an interstate compact. A definitions section is also
 known by its opening ("as used in this act", "unless the context otherwise requires"). A
 heading's word met deeper in a provision names nothing, and "general provisions" is not a kind,
@@ -24,7 +24,7 @@ words (the longest real one read, a severability recital, ran 697), findings and
 articles at 1,200 (findings ran to 1,114), and past its bound a section is a provision.
 Definitions have no bound: real ones run to thousands of words.
 
-Patterns run on normalized text (lineage.sections.normalize: lowercase words, no punctuation).
+Patterns run on normalized text (lineage.text.sections.normalize: lowercase words, no punctuation).
 See DESIGN.md#origin-matches.
 
 See DESIGN.md#dr-11.
@@ -35,8 +35,8 @@ from bisect import bisect_left, bisect_right
 from collections.abc import Sequence
 from dataclasses import dataclass
 
-from lineage.boilerplate import boilerplate_kind
-from lineage.sections import normalize
+from lineage.text.boilerplate import boilerplate_kind
+from lineage.text.sections import normalize
 
 # How far into a section its opening runs, in words, for a definitions section's phrasing.
 OPENING_WORDS = 30
@@ -117,7 +117,7 @@ _FINDINGS_OPENING = re.compile(
 
 def generic_kind(normalized: str) -> str | None:
     """The generic kind a section is, or None for a provision: boilerplate first, as
-    lineage.boilerplate flags it, then by heading, then by its opening, each kind within its
+    lineage.text.boilerplate flags it, then by heading, then by its opening, each kind within its
     bound (MAX_WORDS)."""
     if (kind := boilerplate_kind(normalized)) is not None:
         return kind
@@ -302,7 +302,7 @@ def generic_inside(displays: Sequence[str], *, continuous: bool) -> list[Inside 
     """Each section's generic text inside it, or None when it has none: a compact's standard
     articles, where sectioning left them inside a longer section, and an Article V
     application's shared wording, in a text that applies under Article V. `continuous` says the
-    sections are windows of one undivided text (lineage.sections' fallback), so an article
+    sections are windows of one undivided text (lineage.text.sections' fallback), so an article
     begun in one window runs on into the next; sections split at headings are read apart."""
     application = any(_ARTICLE_V.search(normalize(d)) for d in displays)
     if not continuous:

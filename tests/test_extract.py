@@ -6,7 +6,7 @@ import pytest
 from pypdf import PdfWriter
 from pypdf.generic import ContentStream, DictionaryObject, NameObject
 
-from lineage.extract import ExtractError, extract, html_text, pdf_text
+from lineage.text.extract import ExtractError, extract, html_text, pdf_text
 
 BILL_HTML = b"""<html><head><title>HB 12</title><style>p {margin:0}</style>
 <script>var x = 1;</script></head><body>

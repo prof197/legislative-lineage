@@ -49,9 +49,9 @@ from lineage.collect_base import (
     provenance,
     read_robots,
 )
-from lineage.extract import ExtractError, extract
 from lineage.modeldocs import Source
 from lineage.modeltext import ModelTextError, docx_text, drop_instructions
+from lineage.text.extract import ExtractError, extract
 
 EPPC = "https://eppc.org"
 MEDIA = "https://media.eppc.org"
@@ -369,7 +369,7 @@ def media_type(url: str, content_type: str) -> str | None:
 
 def document_text(got: Fetched, media: str) -> str:
     """The text of a fetched model: Word through lineage.modeltext, PDF and HTML through
-    lineage.extract, as the text layer reads them."""
+    lineage.text.extract, as the text layer reads them."""
     if media == DOCX:
         return docx_text(got.body)
     return extract(got.body, got.content_type if media == "text/html" else media)

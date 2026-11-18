@@ -4,7 +4,7 @@ import json
 import zipfile
 from pathlib import Path
 
-from lineage.ca_bulk import bill_id, caml_text, latest_versions, parse_versions, process_zip
+from lineage.text.ca_bulk import bill_id, caml_text, latest_versions, parse_versions, process_zip
 
 ROWS = [
     b"`20250AB7699INT`\t`202520260AB76`\t99\t2024-12-16 00:00:00\t`Introduced`\tNULL\t"

@@ -19,7 +19,7 @@ will embed. See DESIGN.md#windows.
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage.sections import normalize
+from lineage.text.sections import normalize
 
 # The size of a typical section: the median section split at headings has 97 words
 # (reports/index.json, section_words), and 94 keeps the stride at exactly half. Every unit is

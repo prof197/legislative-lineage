@@ -15,8 +15,8 @@ from lineage.data.stats import (
     georgia_local_notices,
     write_coverage,
 )
-from lineage.sectioning import build_sections
-from lineage.text_merge import merge_texts
+from lineage.text.merge import merge_texts
+from lineage.text.sectioning import build_sections
 from tests.conftest import SESSIONS
 
 

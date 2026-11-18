@@ -18,6 +18,7 @@ from lineage.pairs import (
     section_pairs,
 )
 from lineage.signatures import load_signatures
+from lineage.text import queries as text_queries
 
 COPIED = "a person who knowingly sells a catalytic converter without a receipt commits a felony"
 SECTIONS = {
@@ -38,10 +39,10 @@ def tables(tmp_path: Path) -> Path:
     texts = [SECTIONS[b][1] for b in ids]
     n = len(ids)
     with db.connect_quiet() as con:
-        queries.write_sections(
+        text_queries.write_sections(
             con,
             parquet_path=tables / "sections" / "s.parquet",
-            columns=queries.SectionColumns(
+            columns=text_queries.SectionColumns(
                 ids, [1] * n, [None] * n, texts, texts, [True] * n, [None] * n
             ),
         )
@@ -192,10 +193,10 @@ def test_a_provision_inside_another_states_long_section_is_a_verified_pair(
     (tables / "bills").mkdir()
     ids, states, texts = ["a1", "k1"], ["AL", "AK"], [provision, long]
     with db.connect_quiet() as con:
-        queries.write_sections(
+        text_queries.write_sections(
             con,
             parquet_path=tables / "sections" / "s.parquet",
-            columns=queries.SectionColumns(
+            columns=text_queries.SectionColumns(
                 ids, [1, 1], [None, None], texts, texts, [True, True], [None, None]
             ),
         )

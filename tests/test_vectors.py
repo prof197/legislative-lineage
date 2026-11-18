@@ -8,6 +8,7 @@ from numpy.typing import NDArray
 from lineage import queries, vectors
 from lineage.core import db
 from lineage.data import queries as data_queries
+from lineage.text import queries as text_queries
 from lineage.vectors import (
     EmbedError,
     build_plan,
@@ -40,7 +41,7 @@ def tables(tmp_path: Path) -> Path:
     halves = {"a.parquet": keys[:2], "b.parquet": keys[2:]}
     with db.connect_quiet() as con:
         for name, part in halves.items():
-            columns = queries.SectionColumns(
+            columns = text_queries.SectionColumns(
                 bill_id=[b for b, _ in part],
                 ordinal=[o for _, o in part],
                 heading=[None] * len(part),
@@ -49,7 +50,9 @@ def tables(tmp_path: Path) -> Path:
                 by_heading=[True] * len(part),
                 boilerplate=["effective date" if k == BOILERPLATE else None for k in part],
             )
-            queries.write_sections(con, parquet_path=tables / "sections" / name, columns=columns)
+            text_queries.write_sections(
+                con, parquet_path=tables / "sections" / name, columns=columns
+            )
         bills = sorted({b for b, _ in keys})
         data_queries.write_eligibility(
             con,

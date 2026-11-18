@@ -2,9 +2,9 @@
 
 The jobs come from the fetch plan and rules/text_layer.toml. A record is fetched when its state
 is fetched and either its stored text is unusable or its state's fetched text replaces Open
-States' (lineage.text_rules.replaced_states). Each record takes its state's preferred link
+States' (lineage.text.rules.replaced_states). Each record takes its state's preferred link
 format, or the next one when the record lacks it, and a PDF is read as the state's rules say.
-California's records come from the Legislature's bulk download (lineage.ca_bulk). Everything
+California's records come from the Legislature's bulk download (lineage.text.ca_bulk). Everything
 else is disclosed, with its reason, in reports/text_fetch.json. See DESIGN.md#dr-6.
 """
 
@@ -13,14 +13,14 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
 
-from lineage import queries
-from lineage.ca_bulk import fetch_california
 from lineage.core import db
 from lineage.core.disk import DEFAULT_FLOOR_BYTES
 from lineage.core.paths import DATA
-from lineage.text_fetch import Job, fetch_all, host_of
-from lineage.text_inventory import load_plan
-from lineage.text_rules import RULES, TextRules, load_rules, replaced_states, usable
+from lineage.text import queries
+from lineage.text.ca_bulk import fetch_california
+from lineage.text.fetch import Job, fetch_all, host_of
+from lineage.text.inventory import load_plan
+from lineage.text.rules import RULES, TextRules, load_rules, replaced_states, usable
 
 COMMAND = "uv run lineage text fetch"
 STORE = DATA / "text/full"

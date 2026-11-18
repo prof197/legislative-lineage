@@ -8,7 +8,7 @@ import pytest
 
 from lineage.core import db
 from lineage.core.robots import Robots, parse_robots
-from lineage.text_inventory import (
+from lineage.text.inventory import (
     StalePlanError,
     build_inventory,
     load_plan,
@@ -110,7 +110,7 @@ def test_the_fingerprint_follows_the_snapshot_and_the_document_type_rules(tmp_pa
 def test_stored_text_the_sections_no_longer_hold_is_split_again(tmp_path: Path) -> None:
     # Once a record's fetched text is split, the sections table says nothing about whether
     # its stored text yields a section; the inventory splits the stored text itself.
-    from lineage.text_inventory import _rechecked  # pyright: ignore[reportPrivateUsage]
+    from lineage.text.inventory import _rechecked  # pyright: ignore[reportPrivateUsage]
 
     bills = tmp_path / "bills.parquet"
     with db.connect_quiet() as con:

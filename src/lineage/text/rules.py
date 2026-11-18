@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from lineage.sections import clean
+from lineage.text.sections import clean
 
 RULES = Path("rules/text_layer.toml")
 FORMATS = frozenset({"html", "pdf"})

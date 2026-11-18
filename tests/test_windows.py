@@ -3,9 +3,9 @@ from itertools import pairwise
 import numpy as np
 import pytest
 
-from lineage.sections import normalize
 from lineage.shingles import section_shingles
-from lineage.windows import (
+from lineage.text.sections import normalize
+from lineage.text.windows import (
     WINDOW_STRIDE,
     WINDOW_WORDS,
     display_windows,

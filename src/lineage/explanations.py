@@ -30,7 +30,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from lineage.sections import normalize
+from lineage.text.sections import normalize
 
 MAX_CLAIMS = 4
 MAX_SUMMARY = 200
