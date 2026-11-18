@@ -16,6 +16,7 @@ from lineage.cli.app import (
     TablesOption,
     app,
     eval_app,
+    exits_on,
 )
 from lineage.core.paths import DATA
 from lineage.evals.answer_key import (
@@ -70,11 +71,8 @@ def featured_command(
     ] = FEATURED_REPORT,
 ) -> None:
     """The featured stories' section pairs: each anchor against its listed relatives."""
-    try:
+    with exits_on(FeaturedError, SemanticPairsError, StateBoilerplateError):
         rows, doc = build_featured(tables, answer_key=answer_key)
-    except (FeaturedError, SemanticPairsError, StateBoilerplateError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     write_featured(rows, doc, pairs_path=out, report_path=report)
     for name, story in doc["stories"].items():
         typer.echo(
@@ -145,20 +143,17 @@ def export_command(
     state = state.upper()
     target = out if out is not None else EXPORT_DIR / state
     if package_tag is not None:
-        try:
+        with exits_on(ExportError, ReleaseError):
             asset, checksum = package_export(
                 target, state=state, tag=package_tag, out_dir=target.parent
             )
             write_release_manifest(asset, tag=package_tag, path=release_manifest)
-        except (ExportError, ReleaseError) as e:
-            typer.echo(f"error: {e}", err=True)
-            raise typer.Exit(1) from e
         typer.echo(
             f"{checksum.read_text().strip()} ({asset.stat().st_size / 1e6:.1f} MB) -> {asset}"
         )
         typer.echo(f"pinned -> {release_manifest}; commit it to deploy this release")
         return
-    try:
+    with exits_on(ExportError, NotCachedError, SemanticPairsError, StateBoilerplateError):
         doc = build_export(
             tables,
             state=state,
@@ -172,9 +167,6 @@ def export_command(
             results=results,
             progress=typer.echo,
         )
-    except (ExportError, NotCachedError, SemanticPairsError, StateBoilerplateError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     report.write_text(json.dumps(doc, indent=1) + "\n")
     typer.echo(
         f"{doc['hosted_bills']} bills, {doc['comparisons']} comparisons, "
@@ -193,7 +185,7 @@ def eval_readme(
     ] = EXPORTED_ONLY,
 ) -> None:
     """Regenerate the README's results table from the results files."""
-    try:
+    with exits_on(ResultsTableError, bare=True):
         text = rendered_readme(
             readme.read_text(),
             json.loads(results.read_text()),
@@ -202,8 +194,5 @@ def eval_readme(
             stories=render_stories(hosted_state()),
             withheld=json.loads(WITHHELD_REPORT.read_text()) if WITHHELD_REPORT.exists() else None,
         )
-    except ResultsTableError as e:
-        typer.echo(str(e), err=True)
-        raise typer.Exit(1) from None
     readme.write_text(text)
     typer.echo(f"results table <- {results}, {exported_only} -> {readme}")

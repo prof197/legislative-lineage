@@ -22,6 +22,8 @@ from lineage.cli.app import (
     TablesOption,
     app,
     eval_app,
+    exits_on,
+    fail,
     model_embedder,
 )
 from lineage.core.disk import GiB, InsufficientDiskSpaceError
@@ -115,11 +117,8 @@ def collect_models_command(
     """Collect one source's model legislation through its collector, honoring robots.txt ->
     <modeldocs>/<source>/, <reports>/<source>.json (DESIGN.md#model-documents)."""
     context = CollectContext(root=root, floor_bytes=int(min_free_gib * GiB))
-    try:
+    with exits_on(CollectError, ModelDocError, InsufficientDiskSpaceError):
         report = run_collector(source, context)
-    except (CollectError, ModelDocError, InsufficientDiskSpaceError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     path = write_collect_report(report, reports)
     withdrawn = f", {len(report.withdrawn)} withdrawn" if report.withdrawn else ""
     typer.echo(
@@ -150,7 +149,14 @@ def origins_command(
         typer.echo(f"{counted.matches} matches counted -> {write_origins_report(counted, report)}")
         return
     started = time.perf_counter()
-    try:
+    with exits_on(
+        ModelDocError,
+        InsufficientDiskSpaceError,
+        IndexMissingError,
+        StoplistError,
+        EmbedError,
+        ModelError,
+    ):
         matches = match_models(
             tables,
             docs,
@@ -158,16 +164,6 @@ def origins_command(
             model=SEMANTIC_MODEL,
             floor_bytes=int(min_free_gib * GiB),
         )
-    except (
-        ModelDocError,
-        InsufficientDiskSpaceError,
-        IndexMissingError,
-        StoplistError,
-        EmbedError,
-        ModelError,
-    ) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     path = write_origin_matches(tables, matches)
     counted = origins_report(matches, docs, seconds=time.perf_counter() - started)
     typer.echo(
@@ -198,10 +194,9 @@ def origin_sample_command(
     """Draw an origin precision sample and project what labeling it would cost; asks nothing
     (DESIGN.md#origin-matches)."""
     if part not in ORIGIN_PARTS:
-        typer.echo(f"error: no part {part!r}; one of {', '.join(ORIGIN_PARTS)}", err=True)
-        raise typer.Exit(1)
+        fail(f"error: no part {part!r}; one of {', '.join(ORIGIN_PARTS)}")
     chosen = ORIGIN_PARTS[part]
-    try:
+    with exits_on(OriginPrecisionError, ModelDocError):
         rows, report = draw_part(
             read_origin_matches(tables), chosen, excluded=excluded_keys(chosen), final=final
         )
@@ -221,9 +216,6 @@ def origin_sample_command(
         plan = plan_labels(chars, batch=batch)
         path = write_part(rows, report | {"label_plan": plan.as_dict()}, chosen)
         refuse_over_cap(plan)
-    except (OriginPrecisionError, ModelDocError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     typer.echo(
         f"{len(rows)} matches -> {path}; labels projected at most ${plan.projected:,.2f}, "
         f"${plan.spent:,.2f} of ${plan.budget:,.2f} spent"
@@ -252,9 +244,8 @@ def withhold_command(
     matches, fewer than half judged correct; and those withheld by hand with --doc after a held
     day's review, which are kept when the report is written again (DESIGN.md#origin-matches)."""
     if (doc is None) != (note is None):
-        typer.echo("error: --doc and --note go together", err=True)
-        raise typer.Exit(1)
-    try:
+        fail("error: --doc and --note go together")
+    with exits_on(OriginPrecisionError, ModelDocError):
         docs = [d for c in collectors().values() for d in read_docs(c.source, root)]
         matches = read_origin_matches(tables)
         found = withheld_tallies(matches, docs, tables, load_origin_labels(labels))
@@ -272,9 +263,6 @@ def withhold_command(
                     on=datetime.date.today().isoformat(),
                 )
             ]
-    except (OriginPrecisionError, ModelDocError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     path = write_withheld(found, out, reviewed)
     held = [t for t in found if t.withheld]
     for t in held:
@@ -314,10 +302,9 @@ def origin_label_command(
     """Label an origin sample's matches by a model on each one's strongest section pair; asks
     only with --live (DESIGN.md#origin-matches)."""
     if part not in ORIGIN_PARTS:
-        typer.echo(f"error: no part {part!r}; one of {', '.join(ORIGIN_PARTS)}", err=True)
-        raise typer.Exit(1)
+        fail(f"error: no part {part!r}; one of {', '.join(ORIGIN_PARTS)}")
     chosen = ORIGIN_PARTS[part]
-    try:
+    with exits_on(OriginPrecisionError, ModelDocError, ModelError):
         if not chosen.sample.exists():
             raise OriginPrecisionError(f"no {chosen.sample}; run `lineage origin-sample` first")
         rows = load_origin_sample(chosen.sample)
@@ -335,9 +322,6 @@ def origin_label_command(
             )
         ]
         planned = plan_origin_labels(items, spend_path=spend, max_cost=max_cost)
-    except (OriginPrecisionError, ModelDocError, ModelError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     head = (
         f"{planned.items} matches under {ORIGIN_PROMPT.version}, projected at most "
         f"${planned.projected:,.2f}; ${planned.spent:,.2f} of v2's ${planned.budget:,.2f} spent"
@@ -347,8 +331,7 @@ def origin_label_command(
         return
     refusal = planned.refusal() if batch_id is None else None
     if refusal:
-        typer.echo(f"error: {refusal}", err=True)
-        raise typer.Exit(1)
+        fail(f"error: {refusal}")
     typer.echo(head)
     today = datetime.date.today().isoformat()
     batches = anthropic_batches()
@@ -391,12 +374,11 @@ def eval_origins(
     """Origin recall: what share of each model's enactments its origin matches name
     (DESIGN.md#origin-matches)."""
     if key not in ORIGIN_KEYS:
-        typer.echo(f"error: no answer key {key!r}; one of {', '.join(ORIGIN_KEYS)}", err=True)
-        raise typer.Exit(1)
+        fail(f"error: no answer key {key!r}; one of {', '.join(ORIGIN_KEYS)}")
     answer_key = ORIGIN_KEYS[key]
     name = f"origins_{answer_key.name}"
     previous = json.loads(results.read_text()).get(name) if results.exists() else None
-    try:
+    with exits_on(OriginRecallError):
         acts = {e.act for e in load_key(answer_key.path).enactments}
         section = origin_recall(
             read_origin_matches(tables),
@@ -410,9 +392,6 @@ def eval_origins(
             else None,
             previous=previous,
         )
-    except OriginRecallError as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     write_results(results, name, section)
     r = section["recall"]["pooled"]
     status = f" ({section['status']})" if section["status"] else ""
@@ -432,7 +411,7 @@ def eval_origin_threshold(
     """Each candidate floor's precision on the origin tuning sample, beside its development
     recall (DESIGN.md#origin-matches)."""
     tuning = ORIGIN_PARTS["tuning"]
-    try:
+    with exits_on(OriginPrecisionError, OriginRecallError, ValueError):
         if not tuning.sample.exists():
             raise OriginPrecisionError(f"no {tuning.sample}; run `lineage origin-sample` first")
         sizes = json.loads(ORIGIN_SAMPLE_REPORT.read_text())["tuning"]["strata"]
@@ -446,9 +425,6 @@ def eval_origin_threshold(
             load_key(answer_key.path),
             same_slug(acts, "commission"),
         )
-    except (OriginPrecisionError, OriginRecallError, ValueError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     report.write_text(json.dumps(doc, indent=1) + "\n")
     for f in doc["floors"]:
         p = f["precision"]
@@ -486,14 +462,10 @@ def eval_origin_precision(
     """Origin precision on a reporting sample, read once: overall, by stage, by source, and
     ALEC's against the rest (DESIGN.md#origin-matches)."""
     if part not in ORIGIN_RESULTS_SECTIONS:
-        typer.echo(
-            f"error: no reporting part {part!r}; one of {', '.join(ORIGIN_RESULTS_SECTIONS)}",
-            err=True,
-        )
-        raise typer.Exit(1)
+        fail(f"error: no reporting part {part!r}; one of {', '.join(ORIGIN_RESULTS_SECTIONS)}")
     reporting = ORIGIN_PARTS[part]
     name = ORIGIN_RESULTS_SECTIONS[part]
-    try:
+    with exits_on(OriginPrecisionError, ModelDocError, ValueError):
         doc: dict[str, Any] = json.loads(results.read_text()) if results.exists() else {}
         # A reading published before this part existed moves to its own part's name first.
         moved = origin_retired(doc)
@@ -523,9 +495,6 @@ def eval_origin_precision(
         read = origin_precision_reading(
             rows, correct, json.loads(ORIGIN_SAMPLE_REPORT.read_text())[part]
         )
-    except (OriginPrecisionError, ModelDocError, ValueError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     section = (
         {
             "command": f"uv run lineage eval origin-precision --part {part}",
@@ -537,12 +506,10 @@ def eval_origin_precision(
         | read
     )
     if intervals_only and without_origin_intervals(section) != without_origin_intervals(doc[name]):
-        typer.echo(
+        fail(
             f"error: the reading would change other than its intervals ({results}, {name}); "
-            "it is read once",
-            err=True,
+            "it is read once"
         )
-        raise typer.Exit(1)
     write_results(results, name, section)
 
     def line(name: str, g: Mapping[str, Any]) -> str:
@@ -569,9 +536,8 @@ def eval_origin_census(
     chosen = ORIGIN_PARTS.get(part)
     if chosen is None or not chosen.census or chosen.source is None:
         censuses = ", ".join(n for n, c in ORIGIN_PARTS.items() if c.census)
-        typer.echo(f"error: no census {part!r}; one of {censuses}", err=True)
-        raise typer.Exit(1)
-    try:
+        fail(f"error: no census {part!r}; one of {censuses}")
+    with exits_on(OriginPrecisionError, ModelDocError, ValueError):
         if not chosen.sample.exists():
             raise OriginPrecisionError(f"no {chosen.sample}; run `lineage origin-sample` first")
         rows = load_origin_sample(chosen.sample)
@@ -584,9 +550,6 @@ def eval_origin_census(
         docs = [d for c in collectors().values() for d in read_docs(c.source, root)]
         sections = origin_pair_sections(wrong, read_origin_matches(tables), docs, tables, root=root)
         read = origin_census_reading(rows, correct, sections, source=chosen.source)
-    except (OriginPrecisionError, ModelDocError, ValueError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     section = {
         "command": f"uv run lineage eval origin-census --part {part}",
         "sample": str(chosen.sample),

@@ -22,6 +22,8 @@ from lineage.cli.app import (
     SessionsOption,
     TablesOption,
     eval_app,
+    exits_on,
+    fail,
     model_embedder,
     pair_alignments,
     pair_data_app,
@@ -181,22 +183,27 @@ def eval_commission(
 ) -> None:
     """Commission recall: what share of each uniform act's enactments its text finds."""
     if held_out and not final:
-        typer.echo(
+        fail(
             "The held-out acts are evaluated only at the end of M5, once per configuration it "
-            "settled (DESIGN.md#commission-recall). Pass --final for that run.",
-            err=True,
+            "settled (DESIGN.md#commission-recall). Pass --final for that run."
         )
-        raise typer.Exit(1)
     if final and not held_out:
-        typer.echo("--final applies only with --held-out.", err=True)
-        raise typer.Exit(1)
+        fail("--final applies only with --held-out.")
     flagged = flagged_sections(tables)
     previous: dict[str, Any] | None = (
         json.loads(results.read_text()).get("commission_held_out")
         if held_out and results.exists()
         else None
     )
-    try:
+    with exits_on(
+        CommissionError,
+        IndexMissingError,
+        StoplistError,
+        UlcError,
+        EmbedError,
+        ModelError,
+        bare=True,
+    ):
         if held_out:
             check_held_out_configuration(previous, run_configuration(semantic, flagged))
         search = semantic_search(tables) if semantic else None
@@ -214,16 +221,6 @@ def eval_commission(
         )
         if held_out:
             section = with_earlier_runs(section, previous)
-    except (
-        CommissionError,
-        IndexMissingError,
-        StoplistError,
-        UlcError,
-        EmbedError,
-        ModelError,
-    ) as e:
-        typer.echo(str(e), err=True)
-        raise typer.Exit(1) from None
     write_results(results, "commission_held_out" if held_out else "commission", section)
     pooled = section["recall"]["pooled"]
     for label, key in (("all enactments", "all"), ("with text", "with_text")):
@@ -279,11 +276,10 @@ def eval_answer_key(
     Resolving the held-out lists runs no matching, so it may run before the final evaluation.
     """
     if origins and not held_out:
-        typer.echo("error: --origins resolves the held-out lists; pass --held-out", err=True)
-        raise typer.Exit(1)
+        fail("error: --origins resolves the held-out lists; pass --held-out")
     held_acts = ORIGIN_HELD_OUT_ACTS if origins else HELD_OUT_ACTS
     out = out or ((ORIGINS_HELD_OUT_KEY if origins else HELD_OUT_KEY) if held_out else ANSWER_KEY)
-    try:
+    with exits_on(UlcError, bare=True):
         note, rows = build_answer_key(
             tables,
             enactments_path=enactments or (HELD_OUT_ENACTMENTS if held_out else ENACTMENTS),
@@ -291,9 +287,6 @@ def eval_answer_key(
             development_path=ENACTMENTS if held_out else None,
             acts=frozenset(held_acts) if held_out else None,
         )
-    except UlcError as e:
-        typer.echo(str(e), err=True)
-        raise typer.Exit(1) from None
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(render_answer_key(rows, note))
     counted = {(r["act"], r["jurisdiction"], r["year"]) for r in rows if r["counted"] == "yes"}
@@ -309,11 +302,8 @@ def pair_data_fetch(
     min_free_gib: MinFreeOption = 20.0,
 ) -> None:
     """Download the human-annotated pair files at their pinned commit -> data/pair_data/."""
-    try:
+    with exits_on(FetchError, InsufficientDiskSpaceError):
         fetched, present = fetch_pair_data(directory, floor=int(min_free_gib * GiB))
-    except (FetchError, InsufficientDiskSpaceError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     typer.echo(f"{fetched} fetched, {present} already present -> {directory}")
 
 
@@ -337,12 +327,9 @@ def eval_agreement(
 ) -> None:
     """A person's labels against a model's on the subsample: weighted kappa, cutoff agreement,
     and the precision each gives on the same pairs."""
-    try:
+    with exits_on(LabelError, PrecisionError, AgreementError):
         items, kept = current_items(sample, tables, labels)
         doc = agreement(items, kept, model_labeler=model_labeler, sizes=load_sizes(strata))
-    except (LabelError, PrecisionError, AgreementError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     # One comparison per model labeler, so a re-label at another effort keeps the first.
     previous: dict[str, Any] = (
         json.loads(results.read_text()).get("label_agreement", {}) if results.exists() else {}
@@ -387,18 +374,14 @@ def eval_relatives(
     """The precision of what a page lists, from the reporting sample's labels; with --part, a
     tuning sample's, recorded apart."""
     if part not in RELATIVES_PARTS:
-        typer.echo(f"error: --part is one of {', '.join(RELATIVES_PARTS)}, not {part!r}", err=True)
-        raise typer.Exit(1)
+        fail(f"error: --part is one of {', '.join(RELATIVES_PARTS)}, not {part!r}")
     sample, draw = RELATIVES_PARTS[part].sample, RELATIVES_PARTS[part].report
-    try:
+    with exits_on(LabelError, ModelError):
         items, kept = current_items(sample, tables, labels)
         # The passages the labels were asked on, so the shares with and without them are real.
         items = with_passages(items, model_embedder(models_dir))
         pages = load_pages(sample)
         drawn = json.loads(draw.read_text())
-    except (LabelError, ModelError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     section: dict[str, Any] = {
         "command": "uv run lineage eval relatives",
         "sample": str(sample),
@@ -462,9 +445,8 @@ def eval_threshold(
         sample.resolve() == RELATIVES_PARTS["reporting"].sample.resolve()
         or "reporting" in sample.name
     ):
-        typer.echo("error: the reporting sample is read only once the threshold is final", err=True)
-        raise typer.Exit(1)
-    try:
+        fail("error: the reporting sample is read only once the threshold is final")
+    with exits_on(LabelError, ThresholdError, KeyError):
         items, kept = current_items(sample, tables, labels)
         pages = load_pages(sample)
         commission = json.loads(results.read_text())["commission"]
@@ -475,9 +457,6 @@ def eval_threshold(
         doc["state_boilerplate_flag_at_first_choice"] = flag_at_threshold(
             tables, items, kept, pages, labeler=model_labeler, threshold=THRESHOLD_FIRST_CHOICE
         )
-    except (LabelError, ThresholdError, KeyError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     report.write_text(json.dumps(doc, indent=1) + "\n")
     for option in doc["options"]:
         name = option["option"] + (f" {option['threshold']}" if "threshold" in option else "")
@@ -526,7 +505,7 @@ def eval_precision(
 ) -> None:
     """Precision per stratum, stage and overall, from people's labels and, apart, a model's,
     with the state boilerplate flag off and on."""
-    try:
+    with exits_on(LabelError, PrecisionError, StateBoilerplateError, ThresholdError):
         items, kept = current_items(sample, tables, labels)
         sizes = load_sizes(strata)
         measured = estimate(items, kept, sizes, model_labeler=model_labeler)
@@ -556,9 +535,6 @@ def eval_precision(
                 dropped_items=dropped,
                 dropped_labeler=flagged_labeler,
             )
-    except (LabelError, PrecisionError, StateBoilerplateError, ThresholdError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     section: dict[str, Any] = {"command": "uv run lineage eval precision", **measured}
     write_results(results, "precision", section)
     for who in ("person", "provisional_model"):
@@ -610,7 +586,7 @@ def eval_faithfulness(
 ) -> None:
     """Faithfulness, model-judged: the share of kept claims that describe their cited spans
     correctly, beside the hard check that every kept claim cites spans that exist and differ."""
-    try:
+    with exits_on(ValueError, NotCachedError, ModelError, BudgetError):
         aligned = pair_alignments(load_pairs(pairs), tables, models_dir if paraphrase else None)
         prompts = [prompt for prompt, _ in aligned]
         claims, counts = claims_to_judge(prompts, [view for _, view in aligned], cache=cache)
@@ -625,9 +601,6 @@ def eval_faithfulness(
             today = datetime.date.today().isoformat()
             meter = Meter(spend, "judge", JUDGE_MODEL, JUDGE_PROMPT, today, projected=projected)
             judge_claims(todo, ask=anthropic_judge(), path=judgments, meter=meter, today=today)
-    except (ValueError, NotCachedError, ModelError, BudgetError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     doc = faithfulness(claims, load_judgments(judgments), counts)
     problems = check_cache(cache)
     section: dict[str, Any] = {
@@ -669,13 +642,10 @@ def eval_cost(
     semantic: SemanticOption = True,
 ) -> None:
     """Cost and runtime per stage: the build's from its reports, each query's timed here."""
-    try:
+    with exits_on(IndexMissingError, EmbedError, ModelError, ActTextError):
         require_index(tables)
         search = semantic_search(tables) if semantic else None
         doc = cost_report(tables, acts, reports, search)
-    except (IndexMissingError, EmbedError, ModelError, ActTextError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     write_cost_report(doc, report)
     for act, timed in doc["query"].items():
         warm = ", ".join(f"{k} {v:.2f}s" for k, v in timed["warm"].items())
@@ -704,13 +674,9 @@ def eval_pair_data(
     names = model or list(MODELS)
     unknown = [n for n in names if n not in MODELS]
     if unknown:
-        typer.echo(f"error: unknown model {', '.join(unknown)}", err=True)
-        raise typer.Exit(1)
-    try:
+        fail(f"error: unknown model {', '.join(unknown)}")
+    with exits_on(PairDataError, ModelError, StoplistError):
         doc = evaluate_pairs(tables, names, data_dir=directory, models_dir=models_dir)
-    except (PairDataError, ModelError, StoplistError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     write_pair_report(doc, report)
     near = doc["near_duplicate"]
     typer.echo(f"near-duplicate: precision {near['precision']}, recall {near['recall']} (test)")

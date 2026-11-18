@@ -17,6 +17,8 @@ from lineage.cli.app import (
     ParaphraseOption,
     TablesOption,
     app,
+    exits_on,
+    fail,
     model_embedder,
 )
 from lineage.core.paths import DATA
@@ -112,13 +114,10 @@ def label(
     models_dir: ModelsOption = MODELS_DIR,
 ) -> None:
     """Label sampled matches by hand, unrelated (0) to identical (4); stop and resume at will."""
-    try:
+    with exits_on(LabelError, ModelError):
         who = person(labeler)
         embedder = model_embedder(models_dir) if paraphrase else None
         items, kept = current_items(sample, tables, labels)
-    except (LabelError, ModelError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     todo = pending(items, kept)
     if not todo:
         typer.echo(f"Every pair in {sample} has a label in {labels}.")
@@ -161,13 +160,10 @@ def label_page(
     models_dir: ModelsOption = MODELS_DIR,
 ) -> None:
     """Write a labeling page for a phone: the pending pairs, blind to stages, for an artifact."""
-    try:
+    with exits_on(LabelError, ModelError):
         embedder = model_embedder(models_dir) if paraphrase else None
         items, kept = current_items(sample, tables, labels)
         data = label_page_data(pending(items, kept), handle=labeler, sample=sample, embed=embedder)
-    except (LabelError, ModelError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     page = write_label_page(data, out)
     typer.echo(f"{len(data['pairs'])} pending pairs -> {page} and {out / LABEL_PAGE_DATA}")
 
@@ -191,12 +187,9 @@ def label_import(
     labels: LabelsAppendOption = LABELS_PATH,
 ) -> None:
     """Append a labeling page's saved labels to the labels file, each checked against the sample."""
-    try:
+    with exits_on(LabelError):
         items, kept = current_items(sample, tables, labels)
         rows = imported_label_rows(load_saved_labels(saved), items, kept, handle=labeler)
-    except LabelError as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     append_label_rows(labels, rows)
     left = len(pending(items, [*kept, *rows]))
     typer.echo(f"{len(rows)} labels imported, {left} pairs of {sample} left -> {labels}")
@@ -223,11 +216,8 @@ def precision_sample(
         sample = FLAGGED_SAMPLE if sample == PRECISION_SAMPLE else sample
         report = report or FLAGGED_SAMPLE_REPORT
     report = report or PRECISION_SAMPLE_REPORT
-    try:
+    with exits_on(PrecisionError, SemanticPairsError, StateBoilerplateError):
         rows, doc = build_flagged_sample(tables) if flagged else build_sample(tables)
-    except (PrecisionError, SemanticPairsError, StateBoilerplateError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     write_sample(rows, doc, sample_path=sample, report_path=report)
     sizes = ", ".join(f"{name} {s['drawn']} of {s['size']:,}" for name, s in doc["strata"].items())
     typer.echo(f"{len(rows)} pairs drawn: {sizes} -> {sample}, {report}")
@@ -249,11 +239,8 @@ def agreement_sample(
     ] = AGREEMENT_SAMPLE_REPORT,
 ) -> None:
     """Draw the pairs a person labels to check the model's labels, stratified by stage."""
-    try:
+    with exits_on(LabelError, PrecisionError, AgreementError):
         drawn = draw_subsample(load_sample(source))
-    except (LabelError, PrecisionError, AgreementError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     doc = subsample_report(drawn, source=source, size=AGREEMENT_PAIRS, seed=AGREEMENT_SEED)
     write_subsample(subsample_rows(drawn), doc, sample_path=sample, report_path=report)
     counts = ", ".join(f"{name} {n}" for name, n in doc["strata"].items())
@@ -283,12 +270,11 @@ def relatives_sample(
 ) -> None:
     """Draw listed relatives of random bills of one state, to measure what a page lists."""
     if part not in RELATIVES_PARTS:
-        typer.echo(f"error: --part is one of {', '.join(RELATIVES_PARTS)}, not {part!r}", err=True)
-        raise typer.Exit(1)
+        fail(f"error: --part is one of {', '.join(RELATIVES_PARTS)}, not {part!r}")
     chosen = RELATIVES_PARTS[part]
     sample = sample or chosen.sample
     report = report or chosen.report
-    try:
+    with exits_on(RelativesSampleError, SemanticPairsError, StateBoilerplateError):
         excluded = {
             str(p["bill_id"])
             for other in (excluded_samples or chosen.excludes)
@@ -308,9 +294,6 @@ def relatives_sample(
             first=chosen.first,
             exempt_at=chosen.exempt_at,
         )
-    except (RelativesSampleError, SemanticPairsError, StateBoilerplateError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     write_relatives_sample(rows, doc, sample_path=sample, report_path=report)
     typer.echo(
         f"{len(rows)} relatives drawn from {doc['state_bills_with_a_relative']:,} "
@@ -363,20 +346,14 @@ def label_model(
 ) -> None:
     """Provisional labels from a model, kept apart from people's; asks only with --live."""
     if prompt_version not in LABEL_PROMPTS:
-        typer.echo(
-            f"error: no prompt {prompt_version!r}; one of {', '.join(LABEL_PROMPTS)}", err=True
-        )
-        raise typer.Exit(1)
+        fail(f"error: no prompt {prompt_version!r}; one of {', '.join(LABEL_PROMPTS)}")
     prompt = LABEL_PROMPTS[prompt_version]
     batched = batch or batch_id is not None
     targets = _label_targets(sample, labels, also, batched=batched)
     todo, paths = _model_todo(targets, tables, prompt, models_dir)
     noun = "pair" if len(todo) == 1 else "pairs"
-    try:
+    with exits_on(ValueError):
         cost = projected_cost(todo, model=model, batch=batched, prompt=prompt)
-    except ValueError as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     projected = f"projected at most ${cost:,.2f}"
     already = label_spent(spend)
     if not live:
@@ -413,12 +390,10 @@ def _label_targets(
     for extra in also or []:
         extra_sample, sep, extra_labels = extra.partition("=")
         if not sep or not extra_sample or not extra_labels:
-            typer.echo(f"error: --also takes SAMPLE=LABELS, not {extra!r}", err=True)
-            raise typer.Exit(1)
+            fail(f"error: --also takes SAMPLE=LABELS, not {extra!r}")
         targets.append((Path(extra_sample), Path(extra_labels)))
     if len(targets) > 1 and not batched:
-        typer.echo("error: --also asks several samples in one batch; add --batch", err=True)
-        raise typer.Exit(1)
+        fail("error: --also asks several samples in one batch; add --batch")
     return targets
 
 
@@ -429,7 +404,7 @@ def _model_todo(
     passages when the prompt asks about passages, and each pair's labels file by pair id."""
     todo: list[Item] = []
     paths: dict[str, Path] = {}
-    try:
+    with exits_on(LabelError):
         for target_sample, target_labels in targets:
             items, kept = current_items(target_sample, tables, target_labels)
             for item in model_pending(items, kept, prompt):
@@ -437,15 +412,9 @@ def _model_todo(
                     raise LabelError(f"pair id {item.pair.pair} is in two of the samples asked")
                 paths[item.pair.pair] = target_labels
                 todo.append(item)
-    except LabelError as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
     if prompt.passages:
-        try:
+        with exits_on(ModelError):
             todo = with_passages(todo, model_embedder(models_dir))
-        except ModelError as e:
-            typer.echo(f"error: {e}", err=True)
-            raise typer.Exit(1) from e
     return todo, paths
 
 
@@ -461,15 +430,12 @@ def _check_label_cost(
     """Refuse a run projected over the cap, or a new one that would take the spend over the
     budget; collecting a batch already sent spends nothing new."""
     if cost > max_cost:
-        typer.echo(f"error: {asked}, over the ${max_cost:,.2f} cap; nothing asked", err=True)
-        raise typer.Exit(1)
+        fail(f"error: {asked}, over the ${max_cost:,.2f} cap; nothing asked")
     if batch_id is None and already + cost > budget:
-        typer.echo(
+        fail(
             f"error: {asked}, with ${already:,.2f} spent, over the "
-            f"${budget:,.2f} budget; nothing asked",
-            err=True,
+            f"${budget:,.2f} budget; nothing asked"
         )
-        raise typer.Exit(1)
 
 
 def _label_batched(

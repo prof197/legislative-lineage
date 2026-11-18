@@ -4,9 +4,10 @@ module beside this one; lineage.cli imports them all. Subcommands stay thin wrap
 library functions.
 """
 
-from collections.abc import Sequence
+from collections.abc import Generator, Sequence
+from contextlib import contextmanager
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated, Any, NoReturn
 
 import numpy as np
 import typer
@@ -94,6 +95,23 @@ OriginLabelsOption = Annotated[
 DayOption = Annotated[
     str | None, typer.Option("--day", help="The day, YYYY-MM-DD [default: today, UTC].")
 ]
+
+
+def fail(message: str) -> NoReturn:
+    """`message` on stderr, and the command exits 1."""
+    typer.echo(message, err=True)
+    raise typer.Exit(1)
+
+
+@contextmanager
+def exits_on(*errors: type[Exception], bare: bool = False) -> Generator[None]:
+    """Any of `errors` raised in the block reported on stderr as `error: <message>`, or with
+    `bare` as the message alone, and the command exits 1."""
+    try:
+        yield
+    except errors as e:
+        typer.echo(str(e) if bare else f"error: {e}", err=True)
+        raise typer.Exit(1) from (None if bare else e)
 
 
 def model_embedder(models_dir: Path = MODELS_DIR) -> Embedder:

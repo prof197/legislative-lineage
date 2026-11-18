@@ -13,6 +13,7 @@ from lineage.cli.app import (
     ParaphraseOption,
     TablesOption,
     app,
+    exits_on,
     pair_alignments,
 )
 from lineage.core.paths import DATA
@@ -93,7 +94,7 @@ def explain_command(
     if reground:
         typer.echo(f"{reground_cache(cache)} cache files regrounded under the current rules")
         return
-    try:
+    with exits_on(ValueError, NotCachedError, ModelError, BudgetError):
         todo = load_pairs(pairs)
         prompts = _pair_prompts(todo, tables, models_dir if paraphrase else None)
         uncached = [p for p in prompts if not explanation_cache_path(p, cache).exists()]
@@ -145,6 +146,3 @@ def explain_command(
                 typer.echo(f"  {claim.kind}: {claim.summary} [{cited}]")
             for claim, why in outcome.dropped:
                 typer.echo(f"  dropped ({why}): {claim.summary}")
-    except (ValueError, NotCachedError, ModelError, BudgetError) as e:
-        typer.echo(f"error: {e}", err=True)
-        raise typer.Exit(1) from e
