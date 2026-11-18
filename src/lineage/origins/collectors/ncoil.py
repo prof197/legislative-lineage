@@ -41,7 +41,7 @@ See DESIGN.md#model-documents.
 
 import re
 import urllib.parse
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
 from html.parser import HTMLParser
 from pathlib import PurePosixPath
@@ -370,6 +370,72 @@ def _has_inline_text(line: str) -> bool:
     return len(rest.split()) >= 5 and rest.endswith((".", ";", ":"))
 
 
+@dataclass(slots=True)
+class _Notes:
+    """A pass through a model's lines: the lines kept, whether a note is being read, and the
+    section the pass is in."""
+
+    out: list[str] = field(default_factory=list[str])
+    in_note: bool = False
+    bracketed: bool = False
+    previous: str = ""  # the note's last line
+    section_at: int | None = None  # where the current section's heading is in `out`
+    body: bool = False
+    noted: bool = False
+    placeholder: bool = False
+
+    def is_heading(self, line: str) -> bool:
+        """A heading, unless it could be the wrapped tail of the note's open sentence."""
+        if _HEADING.match(line) is None:
+            return False
+        return not (self.in_note and _OPEN.search(self.previous) and _continues(line))
+
+    def continues_note(self, line: str, heading: bool) -> bool:
+        """Whether `line` belongs to the note being read; the note ends where it does not."""
+        if self.in_note and _CONTENTS.match(line):
+            self.in_note = False
+        if heading or not self.in_note:
+            self.in_note = False
+            return False
+        if self.bracketed and "]" in line:
+            self.in_note = False
+            return True
+        if not line.strip() or _ITEM.match(line) or _DEFINITION.match(line):
+            self.in_note = False
+            return False
+        self.previous = line
+        return True
+
+    def opens_note(self, line: str) -> bool:
+        """Whether `line` opens a note or a footnote, which is then being read."""
+        m = _NOTE.match(line) or _FOOTNOTE.match(line)
+        if m is None:
+            return False
+        self.noted = True
+        self.bracketed = m.re is _NOTE and m.group(1) == "["
+        self.in_note = not (self.bracketed and "]" in line)
+        self.previous = line
+        return True
+
+    def keep(self, line: str, heading: bool) -> None:
+        if heading:
+            self.close_section()
+            self.section_at, self.body, self.noted = None, False, False
+            self.placeholder = _PLACEHOLDER.match(_heading_rest(line)) is not None
+            if _is_section(line) and not _has_inline_text(line):
+                self.section_at = len(self.out)
+        elif line.strip():
+            self.body = True
+        self.out.append(line)
+
+    def close_section(self) -> None:
+        # A section with no text of its own, only a note or a placeholder title, is left to
+        # each state to write. A braced title over text is only a title: "Section 1. {Short
+        # Title}" in some models.
+        if self.section_at is not None and not self.body and (self.noted or self.placeholder):
+            del self.out[self.section_at]
+
+
 def _drop_notes(lines: list[str]) -> list[str]:
     """`lines` without drafting notes or footnotes, and without the heading of a section whose
     only text was a note: the model leaves that section for each state to write.
@@ -378,53 +444,14 @@ def _drop_notes(lines: list[str]) -> list[str]:
     bracketed one at its closing bracket. Ending early keeps a note's tail rather than dropping
     law; a PDF's text layer often has no blank lines, so a page break (a page number, now blank)
     ends one too."""
-    out: list[str] = []
-    in_note = bracketed = False
-    previous = ""  # the note's last line
-    section_at: int | None = None  # where the current section's heading is in `out`
-    body = noted = placeholder = False
-
-    def close_section() -> None:
-        # A section with no text of its own, only a note or a placeholder title, is left to
-        # each state to write. A braced title over text is only a title: "Section 1. {Short
-        # Title}" in some models.
-        if section_at is not None and not body and (noted or placeholder):
-            del out[section_at]
-
+    notes = _Notes()
     for line in lines:
-        heading = _HEADING.match(line) is not None
-        if heading and in_note and _OPEN.search(previous) and _continues(line):
-            heading = False
-        if in_note and _CONTENTS.match(line):
-            in_note = False
-        if heading:
-            in_note = False
-        elif in_note:
-            if bracketed and "]" in line:
-                in_note = False
-                continue
-            if not line.strip() or _ITEM.match(line) or _DEFINITION.match(line):
-                in_note = False
-            else:
-                previous = line
-                continue
-        if not heading and (m := _NOTE.match(line) or _FOOTNOTE.match(line)):
-            noted = True
-            bracketed = m.re is _NOTE and m.group(1) == "["
-            in_note = not (bracketed and "]" in line)
-            previous = line
+        heading = notes.is_heading(line)
+        if notes.continues_note(line, heading) or (not heading and notes.opens_note(line)):
             continue
-        if heading:
-            close_section()
-            section_at, body, noted = None, False, False
-            placeholder = _PLACEHOLDER.match(_heading_rest(line)) is not None
-            if _is_section(line) and not _has_inline_text(line):
-                section_at = len(out)
-        elif line.strip():
-            body = True
-        out.append(line)
-    close_section()
-    return out
+        notes.keep(line, heading)
+    notes.close_section()
+    return notes.out
 
 
 def _key(line: str) -> list[str]:
@@ -448,6 +475,53 @@ def _same_entry(entry: list[str], line: list[str]) -> bool:
     return entry[:shorter] == line[:shorter]
 
 
+def _repeated_entry(lines: list[str], header: int) -> int | None:
+    """Where the text repeats the first entry of the contents list under `header`, if it does.
+
+    A heading's entry is found again by its number, since the list may shorten its title
+    ("Section 1. Title" for "Section 1. Short Title"); any other by its words."""
+    entry = next((i for i in range(header + 1, len(lines)) if lines[i].strip()), None)
+    if entry is None:
+        return None
+    label, key = _label(lines[entry]), _key(lines[entry])
+    for j in range(entry + 1, len(lines)):
+        if not lines[j].strip():
+            continue
+        if label is not None and _label(lines[j]) == label:
+            return j
+        if label is None and _same_entry(key, _key(lines[j])):
+            return j
+    return None
+
+
+def _contents_end(lines: list[str], header: int) -> int:
+    """Where the contents list under `header` ends: past its entries, headings and the short
+    lines an entry wraps onto."""
+    end = header + 1
+    while end < len(lines) and (
+        not lines[end].strip() or _HEADING.match(lines[end]) or _is_wrapped_entry(lines[end])
+    ):
+        end += 1
+    return end
+
+
+def _past_unheaded_contents(lines: list[str], headings: list[int], first: int) -> int:
+    """`first`, or, when it opens a run of headings with nothing between, a contents list
+    without a header, where its first label comes back later."""
+    label = _label(lines[first])
+    if label is None:
+        return first
+    run = [first]
+    for i in headings:
+        if i > run[-1]:
+            if any(line.strip() for line in lines[run[-1] + 1 : i]):
+                break
+            run.append(i)
+    if len(run) >= 2:
+        return next((i for i in headings if i > first and _label(lines[i]) == label), first)
+    return first
+
+
 def _body_start(lines: list[str]) -> int | None:
     """Where the model's text begins, after its title, adoption and sponsor lines, preamble and
     contents.
@@ -463,41 +537,14 @@ def _body_start(lines: list[str]) -> int | None:
     )
     header = next((i for i, line in enumerate(lines) if _CONTENTS.match(line)), None)
     if header is not None and (not starts or header < starts[0]):
-        entry = next((i for i in range(header + 1, len(lines)) if lines[i].strip()), None)
-        if entry is not None:
-            # A heading's entry is found again by its number, since the list may shorten its
-            # title ("Section 1. Title" for "Section 1. Short Title"); any other by its words.
-            label, key = _label(lines[entry]), _key(lines[entry])
-            for j in range(entry + 1, len(lines)):
-                if not lines[j].strip():
-                    continue
-                if label is not None and _label(lines[j]) == label:
-                    return j
-                if label is None and _same_entry(key, _key(lines[j])):
-                    return j
-        # The text never repeats the first entry: the list ends where its entries do, headings
-        # and the short lines an entry wraps onto.
-        end = header + 1
-        while end < len(lines) and (
-            not lines[end].strip() or _HEADING.match(lines[end]) or _is_wrapped_entry(lines[end])
-        ):
-            end += 1
+        if (repeated := _repeated_entry(lines, header)) is not None:
+            return repeated
+        # The text never repeats the first entry: the list ends where its entries do.
+        end = _contents_end(lines, header)
         starts = [i for i in starts if i >= end]
     if not starts:
         return None
-    first = starts[0]
-    label = _label(lines[first])
-    if label is None:
-        return first
-    run = [first]
-    for i in headings:
-        if i > run[-1]:
-            if any(line.strip() for line in lines[run[-1] + 1 : i]):
-                break
-            run.append(i)
-    if len(run) >= 2:
-        return next((i for i in headings if i > first and _label(lines[i]) == label), first)
-    return first
+    return _past_unheaded_contents(lines, headings, starts[0])
 
 
 def clean_model(raw: str) -> str:

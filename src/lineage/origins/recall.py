@@ -24,7 +24,7 @@ from collections import Counter
 from collections.abc import Callable, Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, get_args
 
 from lineage.core.intervals import wilson
 from lineage.evals.answer_key import ANSWER_KEY, HELD_OUT_KEY, ORIGINS_HELD_OUT_KEY, read_answer_key
@@ -37,7 +37,7 @@ STAGES: tuple[Stage, ...] = ("near_duplicate", "semantic")
 STRATA: tuple[Stratum, ...] = ("enacted", "substantially_similar")
 # Ordered by how far an enactment got; an enactment's reason is its furthest bill's.
 MissReason = Literal["not_in_corpus", "not_matched", "below_threshold"]
-MISS_REASONS: tuple[MissReason, ...] = ("not_in_corpus", "not_matched", "below_threshold")
+MISS_REASONS: tuple[MissReason, ...] = get_args(MissReason)
 
 
 class OriginRecallError(Exception):
@@ -188,6 +188,89 @@ def _breakdown(records: Sequence[Mapping[str, Any]], acts: Sequence[str]) -> dic
     }
 
 
+def _best_matches(
+    matches: Iterable[OriginMatch], wanted: Mapping[str, str], floor: float
+) -> dict[tuple[str, str], OriginMatch]:
+    """Each bill's best match with each act `wanted` names a document of, by (bill, act)."""
+    by_pair: dict[tuple[str, str], OriginMatch] = {}
+    for m in matches:
+        act = wanted.get(m.doc_id)
+        if act is None:
+            continue
+        # Two documents of one act can both match a bill; the act's best match stands, a listed
+        # one before any the floor leaves off.
+        best = by_pair.get((m.bill_id, act))
+        if best is None or _rank(m, floor) > _rank(best, floor):
+            by_pair[m.bill_id, act] = m
+    return by_pair
+
+
+def _bill_record(
+    bill_id: str, m: OriginMatch | None, *, min_share: float, floor: float
+) -> dict[str, Any]:
+    return {
+        "id": bill_id,
+        "doc_id": m.doc_id if m else None,
+        "stages": list(m.stages) if m else [],
+        "model_share": m.model_share if m else None,
+        "bill_share": m.bill_share if m else None,
+        "listed": m is not None and is_listed(m, floor),
+        "found": m is not None and m.model_share > min_share and is_listed(m, floor),
+    }
+
+
+def _miss_reason(bills: Sequence[Mapping[str, Any]]) -> MissReason:
+    """Why an enactment none of whose bills was found was missed: how far its bills got."""
+    if not bills:
+        return "not_in_corpus"
+    if any(b["doc_id"] is not None for b in bills):
+        return "below_threshold"
+    return "not_matched"
+
+
+def _enactment_record(
+    e: KeyEnactment,
+    by_pair: Mapping[tuple[str, str], OriginMatch],
+    *,
+    min_share: float,
+    floor: float,
+) -> dict[str, Any]:
+    bills = [
+        _bill_record(bill_id, by_pair.get((bill_id, e.act)), min_share=min_share, floor=floor)
+        for bill_id in e.bill_ids
+    ]
+    hits = [b for b in bills if b["found"]]
+    matched = [b for b in bills if b["doc_id"] is not None]
+    best = max(hits, key=lambda b: b["model_share"]) if hits else None
+    return {
+        "act": e.act,
+        "jurisdiction": e.jurisdiction,
+        "state": e.state,
+        "year": e.year,
+        "listed": e.listed,
+        "stratum": e.stratum,
+        "match_rule": e.rule,
+        "found": best is not None,
+        "found_by_stage": {s: any(b["found"] and s in b["stages"] for b in bills) for s in STAGES},
+        "found_by": best["id"] if best else None,
+        "model_share": best["model_share"] if best else None,
+        "bill_share": best["bill_share"] if best else None,
+        # The larger share of its best match, found or not: what a miss fell short by.
+        "best_share": max((max(b["model_share"], b["bill_share"]) for b in matched), default=None),
+        "miss_reason": _miss_reason(bills) if best is None else None,
+        "bills": bills,
+    }
+
+
+def _miss_counts(records: Sequence[Mapping[str, Any]]) -> dict[MissReason, int]:
+    return dict(
+        sorted(
+            Counter(r["miss_reason"] for r in records if r["miss_reason"]).items(),
+            key=lambda kv: MISS_REASONS.index(kv[0]),
+        )
+    )
+
+
 def evaluate(
     matches: Iterable[OriginMatch],
     key: LoadedKey,
@@ -207,70 +290,10 @@ def evaluate(
     missing = [a for a in acts if not docs.get(a)]
     if missing:
         raise OriginRecallError(f"no model document named for {', '.join(missing)}")
-    wanted = {doc: act for act in acts for doc in docs[act]}
-    by_pair: dict[tuple[str, str], OriginMatch] = {}
-    for m in matches:
-        act = wanted.get(m.doc_id)
-        if act is None:
-            continue
-        # Two documents of one act can both match a bill; the act's best match stands, a listed
-        # one before any the floor leaves off.
-        best = by_pair.get((m.bill_id, act))
-        if best is None or _rank(m, floor) > _rank(best, floor):
-            by_pair[m.bill_id, act] = m
-
-    records: list[dict[str, Any]] = []
-    for e in key.enactments:
-        bills: list[dict[str, Any]] = []
-        for bill_id in e.bill_ids:
-            m = by_pair.get((bill_id, e.act))
-            bills.append(
-                {
-                    "id": bill_id,
-                    "doc_id": m.doc_id if m else None,
-                    "stages": list(m.stages) if m else [],
-                    "model_share": m.model_share if m else None,
-                    "bill_share": m.bill_share if m else None,
-                    "listed": m is not None and is_listed(m, floor),
-                    "found": m is not None and m.model_share > min_share and is_listed(m, floor),
-                }
-            )
-        hits = [b for b in bills if b["found"]]
-        matched = [b for b in bills if b["doc_id"] is not None]
-        best = max(hits, key=lambda b: b["model_share"]) if hits else None
-        miss: MissReason | None = None
-        if best is None:
-            if not bills:
-                miss = "not_in_corpus"
-            elif any(b["doc_id"] is not None for b in bills):
-                miss = "below_threshold"
-            else:
-                miss = "not_matched"
-        records.append(
-            {
-                "act": e.act,
-                "jurisdiction": e.jurisdiction,
-                "state": e.state,
-                "year": e.year,
-                "listed": e.listed,
-                "stratum": e.stratum,
-                "match_rule": e.rule,
-                "found": best is not None,
-                "found_by_stage": {
-                    s: any(b["found"] and s in b["stages"] for b in bills) for s in STAGES
-                },
-                "found_by": best["id"] if best else None,
-                "model_share": best["model_share"] if best else None,
-                "bill_share": best["bill_share"] if best else None,
-                # The larger share of its best match, found or not: what a miss fell short by.
-                "best_share": max(
-                    (max(b["model_share"], b["bill_share"]) for b in matched), default=None
-                ),
-                "miss_reason": miss,
-                "bills": bills,
-            }
-        )
-
+    by_pair = _best_matches(matches, {doc: act for act in acts for doc in docs[act]}, floor)
+    records = [
+        _enactment_record(e, by_pair, min_share=min_share, floor=floor) for e in key.enactments
+    ]
     ablation = {
         s: _breakdown([r | {"found": r["found_by_stage"][s]} for r in records], acts)
         for s in STAGES
@@ -286,18 +309,10 @@ def evaluate(
         "recall": _breakdown(records, acts),
         "stage_ablation": ablation,
         "recall_by_min_share": [
-            {
-                "min_share": s,
-                "found": sum(r["found"] and r["model_share"] >= s for r in records),
-            }
+            {"min_share": s, "found": sum(r["found"] and r["model_share"] >= s for r in records)}
             for s in SHARE_SWEEP
         ],
-        "miss_reasons": dict(
-            sorted(
-                Counter(r["miss_reason"] for r in records if r["miss_reason"]).items(),
-                key=lambda kv: MISS_REASONS.index(kv[0]),
-            )
-        ),
+        "miss_reasons": _miss_counts(records),
         "excluded": key.excluded,
         "enactments": records,
     }
