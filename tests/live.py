@@ -16,7 +16,8 @@ import pytest
 from typer.testing import CliRunner
 
 from lineage.cli import app
-from lineage.export.build import RESULTS, build_export
+from lineage.export.build import build_export
+from lineage.export.pages import RESULTS
 from lineage.live.incremental import update
 from lineage.live.updates import fold, load_days, write_archives
 from lineage.match.semantic.pairs import build_semantic_pairs

@@ -18,7 +18,8 @@ from pathlib import Path
 
 from lineage.core import db
 from lineage.evals.labels import SAME_PROVISION, text_sha256
-from lineage.export.build import RESULTS, build_export
+from lineage.export.build import build_export
+from lineage.export.pages import RESULTS
 from lineage.match.query import matchable_sections
 from lineage.match.semantic.pairs import build_semantic_pairs
 from lineage.origins import queries as origins_queries

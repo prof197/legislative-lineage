@@ -25,10 +25,8 @@ mix of two builds.
 
 import json
 import multiprocessing
-import re
 import shutil
 import time
-import tomllib
 from collections import defaultdict
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from concurrent.futures import ProcessPoolExecutor
@@ -42,95 +40,47 @@ from pydantic import BaseModel
 from pydantic.json_schema import models_json_schema
 
 from lineage.align import Alignment, Embedder, align
-from lineage.core import db
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.core.paths import DATA
-from lineage.data.stats import (
-    AMENDMENT_CHARS,
-    AMENDMENT_OPENING,
-    AMENDMENT_SUBSTITUTE,
-    GEORGIA_ENACTING,
-    GEORGIA_NOTICE,
-)
-from lineage.explain import queries as explain_queries
-from lineage.explain.explain import CACHE_DIR, explain, prompt_spans
-from lineage.explain.explain import MODEL as EXPLAIN_MODEL
-from lineage.export import queries
-from lineage.export.origin_story import BOTH as BOTH_STAGES
+from lineage.explain.explain import CACHE_DIR
 from lineage.export.origin_story import FILE as ORIGIN_STORY_FILE
-from lineage.export.origin_story import STORY as ORIGIN_STORY
 from lineage.export.origin_story import story_file as origin_story_file
+from lineage.export.pages import (
+    FEATURED_PAIRS,
+    FEATURED_REPORT,
+    RESULTS,
+    STORIES_RULES,
+    BillPair,
+    OrdinalPair,
+    bill_list,
+    bill_page,
+    carries_origin_story,
+    comparison,
+    comparison_name,
+    plan_export,
+    texts_by_slug,
+)
 from lineage.export.release import RELEASE_MANIFEST as RELEASE_MANIFEST
 from lineage.export.release import ReleaseError as ReleaseError
 from lineage.export.release import package as package
 from lineage.export.release import write_release_manifest as write_release_manifest
 from lineage.export.schema import (
     TOP_LEVEL,
-    AlignedPair,
-    ArchiveStamp,
-    BillList,
-    BillListEntry,
-    BillPage,
-    BillRef,
-    BillTexts,
-    Claim,
-    Closest,
-    Comparison,
-    Enactment,
-    Excluded,
-    Explanation,
-    Meta,
-    ModelDocRef,
-    Origin,
-    OriginPrecision,
-    OriginShare,
-    Recall,
-    Relative,
-    SectionInfo,
-    SectionPair,
-    SectionText,
-    Share,
-    SourceEntry,
-    Sources,
-    Span,
-    Stage,
-    Story,
-    StoryRelative,
-    TextInfo,
-    Validation,
-    WithheldDocument,
 )
-from lineage.match.listing import ListedPairs, listed_pairs, shipped_flag
-from lineage.match.near.minhash import NUM_PERM
-from lineage.match.near.pairs import load_families
-from lineage.match.relatives import bill_relatives
 from lineage.match.semantic.embed import embed as embed_texts
 from lineage.match.semantic.embed import load_model
-from lineage.match.semantic.pairs import section_keys
 from lineage.match.semantic.stage import MODEL
-from lineage.match.state_boilerplate import COMPACT_PHRASES
 from lineage.origins.collect import PACKAGE as COLLECT_PACKAGE
-from lineage.origins.collect import collectors
 from lineage.origins.labels import LABELS as ORIGIN_LABELS
-from lineage.origins.labels import judged_correct, load_labels
-from lineage.origins.matches import OriginMatch, is_listed, read_origin_matches
-from lineage.origins.modeldocs import MODELDOCS_DIR, ModelDoc, Source, read_docs
-from lineage.origins.withheld import NONE as NO_WITHHELD
+from lineage.origins.modeldocs import MODELDOCS_DIR
 from lineage.origins.withheld import REPORT as WITHHELD_REPORT
-from lineage.origins.withheld import Reason as WithheldReason
-from lineage.origins.withheld import Withheld, load_withheld
 
 EXPORT_DIR = DATA / "export"
 REPORT = Path("reports/export.json")
 SCHEMA = Path("schema/export.schema.json")
-FEATURED_PAIRS = Path("evals/featured_pairs.jsonl")
-STORIES_RULES = Path("rules/stories.toml")
-FEATURED_REPORT = Path("reports/featured_pairs.json")
-RESULTS = Path("reports/results.json")
 COMMAND = "uv run lineage export --state {state}"
 # GitHub Pages' limit on a published site; DR-2 reverses at half of it.
 SITE_LIMIT = 1_000_000_000
-_COMPACT = re.compile("|".join(re.escape(p) for p in COMPACT_PHRASES))
 _SPAWN = multiprocessing.get_context("spawn")
 CHUNK = 64  # section pairs a worker aligns per task
 # One process per performance core of the reference machine, each embedding on one thread.
@@ -186,20 +136,6 @@ def align_all(
     return out
 
 
-class ExportError(Exception):
-    pass
-
-
-def slug(state: str, session: str, identifier: str) -> str:
-    """A bill's file name: its state, session and identifier, lower case, each run of other
-    characters one hyphen."""
-    return re.sub(r"[^a-z0-9_]+", "-", f"{state}-{session}-{identifier}".lower()).strip("-")
-
-
-def comparison_slug(a: str, b: str) -> str:
-    return f"{a}--{b}"
-
-
 def export_schema() -> dict[str, Any]:
     """The JSON Schema of every file the export writes, as the site reads them."""
     _, schema = models_json_schema(
@@ -210,234 +146,6 @@ def export_schema() -> dict[str, Any]:
 
 def schema_text() -> str:
     return json.dumps(export_schema(), indent=1, sort_keys=True) + "\n"
-
-
-BillPair = tuple[str, str]  # (first bill id, second bill id)
-OrdinalPair = tuple[int, int]
-
-
-@dataclass
-class _PairFound:
-    stages: set[str]
-    estimate: float | None = None
-    cosine: float | None = None
-
-
-def pairs_between(
-    listed: ListedPairs,
-    bills: Sequence[str],
-    ordinals: NDArray[np.int64],
-    wanted: Iterable[BillPair],
-) -> dict[BillPair, dict[OrdinalPair, _PairFound]]:
-    """Every listed section pair between the bills of each wanted pair, from the first bill's
-    side, with what each stage found."""
-    wanted_set = set(wanted)
-    firsts = {a for a, _ in wanted_set}
-    first = np.fromiter((b in firsts for b in bills), dtype=bool, count=len(bills))
-    out: dict[BillPair, dict[OrdinalPair, _PairFound]] = defaultdict(dict)
-    stages: tuple[tuple[str, Any, Any, Any], ...] = (
-        ("near_duplicate", listed.near.left, listed.near.right, listed.near.agreements),
-        ("semantic", listed.meaning.left, listed.meaning.right, listed.meaning.cosine),
-    )
-    for stage, left, right, scores in stages:
-        lo, hi = np.asarray(left, dtype=np.int64), np.asarray(right, dtype=np.int64)
-        values = np.asarray(scores)
-        for x, y in ((lo, hi), (hi, lo)):
-            at = np.flatnonzero(first[x])
-            for s, t, v in zip(x[at].tolist(), y[at].tolist(), values[at].tolist(), strict=True):
-                key = (str(bills[s]), str(bills[t]))
-                if key not in wanted_set:
-                    continue
-                found = out[key].setdefault((int(ordinals[s]), int(ordinals[t])), _PairFound(set()))
-                found.stages.add(stage)
-                if stage == "near_duplicate":
-                    found.estimate = round(float(v) / NUM_PERM, 4)
-                else:
-                    found.cosine = round(float(v), 4)
-    return dict(out)
-
-
-def _stages(found: _PairFound) -> list[Stage]:
-    return [s for s in ("near_duplicate", "semantic") if s in found.stages]
-
-
-def validation_from(results: Mapping[str, Any], withheld: Withheld = NO_WITHHELD) -> Validation:
-    """The validation page's figures, read from the committed results; origin precision with
-    how many documents were withheld after it was measured (lineage.origins.withheld)."""
-
-    def recall(r: Mapping[str, Any]) -> Recall:
-        return Recall(enactments=r["enactments"], found=r["found"], recall=r["recall"])
-
-    def origin_share(g: Mapping[str, Any]) -> OriginShare:
-        p = g["precision"]
-        return OriginShare(
-            sources=list(g["sources"]),
-            matches=g["matches"],
-            labeled=g["labeled"],
-            correct=g["correct"],
-            share=None if p is None else p["precision"],
-            interval_95=None if p is None else tuple(p["interval_95"]),
-        )
-
-    origins = results["origins_precision"]
-    (compared,) = (k for k in origins["compared"] if k != "rest")
-    dev, held = results["commission"], results["commission_held_out"]
-    stages = dev["stage_ablation"]
-    precision = results["relatives_precision"]["provisional_model"]
-    faith = results["faithfulness"]
-    return Validation(
-        development_recall=recall(dev["recall"]["pooled"]["all"]),
-        development_recall_by_act={a: recall(r["all"]) for a, r in dev["recall"]["by_act"].items()},
-        development_recall_by_stage={
-            "near_duplicate": recall(stages["near_duplicate"]["pooled"]["all"]),
-            "semantic": recall(stages["semantic"]["pooled"]["all"]),
-            "both": recall(dev["recall"]["pooled"]["all"]),
-        },
-        semantic_threshold=dev["semantic_threshold"],
-        development_enactments=[
-            Enactment(
-                act=e["act"],
-                state=e["state"],
-                year=e["year"],
-                bill_cell=e["bill_cell"],
-                stratum=e["stratum"],
-                found=e["found"],
-                share=e["share"],
-                miss_reason=e["miss_reason"],
-            )
-            for e in dev["enactments"]
-        ],
-        development_excluded=[
-            Excluded(act=x["act"], jurisdiction=x["jurisdiction"], year=x["year"], why=x["why"])
-            for x in dev["excluded"]
-        ],
-        held_out_recall=recall(held["recall"]["pooled"]["all"]),
-        relatives_precision=Share(
-            labeled=precision["overall"]["labeled"],
-            correct=precision["overall"]["correct"],
-            share=precision["overall"]["precision"],
-            interval_95=tuple(precision["overall"]["interval_95"]),
-        ),
-        relatives_precision_labeler=precision["labeler"],
-        faithfulness=Share(
-            labeled=faith["overall"]["judged"],
-            correct=faith["overall"]["correct"],
-            share=faith["overall"]["share"],
-            interval_95=tuple(faith["overall"]["interval_95"]),
-        ),
-        faithfulness_judge=faith["judge"],
-        origin_precision=OriginPrecision(
-            floor=origins["floor"],
-            overall=origin_share(origins["overall"]),
-            compared=origin_share(origins["compared"][compared]),
-            rest=origin_share(origins["compared"]["rest"]),
-            labeler=list(origins["labeler"]),
-            withheld_documents=len(withheld.ids),
-            withheld_matches=withheld.matches,
-        ),
-    )
-
-
-def _refs(con: Any, tables: Path, ids: list[str]) -> tuple[dict[str, BillRef], dict[str, TextInfo]]:
-    rows = queries.export_bills(
-        con,
-        bills_glob=str(tables / "bills" / "*.parquet"),
-        texts_glob=str(tables / "texts" / "*.parquet"),
-        ids=ids,
-        notice=GEORGIA_NOTICE,
-        enacting=GEORGIA_ENACTING,
-        amendment_opening=AMENDMENT_OPENING,
-        amendment_chars=AMENDMENT_CHARS,
-        substitute=AMENDMENT_SUBSTITUTE,
-    )
-    refs: dict[str, BillRef] = {}
-    texts: dict[str, TextInfo] = {}
-    for (
-        bill_id,
-        state,
-        session,
-        identifier,
-        title,
-        status,
-        reason,
-        status_date,
-        first,
-        source,
-        version,
-        url,
-        notice_only,
-        amendment_only,
-    ) in rows:
-        refs[bill_id] = BillRef.model_validate(
-            {
-                "slug": slug(state, session, identifier),
-                "state": state,
-                "session": session,
-                "identifier": identifier,
-                "title": title,
-                "status": status,
-                "status_reason": reason,
-                "status_date": None if status_date is None else status_date.isoformat(),
-                "first_action": first,
-            }
-        )
-        if source is not None:
-            texts[bill_id] = TextInfo.model_validate(
-                {
-                    "source": source,
-                    "version": version,
-                    "url": url,
-                    "notice_only": notice_only,
-                    "amendment_only": amendment_only,
-                }
-            )
-    missing = sorted(set(ids) - set(refs))
-    if missing:
-        raise ExportError(f"{len(missing)} bills are not in the bills table, {missing[0]} first")
-    clashes: dict[str, list[str]] = defaultdict(list)
-    for bill_id, ref in refs.items():
-        clashes[ref.slug].append(bill_id)
-    for name, holders in clashes.items():
-        if len(holders) > 1:
-            raise ExportError(f"bills {', '.join(sorted(holders))} share the file name {name}")
-    return refs, texts
-
-
-def stories_for(state: str, stories: Iterable[str], rules: Path = STORIES_RULES) -> set[str]:
-    """The featured stories `state`'s site carries, by `rules`: a story listed for "all" states,
-    or for this one. A story the rules do not list is an error, so a new story is placed
-    deliberately rather than shown on every state's site by default."""
-    listed: dict[str, Any] = tomllib.loads(rules.read_text()).get("stories", {})
-    unlisted = sorted(set(stories) - set(listed))
-    if unlisted:
-        raise ExportError(
-            f"stories not in {rules}: {', '.join(unlisted)}; say which states carry them"
-        )
-    out: set[str] = set()
-    for key in stories:
-        states = listed[key].get("states")
-        if states == "all" or (isinstance(states, list) and state in states):
-            out.add(key)
-    return out
-
-
-def carries_origin_story(state: str, rules: Path = STORIES_RULES) -> bool:
-    """Whether `state`'s site carries the origin story: only where `rules` place it, so a rules
-    file without it carries none, the safe reading for a story that shows nothing unplaced."""
-    listed: dict[str, Any] = tomllib.loads(rules.read_text()).get("stories", {})
-    return ORIGIN_STORY in listed and bool(stories_for(state, [ORIGIN_STORY], rules))
-
-
-def _load_featured(path: Path) -> dict[str, set[tuple[str, int, str, int]]]:
-    """The featured pairs, by story."""
-    out: dict[str, set[tuple[str, int, str, int]]] = defaultdict(set)
-    for line in path.read_text().splitlines():
-        if line.strip():
-            row = json.loads(line)
-            o, d = row["origin"], row["descendant"]
-            pair = (str(o["bill_id"]), int(o["ordinal"]), str(d["bill_id"]), int(d["ordinal"]))
-            out[str(row["story"])].add(pair)
-    return out
 
 
 @dataclass(frozen=True, slots=True)
@@ -464,114 +172,6 @@ def _write(root: Path, files: Mapping[str, BaseModel]) -> _Written:
     return _Written(dict(sorted(count.items())), dict(sorted(size.items())), largest)
 
 
-def origins_by_bill(
-    matches: Sequence[OriginMatch],
-    docs: Mapping[str, tuple[ModelDoc, Source]],
-    hosted: set[str],
-    withheld: frozenset[str] = frozenset(),
-) -> dict[str, list[Origin]]:
-    """Each hosted bill's origins at the listing floor (lineage.origins.matches.FLOOR), the most
-    of its words first, less those to a withheld document (lineage.origins.withheld). A match
-    whose document no source holds is an error: the page would name a model the sources page
-    does not list."""
-    out: dict[str, list[Origin]] = defaultdict(list)
-    for m in matches:
-        if m.bill_id not in hosted or not is_listed(m) or m.doc_id in withheld:
-            continue
-        if m.doc_id not in docs:
-            raise ExportError(f"origin match names {m.doc_id}, which no collected source holds")
-        doc, source = docs[m.doc_id]
-        ref = ModelDocRef(
-            id=doc.id,
-            source=source.key,
-            organization=source.organization,
-            title=doc.title,
-            url=doc.url,
-            published=None if doc.published is None else doc.published.isoformat(),
-            leaked=doc.leaked,
-            co_publishers=list(doc.co_publishers),
-            drafted_by=doc.drafted_by,
-        )
-        out[m.bill_id].append(
-            Origin(
-                doc=ref,
-                stages=list(m.stages),
-                bill_share=round(m.bill_share, 4),
-                model_share=round(m.model_share, 4),
-                sections=sorted({s.ordinal for s in m.spans}),
-            )
-        )
-    return {b: sorted(os, key=lambda o: (-o.bill_share, o.doc.id)) for b, os in out.items()}
-
-
-def judged_origins(
-    tables: Path,
-    origins: Mapping[str, Sequence[Origin]],
-    refs: Mapping[str, BillRef],
-    matches: Sequence[OriginMatch],
-    docs: Mapping[str, tuple[ModelDoc, Source]],
-    *,
-    modeldocs_root: Path,
-    labels: Path,
-) -> frozenset[tuple[str, str]]:
-    """The origin story's candidates a labeler judged correct, by (bill slug, document id):
-    each passed bill's listed origins both stages found, judged on the sections its match's
-    strongest pair rests on now (lineage.origins.labels.judged_correct)."""
-    keys = {
-        (bill_id, o.doc.id)
-        for bill_id, listed in origins.items()
-        if refs[bill_id].status == "passed"
-        for o in listed
-        if frozenset(o.stages) >= BOTH_STAGES
-    }
-    judged = judged_correct(
-        keys,
-        matches,
-        [d for d, _ in docs.values()],
-        tables,
-        load_labels(labels),
-        root=modeldocs_root,
-    )
-    return frozenset((refs[b].slug, d) for b, d in judged)
-
-
-def sources_doc(
-    sources: Sequence[Source],
-    docs: Mapping[str, tuple[ModelDoc, Source]],
-    withheld: Mapping[str, WithheldReason] | None = None,
-) -> Sources:
-    """The sources page: every library, with how many documents were collected and when, and
-    the documents withheld from pages because their matches rest on generic text."""
-    entries: list[SourceEntry] = []
-    for src in sorted(sources, key=lambda s: s.key):
-        held = [d for d, s in docs.values() if s.key == src.key]
-        reasons = withheld or {}
-        kept_back = sorted((d for d in held if d.id in reasons), key=lambda d: d.id)
-        latest = max((d.collected_on for d in held), default=None)
-        entries.append(
-            SourceEntry(
-                key=src.key,
-                organization=src.organization,
-                descriptor=src.descriptor,
-                members=src.members,
-                members_source=src.members_source,
-                library_url=src.library_url,
-                terms_url=src.terms_url,
-                terms_note=src.terms_note,
-                terms_read_on=src.terms_read_on.isoformat(),
-                leaked=src.leaked,
-                leak_note=src.leak_note,
-                documents=len(held),
-                collected_on=None if latest is None else latest.isoformat(),
-                withheld=[
-                    WithheldDocument(id=d.id, title=d.title, url=d.url, reason=reasons[d.id])
-                    for d in kept_back
-                ],
-            )
-        )
-    return Sources(sources=entries)
-
-
 def build_export(
     tables: Path,
     *,
@@ -593,275 +193,71 @@ def build_export(
     withheld_report: Path = WITHHELD_REPORT,
     progress: Callable[[str], None] = lambda _: None,
 ) -> dict[str, Any]:
-    """Write `state`'s site data to `out`, replacing what was there; returns the report."""
+    """Write `state`'s site data to `out`, replacing what was there; returns the report. Every
+    file is rendered from the plan as the live track renders the ones a day touches
+    (lineage.export.pages); only the alignments are made here."""
     started = time.monotonic()
-    # Committed inputs are read before the alignment, which takes hours for a large state: a
-    # checkout whose reports are older than this code fails here, not at the last step, and a
-    # missing stories file is an error rather than a site built without its stories.
-    inputs = (featured_pairs, featured_report, stories_rules, results)
-    missing = [str(p) for p in inputs if not p.exists()]
-    if missing:
-        raise ExportError(f"committed inputs not found: {', '.join(missing)}")
-    kept_back = load_withheld(withheld_report)
-    try:
-        validation = validation_from(json.loads(results.read_text()), kept_back)
-    except KeyError as e:
-        raise ExportError(f"{results} lacks {e}; is it older than this code?") from e
-    sources = [c.source for c in collectors(collector_package).values()]
-    docs = {d.id: (d, src) for src in sources for d in read_docs(src, modeldocs_root)}
-    bills_glob = str(tables / "bills" / "*.parquet")
-    flag = shipped_flag(tables)
-    if flag is None and require_flag:
-        raise ExportError("no state boilerplate counts; run `uv run lineage state-boilerplate`")
-    with db.connect_quiet() as con:
-        hosted = queries.hosted_bill_ids(
-            con, bills_glob=bills_glob, eligible_path=tables / "eligible.parquet", state=state
-        )
-        stamps = queries.archive_stamps(con, bills_glob=bills_glob, state=state)
-        indexed = queries.states_indexed(con, bills_glob=bills_glob)
-    if not hosted:
-        raise ExportError(f"no {state} bill is matched by the document-type rules")
-    progress(f"{len(hosted)} hosted bills")
-    listed = listed_pairs(tables, model=model, flag=flag)
-    relatives = bill_relatives(tables, hosted, model=model, listed=listed)
-
-    all_stories: dict[str, Any] = json.loads(featured_report.read_text())["stories"]
-    by_story = _load_featured(featured_pairs)
-    keys = set(all_stories) | set(by_story)
-    carried: set[str] = stories_for(state, keys, stories_rules) if keys else set()
-    stories_doc = {k: v for k, v in all_stories.items() if k in carried}
-    featured = {pair for key in carried for pair in by_story.get(key, set())}
-    wanted: set[BillPair] = {(b, m.bill_id) for b, r in relatives.items() for m in r.matches}
-    wanted |= {(a, b) for a, _, b, _ in featured}
-    bills, ordinals = section_keys(tables)
-    found = pairs_between(listed, bills, ordinals, wanted)
-    for a, oa, b, ob in sorted(featured):
-        if (oa, ob) not in found.get((a, b), {}):
-            raise ExportError(f"featured pair {a} §{oa} / {b} §{ob} is not listed in this build")
-
-    story_ids = {
-        str(r["bill_id"]) for s in stories_doc.values() for r in [s["anchor"], *s["relatives"]]
-    }
-    ids = sorted(set(hosted) | {x for pair in wanted for x in pair} | story_ids)
-    keys = sorted(
-        {(a, oa) for (a, _), ps in found.items() for oa, _ in ps}
-        | {(b, ob) for (_, b), ps in found.items() for _, ob in ps}
+    # The plan reads every committed input before the alignment, which takes hours for a large
+    # state: a checkout whose reports are older than this code fails there, not at the last step.
+    plan = plan_export(
+        tables,
+        state=state,
+        cache=cache,
+        featured_pairs=featured_pairs,
+        featured_report=featured_report,
+        stories_rules=stories_rules,
+        results=results,
+        modeldocs_root=modeldocs_root,
+        collector_package=collector_package,
+        model=model,
+        require_flag=require_flag,
+        origin_labels=origin_labels,
+        withheld_report=withheld_report,
+        progress=progress,
     )
-    with db.connect_quiet() as con:
-        refs, text_infos = _refs(con, tables, ids)
-        section_rows = queries.section_infos(
-            con, sections_glob=str(tables / "sections" / "*.parquet"), ids=ids
-        )
-        shown = explain_queries.sections_at(
-            con, sections_glob=str(tables / "sections" / "*.parquet"), keys=keys
-        )
-    text_bytes = sum(len(t.encode()) for _, t, _ in shown.values())
-    n_pairs = sum(len(p) for p in found.values())
+    text_bytes = sum(len(t.encode()) for _, t, _ in plan.shown.values())
+    n_pairs = sum(len(p) for p in plan.found.values())
     # Each text written once, spans at most a few hundred bytes a pair, and the pages.
     require_free_space(out.parent, needed=2 * text_bytes + 4096 * n_pairs + (64 << 20), floor=floor)
-    progress(f"{len(found)} comparisons, {n_pairs} section pairs to align")
+    progress(f"{len(plan.found)} comparisons, {n_pairs} section pairs to align")
 
-    files: dict[str, BaseModel] = {}
-    matches = read_origin_matches(tables)
-    origins = origins_by_bill(matches, docs, set(hosted), kept_back.ids)
-    featured_explained = 0
-    withheld = 0
     ordered = [
-        ((a, b), (oa, ob), pf)
-        for (a, b), ps in sorted(found.items())
-        for (oa, ob), pf in sorted(ps.items())
+        (pair, ordinals) for pair, ps in sorted(plan.found.items()) for ordinals in sorted(ps)
     ]
     alignments = align_all(
-        [(shown[(a, oa)][1], shown[(b, ob)][1]) for (a, b), (oa, ob), _ in ordered],
+        [(plan.shown[(a, oa)][1], plan.shown[(b, ob)][1]) for (a, b), (oa, ob) in ordered],
         models_dir=models_dir,
         workers=workers,
         progress=progress,
     )
-    sections_of: dict[str, list[tuple[int, str | None, int, str | None]]] = defaultdict(list)
-    for bill_id, ordinal, heading, words, boilerplate in section_rows:
-        sections_of[bill_id].append((ordinal, heading, words, boilerplate))
+    aligned: dict[BillPair, dict[OrdinalPair, Alignment]] = defaultdict(dict)
+    for (pair, ordinals), alignment in zip(ordered, alignments, strict=True):
+        aligned[pair][ordinals] = alignment
 
-    def matchable(bill_id: str) -> int:
-        return sum(1 for *_, bp in sections_of[bill_id] if bp is None)
-
-    by_comparison: dict[BillPair, list[AlignedPair]] = defaultdict(list)
-    for ((a, b), (oa, ob), pf), alignment in zip(ordered, alignments, strict=True):
-        explanation = None
-        if (a, oa, b, ob) in featured:
-            ta, tb = shown[(a, oa)][1], shown[(b, ob)][1]
-            outcome = explain(
-                prompt_spans(alignment.spans, ta, tb, origin_side="a"), ask=None, cache=cache
-            )
-            explanation = Explanation(
-                model=EXPLAIN_MODEL,
-                withheld=outcome.withheld,
-                claims=[Claim.model_validate(c.model_dump()) for c in outcome.claims],
-            )
-            featured_explained += 1
-            withheld += outcome.withheld
-        by_comparison[(a, b)].append(
-            AlignedPair(
-                ordinal_a=oa,
-                ordinal_b=ob,
-                stages=_stages(pf),
-                spans=[Span(id=x.id, kind=x.kind, a=x.a, b=x.b) for x in alignment.spans],
-                copied_share_a=round(alignment.copied_share_a, 4),
-                copied_share_b=round(alignment.copied_share_b, 4),
-                explanation=explanation,
-            )
-        )
-    for (a, b), aligned in by_comparison.items():
-        name = comparison_slug(refs[a].slug, refs[b].slug)
-        files[f"compare/{name}.json"] = Comparison(
-            a=refs[a],
-            b=refs[b],
-            sections_a=matchable(a),
-            sections_b=matchable(b),
-            text_a=text_infos.get(a),
-            text_b=text_infos.get(b),
-            pairs=aligned,
-        )
-
-    by_bill: dict[str, list[SectionText]] = defaultdict(list)
-    for (bill_id, ordinal), (heading, text, _) in sorted(shown.items()):
-        by_bill[bill_id].append(SectionText(ordinal=ordinal, heading=heading, text=text))
-    for bill_id, sections in by_bill.items():
-        name = refs[bill_id].slug
-        files[f"texts/{name}.json"] = BillTexts(bill=name, sections=sections)
-
-    entries: list[BillListEntry] = []
-    for bill_id in hosted:
-        r = relatives[bill_id]
-        listed_here: list[Relative] = []
-        per_section: dict[int, int] = defaultdict(int)
-        for m in r.matches:
-            pairs = found.get((bill_id, m.bill_id), {})
-            compact = any(
-                _COMPACT.search(shown[(bill_id, oa)][2])
-                or _COMPACT.search(shown[(m.bill_id, ob)][2])
-                for oa, ob in pairs
-            )
-            for oa in {oa for oa, _ in pairs}:
-                per_section[oa] += 1
-            listed_here.append(
-                Relative(
-                    bill=refs[m.bill_id],
-                    family_bills=m.family_bills,
-                    share=round(m.share, 4),
-                    best_estimate=round(m.best_estimate, 4),
-                    best_cosine=None if m.best_cosine is None else round(m.best_cosine, 4),
-                    found_by="wording" if m.found_by == "wording" else "meaning",
-                    pairs=[
-                        SectionPair(
-                            ordinal=oa,
-                            other_ordinal=ob,
-                            stages=_stages(pf),
-                            estimate=pf.estimate,
-                            cosine=pf.cosine,
-                        )
-                        for (oa, ob), pf in sorted(pairs.items())
-                    ],
-                    names_compact=compact,
-                    comparison=comparison_slug(refs[bill_id].slug, refs[m.bill_id].slug),
-                )
-            )
-        page = BillPage(
-            bill=refs[bill_id],
-            text=text_infos.get(bill_id),
-            sections=[
-                SectionInfo(
-                    ordinal=o,
-                    heading=h,
-                    words=w,
-                    boilerplate=bp,
-                    with_relatives=per_section.get(o, 0),
-                )
-                for o, h, w, bp in sections_of[bill_id]
-            ],
-            words_searched=r.words_searched,
-            families=r.families,
-            relatives=listed_here,
-            origins=origins.get(bill_id, []),
-        )
-        files[f"bills/{refs[bill_id].slug}.json"] = page
-        best = listed_here[0] if listed_here else None
-        entries.append(
-            BillListEntry(
-                bill=refs[bill_id],
-                families=r.families,
-                closest=None
-                if best is None
-                else Closest(
-                    slug=best.bill.slug,
-                    state=best.bill.state,
-                    identifier=best.bill.identifier,
-                    share=best.share,
-                ),
-            )
-        )
-    files["bills.json"] = BillList(bills=entries)
-
-    anchors = sorted({str(st["anchor"]["bill_id"]) for st in stories_doc.values()})
-    anchor_scores: dict[str, dict[str, float]] = {}
-    family_of: dict[str, str] = {}
-    if anchors:
-        listed_for = bill_relatives(tables, anchors, model=model, listed=listed, shown=len(bills))
-        family_of = load_families(tables)
-        anchor_scores = {x: {m.family: m.share for m in r.matches} for x, r in listed_for.items()}
-
-    def story_share(anchor: str, bill_id: str) -> float | None:
-        score = anchor_scores.get(anchor, {}).get(family_of.get(bill_id, bill_id))
-        return None if score is None else round(score, 4)
-
-    story_slugs: list[str] = []
-    for key, s in sorted(stories_doc.items()):
-        anchor = str(s["anchor"]["bill_id"])
-        story_relatives = [
-            StoryRelative(
-                bill=refs[str(rel["bill_id"])],
-                share=story_share(anchor, str(rel["bill_id"])),
-                section_pairs=int(rel["section_pairs"]),
-                comparison=comparison_slug(refs[anchor].slug, refs[str(rel["bill_id"])].slug)
-                if int(rel["section_pairs"])
-                else None,
-            )
-            for rel in s["relatives"]
-        ]
-        files[f"stories/{key}.json"] = Story(
-            slug=key,
-            anchor=refs[anchor],
-            relatives_rule=s["relatives_rule"],
-            scope_note=s["scope_note"],
-            relatives=story_relatives,
-        )
-        story_slugs.append(key)
-
+    files: dict[str, BaseModel] = {}
+    featured_explained = 0
+    withheld = 0
+    for pair in sorted(plan.found):
+        compared = comparison(plan, pair, aligned[pair])
+        files[comparison_name(plan, pair)] = compared
+        for p in compared.pairs:
+            if p.explanation is not None:
+                featured_explained += 1
+                withheld += p.explanation.withheld
+    for name, texts in texts_by_slug(plan).items():
+        files[f"texts/{name}.json"] = texts
+    pages = [bill_page(plan, bill_id) for bill_id in plan.hosted]
+    for page in pages:
+        files[f"bills/{page.bill.slug}.json"] = page
+    files["bills.json"] = bill_list(plan)
+    for key, story in plan.stories.items():
+        files[f"stories/{key}.json"] = story
     if carries_origin_story(state, stories_rules):
-        pages = (f for name, f in files.items() if name.startswith("bills/"))
-        judged = judged_origins(
-            tables,
-            origins,
-            refs,
-            matches,
-            docs,
-            modeldocs_root=modeldocs_root,
-            labels=origin_labels,
-        )
-        story = origin_story_file((p for p in pages if isinstance(p, BillPage)), judged)
-        if story is not None:
-            files[ORIGIN_STORY_FILE] = story
-
-    files["sources.json"] = sources_doc(sources, docs, kept_back.reasons)
-    files["meta.json"] = Meta(
-        state=state,
-        archives=[
-            ArchiveStamp(session=session, generated_at=at.isoformat()) for session, at in stamps
-        ],
-        states_indexed=indexed,
-        hosted_bills=len(hosted),
-        stories=story_slugs,
-        validation=validation,
-    )
+        chosen = origin_story_file(pages, plan.judged)
+        if chosen is not None:
+            files[ORIGIN_STORY_FILE] = chosen
+    files["sources.json"] = plan.sources
+    files["meta.json"] = plan.meta
 
     partial = out.with_name(out.name + ".partial")
     if partial.exists():
@@ -871,15 +267,15 @@ def build_export(
         shutil.rmtree(out)
     partial.rename(out)
     total = sum(written.bytes.values())
-    with_relatives = sum(1 for r in relatives.values() if r.matches)
+    relatives = plan.relatives.values()
     return {
         "command": COMMAND.format(state=state),
         "state": state,
         "schema": str(SCHEMA),
-        "hosted_bills": len(hosted),
-        "bills_with_relatives": with_relatives,
-        "relatives_listed": sum(len(r.matches) for r in relatives.values()),
-        "comparisons": len(found),
+        "hosted_bills": len(plan.hosted),
+        "bills_with_relatives": sum(1 for r in relatives if r.matches),
+        "relatives_listed": sum(len(r.matches) for r in relatives),
+        "comparisons": len(plan.found),
         "section_pairs_aligned": n_pairs,
         "featured_pairs_explained": featured_explained,
         "featured_pairs_withheld": withheld,

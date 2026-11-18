@@ -13,14 +13,11 @@ from lineage.core import db
 from lineage.explain.explain import NotCachedError, explain, prompt_spans
 from lineage.explain.explanations import ChangeExplanation, Claim
 from lineage.export import queries as export_queries
-from lineage.export.build import (
+from lineage.export.build import SCHEMA, align_all, build_export, schema_text
+from lineage.export.pages import (
     RESULTS,
-    SCHEMA,
     ExportError,
-    align_all,
-    build_export,
     comparison_slug,
-    schema_text,
     slug,
     stories_for,
     validation_from,
