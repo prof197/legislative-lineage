@@ -53,7 +53,7 @@ from lineage.data.ingest import ingest
 from lineage.data.snapshot import bills_member, load_manifest, scan, verify, write_manifest
 from lineage.live import queries
 from lineage.live.incremental import applied_days, embedder_for
-from lineage.live.updates import BILLS_SUFFIX, Folded, fold, load_days, text_hash
+from lineage.live.updates import BILLS_SUFFIX, Day, Folded, fold, load_days, text_hash
 from lineage.match.near.index import build_index
 from lineage.match.near.stoplist import build_stoplist
 from lineage.match.semantic import queries as semantic_queries
@@ -366,7 +366,212 @@ class _Timer:
         return value
 
 
-def rebuild(  # noqa: C901  (M13 allow-list, until step 5's lanes)
+def _folded_days(
+    days_dir: Path, through: date | None, base: Base | None
+) -> tuple[list[Day], Folded | None]:
+    """The days under `days_dir` up to `through`, and their fold; refused with neither days
+    nor archives to lay them on."""
+    days = (
+        [d for d in load_days(days_dir) if through is None or d.as_of <= through]
+        if (days_dir.exists())
+        else []
+    )
+    if not days and base is None:
+        raise RebuildError(
+            f"no days under {days_dir} up to {through} and no archives to lay them on"
+        )
+    return days, fold(days) if days else None
+
+
+def _check_pinned(pinned_from: Path, as_of: date | None) -> None:
+    """Pinned statistics come from tables at the same day as the fold, with a stoplist."""
+    applied = applied_days(pinned_from)
+    last = max(applied, default=None)
+    if last != as_of:
+        raise RebuildError(
+            f"{pinned_from} stands as of {last or 'its build'}, the days folded here as of "
+            f"{as_of or 'none'}: pinned statistics come from tables at the same day"
+        )
+    if not (pinned_from / "stoplist.parquet").exists():
+        raise RebuildError(f"{pinned_from} holds no stoplist to pin")
+
+
+def _base_as_of(base: Base | None) -> date:
+    """With no day folded, the snapshot's latest stamp, or today without one."""
+    archives = load_manifest(base.manifest) if base is not None else []
+    stamps = sorted(a.generated_at[:10] for a in archives)
+    return date.fromisoformat(stamps[-1]) if stamps else date.today()
+
+
+@dataclass(frozen=True, slots=True)
+class _Inputs:
+    """What the stages read beside the tables: the text layer's files, the rules and the
+    neighbors' settings, as `rebuild` was given them."""
+
+    sessions: Path
+    document_types: Path
+    text_plan: Path
+    text_store: Path
+    text_rules: Path
+    text_quality: Path
+    max_share: float
+    model: str
+    models_dir: Path
+    neighbors_spec: str
+    ef_search: int | None
+    workers: int
+    floor_bytes: int
+
+
+def _tables_steps(
+    timer: _Timer,
+    doc: dict[str, Any],
+    laid: Laid,
+    *,
+    work: Path,
+    building: Path,
+    pinned_from: Path | None,
+    given: _Inputs,
+) -> None:
+    """Ingest, the texts, the sections, eligibility, the stoplist and the near-duplicate index,
+    into `building`; the archives under `work` are removed once ingested."""
+    raw, manifest, reports = work / "raw", work / "manifest.json", work / "reports"
+    floor_bytes, workers = given.floor_bytes, given.workers
+    result = timer.run(
+        "ingest",
+        lambda: ingest(raw, manifest, given.sessions, building, floor_bytes=floor_bytes),
+    )
+    doc["records"] = result.rows
+    shutil.rmtree(raw)  # as large as the snapshot, and derived from it and the days
+    counts = timer.run(
+        "texts",
+        lambda: merge_texts(
+            building,
+            plan_path=given.text_plan,
+            store=given.text_store,
+            rules_path=given.text_rules,
+            quality_path=given.text_quality,
+            floor_bytes=floor_bytes,
+        ),
+    )
+    doc["text_sources"] = counts
+    if counts.get(FETCHED) or counts.get(BULK):
+        doc["texts_files_with_day_text"] = _exported_for_fresh(building, laid.fresh)
+    timer.run(
+        "sections", lambda: build_sections(building, workers=workers, floor_bytes=floor_bytes)
+    )
+    timer.run(
+        "eligible",
+        lambda: build_eligibility(
+            building,
+            rules_path=given.document_types,
+            report_path=reports / "document_types.json",
+        ),
+    )
+    if pinned_from is not None:
+        shutil.copy2(pinned_from / "stoplist.parquet", building / "stoplist.parquet")
+    else:
+        timer.run(
+            "stoplist",
+            lambda: build_stoplist(
+                building,
+                max_share=given.max_share,
+                workers=workers,
+                report_path=reports / "boilerplate.json",
+                manifest_sha256=file_sha256(manifest),
+                rules_sha256=file_sha256(given.document_types),
+            ),
+        )
+    timer.run(
+        "index",
+        lambda: build_index(
+            building,
+            workers=workers,
+            floor_bytes=floor_bytes,
+            report_path=reports / "index.json",
+        ),
+    )
+
+
+def _semantic_steps(
+    timer: _Timer,
+    doc: dict[str, Any],
+    *,
+    reports: Path,
+    building: Path,
+    reuse: Path | None,
+    given: _Inputs,
+    progress: Callable[[str], None],
+) -> None:
+    """The plan, the vectors (reused where `reuse` embedded every text of a shard), the
+    neighbors, checked against their bounds, and the semantic pairs, into `building`."""
+    model, floor_bytes = given.model, given.floor_bytes
+    plan = timer.run("plan", lambda: build_plan(building, floor_bytes=floor_bytes))
+    doc["vectors"] = (
+        timer.run("reuse", lambda: _reuse_vectors(building, reuse, model))
+        if reuse is not None
+        else {"shards": plan.shards, "shards_reused": 0, "texts_reused": 0}
+    )
+    doc["vectors"]["shards_embedded"] = timer.run(
+        "embed",
+        lambda: _embed_rest(
+            building,
+            model,
+            models_dir=given.models_dir,
+            floor_bytes=floor_bytes,
+            progress=progress,
+        ),
+    )
+    neighbors = timer.run(
+        "neighbors",
+        lambda: build_neighbors(
+            building,
+            model=model,
+            spec=given.neighbors_spec,
+            ef_search=given.ef_search,
+            floor_bytes=floor_bytes,
+            progress=progress,
+        ),
+    )
+    (reports / "neighbors.json").write_text(json.dumps(neighbors, indent=1, default=str) + "\n")
+    recall = neighbors["exact_check"]["recall"]
+    if not neighbors["within_memory_bound"]:
+        raise RebuildError("the neighbors' peak memory crossed the bound")
+    if recall < RECALL_FLOOR:
+        raise RebuildError(f"the neighbors' recall {recall} is below {RECALL_FLOOR}")
+    timer.run(
+        "semantic-pairs",
+        lambda: build_semantic_pairs(building, model=model, floor_bytes=floor_bytes),
+    )
+
+
+def _statistics_and_origins(
+    timer: _Timer,
+    doc: dict[str, Any],
+    *,
+    building: Path,
+    pinned_from: Path | None,
+    match_origins: bool,
+    given: _Inputs,
+) -> None:
+    """The state boilerplate counts, carried from `pinned_from` or built afresh, and the
+    origin matches when asked for."""
+    model, floor_bytes = given.model, given.floor_bytes
+    if pinned_from is not None:
+        if has_counts(pinned_from):
+            doc["state_boilerplate"] = timer.run(
+                "state-boilerplate", lambda: _carry_counts(building, pinned_from)
+            )
+    else:
+        timer.run(
+            "state-boilerplate",
+            lambda: build_state_boilerplate(building, model=model, floor_bytes=floor_bytes),
+        )
+    if match_origins:
+        doc["origin_matches"] = timer.run("origins", lambda: _origins(building, model, floor_bytes))
+
+
+def rebuild(
     out: Path,
     *,
     days_dir: Path,
@@ -398,34 +603,30 @@ def rebuild(  # noqa: C901  (M13 allow-list, until step 5's lanes)
     Origin matches are made when `origins` is True, or, when None, when the tables the
     statistics or vectors come from hold them."""
     started = time.monotonic()
-    days = (
-        [d for d in load_days(days_dir) if through is None or d.as_of <= through]
-        if (days_dir.exists())
-        else []
-    )
-    if not days and base is None:
-        raise RebuildError(
-            f"no days under {days_dir} up to {through} and no archives to lay them on"
-        )
-    folded = fold(days) if days else None
+    days, folded = _folded_days(days_dir, through, base)
     as_of = folded.as_of if folded is not None else None
     if pinned_from is not None:
-        applied = applied_days(pinned_from)
-        last = max(applied, default=None)
-        if last != as_of:
-            raise RebuildError(
-                f"{pinned_from} stands as of {last or 'its build'}, the days folded here as of "
-                f"{as_of or 'none'}: pinned statistics come from tables at the same day"
-            )
-        if not (pinned_from / "stoplist.parquet").exists():
-            raise RebuildError(f"{pinned_from} holds no stoplist to pin")
+        _check_pinned(pinned_from, as_of)
     if as_of is None:
-        archives = load_manifest(base.manifest) if base is not None else []
-        stamps = sorted(a.generated_at[:10] for a in archives)
-        as_of = date.fromisoformat(stamps[-1]) if stamps else date.today()
+        as_of = _base_as_of(base)
     reuse = vectors_from if vectors_from is not None else pinned_from
     match_origins = (
         origins if origins is not None else (reuse is not None and origins_path(reuse).exists())
+    )
+    given = _Inputs(
+        sessions=sessions,
+        document_types=document_types,
+        text_plan=text_plan,
+        text_store=text_store,
+        text_rules=text_rules,
+        text_quality=text_quality,
+        max_share=max_share,
+        model=model,
+        models_dir=models_dir,
+        neighbors_spec=neighbors_spec,
+        ef_search=ef_search,
+        workers=workers,
+        floor_bytes=floor_bytes,
     )
 
     work = work_dir(out)
@@ -460,107 +661,26 @@ def rebuild(  # noqa: C901  (M13 allow-list, until step 5's lanes)
             "records_with_day_text": sum(len(v) for v in laid.fresh.values()),
         }
         building.mkdir(parents=True)
-        result = timer.run(
-            "ingest",
-            lambda: ingest(raw, manifest, sessions, building, floor_bytes=floor_bytes),
+        _tables_steps(
+            timer, doc, laid, work=work, building=building, pinned_from=pinned_from, given=given
         )
-        doc["records"] = result.rows
-        shutil.rmtree(raw)  # as large as the snapshot, and derived from it and the days
-        counts = timer.run(
-            "texts",
-            lambda: merge_texts(
-                building,
-                plan_path=text_plan,
-                store=text_store,
-                rules_path=text_rules,
-                quality_path=text_quality,
-                floor_bytes=floor_bytes,
-            ),
+        _semantic_steps(
+            timer,
+            doc,
+            reports=reports,
+            building=building,
+            reuse=reuse,
+            given=given,
+            progress=progress,
         )
-        doc["text_sources"] = counts
-        if counts.get(FETCHED) or counts.get(BULK):
-            doc["texts_files_with_day_text"] = _exported_for_fresh(building, laid.fresh)
-        timer.run(
-            "sections", lambda: build_sections(building, workers=workers, floor_bytes=floor_bytes)
+        _statistics_and_origins(
+            timer,
+            doc,
+            building=building,
+            pinned_from=pinned_from,
+            match_origins=match_origins,
+            given=given,
         )
-        timer.run(
-            "eligible",
-            lambda: build_eligibility(
-                building,
-                rules_path=document_types,
-                report_path=reports / "document_types.json",
-            ),
-        )
-        if pinned_from is not None:
-            shutil.copy2(pinned_from / "stoplist.parquet", building / "stoplist.parquet")
-        else:
-            timer.run(
-                "stoplist",
-                lambda: build_stoplist(
-                    building,
-                    max_share=max_share,
-                    workers=workers,
-                    report_path=reports / "boilerplate.json",
-                    manifest_sha256=file_sha256(manifest),
-                    rules_sha256=file_sha256(document_types),
-                ),
-            )
-        timer.run(
-            "index",
-            lambda: build_index(
-                building,
-                workers=workers,
-                floor_bytes=floor_bytes,
-                report_path=reports / "index.json",
-            ),
-        )
-        plan = timer.run("plan", lambda: build_plan(building, floor_bytes=floor_bytes))
-        doc["vectors"] = (
-            timer.run("reuse", lambda: _reuse_vectors(building, reuse, model))
-            if reuse is not None
-            else {"shards": plan.shards, "shards_reused": 0, "texts_reused": 0}
-        )
-        doc["vectors"]["shards_embedded"] = timer.run(
-            "embed",
-            lambda: _embed_rest(
-                building, model, models_dir=models_dir, floor_bytes=floor_bytes, progress=progress
-            ),
-        )
-        neighbors = timer.run(
-            "neighbors",
-            lambda: build_neighbors(
-                building,
-                model=model,
-                spec=neighbors_spec,
-                ef_search=ef_search,
-                floor_bytes=floor_bytes,
-                progress=progress,
-            ),
-        )
-        (reports / "neighbors.json").write_text(json.dumps(neighbors, indent=1, default=str) + "\n")
-        recall = neighbors["exact_check"]["recall"]
-        if not neighbors["within_memory_bound"]:
-            raise RebuildError("the neighbors' peak memory crossed the bound")
-        if recall < RECALL_FLOOR:
-            raise RebuildError(f"the neighbors' recall {recall} is below {RECALL_FLOOR}")
-        timer.run(
-            "semantic-pairs",
-            lambda: build_semantic_pairs(building, model=model, floor_bytes=floor_bytes),
-        )
-        if pinned_from is not None:
-            if has_counts(pinned_from):
-                doc["state_boilerplate"] = timer.run(
-                    "state-boilerplate", lambda: _carry_counts(building, pinned_from)
-                )
-        else:
-            timer.run(
-                "state-boilerplate",
-                lambda: build_state_boilerplate(building, model=model, floor_bytes=floor_bytes),
-            )
-        if match_origins:
-            doc["origin_matches"] = timer.run(
-                "origins", lambda: _origins(building, model, floor_bytes)
-            )
     except BaseException:
         shutil.rmtree(building, ignore_errors=True)
         raise
