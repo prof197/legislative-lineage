@@ -143,7 +143,7 @@ def test_the_command_stops_below_the_recall_floor_or_over_the_bound(
 ) -> None:
     from typer.testing import CliRunner
 
-    from lineage import cli
+    from lineage.cli import match as cli
 
     def build(*args: object, **kwargs: object) -> dict[str, object]:
         return _report(recall, within)
@@ -161,7 +161,7 @@ def test_the_command_stops_below_the_recall_floor_or_over_the_bound(
 def test_the_command_passes_at_the_floor(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     from typer.testing import CliRunner
 
-    from lineage import cli
+    from lineage.cli import match as cli
 
     def build(*args: object, **kwargs: object) -> dict[str, object]:
         return _report(0.99, True)

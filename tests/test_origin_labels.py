@@ -144,7 +144,7 @@ def test_the_command_caps_a_run_at_v1s_cap_unless_raised_explicitly() -> None:
     v2's budget still checked."""
     import inspect
 
-    from lineage.cli import origin_label_command
+    from lineage.cli.origins import origin_label_command
     from lineage.evals.model_labels import MAX_COST
 
     default = inspect.signature(origin_label_command).parameters["max_cost"].default
