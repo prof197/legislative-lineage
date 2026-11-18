@@ -21,7 +21,7 @@ from collections import Counter
 from collections.abc import Collection, Sequence
 from dataclasses import dataclass, replace
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, get_args
 
 import numpy as np
 from numpy.typing import NDArray
@@ -36,6 +36,7 @@ from lineage.evals.ulc import (
     NO_BILLS,
     BillRecord,
     Enactment,
+    Found,
     Snapshot,
     canonical_number,
     development_bills,
@@ -43,11 +44,12 @@ from lineage.evals.ulc import (
     load_enactments,
 )
 from lineage.match.near.bands import load_band_index
-from lineage.match.near.lsh import BUCKET_CAP, band_keys
+from lineage.match.near.lsh import BUCKET_CAP, BandIndex, band_keys
 from lineage.match.near.minhash import NUM_PERM
-from lineage.match.near.signatures import open_signatures
+from lineage.match.near.signatures import SignatureFiles, open_signatures
 from lineage.match.near.verify import THRESHOLD, min_agreements
 from lineage.match.query import (
+    QueryResult,
     bucket_sizes,
     matchable_sections,
     query_text,
@@ -77,17 +79,6 @@ MIN_SHARE = 0.0
 SHARE_SWEEP = (0.0, 0.1, 0.25, 0.5)
 
 # Ordered by how far through the pipeline a bill got; an enactment's reason is its furthest bill's.
-MISS_REASONS = (
-    "not_in_corpus",
-    "no_text_in_source",
-    "amendment_only",
-    "excluded_type",
-    "no_usable_text",
-    "not_proposed",
-    "bucket_cap",
-    "verification",
-    "below_threshold",
-)
 MissReason = Literal[
     "not_in_corpus",
     "no_text_in_source",
@@ -99,6 +90,7 @@ MissReason = Literal[
     "verification",
     "below_threshold",
 ]
+MISS_REASONS: tuple[MissReason, ...] = get_args(MissReason)
 Stage = Literal["verified", "bucket_cap", "verification", "not_proposed"]
 
 
@@ -222,6 +214,319 @@ def session_years(
     }
 
 
+@dataclass(frozen=True, slots=True)
+class _Settings:
+    """What every act's query is run and judged with."""
+
+    tables_dir: Path
+    stages: tuple[str, ...]
+    semantic: SemanticSearch | None
+    semantic_thresholds: Sequence[float]
+    flagged: Collection[tuple[str, int]]
+    min_share: float
+
+
+@dataclass(frozen=True, slots=True)
+class _Corpus:
+    """The corpus bills the counted rows may name, which rows name which, and where each
+    bill's signatures are."""
+
+    by_id: dict[str, queries.EnactmentBill]
+    found: list[Found]  # one per counted row, in order
+    files: SignatureFiles
+    rows_of: dict[str, list[tuple[int, int]]]  # bill id -> (signatures file, row)
+    sections_of: dict[str, set[int]]  # bill id -> ordinals of its signed sections
+    index: BandIndex
+
+
+@dataclass(frozen=True, slots=True)
+class _ActRun:
+    """One act's query: what it matched, and what probing its enactments' bills needs."""
+
+    result: QueryResult
+    relatives: dict[str, Relative]  # by family
+    families_at: dict[float, set[str]]  # the families found at each semantic threshold option
+    cosines: dict[str, float]  # each enactment bill's best cosine to the query, by bill id
+    signed: NDArray[np.uint32]
+    sizes: NDArray[np.int64] | None  # the bucket size of each signed window's band keys
+
+
+_Rows = list[tuple[Enactment, Found]]
+
+
+def _counted(
+    snapshot: Snapshot,
+    first_year: int,
+    development: frozenset[tuple[str, int, str]],
+    acts: frozenset[str] | None,
+) -> tuple[list[Enactment], list[tuple[Enactment, str]]]:
+    """The list rows recall counts, and those it leaves out with the reason."""
+    judged = [
+        (r, excluded_reason(r, first_year, development, acts))
+        for r in snapshot.rows
+        if r.stratum is not None
+    ]
+    counted = [r for r, why in judged if why is None]
+    excluded = [(r, why) for r, why in judged if why is not None]
+    return counted, excluded
+
+
+def _corpus(
+    tables_dir: Path, counted: list[Enactment], sessions: dict[tuple[str, str], Session]
+) -> _Corpus:
+    with db.connect_quiet() as con:
+        bills = queries.enactment_bills(
+            con,
+            bills_glob=str(tables_dir / "bills" / "*.parquet"),
+            texts_glob=str(tables_dir / "texts" / "*.parquet"),
+            eligible_path=tables_dir / "eligible.parquet",
+            families_path=tables_dir / "families" / "families.parquet",
+            states=sorted({r.state for r in counted if r.state is not None}),
+            opening=AMENDMENT_OPENING,
+            chars=AMENDMENT_CHARS,
+            substitute=AMENDMENT_SUBSTITUTE,
+        )
+    years = session_years(sessions)
+    records_for_matching = [
+        BillRecord(b.id, b.state, b.session, b.identifier, b.status, b.status_date,
+                   b.passage_chambers)
+        for b in bills
+    ]  # fmt: skip
+    found = [find_bills(r, records_for_matching, years) for r in counted]
+    target_ids = sorted({b.id for f in found for b in f.bills})
+
+    files = open_signatures(tables_dir)
+    with db.connect_quiet() as con:
+        located = queries.signature_rows_of(con, keys_paths=files.keys, bill_ids=target_ids)
+    rows_of: dict[str, list[tuple[int, int]]] = {}
+    sections_of: dict[str, set[int]] = {}
+    for f, row, bill_id, ordinal in located:
+        rows_of.setdefault(bill_id, []).append((f, row))
+        sections_of.setdefault(bill_id, set()).add(ordinal)
+    by_id = {b.id: b for b in bills}
+    return _Corpus(by_id, found, files, rows_of, sections_of, load_band_index(tables_dir))
+
+
+def _run_act(text: str, mine: _Rows, corpus: _Corpus, settings: _Settings) -> _ActRun:
+    """Search once at the lowest threshold asked for, and regroup at each and at the stage's."""
+    tables_dir, semantic = settings.tables_dir, settings.semantic
+    lowest = min([THRESHOLD_SEMANTIC, *settings.semantic_thresholds])
+    result = query_text(
+        text, tables_dir, semantic=semantic, semantic_threshold=lowest, flagged=settings.flagged
+    )
+    if lowest < THRESHOLD_SEMANTIC:
+        result = replace(result, matches=regrouped(result, tables_dir, THRESHOLD_SEMANTIC))
+    families_at = {
+        t: {m.family for m in regrouped(result, tables_dir, t) if m.share > settings.min_share}
+        for t in settings.semantic_thresholds
+    }
+    relatives = {
+        m.family: Relative(rank, round(m.share, 4), m.identifier, frozenset(m.sections_by_stage))
+        for rank, m in enumerate(result.matches, start=1)
+    }
+    cosines: dict[str, float] = {}
+    if semantic is not None:
+        act_bills = [b.id for _, match in mine for b in match.bills]
+        _, matchable = matchable_sections(text)
+        cosines = best_cosines_to_bills([t for t, _ in matchable], act_bills, semantic)
+    signed = sign_query(text, tables_dir).values
+    sizes = bucket_sizes(band_keys(signed), corpus.index) if signed.shape[0] else None
+    return _ActRun(result, relatives, families_at, cosines, signed, sizes)
+
+
+def _query_stats(
+    run: _ActRun, mine: _Rows, corpus: _Corpus, stages: Sequence[str]
+) -> dict[str, Any]:
+    result = run.result
+    targets_by_family = {
+        corpus.by_id[b.id].family
+        for _, match in mine
+        for b in match.bills
+        if corpus.by_id[b.id].family
+    }
+    return {
+        "sections": result.sections,
+        "signed": result.signed,
+        "searched": result.searched,
+        "families": len(result.matches),
+        "families_by_stage": {
+            stage: sum(stage in m.sections_by_stage for m in result.matches) for stage in stages
+        },
+        # Every relative, so the threshold's premise can be checked by reading them.
+        "relatives": [
+            {
+                "rank": rank,
+                "share": round(m.share, 4),
+                "sections_matched": m.sections_matched,
+                "sections_by_stage": m.sections_by_stage,
+                "state": m.state,
+                "session": m.session,
+                "identifier": m.identifier,
+                "enactment": m.family in targets_by_family,
+            }
+            for rank, m in enumerate(result.matches, start=1)
+        ],
+    }
+
+
+def _target(bill_id: str, run: _ActRun, corpus: _Corpus, min_share: float) -> dict[str, Any]:
+    """One bill an enactment names: how far it got against the act's query, and why it was
+    not found, if it was not."""
+    record = corpus.by_id[bill_id]
+    located_rows = corpus.rows_of.get(bill_id, [])
+    probed = None
+    if located_rows and run.sizes is not None:
+        values = np.stack([corpus.files.matrices[f][r] for f, r in located_rows])
+        probed = probe(run.signed, run.sizes, values)
+    relative = run.relatives.get(record.family) if record.family else None
+    signed_sections = len(corpus.sections_of.get(bill_id, ()))
+    reason = target_reason(
+        record,
+        signed_sections=signed_sections,
+        probed=probed,
+        relative=relative,
+        min_share=min_share,
+    )
+    return {
+        "id": record.id,
+        "session": record.session,
+        "identifier": record.identifier,
+        "status": record.status,
+        "text_chars": record.text_chars,
+        "signed_sections": signed_sections,
+        "stage": probed.stage if probed else None,
+        "best_estimate": round(probed.best_estimate, 4) if probed else None,
+        "best_cosine": (round(run.cosines[bill_id], 4) if bill_id in run.cosines else None),
+        "stages": sorted(relative.stages) if relative else [],
+        "rank": relative.rank if relative else None,
+        "share": relative.share if relative else None,
+        "found": relative is not None and relative.share > min_share,
+        "reason": reason,
+    }
+
+
+def _enactment(
+    act: str, row: Enactment, match: Found, run: _ActRun, corpus: _Corpus, settings: _Settings
+) -> dict[str, Any]:
+    """One list row's record: found by its best-ranked bill, else its furthest bill's reason."""
+    targets = [_target(b.id, run, corpus, settings.min_share) for b in match.bills]
+    reasons: list[MissReason] = [t["reason"] for t in targets if t["reason"] is not None]
+    hits = [t for t in targets if t["found"]]
+    best = min(hits, key=lambda t: t["rank"]) if hits else None
+    miss: MissReason | None = None
+    if best is None:
+        miss = max(reasons, key=MISS_REASONS.index) if reasons else "not_in_corpus"
+    families = [corpus.by_id[b.id].family for b in match.bills]
+    return {
+        "act": act,
+        "state": row.state,
+        "year": row.year,
+        "bill_cell": row.bill_cell,
+        "stratum": row.stratum,
+        "match_rule": match.rule if match.bills else None,
+        "with_text": any(t["text_chars"] > 0 for t in targets),
+        "found": best is not None,
+        "found_by_stage": {
+            stage: any(t["found"] and stage in t["stages"] for t in targets)
+            for stage in settings.stages
+        },
+        "found_by": best["identifier"] if best else None,
+        "found_at_semantic_threshold": {
+            str(t): any(f in run.families_at[t] for f in families if f)
+            for t in settings.semantic_thresholds
+        },
+        "rank": best["rank"] if best else None,
+        "share": best["share"] if best else None,
+        "miss_reason": miss,
+        "bills": targets,
+    }
+
+
+_STRATA = ("enacted", "substantially_similar")
+
+
+def _breakdown(records: list[dict[str, Any]], acts: Sequence[str]) -> dict[str, Any]:
+    return {
+        "pooled": _both(records),
+        "by_act": {a: _both([r for r in records if r["act"] == a]) for a in acts},
+        "by_stratum": {s: _both([r for r in records if r["stratum"] == s]) for s in _STRATA},
+    }
+
+
+def _recall_sweeps(
+    records: list[dict[str, Any]], semantic_thresholds: Sequence[float]
+) -> dict[str, Any]:
+    """Recall as if the semantic stage's threshold, or the share found above, were another."""
+    return {
+        "recall_by_semantic_threshold": [
+            {
+                "threshold": t,
+                "enactments": len(records),
+                "found": sum(r["found_at_semantic_threshold"][str(t)] for r in records),
+            }
+            for t in semantic_thresholds
+        ],
+        "recall_by_min_share": [
+            {
+                "min_share": s,
+                "found": sum(r["found"] and r["share"] >= s for r in records),
+                "found_with_text": sum(
+                    r["found"] and r["share"] >= s and r["with_text"] for r in records
+                ),
+            }
+            for s in SHARE_SWEEP
+        ],
+    }
+
+
+def _miss_reasons(records: list[dict[str, Any]]) -> dict[str, int]:
+    return dict(
+        sorted(
+            Counter(r["miss_reason"] for r in records if r["miss_reason"]).items(),
+            key=lambda kv: MISS_REASONS.index(kv[0]),
+        )
+    )
+
+
+def _report(
+    records: list[dict[str, Any]],
+    query_stats: dict[str, dict[str, Any]],
+    excluded: list[tuple[Enactment, str]],
+    settings: _Settings,
+    first_year: int,
+) -> dict[str, Any]:
+    """The results: recall broken down, by stage alone, and swept; the run's settings."""
+    acts_run = sorted(query_stats)
+    ablation = {
+        stage: _breakdown([r | {"found": r["found_by_stage"][stage]} for r in records], acts_run)
+        for stage in settings.stages
+    } | {"both": _breakdown(records, acts_run)}
+    semantic = settings.semantic is not None
+    return {
+        "stages": list(settings.stages),
+        "stage_ablation": ablation if semantic else None,
+        "threshold": {
+            "score": "share of the query's words in the sections the family matches",
+            "min_share": settings.min_share,
+            "found_when": "score above min_share",
+            "status": "approved",
+        },
+        "verification_threshold": THRESHOLD,
+        **run_configuration(semantic, settings.flagged),
+        "bucket_cap": BUCKET_CAP,
+        "first_year": first_year,
+        "queries": query_stats,
+        "recall": _breakdown(records, acts_run),
+        **_recall_sweeps(records, settings.semantic_thresholds),
+        "miss_reasons": _miss_reasons(records),
+        "excluded": [
+            {"act": r.act, "jurisdiction": r.jurisdiction, "year": r.year, "why": why}
+            for r, why in excluded
+        ],
+        "enactments": records,
+    }
+
+
 def evaluate(
     query_texts: dict[str, str],
     snapshot: Snapshot,
@@ -250,249 +555,24 @@ def evaluate(
             f"a semantic threshold under the build's {BUILD_THRESHOLD} lists what the build "
             "never stored, so no page under it can be measured"
         )
-    lowest = min([THRESHOLD_SEMANTIC, *semantic_thresholds])
     require_index(tables_dir)
     stages = ("near_duplicate", "semantic") if semantic is not None else ("near_duplicate",)
-    rows = [r for r in snapshot.rows if r.stratum is not None]
-    excluded = [
-        (r, why)
-        for r in rows
-        if (why := excluded_reason(r, first_year, development, acts)) is not None
-    ]
-    counted = [r for r in rows if excluded_reason(r, first_year, development, acts) is None]
+    settings = _Settings(tables_dir, stages, semantic, semantic_thresholds, flagged, min_share)
+    counted, excluded = _counted(snapshot, first_year, development, acts)
     unknown = sorted({r.act for r in counted} - set(query_texts))
     if unknown:
         raise CommissionError(f"no query text for {', '.join(unknown)}")
 
-    with db.connect_quiet() as con:
-        bills = queries.enactment_bills(
-            con,
-            bills_glob=str(tables_dir / "bills" / "*.parquet"),
-            texts_glob=str(tables_dir / "texts" / "*.parquet"),
-            eligible_path=tables_dir / "eligible.parquet",
-            families_path=tables_dir / "families" / "families.parquet",
-            states=sorted({r.state for r in counted if r.state is not None}),
-            opening=AMENDMENT_OPENING,
-            chars=AMENDMENT_CHARS,
-            substitute=AMENDMENT_SUBSTITUTE,
-        )
-    by_id = {b.id: b for b in bills}
-    years = session_years(sessions)
-    records_for_matching = [
-        BillRecord(b.id, b.state, b.session, b.identifier, b.status, b.status_date,
-                   b.passage_chambers)
-        for b in bills
-    ]  # fmt: skip
-    found = [find_bills(r, records_for_matching, years) for r in counted]
-    target_ids = sorted({b.id for f in found for b in f.bills})
-
-    files = open_signatures(tables_dir)
-    with db.connect_quiet() as con:
-        located = queries.signature_rows_of(con, keys_paths=files.keys, bill_ids=target_ids)
-    rows_of: dict[str, list[tuple[int, int]]] = {}
-    sections_of: dict[str, set[int]] = {}
-    for f, row, bill_id, ordinal in located:
-        rows_of.setdefault(bill_id, []).append((f, row))
-        sections_of.setdefault(bill_id, set()).add(ordinal)
-
-    index = load_band_index(tables_dir)
+    corpus = _corpus(tables_dir, counted, sessions)
     records: list[dict[str, Any]] = []
     query_stats: dict[str, dict[str, Any]] = {}
     for act in sorted(query_texts):
-        result = query_text(
-            query_texts[act],
-            tables_dir,
-            semantic=semantic,
-            semantic_threshold=lowest,
-            flagged=flagged,
-        )
-        if lowest < THRESHOLD_SEMANTIC:
-            result = replace(result, matches=regrouped(result, tables_dir, THRESHOLD_SEMANTIC))
-        families_at = {
-            t: {m.family for m in regrouped(result, tables_dir, t) if m.share > min_share}
-            for t in semantic_thresholds
-        }
-        relatives = {
-            m.family: Relative(
-                rank, round(m.share, 4), m.identifier, frozenset(m.sections_by_stage)
-            )
-            for rank, m in enumerate(result.matches, start=1)
-        }
-        cosines: dict[str, float] = {}
-        if semantic is not None:
-            act_bills = [
-                b.id
-                for row, match in zip(counted, found, strict=True)
-                if row.act == act
-                for b in match.bills
-            ]
-            _, matchable = matchable_sections(query_texts[act])
-            cosines = best_cosines_to_bills([t for t, _ in matchable], act_bills, semantic)
-        signed = sign_query(query_texts[act], tables_dir).values
-        sizes = bucket_sizes(band_keys(signed), index) if signed.shape[0] else None
-        targets_by_family = {
-            by_id[b.id].family
-            for row, match in zip(counted, found, strict=True)
-            if row.act == act
-            for b in match.bills
-            if by_id[b.id].family
-        }
-        query_stats[act] = {
-            "sections": result.sections,
-            "signed": result.signed,
-            "searched": result.searched,
-            "families": len(result.matches),
-            "families_by_stage": {
-                stage: sum(stage in m.sections_by_stage for m in result.matches) for stage in stages
-            },
-            # Every relative, so the threshold's premise can be checked by reading them.
-            "relatives": [
-                {
-                    "rank": rank,
-                    "share": round(m.share, 4),
-                    "sections_matched": m.sections_matched,
-                    "sections_by_stage": m.sections_by_stage,
-                    "state": m.state,
-                    "session": m.session,
-                    "identifier": m.identifier,
-                    "enactment": m.family in targets_by_family,
-                }
-                for rank, m in enumerate(result.matches, start=1)
-            ],
-        }
-        for row, match in zip(counted, found, strict=True):
-            if row.act != act:
-                continue
-            targets: list[dict[str, Any]] = []
-            reasons: list[MissReason] = []
-            for bill in match.bills:
-                record = by_id[bill.id]
-                located_rows = rows_of.get(bill.id, [])
-                probed = None
-                if located_rows and sizes is not None:
-                    values = np.stack([files.matrices[f][r] for f, r in located_rows])
-                    probed = probe(signed, sizes, values)
-                relative = relatives.get(record.family) if record.family else None
-                reason = target_reason(
-                    record,
-                    signed_sections=len(sections_of.get(bill.id, ())),
-                    probed=probed,
-                    relative=relative,
-                    min_share=min_share,
-                )
-                if reason is not None:
-                    reasons.append(reason)
-                targets.append(
-                    {
-                        "id": record.id,
-                        "session": record.session,
-                        "identifier": record.identifier,
-                        "status": record.status,
-                        "text_chars": record.text_chars,
-                        "signed_sections": len(sections_of.get(bill.id, ())),
-                        "stage": probed.stage if probed else None,
-                        "best_estimate": round(probed.best_estimate, 4) if probed else None,
-                        "best_cosine": (round(cosines[bill.id], 4) if bill.id in cosines else None),
-                        "stages": sorted(relative.stages) if relative else [],
-                        "rank": relative.rank if relative else None,
-                        "share": relative.share if relative else None,
-                        "found": relative is not None and relative.share > min_share,
-                        "reason": reason,
-                    }
-                )
-            hits = [t for t in targets if t["found"]]
-            best = min(hits, key=lambda t: t["rank"]) if hits else None
-            miss: MissReason | None = None
-            if best is None:
-                miss = max(reasons, key=MISS_REASONS.index) if reasons else "not_in_corpus"
-            records.append(
-                {
-                    "act": act,
-                    "state": row.state,
-                    "year": row.year,
-                    "bill_cell": row.bill_cell,
-                    "stratum": row.stratum,
-                    "match_rule": match.rule if match.bills else None,
-                    "with_text": any(t["text_chars"] > 0 for t in targets),
-                    "found": best is not None,
-                    "found_by_stage": {
-                        stage: any(t["found"] and stage in t["stages"] for t in targets)
-                        for stage in stages
-                    },
-                    "found_by": best["identifier"] if best else None,
-                    "found_at_semantic_threshold": {
-                        str(t): any(
-                            by_id[b.id].family in families_at[t]
-                            for b in match.bills
-                            if by_id[b.id].family
-                        )
-                        for t in semantic_thresholds
-                    },
-                    "rank": best["rank"] if best else None,
-                    "share": best["share"] if best else None,
-                    "miss_reason": miss,
-                    "bills": targets,
-                }
-            )
+        mine = [(r, f) for r, f in zip(counted, corpus.found, strict=True) if r.act == act]
+        run = _run_act(query_texts[act], mine, corpus, settings)
+        query_stats[act] = _query_stats(run, mine, corpus, stages)
+        records += [_enactment(act, row, match, run, corpus, settings) for row, match in mine]
 
-    strata = ("enacted", "substantially_similar")
-
-    def breakdown(rs: list[dict[str, Any]]) -> dict[str, Any]:
-        return {
-            "pooled": _both(rs),
-            "by_act": {a: _both([r for r in rs if r["act"] == a]) for a in sorted(query_texts)},
-            "by_stratum": {s: _both([r for r in rs if r["stratum"] == s]) for s in strata},
-        }
-
-    ablation = {
-        stage: breakdown([r | {"found": r["found_by_stage"][stage]} for r in records])
-        for stage in stages
-    } | {"both": breakdown(records)}
-    return {
-        "stages": list(stages),
-        "stage_ablation": ablation if semantic is not None else None,
-        "threshold": {
-            "score": "share of the query's words in the sections the family matches",
-            "min_share": min_share,
-            "found_when": "score above min_share",
-            "status": "approved",
-        },
-        "verification_threshold": THRESHOLD,
-        **run_configuration(semantic is not None, flagged),
-        "bucket_cap": BUCKET_CAP,
-        "first_year": first_year,
-        "queries": query_stats,
-        "recall": breakdown(records),
-        "recall_by_semantic_threshold": [
-            {
-                "threshold": t,
-                "enactments": len(records),
-                "found": sum(r["found_at_semantic_threshold"][str(t)] for r in records),
-            }
-            for t in semantic_thresholds
-        ],
-        "recall_by_min_share": [
-            {
-                "min_share": s,
-                "found": sum(r["found"] and r["share"] >= s for r in records),
-                "found_with_text": sum(
-                    r["found"] and r["share"] >= s and r["with_text"] for r in records
-                ),
-            }
-            for s in SHARE_SWEEP
-        ],
-        "miss_reasons": dict(
-            sorted(
-                Counter(r["miss_reason"] for r in records if r["miss_reason"]).items(),
-                key=lambda kv: MISS_REASONS.index(kv[0]),
-            )
-        ),
-        "excluded": [
-            {"act": r.act, "jurisdiction": r.jurisdiction, "year": r.year, "why": why}
-            for r, why in excluded
-        ],
-        "enactments": records,
-    }
+    return _report(records, query_stats, excluded, settings, first_year)
 
 
 def _sha256(data: bytes) -> str:

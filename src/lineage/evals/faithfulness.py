@@ -104,40 +104,50 @@ def pair_view(spans: Sequence[Span], a: str, b: str, *, origin_side: Side) -> Pa
     return PairView(b, a, {s.id: (s.b, s.a) for s in spans})
 
 
+def _context(text: str, lo: int, hi: int, width: int) -> tuple[int, int]:
+    """Where the passage around `text[lo:hi]` starts and ends: `width` characters either way,
+    cut back to whole words, with no space at either end outside the span."""
+    start, end = max(0, lo - width), min(len(text), hi + width)
+    if start > 0 and not text[start - 1].isspace():
+        while start < lo and not text[start].isspace():
+            start += 1
+    if end < len(text) and not text[end].isspace():
+        while end > hi and not text[end - 1].isspace():
+            end -= 1
+    while start < lo and text[start].isspace():
+        start += 1
+    while end > hi and text[end - 1].isspace():
+        end -= 1
+    return start, end
+
+
+def _marked(text: str, start: int, end: int, inside: Sequence[tuple[str, int, int]]) -> str:
+    """`text[start:end]` with each span inside marked, and an ellipsis where text is cut."""
+    parts = ["…" if start > 0 else ""]
+    at = start
+    for span_id, lo, hi in inside:
+        parts += [text[at:lo], f"⟦{span_id}⟧", text[lo:hi], f"⟦/{span_id}⟧"]
+        at = hi
+    parts += [text[at:end], "…" if end < len(text) else ""]
+    return "".join(parts)
+
+
 def marked_passages(
     text: str, cited: Sequence[tuple[str, tuple[int, int]]], width: int = CONTEXT_CHARS
 ) -> list[str]:
     """The passages of `text` around the cited spans, each span marked ⟦id⟧…⟦/id⟧ within
     `width` characters of text either way, cut back to whole words; spans whose windows meet
     share a passage."""
-    windows: list[list[Any]] = []  # [start, end, spans inside]
+    windows: list[tuple[int, int, list[tuple[str, int, int]]]] = []  # start, end, spans inside
     for span_id, (lo, hi) in sorted(cited, key=lambda c: c[1]):
-        start, end = max(0, lo - width), min(len(text), hi + width)
-        if start > 0 and not text[start - 1].isspace():
-            while start < lo and not text[start].isspace():
-                start += 1
-        if end < len(text) and not text[end].isspace():
-            while end > hi and not text[end - 1].isspace():
-                end -= 1
-        while start < lo and text[start].isspace():
-            start += 1
-        while end > hi and text[end - 1].isspace():
-            end -= 1
+        start, end = _context(text, lo, hi, width)
         if windows and start <= windows[-1][1]:
-            windows[-1][1] = max(windows[-1][1], end)
-            windows[-1][2].append((span_id, lo, hi))
+            first, last, inside = windows[-1]
+            inside.append((span_id, lo, hi))
+            windows[-1] = (first, max(last, end), inside)
         else:
-            windows.append([start, end, [(span_id, lo, hi)]])
-    out: list[str] = []
-    for start, end, inside in windows:
-        parts = ["…" if start > 0 else ""]
-        at = start
-        for span_id, lo, hi in inside:
-            parts += [text[at:lo], f"⟦{span_id}⟧", text[lo:hi], f"⟦/{span_id}⟧"]
-            at = hi
-        parts += [text[at:end], "…" if end < len(text) else ""]
-        out.append("".join(parts))
-    return out
+            windows.append((start, end, [(span_id, lo, hi)]))
+    return [_marked(text, start, end, inside) for start, end, inside in windows]
 
 
 @dataclass(frozen=True, slots=True)

@@ -17,7 +17,6 @@ person's label was given: kappa at least KAPPA_FROM and cutoff agreement at leas
 CUTOFF_AGREEMENT_FROM, or the model's labels do not stand as provisional.
 """
 
-import json
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
@@ -29,6 +28,7 @@ from lineage.evals.labels import CORRECT_FROM, PERSON, Item, Pair
 from lineage.evals.pair_data import LABELS
 from lineage.evals.precision import SEED as PRECISION_SEED
 from lineage.evals.precision import latest_labels, stratified
+from lineage.evals.precision import write_sample as write_precision_sample
 from lineage.match.strata import STRATA, stratum_of
 
 PAIRS = 50
@@ -102,8 +102,7 @@ def write_subsample(
     sample_path: Path = SAMPLE,
     report_path: Path = SAMPLE_REPORT,
 ) -> None:
-    sample_path.write_text("".join(json.dumps(r) + "\n" for r in rows))
-    report_path.write_text(json.dumps(report, indent=1) + "\n")
+    write_precision_sample(rows, report, sample_path=sample_path, report_path=report_path)
 
 
 def weighted_kappa(first: Sequence[int], second: Sequence[int], categories: int) -> float | None:
