@@ -6,16 +6,16 @@ from typing import Any
 import pytest
 
 from lineage.core import db
-from lineage.ingest import ingest
-from lineage.sectioning import build_sections
-from lineage.snapshot import scan, write_manifest
-from lineage.stats import (
+from lineage.data.ingest import ingest
+from lineage.data.snapshot import scan, write_manifest
+from lineage.data.stats import (
     BLANK_PATTERN,
     amendment_only,
     coverage,
     georgia_local_notices,
     write_coverage,
 )
+from lineage.sectioning import build_sections
 from lineage.text_merge import merge_texts
 from tests.conftest import SESSIONS
 

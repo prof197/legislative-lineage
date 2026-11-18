@@ -1,5 +1,6 @@
-# Data: raw snapshots, derived tables and indexes never go in git.
-data/
+# Data: raw snapshots, derived tables and indexes never go in git. Anchored at the root, so
+# the lineage.data package is not caught by it.
+/data/
 
 # Secrets, and per-machine settings such as LINEAGE_DATA's absolute path
 .env

@@ -15,12 +15,12 @@ from pathlib import Path
 
 import duckdb
 
-from lineage import queries
 from lineage.core import db
 from lineage.core.disk import require_free_space
-from lineage.sessions import Session, load_sessions, status_end_date
-from lineage.snapshot import Archive, bills_member, load_manifest, verify
-from lineage.status import OUTCOME_CLASSIFICATIONS, STATUS_WORDING, Action, bill_status
+from lineage.data import queries
+from lineage.data.sessions import Session, load_sessions, status_end_date
+from lineage.data.snapshot import Archive, bills_member, load_manifest, verify
+from lineage.data.status import OUTCOME_CLASSIFICATIONS, STATUS_WORDING, Action, bill_status
 
 # Ample for one archive at a time; the largest bills file in the snapshot is under 300 MiB.
 _MEMORY_LIMIT = "4GB"

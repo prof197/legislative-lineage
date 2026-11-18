@@ -6,6 +6,7 @@ import pytest
 
 from lineage import queries
 from lineage.core import db
+from lineage.data import queries as data_queries
 from lineage.shingles import shingle_hashes
 from lineage.stoplist import (
     StoplistError,
@@ -61,7 +62,7 @@ def _write_sections(tables: Path, texts: list[str], eligible: list[bool] | None 
     )
     with db.connect_quiet() as con:
         queries.write_sections(con, parquet_path=tables / "sections" / "s.parquet", columns=columns)
-        queries.write_eligibility(
+        data_queries.write_eligibility(
             con,
             parquet_path=tables / "eligible.parquet",
             ids=columns.bill_id,

@@ -51,6 +51,13 @@ from lineage.collect import PACKAGE as COLLECT_PACKAGE
 from lineage.collect import collectors
 from lineage.core import db
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
+from lineage.data.stats import (
+    AMENDMENT_CHARS,
+    AMENDMENT_OPENING,
+    AMENDMENT_SUBSTITUTE,
+    GEORGIA_ENACTING,
+    GEORGIA_NOTICE,
+)
 from lineage.explain import CACHE_DIR, explain, prompt_spans
 from lineage.explain import MODEL as EXPLAIN_MODEL
 from lineage.export import (
@@ -109,13 +116,6 @@ from lineage.relatives import BillRelatives, bill_relatives
 from lineage.semantic import MODEL
 from lineage.semantic_pairs import section_keys
 from lineage.state_boilerplate import COMPACT_PHRASES
-from lineage.stats import (
-    AMENDMENT_CHARS,
-    AMENDMENT_OPENING,
-    AMENDMENT_SUBSTITUTE,
-    GEORGIA_ENACTING,
-    GEORGIA_NOTICE,
-)
 from lineage.updates import (
     CHANGES_DIR,
     Change,

@@ -17,7 +17,7 @@ from pathlib import Path
 from lineage import queries
 from lineage.commission import FIRST_YEAR, excluded_reason, session_years
 from lineage.core import db
-from lineage.sessions import load_sessions
+from lineage.data.sessions import load_sessions
 from lineage.ulc import (
     ENACTMENTS,
     NO_BILLS,

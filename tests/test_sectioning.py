@@ -5,9 +5,9 @@ import pytest
 
 from lineage.core import db
 from lineage.core.disk import InsufficientDiskSpaceError
-from lineage.ingest import ingest
+from lineage.data.ingest import ingest
+from lineage.data.snapshot import scan, write_manifest
 from lineage.sectioning import SectioningError, build_sections
-from lineage.snapshot import scan, write_manifest
 from lineage.text_merge import merge_texts
 from tests.conftest import SESSIONS
 

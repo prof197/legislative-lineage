@@ -17,6 +17,7 @@ from lineage import origin_matching
 from lineage.acts import ACTS, ACTS_DIR, enacted_text
 from lineage.collect import collectors
 from lineage.commission import evaluate
+from lineage.data.sessions import load_sessions
 from lineage.listing import listed_hits
 from lineage.modeldocs import (
     ModelDoc,
@@ -44,7 +45,6 @@ from lineage.origin_precision import OriginPrecisionError
 from lineage.origins import BillSpan, OriginMatch, read_origin_matches, write_origin_matches
 from lineage.sections import normalize
 from lineage.semantic import CORROBORATING, THRESHOLD, open_search
-from lineage.sessions import load_sessions
 from lineage.ulc import ENACTMENTS, load_enactments
 from tests.conftest import COMMISSION, FAKE_MODEL
 from tests.fakes import MARK, bag_of_words

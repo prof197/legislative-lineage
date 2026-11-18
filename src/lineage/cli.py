@@ -43,7 +43,6 @@ from lineage.answer_key import (
     build_answer_key,
     render_answer_key,
 )
-from lineage.archives import SOURCE, fetch_raw
 from lineage.collect import REPORTS_DIR as COLLECT_REPORTS
 from lineage.collect import CollectContext, CollectError, collectors, run_collector
 from lineage.collect import write_report as write_collect_report
@@ -64,7 +63,19 @@ from lineage.core.paths import DATA
 from lineage.cost import REPORT as COST_REPORT
 from lineage.cost import cost_report
 from lineage.cost import write_report as write_cost_report
-from lineage.doctypes import RULES, DocTypesError, build_eligibility, rule_samples
+from lineage.data.archives import SOURCE, fetch_raw
+from lineage.data.doctypes import RULES, DocTypesError, build_eligibility, rule_samples
+from lineage.data.ingest import ingest as run_ingest
+from lineage.data.sessions import (
+    CARRYOVER,
+    SCRAPERS_REPO,
+    SessionsError,
+    fetch_scraper_sessions,
+    session_rows,
+    write_sessions,
+)
+from lineage.data.snapshot import SnapshotError, load_manifest, scan, write_manifest
+from lineage.data.stats import write_coverage
 from lineage.embed import embed as embed_texts
 from lineage.embed import load_model
 from lineage.explain import CACHE_DIR as EXPLAIN_CACHE
@@ -127,7 +138,6 @@ from lineage.flag_precision import (
 )
 from lineage.incremental import update
 from lineage.index import build_index
-from lineage.ingest import ingest as run_ingest
 from lineage.intake import (
     DAYS,
     ESTIMATE,
@@ -282,15 +292,6 @@ from lineage.semantic import SemanticSearch, open_search
 from lineage.semantic_pairs import REPORT as SEMANTIC_PAIRS_REPORT
 from lineage.semantic_pairs import SemanticPairsError, build_semantic_pairs
 from lineage.semantic_pairs import write_report as write_semantic_pairs_report
-from lineage.sessions import (
-    CARRYOVER,
-    SCRAPERS_REPO,
-    SessionsError,
-    fetch_scraper_sessions,
-    session_rows,
-    write_sessions,
-)
-from lineage.snapshot import SnapshotError, load_manifest, scan, write_manifest
 from lineage.spend import BUDGET as CALL_BUDGET
 from lineage.spend import SPEND as CALL_SPEND
 from lineage.spend import BudgetError, Meter, check_projection
@@ -303,7 +304,6 @@ from lineage.state_boilerplate import (
 )
 from lineage.state_boilerplate import REPORT as STATE_BOILERPLATE_REPORT
 from lineage.state_boilerplate import write_report as write_state_boilerplate_report
-from lineage.stats import write_coverage
 from lineage.stoplist import StoplistError, build_stoplist
 from lineage.strata import PrecisionError
 from lineage.text_inventory import PLAN, REPORT, StalePlanError, build_inventory

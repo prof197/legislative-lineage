@@ -13,7 +13,13 @@ from pathlib import Path
 
 from lineage.core.disk import require_free_space
 from lineage.core.http import FetchError, open_url, stream
-from lineage.snapshot import Archive, SnapshotError, load_manifest, read_archive, write_manifest
+from lineage.data.snapshot import (
+    Archive,
+    SnapshotError,
+    load_manifest,
+    read_archive,
+    write_manifest,
+)
 
 SOURCE = "https://data.openstates.org/json/latest/"
 

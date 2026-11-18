@@ -7,6 +7,7 @@ from numpy.typing import NDArray
 
 from lineage import queries, vectors
 from lineage.core import db
+from lineage.data import queries as data_queries
 from lineage.vectors import (
     EmbedError,
     build_plan,
@@ -50,7 +51,7 @@ def tables(tmp_path: Path) -> Path:
             )
             queries.write_sections(con, parquet_path=tables / "sections" / name, columns=columns)
         bills = sorted({b for b, _ in keys})
-        queries.write_eligibility(
+        data_queries.write_eligibility(
             con,
             parquet_path=tables / "eligible.parquet",
             ids=bills,
@@ -171,7 +172,7 @@ def test_the_report_counts_a_stopped_run_up_to_its_last_shard(tables: Path) -> N
 def test_a_change_of_eligibility_makes_the_plan_stale(tables: Path) -> None:
     current_plan(tables, floor_bytes=0)
     with db.connect_quiet() as con:
-        queries.write_eligibility(
+        data_queries.write_eligibility(
             con,
             parquet_path=tables / "eligible.parquet",
             ids=["b1", "b2", "b3", "r1"],

@@ -4,12 +4,12 @@ from pathlib import Path
 import duckdb
 import pytest
 
-from lineage import queries
 from lineage.core import db
 from lineage.core.disk import InsufficientDiskSpaceError
-from lineage.ingest import ingest
-from lineage.snapshot import SnapshotError, scan, write_manifest
-from lineage.status import ENACTED_WORDING, OUTCOME_CLASSIFICATIONS
+from lineage.data import queries as data_queries
+from lineage.data.ingest import ingest
+from lineage.data.snapshot import SnapshotError, scan, write_manifest
+from lineage.data.status import ENACTED_WORDING, OUTCOME_CLASSIFICATIONS
 from tests.conftest import SESSIONS
 
 
@@ -185,7 +185,7 @@ def test_status_reads_unclassified_actions_whose_wording_records_an_enactment(
     path.write_text(json.dumps([bill]))
 
     with db.connect_quiet() as con:
-        ((_, _, actions),) = queries.outcome_actions(
+        ((_, _, actions),) = data_queries.outcome_actions(
             con, json_path=path, kinds=sorted(OUTCOME_CLASSIFICATIONS), wording=ENACTED_WORDING
         )
 

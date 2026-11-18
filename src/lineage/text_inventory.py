@@ -21,13 +21,13 @@ from urllib.parse import urlsplit
 
 import duckdb
 
-from lineage import doctypes, queries
+from lineage import queries
 from lineage.core import db
 from lineage.core.http import HOST_MOVES, moved
 from lineage.core.paths import DATA
 from lineage.core.robots import Robots, read_robots
-from lineage.sections import split_sections
-from lineage.stats import (
+from lineage.data import doctypes
+from lineage.data.stats import (
     AMENDMENT_CHARS,
     AMENDMENT_OPENING,
     AMENDMENT_SUBSTITUTE,
@@ -35,6 +35,7 @@ from lineage.stats import (
     GEORGIA_ENACTING,
     GEORGIA_NOTICE,
 )
+from lineage.sections import split_sections
 from lineage.versions import Link, Version, choose_version
 
 COMMAND = "uv run lineage text inventory"

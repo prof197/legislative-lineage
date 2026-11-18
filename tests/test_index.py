@@ -8,6 +8,7 @@ from lineage import bands, queries
 from lineage.bands import SWEEP_CAPS, load_band_index
 from lineage.core import db
 from lineage.core.disk import InsufficientDiskSpaceError
+from lineage.data import queries as data_queries
 from lineage.index import build_index
 from lineage.lsh import BANDS, BUCKET_CAP, build_band_index
 from lineage.pairs import (
@@ -44,7 +45,7 @@ def tables(tmp_path: Path) -> Path:
                 ids, [1] * n, [None] * n, texts, texts, [True] * n, [None] * n
             ),
         )
-        queries.write_eligibility(
+        data_queries.write_eligibility(
             con,
             parquet_path=tables / "eligible.parquet",
             ids=ids,
@@ -198,7 +199,7 @@ def test_a_provision_inside_another_states_long_section_is_a_verified_pair(
                 ids, [1, 1], [None, None], texts, texts, [True, True], [None, None]
             ),
         )
-        queries.write_eligibility(
+        data_queries.write_eligibility(
             con,
             parquet_path=tables / "eligible.parquet",
             ids=ids,

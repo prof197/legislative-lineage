@@ -48,6 +48,13 @@ from lineage.collect import collectors
 from lineage.core import db
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.core.paths import DATA
+from lineage.data.stats import (
+    AMENDMENT_CHARS,
+    AMENDMENT_OPENING,
+    AMENDMENT_SUBSTITUTE,
+    GEORGIA_ENACTING,
+    GEORGIA_NOTICE,
+)
 from lineage.embed import embed as embed_texts
 from lineage.embed import load_model
 from lineage.explain import CACHE_DIR, explain, prompt_spans
@@ -107,13 +114,6 @@ from lineage.release import write_release_manifest as write_release_manifest
 from lineage.semantic import MODEL
 from lineage.semantic_pairs import section_keys
 from lineage.state_boilerplate import COMPACT_PHRASES
-from lineage.stats import (
-    AMENDMENT_CHARS,
-    AMENDMENT_OPENING,
-    AMENDMENT_SUBSTITUTE,
-    GEORGIA_ENACTING,
-    GEORGIA_NOTICE,
-)
 from lineage.withheld import NONE as NO_WITHHELD
 from lineage.withheld import REPORT as WITHHELD_REPORT
 from lineage.withheld import Reason as WithheldReason

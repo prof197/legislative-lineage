@@ -15,13 +15,13 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from lineage import queries
 from lineage.core import db
 from lineage.core.hashing import file_sha256
+from lineage.data import queries
 
 COMMAND = "uv run lineage eligible"
 SAMPLES_COMMAND = "uv run lineage stats --samples"
-RULES = Path(__file__).parents[2] / "rules" / "document_types.csv"
+RULES = Path(__file__).parents[3] / "rules" / "document_types.csv"
 _COLUMNS = ["state", "type", "title", "unless", "decision", "reason"]
 _DECISIONS = {"match": True, "exclude": False}
 # Titles shown per title-pattern rule, so a reviewer can see what a pattern caught.

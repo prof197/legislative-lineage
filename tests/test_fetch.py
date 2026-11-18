@@ -6,11 +6,11 @@ from pathlib import Path
 
 import pytest
 
-from lineage.archives import fetch_raw
 from lineage.core import http
 from lineage.core.disk import InsufficientDiskSpaceError
 from lineage.core.http import USER_AGENT, moved, request_url, tls_context
-from lineage.snapshot import load_manifest, scan, verify, write_manifest
+from lineage.data.archives import fetch_raw
+from lineage.data.snapshot import load_manifest, scan, verify, write_manifest
 from tests.conftest import Upstream
 
 

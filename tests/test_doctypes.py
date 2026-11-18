@@ -6,7 +6,7 @@ from typer.testing import CliRunner
 
 from lineage.cli import app
 from lineage.core import db
-from lineage.doctypes import (
+from lineage.data.doctypes import (
     RULES,
     DocTypesError,
     build_eligibility,
@@ -14,9 +14,9 @@ from lineage.doctypes import (
     load_rules,
     rule_samples,
 )
-from lineage.ingest import ingest
+from lineage.data.ingest import ingest
+from lineage.data.snapshot import scan, write_manifest
 from lineage.sectioning import build_sections
-from lineage.snapshot import scan, write_manifest
 from lineage.text_merge import merge_texts
 from tests.conftest import SESSIONS
 

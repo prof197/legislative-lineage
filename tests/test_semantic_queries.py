@@ -6,6 +6,7 @@ import pytest
 
 from lineage import queries
 from lineage.core import db
+from lineage.data import queries as data_queries
 
 # id: (state, session, identifier, title, sections as (text, boilerplate), eligible, family)
 BILLS = {
@@ -36,7 +37,7 @@ def tables(tmp_path: Path) -> Path:
             ),
         )  # fmt: skip
         bills = sorted(BILLS)
-        queries.write_eligibility(
+        data_queries.write_eligibility(
             con, parquet_path=tmp_path / "eligible.parquet", ids=bills,
             eligible=[BILLS[b][5] for b in bills], rules=[1] * len(bills),
         )  # fmt: skip

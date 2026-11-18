@@ -6,6 +6,7 @@ import pytest
 from benchmarks.minhash import ENGINES, run_engine, run_lsh
 from lineage import queries
 from lineage.core import db, memory
+from lineage.data import queries as data_queries
 from lineage.minhash import NUM_PERM
 from lineage.signatures import build_signatures
 
@@ -30,7 +31,7 @@ def tables(tmp_path: Path) -> Path:
                 ids, [1] * n, [None] * n, TEXTS, TEXTS, [True] * n, [None] * n
             ),
         )
-        queries.write_eligibility(
+        data_queries.write_eligibility(
             con,
             parquet_path=tables / "eligible.parquet",
             ids=ids,

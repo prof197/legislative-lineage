@@ -55,7 +55,10 @@ from lineage.bands import load_band_index, update_bands
 from lineage.boilerplate import boilerplate_kind
 from lineage.core import db
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
-from lineage.doctypes import RULES, decide, load_rules
+from lineage.data import queries as data_queries
+from lineage.data.doctypes import RULES, decide, load_rules
+from lineage.data.sessions import load_sessions, status_end_date
+from lineage.data.status import OUTCOME_CLASSIFICATIONS, STATUS_WORDING, Action, bill_status
 from lineage.families import update_families
 from lineage.listing import shipped_flag
 from lineage.minhash import NUM_PERM
@@ -87,13 +90,11 @@ from lineage.semantic_pairs import (
     update_semantic_pairs,
     write_semantic_pairs,
 )
-from lineage.sessions import load_sessions, status_end_date
 from lineage.signatures import (
     open_signatures,
     row_labels,
     sign_part,
 )
-from lineage.status import OUTCOME_CLASSIFICATIONS, STATUS_WORDING, Action, bill_status
 from lineage.stoplist import load_stoplist
 from lineage.updates import (
     CHANGES_DIR,
@@ -324,8 +325,8 @@ def _statuses(
     state: str,
     session_end: date | None,
     as_of: date,
-) -> queries.StatusColumns:
-    columns = queries.StatusColumns(id=[], status=[], reason=[], on=[])
+) -> data_queries.StatusColumns:
+    columns = data_queries.StatusColumns(id=[], status=[], reason=[], on=[])
     for bill_id, kinds, actions in rows:
         outcome = bill_status(
             [
@@ -418,7 +419,7 @@ def _records(
                 replaced=[str(r["id"]) for r in rows],
             )
             status = _statuses(
-                queries.outcome_actions(
+                data_queries.outcome_actions(
                     con,
                     json_path=merged,
                     kinds=sorted(OUTCOME_CLASSIFICATIONS),
@@ -428,7 +429,7 @@ def _records(
                 session_end=status_end_date(sessions, state, session),
                 as_of=day.as_of,
             )
-            queries.copy_bills_to_parquet(
+            data_queries.copy_bills_to_parquet(
                 con,
                 json_path=merged,
                 parquet_path=view.fresh(f"bills/{name}"),
@@ -482,7 +483,7 @@ def _records(
         for bill_id, rule in decided.items():
             eligibility[bill_id] = (rule is not None and rule.match, rule.number if rule else None)
         ordered = sorted(eligibility)
-        queries.write_eligibility(
+        data_queries.write_eligibility(
             con,
             parquet_path=view.fresh("eligible.parquet"),
             ids=ordered,

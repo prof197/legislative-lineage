@@ -30,11 +30,11 @@ from lineage.commission import (
     with_earlier_runs,
 )
 from lineage.core import db
+from lineage.data.sessions import load_sessions
 from lineage.lsh import BANDS, BUCKET_CAP, ROWS
 from lineage.minhash import NUM_PERM
 from lineage.queries import EnactmentBill
 from lineage.semantic import BUILD_THRESHOLD, THRESHOLD
-from lineage.sessions import load_sessions
 from lineage.ulc import ENACTMENTS, load_enactments
 from tests.conftest import COMMISSION
 from tests.fakes import bag_of_words_search

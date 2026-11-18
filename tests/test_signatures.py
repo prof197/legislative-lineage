@@ -6,6 +6,7 @@ import pytest
 from lineage import queries
 from lineage.core import db
 from lineage.core.disk import InsufficientDiskSpaceError
+from lineage.data import queries as data_queries
 from lineage.minhash import NUM_PERM, permutations, signatures
 from lineage.shingles import section_shingles
 from lineage.signatures import (
@@ -54,7 +55,7 @@ def tables(tmp_path: Path) -> Path:
             )
             queries.write_sections(con, parquet_path=tables / "sections" / name, columns=columns)
         bills = sorted({b for b, _ in keys})
-        queries.write_eligibility(
+        data_queries.write_eligibility(
             con,
             parquet_path=tables / "eligible.parquet",
             ids=bills,
@@ -91,7 +92,7 @@ def test_the_stoplist_is_applied_before_signing(tables: Path) -> None:
     with db.connect_quiet() as con:
         columns = queries.SectionColumns(["b9"], [1], [None], [text], [text], [True], [None])
         queries.write_sections(con, parquet_path=tables / "sections" / "b.parquet", columns=columns)
-        queries.write_eligibility(
+        data_queries.write_eligibility(
             con,
             parquet_path=tables / "eligible.parquet",
             ids=["b1", "b9"],
@@ -161,7 +162,7 @@ def test_a_long_section_is_signed_window_by_window(tables: Path) -> None:
     with db.connect_quiet() as con:
         columns = queries.SectionColumns(["b9"], [4], [None], [text], [text], [True], [None])
         queries.write_sections(con, parquet_path=tables / "sections" / "b.parquet", columns=columns)
-        queries.write_eligibility(
+        data_queries.write_eligibility(
             con,
             parquet_path=tables / "eligible.parquet",
             ids=["b1", "b9"],
@@ -203,7 +204,7 @@ def test_the_mapped_files_give_what_the_table_in_memory_gives(tables: Path) -> N
     with db.connect_quiet() as con:
         columns = queries.SectionColumns(["b9"], [4], [None], [text], [text], [True], [None])
         queries.write_sections(con, parquet_path=tables / "sections" / "b.parquet", columns=columns)
-        queries.write_eligibility(
+        data_queries.write_eligibility(
             con, parquet_path=tables / "eligible.parquet", ids=["b1", "b9"],
             eligible=[True, True], rules=[1, 1],
         )  # fmt: skip

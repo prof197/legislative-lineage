@@ -9,12 +9,12 @@ import json
 from pathlib import Path
 from typing import Any
 
-from lineage import queries
 from lineage.core import db
 from lineage.core.hashing import file_sha256
 from lineage.core.paths import DATA
-from lineage.sessions import CARRYOVER, load_sessions, status_end_date
-from lineage.status import ENACTED_IN_WORDS, Status
+from lineage.data import queries
+from lineage.data.sessions import CARRYOVER, load_sessions, status_end_date
+from lineage.data.status import ENACTED_IN_WORDS, Status
 
 COMMAND = "uv run lineage stats"
 # Blank means no character that Python's str.isspace() would not call whitespace. RE2's \s is
