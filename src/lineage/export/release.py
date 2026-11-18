@@ -26,6 +26,7 @@ from pathlib import Path
 from pydantic import BaseModel, ConfigDict, ValidationError
 
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
+from lineage.core.hashing import file_sha256
 from lineage.export.atom import violations
 from lineage.export.schema import (
     BillList,
@@ -210,7 +211,7 @@ def package(
     finally:
         part.unlink(missing_ok=True)
     checksum = out_dir / f"{name}.sha256"
-    checksum.write_text(f"{_sha256(asset)}  {name}\n")
+    checksum.write_text(f"{file_sha256(asset)}  {name}\n")
     return asset, checksum
 
 
@@ -246,14 +247,6 @@ def changed_files(old: Checksums, new: Checksums) -> dict[str, list[str]]:
     }
 
 
-def _sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as f:
-        while chunk := f.read(1 << 20):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
 def write_release_manifest(asset: Path, *, tag: str, path: Path = RELEASE_MANIFEST) -> Release:
     """Pin `asset` as the release the deploy builds from: the tag, the asset's name and its
     SHA-256, computed from the asset itself. The deploy checks the download against this
@@ -261,7 +254,7 @@ def write_release_manifest(asset: Path, *, tag: str, path: Path = RELEASE_MANIFE
     to replace the asset could replace too."""
     if not re.fullmatch(rf"export-[A-Z]{{2}}-{re.escape(tag)}\.tar\.gz", asset.name):
         raise ReleaseError(f"{asset.name} is not release {tag}'s asset")
-    release = Release(tag=tag, asset=asset.name, sha256=_sha256(asset))
+    release = Release(tag=tag, asset=asset.name, sha256=file_sha256(asset))
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(release.model_dump(), indent=1) + "\n")
     return release

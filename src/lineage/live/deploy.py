@@ -38,7 +38,6 @@ lists the steps done, so a run stopped part way resumes rather than publishing t
 See DESIGN.md#updates, DR-13.
 """
 
-import hashlib
 import json
 import os
 import re
@@ -56,6 +55,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict
 
+from lineage.core.hashing import file_sha256
 from lineage.core.paths import DATA
 from lineage.export.release import (
     RELEASE_MANIFEST,
@@ -327,14 +327,6 @@ def export_day(export: Path) -> date | None:
     return None if meta.as_of is None else date.fromisoformat(meta.as_of)
 
 
-def _sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as f:
-        while chunk := f.read(1 << 20):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
 @dataclass(frozen=True, slots=True)
 class Candidate:
     tag: str
@@ -343,7 +335,7 @@ class Candidate:
 
     @property
     def pin(self) -> Release:
-        return Release(tag=self.tag, asset=self.asset.name, sha256=_sha256(self.asset))
+        return Release(tag=self.tag, asset=self.asset.name, sha256=file_sha256(self.asset))
 
 
 def local_paths(export: Path) -> list[str]:
@@ -412,7 +404,7 @@ def pinned_checksums(paths: DeployPaths, shell: Shell) -> tuple[Release, Checksu
     against the pin's digest."""
     pin = Release.model_validate_json((paths.checkout / RELEASE_MANIFEST).read_text())
     local = _candidate_of(paths, pin.tag)
-    if local is not None and _sha256(local.asset) == pin.sha256:
+    if local is not None and file_sha256(local.asset) == pin.sha256:
         return pin, local.checksums
     paths.root.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(dir=paths.root) as tmp:
@@ -423,7 +415,7 @@ def pinned_checksums(paths: DeployPaths, shell: Shell) -> tuple[Release, Checksu
             f"downloading {pin.tag}",
         )
         asset = Path(tmp) / pin.asset
-        if not asset.exists() or _sha256(asset) != pin.sha256:
+        if not asset.exists() or file_sha256(asset) != pin.sha256:
             raise DeployError(f"{pin.asset} does not match the digest the pin commits")
         try:
             return pin, read_checksums(asset)
@@ -808,7 +800,7 @@ def _supersede(paths: DeployPaths, day: date) -> None:
 def withheld_digest(path: Path = WITHHELD_REPORT) -> str:
     """The withhold report as it stood when a release was packed, so a release made after the
     maintainer withholds documents can tell it is out of date."""
-    return _sha256(path) if path.exists() else "none"
+    return file_sha256(path) if path.exists() else "none"
 
 
 def exported_withheld(export: Path) -> frozenset[str]:
