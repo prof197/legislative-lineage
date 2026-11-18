@@ -38,6 +38,59 @@ def test_rules_naming_this_project_apply() -> None:
     assert not parse_robots(URL, 200, body, AT).allows(BILL)
 
 
+def test_a_wildcard_rule_bars_what_it_matches() -> None:
+    body = b"User-agent: *\nDisallow: /reports/world-map/*\nDisallow: /*.pdf$\n"
+    robots = parse_robots(URL, 200, body, AT)
+
+    assert not robots.allows("https://leg.example/reports/world-map/2024/index.html")
+    assert not robots.allows("https://leg.example/files/bill.pdf")
+    assert robots.allows("https://leg.example/files/bill.pdf?download=1")  # "$" ends the path
+    assert robots.allows("https://leg.example/reports/other/")
+
+
+def test_the_longest_rule_decides_and_an_allow_wins_a_tie() -> None:
+    body = b"User-agent: *\nDisallow: /\nAllow: /models/\nDisallow: /models/private/\n"
+    robots = parse_robots(URL, 200, body, AT)
+
+    assert robots.allows("https://leg.example/models/act.pdf")
+    assert not robots.allows("https://leg.example/models/private/act.pdf")
+    assert not robots.allows("https://leg.example/about")
+    tie = parse_robots(URL, 200, b"User-agent: *\nDisallow: /a\nAllow: /a\n", AT)
+    assert tie.allows("https://leg.example/a")
+
+
+def test_an_empty_disallow_allows_everything_wherever_it_stands() -> None:
+    body = b"User-agent: *\nDisallow:\nDisallow: /withheld-\n"
+    robots = parse_robots(URL, 200, body, AT)
+
+    assert not robots.allows("https://leg.example/withheld-act/")
+    assert robots.allows("https://leg.example/act/")
+
+
+def test_groups_for_the_same_agent_combine_and_lines_can_share_a_group() -> None:
+    body = (
+        b"User-agent: legislative-lineage\nDisallow: /a/\n\n"
+        b"User-agent: SomeBot\nUser-agent: legislative-lineage\nDisallow: /b/\n"
+    )
+    robots = parse_robots(URL, 200, body, AT)
+
+    assert not robots.allows("https://leg.example/a/x")
+    assert not robots.allows("https://leg.example/b/x")
+    assert robots.allows("https://leg.example/c/x")
+
+
+def test_a_crawl_delay_before_any_group_still_applies() -> None:
+    body = b"Crawl-delay: 10\nUser-agent: *\nDisallow:\n"
+    assert parse_robots(URL, 200, body, AT).crawl_delay() == 10.0
+    own = b"Crawl-delay: 10\nUser-agent: *\nCrawl-delay: 2\n"
+    assert parse_robots(URL, 200, own, AT).crawl_delay() == 2.0
+
+
+def test_robots_txt_itself_is_always_allowed() -> None:
+    robots = parse_robots(URL, 200, b"User-agent: *\nDisallow: /\n", AT)
+    assert robots.allows("https://leg.example/robots.txt")
+
+
 def test_a_missing_robots_txt_publishes_no_rules() -> None:
     robots = parse_robots(URL, 404, b"", AT)
 

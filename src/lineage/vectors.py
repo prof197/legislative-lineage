@@ -404,3 +404,85 @@ def rows_of(blocks: Sequence[NDArray[Any]], ids: NDArray[np.int64]) -> NDArray[n
         at = np.flatnonzero(which == block)
         out[at] = blocks[block][ids[at] - starts[block]]
     return out
+
+
+# Updates (DESIGN.md#updates, DR-7). A day's new texts take the next ids, filling the last shard
+# and then new ones, so every shard but the last stays SHARD_TEXTS long and ids stay global. A
+# text no window carries any more is retired in place: its text is blanked, so no new window
+# shares it, and its vector zeroed, so it reaches no threshold and takes no neighbor's place.
+# Ids are never reused or renumbered before the next full build.
+
+
+def text_count(tables_dir: Path, model: str, plan: Plan) -> int:
+    """How many text ids the plan has handed out, retired ones included."""
+    if not plan.shards:
+        return 0
+    last = np.load(
+        vectors_dir(tables_dir, model) / f"{shard_name(plan.shards - 1)}.npy", mmap_mode="r"
+    )
+    return (plan.shards - 1) * SHARD_TEXTS + int(last.shape[0])
+
+
+def _replace_file(path: Path) -> Path:
+    """A path to write a file at, never through a link to another table's file."""
+    if path.is_symlink():
+        path.unlink()
+    return path
+
+
+def extend_store(
+    tables_dir: Path,
+    model: str,
+    plan: Plan,
+    texts: Sequence[str],
+    vectors: NDArray[np.float16],
+    retired: Sequence[int],
+) -> tuple[int, int]:
+    """Add `texts` with their `vectors` after the ids handed out, and retire the `retired` ids;
+    return the first new id and the shards after."""
+    first = text_count(tables_dir, model, plan)
+    total = first + len(texts)
+    shards = -(-total // SHARD_TEXTS)
+    touched = {i // SHARD_TEXTS for i in range(first, total)} | {i // SHARD_TEXTS for i in retired}
+    texts_dir, out = semantic_dir(tables_dir) / "texts", vectors_dir(tables_dir, model)
+    with queries.connect_quiet() as con:
+        for shard in sorted(touched):
+            name = shard_name(shard)
+            start, stop = shard * SHARD_TEXTS, min((shard + 1) * SHARD_TEXTS, total)
+            stored: list[str] = []
+            rows = np.zeros((0, vectors.shape[1] if vectors.ndim == 2 else 0), dtype=np.float16)
+            if shard < plan.shards:
+                stored = queries.read_semantic_texts(
+                    con, parquet_path=texts_dir / f"{name}.parquet"
+                )
+                rows = np.asarray(np.load(out / f"{name}.npy"), dtype=np.float16)
+            added = range(max(start, first), stop)
+            shard_texts = stored + [texts[i - first] for i in added]
+            shard_rows = (
+                np.concatenate([rows, vectors[[i - first for i in added]]]) if added else rows
+            )
+            for i in retired:
+                if start <= i < stop:
+                    shard_texts[i - start] = ""
+                    shard_rows[i - start] = 0
+            queries.write_semantic_texts(
+                con,
+                parquet_path=_replace_file(texts_dir / f"{name}.parquet"),
+                first_id=start,
+                texts=shard_texts,
+            )
+            partial = out / f"{name}.npy.partial"
+            with partial.open("wb") as f:
+                np.save(f, shard_rows.astype(np.float16))
+            partial.replace(_replace_file(out / f"{name}.npy"))
+    return first, shards
+
+
+def write_plan(tables_dir: Path, *, windows: int, distinct: int, shards: int) -> Plan:
+    """The plan as it stands after an update, its inputs read afresh, so `lineage embed` takes
+    the tables as current."""
+    sections_files, eligible_sha256 = _inputs(tables_dir)
+    plan = Plan(sections_files, eligible_sha256, windows, distinct, shards)
+    path = _replace_file(_plan_path(tables_dir))
+    path.write_text(json.dumps(_plan_doc(plan), indent=1) + "\n")
+    return plan

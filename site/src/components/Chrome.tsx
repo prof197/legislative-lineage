@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { meta, release } from "@/lib/data";
+import { FEED_PATH, hasFeed, meta, release } from "@/lib/data";
 import { asOf, stateName } from "@/lib/format";
 
 function Logo() {
@@ -42,7 +42,7 @@ export function Stamp() {
   );
 }
 
-type Section = "stories" | "bills" | "validation" | "run" | "home";
+type Section = "stories" | "bills" | "validation" | "sources" | "run" | "home";
 
 export function Header({ current }: { current: Section }) {
   const m = meta();
@@ -60,6 +60,7 @@ export function Header({ current }: { current: Section }) {
             <Link href="/#stories" {...here("stories")}>Stories</Link>
             <Link href="/bills/" {...here("bills")}>{stateName(m.state)} bills</Link>
             <Link href="/validation/" {...here("validation")}>How we checked</Link>
+            <Link href="/sources/" {...here("sources")}>Sources</Link>
             <Link href="/run/" {...here("run")}>Run it for your state</Link>
           </nav>
         </div>
@@ -100,6 +101,9 @@ export function Footer() {
         <nav aria-label="Footer">
           <a href={REPOSITORY}>Source code</a>
           <Link href="/validation/">How we checked</Link>
+          <Link href="/sources/">Sources</Link>
+          {/* The live track's feed, when the data carries one: a file, not a page, so a plain link. */}
+          {hasFeed() && <a href={FEED_PATH}>Atom feed</a>}
           <Link href="/run/">Run it for your state</Link>
           <a href={`${REPOSITORY}/issues`}>Report an error</a>
         </nav>

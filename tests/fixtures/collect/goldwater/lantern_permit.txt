@@ -1,0 +1,22 @@
+Synthetic text, invented for tests; not an institute text.
+Revised September 2, 2026
+Lantern Permit Act
+
+AN ACT relating to fair permits for lanterns.
+
+Section 1. Definitions
+(A) "Agency" means any office of [STATE] that issues lantern permits.
+(B) "Permit" means a written leave to light a lantern under [appropriate section of the state code].
+
+Drafting Note: A state may rename the agency to fit its code.
+It may also add a fee schedule.
+
+Section 2. Permit Timelines
+(A) Within ten (10) business days an agency shall decide each application.
+Commentary: This section follows an invented study of lantern permits.
+
+(B) An application not decided in time is deemed approved for Fiscal Year [20XX].
+[insert effective date]
+2
+Section 3. Review
+A person aggrieved by a violation of this Act may bring an action.

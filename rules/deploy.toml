@@ -1,0 +1,39 @@
+# The live track's deploy rules (DESIGN.md#updates, DR-13), read by lineage.deploy.
+#
+# Before a hosted state's first day of session the site deploys only from a reviewed release:
+# the daily job stops at the local export, and the weekly job packs and gates a release
+# candidate for review. From that day the daily job deploys each day itself, behind the gates
+# and the circuit breaker below.
+
+[session.GA]
+# Georgia's General Assembly meets in regular session on the second Monday in January (Georgia
+# Constitution, Article III, Section IV, Paragraph I). The second Monday of January 2027.
+first_day = 2027-01-11
+source = "Ga. Const. art. III, sec. IV, para. I: regular session on the second Monday in January"
+# Confirmed by the maintainer at the deploy review (2026-11-17), from the constitution; to be
+# checked again against the General Assembly's announced calendar in December 2026.
+confirmed = true
+
+# The circuit breaker: a day is held for the maintainer's review when a count jumps well past a
+# normal day. With at least `min_history` days deployed without a hold, a count is held above
+# both `multiple` times the median of the last `window` such days and its floor; with fewer, above
+# its ceiling. The numbers are calls, argued in DESIGN.md#updates and open to the maintainer.
+[breaker]
+window = 10
+min_history = 5
+multiple = 3.0
+
+[breaker.origin_claims]
+# New origin claims a page or the feed lists, from the change log (both shares, the listing floor).
+floor = 30
+ceiling = 50
+
+[breaker.changed_files]
+# Files added, changed or removed against the day before's release.
+floor = 1000
+ceiling = 2500
+
+# The size gate: the built site's share of GitHub Pages' 1 GB limit at which a deploy stops,
+# DR-2's reversal point, since passing it is a decision about hosting, not a day's update.
+[size]
+max_share_of_pages_limit = 0.5

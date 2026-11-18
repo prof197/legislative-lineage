@@ -2,7 +2,7 @@
 // also fetches its files in the browser (lib/fetch.ts), so a section's text is downloaded once.
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
-import type { BillList, BillPage, Meta, Release, Story } from "@/types/export";
+import type { BillList, BillPage, Meta, Release, Sources, Story } from "@/types/export";
 
 const DATA = path.join(process.cwd(), "public", "data");
 const cache = new Map<string, unknown>();
@@ -23,6 +23,10 @@ export const meta = (): Meta => read<Meta>("meta.json");
 export const billList = (): BillList => read<BillList>("bills.json");
 export const billPage = (slug: string): BillPage => read<BillPage>(`bills/${slug}.json`);
 export const story = (slug: string): Story => read<Story>(`stories/${slug}.json`);
+
+// The libraries the matching reads; data from before export schema version 2 has none.
+export const sources = (): Sources | null =>
+  existsSync(path.join(DATA, "sources.json")) ? read<Sources>("sources.json") : null;
 
 // The release the data came from, which only the deploy's fetch writes.
 export function release(): Release | null {
@@ -73,3 +77,8 @@ export function precisionSampleState(): string {
   const file = path.join(process.cwd(), "..", "reports", "relatives_reporting.json");
   return (JSON.parse(readFileSync(file, "utf8")) as { state: string }).state;
 }
+
+// Whether this build's data carries the live track's Atom feed (lineage.feed writes feed.xml at
+// the export's root); a release from before the live track has none, so nothing links to it.
+export const FEED_PATH = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/data/feed.xml`;
+export const hasFeed = (): boolean => existsSync(path.join(DATA, "feed.xml"));

@@ -1,0 +1,54 @@
+{
+ "documents": 1199,
+ "distinct_texts": 1197,
+ "matches": 4135,
+ "bills": 3711,
+ "by_stage": {
+  "near_duplicate": 804,
+  "semantic": 1226,
+  "both": 2105
+ },
+ "by_source": {
+  "alec": {
+   "documents": 1028,
+   "documents_matched": 300,
+   "matches": 2601
+  },
+  "commission": {
+   "documents": 9,
+   "documents_matched": 9,
+   "matches": 202
+  },
+  "eppc": {
+   "documents": 5,
+   "documents_matched": 4,
+   "matches": 58
+  },
+  "goldwater": {
+   "documents": 15,
+   "documents_matched": 12,
+   "matches": 105
+  },
+  "ifs": {
+   "documents": 1,
+   "documents_matched": 1,
+   "matches": 2
+  },
+  "ncoil": {
+   "documents": 95,
+   "documents_matched": 63,
+   "matches": 810
+  },
+  "public-citizen": {
+   "documents": 7,
+   "documents_matched": 5,
+   "matches": 62
+  },
+  "states-project": {
+   "documents": 39,
+   "documents_matched": 29,
+   "matches": 295
+  }
+ },
+ "seconds": 4647.7
+}

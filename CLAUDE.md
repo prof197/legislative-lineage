@@ -33,6 +33,7 @@ uv run lineage eval commission  # commission recall, act texts from data/acts/ -
 uv run lineage eval threshold  # each semantic threshold option's page precision on the tuning sample of relatives, beside development recall -> reports/threshold_proposal.json
 uv run lineage eval answer-key  # each commission list row and the bills it resolved to -> reports/answer_key.csv
 uv run lineage eval answer-key --held-out  # the held-out lists resolved, development-set bills skipped -> reports/answer_key_heldout.csv
+uv run lineage eval answer-key --held-out --origins  # the reserve acts' lists resolved, origin recall's sealed key -> reports/answer_key_origins_heldout.csv
 uv run lineage eval commission --held-out --final  # held-out recall: run at the end of M5 (2026-11-12), at 0.93 and then at the final configuration; refuses a configuration already run
 uv run lineage eval readme   # regenerate README.md's summary and results tables from reports/results.json, results_exported_only.json and relatives_reporting.json
 uv run lineage label SAMPLE --labeler HANDLE  # label sampled matches by hand, 0 unrelated to 4 identical, blind to the stage, resumable -> evals/precision_labels.jsonl
@@ -52,13 +53,37 @@ uv run lineage eval agreement  # a person's labels against the model's on that s
 uv run lineage label-model SAMPLE  # provisional labels from a model, kept apart from people's; asks nothing without --live
 uv run lineage eval precision  # precision per stratum, stage and overall, people's and the model's apart -> reports/results.json
 uv run lineage collect-models SOURCE  # one source's model legislation -> data/modeldocs/<source>/, reports/modeldocs/<source>.json
-uv run lineage origins       # collected model documents against the corpus -> data/tables/origins/matches.jsonl (lane C; not built yet)
-uv run lineage update --day DIR  # apply one day's new and changed records -> data/changes/<as_of>.jsonl (lane L1; not built yet)
+uv run lineage origins       # collected model documents against the corpus -> data/tables/origins/matches.jsonl, reports/origins.json (needs the built index and semantic vectors; --report-only: count the table as it stands)
+uv run lineage eval origins  # origin recall on the development answer key -> reports/results.json (origins_development); --key v1_held_out: v1's held-out acts, opened in v1, extra evidence; --key held_out --final: the sealed key, once per configuration
+uv run lineage origin-sample  # seeded origin precision sample (--part tuning), label cost projected, nothing asked -> evals/origin_precision_tuning.jsonl, reports/origin_precision_sample.json; --part reporting --final once matching is final (--part reporting_after_fix: the fresh sample after the generic-section fix)
+uv run lineage origin-label  # the sample's matches labeled by a model on each one's strongest section pair, v1's passage question; asks only with --live, through the Batches API, under v2's $25 -> evals/origin_precision_labels.jsonl, reports/origin_label_spend.json
+uv run lineage withhold     # model documents whose labeled listed matches are mostly wrong (at least 3, under half correct), withheld from pages, the feed and stories -> reports/withheld_documents.json (--doc ID --note TEXT: withheld by hand after a held day's review, kept on every rewrite)
+uv run lineage eval origin-threshold  # each candidate share floor's precision on the tuning sample, beside its development recall -> reports/origin_threshold_proposal.json
+uv run lineage origin-sample --part census_eppc  # every EPPC match a page lists, a census, label cost projected -> evals/origin_precision_census_eppc.jsonl
+uv run lineage eval origin-census  # the census read: precision as a count, each wrong match's section pairs by generic kind -> reports/results.json (origins_census_eppc)
+uv run lineage eval origin-precision  # the reporting sample after the generic-section fix read once (--part reporting: the reading before it, kept as origins_precision_before_fix): overall, by stage, by source, ALEC against the rest -> reports/results.json (origins_precision); --intervals-only: regenerate a stored reading's intervals, refused if anything else moves
+uv run lineage intake       # one day of new and changed bills from Open States' API v3 (key from OPENSTATES_API_KEY), text through the text layer -> data/days/<day>/, data/intake/; --tier default|bronze|silver
+uv run lineage intake-estimate  # the API requests a January day needs, against each tier, from the snapshot; no network -> reports/intake_estimate.json
+uv run lineage update --day DIR  # apply one day's new and changed records -> data/changes/<as_of>.jsonl and the tables in place, held to a full rebuild over the same days
+uv run lineage rebuild --out DIR [--pinned-from TABLES]  # the folded days laid over the snapshot's archives, the whole pipeline run again, statistics pinned from tables at the same day or counted afresh, vectors reused for the same texts -> DIR, DIR.build/rebuild.json
 uv run lineage text inventory  # version to fetch per record, by host, robots.txt read -> data/text/plan.parquet, reports/text_inventory.json
 uv run lineage text sample   # quality test: fetch a seeded sample per state and format -> data/text/sample/, reports/text_quality.json
 uv run lineage text fetch    # fetch every planned record as rules/text_layer.toml says, California from its bulk download; resumable -> data/text/full/, reports/text_fetch.json
 uv run lineage export --state GA  # the static site's JSON for one state -> data/export/GA/ (local), reports/export.json
 uv run lineage export --schema   # the export's JSON Schema, the site's contract -> schema/export.schema.json
+uv run lineage export --state GA --package data-ga-YYYY-MM-DD  # the export as a release asset, checksums.json inside, refused unless every file is one the contract names -> data/export/, pinned in site/data-release.json
+uv run lineage publish pages --state GA  # the live track: the logged days the export lacks, only the files they touch rewritten, into a staging copy -> data/export/GA.staging/, data/publish/GA.json
+uv run lineage publish feed --site-url URL  # the national Atom feed of the live track's events, checked against RFC 4287 -> <staging>/feed.xml
+uv run lineage publish promote --state GA  # swap the staging copy in as the live export; deploys nothing
+uv run lineage publish weekly --pinned DIR  # the weekly rebuild's check: agreement with the updated tables, failing below 98%, and the drift -> data/schedule/weekly.json
+uv run lineage publish deploy --state GA  # in session: the live export's day packed as a release, gated (contract, local paths, copy, size), the circuit breaker, the pin committed and leak-checked, then the GitHub release, push and Pages dispatch; exits 3 when held -> data/deploy/days/<day>.json
+uv run lineage publish release --day D  # a day the circuit breaker held, approved after review (--repack: the live export as it stands, after withholding the documents behind bad claims; RUNBOOK.md)
+uv run lineage publish reject --day D  # a held day rejected for an infrastructure problem: never published, its data kept, the next day publishes as usual
+uv run lineage publish candidate --site-url URL  # before session: the live export packed and gated as a release candidate, publishing nothing -> data/deploy/candidates/<tag>/review.txt
+uv run lineage publish review --site-url URL  # in session: the week's new origin claims for the maintainer's review -> data/deploy/reviews/<day>.txt
+uv run lineage schedule daily --site-url URL  # the daily job: intake, update, pages, feed, promote, and from the first day of session (rules/deploy.toml) the deploy; a failed step or held day stops it and alerts -> data/schedule/status.json
+uv run lineage schedule weekly --site-url URL  # the weekly job: two rebuilds and the agreement check, then a candidate before session or the origin-claims review during it
+uv run lineage schedule plist daily --out FILE --site-url URL  # fill a launchd template from scheduling/ at the ruled times (daily Monday to Saturday 05:30, weekly Saturday 20:00, local); loading it is by hand
 uv run python -m evals.fixture  # rebuild tests/fixtures/commission/ from the local snapshot, dev only
 uv run python -m benchmarks.minhash  # NumPy vs datasketch: signing and LSH index time and memory (DR-3), dev only
 uv run lineage model fetch   # the pinned embedding models' files, hash-checked -> data/models/<name>/
@@ -68,7 +93,7 @@ uv run python -m benchmarks.ann  # IVF-PQ and HNSW against exact search on a sam
 LEAK_CHECK_TERMS=... uv run python -m tools.leak_check --history  # no local path or deny-listed term (any case) in any file or commit; CI runs it
 ```
 
-All four checks must pass before every commit. CI runs the same four commands, then the leak check, whose deny list comes from the `LEAK_CHECK_TERMS` repository secret. Run the leak check before every push.
+All four checks must pass before every commit. CI runs the same four commands, the site's checks over both fixtures, then the leak check, whose deny list comes from the `LEAK_CHECK_TERMS` repository secret. Run the leak check before every push. On pull requests to main, data.yml downloads the pinned data release, verifies it, builds the site from it and runs the copy check.
 
 ## Layout
 
@@ -149,14 +174,33 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
   ann.py          nearest neighbors over unit vectors: exact search, and faiss indexes (build extra), typed
   export_schema.py  the site's data contract: every exported file as a Pydantic model, which emits the JSON Schema
   export.py       `lineage export`: bill pages, comparisons, section texts, stories and the data stamp for one state
+  release.py      the data release: the export contract's files, packing with its checksum manifest, pinning (DESIGN.md#export)
+  origin_story.py  the origin story's rule, which names no organization, and its file (DESIGN.md#export)
+  publish.py      `lineage publish pages|promote`: the pages a day's changes touch, rewritten in a staging copy, and the swap (DESIGN.md#updates)
+  feed.py         `lineage publish feed`: the national Atom feed of the live track's events, checked against RFC 4287
+  schedule.py     `lineage schedule`: the daily and weekly jobs under launchd, their status (held included) and alerts; the weekly agreement check and drift
+  deploy.py       `lineage publish deploy|release|candidate|review`: the day's release, its gates and circuit breaker, a held day's release, the candidate and the origin-claims review; every external command through an injectable shell (DR-13)
   updates.py      the live track's contracts (DR-7): days, records over time, the change log, the snapshot an update must equal
-  incremental.py  `lineage update`'s body, one day applied in both directions (lane L1, M10; a stub until then)
+  incremental.py  `lineage update`'s body, one day applied in both directions in a staging view, journaled per day
+  rebuild.py      `lineage rebuild`: the folded days over the snapshot's archives, the pipeline run again with pinned or refreshed statistics (DR-7)
   modeldocs.py    model legislation: each source's entry, each collected document, texts per version under data/modeldocs/
   collect.py      the collector registry: one module per source under collectors/, found by name; the coverage report
   collectors/     one collector module per source of model legislation, each owned by the lane that builds it
   origins.py      OriginMatch, both shares and the bill's spans, and the origins table
-  origin_matching.py  `lineage origins`' body: model documents queried against the corpus (lane C, M10; a stub until then)
+  origin_matching.py  `lineage origins`' body: each model document queried as `lineage query` queries a bill, through both stages and the page listing rule
+  collect_base.py  what collectors share: robots.txt per host, paced requests, provenance, storing, the report
+  modeltext.py    model texts as matching reads them: sections kept, commentary and drafting instructions dropped; Word text
+  collectors/commission.py  the commission's acts: those on disk, then its site's (off, SITE_FETCH, until its terms are ruled)
+  openstates_api.py  API v3's bills request and its bills mapped into the bulk archive's record shape
+  intake.py       `lineage intake`: paged by updated_at, pages recorded, text through the text layer, days written once; the January estimate
+  origin_recall.py  `lineage eval origins`: model-to-bill recall from the resolved answer keys; a sealed key only with --final
+  origin_precision.py  `lineage origin-sample` and `eval origin-precision`: seeded samples of origin matches, the tuning part by share band, the reporting part by stage at the floor; v2's label budget; the reporting reading by source
+  origin_labels.py  `lineage origin-label`: a match's strongest section pair, both sections and their passages, asked in one batch; rows by text hash
+  generic_sections.py  a section's generic kind by its heading or opening, within its kind's bound: definitions, short title, findings, severability and the rest, or lineage.boilerplate's kinds
+  withheld.py     `lineage withhold`: the documents withheld from pages because their labeled matches are mostly wrong, as a committed report the export, the live track and the feed read
+  origin_threshold.py  `lineage eval origin-threshold`: each candidate floor's weighted precision and development recall
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
+scheduling/       the live track's launchd templates and run.sh; nothing loads them
 tools/            dev and CI checks
   leak_check.py   local paths and deny-listed terms in tracked files and every commit
 evals/            eval inputs: ulc_enactments.csv (hand copy of the commission's lists, dated), ulc_enactments_heldout.csv (the held-out acts' lists, reserves included), precision_labels.jsonl (the precision sample's labels, keyed by Open States bill id and section text hash; labelers by GitHub handle or model id; no text)
@@ -164,7 +208,10 @@ evals/            eval inputs: ulc_enactments.csv (hand copy of the commission's
 tests/            pytest; small committed fixtures only
   fixtures/openstates/  trimmed real records in archive layout (README + *_bills.json)
   fixtures/commission/  enacting bills among uniform-act distractors, same layout, + sessions.csv
+  fixtures/collect/  synthetic responses in the commission site's shape, for its collector's tests
+  fixtures/intake/  API v3 responses constructed in the documented shape, synthetic bills and sponsors
   days.py         recorded days for the live track, built at test time from fixtures/commission/, and the reference rebuild
+  live.py         the live track built once per session over the recorded days: updated tables, a pinned and a refreshed rebuild, for the publish, feed and schedule tests
   fixture_export.py  builds fixtures/export/: Utah's bills, synthetic model documents, hand-made origins (LINEAGE_REGENERATE=1 rewrites it)
   fixtures/export/  the fixture export every v2 lane builds and tests against (committed, generated)
   collector_fixtures/  two synthetic sources, one leaked, for the registry and the fixture export
@@ -173,12 +220,14 @@ snapshot/sessions.csv   session start/end dates and carryover, from a pinned scr
 rules/document_types.csv  which document types are matched, per state; first fitting rule wins
 rules/text_layer.toml  the text layer's rules: usable bar, per-state format and PDF reading, content elements, replacement
 rules/stories.toml  which featured stories each hosted state's site carries
+rules/deploy.toml  each hosted state's first day of session, from which the daily job deploys, and the circuit breaker's and size gate's numbers
 schema/export.schema.json  the export's JSON Schema, generated from lineage.export_schema; a test fails when it drifts
 reports/          committed outputs of pipeline commands; README and DESIGN numbers cite them
   results.json    eval results, one section per eval; the README results table reads it
   results_exported_only.json  commission recall on the export's text alone, for the comparison in DR-6
   answer_key.csv  each commission list row and the corpus bills it resolved to
   answer_key_heldout.csv  the held-out lists resolved to bills; no matching is run on them before the final evaluation
+  answer_key_origins_heldout.csv  the reserve acts' lists resolved to bills, origin recall's sealed key
   pair_data.json  the stages on the labeled pair dataset: precision, recall, per label; metrics only
   text_inventory.json  records without usable text, the versions planned, hosts and their robots.txt
   text_quality.json  the quality test per state and format: outcomes, usable and clean rates per reading, comparison
@@ -186,6 +235,7 @@ reports/          committed outputs of pipeline commands; README and DESIGN numb
 explanations/cache/  model replies, one JSON file per (model, prompt version, spans) hash; replayed without a key
 DESIGN.md         design, alternatives, scaling limits, failure modes, decision records
 CONTRIBUTING.md   the checks to run before a commit and a push, and the leak check
+RUNBOOK.md        the live track's setup, schedule, and what to do when a job fails or holds a day
 OUTCOMES.md       where the tool has been used on real work, with permission
 data/             local snapshots and derived tables; gitignored, never committed
   raw/<ST>/*.zip  Open States session archives, never edited
@@ -199,6 +249,8 @@ data/             local snapshots and derived tables; gitignored, never committe
   pair_data/      the labeled pair dataset's split files, from `lineage pair-data fetch`; never committed
   models/<name>/  embedding model files at their pinned revision, from `lineage model fetch`
   export/<ST>/    the static site's JSON for one state, from `lineage export`
+  rebuild/        the weekly job's two rebuilds, pinned/ and refreshed/, each with its .build/ archives' manifest and reports
+  deploy/         the deploy's day records, release candidates, weekly reviews, and checkout/, the job's own clone of the repository (set up by hand)
 ```
 
 ## Conventions

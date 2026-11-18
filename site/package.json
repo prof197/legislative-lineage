@@ -8,6 +8,7 @@
     "sessions": "node scripts/sessions.mjs",
     "sessions:check": "node scripts/sessions.mjs --check",
     "data:fixture": "node scripts/fixture-data.mjs",
+    "data:fixture-export": "node scripts/fixture-export.mjs",
     "typecheck": "tsc --noEmit",
     "build": "next build",
     "size": "node scripts/size.mjs",
@@ -16,7 +17,7 @@
     "dev": "next dev"
   },
   "dependencies": {
-    "next": "16.4.3",
+    "next": "16.4.5",
     "react": "19.1.10",
     "react-dom": "19.1.10"
   },

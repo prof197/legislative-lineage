@@ -1,0 +1,4 @@
+# Synthetic. The institute's robots.txt (read 2026-11-15) disallows nothing; this one withholds
+# one uploads folder so a disallowed document can be tested.
+User-agent: *
+Disallow: /wp-content/uploads/withheld/

@@ -9,10 +9,15 @@ text layer added, stage for stage. The export's text has no semantic run, since 
 vectors are embedded from the fetched text. See DESIGN.md#dr-6.
 """
 
+import json
+import tomllib
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from lineage.acts import ACT_NAMES
+from lineage.export import STORIES_RULES, stories_for
+from lineage.origin_story import STORY as ORIGIN_STORY
+from lineage.release import RELEASE_MANIFEST
 from lineage.ulc import ULC_STATES
 
 README = Path("README.md")
@@ -28,9 +33,32 @@ HELD_OUT_END = "<!-- /results:held-out -->"
 HELD_OUT_COMMAND = "uv run lineage eval commission --held-out --final"
 SUMMARY_START = "<!-- results:summary -->"
 SUMMARY_END = "<!-- /results:summary -->"
+ORIGINS_START = "<!-- results:origins -->"
+ORIGINS_END = "<!-- /results:origins -->"
+# The stories the hosted state's site carries, counted from rules/stories.toml.
+STORIES_START = "<!-- stories -->"
+STORIES_END = "<!-- /stories -->"
+_COUNT_WORDS = ("no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine")
+# v2's origin evals, each rendered only when its section is in the results: they are
+# regenerated as matching settles, and a row for a run not yet made would be a number typed in.
+ORIGIN_DEVELOPMENT = "origins_development"
+ORIGIN_SEALED = "origins_held_out"
+ORIGIN_V1_HELD_OUT = "origins_v1_held_out"
+ORIGIN_PRECISION = "origins_precision"
+# One footnote on the sealed row, filled in when the README is regenerated: the sealed key runs
+# once per configuration, so a later change to matching is said beside it, never rerun to fit.
+SEALED_NOTE = (
+    "Run once, before generic sections were left out of origin matches; a sealed key is not run "
+    "again, so it stands at the configuration it records ([DESIGN.md](DESIGN.md#origin-matches))."
+)
+_ORIGIN_STAGES = {
+    "near_duplicate_only": "found by the near-duplicate stage alone",
+    "semantic_only": "found by meaning alone",
+    "both": "found by both stages",
+}
 # The precision sample's report, which names the state whose pages were sampled.
 SAMPLED_STATE_REPORT = Path("reports/relatives_reporting.json")
-_COUNTS = {3: "three", 4: "four"}
+_COUNTS = {2: "two", 3: "three", 4: "four"}
 
 _REASONS = {
     "not_in_corpus": "not in the corpus",
@@ -168,6 +196,182 @@ def _share(x: dict[str, Any], key: str) -> str:
     return f"{x[key]:.2f} [{low:.2f}, {high:.2f}]"
 
 
+def _counted(n: int, noun: str) -> str:
+    return f"{_COUNTS.get(n, n)} {noun}{'' if n == 1 else 's'}"
+
+
+def _origin_floor(results: dict[str, Any]) -> float | None:
+    """The listing floor every origin eval present was read at; refused when they differ, since
+    rows read at different floors would sit side by side as one configuration."""
+    floors = {
+        results[name]["threshold"]["floor"]
+        for name in (ORIGIN_DEVELOPMENT, ORIGIN_SEALED, ORIGIN_V1_HELD_OUT)
+        if name in results
+    }
+    if ORIGIN_PRECISION in results:
+        floors.add(results[ORIGIN_PRECISION]["floor"])
+    if len(floors) > 1:
+        raise ResultsTableError(
+            f"the origin evals were read at different floors ({sorted(floors)}); rerun them"
+        )
+    return next(iter(floors), None)
+
+
+def _origin_recall_command(section: dict[str, Any]) -> str:
+    key = section["answer_key"]["name"]
+    if key == "development":
+        return section["command"]
+    return f"{section['command']} --key {key}" + (" --final" if section["sealed"] else "")
+
+
+def _origin_recall(section: dict[str, Any]) -> str:
+    r = section["recall"]["pooled"]
+    if not r["enactments"]:
+        return "none"
+    low, high = r["interval_95"]
+    return f"{r['found']} of {r['enactments']}, {r['recall']:.2f} [{low:.2f}, {high:.2f}]"
+
+
+def _origin_precision(group: dict[str, Any]) -> str:
+    """A stage's or the whole sample's precision; a stratum's figure sits on the group itself,
+    the whole sample's in a nested estimate."""
+    p = group["precision"]
+    if p is None:
+        return "no estimate: a stage holding matches has no label"
+    if isinstance(p, float | int):
+        return _share(group, "precision")
+    return _share(cast(dict[str, Any], p), "precision")
+
+
+V1_HELD_OUT_STATUS = "opened in v1; not a sealed test"
+
+
+def _compared_name(name: str, group: dict[str, Any]) -> str:
+    """A compared group by whose matches it holds: one source's, by its organization's name as
+    its collector gives it, or every other source's."""
+    if name == "rest":
+        return "every other source's matches"
+    from lineage.collect import collectors  # the registry imports every collector
+
+    (source,) = group["sources"]
+    organization = next(
+        (c.source.organization for c in collectors().values() if c.source.key == source), source
+    )
+    return f"{organization}'s matches"
+
+
+def render_origins(
+    results: dict[str, Any],
+    sealed_note: str = SEALED_NOTE,
+    withheld: dict[str, Any] | None = None,
+) -> str:
+    """v2's origin evals, one row each for those in the results and nothing for those not:
+    recall on the development key and on the sealed key, precision on the reporting sample
+    overall and by stage, and apart from the sealed row, v1's held-out acts, which v1's final
+    run had already opened. With `withheld`, the withheld documents' report (lineage.withheld),
+    precision is said to be read before they were withheld."""
+    floor = _origin_floor(results)
+    if floor is None:
+        return ""
+    recall = [results[n] for n in (ORIGIN_DEVELOPMENT, ORIGIN_SEALED) if n in results]
+    precision = results.get(ORIGIN_PRECISION)
+    v1 = results.get(ORIGIN_V1_HELD_OUT)
+    intro: list[str] = []
+    if recall or v1:
+        intro.append(
+            "Origin recall: each uniform act's published text is matched against the corpus "
+            "as a model document, through both stages and the rule a page lists by, and an "
+            "enactment is found when the act's document matches one of its bills with the "
+            "larger of the two shares, of the model's words or of the bill's, at the listing "
+            f"floor of {floor:.2f} or above."
+        )
+    if precision:
+        intro.append(
+            "Origin precision: a model's judgment of a seeded sample of the matches pages list "
+            "at the floor, drawn by stage and weighted by each stage's matches, each labeled "
+            "on the section pair it rests on most with v1's passage-level question. One "
+            "source's matches are read against every other source's together, each weighted "
+            "by stage as the whole is (`compared`), and each source's own figure is in the "
+            "same section (`by_source`)."
+        )
+        held = [*(withheld or {}).get("withheld", []), *(withheld or {}).get("reviewed", [])]
+        if held:
+            n = len(held)
+            matches = int((withheld or {})["listed_matches_withheld"])
+            intro.append(
+                f"The reading was taken before {_counted(n, 'document')} whose matches were "
+                f"found mostly wrong {'was' if n == 1 else 'were'} withheld from pages, "
+                f"{matches:,} listed {'match' if matches == 1 else 'matches'} in all "
+                "(`uv run lineage withhold`, "
+                "`reports/withheld_documents.json`), so it likely understates the precision of "
+                "what pages show."
+            )
+    intro.append(
+        "Each result carries its 95% Wilson interval, and each command writes "
+        "`reports/results.json` ([DESIGN.md](DESIGN.md#origin-matches))."
+    )
+    head = ["| | Result | Reproduce |", "|---|---|---|"]
+    rows: list[tuple[str, str, str]] = []
+    for s in recall:
+        acts = _counted(len(s["documents"]), "act")
+        if s["sealed"]:
+            label = f"Recall on the sealed key, {acts} v1 never ran, run once with `--final`"
+            label += "[^sealed]" if sealed_note else ""
+        else:
+            label = f"Recall on the development key, {acts}"
+        rows.append((label, _origin_recall(s), _origin_recall_command(s)))
+    if precision:
+        overall = precision["overall"]
+        rows.append(
+            (
+                f"Precision, model-judged, all stages ({overall['labeled']} labels of "
+                f"{overall['matches']:,} matches)",
+                _origin_precision(overall),
+                precision["command"],
+            )
+        )
+        rows += [
+            (
+                f"Precision, {_ORIGIN_STAGES[stage]} ({g['labeled']} labels of "
+                f"{g['size']:,} matches)",
+                _origin_precision(g),
+                precision["command"],
+            )
+            for stage, g in overall["by_stage"].items()
+        ]
+        compared: dict[str, Any] = precision["compared"]
+        rows += [
+            (
+                f"Precision, {_compared_name(name, g)} ({g['labeled']} labels of "
+                f"{g['matches']:,} matches)",
+                _origin_precision(g),
+                precision["command"],
+            )
+            for name, g in compared.items()
+        ]
+    lines = [" ".join(intro)]
+    if rows:
+        lines += ["", *head, *(f"| {label} | {r} | `{c}` |" for label, r, c in rows)]
+    if sealed_note and ORIGIN_SEALED in results:
+        lines += ["", f"[^sealed]: {sealed_note}"]
+    if v1:
+        if v1["status"] != V1_HELD_OUT_STATUS:
+            raise ResultsTableError(
+                f"v1's held-out acts are reported as {V1_HELD_OUT_STATUS!r}, not {v1['status']!r}"
+            )
+        acts = _counted(len(v1["documents"]), "held-out act")
+        lines += [
+            "",
+            "Apart from the sealed key, v1's held-out acts: v1's final run looked at their "
+            "matches, so they test nothing sealed.",
+            "",
+            *head,
+            f"| Recall on v1's {acts}: {V1_HELD_OUT_STATUS} | {_origin_recall(v1)} | "
+            f"`{_origin_recall_command(v1)}` |",
+        ]
+    return "\n".join(lines)
+
+
 def render_summary(results: dict[str, Any], sampled_state: str) -> str:
     """The README's opening table: one line per question the evals answer, each with the
     command that reproduces it. The detail is in the sections below it."""
@@ -204,12 +408,57 @@ def render_summary(results: dict[str, Any], sampled_state: str) -> str:
             "uv run lineage eval faithfulness",
         ),
     ]
+    if ORIGIN_DEVELOPMENT in results:
+        s = results[ORIGIN_DEVELOPMENT]
+        r = s["recall"]["pooled"]
+        acts = len(s["documents"])
+        rows.append(
+            (
+                "Matched as published model legislation, does a uniform act find the bills "
+                f"that enacted it? ({_COUNTS.get(acts, acts)} acts, at the listing floor)",
+                f"{r['found']} of {r['enactments']} ({r['found'] / r['enactments']:.1%})",
+                _origin_recall_command(s),
+            )
+        )
+    if ORIGIN_PRECISION in results:
+        overall = results[ORIGIN_PRECISION]["overall"]
+        rows.append(
+            (
+                "Judged by a model: does the model legislation a page lists as an origin share "
+                f"the provision? ({overall['labeled']} sampled matches)",
+                _origin_precision(overall),
+                results[ORIGIN_PRECISION]["command"],
+            )
+        )
     lines = [
         "| Question | Result | Reproduce |",
         "|---|---|---|",
         *(f"| {q} | {r} | `{c}` |" for q, r, c in rows),
     ]
     return "\n".join(lines)
+
+
+def hosted_state(manifest: Path = RELEASE_MANIFEST) -> str:
+    """The state the site hosts: the one whose data release the deploy builds from."""
+    tag = str(json.loads(manifest.read_text())["tag"])
+    return tag.split("-")[1].upper()
+
+
+def render_stories(state: str, rules: Path = STORIES_RULES) -> str:
+    """The stories `state`'s site carries, counted from the stories rules: its featured stories,
+    and the origin story when the rules place it, which a site shows only once a labeler has
+    judged its match correct (lineage.origin_story)."""
+    listed: dict[str, Any] = tomllib.loads(rules.read_text()).get("stories", {})
+    carried = stories_for(state, listed, rules)
+    n = len(carried - {ORIGIN_STORY})
+    count = _COUNT_WORDS[n] if n < len(_COUNT_WORDS) else f"{n:,}"
+    out = f"{count} featured stor{'y' if n == 1 else 'ies'}"
+    if ORIGIN_STORY in carried:
+        out += (
+            ", and one on a passed bill that shares wording with a published model, once a model "
+            "has judged such a match correct"
+        )
+    return out + "."
 
 
 def _replaced(readme: str, start_mark: str, end_mark: str, body: str) -> str:
@@ -224,11 +473,17 @@ def rendered_readme(
     results: dict[str, Any],
     exported: dict[str, Any],
     sampled_state: str | None = None,
+    sealed_note: str = SEALED_NOTE,
+    stories: str | None = None,
+    withheld: dict[str, Any] | None = None,
 ) -> str:
     """The README with its results section replaced by one rendered from `results`, and from
     `exported`, the results on the export's text alone; its opening summary, when it has one,
-    from `results` and the state the precision sample was drawn from; and its held-out section,
-    when it has one, from the held-out run's results, which must then exist."""
+    from `results` and the state the precision sample was drawn from; its held-out section,
+    when it has one, from the held-out run's results, which must then exist; and its origins
+    section, when it has one, from whichever origin evals the results hold, with `sealed_note`
+    as the sealed row's footnote when it is given; and its story count, when it has one, from
+    `stories` (render_stories)."""
     out = _replaced(
         readme, START, END, render_commission(results["commission"], exported["commission"])
     )
@@ -236,10 +491,20 @@ def rendered_readme(
         if sampled_state is None:
             raise ResultsTableError("README has a summary but no precision sample state was given")
         out = _replaced(out, SUMMARY_START, SUMMARY_END, render_summary(results, sampled_state))
-    if HELD_OUT_START not in out:
-        return out
-    if "commission_held_out" not in results:
-        raise ResultsTableError("README has a held-out section but the held-out run has no results")
-    return _replaced(
-        out, HELD_OUT_START, HELD_OUT_END, render_held_out(results["commission_held_out"])
-    )
+    if HELD_OUT_START in out:
+        if "commission_held_out" not in results:
+            raise ResultsTableError(
+                "README has a held-out section but the held-out run has no results"
+            )
+        out = _replaced(
+            out, HELD_OUT_START, HELD_OUT_END, render_held_out(results["commission_held_out"])
+        )
+    if ORIGINS_START in out:
+        out = _replaced(
+            out, ORIGINS_START, ORIGINS_END, render_origins(results, sealed_note, withheld)
+        )
+    if STORIES_START in out:
+        if stories is None:
+            raise ResultsTableError("README counts its stories but no count was given")
+        out = _replaced(out, STORIES_START, STORIES_END, stories)
+    return out

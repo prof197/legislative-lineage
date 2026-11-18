@@ -17,6 +17,7 @@ from lineage.modeldocs import (
     sha256,
     store,
     text_path,
+    withdraw,
 )
 
 SOURCE = Source(
@@ -44,6 +45,18 @@ def _doc(text: str, on: date, raw: bytes = b"%PDF") -> ModelDoc:
     )
 
 
+def test_a_members_line_comes_with_its_source() -> None:
+    line = "Commissioners appointed by each state."
+    with pytest.raises(ValidationError, match="members line"):
+        Source.model_validate({**SOURCE.model_dump(), "members": line})
+    with pytest.raises(ValidationError):
+        Source.model_validate(
+            {**SOURCE.model_dump(), "members": line, "members_source": "http://example.org"}
+        )
+    sourced = {**SOURCE.model_dump(), "members": line, "members_source": "https://example.org/a"}
+    assert Source.model_validate(sourced).members == line
+
+
 def test_a_leaked_source_says_how_it_became_public() -> None:
     with pytest.raises(ValidationError, match="leak_note"):
         Source.model_validate({**SOURCE.model_dump(), "leaked": True})
@@ -52,6 +65,16 @@ def test_a_leaked_source_says_how_it_became_public() -> None:
     )
     with pytest.raises(ModelDocError, match="leaked"):
         store(leaked, _doc("text", date(2026, 11, 15)), raw=b"%PDF", text="text", root=Path())
+
+
+def test_a_joint_document_names_its_co_publishers_and_older_records_have_none() -> None:
+    doc = _doc("t", date(2026, 11, 15))
+    assert doc.co_publishers == ()  # a record stored before the field reads as it did
+    joint = ModelDoc.model_validate({**doc.model_dump(), "co_publishers": ["Second Institute"]})
+    assert joint.co_publishers == ("Second Institute",)
+    for names in (["  "], ["Second Institute", "Second Institute"]):
+        with pytest.raises(ValidationError, match="co-publisher"):
+            ModelDoc.model_validate({**doc.model_dump(), "co_publishers": names})
 
 
 def test_a_document_belongs_to_the_source_its_id_names() -> None:
@@ -84,6 +107,17 @@ def test_collecting_again_changes_nothing_and_a_new_text_keeps_the_old(tmp_path:
     assert [(v.first_seen, v.replaced_on) for v in versions] == [(first, second), (second, None)]
     assert text_path(old, tmp_path).exists()  # replaced, not erased
     assert load_text(new, tmp_path) == "Section 1. Records are open within ten days."
+
+
+def test_a_withdrawn_document_leaves_the_current_list_and_keeps_its_text(tmp_path: Path) -> None:
+    doc = _doc("Section 1. Records are open.", date(2026, 11, 1))
+    store(SOURCE, doc, raw=b"%PDF", text="Section 1. Records are open.", root=tmp_path)
+
+    assert withdraw(SOURCE, doc.id, on=date(2026, 11, 15), root=tmp_path)
+    assert read_docs(SOURCE, tmp_path) == []
+    assert [v.replaced_on for v in read_versions(SOURCE, tmp_path)] == [date(2026, 11, 15)]
+    assert text_path(doc, tmp_path).exists()
+    assert not withdraw(SOURCE, doc.id, on=date(2026, 11, 16), root=tmp_path)
 
 
 def test_hashes_must_match_what_is_stored(tmp_path: Path) -> None:

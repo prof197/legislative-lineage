@@ -137,6 +137,8 @@ stages: ("near_duplicate" | "semantic")[]
  * via the `definition` "ModelDocRef".
  */
 export interface ModelDocRef {
+co_publishers?: string[]
+drafted_by?: (string | null)
 id: string
 leaked: boolean
 organization: string
@@ -295,6 +297,7 @@ development_recall_by_stage: {
 faithfulness: Share
 faithfulness_judge: string
 held_out_recall: Recall
+origin_precision: OriginPrecision
 relatives_precision: Share
 relatives_precision_labeler: string
 semantic_threshold: number
@@ -323,6 +326,50 @@ labeled: number
 share: (number | null)
 }
 /**
+ * Origin precision as the reporting sample reads it (reports/results.json,
+ * origins_precision): the whole, and one source's matches against every other source's.
+ * 
+ * This interface was referenced by `LegislativeLineageExport`'s JSON-Schema
+ * via the `definition` "OriginPrecision".
+ */
+export interface OriginPrecision {
+compared: OriginShare
+floor: number
+labeler: string[]
+overall: OriginShare
+rest: OriginShare
+withheld_documents: number
+withheld_matches: number
+}
+/**
+ * A group of origin matches' precision on the reporting sample, weighted by stage.
+ * 
+ * This interface was referenced by `LegislativeLineageExport`'s JSON-Schema
+ * via the `definition` "OriginShare".
+ */
+export interface OriginShare {
+correct: number
+interval_95: ([number, number] | null)
+labeled: number
+matches: number
+share: (number | null)
+sources: string[]
+}
+/**
+ * `origin_story.json`: the origin story (DESIGN.md#export), the passed bill and listed origin
+ * lineage.origin_story's rule chooses; not written when no passed bill has a listed origin both
+ * stages found that a labeler judged correct.
+ * 
+ * This interface was referenced by `LegislativeLineageExport`'s JSON-Schema
+ * via the `definition` "OriginStory".
+ */
+export interface OriginStory {
+bill: BillRef
+eligible: number
+origin: Origin
+passed_over: number
+}
+/**
  * `release.json`, written by the site build when it fetches the export: the release the
  * data came from and the checksum it was verified against, for the data stamp.
  * 
@@ -348,10 +395,26 @@ key: string
 leak_note: (string | null)
 leaked: boolean
 library_url: string
+members: (string | null)
+members_source: (string | null)
 organization: string
 terms_note: string
 terms_read_on: string
 terms_url: (string | null)
+withheld: WithheldDocument[]
+}
+/**
+ * A model document withheld from bill pages, the feed and stories (lineage.withheld): at
+ * least 3 of its listed matches labeled, fewer than half judged correct.
+ * 
+ * This interface was referenced by `LegislativeLineageExport`'s JSON-Schema
+ * via the `definition` "WithheldDocument".
+ */
+export interface WithheldDocument {
+id: string
+reason: ("generic_text" | "review")
+title: string
+url: string
 }
 /**
  * `sources.json`: every library the matching reads, whether or not any bill matches it.

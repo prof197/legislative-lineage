@@ -1,0 +1,45 @@
+name: Data
+
+# Downloads the data release site/data-release.json pins and verifies it as the deploy does
+# (fetch-data.sh: the asset against the committed digest, every file against the checksum
+# manifest inside it), builds the site from it and runs the copy check on the real pages, so a
+# pull request that changes the pin, the site or the script is checked against the real data
+# before Pages ever builds it. It never deploys; CI's site job builds from the fixture export.
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: data-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      # Pinned to the commit SHAs pages.yml uses: a tag can be moved, a SHA cannot.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci
+      - run: npm run types:check
+      - run: npm run sessions:check
+      # Downloads the pinned release's export and fails unless it matches the committed digest
+      # and every file matches the manifest inside it.
+      - run: scripts/fetch-data.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - run: npm run build
+      # The copy rules over the pages built from the real data, claims included.
+      - run: npm run test:copy

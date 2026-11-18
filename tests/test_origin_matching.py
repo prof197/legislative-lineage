@@ -1,0 +1,412 @@
+"""Origin matching: model documents queried against the corpus through both stages.
+
+The synthetic documents of the fixture export (tests/fixture_export.py) are copied whole from
+fixture bills, so each must come back as its hand-made match says. The commission's act texts,
+which cannot be committed, are matched as model documents against the commission fixture when
+they are present locally, and must find every enactment the v1 eval finds there.
+"""
+
+import hashlib
+from datetime import date
+from pathlib import Path
+from typing import Any
+
+import pytest
+
+from lineage import origin_matching
+from lineage.acts import ACTS, ACTS_DIR, enacted_text
+from lineage.collect import collectors
+from lineage.commission import evaluate
+from lineage.listing import listed_hits
+from lineage.modeldocs import (
+    ModelDoc,
+    ModelDocError,
+    Source,
+    load_text,
+    read_docs,
+    sha256,
+    store,
+    text_path,
+)
+from lineage.origin_labels import build_items, strongest_pair
+from lineage.origin_matching import (
+    BillHits,
+    BillSection,
+    ModelText,
+    bill_sections,
+    bill_spans,
+    listed,
+    match_models,
+    match_of,
+    model_text,
+)
+from lineage.origin_precision import OriginPrecisionError
+from lineage.origins import BillSpan, OriginMatch, read_origin_matches, write_origin_matches
+from lineage.sections import normalize
+from lineage.semantic import CORROBORATING, THRESHOLD, open_search
+from lineage.sessions import load_sessions
+from lineage.ulc import ENACTMENTS, load_enactments
+from tests.conftest import COMMISSION, FAKE_MODEL
+from tests.fakes import MARK, bag_of_words
+from tests.fixture_export import PACKAGE
+from tests.fixture_export import hand_made_origins as hand_made
+
+
+def _sources() -> dict[str, Source]:
+    return {c.source.key: c.source for c in collectors(PACKAGE).values()}
+
+
+def _docs(root: Path) -> list[ModelDoc]:
+    return [d for s in _sources().values() for d in read_docs(s, root)]
+
+
+def _match(tables: Path, docs: list[ModelDoc], root: Path) -> list[OriginMatch]:
+    return match_models(
+        tables, docs, modeldocs_root=root, model=FAKE_MODEL, floor_bytes=0, embed=bag_of_words
+    )
+
+
+def _lines(matches: list[OriginMatch]) -> str:
+    return "".join(m.model_dump_json() + "\n" for m in matches)
+
+
+def _digests(directory: Path) -> dict[str, str]:
+    return {
+        str(p.relative_to(directory)): hashlib.sha256(p.read_bytes()).hexdigest()
+        for p in sorted(directory.rglob("*"))
+        if p.is_file()
+    }
+
+
+@pytest.fixture
+def synthetic(embedded_commission: Path, tmp_path: Path) -> tuple[Path, Path, list[OriginMatch]]:
+    """The embedded commission fixture, the fixture export's model documents stored under a
+    root of their own, and the matches written by hand for them."""
+    root = tmp_path / "modeldocs"
+    labels = tmp_path / "origin_labels.jsonl"
+    return embedded_commission, root, hand_made(embedded_commission, root, _sources(), labels)
+
+
+def test_a_model_copied_whole_yields_its_hand_made_match(
+    synthetic: tuple[Path, Path, list[OriginMatch]],
+) -> None:
+    tables, root, expected = synthetic
+
+    matches = {(m.bill_id, m.doc_id): m for m in _match(tables, _docs(root), root)}
+
+    for want in expected:
+        got = matches[(want.bill_id, want.doc_id)]
+        assert "near_duplicate" in got.stages
+        assert got.model_share == want.model_share == 1.0
+        # The hand-made share counts display words, matching counts normalized ones, as a
+        # bill's relatives do (lineage.relatives); the two differ by a word or so.
+        assert got.bill_share == pytest.approx(want.bill_share, abs=0.01)
+        assert got.spans == want.spans
+
+
+def test_every_match_is_kept_by_bill_with_shares_and_spans_on_the_bill_side(
+    synthetic: tuple[Path, Path, list[OriginMatch]],
+) -> None:
+    tables, root, _ = synthetic
+
+    matches = _match(tables, _docs(root), root)
+
+    assert matches == sorted(matches, key=lambda m: (m.bill_id, m.doc_id))
+    assert len({(m.bill_id, m.doc_id) for m in matches}) == len(matches)
+    for m in matches:
+        assert m.stages == sorted(set(m.stages))
+        assert 0 < m.model_share <= 1
+        assert 0 < m.bill_share <= 1
+        assert all(s.end > s.start for s in m.spans)
+        assert m.spans == sorted(m.spans, key=lambda s: (s.ordinal, s.start, s.end))
+    # Other states' enactments of the same act match the documents drawn from Utah's.
+    assert len({m.bill_id for m in matches}) > len(_docs(root))
+
+
+def test_each_match_keeps_its_section_pairs_with_each_stages_evidence(
+    synthetic: tuple[Path, Path, list[OriginMatch]],
+) -> None:
+    tables, root, _ = synthetic
+
+    for m in _match(tables, _docs(root), root):
+        assert m.pairs == sorted(m.pairs, key=lambda p: (p.model_section, p.ordinal))
+        # Every section a span is in was paired, and a stage's evidence appears only when the
+        # stage found the match.
+        assert {s.ordinal for s in m.spans} <= {p.ordinal for p in m.pairs}
+        assert any(p.agreements for p in m.pairs) == ("near_duplicate" in m.stages)
+        assert any(p.cosine is not None for p in m.pairs) == ("semantic" in m.stages)
+        assert all(p.cosine is None or p.cosine >= CORROBORATING for p in m.pairs)
+
+
+def test_matching_is_deterministic_and_leaves_the_bill_index_alone(
+    synthetic: tuple[Path, Path, list[OriginMatch]], tmp_path: Path
+) -> None:
+    tables, root, _ = synthetic
+    before = _digests(tables)
+    docs = _docs(root)
+
+    first = _match(tables, docs, root)
+    again = _match(tables, list(reversed(docs)), root)
+    alone = [m for d in docs for m in _match(tables, [d], root)]
+
+    assert _lines(first) == _lines(again)
+    assert _lines(first) == _lines(sorted(alone, key=lambda m: (m.bill_id, m.doc_id)))
+    assert _digests(tables) == before
+    out = tmp_path / "out"
+    write_origin_matches(out, first)
+    assert read_origin_matches(out) == first
+
+
+def test_a_document_listed_twice_is_refused(
+    synthetic: tuple[Path, Path, list[OriginMatch]],
+) -> None:
+    tables, root, _ = synthetic
+    doc = _docs(root)[0]
+
+    with pytest.raises(ModelDocError, match="twice"):
+        _match(tables, [doc, doc], root)
+
+
+def test_a_model_two_sources_hold_is_matched_once_and_credited_to_each(
+    synthetic: tuple[Path, Path, list[OriginMatch]], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    tables, root, _ = synthetic
+    original = _docs(root)[0]
+    copy = original.model_copy(
+        update={"id": f"second-library/{original.id.partition('/')[2]}", "source": "second-library"}
+    )
+    held = text_path(copy, root)
+    held.parent.mkdir(parents=True)
+    held.write_text(load_text(original, root))
+    seen: list[int] = []
+    real = origin_matching.match_texts
+
+    def counted(*args: Any, **kwargs: Any) -> list[OriginMatch]:
+        seen.append(len(args[1]))
+        return real(*args, **kwargs)
+
+    monkeypatch.setattr(origin_matching, "match_texts", counted)
+    matches = _match(tables, [original, copy], root)
+
+    assert seen == [1]  # one text, matched once
+    by_doc = {d: [m for m in matches if m.doc_id == d] for d in (original.id, copy.id)}
+    assert by_doc[original.id]
+    strip = [m.model_copy(update={"doc_id": ""}) for m in by_doc[copy.id]]
+    assert strip == [m.model_copy(update={"doc_id": ""}) for m in by_doc[original.id]]
+    assert matches == sorted(matches, key=lambda m: (m.bill_id, m.doc_id))
+
+
+def test_no_documents_no_matches(embedded_commission: Path, tmp_path: Path) -> None:
+    assert _match(embedded_commission, [], tmp_path) == []
+
+
+def test_hits_are_listed_as_a_page_lists_them() -> None:
+    near = [(0, "a", 1, 90), (0, "b", 2, 70), (1, "b", 2, 66), (2, "c", 0, 80)]
+    by_meaning = [
+        (0, "a", 1, 0.99),
+        (1, "b", 2, CORROBORATING),
+        (0, "d", 4, THRESHOLD),
+        (2, "d", 4, THRESHOLD - 0.001),
+        (3, "c", 0, 0.97),
+    ]
+    flagged = {("b", 2), ("c", 0)}
+
+    kept_near, kept_meaning = listed(near, by_meaning, flagged=flagged)
+
+    page_near, page_meaning = listed_hits(near, by_meaning, threshold=THRESHOLD, flagged=flagged)
+    assert [(q, b, a) for q, b, _, a in kept_near] == page_near
+    assert [(q, b, c) for q, b, _, c in kept_meaning] == page_meaning
+    # b's section 2 stands from section 1, where both stages hit it, and c's from neither.
+    assert kept_near == [(0, "a", 1, 90), (1, "b", 2, 66)]
+    assert kept_meaning == [(0, "a", 1, 0.99), (0, "d", 4, THRESHOLD)]
+
+
+def test_a_bill_section_keeps_what_each_model_section_copied_or_paraphrased() -> None:
+    first = "The court shall hear the motion within sixty days of its filing."
+    second = "A party may appeal an order granting or denying the motion as of right."
+    reworded = " ".join(w + MARK for w in second.split())
+    bill = f"{first} Something the model never said appears here. {reworded}"
+
+    spans = bill_spans(3, bill, [first, second], bag_of_words)
+
+    assert spans == [
+        BillSpan(ordinal=3, start=0, end=len(first), kind="exact"),
+        BillSpan(ordinal=3, start=bill.index(reworded), end=len(bill), kind="paraphrase"),
+    ]
+    # Without a model only copies are marked, and a copy found twice is one span.
+    assert bill_spans(3, bill, [first, first], None) == spans[:1]
+
+
+def _act_docs(root: Path) -> list[ModelDoc]:
+    """Each development act's text, as the v1 eval queries it, stored as a model document."""
+    source = Source(
+        key="acts",
+        organization="Uniform Law Commission (local eval copy)",
+        descriptor="the development acts, read from the local data directory",
+        library_url="https://example.org/acts",
+        terms_note="local eval only; never committed",
+        terms_read_on=date(2026, 11, 15),
+    )
+    docs: list[ModelDoc] = []
+    for act in ACTS:
+        raw = (ACTS_DIR / f"{act}.txt").read_bytes()
+        text = enacted_text(raw.decode("utf-8-sig"))
+        doc = ModelDoc(
+            id=f"acts/{act}",
+            source="acts",
+            title=act,
+            url=f"https://example.org/acts/{act}",
+            collected_on=date(2026, 11, 15),
+            robots="no_robots_txt",
+            leaked=False,
+            raw_sha256=sha256(raw),
+            media_type="text/plain",
+            text_sha256=sha256(text.encode()),
+        )
+        store(source, doc, raw=raw, text=text, root=root)
+        docs.append(doc)
+    return docs
+
+
+@pytest.mark.skipif(
+    not all((ACTS_DIR / f"{act}.txt").exists() for act in ACTS),
+    reason="the act texts are local data (README.md#uniform-act-texts)",
+)
+def test_the_act_texts_as_models_find_every_enactment_v1_finds(
+    embedded_commission: Path, tmp_path: Path
+) -> None:
+    root = tmp_path / "modeldocs"
+    docs = _act_docs(root)
+    v1 = evaluate(
+        {act: enacted_text((ACTS_DIR / f"{act}.txt").read_text("utf-8-sig")) for act in ACTS},
+        load_enactments(ENACTMENTS),
+        embedded_commission,
+        load_sessions(COMMISSION / "sessions.csv"),
+        semantic=open_search(embedded_commission, bag_of_words, FAKE_MODEL),
+    )
+
+    matched = {(m.doc_id, m.bill_id) for m in _match(embedded_commission, docs, root)}
+
+    enactments: list[dict[str, Any]] = v1["enactments"]
+    found_v1 = {_enactment(e) for e in enactments if e["found"]}
+    found = {
+        _enactment(e)
+        for e in enactments
+        if any((f"acts/{e['act']}", b["id"]) in matched for b in e["bills"])
+    }
+    assert found >= found_v1, sorted(found_v1 - found)
+
+
+def _enactment(e: dict[str, Any]) -> str:
+    return f"{e['act']} {e['state']} {e['year']}"
+
+
+def test_a_sampled_match_is_read_back_as_its_strongest_pair_both_sections_whole(
+    synthetic: tuple[Path, Path, list[OriginMatch]],
+) -> None:
+    tables, root, _ = synthetic
+    docs = _docs(root)
+    matches = _match(tables, docs, root)
+    rows = [
+        {"pair": f"o{n:04d}", "stages": m.stages, "bill_id": m.bill_id, "doc_id": m.doc_id}
+        for n, m in enumerate(matches[:5], start=1)
+    ]
+
+    items = build_items(rows, matches, docs, tables, root=root)
+
+    assert [i.pair for i in items] == [r["pair"] for r in rows]
+    for i, m in zip(items, matches, strict=False):
+        best = strongest_pair(m)
+        # The model's section is asked first, the bill's second, each whole and each keyed by
+        # its normalized text's hash, as a label row names it.
+        assert (i.item.query.ref.bill_id, i.item.query.ref.ordinal) == (
+            m.doc_id,
+            best.model_section,
+        )
+        assert (i.item.match.ref.bill_id, i.item.match.ref.ordinal) == (m.bill_id, best.ordinal)
+        assert i.item.query.text.strip()
+        assert i.item.match.text.strip()
+    stale = [r | {"doc_id": "nowhere/else"} for r in rows[:1]]
+    with pytest.raises(OriginPrecisionError, match="not in the matches table"):
+        build_items(stale, matches, docs, tables, root=root)
+
+
+def test_generic_sections_are_left_out_of_a_match_on_both_sides() -> None:
+    """Ruled at the step 47 review: a pair counts only when neither section is generic, the
+    shares are of the sections that are not, and the stages and pairs are the counted pairs'."""
+    text = ModelText(
+        "lib/m", "", ["alpha beta", "gamma delta", "severability"], [100, 300, 600], frozenset({2})
+    )
+    bill = {
+        0: BillSection("alpha beta", 50, False),
+        1: BillSection("gamma delta", 150, False),
+        2: BillSection("definitions", 800, True),
+    }
+    hits = BillHits(
+        stages={"near_duplicate", "semantic"},
+        pairs={(0, 0), (2, 1), (1, 2)},
+        agreements={(2, 1): 9, (1, 2): 4},
+        cosine={(0, 0): 0.97},
+    )
+    m = match_of(text, "b1", bill, hits, None)
+
+    assert m is not None
+    assert [(p.model_section, p.ordinal) for p in m.pairs] == [(0, 0)]
+    assert m.stages == ["semantic"]
+    assert m.model_share == 0.25  # 100 of the 400 words not generic
+    assert m.bill_share == 0.25  # 50 of the 200
+    assert {s.ordinal for s in m.spans} <= {0}
+
+    only_generic = BillHits(stages={"near_duplicate"}, pairs={(2, 1), (1, 2)},
+                            agreements={(2, 1): 9, (1, 2): 4})  # fmt: skip
+    assert match_of(text, "b1", bill, only_generic, None) is None
+
+
+# An invented compact's articles, for generic text inside a section (ruled at the step 48
+# review): a commission article every compact shares, and two articles of substance.
+SHARED_ARTICLE = (
+    "ARTICLE IX. WITHDRAWAL AND DISSOLUTION.\nA member state may withdraw from this compact by "
+    "repealing the statute that enacted it, and the withdrawal takes effect one year after the "
+    "repeal is enacted; the withdrawing state remains bound until then."
+)
+LAMPS = (
+    "ARTICLE III. LAMP KEEPING.\nEach keeper shall light every harbor lamp at dusk, trim its "
+    "wick at midnight and record the hour of each lighting in the keeper's log."
+)
+BELLS = (
+    "ARTICLE III. BELL RINGING.\nEach sexton shall ring the town bell at noon on market days "
+    "and toll it slowly at the death of any resident of the parish."
+)
+
+
+def _compact_section(*articles: str, opening: str = "Section 2. The Lamp Compact reads:") -> str:
+    return opening + "\n" + "\n".join(articles)
+
+
+def test_a_pair_resting_on_generic_text_inside_its_sections_does_not_count() -> None:
+    """Two compacts sharing only a commission article, each enacted as one long section, are
+    no match; sharing an article of substance too, they match, the shares count only the words
+    outside generic text and the spans leave it out."""
+    model = model_text(
+        "lib/compact", "Section 1. Lamps.\n" + _compact_section(LAMPS, SHARED_ARTICLE)
+    )
+    (q,) = [n for n, d in enumerate(model.display) if "ARTICLE IX" in d]
+    assert q in model.inside
+    assert q not in model.generic
+
+    def bill(*articles: str) -> dict[int, BillSection]:
+        text = _compact_section(*articles, opening="Sec. 5. Text of the agreement.")
+        return bill_sections([(1, text, normalize(text))], by_heading=True)
+
+    hits = BillHits(stages={"near_duplicate"}, pairs={(q, 1)}, agreements={(q, 1): 9})
+    assert match_of(model, "b-bells", bill(BELLS, SHARED_ARTICLE), hits, None) is None
+
+    lamps = bill(LAMPS, SHARED_ARTICLE)
+    m = match_of(model, "b-lamps", lamps, hits, None)
+    assert m is not None
+    assert lamps[1].counted == len(
+        normalize(_compact_section(LAMPS, opening="Sec. 5. Text of the agreement.")).split()
+    )
+    assert m.bill_share == 1.0
+    assert m.spans
+    assert all("WITHDRAWAL" not in lamps[1].display[s.start : s.end] for s in m.spans)

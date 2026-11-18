@@ -453,8 +453,11 @@ def record_spend(
     prompt: str,
     usage: tuple[int, int, int],
     today: str,
+    budget: float = BUDGET,
+    command: str = "uv run lineage label-model --batch",
 ) -> dict[str, Any]:
-    """Record a batch's tokens and cost, once per batch id, and return the ledger."""
+    """Record a batch's tokens and cost, once per batch id, and return the ledger: v1's
+    precision labels' by default, or another under its own budget and command."""
     replies, input_tokens, output_tokens = usage
     entry = {
         "batch_id": batch_id,
@@ -468,8 +471,8 @@ def record_spend(
     }
     batches = [b for b in load_spend(path) if b["batch_id"] != batch_id] + [entry]
     doc = {
-        "command": "uv run lineage label-model --batch",
-        "budget": BUDGET,
+        "command": command,
+        "budget": budget,
         "spent": round(sum(float(b["dollars"]) for b in batches), 4),
         "batches": batches,
     }

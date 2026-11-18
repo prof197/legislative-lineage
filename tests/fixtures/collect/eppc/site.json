@@ -1,0 +1,42 @@
+{
+ "_note": "Recorded responses for the eppc collector, synthetic: pages in the shape of the organization's (a top PDF button that is the summary, a button naming the model legislation, a bare View PDF button, summary links, a category tag, a page of its own, and a file with no page), with invented documents, file names and text. A body is inline HTML; a file names a fixture under tests/fixtures/collect/; build makes a Word or PDF file from it. A URL not listed answers 404.",
+ "https://eppc.org/publication/synthetic-lantern-model-legislation/": {
+  "content_type": "text/html; charset=UTF-8",
+  "body": "<!doctype html><html><head><title>Synthetic Lantern: Model Legislation</title></head><body><nav><a href=\"/publication/\">Publications</a> <a href=\"/program/\">Programs</a></nav><main><h1>Synthetic Lantern: Model Legislation</h1><p>Published January 2, 2026</p><a class=\"btn\" href=\"https://eppc.org/wp-content/uploads/2026/01/synthetic-lantern-summary_web.pdf\">PDF</a> <a class=\"btn\" href=\"https://eppc.org/wp-content/uploads/2026/01/synthetic-lantern-bill_web.pdf\">Download PDF of Model Legislation</a> <a class=\"btn\" href=\"https://eppc.org/wp-content/uploads/2026/01/synthetic-lantern-summary_web.pdf\">Download PDF of Summary</a> <a class=\"btn\" href=\"https://eppc.org/wp-content/uploads/2025/09/Synthetic-Policy-Brief-web.pdf\">report</a> <a class=\"btn\" href=\"https://example.org/another-publisher/model.pdf\">Model Legislation</a> <p>An invented summary paragraph.</p><p><a href=\"/category/model-legislation/\">Model Legislation</a>, <a href=\"/category/policy/\">Policy</a></p></main><footer><p>Copyright © 2026 Example</p></footer></body></html>"
+ },
+ "https://media.eppc.org/2026/01/synthetic-lantern-bill_web.pdf": {
+  "content_type": "application/pdf",
+  "file": "eppc/synthetic_bill.txt",
+  "build": "pdf"
+ },
+ "https://eppc.org/publication/synthetic-harbor-model-legislation/": {
+  "content_type": "text/html; charset=UTF-8",
+  "body": "<!doctype html><html><head><title>Model Legislation: Synthetic Harbor</title></head><body><nav><a href=\"/publication/\">Publications</a> <a href=\"/program/\">Programs</a></nav><main><h1>Model Legislation: Synthetic Harbor</h1><p>Published January 2, 2026</p><a class=\"btn\" href=\"https://media.eppc.org/2026/02/The-Synthetic-Harbor-Act-Summary.pdf\">Executive Summary</a> <a class=\"btn\" href=\"https://eppc.org/the-synthetic-harbor-act/\">View Model Legislation</a> <p>An invented summary paragraph.</p><p><a href=\"/category/model-legislation/\">Model Legislation</a>, <a href=\"/category/policy/\">Policy</a></p></main><footer><p>Copyright © 2026 Example</p></footer></body></html>"
+ },
+ "https://eppc.org/the-synthetic-harbor-act/": {
+  "content_type": "text/html; charset=UTF-8",
+  "body": "<!doctype html><html><body><nav><a href=\"/publication/\">Publications</a> Programs</nav><main><h1>The Synthetic Harbor Act</h1><p>An invented preamble.</p><h3>Section 1. Short title.</h3><p>This [act] may be cited as the Synthetic Harbor Act.</p><h3>Section 2. Harbors.</h3><p>A harbor keeper shall light the harbor [insert hours].</p></main><footer><p>Copyright © 2026 Example</p><p>Contact</p></footer></body></html>"
+ },
+ "https://eppc.org/publication/the-synthetic-shelf-act/": {
+  "content_type": "text/html; charset=UTF-8",
+  "body": "<!doctype html><html><head><title>The Synthetic Shelf Act</title></head><body><nav><a href=\"/publication/\">Publications</a> <a href=\"/program/\">Programs</a></nav><main><h1>The Synthetic Shelf Act</h1><p>Published January 2, 2026</p><a class=\"btn\" href=\"https://media.eppc.org/2026/08/1-26-Synthetic-Shelf-Act.pdf\">View PDF</a> <a class=\"btn\" href=\"https://media.eppc.org/2026/08/1-26-Synthetic-Shelf-Act.pdf\">Download PDF</a> <p>An invented summary paragraph.</p><p><a href=\"/category/model-legislation/\">Model Legislation</a>, <a href=\"/category/policy/\">Policy</a></p></main><footer><p>Copyright © 2026 Example</p></footer></body></html>"
+ },
+ "https://media.eppc.org/2026/08/1-26-Synthetic-Shelf-Act.pdf": {
+  "content_type": "application/pdf",
+  "file": "eppc/synthetic_lettered_bill.txt",
+  "build": "pdf"
+ },
+ "https://media.eppc.org/2026/04/Synthetic-Harbor-Package-Model-Legislation.pdf": {
+  "content_type": "application/pdf",
+  "file": "eppc/synthetic_package.txt",
+  "build": "pdf"
+ },
+ "https://eppc.org/publication/synthetic-withheld-model-legislation/": {
+  "content_type": "text/html; charset=UTF-8",
+  "body": "<!doctype html><html><head><title>Model Legislation: Synthetic Withheld</title></head><body><nav><a href=\"/publication/\">Publications</a> <a href=\"/program/\">Programs</a></nav><main><h1>Model Legislation: Synthetic Withheld</h1><p>Published January 2, 2026</p><a class=\"btn\" href=\"https://media.eppc.org/withheld/synthetic-withheld-bill.pdf\">Model Legislation</a> <p>An invented summary paragraph.</p><p><a href=\"/category/model-legislation/\">Model Legislation</a>, <a href=\"/category/policy/\">Policy</a></p></main><footer><p>Copyright © 2026 Example</p></footer></body></html>"
+ },
+ "https://eppc.org/publication/synthetic-unlinked/": {
+  "content_type": "text/html; charset=UTF-8",
+  "body": "<!doctype html><html><head><title>Synthetic Unlinked</title></head><body><nav><a href=\"/publication/\">Publications</a> <a href=\"/program/\">Programs</a></nav><main><h1>Synthetic Unlinked</h1><p>Published January 2, 2026</p><a class=\"btn\" href=\"https://media.eppc.org/2026/03/synthetic-unlinked-summary.pdf\">Summary</a> <p>An invented summary paragraph.</p><p><a href=\"/category/model-legislation/\">Model Legislation</a>, <a href=\"/category/policy/\">Policy</a></p></main><footer><p>Copyright © 2026 Example</p></footer></body></html>"
+ }
+}

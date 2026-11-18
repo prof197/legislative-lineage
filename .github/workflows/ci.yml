@@ -87,3 +87,8 @@ jobs:
       - run: npm run build
       # The copy rules over the built pages, scripts and displayed claims.
       - run: npm run test:copy
+      # Again over the v2 fixture export, which carries origins, sources and an origin story, so
+      # the origin-line rule and the sources page are checked on every push, not only at deploy.
+      - run: npm run data:fixture-export
+      - run: npm run build
+      - run: npm run test:copy

@@ -66,4 +66,4 @@ def test_the_commands_say_what_is_missing(tmp_path: Path) -> None:
     assert "no collector for nowhere" in missing.output
     origins = runner.invoke(app, ["origins", "--tables", str(tmp_path), "--min-free-gib", "0"])
     assert origins.exit_code == 1
-    assert "not built yet" in origins.output
+    assert "run `lineage index` first" in origins.output

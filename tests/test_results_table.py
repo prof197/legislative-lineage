@@ -2,19 +2,25 @@
 
 import json
 from pathlib import Path
+from typing import Any
 
 import pytest
 from typer.testing import CliRunner
 
 from lineage.cli import app
+from lineage.export import STORIES_RULES as STORIES
 from lineage.results_table import (
     END,
     HELD_OUT_END,
     HELD_OUT_START,
+    ORIGINS_END,
+    ORIGINS_START,
     START,
     SUMMARY_END,
     SUMMARY_START,
     ResultsTableError,
+    hosted_state,
+    render_stories,
     rendered_readme,
 )
 
@@ -53,9 +59,24 @@ def test_the_committed_readme_shows_the_committed_results() -> None:
 
     state = json.loads((ROOT / "reports" / "relatives_reporting.json").read_text())["state"]
 
-    assert readme == rendered_readme(readme, results, exported, state), (
-        "run `uv run lineage eval readme`"
+    stories = render_stories(hosted_state(ROOT / "site" / "data-release.json"), ROOT / STORIES)
+    withheld = json.loads((ROOT / "reports" / "withheld_documents.json").read_text())
+    assert readme == rendered_readme(
+        readme, results, exported, state, stories=stories, withheld=withheld
+    ), "run `uv run lineage eval readme`"
+
+
+def test_the_story_count_is_the_hosted_states_from_the_stories_rules(tmp_path: Path) -> None:
+    rules = tmp_path / "stories.toml"
+    rules.write_text(
+        '[stories.a]\nstates = "all"\n[stories.b]\nstates = ["GA"]\n'
+        '[stories.c]\nstates = ["UT"]\n[stories.origin]\nstates = "all"\n'
     )
+    ga = render_stories("GA", rules)
+    assert ga.startswith("two featured stories, and one on a passed bill")
+    rules.write_text('[stories.a]\nstates = ["UT"]\n')
+    assert render_stories("GA", rules) == "no featured stories."
+    assert render_stories("UT", rules) == "one featured story."
 
 
 def test_renders_counts_and_shares_from_the_results() -> None:
@@ -186,9 +207,222 @@ def test_the_summary_answers_each_question_from_the_results() -> None:
     assert f"| {dev['found']} of {dev['enactments']} (" in out
     assert "sampled from Georgia's pages" in out
     judged = [line for line in out.splitlines() if "judged by a model" in line.lower()]
-    assert len(judged) == 2  # precision and faithfulness, said in the row itself
+    # precision and faithfulness, said in the row itself, and origin precision once it is read
+    assert len(judged) == 2 + ("origins_precision" in results)
     assert all(line.startswith("| Judged by a model:") for line in judged)
     assert "`uv run lineage eval faithfulness`" in out
     assert "stale" not in out
     with pytest.raises(ResultsTableError, match="precision sample"):
         rendered_readme(readme, results, exported)
+
+
+def _rate(found: int, n: int, low: float, high: float) -> dict[str, object]:
+    return {"enactments": n, "found": found, "recall": found / n, "interval_95": [low, high]}
+
+
+def _origin_recall(
+    key: str, found: int, n: int, *, sealed: bool = False, status: str | None = None
+) -> dict[str, object]:
+    """An origin recall section as `lineage eval origins` writes it, cut to what is read."""
+    pooled = _rate(found, n, 0.5, 0.99)
+    return {
+        "command": "uv run lineage eval origins",
+        "answer_key": {"name": key, "path": "reports/answer_key.csv", "read": "read 2099-01-02"},
+        "sealed": sealed,
+        "status": status,
+        "threshold": {"min_share": 0.0, "floor": 0.25},
+        "documents": {"act-a": ["commission/act-a"], "act-b": ["commission/act-b"]},
+        "recall": {"pooled": pooled, "by_act": {"act-a": pooled, "act-b": pooled}},
+    }
+
+
+def _stratum(size: int, labeled: int, correct: int) -> dict[str, object]:
+    return {
+        "size": size,
+        "labeled": labeled,
+        "correct": correct,
+        "precision": correct / labeled,
+        "interval_95": [0.41, 0.97],
+    }
+
+
+def _origin_precision() -> dict[str, object]:
+    """The reporting reading as `lineage eval origin-precision` writes it, cut to what is read."""
+    return {
+        "command": "uv run lineage eval origin-precision --part reporting_after_fix",
+        "floor": 0.25,
+        "overall": {
+            "matches": 60,
+            "labeled": 9,
+            "correct": 8,
+            "precision": {"precision": 0.8812, "interval_95": [0.5521, 0.9763]},
+            "by_stage": {
+                "near_duplicate_only": _stratum(10, 3, 2),
+                "semantic_only": _stratum(20, 3, 3),
+                "both": _stratum(30, 3, 3),
+            },
+        },
+        "compared": {
+            "example-library": {
+                "sources": ["example-library"],
+                "matches": 40,
+                "labeled": 6,
+                "correct": 5,
+                "precision": {"precision": 0.8101, "interval_95": [0.4012, 0.9655]},
+            },
+            "rest": {
+                "sources": ["example-archive"],
+                "matches": 20,
+                "labeled": 3,
+                "correct": 3,
+                "precision": {"precision": 1.0, "interval_95": [0.4385, 1.0]},
+            },
+        },
+    }
+
+
+def _origins() -> dict[str, object]:
+    return {
+        "origins_development": _origin_recall("development", 3, 4),
+        "origins_held_out": _origin_recall("held_out", 2, 2, sealed=True),
+        "origins_v1_held_out": _origin_recall(
+            "v1_held_out", 4, 5, status="opened in v1; not a sealed test"
+        ),
+        "origins_precision": _origin_precision(),
+    }
+
+
+def _rendered_origins(
+    results: dict[str, object], sealed_note: str = "", withheld: dict[str, Any] | None = None
+) -> str:
+    readme = f"{START}\n{END}\n{ORIGINS_START}\nstale\n{ORIGINS_END}\n"
+    out = rendered_readme(
+        readme,
+        {"commission": _section(1, 3)} | results,
+        {"commission": _section(1, 3)},
+        sealed_note=sealed_note,
+        withheld=withheld,
+    )
+    return out[out.index(ORIGINS_START) : out.index(ORIGINS_END)]
+
+
+def test_origin_recall_and_precision_are_rendered_with_intervals_and_commands() -> None:
+    block = _rendered_origins(_origins())
+
+    assert "stale" not in block
+    assert "listing floor of 0.25" in block
+    rows = [line for line in block.splitlines() if line.startswith("| ")]
+    dev = next(r for r in rows if "development" in r)
+    assert "3 of 4, 0.75 [0.50, 0.99]" in dev
+    assert "`uv run lineage eval origins`" in dev
+    sealed = next(r for r in rows if "sealed key" in r)
+    assert "2 of 2, 1.00 [0.50, 0.99]" in sealed
+    assert "`uv run lineage eval origins --key held_out --final`" in sealed
+    overall = next(r for r in rows if "all stages" in r)
+    assert "0.88 [0.55, 0.98]" in overall
+    assert "9 labels of 60 matches" in overall
+    assert "`uv run lineage eval origin-precision --part reporting_after_fix`" in overall
+    near = next(r for r in rows if "near-duplicate stage alone" in r)
+    assert "0.67 [0.41, 0.97]" in near
+    assert "3 labels of 10 matches" in near
+    assert any("by meaning alone" in r for r in rows)
+    assert any("both stages" in r for r in rows)
+    # Ruled at the step 48 review: one source against every other's, with intervals.
+    one = next(r for r in rows if "example-library's matches" in r)  # no collector names it
+    assert "0.81 [0.40, 0.97]" in one
+    assert "6 labels of 40 matches" in one
+    rest = next(r for r in rows if "every other source's matches" in r)
+    assert "1.00 [0.44, 1.00]" in rest
+
+
+def test_precision_read_before_documents_were_withheld_says_so() -> None:
+    """Ruled at the deploy review: the readings stand as measured, noted as understating the
+    precision of what pages show once mostly-wrong documents are withheld."""
+    assert "withheld" not in _rendered_origins(_origins())
+    assert "withheld" not in _rendered_origins(
+        _origins(), withheld={"withheld": [], "listed_matches_withheld": 0}
+    )
+    held = [{"doc_id": f"lib/{n}"} for n in range(5)]
+    block = _rendered_origins(
+        _origins(),
+        withheld={
+            "withheld": held,
+            "reviewed": [{"doc_id": "lib/r"}],
+            "listed_matches_withheld": 82,
+        },
+    )
+    assert "before 6 documents whose matches were found mostly wrong were withheld" in block
+    assert "82 listed matches in all" in block
+    assert "likely understates the precision of what pages show" in block
+
+
+def test_v1_held_out_acts_are_labeled_exactly_and_kept_apart_from_the_sealed_row() -> None:
+    lines = _rendered_origins(_origins()).splitlines()
+
+    v1 = next(n for n, line in enumerate(lines) if "--key v1_held_out" in line)
+    sealed = next(n for n, line in enumerate(lines) if "--key held_out --final" in line)
+    assert "opened in v1; not a sealed test" in lines[v1]
+    assert "4 of 5, 0.80 [0.50, 0.99]" in lines[v1]
+    # a line that is not a table row stands between them, so they are two tables
+    assert any(not line.startswith("|") for line in lines[min(v1, sealed) : max(v1, sealed)])
+    assert "opened in v1" not in lines[sealed]
+
+
+def test_an_absent_origin_section_leaves_no_row_and_nothing_in_its_place() -> None:
+    results = _origins()
+    del results["origins_precision"]
+
+    block = _rendered_origins(results)
+
+    assert "origin-precision" not in block
+    assert "recision" not in block
+    assert "--key held_out --final" in block
+
+    for name in ("origins_held_out", "origins_v1_held_out"):
+        partial = _origins()
+        del partial[name]
+        assert f"--key {name.removeprefix('origins_')}" not in _rendered_origins(partial)
+
+
+def test_with_no_origin_section_the_block_is_left_empty() -> None:
+    assert _rendered_origins({}).strip() == ORIGINS_START
+
+
+def test_the_sealed_row_takes_one_footnote_only_when_one_is_given() -> None:
+    plain = _rendered_origins(_origins())
+    noted = _rendered_origins(_origins(), sealed_note="A note on the sealed run.")
+
+    assert "[^sealed]" not in plain
+    sealed = next(line for line in noted.splitlines() if "--key held_out --final" in line)
+    assert "[^sealed]" in sealed
+    assert "[^sealed]: A note on the sealed run." in noted.splitlines()
+    assert noted.count("[^sealed]") == 2
+
+
+def test_origin_evals_at_different_floors_are_not_set_side_by_side() -> None:
+    results = _origins()
+    results["origins_precision"] = _origin_precision() | {"floor": 0.1}
+
+    with pytest.raises(ResultsTableError, match="floor"):
+        _rendered_origins(results)
+
+
+def test_the_summary_answers_the_origin_questions_only_from_sections_present() -> None:
+    results = json.loads((ROOT / "reports" / "results.json").read_text())
+    exported = json.loads((ROOT / "reports" / "results_exported_only.json").read_text())
+    readme = f"{SUMMARY_START}\n{SUMMARY_END}\n{START}\n{END}\n"
+    results |= _origins()
+
+    out = rendered_readme(readme, results, exported, "GA")
+
+    origin_rows = [line for line in out.splitlines() if "model legislation" in line]
+    assert len(origin_rows) == 2
+    assert any("3 of 4 (75.0%)" in r and "`uv run lineage eval origins`" in r for r in origin_rows)
+    assert any(
+        r.startswith("| Judged by a model:") and "0.88 [0.55, 0.98]" in r for r in origin_rows
+    )
+
+    for name in ("origins_development", "origins_precision"):
+        del results[name]
+    out = rendered_readme(readme, results, exported, "GA")
+    assert "model legislation" not in out

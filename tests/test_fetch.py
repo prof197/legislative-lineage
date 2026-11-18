@@ -1,10 +1,12 @@
 import shutil
 import ssl
+import urllib.request
 import zipfile
 from pathlib import Path
 
 import pytest
 
+from lineage import fetch
 from lineage.disk import InsufficientDiskSpaceError
 from lineage.fetch import USER_AGENT, fetch_raw, moved, request_url, tls_context
 from lineage.snapshot import load_manifest, scan, verify, write_manifest
@@ -173,3 +175,26 @@ def test_spaces_in_a_link_are_escaped_and_existing_escapes_kept() -> None:
     assert request_url(url) == (
         "https://www.oklegislature.gov/cf_pdf/2025-26%20ENR/SB/SB1232%20ENR.PDF?a=1&b=%20"
     )
+
+
+def test_a_header_travels_with_the_user_agent_and_cannot_replace_it(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    sent: list[urllib.request.Request] = []
+
+    def urlopen(request: urllib.request.Request, **_: object) -> None:
+        sent.append(request)
+
+    monkeypatch.setattr(fetch.urllib.request, "urlopen", urlopen)
+    monkeypatch.setenv("LINEAGE_PACE_DIR", str(tmp_path))
+    fetch.open_url(
+        "https://api.example/bills",
+        0,
+        interval=0,
+        headers={"X-API-KEY": "a-fixture-value", "User-Agent": "someone else"},
+    )
+
+    (request,) = sent
+    assert request.get_header("X-api-key") == "a-fixture-value"
+    assert request.get_header("User-agent") == USER_AGENT
+    assert "a-fixture-value" not in request.full_url

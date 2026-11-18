@@ -1,0 +1,291 @@
+{
+ "command": "uv run lineage eval origin-threshold",
+ "prompt": "passages-v1-high",
+ "score": "a match's larger share: of the model's words, or of the bill's",
+ "labeled": 200,
+ "sampled": 200,
+ "bands": {
+  "share_from_0.00": {
+   "size": 597,
+   "labeled": 50,
+   "correct": 10,
+   "precision": 0.2,
+   "interval_95": [
+    0.1124,
+    0.3304
+   ]
+  },
+  "share_from_0.05": {
+   "size": 674,
+   "labeled": 50,
+   "correct": 11,
+   "precision": 0.22,
+   "interval_95": [
+    0.1275,
+    0.3524
+   ]
+  },
+  "share_from_0.10": {
+   "size": 1035,
+   "labeled": 50,
+   "correct": 32,
+   "precision": 0.64,
+   "interval_95": [
+    0.5014,
+    0.7586
+   ]
+  },
+  "share_from_0.25": {
+   "size": 3459,
+   "labeled": 50,
+   "correct": 44,
+   "precision": 0.88,
+   "interval_95": [
+    0.762,
+    0.9438
+   ]
+  }
+ },
+ "floors": [
+  {
+   "floor": 0.0,
+   "precision": {
+    "precision": 0.6893,
+    "interval_95": [
+     0.6221,
+     0.7494
+    ]
+   },
+   "band_above": {
+    "size": 597,
+    "labeled": 50,
+    "correct": 10,
+    "precision": 0.2,
+    "interval_95": [
+     0.1124,
+     0.3304
+    ]
+   },
+   "matches_listed": 5827,
+   "bills_listing_an_origin": 4926,
+   "development_recall": {
+    "enactments": 36,
+    "found": 33,
+    "recall": 0.9167,
+    "interval_95": [
+     0.7817,
+     0.9713
+    ]
+   },
+   "by_stage": {
+    "near_duplicate_only": {
+     "labeled": 48,
+     "correct": 25,
+     "precision": 0.5208,
+     "interval_95": [
+      0.3833,
+      0.6553
+     ]
+    },
+    "semantic_only": {
+     "labeled": 59,
+     "correct": 36,
+     "precision": 0.6102,
+     "interval_95": [
+      0.4827,
+      0.7242
+     ]
+    },
+    "both": {
+     "labeled": 93,
+     "correct": 36,
+     "precision": 0.3871,
+     "interval_95": [
+      0.2945,
+      0.4887
+     ]
+    }
+   }
+  },
+  {
+   "floor": 0.05,
+   "precision": {
+    "precision": 0.7459,
+    "interval_95": [
+     0.6706,
+     0.8088
+    ]
+   },
+   "band_above": {
+    "size": 674,
+    "labeled": 50,
+    "correct": 11,
+    "precision": 0.22,
+    "interval_95": [
+     0.1275,
+     0.3524
+    ]
+   },
+   "matches_listed": 5217,
+   "bills_listing_an_origin": 4433,
+   "development_recall": {
+    "enactments": 36,
+    "found": 33,
+    "recall": 0.9167,
+    "interval_95": [
+     0.7817,
+     0.9713
+    ]
+   },
+   "by_stage": {
+    "near_duplicate_only": {
+     "labeled": 45,
+     "correct": 25,
+     "precision": 0.5556,
+     "interval_95": [
+      0.4118,
+      0.6906
+     ]
+    },
+    "semantic_only": {
+     "labeled": 38,
+     "correct": 31,
+     "precision": 0.8158,
+     "interval_95": [
+      0.6658,
+      0.9078
+     ]
+    },
+    "both": {
+     "labeled": 67,
+     "correct": 31,
+     "precision": 0.4627,
+     "interval_95": [
+      0.3486,
+      0.5808
+     ]
+    }
+   }
+  },
+  {
+   "floor": 0.1,
+   "precision": {
+    "precision": 0.8247,
+    "interval_95": [
+     0.7369,
+     0.8877
+    ]
+   },
+   "band_above": {
+    "size": 1035,
+    "labeled": 50,
+    "correct": 32,
+    "precision": 0.64,
+    "interval_95": [
+     0.5014,
+     0.7586
+    ]
+   },
+   "matches_listed": 4542,
+   "bills_listing_an_origin": 3857,
+   "development_recall": {
+    "enactments": 36,
+    "found": 32,
+    "recall": 0.8889,
+    "interval_95": [
+     0.7469,
+     0.9559
+    ]
+   },
+   "by_stage": {
+    "near_duplicate_only": {
+     "labeled": 28,
+     "correct": 22,
+     "precision": 0.7857,
+     "interval_95": [
+      0.6046,
+      0.8979
+     ]
+    },
+    "semantic_only": {
+     "labeled": 33,
+     "correct": 26,
+     "precision": 0.7879,
+     "interval_95": [
+      0.6225,
+      0.8932
+     ]
+    },
+    "both": {
+     "labeled": 39,
+     "correct": 28,
+     "precision": 0.7179,
+     "interval_95": [
+      0.5622,
+      0.8346
+     ]
+    }
+   }
+  },
+  {
+   "floor": 0.25,
+   "precision": {
+    "precision": 0.88,
+    "interval_95": [
+     0.762,
+     0.9438
+    ]
+   },
+   "band_above": {
+    "size": 3459,
+    "labeled": 50,
+    "correct": 44,
+    "precision": 0.88,
+    "interval_95": [
+     0.762,
+     0.9438
+    ]
+   },
+   "matches_listed": 3494,
+   "bills_listing_an_origin": 3069,
+   "development_recall": {
+    "enactments": 36,
+    "found": 31,
+    "recall": 0.8611,
+    "interval_95": [
+     0.7134,
+     0.9392
+    ]
+   },
+   "by_stage": {
+    "near_duplicate_only": {
+     "labeled": 11,
+     "correct": 11,
+     "precision": 1.0,
+     "interval_95": [
+      0.7412,
+      1.0
+     ]
+    },
+    "semantic_only": {
+     "labeled": 14,
+     "correct": 12,
+     "precision": 0.8571,
+     "interval_95": [
+      0.6006,
+      0.9599
+     ]
+    },
+    "both": {
+     "labeled": 25,
+     "correct": 21,
+     "precision": 0.84,
+     "interval_95": [
+      0.6535,
+      0.936
+     ]
+    }
+   }
+  }
+ ]
+}

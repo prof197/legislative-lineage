@@ -622,6 +622,25 @@
    "additionalProperties": false,
    "description": "A published model document as a page names it. Its text is never exported.",
    "properties": {
+    "co_publishers": {
+     "items": {
+      "type": "string"
+     },
+     "title": "Co Publishers",
+     "type": "array"
+    },
+    "drafted_by": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Drafted By"
+    },
     "id": {
      "title": "Id",
      "type": "string"
@@ -712,6 +731,146 @@
     "sections"
    ],
    "title": "Origin",
+   "type": "object"
+  },
+  "OriginPrecision": {
+   "additionalProperties": false,
+   "description": "Origin precision as the reporting sample reads it (reports/results.json,\norigins_precision): the whole, and one source's matches against every other source's.",
+   "properties": {
+    "compared": {
+     "$ref": "#/$defs/OriginShare"
+    },
+    "floor": {
+     "title": "Floor",
+     "type": "number"
+    },
+    "labeler": {
+     "items": {
+      "type": "string"
+     },
+     "title": "Labeler",
+     "type": "array"
+    },
+    "overall": {
+     "$ref": "#/$defs/OriginShare"
+    },
+    "rest": {
+     "$ref": "#/$defs/OriginShare"
+    },
+    "withheld_documents": {
+     "title": "Withheld Documents",
+     "type": "integer"
+    },
+    "withheld_matches": {
+     "title": "Withheld Matches",
+     "type": "integer"
+    }
+   },
+   "required": [
+    "floor",
+    "overall",
+    "compared",
+    "rest",
+    "labeler",
+    "withheld_documents",
+    "withheld_matches"
+   ],
+   "title": "OriginPrecision",
+   "type": "object"
+  },
+  "OriginShare": {
+   "additionalProperties": false,
+   "description": "A group of origin matches' precision on the reporting sample, weighted by stage.",
+   "properties": {
+    "correct": {
+     "title": "Correct",
+     "type": "integer"
+    },
+    "interval_95": {
+     "anyOf": [
+      {
+       "maxItems": 2,
+       "minItems": 2,
+       "prefixItems": [
+        {
+         "type": "number"
+        },
+        {
+         "type": "number"
+        }
+       ],
+       "type": "array"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Interval 95"
+    },
+    "labeled": {
+     "title": "Labeled",
+     "type": "integer"
+    },
+    "matches": {
+     "title": "Matches",
+     "type": "integer"
+    },
+    "share": {
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Share"
+    },
+    "sources": {
+     "items": {
+      "type": "string"
+     },
+     "title": "Sources",
+     "type": "array"
+    }
+   },
+   "required": [
+    "sources",
+    "matches",
+    "labeled",
+    "correct",
+    "share",
+    "interval_95"
+   ],
+   "title": "OriginShare",
+   "type": "object"
+  },
+  "OriginStory": {
+   "additionalProperties": false,
+   "description": "`origin_story.json`: the origin story (DESIGN.md#export), the passed bill and listed origin\nlineage.origin_story's rule chooses; not written when no passed bill has a listed origin both\nstages found that a labeler judged correct.",
+   "properties": {
+    "bill": {
+     "$ref": "#/$defs/BillRef"
+    },
+    "eligible": {
+     "title": "Eligible",
+     "type": "integer"
+    },
+    "origin": {
+     "$ref": "#/$defs/Origin"
+    },
+    "passed_over": {
+     "title": "Passed Over",
+     "type": "integer"
+    }
+   },
+   "required": [
+    "bill",
+    "origin",
+    "eligible",
+    "passed_over"
+   ],
+   "title": "OriginStory",
    "type": "object"
   },
   "Recall": {
@@ -1058,6 +1217,28 @@
      "title": "Library Url",
      "type": "string"
     },
+    "members": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Members"
+    },
+    "members_source": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Members Source"
+    },
     "organization": {
      "title": "Organization",
      "type": "string"
@@ -1080,12 +1261,21 @@
       }
      ],
      "title": "Terms Url"
+    },
+    "withheld": {
+     "items": {
+      "$ref": "#/$defs/WithheldDocument"
+     },
+     "title": "Withheld",
+     "type": "array"
     }
    },
    "required": [
     "key",
     "organization",
     "descriptor",
+    "members",
+    "members_source",
     "library_url",
     "terms_url",
     "terms_note",
@@ -1093,7 +1283,8 @@
     "leaked",
     "leak_note",
     "documents",
-    "collected_on"
+    "collected_on",
+    "withheld"
    ],
    "title": "SourceEntry",
    "type": "object"
@@ -1369,6 +1560,9 @@
     "held_out_recall": {
      "$ref": "#/$defs/Recall"
     },
+    "origin_precision": {
+     "$ref": "#/$defs/OriginPrecision"
+    },
     "relatives_precision": {
      "$ref": "#/$defs/Share"
     },
@@ -1392,9 +1586,44 @@
     "relatives_precision",
     "relatives_precision_labeler",
     "faithfulness",
-    "faithfulness_judge"
+    "faithfulness_judge",
+    "origin_precision"
    ],
    "title": "Validation",
+   "type": "object"
+  },
+  "WithheldDocument": {
+   "additionalProperties": false,
+   "description": "A model document withheld from bill pages, the feed and stories (lineage.withheld): at\nleast 3 of its listed matches labeled, fewer than half judged correct.",
+   "properties": {
+    "id": {
+     "title": "Id",
+     "type": "string"
+    },
+    "reason": {
+     "enum": [
+      "generic_text",
+      "review"
+     ],
+     "title": "Reason",
+     "type": "string"
+    },
+    "title": {
+     "title": "Title",
+     "type": "string"
+    },
+    "url": {
+     "title": "Url",
+     "type": "string"
+    }
+   },
+   "required": [
+    "id",
+    "title",
+    "url",
+    "reason"
+   ],
+   "title": "WithheldDocument",
    "type": "object"
   }
  },

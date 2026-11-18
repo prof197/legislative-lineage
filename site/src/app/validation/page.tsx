@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import type { OriginPrecision, OriginShare } from "@/types/export";
 import { DataCredit, Footer, Header } from "@/components/Chrome";
 import { Enactments } from "@/components/Enactments";
-import { meta, precisionSampleState } from "@/lib/data";
+import { meta, precisionSampleState, sources } from "@/lib/data";
 import { stateName } from "@/lib/format";
 
 export const metadata: Metadata = { title: "How we checked" };
@@ -19,6 +21,46 @@ const STAGE: [string, string, string][] = [
 ];
 
 const pct = (x: number) => `${Math.round(x * 100)}%`;
+
+// A group of origin matches' precision with its interval, or why there is none.
+function originShare(g: OriginShare): string {
+  if (g.share === null || g.interval_95 === null) return "no estimate: a stage holding matches has no label";
+  return `${pct(g.share)} (95% interval ${pct(g.interval_95[0])}–${pct(g.interval_95[1])}), from ${g.labeled} labels of ${g.matches.toLocaleString("en-US")} matches`;
+}
+
+// Origin precision on the reporting sample, one library's matches read against the rest's
+// (DESIGN.md#origin-matches). An export from before model documents has none, so nothing shows.
+function OriginPrecisionSection({ o }: { o: OriginPrecision | undefined }) {
+  if (!o) return null;
+  const organization = (key: string) => sources()?.sources.find((s) => s.key === key)?.organization ?? key;
+  return (
+    <section aria-labelledby="origins" style={{ marginTop: 48 }}>
+      <h2 id="origins" className="section" style={{ fontSize: 24 }}>Matches with published model legislation</h2>
+      <p className="body-serif" style={{ marginTop: 12, maxWidth: "40em" }}>
+        Bill pages list a model document when at least {pct(o.floor)} of the bill&apos;s wording, or of the
+        model&apos;s, is in sections that match. A model judged a seeded sample of those matches, each on the
+        passages its closest section pair shares: are they the same provision? Weighted by how many matches
+        each stage found, the share judged the same provision is {originShare(o.overall)}.
+      </p>
+      <ul className="body-serif" style={{ marginTop: 12, maxWidth: "40em" }}>
+        <li>{organization(o.compared.sources[0] ?? "")}&apos;s matches: {originShare(o.compared)}.</li>
+        <li>Every other library&apos;s matches together: {originShare(o.rest)}.</li>
+      </ul>
+      <p className="note">
+        One library&apos;s matches are read apart from the rest, because errors gathered on one
+        organization&apos;s documents would wrong it whatever the overall figure. A wrong match is two
+        texts that share wording, such as a clause many acts carry, without sharing a provision.
+      </p>
+      {(o.withheld_documents ?? 0) > 0 && (
+        <p className="note">
+          These figures were measured before {o.withheld_documents === 1 ? "one model document" : `${o.withheld_documents} model documents`} whose
+          matches were found mostly wrong {o.withheld_documents === 1 ? "was" : "were"} withheld from bill pages ({o.withheld_matches.toLocaleString("en-US")} listed{" "}
+          {o.withheld_matches === 1 ? "match" : "matches"}; the <Link href="/sources/">sources page</Link> names {o.withheld_documents === 1 ? "it" : "them"}). For what pages show now, they likely understate precision.
+        </p>
+      )}
+    </section>
+  );
+}
 
 export default function ValidationPage() {
   const v = meta().validation;
@@ -109,6 +151,8 @@ export default function ValidationPage() {
             key is the Commission&apos;s enactment lists as of the snapshot date.
           </p>
         </section>
+
+        <OriginPrecisionSection o={v.origin_precision} />
 
         <section aria-labelledby="data" style={{ marginTop: 48 }}>
           <h2 id="data" className="section" style={{ fontSize: 24 }}>The data</h2>

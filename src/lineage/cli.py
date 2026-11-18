@@ -4,7 +4,8 @@ import datetime
 import json
 import os
 import time
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
+from dataclasses import replace
 from pathlib import Path
 from typing import Annotated, Any
 
@@ -12,8 +13,16 @@ import numpy as np
 import typer
 from numpy.typing import NDArray
 
-from lineage import __version__
-from lineage.acts import ACTS, ACTS_DIR, HELD_OUT_ACTS, HELD_OUT_DIR, ActTextError
+from lineage import __version__, deploy
+from lineage import rebuild as rebuilding
+from lineage.acts import (
+    ACTS,
+    ACTS_DIR,
+    HELD_OUT_ACTS,
+    HELD_OUT_DIR,
+    ORIGIN_HELD_OUT_ACTS,
+    ActTextError,
+)
 from lineage.agreement import PAIRS as AGREEMENT_PAIRS
 from lineage.agreement import SAMPLE as AGREEMENT_SAMPLE
 from lineage.agreement import SAMPLE_REPORT as AGREEMENT_SAMPLE_REPORT
@@ -27,7 +36,13 @@ from lineage.agreement import (
     write_subsample,
 )
 from lineage.align import Embedder, align
-from lineage.answer_key import ANSWER_KEY, HELD_OUT_KEY, build_answer_key, render_answer_key
+from lineage.answer_key import (
+    ANSWER_KEY,
+    HELD_OUT_KEY,
+    ORIGINS_HELD_OUT_KEY,
+    build_answer_key,
+    render_answer_key,
+)
 from lineage.collect import REPORTS_DIR as COLLECT_REPORTS
 from lineage.collect import CollectContext, CollectError, collectors, run_collector
 from lineage.collect import write_report as write_collect_report
@@ -98,9 +113,20 @@ from lineage.faithfulness import with_earlier_runs as with_earlier_faithfulness
 from lineage.featured import PAIRS as FEATURED_PAIRS
 from lineage.featured import REPORT as FEATURED_REPORT
 from lineage.featured import FeaturedError, build_featured, write_featured
-from lineage.fetch import SOURCE, FetchError, fetch_raw
+from lineage.feed import FeedError, write_feed
+from lineage.fetch import SOURCE, FetchError, fetch_raw, open_url
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
+from lineage.intake import (
+    DAYS,
+    ESTIMATE,
+    TIERS,
+    IntakeError,
+    Tier,
+    api_key,
+    january_estimate,
+    run_intake,
+)
 from lineage.label_page import OUT as LABEL_PAGE_OUT
 from lineage.label_page import PAIRS_FILE as LABEL_PAGE_DATA
 from lineage.label_page import append_rows as append_label_rows
@@ -144,12 +170,56 @@ from lineage.model_labels import record_spend as record_label_spend
 from lineage.model_labels import spent as label_spent
 from lineage.modeldocs import MODELDOCS_DIR, ModelDocError, read_docs
 from lineage.models import MODELS, MODELS_DIR, ModelError, fetch_model
-from lineage.neighbors import EF_SEARCH, RECALL_FLOOR, build_neighbors
+from lineage.neighbors import EF_SEARCH, RECALL_FLOOR, SPEC, build_neighbors
 from lineage.neighbors import REPORT as NEIGHBORS_REPORT
 from lineage.neighbors import check_at as check_neighbors_at
 from lineage.neighbors import write_report as write_neighbors_report
+from lineage.origin_labels import LABELS as ORIGIN_LABELS
+from lineage.origin_labels import PROMPT as ORIGIN_PROMPT
+from lineage.origin_labels import build_items as build_origin_items
+from lineage.origin_labels import correct_by_sections as origin_correct_by_sections
+from lineage.origin_labels import label_in_batch as origin_label_in_batch
+from lineage.origin_labels import labelers as origin_labelers
+from lineage.origin_labels import load_labels as load_origin_labels
+from lineage.origin_labels import pair_sections as origin_pair_sections
+from lineage.origin_labels import pending as origin_pending
+from lineage.origin_labels import plan as plan_origin_labels
+from lineage.origin_labels import record as record_origin_spend
 from lineage.origin_matching import match_models
-from lineage.origins import write_origin_matches
+from lineage.origin_precision import PARTS as ORIGIN_PARTS
+from lineage.origin_precision import REPORT as ORIGIN_SAMPLE_REPORT
+from lineage.origin_precision import RESULTS_SECTIONS as ORIGIN_RESULTS_SECTIONS
+from lineage.origin_precision import SPEND as ORIGIN_SPEND
+from lineage.origin_precision import (
+    OriginPrecisionError,
+    doc_chars,
+    draw_part,
+    excluded_keys,
+    plan_labels,
+    prompt_chars,
+    refuse_over_cap,
+    section_chars,
+    write_part,
+)
+from lineage.origin_precision import census_reading as origin_census_reading
+from lineage.origin_precision import load_sample as load_origin_sample
+from lineage.origin_precision import reading as origin_precision_reading
+from lineage.origin_precision import retired as origin_retired
+from lineage.origin_precision import without_intervals as without_origin_intervals
+from lineage.origin_recall import KEYS as ORIGIN_KEYS
+from lineage.origin_recall import OriginRecallError, load_key, origin_recall, same_slug
+from lineage.origin_threshold import REPORT as ORIGIN_THRESHOLD_REPORT
+from lineage.origin_threshold import correct_by_match as origin_correct_by_match
+from lineage.origin_threshold import correct_by_pair as origin_correct_by_pair
+from lineage.origin_threshold import proposal as origin_threshold_proposal
+from lineage.origins import FLOOR as ORIGIN_FLOOR
+from lineage.origins import REPORT as ORIGINS_REPORT
+from lineage.origins import (
+    origins_report,
+    read_origin_matches,
+    write_origin_matches,
+    write_origins_report,
+)
 from lineage.pair_data import PAIR_DATA_DIR, PairDataError, fetch_pair_data
 from lineage.pair_eval import REPORT as PAIR_REPORT
 from lineage.pair_eval import evaluate as evaluate_pairs
@@ -158,6 +228,7 @@ from lineage.paths import DATA
 from lineage.precision import SAMPLE as PRECISION_SAMPLE
 from lineage.precision import SAMPLE_REPORT as PRECISION_SAMPLE_REPORT
 from lineage.precision import PrecisionError, build_sample, estimate, load_sizes, write_sample
+from lineage.publish import PublishError, export_changes, promote, staging_dir
 from lineage.query import IndexMissingError, query_text, require_index
 from lineage.relatives_sample import LABELS as RELATIVES_LABELS
 from lineage.relatives_sample import PARTS as RELATIVES_PARTS
@@ -170,12 +241,30 @@ from lineage.relatives_sample import (
 )
 from lineage.relatives_sample import estimate as relatives_estimate
 from lineage.relatives_sample import write_sample as write_relatives_sample
+from lineage.release import ReleaseError
 from lineage.results_table import (
     EXPORTED_ONLY,
     README,
     SAMPLED_STATE_REPORT,
     ResultsTableError,
+    hosted_state,
+    render_stories,
     rendered_readme,
+)
+from lineage.schedule import (
+    SCHEDULE,
+    TEMPLATES,
+    WEEKLY_REPORT,
+    ScheduleError,
+    When,
+    calendar_intervals,
+    cli_runner,
+    daily_steps,
+    osascript_notifier,
+    render_template,
+    run_job,
+    weekly_job_steps,
+    weekly_report,
 )
 from lineage.sectioning import SectioningError, build_sections
 from lineage.semantic import MODEL as SEMANTIC_MODEL
@@ -237,6 +326,12 @@ from lineage.vectors import REPORT as EMBED_REPORT
 from lineage.vectors import THREADS as EMBED_THREADS
 from lineage.vectors import EmbedError, embed_corpus, vectors_dir
 from lineage.vectors import write_report as write_embed_report
+from lineage.withheld import REPORT as WITHHELD_REPORT
+from lineage.withheld import Reviewed as WithheldReviewed
+from lineage.withheld import listed_count as withheld_listed_count
+from lineage.withheld import read_reviewed as read_withheld_reviewed
+from lineage.withheld import tallies as withheld_tallies
+from lineage.withheld import write_report as write_withheld
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
 eval_app = typer.Typer(no_args_is_help=True, help="Run an eval and write its results.")
@@ -649,6 +744,113 @@ def update_command(
     typer.echo(f"{len(logged)} changes -> {changes}")
 
 
+@app.command("rebuild")
+def rebuild_command(
+    out: Annotated[Path, typer.Option("--out", help="The rebuild's tables directory (local).")],
+    days: Annotated[
+        Path, typer.Option("--days", help="The days taken in, one directory each (local).")
+    ] = DATA / "days",
+    through: Annotated[
+        str | None,
+        typer.Option("--through", help="Fold the days up to this one, YYYY-MM-DD [default: all]."),
+    ] = None,
+    pinned_from: Annotated[
+        Path | None,
+        typer.Option(
+            "--pinned-from",
+            help="Tables at the same day whose stoplist and state boilerplate counts to keep; "
+            "without it they are counted afresh.",
+        ),
+    ] = None,
+    vectors_from: Annotated[
+        Path | None,
+        typer.Option(
+            "--vectors-from",
+            help="Tables whose vectors to reuse for the same texts [default: --pinned-from].",
+        ),
+    ] = None,
+    raw: RawOption = rebuilding.RAW,
+    manifest: ManifestOption = rebuilding.MANIFEST,
+    days_only: Annotated[
+        bool,
+        typer.Option("--days-only", help="Lay the days over no archives: the days are the corpus."),
+    ] = False,
+    sessions: Annotated[
+        Path, typer.Option("--sessions", help="Session dates CSV (committed).")
+    ] = rebuilding.SESSIONS,
+    text_plan: Annotated[
+        Path, typer.Option("--text-plan", help="The text layer's fetch plan, as `text merge`.")
+    ] = PLAN,
+    max_share: Annotated[
+        float,
+        typer.Option("--max-share", help="A refreshed stoplist's share, as `lineage boilerplate`."),
+    ] = rebuilding.MAX_SHARE,
+    origins: Annotated[
+        bool | None,
+        typer.Option(
+            "--origins/--no-origins",
+            help="Match the model documents [default: when the tables reused hold matches].",
+        ),
+    ] = None,
+    model: Annotated[str, typer.Option("--model", help="The embedding model.")] = SEMANTIC_MODEL,
+    exact: Annotated[
+        bool,
+        typer.Option("--exact", help="Search neighbors exactly, not by HNSW (small corpora)."),
+    ] = False,
+    workers: Annotated[int, typer.Option("--workers", help="Worker processes.")] = (
+        os.cpu_count() or 1
+    ),
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """The folded days laid over the snapshot's archives and the whole pipeline run into OUT,
+    with pinned or refreshed corpus statistics -> OUT, OUT.build/rebuild.json (DR-7)."""
+    try:
+        doc = rebuilding.rebuild(
+            out,
+            days_dir=days,
+            through=datetime.date.fromisoformat(through) if through else None,
+            base=None if days_only else rebuilding.Base(raw=raw, manifest=manifest),
+            sessions=sessions,
+            text_plan=text_plan,
+            pinned_from=pinned_from,
+            vectors_from=vectors_from,
+            max_share=max_share,
+            origins=origins,
+            model=model,
+            neighbors_spec="Flat" if exact else SPEC,
+            ef_search=None if exact else EF_SEARCH,
+            workers=workers,
+            floor_bytes=int(min_free_gib * GiB),
+            progress=typer.echo,
+        )
+    except (
+        rebuilding.RebuildError,
+        UpdateError,
+        SnapshotError,
+        InsufficientDiskSpaceError,
+        StoplistError,
+        EmbedError,
+        ModelError,
+        SemanticPairsError,
+        StateBoilerplateError,
+        MemoryBoundError,
+        SectioningError,
+        DocTypesError,
+        ModelDocError,
+        IndexMissingError,
+    ) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    v = doc["vectors"]
+    typer.echo(
+        f"{doc['records']:,} records as of {doc['as_of']}, {len(doc['days'])} days over "
+        f"{doc['archives']['written']} archives, statistics {doc['statistics']}; "
+        f"{v['shards_reused']} of {v['shards']} vector shards reused, {v['shards_embedded']} "
+        f"embedded; {doc['seconds']['total']:.0f}s -> {out}, "
+        f"{rebuilding.work_dir(out) / rebuilding.REPORT}"
+    )
+
+
 @app.command("collect-models")
 def collect_models_command(
     source: Annotated[str, typer.Argument(help="The source's key, as its collector declares it.")],
@@ -669,9 +871,11 @@ def collect_models_command(
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
     path = write_collect_report(report, reports)
+    withdrawn = f", {len(report.withdrawn)} withdrawn" if report.withdrawn else ""
     typer.echo(
         f"{report.found} found: {report.collected} collected, {report.unchanged} unchanged, "
-        f"{len(report.blocked)} blocked by robots.txt, {len(report.failed)} failed -> {path}"
+        f"{len(report.blocked)} blocked by robots.txt, {len(report.failed)} failed{withdrawn} "
+        f"-> {path}"
     )
 
 
@@ -682,10 +886,22 @@ def origins_command(
         Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
     ] = MODELDOCS_DIR,
     min_free_gib: MinFreeOption = 20.0,
+    report: Annotated[Path, typer.Option("--report", help="Counts per source and stage.")] = (
+        ORIGINS_REPORT
+    ),
+    report_only: Annotated[
+        bool,
+        typer.Option("--report-only", help="Count the table as it stands; match nothing."),
+    ] = False,
 ) -> None:
-    """Match every collected model document against the corpus -> <tables>/origins/matches.jsonl
-    (DESIGN.md#origin-matches)."""
+    """Match every collected model document against the corpus -> <tables>/origins/matches.jsonl,
+    reports/origins.json (DESIGN.md#origin-matches)."""
     docs = [d for c in collectors().values() for d in read_docs(c.source, root)]
+    if report_only:
+        counted = origins_report(read_origin_matches(tables), docs, seconds=None)
+        typer.echo(f"{counted.matches} matches counted -> {write_origins_report(counted, report)}")
+        return
+    started = time.perf_counter()
     try:
         matches = match_models(
             tables,
@@ -694,14 +910,307 @@ def origins_command(
             model=SEMANTIC_MODEL,
             floor_bytes=int(min_free_gib * GiB),
         )
-    except (ModelDocError, InsufficientDiskSpaceError) as e:
+    except (
+        ModelDocError,
+        InsufficientDiskSpaceError,
+        IndexMissingError,
+        StoplistError,
+        EmbedError,
+        ModelError,
+    ) as e:
         typer.echo(f"error: {e}", err=True)
         raise typer.Exit(1) from e
-    except NotImplementedError as e:
-        typer.echo(f"error: not built yet: {e}", err=True)
-        raise typer.Exit(1) from e
     path = write_origin_matches(tables, matches)
-    typer.echo(f"{len(matches)} matches from {len(docs)} documents -> {path}")
+    counted = origins_report(matches, docs, seconds=time.perf_counter() - started)
+    typer.echo(
+        f"{len(matches)} matches from {len(docs)} documents -> {path}, "
+        f"{write_origins_report(counted, report)}"
+    )
+
+
+@app.command("origin-sample")
+def origin_sample_command(
+    part: Annotated[
+        str,
+        typer.Option(
+            "--part",
+            help="tuning, reporting (once matching is final), or census_eppc (every EPPC "
+            "match listed).",
+        ),
+    ] = "tuning",
+    tables: TablesOption = DATA / "tables",
+    root: Annotated[
+        Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
+    ] = MODELDOCS_DIR,
+    final: Annotated[
+        bool, typer.Option("--final", help="Matching is final: the reporting sample may be drawn.")
+    ] = False,
+    batch: Annotated[
+        bool, typer.Option("--batch", help="Project at the Batches API's half price.")
+    ] = False,
+) -> None:
+    """Draw an origin precision sample and project what labeling it would cost; asks nothing
+    (DESIGN.md#origin-matches)."""
+    if part not in ORIGIN_PARTS:
+        typer.echo(f"error: no part {part!r}; one of {', '.join(ORIGIN_PARTS)}", err=True)
+        raise typer.Exit(1)
+    chosen = ORIGIN_PARTS[part]
+    try:
+        rows, report = draw_part(
+            read_origin_matches(tables), chosen, excluded=excluded_keys(chosen), final=final
+        )
+        if not rows:
+            raise OriginPrecisionError(
+                f"no origin matches in {tables}; run `lineage origins` first"
+            )
+        wanted = {r["doc_id"] for r in rows}
+        docs = [
+            d for c in collectors().values() for d in read_docs(c.source, root) if d.id in wanted
+        ]
+        chars = prompt_chars(
+            rows,
+            sections=section_chars(tables, [r["bill_id"] for r in rows]),
+            docs=doc_chars(docs, root),
+        )
+        plan = plan_labels(chars, batch=batch)
+        path = write_part(rows, report | {"label_plan": plan.as_dict()}, chosen)
+        refuse_over_cap(plan)
+    except (OriginPrecisionError, ModelDocError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    typer.echo(
+        f"{len(rows)} matches -> {path}; labels projected at most ${plan.projected:,.2f}, "
+        f"${plan.spent:,.2f} of ${plan.budget:,.2f} spent"
+    )
+
+
+@app.command("withhold")
+def withhold_command(
+    tables: TablesOption = DATA / "tables",
+    root: Annotated[
+        Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
+    ] = MODELDOCS_DIR,
+    labels: Annotated[
+        Path, typer.Option("--labels", help="Origin precision labels (committed).")
+    ] = ORIGIN_LABELS,
+    out: Annotated[
+        Path, typer.Option("--out", help="The withheld documents' report (committed).")
+    ] = WITHHELD_REPORT,
+    doc: Annotated[
+        str | None,
+        typer.Option("--doc", help="Withhold this document after reviewing a held day's claims."),
+    ] = None,
+    note: Annotated[
+        str | None, typer.Option("--note", help="Why, for the record: what the review found.")
+    ] = None,
+) -> None:
+    """The model documents withheld from pages, the feed and stories: at least 3 labeled listed
+    matches, fewer than half judged correct; and those withheld by hand with --doc after a held
+    day's review, which are kept when the report is written again (DESIGN.md#origin-matches)."""
+    if (doc is None) != (note is None):
+        typer.echo("error: --doc and --note go together", err=True)
+        raise typer.Exit(1)
+    try:
+        docs = [d for c in collectors().values() for d in read_docs(c.source, root)]
+        matches = read_origin_matches(tables)
+        found = withheld_tallies(matches, docs, tables, load_origin_labels(labels))
+        reviewed = read_withheld_reviewed(out)
+        if doc is not None and note is not None:
+            titles = {d.id: d.title for d in docs}
+            if doc not in titles:
+                raise ModelDocError(f"no collected document {doc}")
+            reviewed = [r for r in reviewed if r.doc_id != doc] + [
+                WithheldReviewed(
+                    doc_id=doc,
+                    title=titles[doc],
+                    listed=withheld_listed_count(matches, doc),
+                    note=note,
+                    on=datetime.date.today().isoformat(),
+                )
+            ]
+    except (OriginPrecisionError, ModelDocError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    path = write_withheld(found, out, reviewed)
+    held = [t for t in found if t.withheld]
+    for t in held:
+        typer.echo(f"withheld {t.doc_id}: {t.correct} of {t.labeled} labeled matches correct")
+    for r in reviewed:
+        typer.echo(f"withheld {r.doc_id} after review on {r.on}: {r.note}")
+    typer.echo(
+        f"{len(held)} of {len(found)} documents with labeled matches withheld, "
+        f"{len(reviewed)} by review -> {path}"
+    )
+
+
+@app.command("origin-label")
+def origin_label_command(
+    part: Annotated[str, typer.Option("--part", help="The sample labeled.")] = "tuning",
+    tables: TablesOption = DATA / "tables",
+    root: Annotated[
+        Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
+    ] = MODELDOCS_DIR,
+    labels: Annotated[
+        Path, typer.Option("--labels", help="Labels file, appended to (committed).")
+    ] = ORIGIN_LABELS,
+    spend: Annotated[
+        Path, typer.Option("--spend", help="v2's spend ledger (committed).")
+    ] = ORIGIN_SPEND,
+    live: Annotated[
+        bool, typer.Option("--live", help="Ask, through the Batches API; else nothing is sent.")
+    ] = False,
+    batch_id: Annotated[
+        str | None, typer.Option("--batch-id", help="Collect a batch already sent.")
+    ] = None,
+    models_dir: Annotated[
+        Path, typer.Option("--models", help="Directory of model files (local), for alignment.")
+    ] = MODELS_DIR,
+    max_cost: Annotated[
+        float,
+        typer.Option(
+            "--max-cost",
+            help="Dollars the run may be projected to cost; v2's budget still applies.",
+        ),
+    ] = LABEL_MAX_COST,
+) -> None:
+    """Label an origin sample's matches by a model on each one's strongest section pair; asks
+    only with --live (DESIGN.md#origin-matches)."""
+    if part not in ORIGIN_PARTS:
+        typer.echo(f"error: no part {part!r}; one of {', '.join(ORIGIN_PARTS)}", err=True)
+        raise typer.Exit(1)
+    chosen = ORIGIN_PARTS[part]
+    try:
+        if not chosen.sample.exists():
+            raise OriginPrecisionError(f"no {chosen.sample}; run `lineage origin-sample` first")
+        rows = load_origin_sample(chosen.sample)
+        docs = [d for c in collectors().values() for d in read_docs(c.source, root)]
+        items = origin_pending(
+            build_origin_items(rows, read_origin_matches(tables), docs, tables, root=root),
+            load_origin_labels(labels),
+        )
+        items = [
+            replace(i, item=it)
+            for i, it in zip(
+                items,
+                with_passages([i.item for i in items], _model_embedder(models_dir)),
+                strict=True,
+            )
+        ]
+        planned = plan_origin_labels(items, spend_path=spend, max_cost=max_cost)
+    except (OriginPrecisionError, ModelDocError, ModelError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    head = (
+        f"{planned.items} matches under {ORIGIN_PROMPT.version}, projected at most "
+        f"${planned.projected:,.2f}; ${planned.spent:,.2f} of v2's ${planned.budget:,.2f} spent"
+    )
+    if not live:
+        typer.echo(f"{head}; run with --live to ask.")
+        return
+    refusal = planned.refusal() if batch_id is None else None
+    if refusal:
+        typer.echo(f"error: {refusal}", err=True)
+        raise typer.Exit(1)
+    typer.echo(head)
+    today = datetime.date.today().isoformat()
+    batches = anthropic_batches()
+    done, unusable, sent = origin_label_in_batch(
+        items,
+        batches=batches,
+        model=LABEL_MODEL,
+        labels_path=labels,
+        today=today,
+        wait=lambda: time.sleep(60),
+        batch_id=batch_id,
+        submitted=lambda b: typer.echo(f"sent as batch {b}; collect with --batch-id {b}"),
+    )
+    ledger = record_origin_spend(
+        batches, sent, model=LABEL_MODEL, today=today, spend_path=spend, planned=planned
+    )
+    typer.echo(f"{done} labeled from batch {sent}, {unusable} unusable replies -> {labels}")
+    typer.echo(f"${ledger['spent']:,.2f} of v2's ${ledger['budget']:,.2f} spent -> {spend}")
+
+
+@app.command("intake")
+def intake_command(
+    as_of: Annotated[
+        str | None, typer.Option("--day", help="The day's date, YYYY-MM-DD [default: today, UTC].")
+    ] = None,
+    start: Annotated[
+        str | None,
+        typer.Option(
+            "--start",
+            help="Where a state with no recorded page starts, ISO 8601 with an offset "
+            "[default: the start of the day before].",
+        ),
+    ] = None,
+    tier: Annotated[
+        str, typer.Option("--tier", help=f"The key's limits: {', '.join(TIERS)}.")
+    ] = "default",
+    days: Annotated[Path, typer.Option("--days", help="Days directory (local).")] = DAYS,
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """Take in one day of new and changed bills from Open States' API v3, with their text
+    -> <days>/<day>/ and <data>/intake/reports/<day>.json (DESIGN.md#updates). The key comes
+    from OPENSTATES_API_KEY."""
+    if tier not in TIERS:
+        typer.echo(f"error: no tier {tier!r}; one of {', '.join(TIERS)}", err=True)
+        raise typer.Exit(1)
+    day = (
+        datetime.date.fromisoformat(as_of) if as_of else datetime.datetime.now(datetime.UTC).date()
+    )
+    begin = (
+        datetime.datetime.fromisoformat(start)
+        if start
+        else datetime.datetime.combine(
+            day - datetime.timedelta(days=1), datetime.time.min, datetime.UTC
+        )
+    )
+    try:
+        report = run_intake(
+            day,
+            opener=open_url,
+            key=api_key(),
+            start=begin,
+            days=days,
+            tier=TIERS[tier],
+            floor_bytes=int(min_free_gib * GiB),
+        )
+    except (IntakeError, InsufficientDiskSpaceError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    outcomes = ", ".join(f"{k} {v}" for k, v in report.get("outcomes", {}).items())
+    typer.echo(f"{report['as_of']}: day {report['day']}" + (f"; {outcomes}" if outcomes else ""))
+
+
+@app.command("intake-estimate")
+def intake_estimate_command(
+    tables: TablesOption = DATA / "tables",
+    years: Annotated[
+        list[int] | None, typer.Option("--year", help="A January to estimate; repeatable.")
+    ] = None,
+    out: Annotated[Path, typer.Option("--out", help="Report (committed).")] = ESTIMATE,
+) -> None:
+    """The API requests a January day needs, from the snapshot's actions, against each tier's
+    limit; no network (DESIGN.md#updates)."""
+    chosen = years or [2023, 2024, 2025, 2026]
+    tiers: list[Tier] = list(TIERS.values())
+    estimates = [january_estimate(tables, y, tiers) for y in chosen]
+    report = {
+        "command": "uv run lineage intake-estimate",
+        "method": "a bill counts as updated on each day it has an action, a lower bound on what "
+        "the API reports as updated; a state with nothing new still costs one request",
+        "tiers": {k: {"per_minute": t.per_minute, "per_day": t.per_day} for k, t in TIERS.items()},
+        "januaries": estimates,
+    }
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(report, indent=1) + "\n")
+    for e in estimates:
+        typer.echo(
+            f"January {e['year']}: {e['requests']:,} requests, mean {e['mean_per_day']}/day, "
+            f"peak {e['peak']['requests']} on {e['peak']['day']}; days over {e['days_over']}"
+        )
+    typer.echo(f"-> {out}")
 
 
 @app.command("state-boilerplate")
@@ -1335,8 +1844,10 @@ def export_command(
         str | None,
         typer.Option(
             "--package",
-            help="Package the existing export as a release asset under this tag, with its "
-            "SHA-256, pin it in the release manifest, and stop.",
+            help="Package the existing export as a release asset under this tag "
+            "(data-<st>-YYYY-MM-DD), refused unless every file is one the export contract names "
+            "and valid against its model, with checksums.json inside and its SHA-256 beside it; "
+            "pin it in the release manifest, and stop.",
         ),
     ] = None,
     release_manifest: Annotated[
@@ -1360,10 +1871,10 @@ def export_command(
             asset, checksum = package_export(
                 target, state=state, tag=package_tag, out_dir=target.parent
             )
-        except ExportError as e:
+            write_release_manifest(asset, tag=package_tag, path=release_manifest)
+        except (ExportError, ReleaseError) as e:
             typer.echo(f"error: {e}", err=True)
             raise typer.Exit(1) from e
-        write_release_manifest(asset, tag=package_tag, path=release_manifest)
         typer.echo(
             f"{checksum.read_text().strip()} ({asset.stat().st_size / 1e6:.1f} MB) -> {asset}"
         )
@@ -1577,6 +2088,247 @@ def stats(
         typer.echo(f"sample titles for {len(found['rules'])} rules -> {samples_report}")
 
 
+@eval_app.command("origins")
+def eval_origins(
+    tables: TablesOption = DATA / "tables",
+    key: Annotated[
+        str,
+        typer.Option(
+            "--key",
+            help="The answer key: development, v1_held_out (v1's held-out acts, opened in "
+            "v1), or held_out (sealed, with --final).",
+        ),
+    ] = "development",
+    source: Annotated[
+        str, typer.Option("--source", help="The source whose documents are named by act slug.")
+    ] = "commission",
+    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+    final: Annotated[
+        bool, typer.Option("--final", help="The one run of a sealed key per configuration.")
+    ] = False,
+) -> None:
+    """Origin recall: what share of each model's enactments its origin matches name
+    (DESIGN.md#origin-matches)."""
+    if key not in ORIGIN_KEYS:
+        typer.echo(f"error: no answer key {key!r}; one of {', '.join(ORIGIN_KEYS)}", err=True)
+        raise typer.Exit(1)
+    answer_key = ORIGIN_KEYS[key]
+    name = f"origins_{answer_key.name}"
+    previous = json.loads(results.read_text()).get(name) if results.exists() else None
+    try:
+        acts = {e.act for e in load_key(answer_key.path).enactments}
+        section = origin_recall(
+            read_origin_matches(tables),
+            answer_key,
+            same_slug(acts, source),
+            final=final,
+            # v1's listing configuration, and the floor a page lists an origin at
+            configuration=run_configuration(True, flagged_sections(tables))
+            | {"origin_floor": ORIGIN_FLOOR}
+            if answer_key.sealed and final
+            else None,
+            previous=previous,
+        )
+    except OriginRecallError as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    write_results(results, name, section)
+    r = section["recall"]["pooled"]
+    status = f" ({section['status']})" if section["status"] else ""
+    typer.echo(
+        f"origin recall: {r['found']}/{r['enactments']} {r['interval_95']}{status} -> {results}"
+    )
+
+
+@eval_app.command("origin-threshold")
+def eval_origin_threshold(
+    tables: TablesOption = DATA / "tables",
+    labels: Annotated[
+        Path, typer.Option("--labels", help="The origin labels (committed).")
+    ] = ORIGIN_LABELS,
+    report: Annotated[
+        Path, typer.Option("--report", help="The proposal (committed).")
+    ] = ORIGIN_THRESHOLD_REPORT,
+) -> None:
+    """Each candidate floor's precision on the origin tuning sample, beside its development
+    recall (DESIGN.md#origin-matches)."""
+    tuning = ORIGIN_PARTS["tuning"]
+    try:
+        if not tuning.sample.exists():
+            raise OriginPrecisionError(f"no {tuning.sample}; run `lineage origin-sample` first")
+        sizes = json.loads(ORIGIN_SAMPLE_REPORT.read_text())["tuning"]["strata"]
+        answer_key = ORIGIN_KEYS["development"]
+        acts = {e.act for e in load_key(answer_key.path).enactments}
+        doc = origin_threshold_proposal(
+            load_origin_sample(tuning.sample),
+            load_origin_labels(labels),
+            sizes,
+            read_origin_matches(tables),
+            load_key(answer_key.path),
+            same_slug(acts, "commission"),
+        )
+    except (OriginPrecisionError, OriginRecallError, ValueError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    report.write_text(json.dumps(doc, indent=1) + "\n")
+    for f in doc["floors"]:
+        p = f["precision"]
+        r = f["development_recall"]
+        shown = "unlabeled" if p is None else f"{p['precision']:.2f} {p['interval_95']}"
+        typer.echo(
+            f"floor {f['floor']:.2f}: precision {shown}, {f['matches_listed']:,} listed, "
+            f"recall {r['found']}/{r['enactments']}"
+        )
+    typer.echo(f"-> {report}")
+
+
+@eval_app.command("origin-precision")
+def eval_origin_precision(
+    part: Annotated[
+        str,
+        typer.Option(
+            "--part",
+            help="reporting_after_compact_fix; reporting_after_fix and reporting are the "
+            "readings before each change to matching.",
+        ),
+    ] = "reporting_after_compact_fix",
+    labels: Annotated[
+        Path, typer.Option("--labels", help="The origin labels (committed).")
+    ] = ORIGIN_LABELS,
+    tables: TablesOption = DATA / "tables",
+    root: Annotated[
+        Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
+    ] = MODELDOCS_DIR,
+    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+    intervals_only: Annotated[
+        bool,
+        typer.Option(
+            "--intervals-only",
+            help="Regenerate the stored reading's intervals; refused if anything else would move.",
+        ),
+    ] = False,
+) -> None:
+    """Origin precision on a reporting sample, read once: overall, by stage, by source, and
+    ALEC's against the rest (DESIGN.md#origin-matches)."""
+    if part not in ORIGIN_RESULTS_SECTIONS:
+        typer.echo(
+            f"error: no reporting part {part!r}; one of {', '.join(ORIGIN_RESULTS_SECTIONS)}",
+            err=True,
+        )
+        raise typer.Exit(1)
+    reporting = ORIGIN_PARTS[part]
+    name = ORIGIN_RESULTS_SECTIONS[part]
+    try:
+        doc: dict[str, Any] = json.loads(results.read_text()) if results.exists() else {}
+        # A reading published before this part existed moves to its own part's name first.
+        moved = origin_retired(doc)
+        if moved != doc:
+            doc = moved
+            results.write_text(json.dumps(doc, indent=1) + "\n")
+        if intervals_only and name not in doc:
+            raise OriginPrecisionError(f"no stored reading in {results} to regenerate")
+        if name in doc and not intervals_only:
+            raise OriginPrecisionError(
+                f"the {part} sample was read once already ({results}, {name}); a second "
+                "reading could be chosen"
+            )
+        if not reporting.sample.exists():
+            raise OriginPrecisionError(
+                f"no {reporting.sample}; run `lineage origin-sample --part {part} --final`"
+            )
+        rows = load_origin_sample(reporting.sample)
+        if reporting.by_sections:
+            docs = [d for c in collectors().values() for d in read_docs(c.source, root)]
+            items = build_origin_items(rows, read_origin_matches(tables), docs, tables, root=root)
+            correct = origin_correct_by_sections(items, load_origin_labels(labels))
+            labelers = origin_labelers(items, load_origin_labels(labels))
+        else:
+            correct = origin_correct_by_pair(load_origin_labels(labels))
+            labelers = []
+        read = origin_precision_reading(
+            rows, correct, json.loads(ORIGIN_SAMPLE_REPORT.read_text())[part]
+        )
+    except (OriginPrecisionError, ModelDocError, ValueError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    section = (
+        {
+            "command": f"uv run lineage eval origin-precision --part {part}",
+            "sample": str(reporting.sample),
+            "labels": str(labels),
+            "prompt": ORIGIN_PROMPT.version,
+        }
+        | ({"labeler": labelers} if labelers else {})
+        | read
+    )
+    if intervals_only and without_origin_intervals(section) != without_origin_intervals(doc[name]):
+        typer.echo(
+            f"error: the reading would change other than its intervals ({results}, {name}); "
+            "it is read once",
+            err=True,
+        )
+        raise typer.Exit(1)
+    write_results(results, name, section)
+
+    def line(name: str, g: Mapping[str, Any]) -> str:
+        p = g["precision"]
+        shown = "too few labels" if p is None else f"{p['precision']:.2f} {p['interval_95']}"
+        return f"{name}: {shown}, {g['correct']}/{g['labeled']} of {g['matches']:,} listed"
+
+    typer.echo(line("overall", read["overall"]))
+    for name, g in read["compared"].items():
+        typer.echo(line(name, g))
+    typer.echo(f"-> {results}")
+
+
+@eval_app.command("origin-census")
+def eval_origin_census(
+    part: Annotated[str, typer.Option("--part", help="The census read.")] = "census_eppc",
+    tables: TablesOption = DATA / "tables",
+    root: Annotated[
+        Path, typer.Option("--modeldocs", help="Where documents are kept (local).")
+    ] = MODELDOCS_DIR,
+    labels: Annotated[
+        Path, typer.Option("--labels", help="The origin labels (committed).")
+    ] = ORIGIN_LABELS,
+    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+) -> None:
+    """A census of one source's listed matches: its precision as a count, and the section pairs
+    each wrong match rests on, by kind (DESIGN.md#origin-matches)."""
+    chosen = ORIGIN_PARTS.get(part)
+    if chosen is None or not chosen.census or chosen.source is None:
+        censuses = ", ".join(n for n, c in ORIGIN_PARTS.items() if c.census)
+        typer.echo(f"error: no census {part!r}; one of {censuses}", err=True)
+        raise typer.Exit(1)
+    try:
+        if not chosen.sample.exists():
+            raise OriginPrecisionError(f"no {chosen.sample}; run `lineage origin-sample` first")
+        rows = load_origin_sample(chosen.sample)
+        correct = origin_correct_by_match(load_origin_labels(labels))
+        wrong = [
+            (str(r["bill_id"]), str(r["doc_id"]))
+            for r in rows
+            if not correct.get((str(r["bill_id"]), str(r["doc_id"])), True)
+        ]
+        docs = [d for c in collectors().values() for d in read_docs(c.source, root)]
+        sections = origin_pair_sections(wrong, read_origin_matches(tables), docs, tables, root=root)
+        read = origin_census_reading(rows, correct, sections, source=chosen.source)
+    except (OriginPrecisionError, ModelDocError, ValueError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    section = {
+        "command": f"uv run lineage eval origin-census --part {part}",
+        "sample": str(chosen.sample),
+        "labels": str(labels),
+        "prompt": ORIGIN_PROMPT.version,
+    } | read
+    write_results(results, f"origins_{part}", section)
+    typer.echo(
+        f"{chosen.source}: {read['correct']}/{read['matches']} listed matches correct "
+        f"({read['precision']}), {len(read['wrong'])} wrong -> {results}"
+    )
+
+
 @eval_app.command("commission")
 def eval_commission(
     tables: TablesOption = DATA / "tables",
@@ -1700,19 +2452,31 @@ def eval_answer_key(
             "--held-out", help="Resolve the held-out lists, skipping the development set's bills."
         ),
     ] = False,
+    origins: Annotated[
+        bool,
+        typer.Option(
+            "--origins",
+            help="With --held-out: resolve the reserve acts, origin recall's sealed key "
+            "[default out: reports/answer_key_origins_heldout.csv].",
+        ),
+    ] = False,
 ) -> None:
     """The bills each commission list row resolved to, for checking the mapping by eye.
 
     Resolving the held-out lists runs no matching, so it may run before the final evaluation.
     """
-    out = out or (HELD_OUT_KEY if held_out else ANSWER_KEY)
+    if origins and not held_out:
+        typer.echo("error: --origins resolves the held-out lists; pass --held-out", err=True)
+        raise typer.Exit(1)
+    held_acts = ORIGIN_HELD_OUT_ACTS if origins else HELD_OUT_ACTS
+    out = out or ((ORIGINS_HELD_OUT_KEY if origins else HELD_OUT_KEY) if held_out else ANSWER_KEY)
     try:
         note, rows = build_answer_key(
             tables,
             enactments_path=enactments or (HELD_OUT_ENACTMENTS if held_out else ENACTMENTS),
             sessions_path=sessions,
             development_path=ENACTMENTS if held_out else None,
-            acts=frozenset(HELD_OUT_ACTS) if held_out else None,
+            acts=frozenset(held_acts) if held_out else None,
         )
     except UlcError as e:
         typer.echo(str(e), err=True)
@@ -1740,6 +2504,8 @@ def eval_readme(
             json.loads(results.read_text()),
             json.loads(exported_only.read_text()),
             json.loads(SAMPLED_STATE_REPORT.read_text())["state"],
+            stories=render_stories(hosted_state()),
+            withheld=json.loads(WITHHELD_REPORT.read_text()) if WITHHELD_REPORT.exists() else None,
         )
     except ResultsTableError as e:
         typer.echo(str(e), err=True)
@@ -2303,3 +3069,468 @@ def eval_pair_data(
             f"recall {at.get('test_recall')}"
         )
     typer.echo(f"-> {report}")
+
+
+PUBLISH_REPORTS = DATA / "publish"
+
+publish_app = typer.Typer(
+    no_args_is_help=True,
+    help="The live track's publishing: the incremental export, the feed and the swap.",
+)
+app.add_typer(publish_app, name="publish")
+schedule_app = typer.Typer(
+    no_args_is_help=True, help="The live track's scheduled jobs, as launchd runs them."
+)
+app.add_typer(schedule_app, name="schedule")
+
+StateOption = Annotated[str, typer.Option("--state", help="The hosted state, by postal code.")]
+ChangesOption = Annotated[
+    Path, typer.Option("--changes", help="The change log, one file per day (local).")
+]
+SiteOption = Annotated[
+    str, typer.Option("--site-url", help="The site's address, absolute, for the feed's links.")
+]
+
+
+@publish_app.command("pages")
+def publish_pages_command(
+    state: StateOption = "GA",
+    tables: TablesOption = DATA / "tables",
+    export: Annotated[
+        Path | None,
+        typer.Option("--export", help="The live export (local); default data/export/<ST>."),
+    ] = None,
+    changes: ChangesOption = CHANGES_DIR,
+    since: Annotated[
+        str | None,
+        typer.Option("--since", help="Apply the logged days from this one, YYYY-MM-DD."),
+    ] = None,
+    cache: Annotated[
+        Path, typer.Option("--cache", help="Cached explanations (committed).")
+    ] = EXPLAIN_CACHE,
+    paraphrase: Annotated[
+        bool,
+        typer.Option(
+            "--paraphrase/--no-paraphrase",
+            help="Mark paraphrase as the export in place was built (local model).",
+        ),
+    ] = True,
+    models_dir: Annotated[
+        Path, typer.Option("--models", help="Directory of model files (local).")
+    ] = MODELS_DIR,
+    workers: Annotated[
+        int, typer.Option("--workers", help="Processes aligning section pairs.")
+    ] = EXPORT_WORKERS,
+    featured_pairs: Annotated[
+        Path, typer.Option("--featured-pairs", help="The featured pairs (committed).")
+    ] = FEATURED_PAIRS,
+    featured_report: Annotated[
+        Path, typer.Option("--featured-report", help="Each story's relatives (committed).")
+    ] = FEATURED_REPORT,
+    stories_rules: Annotated[
+        Path, typer.Option("--stories", help="Which stories each state's site carries (committed).")
+    ] = STORIES_RULES,
+    results: Annotated[Path, typer.Option("--results", help="Results JSON (committed).")] = RESULTS,
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """Apply the logged days the export lacks to a staging copy of it, rewriting only the files
+    they touch -> <export>.staging/, data/publish/<ST>.json (DESIGN.md#updates)."""
+    state = state.upper()
+    target = export if export is not None else EXPORT_DIR / state
+    try:
+        doc = export_changes(
+            tables,
+            state=state,
+            export=target,
+            changes_dir=changes,
+            since=datetime.date.fromisoformat(since) if since else None,
+            models_dir=models_dir if paraphrase else None,
+            workers=workers,
+            cache=cache,
+            featured_pairs=featured_pairs,
+            featured_report=featured_report,
+            stories_rules=stories_rules,
+            results=results,
+            floor=int(min_free_gib * GiB),
+            progress=typer.echo,
+        )
+    except (
+        PublishError,
+        ExportError,
+        NotCachedError,
+        SemanticPairsError,
+        StateBoilerplateError,
+        UpdateError,
+        InsufficientDiskSpaceError,
+    ) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    PUBLISH_REPORTS.mkdir(parents=True, exist_ok=True)
+    report = PUBLISH_REPORTS / f"{state}.json"
+    report.write_text(json.dumps(doc, indent=1) + "\n")
+    written = sum(doc["files_written"].values())
+    typer.echo(
+        f"{len(doc['days'])} days applied, as of {doc['as_of']}: {written} files written, "
+        f"{doc['files_removed']} removed, {doc['section_pairs_aligned']} section pairs aligned; "
+        f"{len(doc['beyond_log'])} beyond the log -> {doc['staging']}, {report}"
+    )
+
+
+@publish_app.command("feed")
+def publish_feed_command(
+    site_url: SiteOption,
+    state: StateOption = "GA",
+    tables: TablesOption = DATA / "tables",
+    export: Annotated[
+        Path | None,
+        typer.Option(
+            "--export", help="The export to write feed.xml into; default the staging copy."
+        ),
+    ] = None,
+    changes: ChangesOption = CHANGES_DIR,
+) -> None:
+    """The Atom feed of the live track's events from every state, checked against RFC 4287
+    -> <export>/feed.xml (DESIGN.md#updates)."""
+    state = state.upper()
+    target = export if export is not None else staging_dir(EXPORT_DIR / state)
+    try:
+        doc = write_feed(tables, state=state, export=target, site_url=site_url, changes_dir=changes)
+    except (FeedError, PublishError, ExportError, FileNotFoundError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    kinds = ", ".join(f"{k} {v}" for k, v in doc["by_kind"].items())
+    typer.echo(
+        f"{doc['entries']} entries through {doc['through']} ({kinds or 'none'}), "
+        f"{len(doc['states'])} states, {doc['bytes']:,} bytes -> {doc['path']}"
+    )
+
+
+@publish_app.command("promote")
+def publish_promote_command(
+    state: StateOption = "GA",
+    export: Annotated[
+        Path | None,
+        typer.Option("--export", help="The live export (local); default data/export/<ST>."),
+    ] = None,
+) -> None:
+    """Swap the staging copy in as the live export. Nothing is deployed or published."""
+    target = export if export is not None else EXPORT_DIR / state.upper()
+    try:
+        promote(target)
+    except PublishError as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    typer.echo(f"-> {target}")
+
+
+@publish_app.command("weekly")
+def publish_weekly_command(
+    pinned: Annotated[
+        Path, typer.Option("--pinned", help="A full rebuild with the base build's statistics.")
+    ],
+    updated: Annotated[Path, typer.Option("--updated", help="The updated tables (local).")] = DATA
+    / "tables",
+    refreshed: Annotated[
+        Path | None,
+        typer.Option("--refreshed", help="A full rebuild with the statistics counted afresh."),
+    ] = None,
+    report: Annotated[
+        Path, typer.Option("--report", help="The weekly report (local).")
+    ] = WEEKLY_REPORT,
+    model: Annotated[str, typer.Option("--model", help="The embedding model.")] = SEMANTIC_MODEL,
+) -> None:
+    """The weekly rebuild's check: the share of relatives the updated tables and the rebuild
+    agree on, failing below 98%, and the drift when the statistics are refreshed (DR-7)."""
+    try:
+        doc = weekly_report(updated, pinned, refreshed, model=model, report=report)
+    except ScheduleError as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    a, d = doc["agreement"], doc["drift"]
+    drifted = "" if d is None else f"; {d['relatives_changed']} relatives drift when refreshed"
+    typer.echo(
+        f"{a['share']:.2%} of relatives agree ({a['relatives_agreed']} of "
+        f"{a['relatives_updated']}){drifted} -> {report}"
+    )
+
+
+DeployRootOption = Annotated[
+    Path, typer.Option("--deploy-dir", help="The deploy's records and releases (local).")
+]
+
+
+def _deploy_paths(root: Path) -> deploy.DeployPaths:
+    return deploy.DeployPaths(root=root, checkout=root / "checkout")
+
+
+@publish_app.command("deploy")
+def publish_deploy_command(
+    state: StateOption = "GA",
+    export: Annotated[
+        Path | None,
+        typer.Option("--export", help="The live export (local); default data/export/<ST>."),
+    ] = None,
+    changes: ChangesOption = CHANGES_DIR,
+    root: DeployRootOption = deploy.DEPLOY_DIR,
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """Deploy the live export's day: pack the release, the gates, the circuit breaker, then
+    the GitHub release, the pin's commit, the push and the Pages workflow (DESIGN.md#updates).
+    Exits 3 when the day is held for review, printing its counts and baseline last."""
+    state = state.upper()
+    target = export if export is not None else EXPORT_DIR / state
+    try:
+        record = deploy.deploy_day(
+            state=state,
+            export=target,
+            changes_dir=changes,
+            paths=_deploy_paths(root),
+            floor=int(min_free_gib * GiB),
+        )
+    except (deploy.DeployError, ReleaseError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    if record.state == "held":
+        typer.echo(
+            json.dumps(
+                {
+                    "day": record.day.isoformat(),
+                    "tag": record.tag,
+                    "held_on_counts": record.held_on_counts,
+                    "held_behind": None if record.held_behind is None else str(record.held_behind),
+                    "reasons": record.reasons,
+                    "counts": record.counts,
+                    "baseline": record.baseline,
+                }
+            )
+        )
+        raise typer.Exit(deploy.HELD)
+    typer.echo(f"{record.day}: {record.state} as {record.tag}; {record.counts}")
+
+
+@publish_app.command("release")
+def publish_release_command(
+    day: Annotated[str, typer.Option("--day", help="The held day, YYYY-MM-DD.")],
+    root: DeployRootOption = deploy.DEPLOY_DIR,
+    repack: Annotated[
+        bool,
+        typer.Option(
+            "--repack",
+            help="Pack the live export as it stands now, after withholding the documents behind "
+            "bad claims and running publish pages, feed and promote.",
+        ),
+    ] = False,
+    state: StateOption = "GA",
+    export: Annotated[
+        Path | None,
+        typer.Option("--export", help="The live export (local); default data/export/<ST>."),
+    ] = None,
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """Approve a day the circuit breaker held, once reviewed: its release, or with --repack the
+    live export as it now stands; the site's gates run again, the pin committed and
+    leak-checked, pushed, and the Pages workflow dispatched."""
+    state = state.upper()
+    try:
+        record = deploy.release_day(
+            datetime.date.fromisoformat(day),
+            paths=_deploy_paths(root),
+            repack=repack,
+            export=export if export is not None else EXPORT_DIR / state,
+            state=state,
+            floor=int(min_free_gib * GiB),
+        )
+    except (deploy.DeployError, ReleaseError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    typer.echo(f"{record.day}: {record.state} as {record.tag}")
+
+
+@publish_app.command("reject")
+def publish_reject_command(
+    day: Annotated[str, typer.Option("--day", help="The held day, YYYY-MM-DD.")],
+    root: DeployRootOption = deploy.DEPLOY_DIR,
+) -> None:
+    """Reject a day the circuit breaker held, once reviewed: its release is never published and
+    nothing leaves this machine. The live track keeps its data, and the next day's run publishes
+    as usual, with it."""
+    try:
+        record = deploy.reject_day(datetime.date.fromisoformat(day), paths=_deploy_paths(root))
+    except deploy.DeployError as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    typer.echo(
+        f"{record.day}: rejected; {record.tag} stays unpublished, and the next day's run "
+        "publishes as usual"
+    )
+
+
+def _review_names(tables: Path, state: str, site_url: str) -> tuple[Any, dict[str, dict[str, Any]]]:
+    return (
+        deploy.describe_bills(tables, state=state, site_url=site_url),
+        deploy.document_names(),
+    )
+
+
+@publish_app.command("candidate")
+def publish_candidate_command(
+    site_url: SiteOption,
+    state: StateOption = "GA",
+    day: Annotated[
+        str | None, typer.Option("--day", help="The day, YYYY-MM-DD [default: today, UTC].")
+    ] = None,
+    tables: TablesOption = DATA / "tables",
+    export: Annotated[
+        Path | None,
+        typer.Option("--export", help="The live export (local); default data/export/<ST>."),
+    ] = None,
+    changes: ChangesOption = CHANGES_DIR,
+    root: DeployRootOption = deploy.DEPLOY_DIR,
+    min_free_gib: MinFreeOption = 20.0,
+) -> None:
+    """Before session: the live export packed and gated as a release candidate, with a review
+    summary against the pinned release -> <deploy>/candidates/<tag>/review.txt. Publishes
+    nothing."""
+    state = state.upper()
+    as_of = datetime.date.fromisoformat(day) if day else datetime.datetime.now(datetime.UTC).date()
+    describe, documents = _review_names(tables, state, site_url)
+    try:
+        doc = deploy.prepare_candidate(
+            as_of,
+            state=state,
+            export=export if export is not None else EXPORT_DIR / state,
+            changes_dir=changes,
+            paths=_deploy_paths(root),
+            describe=describe,
+            documents=documents,
+            floor=int(min_free_gib * GiB),
+        )
+    except (deploy.DeployError, ReleaseError) as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    files = doc["files"]
+    typer.echo(
+        f"{doc['tag']} against {doc['pinned']}: {len(files['added'])} added, "
+        f"{len(files['changed'])} changed, {len(files['removed'])} removed; "
+        f"{len(doc['origin_claims'])} new origin claims -> "
+        f"{root / 'candidates' / doc['tag'] / 'review.txt'}"
+    )
+
+
+@publish_app.command("review")
+def publish_review_command(
+    site_url: SiteOption,
+    state: StateOption = "GA",
+    through: Annotated[
+        str | None, typer.Option("--through", help="The week's last day [default: today, UTC].")
+    ] = None,
+    tables: TablesOption = DATA / "tables",
+    changes: ChangesOption = CHANGES_DIR,
+    root: DeployRootOption = deploy.DEPLOY_DIR,
+) -> None:
+    """During session: the week's new origin claims, each with its bill, document, shares,
+    stages and the day first listed, for the maintainer's weekly review ->
+    <deploy>/reviews/<day>.txt."""
+    day = (
+        datetime.date.fromisoformat(through)
+        if through
+        else datetime.datetime.now(datetime.UTC).date()
+    )
+    describe, documents = _review_names(tables, state.upper(), site_url)
+    out = deploy.weekly_review(
+        day, changes_dir=changes, paths=_deploy_paths(root), describe=describe, documents=documents
+    )
+    n = len(json.loads(out.read_text())["origin_claims"])
+    typer.echo(f"{n} new origin claims in the week through {day} -> {out.with_suffix('.txt')}")
+
+
+@schedule_app.command("daily")
+def schedule_daily_command(
+    site_url: SiteOption,
+    state: StateOption = "GA",
+    day: Annotated[
+        str | None, typer.Option("--day", help="The day, YYYY-MM-DD [default: today, UTC].")
+    ] = None,
+    tier: Annotated[str, typer.Option("--tier", help="The intake key's limits.")] = "default",
+) -> None:
+    """The daily job: intake, update, the incremental export and the feed, swapped in only when
+    every step succeeds, and from the first day of session the deploy (rules/deploy.toml); a
+    failure or a held day is recorded in data/schedule/status.json and alerted. Exits 3 when
+    the day is held for review."""
+    as_of = datetime.date.fromisoformat(day) if day else datetime.datetime.now(datetime.UTC).date()
+    steps = daily_steps(as_of, state=state.upper(), site_url=site_url, tier=tier)
+    status = run_job("daily", steps, run=cli_runner, notify=osascript_notifier)
+    if status.state == "held":
+        typer.echo(f"daily {as_of}: held for review; see data/schedule/status.json")
+        raise typer.Exit(deploy.HELD)
+    typer.echo(f"daily {as_of}: " + ("ok" if status.ok else f"stopped at {status.failed_step}"))
+    raise typer.Exit(0 if status.ok else 1)
+
+
+@schedule_app.command("weekly")
+def schedule_weekly_command(
+    site_url: SiteOption,
+    state: StateOption = "GA",
+    day: Annotated[
+        str | None, typer.Option("--day", help="The day, YYYY-MM-DD [default: today, UTC].")
+    ] = None,
+) -> None:
+    """The weekly job: two full rebuilds over the days the tables have had, then the check,
+    which fails the job below 98% agreement (DR-7); then, before session, a release candidate
+    for review, and during it the week's new origin claims (DESIGN.md#updates)."""
+    as_of = datetime.date.fromisoformat(day) if day else datetime.datetime.now(datetime.UTC).date()
+    steps = weekly_job_steps(state=state.upper(), site_url=site_url, day=as_of)
+    status = run_job("weekly", steps, run=cli_runner, notify=osascript_notifier)
+    typer.echo(f"weekly {as_of}: " + ("ok" if status.ok else f"stopped at {status.failed_step}"))
+    raise typer.Exit(0 if status.ok else 1)
+
+
+@schedule_app.command("plist")
+def schedule_plist_command(
+    job: Annotated[str, typer.Argument(help="daily or weekly.")],
+    out: Annotated[Path, typer.Option("--out", help="Where the filled plist goes (local).")],
+    site_url: SiteOption,
+    state: StateOption = "GA",
+    hour: Annotated[
+        int | None, typer.Option("--hour", help="The hour it runs, local time; else as ruled.")
+    ] = None,
+    minute: Annotated[
+        int | None, typer.Option("--minute", help="The minute it runs; else as ruled.")
+    ] = None,
+    weekdays: Annotated[
+        str | None,
+        typer.Option("--weekdays", help="Days it runs, 0 Sunday to 6 Saturday, comma-separated."),
+    ] = None,
+    label: Annotated[str, typer.Option("--label", help="launchd's label prefix.")] = (
+        "local.legislative-lineage"
+    ),
+) -> None:
+    """Fill a launchd template with this checkout, the data directory and the PATH it runs
+    under -> OUT. Loading it with launchctl is the operator's step."""
+    if job not in ("daily", "weekly"):
+        typer.echo("error: the job is daily or weekly", err=True)
+        raise typer.Exit(1)
+    ruled = SCHEDULE[job]
+    when = When(
+        hour=ruled.hour if hour is None else hour,
+        minute=ruled.minute if minute is None else minute,
+        weekdays=ruled.weekdays
+        if weekdays is None
+        else tuple(int(d) for d in weekdays.split(",") if d.strip()),
+    )
+    values = {
+        "REPO": str(Path.cwd().resolve()),
+        "DATA": str(DATA.resolve()),
+        "STATE": state.upper(),
+        "SITE_URL": site_url,
+        "PATH": os.environ.get("PATH", "/usr/bin:/bin"),
+        "INTERVALS": calendar_intervals(when),
+        "LABEL": label,
+    }
+    try:
+        text = render_template((TEMPLATES / f"lineage-{job}.plist.template").read_text(), values)
+    except ScheduleError as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    out.write_text(text)
+    typer.echo(f"-> {out}; load it with launchctl when ready")

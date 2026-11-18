@@ -1,0 +1,40 @@
+{
+ "source": "alec",
+ "run_on": "2026-11-15",
+ "found": 1032,
+ "collected": 369,
+ "unchanged": 659,
+ "blocked": [],
+ "failed": [
+  {
+   "url": "https://alec.org/model-policy/internet-free-speech-act/",
+   "reason": "no section, clause or provision in the body"
+  },
+  {
+   "url": "https://alec.org/model-policy/model-policies-annual-meeting-2013/",
+   "reason": "no section, clause or provision in the body"
+  },
+  {
+   "url": "https://alec.org/model-policy/model-policies-stfs-2014/",
+   "reason": "no section, clause or provision in the body"
+  },
+  {
+   "url": "https://alec.org/model-policy/promoting-transparency-in-state-unfunded-liabilities/",
+   "reason": "no section, clause or provision in the body"
+  }
+ ],
+ "withdrawn": [
+  "alec/a-local-resolution-in-support-of-state-minimum-wage-law",
+  "alec/a-public-safety-resolution-calling-on-the-insert-jurisdiction-to-define-insert-jurisdiction-as-a-rule-of-law-community",
+  "alec/a-resolution-for-government-services-to-be-compared-to-private-sector-services-for-federal-and-state-grant-money",
+  "alec/homeowners-freedom-to-inspect-and-review-services-ordinance",
+  "alec/local-right-to-work-ordinance-private-sector",
+  "alec/open-fair-competition-resolution-municipal-local-water-wastewater-projects",
+  "alec/ordinance-establishing-mobile-food-vendors",
+  "alec/ordinance-freedom-of-association-in-local-elections",
+  "alec/ordinance-prohibition-on-taxpayer-funded-lobbying-activities",
+  "alec/proclamation-recognizing-tax-freedom-day",
+  "alec/prohibition-on-paid-union-activity-release-time-by-public-employees-ordinance",
+  "alec/regulating-containers-to-protect-business-and-consumer-choice"
+ ]
+}

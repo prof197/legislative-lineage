@@ -8,6 +8,8 @@ and a leaked archive is annotated as leaked. A document's text is stored once pe
 its SHA-256, so a revised text replaces the earlier one without erasing it, as bill records do
 (DESIGN.md#updates). Texts are never committed, redistributed or shown; only what is recorded
 here, and the share of wording a bill matches, reaches the site. See DESIGN.md#model-documents.
+
+See DESIGN.md#dr-10.
 """
 
 import hashlib
@@ -39,6 +41,10 @@ class Source(BaseModel):
     # What kind of organization it is, from public filings: "nonprofit membership organization
     # of state legislators, 501(c)(3)". Never a political label.
     descriptor: str = Field(min_length=1)
+    # For a membership organization, one line on who its members are, and the public page it
+    # comes from; both or neither.
+    members: str | None = Field(default=None, min_length=1)
+    members_source: str | None = Field(default=None, pattern=r"^https://")
     library_url: str = Field(pattern=r"^https://")
     terms_url: str | None = None
     terms_note: str = Field(min_length=1)  # what the terms allow, as read on `terms_read_on`
@@ -50,6 +56,8 @@ class Source(BaseModel):
     def _a_leaked_source_says_how(self) -> Self:
         if self.leaked != (self.leak_note is not None):
             raise ValueError("a leaked source needs a leak_note, and only a leaked one has one")
+        if (self.members is None) != (self.members_source is None):
+            raise ValueError("a members line needs its source, and a source its line")
         return self
 
 
@@ -68,11 +76,24 @@ class ModelDoc(BaseModel):
     raw_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")  # the bytes as fetched
     media_type: str
     text_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")  # the cleaned text matching reads
+    # Other organizations the document names as publishing it with its source's, as they are
+    # named there: a page credits a joint bill to each, though only one library holds it.
+    co_publishers: tuple[str, ...] = ()
+    # The organization that drafted a leaked document, as the document or its archive names it:
+    # a leaked archive published it, so a page names both (ruled at the deploy review). None for
+    # a document its own organization published.
+    drafted_by: str | None = Field(default=None, min_length=1)
 
     @model_validator(mode="after")
     def _its_id_names_its_source(self) -> Self:
         if self.id.partition("/")[0] != self.source:
             raise ValueError(f"{self.id} is not in source {self.source}")
+        if any(not name.strip() for name in self.co_publishers):
+            raise ValueError("a co-publisher is named, never blank")
+        if len(set(self.co_publishers)) != len(self.co_publishers):
+            raise ValueError("a co-publisher is named once")
+        if self.leaked != (self.drafted_by is not None):
+            raise ValueError("a leaked document names who drafted it, and only a leaked one does")
         return self
 
 
@@ -168,6 +189,26 @@ def store(
     current[doc.id] = doc
     directory = source_dir(source.key, root)
     directory.mkdir(parents=True, exist_ok=True)
+    _write_lines(directory / VERSIONS_FILE, versions)
+    _write_lines(directory / DOCS_FILE, [current[k] for k in sorted(current)])
+    return True
+
+
+def withdraw(source: Source, doc_id: str, *, on: date, root: Path = MODELDOCS_DIR) -> bool:
+    """Take a document its collector now finds out of scope off the current list, as of `on`;
+    returns whether it was there. Its version closes that day and its text stays on disk, as a
+    replaced version's does, so what was matched before stays traceable."""
+    current = {d.id: d for d in read_docs(source, root)}
+    if doc_id not in current:
+        return False
+    del current[doc_id]
+    versions = [
+        v.model_copy(update={"replaced_on": on})
+        if v.doc_id == doc_id and v.replaced_on is None
+        else v
+        for v in read_versions(source, root)
+    ]
+    directory = source_dir(source.key, root)
     _write_lines(directory / VERSIONS_FILE, versions)
     _write_lines(directory / DOCS_FILE, [current[k] for k in sorted(current)])
     return True

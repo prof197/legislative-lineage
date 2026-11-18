@@ -1,0 +1,61 @@
+{
+ "command": "uv run lineage withhold",
+ "rule": {
+  "min_labeled": 3,
+  "withheld_when": "fewer than half of the labeled listed matches judged correct",
+  "floor": 0.25
+ },
+ "documents_with_labels": 274,
+ "listed_matches_withheld": 82,
+ "withheld": [
+  {
+   "doc_id": "alec/electronic-data-privacy-protection-act",
+   "title": "Electronic Data Privacy Protection Act",
+   "listed": 56,
+   "labeled": 19,
+   "correct": 0,
+   "reason": "generic_text"
+  },
+  {
+   "doc_id": "alec/resolution-to-effectuate-the-compact-for-america",
+   "title": "Compact for America: Balanced Budget Amendment",
+   "listed": 7,
+   "labeled": 4,
+   "correct": 0,
+   "reason": "generic_text"
+  },
+  {
+   "doc_id": "eppc/safe-chat-act",
+   "title": "The SAFE CHAT Act",
+   "listed": 3,
+   "labeled": 3,
+   "correct": 1,
+   "reason": "generic_text"
+  },
+  {
+   "doc_id": "ncoil/ncoil-improving-affordability-for-patients-model-act",
+   "title": "NCOIL Improving Affordability for Patients Model Act",
+   "listed": 7,
+   "labeled": 3,
+   "correct": 0,
+   "reason": "generic_text"
+  },
+  {
+   "doc_id": "states-project/affordable-retirement-savings",
+   "title": "Affordable Retirement Savings Act",
+   "listed": 4,
+   "labeled": 3,
+   "correct": 1,
+   "reason": "generic_text"
+  },
+  {
+   "doc_id": "states-project/school-mental-health",
+   "title": "Mental Health in Schools Act",
+   "listed": 5,
+   "labeled": 3,
+   "correct": 1,
+   "reason": "generic_text"
+  }
+ ],
+ "reviewed": []
+}

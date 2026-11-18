@@ -23,14 +23,10 @@ output is written to a fresh directory and swapped in whole, so a failed export 
 mix of two builds.
 """
 
-import gzip
-import hashlib
-import io
 import json
 import multiprocessing
 import re
 import shutil
-import tarfile
 import time
 import tomllib
 from collections import defaultdict
@@ -72,9 +68,10 @@ from lineage.export_schema import (
     Meta,
     ModelDocRef,
     Origin,
+    OriginPrecision,
+    OriginShare,
     Recall,
     Relative,
-    Release,
     SectionInfo,
     SectionPair,
     SectionText,
@@ -87,14 +84,25 @@ from lineage.export_schema import (
     StoryRelative,
     TextInfo,
     Validation,
+    WithheldDocument,
 )
 from lineage.listing import ListedPairs, listed_pairs, shipped_flag
 from lineage.minhash import NUM_PERM
 from lineage.modeldocs import MODELDOCS_DIR, ModelDoc, Source, read_docs
-from lineage.origins import OriginMatch, read_origin_matches
+from lineage.origin_labels import LABELS as ORIGIN_LABELS
+from lineage.origin_labels import judged_correct, load_labels
+from lineage.origin_story import BOTH as BOTH_STAGES
+from lineage.origin_story import FILE as ORIGIN_STORY_FILE
+from lineage.origin_story import STORY as ORIGIN_STORY
+from lineage.origin_story import story_file as origin_story_file
+from lineage.origins import OriginMatch, is_listed, read_origin_matches
 from lineage.pairs import load_families
 from lineage.paths import DATA
 from lineage.relatives import bill_relatives
+from lineage.release import RELEASE_MANIFEST as RELEASE_MANIFEST
+from lineage.release import ReleaseError as ReleaseError
+from lineage.release import package as package
+from lineage.release import write_release_manifest as write_release_manifest
 from lineage.semantic import MODEL
 from lineage.semantic_pairs import section_keys
 from lineage.state_boilerplate import COMPACT_PHRASES
@@ -105,11 +113,12 @@ from lineage.stats import (
     GEORGIA_ENACTING,
     GEORGIA_NOTICE,
 )
+from lineage.withheld import NONE as NO_WITHHELD
+from lineage.withheld import REPORT as WITHHELD_REPORT
+from lineage.withheld import Reason as WithheldReason
+from lineage.withheld import Withheld, load_withheld
 
 EXPORT_DIR = DATA / "export"
-# The data release the deploy builds from, committed: its tag and the asset's expected SHA-256.
-# A data change reaches the site only as a reviewed commit to this file.
-RELEASE_MANIFEST = Path("site/data-release.json")
 REPORT = Path("reports/export.json")
 SCHEMA = Path("schema/export.schema.json")
 FEATURED_PAIRS = Path("evals/featured_pairs.jsonl")
@@ -250,12 +259,26 @@ def _stages(found: _PairFound) -> list[Stage]:
     return [s for s in ("near_duplicate", "semantic") if s in found.stages]
 
 
-def validation_from(results: Mapping[str, Any]) -> Validation:
-    """The validation page's figures, read from the committed results."""
+def validation_from(results: Mapping[str, Any], withheld: Withheld = NO_WITHHELD) -> Validation:
+    """The validation page's figures, read from the committed results; origin precision with
+    how many documents were withheld after it was measured (lineage.withheld)."""
 
     def recall(r: Mapping[str, Any]) -> Recall:
         return Recall(enactments=r["enactments"], found=r["found"], recall=r["recall"])
 
+    def origin_share(g: Mapping[str, Any]) -> OriginShare:
+        p = g["precision"]
+        return OriginShare(
+            sources=list(g["sources"]),
+            matches=g["matches"],
+            labeled=g["labeled"],
+            correct=g["correct"],
+            share=None if p is None else p["precision"],
+            interval_95=None if p is None else tuple(p["interval_95"]),
+        )
+
+    origins = results["origins_precision"]
+    (compared,) = (k for k in origins["compared"] if k != "rest")
     dev, held = results["commission"], results["commission_held_out"]
     stages = dev["stage_ablation"]
     precision = results["relatives_precision"]["provisional_model"]
@@ -301,6 +324,15 @@ def validation_from(results: Mapping[str, Any]) -> Validation:
             interval_95=tuple(faith["overall"]["interval_95"]),
         ),
         faithfulness_judge=faith["judge"],
+        origin_precision=OriginPrecision(
+            floor=origins["floor"],
+            overall=origin_share(origins["overall"]),
+            compared=origin_share(origins["compared"][compared]),
+            rest=origin_share(origins["compared"]["rest"]),
+            labeler=list(origins["labeler"]),
+            withheld_documents=len(withheld.ids),
+            withheld_matches=withheld.matches,
+        ),
     )
 
 
@@ -387,6 +419,13 @@ def stories_for(state: str, stories: Iterable[str], rules: Path = STORIES_RULES)
     return out
 
 
+def carries_origin_story(state: str, rules: Path = STORIES_RULES) -> bool:
+    """Whether `state`'s site carries the origin story: only where `rules` place it, so a rules
+    file without it carries none, the safe reading for a story that shows nothing unplaced."""
+    listed: dict[str, Any] = tomllib.loads(rules.read_text()).get("stories", {})
+    return ORIGIN_STORY in listed and bool(stories_for(state, [ORIGIN_STORY], rules))
+
+
 def _load_featured(path: Path) -> dict[str, set[tuple[str, int, str, int]]]:
     """The featured pairs, by story."""
     out: dict[str, set[tuple[str, int, str, int]]] = defaultdict(set)
@@ -424,13 +463,17 @@ def _write(root: Path, files: Mapping[str, BaseModel]) -> _Written:
 
 
 def origins_by_bill(
-    matches: Sequence[OriginMatch], docs: Mapping[str, tuple[ModelDoc, Source]], hosted: set[str]
+    matches: Sequence[OriginMatch],
+    docs: Mapping[str, tuple[ModelDoc, Source]],
+    hosted: set[str],
+    withheld: frozenset[str] = frozenset(),
 ) -> dict[str, list[Origin]]:
-    """Each hosted bill's origins, the most of its words first. A match whose document no source
-    holds is an error: the page would name a model the sources page does not list."""
+    """Each hosted bill's origins at the listing floor (lineage.origins.FLOOR), the most of its
+    words first, less those to a withheld document (lineage.withheld). A match whose document no
+    source holds is an error: the page would name a model the sources page does not list."""
     out: dict[str, list[Origin]] = defaultdict(list)
     for m in matches:
-        if m.bill_id not in hosted:
+        if m.bill_id not in hosted or not is_listed(m) or m.doc_id in withheld:
             continue
         if m.doc_id not in docs:
             raise ExportError(f"origin match names {m.doc_id}, which no collected source holds")
@@ -443,6 +486,8 @@ def origins_by_bill(
             url=doc.url,
             published=None if doc.published is None else doc.published.isoformat(),
             leaked=doc.leaked,
+            co_publishers=list(doc.co_publishers),
+            drafted_by=doc.drafted_by,
         )
         out[m.bill_id].append(
             Origin(
@@ -456,17 +501,57 @@ def origins_by_bill(
     return {b: sorted(os, key=lambda o: (-o.bill_share, o.doc.id)) for b, os in out.items()}
 
 
-def sources_doc(sources: Sequence[Source], docs: Mapping[str, tuple[ModelDoc, Source]]) -> Sources:
-    """The sources page: every library, with how many documents were collected and when."""
+def judged_origins(
+    tables: Path,
+    origins: Mapping[str, Sequence[Origin]],
+    refs: Mapping[str, BillRef],
+    matches: Sequence[OriginMatch],
+    docs: Mapping[str, tuple[ModelDoc, Source]],
+    *,
+    modeldocs_root: Path,
+    labels: Path,
+) -> frozenset[tuple[str, str]]:
+    """The origin story's candidates a labeler judged correct, by (bill slug, document id):
+    each passed bill's listed origins both stages found, judged on the sections its match's
+    strongest pair rests on now (lineage.origin_labels.judged_correct)."""
+    keys = {
+        (bill_id, o.doc.id)
+        for bill_id, listed in origins.items()
+        if refs[bill_id].status == "passed"
+        for o in listed
+        if frozenset(o.stages) >= BOTH_STAGES
+    }
+    judged = judged_correct(
+        keys,
+        matches,
+        [d for d, _ in docs.values()],
+        tables,
+        load_labels(labels),
+        root=modeldocs_root,
+    )
+    return frozenset((refs[b].slug, d) for b, d in judged)
+
+
+def sources_doc(
+    sources: Sequence[Source],
+    docs: Mapping[str, tuple[ModelDoc, Source]],
+    withheld: Mapping[str, WithheldReason] | None = None,
+) -> Sources:
+    """The sources page: every library, with how many documents were collected and when, and
+    the documents withheld from pages because their matches rest on generic text."""
     entries: list[SourceEntry] = []
     for src in sorted(sources, key=lambda s: s.key):
         held = [d for d, s in docs.values() if s.key == src.key]
+        reasons = withheld or {}
+        kept_back = sorted((d for d in held if d.id in reasons), key=lambda d: d.id)
         latest = max((d.collected_on for d in held), default=None)
         entries.append(
             SourceEntry(
                 key=src.key,
                 organization=src.organization,
                 descriptor=src.descriptor,
+                members=src.members,
+                members_source=src.members_source,
                 library_url=src.library_url,
                 terms_url=src.terms_url,
                 terms_note=src.terms_note,
@@ -475,6 +560,10 @@ def sources_doc(sources: Sequence[Source], docs: Mapping[str, tuple[ModelDoc, So
                 leak_note=src.leak_note,
                 documents=len(held),
                 collected_on=None if latest is None else latest.isoformat(),
+                withheld=[
+                    WithheldDocument(id=d.id, title=d.title, url=d.url, reason=reasons[d.id])
+                    for d in kept_back
+                ],
             )
         )
     return Sources(sources=entries)
@@ -497,6 +586,8 @@ def build_export(
     model: str = MODEL,
     require_flag: bool = True,
     floor: int = DEFAULT_FLOOR_BYTES,
+    origin_labels: Path = ORIGIN_LABELS,
+    withheld_report: Path = WITHHELD_REPORT,
     progress: Callable[[str], None] = lambda _: None,
 ) -> dict[str, Any]:
     """Write `state`'s site data to `out`, replacing what was there; returns the report."""
@@ -508,8 +599,9 @@ def build_export(
     missing = [str(p) for p in inputs if not p.exists()]
     if missing:
         raise ExportError(f"committed inputs not found: {', '.join(missing)}")
+    kept_back = load_withheld(withheld_report)
     try:
-        validation = validation_from(json.loads(results.read_text()))
+        validation = validation_from(json.loads(results.read_text()), kept_back)
     except KeyError as e:
         raise ExportError(f"{results} lacks {e}; is it older than this code?") from e
     sources = [c.source for c in collectors(collector_package).values()]
@@ -567,7 +659,8 @@ def build_export(
     progress(f"{len(found)} comparisons, {n_pairs} section pairs to align")
 
     files: dict[str, BaseModel] = {}
-    origins = origins_by_bill(read_origin_matches(tables), docs, set(hosted))
+    matches = read_origin_matches(tables)
+    origins = origins_by_bill(matches, docs, set(hosted), kept_back.ids)
     featured_explained = 0
     withheld = 0
     ordered = [
@@ -740,7 +833,22 @@ def build_export(
         )
         story_slugs.append(key)
 
-    files["sources.json"] = sources_doc(sources, docs)
+    if carries_origin_story(state, stories_rules):
+        pages = (f for name, f in files.items() if name.startswith("bills/"))
+        judged = judged_origins(
+            tables,
+            origins,
+            refs,
+            matches,
+            docs,
+            modeldocs_root=modeldocs_root,
+            labels=origin_labels,
+        )
+        story = origin_story_file((p for p in pages if isinstance(p, BillPage)), judged)
+        if story is not None:
+            files[ORIGIN_STORY_FILE] = story
+
+    files["sources.json"] = sources_doc(sources, docs, kept_back.reasons)
     files["meta.json"] = Meta(
         state=state,
         archives=[
@@ -779,41 +887,3 @@ def build_export(
         "largest_file": {"path": written.largest[0], "bytes": written.largest[1]},
         "seconds": round(time.monotonic() - started),
     }
-
-
-def package(export: Path, *, state: str, tag: str, out_dir: Path) -> tuple[Path, Path]:
-    """The export as one release asset, `export-<ST>-<tag>.tar.gz`, and its SHA-256 in the
-    form `sha256sum -c` reads. The archive is byte-for-byte reproducible: names sorted, every
-    timestamp and owner zeroed, so the same export always gives the same checksum."""
-    if not (export / "meta.json").exists():
-        raise ExportError(f"{export} holds no export; run `uv run lineage export` first")
-    name = f"export-{state}-{tag}.tar.gz"
-    buffer = io.BytesIO()
-    with tarfile.open(fileobj=buffer, mode="w", format=tarfile.PAX_FORMAT) as tar:
-        for path in sorted(p for p in export.rglob("*") if p.is_file()):
-            info = tarfile.TarInfo(path.relative_to(export).as_posix())
-            info.size = path.stat().st_size
-            info.mtime = 0
-            info.mode = 0o644
-            with path.open("rb") as f:
-                tar.addfile(info, f)
-    data = gzip.compress(buffer.getvalue(), mtime=0)
-    out_dir.mkdir(parents=True, exist_ok=True)
-    asset = out_dir / name
-    asset.write_bytes(data)
-    checksum = out_dir / f"{name}.sha256"
-    checksum.write_text(f"{hashlib.sha256(data).hexdigest()}  {name}\n")
-    return asset, checksum
-
-
-def write_release_manifest(asset: Path, *, tag: str, path: Path = RELEASE_MANIFEST) -> Release:
-    """Pin `asset` as the release the deploy builds from: the tag, the asset's name and its
-    SHA-256, computed from the asset itself. The deploy checks the download against this
-    committed digest, not against a checksum file published beside the asset, which anyone able
-    to replace the asset could replace too."""
-    release = Release(
-        tag=tag, asset=asset.name, sha256=hashlib.sha256(asset.read_bytes()).hexdigest()
-    )
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(release.model_dump(), indent=1) + "\n")
-    return release

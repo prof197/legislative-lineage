@@ -6,7 +6,8 @@ the rest, Utah's among them; day 3 replaces the Georgia record's text and record
 signature on a day-1 record without changing its text. The Georgia record is synthetic, the only
 one here: no Georgia bill enacts these acts, so it carries Utah SB 18's text, the Public
 Expression Protection Act, and then the Special Deposits Act's query text. It arrives before
-any other state's version, so its relatives come only on day 2.
+Utah's version, so Utah SB 18 joins its relatives only on day 2; day 1 already brings the act's
+enactments in the states before N, its first relatives.
 """
 
 import copy

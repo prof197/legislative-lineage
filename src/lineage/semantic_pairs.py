@@ -217,3 +217,133 @@ def load_semantic_pairs(
 
 def write_report(doc: dict[str, Any], path: Path = REPORT) -> None:
     path.write_text(json.dumps(doc, indent=1) + "\n")
+
+
+# Updates (DESIGN.md#updates, DR-7): the section pairs a day can change are expanded again from
+# the neighbors, with the build's own query, and the rest carried over under their new numbers.
+
+
+def changed_texts(
+    before: NDArray[np.int32],
+    after: NDArray[np.int32],
+    rows: NDArray[np.int64],
+    new_unit_texts: NDArray[np.int64],
+) -> NDArray[np.int64]:
+    """Every text a section pair's expansion can have changed around: both ends of each
+    neighbor entry gained or lost in the given rows, and each text a new window carries with
+    every text it keeps or is kept by, since the new window's section pairs with every section
+    that carries one of them."""
+    out: set[int] = set()
+    for row in rows.tolist():
+        was = {int(t) for t in before[row] if t >= 0} if row < before.shape[0] else set[int]()
+        now = {int(t) for t in after[row] if t >= 0}
+        if was != now:
+            out |= was ^ now
+            out.add(row)
+    carried = np.unique(new_unit_texts)
+    if carried.size:
+        out |= set(carried.tolist())
+        out |= {int(t) for t in np.asarray(after)[carried].ravel() if t >= 0}
+        kept_by = np.isin(np.asarray(after), carried).any(axis=1)
+        out |= set(np.flatnonzero(kept_by).tolist())
+    return np.array(sorted(out), dtype=np.int64)
+
+
+def renumbered_semantic(pairs: SemanticPairs, section_map: NDArray[np.int64]) -> SemanticPairs:
+    """Stored pairs under new section numbers, those of a retired section (-1) dropped."""
+    a = section_map[np.asarray(pairs.left, dtype=np.int64)]
+    b = section_map[np.asarray(pairs.right, dtype=np.int64)]
+    keep = (a >= 0) & (b >= 0)
+    return SemanticPairs(
+        a[keep].astype(np.uint32),
+        b[keep].astype(np.uint32),
+        np.asarray(pairs.cosine)[keep],
+        np.asarray(pairs.left_window)[keep],
+        np.asarray(pairs.right_window)[keep],
+    )
+
+
+def update_semantic_pairs(
+    tables_dir: Path,
+    carried: SemanticPairs,
+    texts: NDArray[np.int64],
+    ids: NDArray[np.int32],
+    scores: NDArray[np.float16],
+) -> SemanticPairs:
+    """The section pairs after an update: `carried`, the stored pairs under the new section
+    numbers, with every pair among the sections that carry one of `texts` expanded again from
+    the neighbors after (`ids`, `scores`) and the windows in `tables_dir`.
+
+    A pair's best cosine comes from the texts its two sections carry and the neighbors between
+    them. If neither section carries one of `texts` (`changed_texts`), nothing under the pair
+    changed; if one does and the other does not, no neighbor between them changed either, or
+    the other would carry an end of it. So only the pairs among the sections that carry one of
+    them can change, and those are recomputed whole."""
+    bills, ordinals = section_keys(tables_dir)
+    number = {(b, int(o)): i for i, (b, o) in enumerate(zip(bills, ordinals.tolist(), strict=True))}
+    units_glob = str(semantic_dir(tables_dir) / "units" / "*.parquet")
+    with queries.connect_quiet() as con:
+        units = queries.semantic_units_of(con, units_glob=units_glob, text_ids=texts.tolist())
+        touched = sorted({number[(b, o)] for _, b, o in units if (b, o) in number})
+        if not touched:
+            return carried
+        wanted = sorted({bills[s] for s in touched})
+        of_bills = queries.semantic_text_ids_of(con, units_glob=units_glob, bill_ids=wanted)
+        carried_texts = np.unique(np.array([t for _, t in of_bills], dtype=np.int64))
+        rows = np.asarray(ids)[carried_texts]
+        keep = (rows >= 0) & np.isin(rows, carried_texts)
+        neighbors = {
+            "a": np.repeat(carried_texts, rows.shape[1])[keep.ravel()],
+            "b": rows[keep].astype(np.int64),
+            "cosine": np.asarray(scores)[carried_texts][keep].astype(np.float32),
+        }
+        section = np.array(touched, dtype=np.int64)
+        found = queries.semantic_section_pairs(
+            con,
+            units_glob=units_glob,
+            bills_glob=str(tables_dir / "bills" / "*.parquet"),
+            sections={
+                "section": section,
+                "bill_id": np.array([bills[s] for s in touched], dtype=object),
+                "ordinal": ordinals[section],
+            },
+            neighbors=neighbors,
+        )
+    inside = np.zeros(len(bills), dtype=bool)
+    inside[section] = True
+    left, right = np.asarray(carried.left), np.asarray(carried.right)
+    stays = ~(inside[left] & inside[right])
+    columns = [
+        np.concatenate([np.asarray(old)[stays], np.asarray(found[new])])
+        for old, new in (
+            (carried.left, "l"),
+            (carried.right, "r"),
+            (carried.cosine, "cosine"),
+            (carried.left_window, "lw"),
+            (carried.right_window, "rw"),
+        )
+    ]
+    order = np.lexsort((columns[1], columns[0]))
+    return SemanticPairs(
+        columns[0][order].astype(np.uint32),
+        columns[1][order].astype(np.uint32),
+        columns[2][order].astype(np.float32),
+        columns[3][order].astype(np.uint32),
+        columns[4][order].astype(np.uint32),
+    )
+
+
+def write_semantic_pairs(dest: Path, pairs: SemanticPairs, built: dict[str, Any]) -> None:
+    """The table's files as `build_semantic_pairs` writes them, under the fingerprint `built`
+    of the table they update."""
+    for name in _FILES:
+        np.save(dest / f"{name}.npy", getattr(pairs, name))
+    (dest / "fingerprint.json").write_text(json.dumps(built, indent=1) + "\n")
+
+
+def load_built_semantic_pairs(tables_dir: Path, model: str) -> tuple[SemanticPairs, dict[str, Any]]:
+    """Every stored pair, down to the threshold the table was built at, and its fingerprint."""
+    path = pairs_dir(tables_dir, model) / "fingerprint.json"
+    built: dict[str, Any] = json.loads(path.read_text()) if path.exists() else {}
+    threshold = float(built.get("threshold", BUILD_THRESHOLD))
+    return load_semantic_pairs(tables_dir, model, threshold=threshold), built

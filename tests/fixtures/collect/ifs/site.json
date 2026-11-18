@@ -1,0 +1,25 @@
+{
+ "_note": "Recorded responses for the ifs collector, synthetic: pages in the shape of the organization's (a technology initiative's page with a script download button, a fact sheet and a link naming the model bill), with invented documents, file names and text. A body is inline HTML; a file names a fixture under tests/fixtures/collect/; build makes a Word or PDF file from it. A URL not listed answers 404.",
+ "https://ifstudies.org/family-first-technology-initiative/synthetic-pewter": {
+  "content_type": "text/html; charset=UTF-8",
+  "body": "<!doctype html><html><head><title>Synthetic Pewter</title></head><body><nav><a href=\"/publication/\">Publications</a> <a href=\"/program/\">Programs</a></nav><main><h1>Synthetic Pewter</h1><p>Published January 2, 2026</p><a class=\"btn\" href=\"javascript:void(0);\">Download PDF</a> <a class=\"btn\" href=\"/ifs-admin/resources/synthetic-pewter-fact-sheet.pdf\">Download the PDF factsheet</a> <a class=\"btn\" href=\"/ifs-admin/resources/synthetic-pewter-act.pdf\">Download the Model Bill</a> <p>An invented summary paragraph.</p><p><a href=\"/category/model-legislation/\">Model Legislation</a>, <a href=\"/category/policy/\">Policy</a></p></main><footer><p>Copyright © 2026 Example</p></footer></body></html>"
+ },
+ "https://ifstudies.org/ifs-admin/resources/synthetic-pewter-act.pdf": {
+  "content_type": "application/pdf",
+  "file": "ifs/synthetic_word_bill.txt",
+  "build": "pdf"
+ },
+ "https://ifstudies.org/report-brief/synthetic-tin-model-bill": {
+  "content_type": "text/html; charset=UTF-8",
+  "body": "<!doctype html><html><head><title>Synthetic Tin</title></head><body><nav><a href=\"/publication/\">Publications</a> <a href=\"/program/\">Programs</a></nav><main><h1>Synthetic Tin</h1><p>Published January 2, 2026</p><a class=\"btn\" href=\"/ifs-admin/resources/synthetic-tin-act.docx\">Download the Model Bill</a> <p>An invented summary paragraph.</p><p><a href=\"/category/model-legislation/\">Model Legislation</a>, <a href=\"/category/policy/\">Policy</a></p></main><footer><p>Copyright © 2026 Example</p></footer></body></html>"
+ },
+ "https://ifstudies.org/ifs-admin/resources/synthetic-tin-act.docx": {
+  "content_type": "application/octet-stream",
+  "file": "ifs/synthetic_word_bill.txt",
+  "build": "docx"
+ },
+ "https://ifstudies.org/reports/synthetic-map/model-bill": {
+  "content_type": "text/html; charset=UTF-8",
+  "body": "<!doctype html><html><head><title>Synthetic Map</title></head><body><nav><a href=\"/publication/\">Publications</a> <a href=\"/program/\">Programs</a></nav><main><h1>Synthetic Map</h1><p>Published January 2, 2026</p><a class=\"btn\" href=\"/ifs-admin/resources/map.pdf\">Model Bill</a> <p>An invented summary paragraph.</p><p><a href=\"/category/model-legislation/\">Model Legislation</a>, <a href=\"/category/policy/\">Policy</a></p></main><footer><p>Copyright © 2026 Example</p></footer></body></html>"
+ }
+}

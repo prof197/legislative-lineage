@@ -132,7 +132,6 @@ def test_the_recorded_days_do_what_they_say(snapshots: dict[int, Snapshot]) -> N
     assert RelativeLost(as_of=D3, bill_id=UTAH_SB_18, relative_id=GEORGIA_ID) in lost
 
 
-@pytest.mark.xfail(raises=NotImplementedError, strict=True, reason="lane L1 (M10) builds update")
 @pytest.mark.parametrize("n", [2, 3])
 def test_an_update_gives_what_a_rebuild_gives(
     n: int, days: Path, rebuilt: dict[int, Path], snapshots: dict[int, Snapshot], tmp_path: Path
@@ -164,7 +163,12 @@ def test_a_bill_gains_and_loses_published_models_as_it_does_relatives() -> None:
 
     assert origin_changes(before, after, D3) == [
         OriginGained(
-            as_of=D3, bill_id="b1", doc_id="commission/y", stages=["semantic"], bill_share=0.3
+            as_of=D3,
+            bill_id="b1",
+            doc_id="commission/y",
+            stages=["semantic"],
+            bill_share=0.3,
+            model_share=0.2,
         ),
         OriginLost(as_of=D3, bill_id="b1", doc_id="commission/x"),
     ]

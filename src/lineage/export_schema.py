@@ -94,6 +94,10 @@ class ModelDocRef(_Model):
     url: str
     published: str | None  # as the organization dates it, ISO 8601
     leaked: bool
+    # Organizations that published it with `organization`, as the document names them.
+    co_publishers: list[str] = Field(default_factory=list[str])
+    # A leaked document's drafting organization; `organization` is then the archive's.
+    drafted_by: str | None = None
 
 
 class Origin(_Model):
@@ -253,6 +257,32 @@ class Share(_Model):
     interval_95: tuple[float, float]
 
 
+class OriginShare(_Model):
+    """A group of origin matches' precision on the reporting sample, weighted by stage."""
+
+    sources: list[str]  # the source keys whose matches the group holds
+    matches: int  # listed at the floor
+    labeled: int
+    correct: int
+    share: float | None  # None when a stage holding matches has no label
+    interval_95: tuple[float, float] | None
+
+
+class OriginPrecision(_Model):
+    """Origin precision as the reporting sample reads it (reports/results.json,
+    origins_precision): the whole, and one source's matches against every other source's."""
+
+    floor: float
+    overall: OriginShare
+    compared: OriginShare  # the compared source's matches
+    rest: OriginShare  # every other source's together
+    labeler: list[str]
+    # Measured before documents whose labeled matches were mostly wrong were withheld from pages
+    # (lineage.withheld), so conservative for what pages show: how many, and their listed matches.
+    withheld_documents: int
+    withheld_matches: int
+
+
 class Validation(_Model):
     """The validation page's figures, from the committed results (reports/results.json)."""
 
@@ -267,6 +297,7 @@ class Validation(_Model):
     relatives_precision_labeler: str
     faithfulness: Share  # model-judged
     faithfulness_judge: str
+    origin_precision: OriginPrecision  # model-judged
 
 
 class Meta(_Model):
@@ -282,12 +313,26 @@ class Meta(_Model):
     as_of: str | None = None  # the last day the live track applied, ISO 8601 (DESIGN.md#updates)
 
 
+class WithheldDocument(_Model):
+    """A model document withheld from bill pages, the feed and stories (lineage.withheld): at
+    least 3 of its listed matches labeled, fewer than half judged correct."""
+
+    id: str
+    title: str
+    url: str
+    # generic_text: its labeled matches are mostly wrong, resting on generic text; review: the
+    # maintainer found its listed matches wrong on reviewing a held day.
+    reason: Literal["generic_text", "review"]
+
+
 class SourceEntry(_Model):
     """A library of model legislation, as the sources page lists it (DESIGN.md#model-documents)."""
 
     key: str
     organization: str
     descriptor: str  # what kind of organization it is, from public filings
+    members: str | None  # for a membership organization, who its members are
+    members_source: str | None  # the page that line comes from
     library_url: str
     terms_url: str | None
     terms_note: str
@@ -296,12 +341,24 @@ class SourceEntry(_Model):
     leak_note: str | None
     documents: int  # collected
     collected_on: str | None  # the latest collection, ISO 8601
+    withheld: list[WithheldDocument]  # documents no page lists until a fix lands
 
 
 class Sources(_Model):
     """`sources.json`: every library the matching reads, whether or not any bill matches it."""
 
     sources: list[SourceEntry]
+
+
+class OriginStory(_Model):
+    """`origin_story.json`: the origin story (DESIGN.md#export), the passed bill and listed origin
+    lineage.origin_story's rule chooses; not written when no passed bill has a listed origin both
+    stages found that a labeler judged correct."""
+
+    bill: BillRef
+    origin: Origin  # its first origin in the rule's order judged correct, as its page lists it
+    eligible: int  # passed bills with a listed origin both stages found
+    passed_over: int  # bills the rule ranks first whose origins no labeler judged correct
 
 
 class Release(_Model):
@@ -321,5 +378,6 @@ TOP_LEVEL: tuple[type[BaseModel], ...] = (
     Comparison,
     BillTexts,
     Story,
+    OriginStory,
     Sources,
 )

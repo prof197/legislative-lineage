@@ -19,9 +19,16 @@ from pathlib import Path
 from lineage import queries
 from lineage.collect import collectors
 from lineage.export import RESULTS, build_export
+from lineage.generic_sections import generic_kind
+from lineage.labels import SAME_PROVISION, text_sha256
 from lineage.modeldocs import ModelDoc, Source, sha256, store
-from lineage.origins import BillSpan, OriginMatch, write_origin_matches
+from lineage.origin_labels import PROMPT
+from lineage.origins import BillSpan, OriginMatch, SectionPair, write_origin_matches
+from lineage.query import matchable_sections
+from lineage.sections import normalize
 from lineage.semantic_pairs import build_semantic_pairs
+from lineage.withheld import Tally
+from lineage.withheld import write_report as write_withheld
 from tests.conftest import (
     COMMISSION,
     FAKE_MODEL,
@@ -45,11 +52,22 @@ DRAWN_FROM = {
         "ocd-bill/370e175f-246b-4076-a6b8-62312800299c",  # Utah HB 181 (2026)
         "Model Electronic Estate Planning Documents Act (synthetic fixture)",
     ),
+    # Matched, then withheld (lineage.withheld), so no page lists it and the sources page does.
+    "example-library/speech-procedures": (
+        "ocd-bill/7968b9d9-25ee-4684-a92e-c76167d6f917",  # Utah SB 18 (2023)
+        "Model Speech Procedures Act (synthetic fixture)",
+    ),
 }
+WITHHELD = "example-library/speech-procedures"
 SECTIONS_DRAWN = 2
 
 
-def _origins(tables: Path, modeldocs: Path, sources: dict[str, Source]) -> list[OriginMatch]:
+def hand_made_origins(
+    tables: Path, modeldocs: Path, sources: dict[str, Source], labels: Path
+) -> list[OriginMatch]:
+    """The hand-made matches, and in `labels` a label judging the first correct, as a labeler
+    would on its strongest pair, so the fixture's origin story can feature it (a featured
+    story features only a match judged correct, lineage.origin_story)."""
     ids = [bill for bill, _ in DRAWN_FROM.values()]
     with queries.connect_quiet() as con:
         rows = queries.matchable_section_texts(
@@ -62,6 +80,9 @@ def _origins(tables: Path, modeldocs: Path, sources: dict[str, Source]) -> list[
     for bill_id, ordinal, text in rows:
         by_bill[bill_id].append((ordinal, text))
     out: list[OriginMatch] = []
+    # The first is found by both stages, so the fixture carries an origin story
+    # (lineage.origin_story), and the rest by wording alone.
+    first = next(iter(DRAWN_FROM))
     for doc_id, (bill_id, title) in DRAWN_FROM.items():
         sections = by_bill[bill_id]
         drawn = sorted(sorted(sections, key=lambda s: -len(s[1]))[:SECTIONS_DRAWN])
@@ -76,22 +97,45 @@ def _origins(tables: Path, modeldocs: Path, sources: dict[str, Source]) -> list[
             collected_on=COLLECTED_ON,
             robots="allowed",
             leaked=source.leaked,
+            drafted_by="Example Council" if source.leaked else None,
             raw_sha256=sha256(raw),
             media_type="text/plain",
             text_sha256=sha256(raw),
         )
         store(source, doc, raw=raw, text=text, root=modeldocs)
-        words = sum(len(t.split()) for _, t in sections)
+        # Generic sections are left out of a match's shares (lineage.generic_sections).
+        words = sum(len(t.split()) for _, t in sections if generic_kind(normalize(t)) is None)
+        model_sections = [norm for _, norm in matchable_sections(text)[1]]
+        pairs = [
+            SectionPair(model_section=model_sections.index(normalize(t)), ordinal=o, agreements=9)
+            for o, t in drawn
+        ]
         out.append(
             OriginMatch(
                 bill_id=bill_id,
                 doc_id=doc_id,
-                stages=["near_duplicate"],
+                stages=["near_duplicate", "semantic"] if doc_id == first else ["near_duplicate"],
                 model_share=1.0,
                 bill_share=round(sum(len(t.split()) for _, t in drawn) / words, 4),
                 spans=[BillSpan(ordinal=o, start=0, end=len(t), kind="exact") for o, t in drawn],
+                pairs=pairs,
             )
         )
+        if doc_id == first:
+            strongest = min(pairs, key=lambda p: (p.model_section, p.ordinal))
+            bill_text = dict(drawn)[strongest.ordinal]
+            label = {
+                "pair": "fixture-1",
+                "bill_id": bill_id,
+                "doc_id": doc_id,
+                "model_section": text_sha256(model_sections[strongest.model_section]),
+                "bill_section": text_sha256(normalize(bill_text)),
+                "label": 1,
+                "labeler": f"fixture@{PROMPT.version}",
+                "scale": SAME_PROVISION,
+                "at": COLLECTED_ON.isoformat(),
+            }
+            labels.write_text(json.dumps(label) + "\n")
     return out
 
 
@@ -103,11 +147,17 @@ def build_fixture_export(root: Path) -> Path:
     build_semantic_pairs(tables, model=FAKE_MODEL, floor_bytes=0)
     sources = {c.source.key: c.source for c in collectors(PACKAGE).values()}
     modeldocs = root / "modeldocs"
-    write_origin_matches(tables, _origins(tables, modeldocs, sources))
+    labels = root / "origin_labels.jsonl"
+    write_origin_matches(tables, hand_made_origins(tables, modeldocs, sources, labels))
     no_pairs, no_stories, rules = root / "none.jsonl", root / "none.json", root / "stories.toml"
     no_pairs.touch()
     no_stories.write_text('{"stories": {}}')
-    rules.write_text("")
+    rules.write_text('[stories.origin]\nstates = "all"\n')
+    withheld = root / "withheld.json"
+    write_withheld(
+        [Tally(doc_id=WITHHELD, title=DRAWN_FROM[WITHHELD][1], listed=1, labeled=3, correct=0)],
+        withheld,
+    )
     out = root / "export"
     build_export(
         tables,
@@ -124,6 +174,8 @@ def build_fixture_export(root: Path) -> Path:
         model=FAKE_MODEL,
         require_flag=False,
         floor=0,
+        origin_labels=labels,
+        withheld_report=withheld,
     )
     return out
 

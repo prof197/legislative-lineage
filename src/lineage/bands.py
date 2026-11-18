@@ -24,9 +24,12 @@ from lineage.lsh import (
     BUCKET_CAP,
     ROWS,
     BandIndex,
+    band_keys,
     cap_sweep,
     fill_band_index,
+    merge_band,
     threshold,
+    touched_pairs,
 )
 from lineage.signatures import RowLabels, SignatureFiles
 
@@ -148,3 +151,51 @@ def load_band_index(tables_dir: Path) -> BandIndex:
     keys = cast("NDArray[np.uint64]", np.load(bands / "keys.npy", mmap_mode="r"))
     rows = cast("NDArray[np.uint32]", np.load(bands / "rows.npy", mmap_mode="r"))
     return BandIndex(keys, rows)
+
+
+def update_bands(
+    old: BandIndex,
+    row_map: NDArray[np.int64],
+    new_values: NDArray[np.uint32],
+    new_rows: NDArray[np.int64],
+    dest: Path,
+    *,
+    cap: int = BUCKET_CAP,
+) -> NDArray[np.uint64]:
+    """Write the band index after an update into `dest`, as `build_bands` would write it over
+    the updated signatures, and return the window pairs whose candidacy the update may have
+    changed (lineage.lsh.touched_pairs), as sorted distinct codes over the new row numbers.
+
+    `row_map` gives each old row's new number, -1 where it was retired; `new_values` are the
+    signatures of the rows added, numbered `new_rows`. Each band is merged in turn, so only one
+    band of the old and new index is held at a time; the bands already merged are written to
+    memory-mapped files (DESIGN.md#dr-3)."""
+    n = int((row_map >= 0).sum()) + int(new_rows.size)
+    fresh = np.zeros(n, dtype=bool)
+    fresh[new_rows] = True
+    added = band_keys(new_values) if new_values.size else np.empty((0, BANDS), dtype=np.uint64)
+    if n == 0:
+        np.save(dest / "keys.npy", np.empty((BANDS, 0), dtype=np.uint64))
+        np.save(dest / "rows.npy", np.empty((BANDS, 0), dtype=np.uint32))
+        return np.empty(0, dtype=np.uint64)
+    keys_out = np.lib.format.open_memmap(
+        dest / "keys.npy", mode="w+", dtype=np.uint64, shape=(BANDS, n)
+    )
+    rows_out = np.lib.format.open_memmap(
+        dest / "rows.npy", mode="w+", dtype=np.uint32, shape=(BANDS, n)
+    )
+    parts: list[NDArray[np.uint64]] = []
+    for b in range(BANDS):
+        before_keys = np.asarray(old.keys[b], dtype=np.uint64)
+        before_rows = np.asarray(old.rows[b], dtype=np.int64)
+        keys, rows = merge_band(before_keys, old.rows[b], row_map, added[:, b], new_rows)
+        retired = before_keys[row_map[before_rows] < 0]
+        touched = np.concatenate([added[:, b], retired])
+        parts.append(touched_pairs(before_keys, keys, rows, fresh, touched, cap=cap))
+        keys_out[b] = keys
+        rows_out[b] = rows
+    keys_out.flush()
+    rows_out.flush()
+    codes = np.concatenate(parts)
+    codes.sort()
+    return codes[np.r_[True, codes[1:] != codes[:-1]]] if codes.size else codes

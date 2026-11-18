@@ -108,6 +108,37 @@ def test_strata_are_weighted_by_size_and_an_unlabeled_one_leaves_no_estimate() -
     assert stratified([(900, 10, 10), (0, 0, 0)])["precision"] == 1.0  # type: ignore[index]
 
 
+def test_a_stratified_interval_always_holds_its_point() -> None:
+    """Ruled at the step 47 review: an interval centred on Wilson-adjusted strata could fall
+    below its point where small strata were all correct (NCOIL's reading, 0.973 against
+    [0.828, 0.971]). Wilson at the effective sample size holds its point by construction."""
+    import random
+
+    rng = random.Random(20261116)
+    for _ in range(5000):
+        parts: list[tuple[int, int, int]] = []
+        for _ in range(rng.randint(2, 4)):
+            n = rng.randint(1, 60)
+            x = rng.choice([0, n, rng.randint(0, n)])
+            parts.append((rng.randint(1, 5000), n, x))
+        got = stratified(parts)
+        assert got is not None
+        lo, hi = got["interval_95"]
+        assert lo <= got["precision"] <= hi, parts
+    # The case that showed it: 16, 20 and 22 labels, the last two strata all correct.
+    got = stratified([(98, 16, 13), (184, 20, 20), (409, 22, 22)])
+    assert got is not None
+    assert got["interval_95"][0] <= got["precision"] <= got["interval_95"][1]
+
+
+def test_the_effective_sample_size_never_exceeds_the_labels() -> None:
+    """Stratifying can make the variance small; the interval is never narrower than Wilson's on
+    every label pooled, at the same point."""
+    got = stratified([(500, 30, 27), (500, 30, 27)])
+    assert got is not None
+    assert got["interval_95"] == [round(v, 4) for v in wilson(54, 60)]
+
+
 def _item(i: int, stages: tuple[str, ...]) -> Item:
     def section(bill: str) -> Section:
         text = f"{bill} text {i}"

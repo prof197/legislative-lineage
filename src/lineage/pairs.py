@@ -32,7 +32,17 @@ from lineage import queries
 from lineage.bands import load_band_index
 from lineage.disk import require_free_space
 from lineage.families import FAMILY_SHARE, bill_pairs, components, linked
-from lineage.lsh import BANDS, band_pairs, merge_sorted, unseen
+from lineage.lsh import (
+    BANDS,
+    BUCKET_CAP,
+    BandIndex,
+    band_keys,
+    band_pairs,
+    bucket_sizes,
+    candidates_by_band,
+    merge_sorted,
+    unseen,
+)
 from lineage.minhash import NUM_PERM
 from lineage.signatures import RowLabels, SignatureFiles, signature_values
 from lineage.verify import THRESHOLD, agreements_by, min_agreements
@@ -341,3 +351,120 @@ def load_families(tables_dir: Path) -> dict[str, str]:
     """Every signed bill's family, by bill id."""
     with queries.connect_quiet() as con:
         return queries.read_families(con, parquet_path=tables_dir / "families" / "families.parquet")
+
+
+# Updates (DESIGN.md#updates, DR-7): the section pairs a day can change are recomputed exactly,
+# from every pair of their windows, and the rest carried over under their new numbers.
+
+# Window pairs compared per step when section pairs are recomputed.
+_RECOMPUTE_CHUNK = 1 << 18
+
+
+def section_bounds(section_of_row: NDArray[np.int64]) -> NDArray[np.int64]:
+    """Each section's first signature row, and one past the last row: a section's windows are
+    adjacent rows, so section s holds rows bounds[s] to bounds[s + 1]."""
+    sections = int(section_of_row[-1]) + 1 if section_of_row.size else 0
+    return np.searchsorted(section_of_row, np.arange(sections + 1)).astype(np.int64)
+
+
+def recompute_section_pairs(
+    files: SignatureFiles,
+    index: BandIndex,
+    bounds: NDArray[np.int64],
+    left: NDArray[np.uint32],
+    right: NDArray[np.uint32],
+    *,
+    cap: int = BUCKET_CAP,
+    threshold: float = THRESHOLD,
+) -> SectionPairs:
+    """The verified pairs among the given section pairs, each with its best window pair's
+    agreements, exactly as a build forms them: a window pair counts when some band puts both
+    windows in one bucket within the cap and their signatures agree on enough positions."""
+    need = min_agreements(threshold)
+    lefts = np.asarray(left, dtype=np.int64)
+    rights = np.asarray(right, dtype=np.int64)
+    n_left = bounds[lefts + 1] - bounds[lefts]
+    n_right = bounds[rights + 1] - bounds[rights]
+    per_pair = n_left * n_right
+    pair = np.repeat(np.arange(lefts.size), per_pair)
+    within = np.arange(int(per_pair.sum()), dtype=np.int64) - np.repeat(
+        np.cumsum(per_pair) - per_pair, per_pair
+    )
+    rows_left = bounds[lefts][pair] + within // n_right[pair]
+    rows_right = bounds[rights][pair] + within % n_right[pair]
+    involved = np.unique(np.concatenate([rows_left, rows_right]))
+    values = signature_values(files, involved)
+    keys = band_keys(values) if involved.size else np.empty((0, BANDS), dtype=np.uint64)
+    sizes = np.empty(keys.shape, dtype=np.int64)
+    for b in range(BANDS):
+        sizes[:, b] = bucket_sizes(np.asarray(index.keys[b], dtype=np.uint64), keys[:, b])
+    best = np.zeros(lefts.size, dtype=np.int16) - 1
+    for start in range(0, pair.size, _RECOMPUTE_CHUNK):
+        stop = start + _RECOMPUTE_CHUNK
+        a = np.searchsorted(involved, rows_left[start:stop])
+        b = np.searchsorted(involved, rows_right[start:stop])
+        candidate = candidates_by_band(keys[a], keys[b], sizes[a], cap=cap)
+        agree = np.count_nonzero(values[a] == values[b], axis=1).astype(np.int16)
+        verified = candidate & (agree >= need)
+        np.maximum.at(best, pair[start:stop][verified], agree[verified])
+    kept = best >= 0
+    return SectionPairs(
+        lefts[kept].astype(np.uint32), rights[kept].astype(np.uint32), best[kept].astype(np.uint8)
+    )
+
+
+def renumbered(pairs: SectionPairs, section_map: NDArray[np.int64]) -> SectionPairs:
+    """Stored pairs under new section numbers, those of a retired section (-1) dropped. Section
+    numbers keep their order, so the pairs stay sorted."""
+    a = section_map[np.asarray(pairs.left, dtype=np.int64)]
+    b = section_map[np.asarray(pairs.right, dtype=np.int64)]
+    keep = (a >= 0) & (b >= 0)
+    return SectionPairs(
+        a[keep].astype(np.uint32), b[keep].astype(np.uint32), np.asarray(pairs.agreements)[keep]
+    )
+
+
+def pair_codes(left: NDArray[np.uint32], right: NDArray[np.uint32]) -> NDArray[np.uint64]:
+    return (np.asarray(left).astype(np.uint64) << np.uint64(32)) | np.asarray(right).astype(
+        np.uint64
+    )
+
+
+def replaced_pairs(
+    carried: SectionPairs, recomputed_codes: NDArray[np.uint64], found: SectionPairs
+) -> SectionPairs:
+    """`carried` without the pairs that were recomputed, with what the recomputation found,
+    sorted by left, then right."""
+    codes = pair_codes(carried.left, carried.right)
+    keep = ~np.isin(codes, recomputed_codes)
+    merged = np.concatenate([codes[keep], pair_codes(found.left, found.right)])
+    agreements = np.concatenate([np.asarray(carried.agreements)[keep], found.agreements])
+    order = np.argsort(merged, kind="stable")
+    merged = merged[order]
+    return SectionPairs(
+        (merged >> np.uint64(32)).astype(np.uint32),
+        (merged & np.uint64(0xFFFF_FFFF)).astype(np.uint32),
+        agreements[order].astype(np.uint8),
+    )
+
+
+def write_section_pairs(directory: Path, found: SectionPairs) -> None:
+    """A pairs table's three vectors, as `build_pairs` writes them."""
+    np.save(directory / "left.npy", np.asarray(found.left, dtype=np.uint32))
+    np.save(directory / "right.npy", np.asarray(found.right, dtype=np.uint32))
+    np.save(directory / "agreements.npy", np.asarray(found.agreements, dtype=np.uint8))
+
+
+def sections_of_window_pairs(
+    codes: NDArray[np.uint64], section_of_row: NDArray[np.int64]
+) -> tuple[NDArray[np.uint32], NDArray[np.uint32]]:
+    """The distinct section pairs, left < right, behind window pairs given as codes; a pair of
+    windows of one section is not a section pair."""
+    a = section_of_row[(codes >> np.uint64(32)).astype(np.int64)]
+    b = section_of_row[(codes & np.uint64(0xFFFF_FFFF)).astype(np.int64)]
+    apart = a != b
+    found = np.unique(pair_codes(np.minimum(a, b)[apart], np.maximum(a, b)[apart]))
+    return (
+        (found >> np.uint64(32)).astype(np.uint32),
+        (found & np.uint64(0xFFFF_FFFF)).astype(np.uint32),
+    )
