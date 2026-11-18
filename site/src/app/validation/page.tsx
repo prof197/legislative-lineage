@@ -3,8 +3,9 @@ import Link from "next/link";
 import type { OriginPrecision, OriginShare } from "@/types/export";
 import { DataCredit, Footer, Header } from "@/components/Chrome";
 import { Enactments } from "@/components/Enactments";
-import { meta, precisionSampleState, sources } from "@/lib/data";
+import { meta, originRecall, precisionSampleState, sources } from "@/lib/data";
 import { stateName } from "@/lib/format";
+import type { KeyRecall, OriginRecall } from "@/lib/recall";
 
 export const metadata: Metadata = { title: "How we checked" };
 
@@ -28,9 +29,14 @@ function originShare(g: OriginShare): string {
   return `${pct(g.share)} (95% interval ${pct(g.interval_95[0])}–${pct(g.interval_95[1])}), from ${g.labeled} labels of ${g.matches.toLocaleString("en-US")} matches`;
 }
 
-// Origin precision on the reporting sample, one library's matches read against the rest's
-// (DESIGN.md#origin-matches). An export from before model documents has none, so nothing shows.
-function OriginPrecisionSection({ o }: { o: OriginPrecision | undefined }) {
+// A key's recall with its interval.
+const keyRecall = (k: KeyRecall) =>
+  `${k.found} of ${k.enactments} enactments (${pct(k.recall)}, 95% interval ${pct(k.interval_95[0])}–${pct(k.interval_95[1])})`;
+
+// Origin recall on its three answer keys beside origin precision on the reporting sample, one
+// library's matches read against the rest's (DESIGN.md#origin-matches). An export from before model
+// documents has no precision, so nothing shows.
+function OriginsSection({ o, r }: { o: OriginPrecision | undefined; r: OriginRecall }) {
   if (!o) return null;
   const organization = (key: string) => sources()?.sources.find((s) => s.key === key)?.organization ?? key;
   return (
@@ -38,9 +44,29 @@ function OriginPrecisionSection({ o }: { o: OriginPrecision | undefined }) {
       <h2 id="origins" className="section" style={{ fontSize: 24 }}>Matches with published model legislation</h2>
       <p className="body-serif" style={{ marginTop: 12, maxWidth: "40em" }}>
         Bill pages list a model document when at least {pct(o.floor)} of the bill&apos;s wording, or of the
-        model&apos;s, is in sections that match. A model judged a seeded sample of those matches, each on the
-        passages its closest section pair shares: are they the same provision? Weighted by how many matches
-        each stage found, the share judged the same provision is {originShare(o.overall)}.
+        model&apos;s, is in sections that match. We checked both directions: does a model find the bills that
+        enacted it, and is what pages list right?
+      </p>
+      <h3 className="section" style={{ fontSize: 19, marginTop: 24 }}>Does a model find the bills that enacted it?</h3>
+      <p className="body-serif" style={{ marginTop: 8, maxWidth: "40em" }}>
+        Each uniform act&apos;s published text was matched as a model document, and an enactment the
+        Commission lists counts as found only where the enacting bill&apos;s page would list the act.
+      </p>
+      <ul className="body-serif" style={{ marginTop: 12, maxWidth: "40em" }}>
+        <li>The three acts above: {keyRecall(r.development)}.</li>
+        <li>
+          Two acts kept unseen until one final run: {keyRecall(r.sealed)}. That run came before the last
+          changes to origin matching, and a held-out check is not run twice.
+        </li>
+        <li>
+          Four acts an earlier version&apos;s final check had already looked at, so not held out: {keyRecall(r.opened)}.
+        </li>
+      </ul>
+      <h3 className="section" style={{ fontSize: 19, marginTop: 24 }}>Is what pages list right?</h3>
+      <p className="body-serif" style={{ marginTop: 8, maxWidth: "40em" }}>
+        A model judged a seeded sample of listed matches, each on the passages its closest section pair
+        shares: are they the same provision? Weighted by how many matches each stage found, the share
+        judged the same provision is {originShare(o.overall)}.
       </p>
       <ul className="body-serif" style={{ marginTop: 12, maxWidth: "40em" }}>
         <li>{organization(o.compared.sources[0] ?? "")}&apos;s matches: {originShare(o.compared)}.</li>
@@ -152,7 +178,7 @@ export default function ValidationPage() {
           </p>
         </section>
 
-        <OriginPrecisionSection o={v.origin_precision} />
+        <OriginsSection o={v.origin_precision} r={originRecall()} />
 
         <section aria-labelledby="data" style={{ marginTop: 48 }}>
           <h2 id="data" className="section" style={{ fontSize: 24 }}>The data</h2>
