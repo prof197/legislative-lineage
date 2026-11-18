@@ -328,7 +328,7 @@ def test_the_recorded_days_give_a_national_feed_that_passes_the_check(
 ) -> None:
     inputs = export_inputs(tmp_path / "inputs")
     export = full_export(rec.tables[3], tmp_path / "export" / state, inputs, state)
-    sources = Sources(inputs["modeldocs_root"], inputs["collector_package"])
+    sources = Sources(inputs.modeldocs_root, inputs.collector_package)
 
     report = write_feed(
         rec.tables[3],
@@ -380,7 +380,7 @@ def test_a_feed_that_breaks_the_rfc_or_has_no_site_is_not_written(
 ) -> None:
     inputs = export_inputs(tmp_path / "inputs")
     export = full_export(rec.tables[3], tmp_path / "export" / "GA", inputs)
-    sources = Sources(inputs["modeldocs_root"], inputs["collector_package"])
+    sources = Sources(inputs.modeldocs_root, inputs.collector_package)
     with pytest.raises(FeedError, match="absolute"):
         write_feed(
             rec.tables[3], state="GA", export=export, site_url="example.org", changes_dir=rec.log,

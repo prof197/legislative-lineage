@@ -75,7 +75,7 @@ def test_only_the_files_a_day_changes_are_rewritten_and_the_export_equals_a_full
             since=day if n == first else None,  # a full export carries no as-of date
             models_dir=None,
             floor=0,
-            **inputs,
+            inputs=inputs,
         )
         assert files_seen(live) == before  # nothing reaches the live export before the swap
         promote(live)
@@ -146,7 +146,7 @@ def test_a_page_a_relative_moved_without_a_log_entry_is_rebuilt_and_reported(
         since=D3,
         models_dir=None,
         floor=0,
-        **inputs,
+        inputs=inputs,
     )
     promote(live)
 
@@ -160,7 +160,7 @@ def test_an_export_ahead_of_or_behind_the_tables_is_refused(rec: Recorded, tmp_p
     log = rec.log_through(3, tmp_path / "log")
     with pytest.raises(PublishError, match="not had 2026-01-14 applied"):
         export_changes(
-            rec.tables[2], state="GA", export=live, changes_dir=log, models_dir=None, **inputs
+            rec.tables[2], state="GA", export=live, changes_dir=log, models_dir=None, inputs=inputs
         )
     with pytest.raises(PublishError, match="not in"):
         export_changes(
@@ -169,7 +169,7 @@ def test_an_export_ahead_of_or_behind_the_tables_is_refused(rec: Recorded, tmp_p
             export=live,
             changes_dir=rec.log_through(2, tmp_path / "short"),
             models_dir=None,
-            **inputs,
+            inputs=inputs,
         )
 
 

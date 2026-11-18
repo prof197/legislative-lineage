@@ -70,7 +70,7 @@ def live(rec: Recorded, tmp_path_factory: pytest.TempPathFactory) -> dict[int, P
         log = rec.log_through(n, root / f"log{n}")
         export_changes(
             rec.tables[n], state="GA", export=export, changes_dir=log, models_dir=None, floor=0,
-            **inputs,
+            inputs=inputs,
         )  # fmt: skip
         write_feed(
             rec.tables[n],
@@ -78,8 +78,8 @@ def live(rec: Recorded, tmp_path_factory: pytest.TempPathFactory) -> dict[int, P
             export=staging_dir(export),
             site_url=SITE,
             changes_dir=log,
-            modeldocs_root=inputs["modeldocs_root"],
-            collector_package=inputs["collector_package"],
+            modeldocs_root=inputs.modeldocs_root,
+            collector_package=inputs.collector_package,
         )
         promote(export)
         out[n] = shutil.copytree(export, root / f"after{n}")

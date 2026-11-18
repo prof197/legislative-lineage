@@ -109,7 +109,7 @@ def _runner(rec: Recorded, paths: DailyPaths, inputs: ExportInputs, fail: str | 
                 changes_dir=paths.changes,
                 models_dir=None,
                 floor=0,
-                **inputs,
+                inputs=inputs,
             )
         elif step.name == "feed":
             write_feed(
@@ -118,8 +118,8 @@ def _runner(rec: Recorded, paths: DailyPaths, inputs: ExportInputs, fail: str | 
                 export=staging_dir(export),
                 site_url=SITE,
                 changes_dir=paths.changes,
-                modeldocs_root=inputs["modeldocs_root"],
-                collector_package=inputs["collector_package"],
+                modeldocs_root=inputs.modeldocs_root,
+                collector_package=inputs.collector_package,
             )
         elif step.name == "promote":
             promote(export)

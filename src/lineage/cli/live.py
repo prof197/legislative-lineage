@@ -48,7 +48,7 @@ from lineage.export.build import EXPORT_DIR
 from lineage.export.build import WORKERS as EXPORT_WORKERS
 from lineage.export.featured import PAIRS as FEATURED_PAIRS
 from lineage.export.featured import REPORT as FEATURED_REPORT
-from lineage.export.pages import STORIES_RULES, ExportError
+from lineage.export.pages import STORIES_RULES, ExportError, ExportInputs
 from lineage.export.release import ReleaseError
 from lineage.live import deploy
 from lineage.live import rebuild as rebuilding
@@ -369,11 +369,13 @@ def publish_pages_command(
             since=datetime.date.fromisoformat(since) if since else None,
             models_dir=models_dir if paraphrase else None,
             workers=workers,
-            cache=cache,
-            featured_pairs=featured_pairs,
-            featured_report=featured_report,
-            stories_rules=stories_rules,
-            results=results,
+            inputs=ExportInputs(
+                cache=cache,
+                featured_pairs=featured_pairs,
+                featured_report=featured_report,
+                stories_rules=stories_rules,
+                results=results,
+            ),
             floor=int(min_free_gib * GiB),
             progress=typer.echo,
         )

@@ -3,6 +3,7 @@ site's types come from, every comparison's spans indexing the section texts writ
 and featured pairs carrying their cached explanation (DESIGN.md#export)."""
 
 import json
+from dataclasses import fields
 from pathlib import Path
 from typing import Any
 
@@ -17,6 +18,7 @@ from lineage.export.build import SCHEMA, align_all, build_export, schema_text
 from lineage.export.pages import (
     RESULTS,
     ExportError,
+    ExportInputs,
     comparison_slug,
     slug,
     stories_for,
@@ -29,6 +31,8 @@ from tests.test_explain import scripted
 from tests.test_relatives import bill_of, most_related
 
 REPO = Path(__file__).parent.parent
+
+INPUT_FIELDS = {f.name for f in fields(ExportInputs)}
 
 
 def test_a_bills_file_name_is_its_state_session_and_identifier() -> None:
@@ -80,13 +84,16 @@ def _export(tables: Path, out: Path, **kw: Any) -> dict[str, Any]:
         state=state,
         out=out,
         models_dir=None,
-        cache=kw.pop("cache", out.parent / "no-cache"),
-        featured_pairs=kw.pop("featured_pairs", no_pairs),
-        featured_report=kw.pop("featured_report", no_stories),
-        stories_rules=rules,
-        results=kw.pop("results", REPO / RESULTS),
-        model=FAKE_MODEL,
-        require_flag=False,
+        inputs=ExportInputs(
+            cache=kw.pop("cache", out.parent / "no-cache"),
+            featured_pairs=kw.pop("featured_pairs", no_pairs),
+            featured_report=kw.pop("featured_report", no_stories),
+            stories_rules=rules,
+            results=kw.pop("results", REPO / RESULTS),
+            model=FAKE_MODEL,
+            require_flag=False,
+            **{k: kw.pop(k) for k in list(kw) if k in INPUT_FIELDS},
+        ),
         floor=0,
         **kw,
     )

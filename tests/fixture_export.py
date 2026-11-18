@@ -19,7 +19,7 @@ from pathlib import Path
 from lineage.core import db
 from lineage.evals.labels import SAME_PROVISION, text_sha256
 from lineage.export.build import build_export
-from lineage.export.pages import RESULTS
+from lineage.export.pages import RESULTS, ExportInputs
 from lineage.match.query import matchable_sections
 from lineage.match.semantic.pairs import build_semantic_pairs
 from lineage.origins import queries as origins_queries
@@ -167,18 +167,20 @@ def build_fixture_export(root: Path) -> Path:
         state=STATE,
         out=out,
         models_dir=None,
-        cache=root / "no-cache",
-        featured_pairs=no_pairs,
-        featured_report=no_stories,
-        stories_rules=rules,
-        results=REPO / RESULTS,
-        modeldocs_root=modeldocs,
-        collector_package=PACKAGE,
-        model=FAKE_MODEL,
-        require_flag=False,
+        inputs=ExportInputs(
+            cache=root / "no-cache",
+            featured_pairs=no_pairs,
+            featured_report=no_stories,
+            stories_rules=rules,
+            results=REPO / RESULTS,
+            modeldocs_root=modeldocs,
+            collector_package=PACKAGE,
+            model=FAKE_MODEL,
+            require_flag=False,
+            origin_labels=labels,
+            withheld_report=withheld,
+        ),
         floor=0,
-        origin_labels=labels,
-        withheld_report=withheld,
     )
     return out
 

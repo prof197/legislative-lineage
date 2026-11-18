@@ -11,6 +11,7 @@ from lineage.export.origin_story import FILE as ORIGIN_STORY_FILE
 from lineage.export.origin_story import story_file
 from lineage.export.pages import (
     RESULTS,
+    ExportInputs,
     bill_list,
     bill_page,
     carries_origin_story,
@@ -90,17 +91,19 @@ def test_the_live_tracks_rendering_gives_the_exports_pages_byte_for_byte(built: 
     plan = plan_export(
         root / "embedded",
         state=STATE,
-        cache=root / "no-cache",
-        featured_pairs=root / "none.jsonl",
-        featured_report=root / "none.json",
-        stories_rules=root / "stories.toml",
-        results=REPO / RESULTS,
-        modeldocs_root=root / "modeldocs",
-        collector_package=PACKAGE,
-        model=FAKE_MODEL,
-        require_flag=False,
-        origin_labels=root / "origin_labels.jsonl",
-        withheld_report=root / "withheld.json",
+        inputs=ExportInputs(
+            cache=root / "no-cache",
+            featured_pairs=root / "none.jsonl",
+            featured_report=root / "none.json",
+            stories_rules=root / "stories.toml",
+            results=REPO / RESULTS,
+            modeldocs_root=root / "modeldocs",
+            collector_package=PACKAGE,
+            model=FAKE_MODEL,
+            require_flag=False,
+            origin_labels=root / "origin_labels.jsonl",
+            withheld_report=root / "withheld.json",
+        ),
     )
 
     def same(name: str, rendered: bytes) -> None:

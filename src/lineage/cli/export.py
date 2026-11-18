@@ -42,7 +42,7 @@ from lineage.export.build import schema_text as export_schema_text
 from lineage.export.featured import PAIRS as FEATURED_PAIRS
 from lineage.export.featured import REPORT as FEATURED_REPORT
 from lineage.export.featured import FeaturedError, build_featured, write_featured
-from lineage.export.pages import STORIES_RULES, ExportError
+from lineage.export.pages import STORIES_RULES, ExportError, ExportInputs
 from lineage.export.release import ReleaseError
 from lineage.export.results_table import (
     EXPORTED_ONLY,
@@ -146,11 +146,13 @@ def export_command(
             out=target,
             models_dir=models_dir if paraphrase else None,
             workers=workers,
-            cache=cache,
-            featured_pairs=featured_pairs,
-            featured_report=featured_report,
-            stories_rules=stories_rules,
-            results=results,
+            inputs=ExportInputs(
+                cache=cache,
+                featured_pairs=featured_pairs,
+                featured_report=featured_report,
+                stories_rules=stories_rules,
+                results=results,
+            ),
             progress=typer.echo,
         )
     report.write_text(json.dumps(doc, indent=1) + "\n")

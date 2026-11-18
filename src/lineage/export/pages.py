@@ -506,33 +506,48 @@ def _stories(
     return stories
 
 
+@dataclass(frozen=True, slots=True)
+class ExportInputs:
+    """What an export reads besides the tables: the committed inputs (the featured pairs and
+    stories, their rules, the results, the origin labels, the withheld report), the cached
+    explanations, the collected model documents and their collectors, the embedding model, and
+    whether the state boilerplate counts must exist. By default the repository's own."""
+
+    cache: Path = CACHE_DIR
+    featured_pairs: Path = FEATURED_PAIRS
+    featured_report: Path = FEATURED_REPORT
+    stories_rules: Path = STORIES_RULES
+    results: Path = RESULTS
+    modeldocs_root: Path = MODELDOCS_DIR
+    collector_package: str = COLLECT_PACKAGE
+    model: str = MODEL
+    require_flag: bool = True
+    origin_labels: Path = ORIGIN_LABELS
+    withheld_report: Path = WITHHELD_REPORT
+
+
+DEFAULT_INPUTS = ExportInputs()
+
+
 def plan_export(
     tables: Path,
     *,
     state: str,
-    cache: Path = CACHE_DIR,
-    featured_pairs: Path = FEATURED_PAIRS,
-    featured_report: Path = FEATURED_REPORT,
-    stories_rules: Path = STORIES_RULES,
-    results: Path = RESULTS,
-    modeldocs_root: Path = MODELDOCS_DIR,
-    collector_package: str = COLLECT_PACKAGE,
-    model: str = MODEL,
-    require_flag: bool = True,
-    origin_labels: Path = ORIGIN_LABELS,
-    withheld_report: Path = WITHHELD_REPORT,
+    inputs: ExportInputs = DEFAULT_INPUTS,
     progress: Callable[[str], None] = lambda _: None,
 ) -> Plan:
     """What the export reads before it aligns anything, with its inputs and checks: everything
     its files hold but the alignments (lineage.export.build.build_export)."""
     kept_back, validation = _committed(
-        (featured_pairs, featured_report, stories_rules, results), results, withheld_report
+        (inputs.featured_pairs, inputs.featured_report, inputs.stories_rules, inputs.results),
+        inputs.results,
+        inputs.withheld_report,
     )
-    sources = [c.source for c in collectors(collector_package).values()]
-    docs = {d.id: (d, src) for src in sources for d in read_docs(src, modeldocs_root)}
+    sources = [c.source for c in collectors(inputs.collector_package).values()]
+    docs = {d.id: (d, src) for src in sources for d in read_docs(src, inputs.modeldocs_root)}
     bills_glob = str(tables / "bills" / "*.parquet")
     flag = shipped_flag(tables)
-    if flag is None and require_flag:
+    if flag is None and inputs.require_flag:
         raise ExportError("no state boilerplate counts; run `uv run lineage state-boilerplate`")
     with db.connect_quiet() as con:
         hosted = queries.hosted_bill_ids(
@@ -543,16 +558,18 @@ def plan_export(
     if not hosted:
         raise ExportError(f"no {state} bill is matched by the document-type rules")
     progress(f"{len(hosted)} hosted bills")
-    listed = listed_pairs(tables, model=model, flag=flag)
-    relatives = bill_relatives(tables, hosted, model=model, listed=listed)
-    stories_doc, featured = _carried_stories(state, featured_report, featured_pairs, stories_rules)
+    listed = listed_pairs(tables, model=inputs.model, flag=flag)
+    relatives = bill_relatives(tables, hosted, model=inputs.model, listed=listed)
+    stories_doc, featured = _carried_stories(
+        state, inputs.featured_report, inputs.featured_pairs, inputs.stories_rules
+    )
     wanted, found, signed = _found_pairs(tables, listed, relatives, featured)
     story_ids = {
         str(r["bill_id"]) for s in stories_doc.values() for r in [s["anchor"], *s["relatives"]]
     }
     ids = sorted(set(hosted) | {x for pair in wanted for x in pair} | story_ids)
     refs, text_infos, sections_of, shown = _sections(tables, ids, found)
-    stories = _stories(tables, stories_doc, refs, model=model, listed=listed, signed=signed)
+    stories = _stories(tables, stories_doc, refs, model=inputs.model, listed=listed, signed=signed)
     meta = Meta(
         state=state,
         archives=[
@@ -572,10 +589,10 @@ def plan_export(
             refs,
             matches,
             docs,
-            modeldocs_root=modeldocs_root,
-            labels=origin_labels,
+            modeldocs_root=inputs.modeldocs_root,
+            labels=inputs.origin_labels,
         )
-        if carries_origin_story(state, stories_rules)
+        if carries_origin_story(state, inputs.stories_rules)
         else frozenset[tuple[str, str]]()
     )
     return Plan(
@@ -593,7 +610,7 @@ def plan_export(
         stories=stories,
         sources=sources_doc(sources, docs, kept_back.reasons),
         meta=meta,
-        cache=cache,
+        cache=inputs.cache,
     )
 
 

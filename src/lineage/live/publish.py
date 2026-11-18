@@ -45,16 +45,13 @@ from pydantic import BaseModel, TypeAdapter
 from lineage.align import Alignment
 from lineage.align import Span as AlignSpan
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
-from lineage.explain.explain import CACHE_DIR
 from lineage.export.build import align_all
 from lineage.export.origin_story import FILE as ORIGIN_STORY_FILE
 from lineage.export.origin_story import story_file as origin_story_file
 from lineage.export.pages import (
-    FEATURED_PAIRS,
-    FEATURED_REPORT,
-    RESULTS,
-    STORIES_RULES,
+    DEFAULT_INPUTS,
     BillPair,
+    ExportInputs,
     OrdinalPair,
     Plan,
     bill_list,
@@ -79,11 +76,6 @@ from lineage.live.updates import (
     RelativeGained,
     RelativeLost,
 )
-from lineage.match.semantic.stage import MODEL
-from lineage.origins.collect import PACKAGE as COLLECT_PACKAGE
-from lineage.origins.labels import LABELS as ORIGIN_LABELS
-from lineage.origins.modeldocs import MODELDOCS_DIR
-from lineage.origins.withheld import REPORT as WITHHELD_REPORT
 
 STAGING_SUFFIX = ".staging"
 OLD_SUFFIX = ".old"
@@ -443,18 +435,8 @@ def export_changes(
     since: date | None = None,
     models_dir: Path | None,
     workers: int = 1,
-    cache: Path = CACHE_DIR,
-    featured_pairs: Path = FEATURED_PAIRS,
-    featured_report: Path = FEATURED_REPORT,
-    stories_rules: Path = STORIES_RULES,
-    results: Path = RESULTS,
-    modeldocs_root: Path = MODELDOCS_DIR,
-    collector_package: str = COLLECT_PACKAGE,
-    model: str = MODEL,
-    require_flag: bool = True,
+    inputs: ExportInputs = DEFAULT_INPUTS,
     floor: int = DEFAULT_FLOOR_BYTES,
-    origin_labels: Path = ORIGIN_LABELS,
-    withheld_report: Path = WITHHELD_REPORT,
     progress: Callable[[str], None] = lambda _: None,
 ) -> dict[str, Any]:
     """Apply the logged days the live `export` lacks to a staging copy of it, from the updated
@@ -470,17 +452,7 @@ def export_changes(
     plan = plan_export(
         tables,
         state=state,
-        cache=cache,
-        featured_pairs=featured_pairs,
-        featured_report=featured_report,
-        stories_rules=stories_rules,
-        results=results,
-        modeldocs_root=modeldocs_root,
-        collector_package=collector_package,
-        model=model,
-        require_flag=require_flag,
-        origin_labels=origin_labels,
-        withheld_report=withheld_report,
+        inputs=inputs,
     )
     before = _export_files(target)
     writes = _Writes(target)
@@ -494,7 +466,7 @@ def export_changes(
     )
     texts = _section_texts(plan, rebuild, dropped, writes)
     origin_story = _index_files(
-        plan, writes, state=state, stories_rules=stories_rules, through=through
+        plan, writes, state=state, stories_rules=inputs.stories_rules, through=through
     )
 
     expected = (

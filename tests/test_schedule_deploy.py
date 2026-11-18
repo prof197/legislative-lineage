@@ -107,7 +107,7 @@ def _runner(
         elif step.name == "pages":
             export_changes(
                 paths.tables, state="GA", export=export, changes_dir=paths.changes,
-                models_dir=None, floor=0, **inputs,
+                models_dir=None, floor=0, inputs=inputs,
             )  # fmt: skip
         elif step.name == "feed":
             write_feed(
@@ -116,8 +116,8 @@ def _runner(
                 export=staging_dir(export),
                 site_url=SITE,
                 changes_dir=paths.changes,
-                modeldocs_root=inputs["modeldocs_root"],
-                collector_package=inputs["collector_package"],
+                modeldocs_root=inputs.modeldocs_root,
+                collector_package=inputs.collector_package,
             )
         elif step.name == "promote":
             promote(export)

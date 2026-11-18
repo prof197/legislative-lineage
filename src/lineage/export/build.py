@@ -42,15 +42,12 @@ from pydantic.json_schema import models_json_schema
 from lineage.align import Alignment, Embedder, align
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.core.paths import DATA
-from lineage.explain.explain import CACHE_DIR
 from lineage.export.origin_story import FILE as ORIGIN_STORY_FILE
 from lineage.export.origin_story import story_file as origin_story_file
 from lineage.export.pages import (
-    FEATURED_PAIRS,
-    FEATURED_REPORT,
-    RESULTS,
-    STORIES_RULES,
+    DEFAULT_INPUTS,
     BillPair,
+    ExportInputs,
     OrdinalPair,
     Plan,
     bill_list,
@@ -71,10 +68,6 @@ from lineage.export.schema import (
 from lineage.match.semantic.embed import embed as embed_texts
 from lineage.match.semantic.embed import load_model
 from lineage.match.semantic.stage import MODEL
-from lineage.origins.collect import PACKAGE as COLLECT_PACKAGE
-from lineage.origins.labels import LABELS as ORIGIN_LABELS
-from lineage.origins.modeldocs import MODELDOCS_DIR
-from lineage.origins.withheld import REPORT as WITHHELD_REPORT
 
 EXPORT_DIR = DATA / "export"
 REPORT = Path("reports/export.json")
@@ -282,18 +275,8 @@ def build_export(
     out: Path,
     models_dir: Path | None,
     workers: int = 1,
-    cache: Path = CACHE_DIR,
-    featured_pairs: Path = FEATURED_PAIRS,
-    featured_report: Path = FEATURED_REPORT,
-    stories_rules: Path = STORIES_RULES,
-    results: Path = RESULTS,
-    modeldocs_root: Path = MODELDOCS_DIR,
-    collector_package: str = COLLECT_PACKAGE,
-    model: str = MODEL,
-    require_flag: bool = True,
+    inputs: ExportInputs = DEFAULT_INPUTS,
     floor: int = DEFAULT_FLOOR_BYTES,
-    origin_labels: Path = ORIGIN_LABELS,
-    withheld_report: Path = WITHHELD_REPORT,
     progress: Callable[[str], None] = lambda _: None,
 ) -> dict[str, Any]:
     """Write `state`'s site data to `out`, replacing what was there; returns the report. Every
@@ -305,17 +288,7 @@ def build_export(
     plan = plan_export(
         tables,
         state=state,
-        cache=cache,
-        featured_pairs=featured_pairs,
-        featured_report=featured_report,
-        stories_rules=stories_rules,
-        results=results,
-        modeldocs_root=modeldocs_root,
-        collector_package=collector_package,
-        model=model,
-        require_flag=require_flag,
-        origin_labels=origin_labels,
-        withheld_report=withheld_report,
+        inputs=inputs,
         progress=progress,
     )
     text_bytes = sum(len(t.encode()) for _, t, _ in plan.shown.values())
@@ -324,6 +297,6 @@ def build_export(
     require_free_space(out.parent, needed=2 * text_bytes + 4096 * n_pairs + (64 << 20), floor=floor)
     progress(f"{len(plan.found)} comparisons, {n_pairs} section pairs to align")
     aligned = _aligned(plan, models_dir=models_dir, workers=workers, progress=progress)
-    rendered = _files(plan, aligned, state=state, stories_rules=stories_rules)
+    rendered = _files(plan, aligned, state=state, stories_rules=inputs.stories_rules)
     written = _swap_in(out, rendered.files)
     return _report(plan, written, rendered, n_pairs=n_pairs, started=started)
