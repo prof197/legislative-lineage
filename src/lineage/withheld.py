@@ -13,6 +13,11 @@ so the daily live track reads the same set the reviewed export did and never rec
 Precision readings are not redrawn: they were measured with these documents' matches in, so
 they are conservative for what pages show (DESIGN.md#origin-matches).
 
+A stopgap: the fix on the roadmap is frequency-weighted shares, a passage that recurs across many
+unrelated bills and models counting for less, for every source (DESIGN.md#future-work). Once it
+lands, `lineage withhold` runs again on a fresh reading and a document whose matches then pass the
+rule returns by itself.
+
 See DESIGN.md#dr-11.
 """
 
