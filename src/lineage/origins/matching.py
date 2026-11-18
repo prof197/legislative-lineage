@@ -338,6 +338,91 @@ def bill_sections(
     }
 
 
+@dataclass(slots=True)
+class _Alignments:
+    """A model's and a bill's section pairs' alignments, each made once, when first needed."""
+
+    text: ModelText
+    bill: dict[int, BillSection]
+    embed: Embedder | None
+    aligned: dict[tuple[int, int], Alignment] = field(
+        default_factory=dict[tuple[int, int], Alignment]
+    )
+
+    def of(self, q: int, o: int) -> Alignment:
+        if (q, o) not in self.aligned:
+            self.aligned[(q, o)] = align(
+                self.text.display[q], self.bill[o].display, embed=self.embed
+            )
+        return self.aligned[(q, o)]
+
+
+def _outside(alignments: _Alignments, q: int, o: int) -> bool:
+    """Ruled at the step 48 review: where either section holds generic text, a pair counts only
+    when its alignment shares MIN_WORDS outside it on both sides."""
+    text, bill = alignments.text, alignments.bill
+    model_in, bill_in = text.inside.get(q), bill[o].inside
+    if model_in is None and bill_in is None:
+        return True
+    return any(
+        span.a is not None
+        and span.b is not None
+        and words_outside(text.display[q], span.a, model_in.ranges if model_in else ()) >= MIN_WORDS
+        and words_outside(bill[o].display, span.b, bill_in.ranges if bill_in else ()) >= MIN_WORDS
+        for span in alignments.of(q, o).spans
+    )
+
+
+def _counted_pairs(entry: BillHits, alignments: _Alignments) -> list[tuple[int, int]]:
+    """The section pairs a match counts, in order: neither section generic, and shared words
+    outside any generic text."""
+    text, bill = alignments.text, alignments.bill
+    return sorted(
+        (q, o)
+        for q, o in entry.pairs
+        if q not in text.generic and not bill[o].generic and _outside(alignments, q, o)
+    )
+
+
+def _match_spans(pairs: Sequence[tuple[int, int]], alignments: _Alignments) -> list[BillSpan]:
+    """The bill's spans, section by section, from the alignments of the pairs it is in."""
+    by_ordinal: dict[int, list[int]] = defaultdict(list)
+    for q, o in pairs:
+        by_ordinal[o].append(q)
+    return [
+        span
+        for o in sorted(by_ordinal)
+        for span in _spans_of(
+            o,
+            [alignments.of(q, o) for q in by_ordinal[o]],
+            alignments.bill[o].cut,
+        )
+    ]
+
+
+def _stages(pairs: Sequence[tuple[int, int]], entry: BillHits) -> list[Stage]:
+    stages: list[Stage] = []
+    if any(p in entry.agreements for p in pairs):
+        stages.append("near_duplicate")
+    if any(p in entry.cosine for p in pairs):
+        stages.append("semantic")
+    return stages
+
+
+def _section_pairs(pairs: Sequence[tuple[int, int]], entry: BillHits) -> list[SectionPair]:
+    return [
+        SectionPair(
+            model_section=q,
+            ordinal=o,
+            agreements=entry.agreements.get((q, o)),
+            cosine=None
+            if (q, o) not in entry.cosine
+            else round(float(entry.cosine[(q, o)]), COSINE_PLACES),
+        )
+        for q, o in pairs
+    ]
+
+
 def match_of(
     text: ModelText,
     bill_id: str,
@@ -350,75 +435,22 @@ def match_of(
     sections is generic, both shares are of the sections that are not, and the stages, spans
     and pairs are the counted pairs'. A bill whose every pair touches a generic section has no
     match."""
-    aligned: dict[tuple[int, int], Alignment] = {}
-
-    def alignment(q: int, o: int) -> Alignment:
-        if (q, o) not in aligned:
-            aligned[(q, o)] = align(text.display[q], bill[o].display, embed=embed)
-        return aligned[(q, o)]
-
-    def outside(q: int, o: int) -> bool:
-        """Ruled at the step 48 review: where either section holds generic text, a pair counts
-        only when its alignment shares MIN_WORDS outside it on both sides."""
-        model_in, bill_in = text.inside.get(q), bill[o].inside
-        if model_in is None and bill_in is None:
-            return True
-        return any(
-            span.a is not None
-            and span.b is not None
-            and words_outside(text.display[q], span.a, model_in.ranges if model_in else ())
-            >= MIN_WORDS
-            and words_outside(bill[o].display, span.b, bill_in.ranges if bill_in else ())
-            >= MIN_WORDS
-            for span in alignment(q, o).spans
-        )
-
-    pairs = sorted(
-        (q, o)
-        for q, o in entry.pairs
-        if q not in text.generic and not bill[o].generic and outside(q, o)
-    )
+    alignments = _Alignments(text, bill, embed)
+    pairs = _counted_pairs(entry, alignments)
     if not pairs:
         return None
     model_words = sum(text.counted(q) for q in text.searched if q not in text.generic)
     bill_words = sum(s.counted for s in bill.values() if not s.generic)
     matched_model = {q for q, _ in pairs}
     matched_bill = {o for _, o in pairs}
-    by_ordinal: dict[int, list[int]] = defaultdict(list)
-    for q, o in pairs:
-        by_ordinal[o].append(q)
-    spans = [
-        span
-        for o in sorted(by_ordinal)
-        for span in _spans_of(
-            o,
-            [alignment(q, o) for q in by_ordinal[o]],
-            bill[o].cut,
-        )
-    ]
-    stages: list[Stage] = []
-    if any(p in entry.agreements for p in pairs):
-        stages.append("near_duplicate")
-    if any(p in entry.cosine for p in pairs):
-        stages.append("semantic")
     return OriginMatch(
         bill_id=bill_id,
         doc_id=text.doc_id,
-        stages=stages,
+        stages=_stages(pairs, entry),
         model_share=_share(sum(text.counted(q) for q in matched_model), model_words),
         bill_share=_share(sum(bill[o].counted for o in matched_bill), bill_words),
-        spans=spans,
-        pairs=[
-            SectionPair(
-                model_section=q,
-                ordinal=o,
-                agreements=entry.agreements.get((q, o)),
-                cosine=None
-                if (q, o) not in entry.cosine
-                else round(float(entry.cosine[(q, o)]), COSINE_PLACES),
-            )
-            for q, o in pairs
-        ],
+        spans=_match_spans(pairs, alignments),
+        pairs=_section_pairs(pairs, entry),
     )
 
 
