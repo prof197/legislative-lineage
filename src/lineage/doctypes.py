@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Any
 
 from lineage import queries
-from lineage.stoplist import file_sha256
+from lineage.hashing import file_sha256
 
 COMMAND = "uv run lineage eligible"
 SAMPLES_COMMAND = "uv run lineage stats --samples"

@@ -47,6 +47,7 @@ from lineage import queries
 from lineage.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.doctypes import RULES as DOCUMENT_TYPES
 from lineage.doctypes import build_eligibility
+from lineage.hashing import file_sha256
 from lineage.incremental import applied_days, embedder_for
 from lineage.index import build_index
 from lineage.ingest import ingest
@@ -60,7 +61,7 @@ from lineage.semantic import MODEL
 from lineage.semantic_pairs import build_semantic_pairs, section_keys
 from lineage.snapshot import bills_member, load_manifest, scan, verify, write_manifest
 from lineage.state_boilerplate import build_state_boilerplate, has_counts, load_families_reached
-from lineage.stoplist import build_stoplist, file_sha256
+from lineage.stoplist import build_stoplist
 from lineage.text_inventory import PLAN as TEXT_PLAN
 from lineage.text_merge import BULK, FETCHED, merge_texts
 from lineage.text_rules import RULES as TEXT_RULES

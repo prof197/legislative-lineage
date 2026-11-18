@@ -115,6 +115,7 @@ from lineage.featured import REPORT as FEATURED_REPORT
 from lineage.featured import FeaturedError, build_featured, write_featured
 from lineage.feed import FeedError, write_feed
 from lineage.fetch import SOURCE, FetchError, fetch_raw, open_url
+from lineage.hashing import file_sha256
 from lineage.index import build_index
 from lineage.ingest import ingest as run_ingest
 from lineage.intake import (
@@ -299,7 +300,7 @@ from lineage.state_boilerplate import (
 from lineage.state_boilerplate import REPORT as STATE_BOILERPLATE_REPORT
 from lineage.state_boilerplate import write_report as write_state_boilerplate_report
 from lineage.stats import write_coverage
-from lineage.stoplist import StoplistError, build_stoplist, file_sha256
+from lineage.stoplist import StoplistError, build_stoplist
 from lineage.text_inventory import PLAN, REPORT, StalePlanError, build_inventory
 from lineage.text_merge import merge_texts
 from lineage.text_quality import REPORT as QUALITY

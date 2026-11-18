@@ -9,7 +9,6 @@ flagged as boilerplate, so excluded resolutions cannot shift the list. See
 DESIGN.md#boilerplate.
 """
 
-import hashlib
 import json
 import multiprocessing
 import time
@@ -212,7 +211,3 @@ def build_stoplist(
         occurrences_removed=removed,
         seconds=time.monotonic() - started,
     )
-
-
-def file_sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()

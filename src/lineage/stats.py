@@ -10,10 +10,10 @@ from pathlib import Path
 from typing import Any
 
 from lineage import queries
+from lineage.hashing import file_sha256
 from lineage.paths import DATA
 from lineage.sessions import CARRYOVER, load_sessions, status_end_date
 from lineage.status import ENACTED_IN_WORDS, Status
-from lineage.stoplist import file_sha256
 
 COMMAND = "uv run lineage stats"
 # Blank means no character that Python's str.isspace() would not call whitespace. RE2's \s is
