@@ -16,6 +16,7 @@ from collections.abc import Sequence
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
@@ -121,27 +122,31 @@ def _texts_of(parts: list[Path], eligible: Path, wanted: set[int]) -> dict[int, 
     return found
 
 
-def build_stoplist(
-    tables_dir: Path,
-    *,
-    max_share: float,
-    workers: int,
-    report_path: Path,
-    manifest_sha256: str,
-    rules_sha256: str,
-) -> StoplistResult:
-    """Write `<tables>/stoplist.parquet` and the report from the sections table."""
-    started = time.monotonic()
+def _inputs(tables_dir: Path) -> tuple[list[Path], Path]:
+    """The sections files and the eligibility table; refused when either is missing."""
     parts = sorted((tables_dir / "sections").glob("*.parquet"))
     if not parts:
         raise StoplistError(f"no sections table in {tables_dir}; run `lineage split` first")
     eligible = tables_dir / "eligible.parquet"
     if not eligible.exists():
         raise StoplistError(f"no eligibility table in {tables_dir}; run `lineage eligible` first")
-    with ProcessPoolExecutor(max_workers=workers, mp_context=_SPAWN) as pool:
-        results = list(pool.map(_part_shingles, parts, [eligible] * len(parts)))
-    sections = sum(n for n, _ in results)
+    return parts, eligible
 
+
+@dataclass(frozen=True, slots=True)
+class _Counted:
+    stoplist: NDArray[np.uint32]
+    dfs: NDArray[np.int64]  # each stoplisted hash's document frequency
+    distinct: int
+    occurrences: int
+    by_share: dict[float, list[int]]  # share -> [shingles over it, their occurrences]
+
+
+def _count(
+    results: list[tuple[int, list[NDArray[np.uint32]]]], sections: int, max_share: float
+) -> _Counted:
+    """Document frequencies partition by partition: the stoplist at `max_share`, and what each
+    share the report tabulates would remove."""
     stop_hashes: list[NDArray[np.uint32]] = []
     stop_counts: list[NDArray[np.int64]] = []
     distinct = occurrences = 0
@@ -157,58 +162,90 @@ def build_stoplist(
         keep = counts > max_share * sections
         stop_hashes.append(hashes[keep])
         stop_counts.append(counts[keep])
-    del results
-    stoplist = np.concatenate(stop_hashes)
-    dfs = np.concatenate(stop_counts)
+    return _Counted(
+        np.concatenate(stop_hashes), np.concatenate(stop_counts), distinct, occurrences, by_share
+    )
 
+
+def _store(tables_dir: Path, counted: _Counted) -> dict[str, int]:
+    """Write the stoplist; return the boilerplate counts of the sections table."""
     with db.connect_quiet() as con:
         # Written beside the old file and renamed, so a failure never leaves half a stoplist.
         partial = tables_dir / "stoplist.parquet.partial"
         queries.write_stoplist(
-            con, parquet_path=partial, hashes=stoplist.tolist(), sections=dfs.tolist()
+            con,
+            parquet_path=partial,
+            hashes=counted.stoplist.tolist(),
+            sections=counted.dfs.tolist(),
         )
         partial.replace(tables_dir / "stoplist.parquet")
-        boilerplate = queries.boilerplate_counts(
+        return queries.boilerplate_counts(
             con, sections_glob=str(tables_dir / "sections" / "*.parquet")
         )
 
+
+def _top_rows(
+    parts: list[Path], eligible: Path, counted: _Counted, sections: int
+) -> list[dict[str, Any]]:
+    """The _TOP most frequent stoplisted shingles, each with an example of its text."""
+    stoplist, dfs = counted.stoplist, counted.dfs
     # Highest document frequency first; the hash breaks ties so the choice is reproducible.
     top = np.lexsort((stoplist, -dfs))[:_TOP]
     top_df = {int(stoplist[i]): int(dfs[i]) for i in top}
     texts = _texts_of(parts, eligible, set(top_df))
-    top_rows = sorted(
+    return sorted(
         (
             {"shingle": texts[h], "sections": df, "share": round(df / sections, 6)}
             for h, df in top_df.items()
         ),
         key=lambda r: (-int(r["sections"]), str(r["shingle"])),
     )
-    removed = int(dfs.sum())
+
+
+def build_stoplist(
+    tables_dir: Path,
+    *,
+    max_share: float,
+    workers: int,
+    report_path: Path,
+    manifest_sha256: str,
+    rules_sha256: str,
+) -> StoplistResult:
+    """Write `<tables>/stoplist.parquet` and the report from the sections table."""
+    started = time.monotonic()
+    parts, eligible = _inputs(tables_dir)
+    with ProcessPoolExecutor(max_workers=workers, mp_context=_SPAWN) as pool:
+        results = list(pool.map(_part_shingles, parts, [eligible] * len(parts)))
+    sections = sum(n for n, _ in results)
+    counted = _count(results, sections, max_share)
+    del results
+    boilerplate = _store(tables_dir, counted)
+    removed = int(counted.dfs.sum())
     report = {
         "command": COMMAND,
         "manifest_sha256": manifest_sha256,
         "rules_sha256": rules_sha256,
         "sections": sections,
-        "distinct_shingles": distinct,
-        "shingle_occurrences": occurrences,
+        "distinct_shingles": counted.distinct,
+        "shingle_occurrences": counted.occurrences,
         "max_share": max_share,
         "max_sections": int(max_share * sections),
-        "stoplisted_shingles": int(stoplist.size),
+        "stoplisted_shingles": int(counted.stoplist.size),
         "occurrences_removed": removed,
         "by_threshold": [
             {"max_share": s, "stoplisted_shingles": n, "occurrences_removed": o}
-            for s, (n, o) in sorted(by_share.items(), reverse=True)
+            for s, (n, o) in sorted(counted.by_share.items(), reverse=True)
         ],
         "boilerplate_sections": boilerplate,
-        "top_shingles": top_rows,
+        "top_shingles": _top_rows(parts, eligible, counted, sections),
     }
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(report, indent=1, ensure_ascii=False) + "\n")
     return StoplistResult(
         sections=sections,
-        distinct_shingles=distinct,
-        occurrences=occurrences,
-        stoplisted=int(stoplist.size),
+        distinct_shingles=counted.distinct,
+        occurrences=counted.occurrences,
+        stoplisted=int(counted.stoplist.size),
         occurrences_removed=removed,
         seconds=time.monotonic() - started,
     )
