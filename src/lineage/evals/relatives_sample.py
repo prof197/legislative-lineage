@@ -46,9 +46,9 @@ from lineage.core.intervals import weighted_share, wilson
 from lineage.evals.labels import Item
 from lineage.evals.precision import SEED as PRECISION_SEED
 from lineage.evals.precision import latest_correct
-from lineage.match.listing import listed_pairs
+from lineage.match.listing import ListedPairs, listed_pairs
 from lineage.match.near import queries as near_queries
-from lineage.match.relatives import RELATIVES_SHOWN, bill_relatives
+from lineage.match.relatives import RELATIVES_SHOWN, BillRelatives, bill_relatives
 from lineage.match.semantic.pairs import section_keys
 from lineage.match.semantic.stage import BUILD_THRESHOLD, CORROBORATING, MODEL, THRESHOLD
 from lineage.match.strata import STRATA, stratum_of
@@ -152,6 +152,124 @@ def _best_pair(
     return int(q[best]), int(m[best])
 
 
+def _judged_pair(
+    pairs: ListedPairs, query_sections: NDArray[np.bool_], match_sections: NDArray[np.bool_]
+) -> tuple[int, int] | None:
+    """The pair a relative's listing rests on most, as (query, match): the near-duplicate
+    stage's with the most band agreements, failing that the semantic stage's at the best
+    cosine."""
+    near, meaning = pairs.near, pairs.meaning
+    for left, right, scores in (
+        (near.left, near.right, near.agreements),
+        (meaning.left, meaning.right, meaning.cosine),
+    ):
+        rows = _touching(left, right, query_sections)
+        found = _best_pair(rows, left, right, scores, query_sections, match_sections)
+        if found is not None:
+            return found
+    return None
+
+
+def _state_bills(
+    tables_dir: Path, state: str, section_bills: Sequence[str], pairs: ListedPairs
+) -> tuple[list[str], list[str]]:
+    """The state's bills with a signed section, and those of them a listed pair touches."""
+    with db.connect_quiet() as con:
+        states = near_queries.bill_states(con, bills_glob=str(tables_dir / "bills" / "*.parquet"))
+    in_state = np.fromiter(
+        (states.get(b) == state for b in section_bills), dtype=bool, count=len(section_bills)
+    )
+    paired = np.zeros(len(section_bills), dtype=bool)
+    for left, right in (
+        (pairs.near.left, pairs.near.right),
+        (pairs.meaning.left, pairs.meaning.right),
+    ):
+        paired[np.asarray(left)] = True
+        paired[np.asarray(right)] = True
+    signed = sorted({section_bills[s] for s in np.flatnonzero(in_state).tolist()})
+    listing = sorted({section_bills[s] for s in np.flatnonzero(in_state & paired).tolist()})
+    return signed, listing
+
+
+def _section_numbers(section_bills: Sequence[str], wanted: set[str]) -> dict[str, list[int]]:
+    """Each wanted bill's section numbers."""
+    numbers: dict[str, list[int]] = {}
+    for number, bill_id in enumerate(section_bills):
+        if bill_id in wanted:
+            numbers.setdefault(bill_id, []).append(number)
+    return numbers
+
+
+def _sample_row(
+    pair: str,
+    bill_id: str,
+    page: BillRelatives,
+    rank: int,
+    judged: tuple[int, int],
+    ordinals: NDArray[np.int64],
+    pairs: ListedPairs,
+) -> dict[str, Any]:
+    """One sampled relative, in the precision sample's format, with the page it is listed on."""
+    q, m = judged
+    relative = page.matches[rank]
+    near, meaning = pairs.near, pairs.meaning
+    return {
+        "pair": pair,
+        "stages": _stages_of(q, m, near.left, near.right, meaning.left, meaning.right),
+        "query": {"bill_id": bill_id, "ordinal": int(ordinals[q])},
+        "match": {"bill_id": relative.bill_id, "ordinal": int(ordinals[m])},
+        "page": {
+            "bill_id": bill_id,
+            "listed": len(page.matches),
+            "families": page.families,
+            "rank": rank + 1,
+            "family": relative.family,
+            "state": relative.state,
+            "share": round(relative.share, 4),
+            "relative_stages": sorted(relative.sections_by_stage),
+            "best_cosine": relative.best_cosine,
+            # Every relative the page shows by meaning alone, by its best cosine: what
+            # a higher threshold would take off the page.
+            "shown_semantic_only": sorted(
+                float(m.best_cosine)
+                for m in page.matches
+                if "near_duplicate" not in m.sections_by_stage and m.best_cosine is not None
+            ),
+        },
+    }
+
+
+def _sample_rows(
+    chosen: Sequence[str],
+    relatives: Mapping[str, BillRelatives],
+    pairs: ListedPairs,
+    section_bills: Sequence[str],
+    ordinals: NDArray[np.int64],
+    *,
+    seed: int,
+    first: int,
+) -> list[dict[str, Any]]:
+    """One relative drawn at random from each chosen bill's page, with the pair it rests on."""
+    wanted = set(chosen) | {m.bill_id for page in relatives.values() for m in page.matches}
+    numbers = _section_numbers(section_bills, wanted)
+    rows: list[dict[str, Any]] = []
+    for n, bill_id in enumerate(chosen, start=first):
+        page = relatives[bill_id]
+        if not page.matches:
+            raise RelativesSampleError(f"{bill_id} has stored pairs but lists no relative")
+        rank = int(np.random.default_rng([seed, n]).integers(len(page.matches)))
+        relative = page.matches[rank]
+        judged = _judged_pair(
+            pairs,
+            _mask(len(section_bills), numbers[bill_id]),
+            _mask(len(section_bills), numbers[relative.bill_id]),
+        )
+        if judged is None:
+            raise RelativesSampleError(f"no stored pair links {bill_id} to {relative.bill_id}")
+        rows.append(_sample_row(f"r{n:04d}", bill_id, page, rank, judged, ordinals, pairs))
+    return rows
+
+
 def build_relatives_sample(
     tables_dir: Path,
     *,
@@ -170,21 +288,10 @@ def build_relatives_sample(
     listed at `threshold` with `flag` and its exemption at `exempt_at` (lineage.match.listing), pair
     ids numbered from `first`."""
     section_bills, ordinals = section_keys(tables_dir)
-    with db.connect_quiet() as con:
-        states = near_queries.bill_states(con, bills_glob=str(tables_dir / "bills" / "*.parquet"))
-    in_state = np.fromiter(
-        (states.get(b) == state for b in section_bills), dtype=bool, count=len(section_bills)
-    )
     pairs = listed_pairs(
         tables_dir, model=model, threshold=threshold, flag=flag, exempt_at=exempt_at
     )
-    near, meaning = pairs.near, pairs.meaning
-    paired = np.zeros(len(section_bills), dtype=bool)
-    for left, right in ((near.left, near.right), (meaning.left, meaning.right)):
-        paired[np.asarray(left)] = True
-        paired[np.asarray(right)] = True
-    signed = sorted({section_bills[s] for s in np.flatnonzero(in_state).tolist()})
-    listing = sorted({section_bills[s] for s in np.flatnonzero(in_state & paired).tolist()})
+    signed, listing = _state_bills(tables_dir, state, section_bills, pairs)
     candidates = [b for b in listing if b not in excluded]
     if len(candidates) < bills:
         raise RelativesSampleError(
@@ -193,68 +300,8 @@ def build_relatives_sample(
     order: list[int] = np.random.default_rng(seed).permutation(len(candidates)).tolist()
     chosen = [candidates[i] for i in order[:bills]]
     relatives = bill_relatives(tables_dir, chosen, model=model, listed=pairs)
-    wanted = set(chosen) | {m.bill_id for page in relatives.values() for m in page.matches}
-    numbers: dict[str, list[int]] = {}
-    for number, bill_id in enumerate(section_bills):
-        if bill_id in wanted:
-            numbers.setdefault(bill_id, []).append(number)
-    rows: list[dict[str, Any]] = []
-    listed: list[int] = []
-    for n, bill_id in enumerate(chosen, start=first):
-        page = relatives[bill_id]
-        if not page.matches:
-            raise RelativesSampleError(f"{bill_id} has stored pairs but lists no relative")
-        rank = int(np.random.default_rng([seed, n]).integers(len(page.matches)))
-        relative = page.matches[rank]
-        query_sections = _mask(len(section_bills), numbers[bill_id])
-        match_sections = _mask(len(section_bills), numbers[relative.bill_id])
-        found = _best_pair(
-            _touching(near.left, near.right, query_sections),
-            near.left,
-            near.right,
-            near.agreements,
-            query_sections,
-            match_sections,
-        )
-        if found is None:
-            found = _best_pair(
-                _touching(meaning.left, meaning.right, query_sections),
-                meaning.left,
-                meaning.right,
-                meaning.cosine,
-                query_sections,
-                match_sections,
-            )
-        if found is None:
-            raise RelativesSampleError(f"no stored pair links {bill_id} to {relative.bill_id}")
-        q, m = found
-        rows.append(
-            {
-                "pair": f"r{n:04d}",
-                "stages": _stages_of(q, m, near.left, near.right, meaning.left, meaning.right),
-                "query": {"bill_id": bill_id, "ordinal": int(ordinals[q])},
-                "match": {"bill_id": relative.bill_id, "ordinal": int(ordinals[m])},
-                "page": {
-                    "bill_id": bill_id,
-                    "listed": len(page.matches),
-                    "families": page.families,
-                    "rank": rank + 1,
-                    "family": relative.family,
-                    "state": relative.state,
-                    "share": round(relative.share, 4),
-                    "relative_stages": sorted(relative.sections_by_stage),
-                    "best_cosine": relative.best_cosine,
-                    # Every relative the page shows by meaning alone, by its best cosine: what
-                    # a higher threshold would take off the page.
-                    "shown_semantic_only": sorted(
-                        float(m.best_cosine)
-                        for m in page.matches
-                        if "near_duplicate" not in m.sections_by_stage and m.best_cosine is not None
-                    ),
-                },
-            }
-        )
-        listed.append(len(page.matches))
+    rows = _sample_rows(chosen, relatives, pairs, section_bills, ordinals, seed=seed, first=first)
+    listed = [len(relatives[b].matches) for b in chosen]
     report = {
         "command": COMMAND,
         "state": state,
