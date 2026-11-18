@@ -34,6 +34,7 @@ from lineage.match.near.pairs import (
 )
 from lineage.match.near.signatures import open_signatures, row_labels, sign_part
 from lineage.match.near.stoplist import load_stoplist
+from lineage.match.state_boilerplate import COUNT_FILES
 
 
 @dataclass(frozen=True, slots=True)
@@ -208,13 +209,14 @@ def update_near_duplicates(
 def _carry_state_boilerplate(
     tables: Path, view: Staging, section_map: NDArray[np.int64], sections: int
 ) -> None:
-    """The base build's state boilerplate counts under the new section numbers (DR-7): pinned,
-    so a new section counts no families until the next full build counts it."""
-    path = tables / "state_boilerplate" / "families_reached.npy"
-    if not path.exists():
-        return
-    old = np.load(path)
-    counts = np.zeros(sections, dtype=old.dtype)
-    kept = section_map >= 0
-    counts[section_map[kept]] = old[kept]
-    np.save(view.fresh("state_boilerplate/families_reached.npy"), counts)
+    """The base build's state boilerplate counts and passage reach under the new section numbers
+    (DR-7): pinned, so a new section counts no families until the next full build counts it."""
+    for name in COUNT_FILES:
+        path = tables / "state_boilerplate" / name
+        if not path.exists():
+            continue
+        old = np.load(path)
+        counts = np.zeros(sections, dtype=old.dtype)
+        kept = section_map >= 0
+        counts[section_map[kept]] = old[kept]
+        np.save(view.fresh(f"state_boilerplate/{name}"), counts)

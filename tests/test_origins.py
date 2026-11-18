@@ -3,18 +3,23 @@ table that is empty until matching has run."""
 
 from datetime import date
 from pathlib import Path
+from typing import Any
 
 import pytest
 from pydantic import ValidationError
 
 from lineage.origins.matches import (
     FLOOR,
+    REACH_SCALE,
     BillSpan,
     OriginMatch,
+    Weighed,
     is_listed,
     origins_report,
     read_origin_matches,
     share_of,
+    weight,
+    weighted_shares,
     write_origin_matches,
 )
 from lineage.origins.modeldocs import ModelDoc
@@ -103,3 +108,54 @@ def test_the_report_counts_by_source_and_stage_and_shared_texts_once() -> None:
 def test_the_report_refuses_a_match_no_source_holds() -> None:
     with pytest.raises(ValueError, match="no source holds"):
         origins_report([_match("ocd-bill/1", "gone/a")], [_doc("first/a", "1")], seconds=None)
+
+
+def _weighed(
+    model: list[tuple[int, int]], bill: list[tuple[int, int]], words: tuple[int, int]
+) -> dict[str, Any]:
+    """A match's weighing fields: (words, reach) per matched section, and the shares' wholes."""
+    return {
+        "model_words": words[0],
+        "bill_words": words[1],
+        "weighed_model": [Weighed(section=i, words=w, reach=r) for i, (w, r) in enumerate(model)],
+        "weighed_bill": [Weighed(section=i, words=w, reach=r) for i, (w, r) in enumerate(bill)],
+    }
+
+
+def test_a_passage_counts_in_full_up_to_the_scale_and_less_the_wider_it_recurs() -> None:
+    assert weight(0) == weight(REACH_SCALE) == 1.0
+    assert weight(2 * REACH_SCALE) == 0.5
+    assert weight(10 * REACH_SCALE) == pytest.approx(0.1)
+
+
+def test_the_floor_reads_the_weighted_shares_and_pages_keep_the_plain_ones() -> None:
+    common = 4 * REACH_SCALE
+    m = OriginMatch(
+        bill_id="b",
+        doc_id="lib/doc",
+        stages=["near_duplicate"],
+        model_share=0.5,
+        bill_share=0.4,
+        spans=[],
+        **_weighed([(50, common)], [(40, common)], (100, 100)),
+    )
+    assert weighted_shares(m) == (0.125, 0.1)
+    assert share_of(m) == 0.125
+    assert not is_listed(m)
+    assert (m.model_share, m.bill_share) == (0.5, 0.4)  # what a page shows is unchanged
+    distinctive = m.model_copy(update=_weighed([(50, 3)], [(40, 3)], (100, 100)))
+    assert weighted_shares(distinctive) == (0.5, 0.4)
+    assert is_listed(distinctive)
+
+
+def test_a_match_written_without_reach_is_read_by_its_plain_shares() -> None:
+    m = OriginMatch(
+        bill_id="b",
+        doc_id="lib/doc",
+        stages=["semantic"],
+        model_share=0.3,
+        bill_share=0.1,
+        spans=[],
+    )
+    assert weighted_shares(m) == (0.3, 0.1)
+    assert is_listed(m)

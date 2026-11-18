@@ -18,11 +18,19 @@ from lineage.evals.acts import ACTS, ACTS_DIR, enacted_text
 from lineage.evals.commission import evaluate
 from lineage.evals.ulc import ENACTMENTS, load_enactments
 from lineage.match.listing import listed_hits
+from lineage.match.semantic.pairs import build_semantic_pairs
 from lineage.match.semantic.stage import CORROBORATING, THRESHOLD, open_search
+from lineage.match.state_boilerplate import build_state_boilerplate, load_passage_reach
 from lineage.origins import matching as origin_matching
 from lineage.origins.collect import collectors
 from lineage.origins.labels import build_items, strongest_pair
-from lineage.origins.matches import BillSpan, OriginMatch, read_origin_matches, write_origin_matches
+from lineage.origins.matches import (
+    BillSpan,
+    OriginMatch,
+    read_origin_matches,
+    weighted_shares,
+    write_origin_matches,
+)
 from lineage.origins.matching import (
     BillHits,
     BillSection,
@@ -136,6 +144,33 @@ def test_each_match_keeps_its_section_pairs_with_each_stages_evidence(
         assert any(p.agreements for p in m.pairs) == ("near_duplicate" in m.stages)
         assert any(p.cosine is not None for p in m.pairs) == ("semantic" in m.stages)
         assert all(p.cosine is None or p.cosine >= CORROBORATING for p in m.pairs)
+
+
+def test_with_reach_stored_each_match_weighs_the_sections_its_shares_count(
+    synthetic: tuple[Path, Path, list[OriginMatch]],
+) -> None:
+    tables, root, _ = synthetic
+    build_semantic_pairs(tables, model=FAKE_MODEL, floor_bytes=0)
+    build_state_boilerplate(tables, model=FAKE_MODEL, floor_bytes=0)
+    reach = load_passage_reach(tables)
+    assert reach is not None
+
+    matches = _match(tables, _docs(root), root)
+
+    assert matches
+    for m in matches:
+        assert m.model_words
+        assert m.bill_words
+        plain = (
+            round(sum(w.words for w in m.weighed_model) / m.model_words, 4),
+            round(sum(w.words for w in m.weighed_bill) / m.bill_words, 4),
+        )
+        assert plain == (m.model_share, m.bill_share)
+        assert {w.section for w in m.weighed_bill} == {p.ordinal for p in m.pairs}
+        assert {w.section for w in m.weighed_model} == {p.model_section for p in m.pairs}
+        model, bill = weighted_shares(m)
+        assert model <= m.model_share
+        assert bill <= m.bill_share
 
 
 def test_matching_is_deterministic_and_leaves_the_bill_index_alone(

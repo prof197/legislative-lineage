@@ -76,9 +76,11 @@ from lineage.match.semantic.vectors import (
     vectors_dir,
 )
 from lineage.match.state_boilerplate import (
+    REACH_FILE,
     build_state_boilerplate,
     has_counts,
     load_families_reached,
+    load_passage_reach,
 )
 from lineage.origins.matches import origins_path, write_origin_matches
 from lineage.text.inventory import PLAN as TEXT_PLAN
@@ -238,26 +240,29 @@ def _exported_for_fresh(tables: Path, fresh: Mapping[str, frozenset[str]]) -> in
 
 
 def _carry_counts(tables: Path, pinned_from: Path) -> dict[str, int]:
-    """The pinned tables' state boilerplate counts on the rebuild's sections, by bill and
-    ordinal; a section they do not have counts no families, as a new section in an update."""
-    counts = load_families_reached(pinned_from)
+    """The pinned tables' state boilerplate counts and passage reach on the rebuild's sections,
+    by bill and ordinal; a section they do not have counts no families, as a new section in an
+    update."""
     bills, ordinals = section_keys(pinned_from)
-    by_key = {
-        (b, int(o)): int(c)
-        for b, o, c in zip(bills, ordinals.tolist(), counts.tolist(), strict=True)
-    }
+    keys = list(zip(bills, ordinals.tolist(), strict=True))
+    position = {(b, int(o)): i for i, (b, o) in enumerate(keys)}
     now_bills, now_ordinals = section_keys(tables)
-    carried = np.zeros(len(now_bills), dtype=counts.dtype)
-    found = 0
-    for i, key in enumerate(zip(now_bills, now_ordinals.tolist(), strict=True)):
-        c = by_key.get((key[0], int(key[1])))
-        if c is not None:
-            carried[i] = c
-            found += 1
+    now = zip(now_bills, now_ordinals.tolist(), strict=True)
+    at = np.fromiter(
+        (position.get((b, int(o)), -1) for b, o in now), dtype=np.int64, count=len(now_bills)
+    )
+    found = at >= 0
     where = tables / "state_boilerplate"
     where.mkdir(parents=True, exist_ok=True)
-    np.save(where / "families_reached.npy", carried)
-    return {"sections": len(now_bills), "carried": found, "not_in_pinned": len(now_bills) - found}
+    stored = [("families_reached.npy", load_families_reached(pinned_from))]
+    if (reach := load_passage_reach(pinned_from)) is not None:
+        stored.append((REACH_FILE, reach))
+    for name, counts in stored:
+        carried = np.zeros(len(now_bills), dtype=counts.dtype)
+        carried[found] = counts[at[found]]
+        np.save(where / name, carried)
+    n = int(found.sum())
+    return {"sections": len(now_bills), "carried": n, "not_in_pinned": len(now_bills) - n}
 
 
 def _vector_index(

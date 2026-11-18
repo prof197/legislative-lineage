@@ -27,6 +27,11 @@ REPORT = Path("reports/origins.json")
 # (reports/origin_threshold_proposal.json): an origin names an organization, so a wrong one
 # costs more than a missed one. See DESIGN.md#origin-matches.
 FLOOR = 0.25
+# A passage whose reach (the distinct bill families it recurs across, nationally, by either
+# stage, and the other model texts holding it) is at most this many counts in full; past it,
+# REACH_SCALE / reach of its words count, as a search engine discounts a common word. Set on the
+# tuning sample at M13's step 6 (reports/origin_reach_proposal.json). See DESIGN.md#origin-matches.
+REACH_SCALE = 50
 
 
 class BillSpan(BaseModel):
@@ -57,6 +62,15 @@ class SectionPair(BaseModel):
         return self
 
 
+class Weighed(BaseModel):
+    """A matched section's counted words and its reach, what its weight in a share comes from."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+    section: int = Field(ge=0)  # the model's section index, or the bill's ordinal
+    words: int = Field(ge=0)
+    reach: int = Field(ge=0)
+
+
 class OriginMatch(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
     bill_id: str
@@ -68,17 +82,48 @@ class OriginMatch(BaseModel):
     # Kept for labeling, never shown: the model's sections are not. Empty in a table written
     # before they were kept.
     pairs: list[SectionPair] = Field(default_factory=list[SectionPair])
+    # Each matched section's words and reach, and the words the shares are of, so the weighted
+    # shares the floor reads are a function of the table. None in a table written before.
+    model_words: int | None = None
+    bill_words: int | None = None
+    weighed_model: list[Weighed] = Field(default_factory=list[Weighed])
+    weighed_bill: list[Weighed] = Field(default_factory=list[Weighed])
 
 
-def share_of(m: OriginMatch) -> float:
-    """What the floor compares: the larger of a match's two shares, so a bill that takes one
-    section of a long model and a long bill that takes a short model whole both stand."""
-    return max(m.model_share, m.bill_share)
+def weight(reach: int, scale: int = REACH_SCALE) -> float:
+    """What a passage's words count for: in full up to `scale`, then less the wider it recurs."""
+    return 1.0 if reach <= scale else scale / reach
 
 
-def is_listed(m: OriginMatch, floor: float = FLOOR) -> bool:
-    """Whether a page lists the match: its larger share at or above the floor."""
-    return share_of(m) >= floor
+def _weighted(sections: Sequence[Weighed], whole: int | None, scale: int) -> float:
+    if not whole:
+        return 0.0
+    part = sum(s.words * weight(s.reach, scale) for s in sections)
+    return round(min(part / whole, 1.0), 4)
+
+
+def weighted_shares(m: OriginMatch, scale: int = REACH_SCALE) -> tuple[float, float]:
+    """The model's and the bill's shares with each passage weighed by its reach; the plain
+    shares for a match written without reach."""
+    if m.model_words is None or m.bill_words is None:
+        return m.model_share, m.bill_share
+    return (
+        _weighted(m.weighed_model, m.model_words, scale),
+        _weighted(m.weighed_bill, m.bill_words, scale),
+    )
+
+
+def share_of(m: OriginMatch, scale: int = REACH_SCALE) -> float:
+    """What the floor compares: the larger of a match's two weighted shares, so a bill that
+    takes one section of a long model and a long bill that takes a short model whole both
+    stand, and a match resting on passages that recur everywhere counts for less. Pages show the
+    plain shares: what share of the wording the two texts have in common."""
+    return max(weighted_shares(m, scale))
+
+
+def is_listed(m: OriginMatch, floor: float = FLOOR, scale: int = REACH_SCALE) -> bool:
+    """Whether a page lists the match: its larger weighted share at or above the floor."""
+    return share_of(m, scale) >= floor
 
 
 def origins_path(tables_dir: Path) -> Path:

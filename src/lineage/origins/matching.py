@@ -31,9 +31,10 @@ See DESIGN.md#dr-8.
 """
 
 from collections import defaultdict
-from collections.abc import Collection, Sequence
+from collections.abc import Collection, Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
@@ -46,6 +47,7 @@ from lineage.match.query import near_duplicate_hits, require_index, sign_query
 from lineage.match.semantic.embed import embed as embed_texts
 from lineage.match.semantic.embed import load_model
 from lineage.match.semantic.models import MODELS_DIR
+from lineage.match.semantic.pairs import section_keys
 from lineage.match.semantic.stage import (
     CORROBORATING,
     THRESHOLD,
@@ -53,8 +55,9 @@ from lineage.match.semantic.stage import (
     open_search,
     search_sections,
 )
+from lineage.match.state_boilerplate import load_passage_reach
 from lineage.origins import queries
-from lineage.origins.matches import BillSpan, OriginMatch, SectionPair, Stage
+from lineage.origins.matches import BillSpan, OriginMatch, SectionPair, Stage, Weighed
 from lineage.origins.modeldocs import ModelDoc, ModelDocError, load_text
 from lineage.text.boilerplate import boilerplate_kind
 from lineage.text.generic_sections import (
@@ -292,11 +295,37 @@ def match_texts(
         for bill_id, rows_of in by_bill.items()
     }
 
+    reach = section_reach(tables_dir, hits)
     out: list[OriginMatch] = []
     for (d, bill_id), entry in sorted(hits.items(), key=lambda kv: (kv[0][1], kv[0][0])):
-        if (m := match_of(texts[d], bill_id, sections[bill_id], entry, embed)) is not None:
+        of_bill = None if reach is None else reach.get(bill_id, {})
+        m = match_of(texts[d], bill_id, sections[bill_id], entry, embed, reach=of_bill)
+        if m is not None:
             out.append(m)
     return out
+
+
+def section_reach(
+    tables_dir: Path, hits: Mapping[tuple[int, str], BillHits]
+) -> dict[str, dict[int, int]] | None:
+    """Each hit bill section's reach, by bill and ordinal: the distinct other bill families its
+    text recurs across nationally (lineage.match.state_boilerplate's passage reach), and the
+    other model texts whose hits pair with it. None for tables without passage reach."""
+    stored = load_passage_reach(tables_dir)
+    if stored is None:
+        return None
+    texts_of: dict[tuple[str, int], set[int]] = defaultdict(set)
+    for (d, bill_id), entry in hits.items():
+        for _, ordinal in entry.pairs:
+            texts_of[(bill_id, ordinal)].add(d)
+    wanted = {bill_id for _, bill_id in hits}
+    bills, ordinals = section_keys(tables_dir)
+    out: dict[str, dict[int, int]] = defaultdict(dict)
+    for i, (bill_id, ordinal) in enumerate(zip(bills, ordinals.tolist(), strict=True)):
+        if bill_id in wanted and (bill_id, ordinal) in texts_of:
+            others = len(texts_of[(bill_id, ordinal)]) - 1
+            out[bill_id][int(ordinal)] = int(stored[i]) + others
+    return dict(out)
 
 
 @dataclass(frozen=True, slots=True)
@@ -429,6 +458,8 @@ def match_of(
     bill: dict[int, BillSection],
     entry: BillHits,
     embed: Embedder | None,
+    *,
+    reach: Mapping[int, int] | None = None,
 ) -> OriginMatch | None:
     """A bill's match with a model from the section pairs the stages found, generic sections
     left out on both sides (ruled at the step 47 review): a pair counts only when neither of its
@@ -451,7 +482,35 @@ def match_of(
         bill_share=_share(sum(bill[o].counted for o in matched_bill), bill_words),
         spans=_match_spans(pairs, alignments),
         pairs=_section_pairs(pairs, entry),
+        **({} if reach is None else _weighed(text, bill, pairs, reach, model_words, bill_words)),
     )
+
+
+def _weighed(
+    text: ModelText,
+    bill: dict[int, BillSection],
+    pairs: Sequence[tuple[int, int]],
+    reach: Mapping[int, int],
+    model_words: int,
+    bill_words: int,
+) -> dict[str, Any]:
+    """Each counted section's words and reach: a bill section's its own, a model section's
+    that of the least widespread bill section it pairs with, its most distinctive evidence."""
+    of_model: dict[int, int] = {}
+    for q, o in pairs:
+        r = reach.get(o, 0)
+        of_model[q] = min(r, of_model.get(q, r))
+    return {
+        "model_words": model_words,
+        "bill_words": bill_words,
+        "weighed_model": [
+            Weighed(section=q, words=text.counted(q), reach=r) for q, r in sorted(of_model.items())
+        ],
+        "weighed_bill": [
+            Weighed(section=o, words=bill[o].counted, reach=reach.get(o, 0))
+            for o in sorted({o for _, o in pairs})
+        ],
+    }
 
 
 def _share(part: int, whole: int) -> float:

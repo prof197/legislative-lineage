@@ -84,6 +84,13 @@ def _where(tables_dir: Path) -> Path:
     return tables_dir / "state_boilerplate"
 
 
+# Each section's reach, stored beside the counts and carried with them: the distinct families,
+# other than its own, that hold a near-duplicate of it or a match by meaning, in any state.
+# Origin matching counts a passage that recurs widely for less (lineage.origins.matches).
+REACH_FILE = "passage_reach.npy"
+COUNT_FILES = ("families_reached.npy", REACH_FILE)
+
+
 def has_counts(tables_dir: Path) -> bool:
     return (_where(tables_dir) / "families_reached.npy").exists()
 
@@ -101,6 +108,21 @@ def load_families_reached(tables_dir: Path) -> NDArray[np.int64]:
             f"{path} counts {counts.size} sections, the signatures {len(bills)}; run `{COMMAND}`"
         )
     return counts
+
+
+def load_passage_reach(tables_dir: Path) -> NDArray[np.int64] | None:
+    """Each section's national reach, in the signatures' order, or None for tables built
+    before it was counted; refused when the sections have changed since."""
+    path = _where(tables_dir) / REACH_FILE
+    if not path.exists():
+        return None
+    reach = cast("NDArray[np.int64]", np.load(path))
+    bills, _ = section_keys(tables_dir)
+    if reach.size != len(bills):
+        raise StateBoilerplateError(
+            f"{path} counts {reach.size} sections, the signatures {len(bills)}; run `{COMMAND}`"
+        )
+    return reach
 
 
 def flagged(counts: NDArray[np.int64], min_families: int = MIN_FAMILIES) -> NDArray[np.bool_]:
@@ -125,10 +147,21 @@ def _histogram(counts: NDArray[np.int64]) -> list[dict[str, Any]]:
     return out
 
 
-def _store_counts(tables_dir: Path, counts: NDArray[np.int64], *, floor_bytes: int) -> None:
+def _store_counts(
+    tables_dir: Path,
+    counts: NDArray[np.int64],
+    reach: NDArray[np.int64],
+    *,
+    floor_bytes: int,
+) -> None:
     where = _where(tables_dir)
-    require_free_space(where.parent, needed=counts.size * 8 + (1 << 20), floor=floor_bytes)
-    rebuild_dir(where, lambda d: np.save(d / "families_reached.npy", counts))
+    require_free_space(where.parent, needed=counts.size * 16 + (1 << 20), floor=floor_bytes)
+
+    def write(d: Path) -> None:
+        np.save(d / "families_reached.npy", counts)
+        np.save(d / REACH_FILE, reach)
+
+    rebuild_dir(where, write)
 
 
 def _sweep_at(
@@ -198,12 +231,16 @@ def build_state_boilerplate(
     family = section_families(bills, load_families(tables_dir))
     same = load_same_state_pairs(tables_dir)
     counts = families_reached(family, same.left, same.right)
-    del same
-    require_within(bound_bytes, "counting the families each section reaches")
-    _store_counts(tables_dir, counts, floor_bytes=floor_bytes)
-
     near = load_cross_state_pairs(tables_dir)
     meaning = load_semantic_pairs(tables_dir, model, threshold=BUILD_THRESHOLD)
+    reach = families_reached(
+        family,
+        np.concatenate([np.asarray(p.left) for p in (same, near, meaning)]),
+        np.concatenate([np.asarray(p.right) for p in (same, near, meaning)]),
+    )
+    del same
+    require_within(bound_bytes, "counting the families each section reaches")
+    _store_counts(tables_dir, counts, reach, floor_bytes=floor_bytes)
     with db.connect_quiet() as con:
         state_of_bill = near_queries.bill_states(
             con, bills_glob=str(tables_dir / "bills" / "*.parquet")
@@ -230,6 +267,14 @@ def build_state_boilerplate(
         # The precision sample's strata in the build, as the estimate weights them.
         "precision_strata": sizes,
         "flagged_by_state": [{"state": s, "sections": n} for s, n in by_state[:LARGEST_LISTED]],
+        # The national reach origin matching weighs passages by (lineage.origins.matches).
+        "passage_reach": {
+            "histogram": _histogram(reach),
+            "quantiles_of_sections_reaching_another_family": {
+                q: int(np.quantile(reach[reach > 0], float(q))) if (reach > 0).any() else 0
+                for q in ("0.5", "0.9", "0.99", "0.999")
+            },
+        },
         "states_with_a_flagged_section": len(by_state),
         "bytes": int(counts.nbytes),
         "seconds": round(time.monotonic() - started),
