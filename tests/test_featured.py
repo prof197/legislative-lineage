@@ -13,7 +13,7 @@ from lineage.featured import (
     introduced_after,
     pairs_with,
 )
-from lineage.listing import ListedPairs
+from lineage.match.listing import ListedPairs
 from lineage.match.near.pairs import SectionPairs
 from lineage.match.semantic.pairs import SemanticPairs
 

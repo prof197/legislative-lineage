@@ -1,6 +1,6 @@
 """The state boilerplate flag's precision: the precision sample with the flag on, and the pairs
 the flag drops, sampled apart under their own seed and read on their own
-(lineage.state_boilerplate computes the flag; DESIGN.md#boilerplate).
+(lineage.match.state_boilerplate computes the flag; DESIGN.md#boilerplate).
 """
 
 import json
@@ -14,8 +14,7 @@ from numpy.typing import NDArray
 from lineage.labels import Item, SectionKey
 from lineage.match.semantic.pairs import section_keys
 from lineage.match.semantic.stage import MODEL
-from lineage.precision import SEED, draw, estimate, sample_rows, without_sections
-from lineage.state_boilerplate import (
+from lineage.match.state_boilerplate import (
     COMMAND,
     MIN_FAMILIES,
     REPORT,
@@ -24,7 +23,8 @@ from lineage.state_boilerplate import (
     has_counts,
     load_families_reached,
 )
-from lineage.strata import STRATA, stored_strata, stratum_of
+from lineage.match.strata import STRATA, stored_strata, stratum_of
+from lineage.precision import SEED, draw, estimate, sample_rows, without_sections
 
 # The pairs the flag drops, sampled apart so their precision is measured directly: a third of
 # the main sample's size, under its own seed. Pair ids start with "f".

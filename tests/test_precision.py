@@ -11,6 +11,7 @@ import pytest
 from lineage.core import db
 from lineage.core.intervals import wilson
 from lineage.labels import SAME_PROVISION, Item, Pair, Section, SectionKey, SectionRef, text_sha256
+from lineage.match.strata import STRATA, PrecisionError, pair_keys, strata, stratum_of
 from lineage.precision import (
     draw,
     estimate,
@@ -20,7 +21,6 @@ from lineage.precision import (
     sample_rows,
     stratified,
 )
-from lineage.strata import STRATA, PrecisionError, pair_keys, strata, stratum_of
 
 
 def _keys(*pairs: tuple[int, int]) -> np.ndarray:

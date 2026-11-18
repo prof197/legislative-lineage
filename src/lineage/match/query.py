@@ -26,9 +26,9 @@ from pathlib import Path
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage import queries
 from lineage.core import db
-from lineage.listing import MeaningHit, NearHit, SectionKey, listed_hits
+from lineage.match import queries
+from lineage.match.listing import MeaningHit, NearHit, SectionKey, listed_hits
 from lineage.match.near.bands import load_band_index
 from lineage.match.near.lsh import BANDS, BUCKET_CAP, BandIndex, band_keys
 from lineage.match.near.minhash import NUM_PERM, permutations, signatures
@@ -79,7 +79,7 @@ class Hits:
     """A query's hits before grouping, so its matches can be grouped again under a stricter
     semantic threshold (`regrouped`) without searching again. The hits by meaning go down to
     the lower of the search's threshold and the cosine that corroborates a match, which the
-    state boilerplate flag's exemption reads (lineage.listing)."""
+    state boilerplate flag's exemption reads (lineage.match.listing)."""
 
     near: Sequence[NearHit]  # (query section, bill id, ordinal, agreements)
     by_meaning: Sequence[MeaningHit]  # (query section, bill id, ordinal, cosine)
@@ -207,8 +207,8 @@ def group_matches(
 
     `near` holds (query section, bill id, agreements) and `by_meaning` (query section, bill id,
     cosine); `words` gives each query section's words, and `words_searched` the share's
-    denominator. A corpus bill's relatives are scored by the same function (lineage.relatives),
-    so a bill and a query scored alike agree."""
+    denominator. A corpus bill's relatives are scored by the same function
+    (lineage.match.relatives), so a bill and a query scored alike agree."""
     with db.connect_quiet() as con:
         summaries = queries.bill_summaries(
             con,
@@ -275,7 +275,7 @@ def query_text(
 ) -> QueryResult:
     """Every family that shares text with `raw`, best first: verified near-duplicates, and with
     `semantic`, the semantic stage's matches at `semantic_threshold` too, as a page lists them
-    (lineage.listing): without hits on the `flagged` sections that one stage alone found. It
+    (lineage.match.listing): without hits on the `flagged` sections that one stage alone found. It
     searches down to the cosine that corroborates a match, so the flag's exemption sees the
     hits under `semantic_threshold`, and lists only those at or above it."""
     require_index(tables_dir)

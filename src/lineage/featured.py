@@ -2,7 +2,7 @@
 
 Each story has an anchor bill and a rule for the relatives it is compared with (STORIES), as
 the M6 review ruled them. A pair is every section pair a page lists between the anchor and a
-relative (lineage.listing: both stages, by meaning at the stage's threshold, the state
+relative (lineage.match.listing: both stages, by meaning at the stage's threshold, the state
 boilerplate flag applied), the anchor's section as the origin. "Origin" only names the text the
 comparison starts from: no story's anchor is a documented source, so no explanation may say
 which text came first (DESIGN.md#explanations).
@@ -35,9 +35,9 @@ from numpy.typing import NDArray
 from lineage import queries
 from lineage.answer_key import ANSWER_KEY, read_answer_key
 from lineage.core import db
-from lineage.listing import ListedPairs, listed_pairs, shipped_flag
+from lineage.match.listing import ListedPairs, listed_pairs, shipped_flag
+from lineage.match.relatives import bill_relatives
 from lineage.match.semantic.pairs import section_keys
-from lineage.relatives import bill_relatives
 
 PAIRS = Path("evals/featured_pairs.jsonl")
 REPORT = Path("reports/featured_pairs.json")

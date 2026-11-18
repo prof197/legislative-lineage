@@ -167,9 +167,10 @@ from lineage.labels import (
 )
 from lineage.labels import PERSON as PERSON_PREFIX
 from lineage.labels import model_labeler as model_labeler_name
-from lineage.listing import flagged_sections, shipped_flag
+from lineage.match.listing import flagged_sections, shipped_flag
 from lineage.match.near.index import build_index
 from lineage.match.near.stoplist import StoplistError, build_stoplist
+from lineage.match.query import IndexMissingError, query_text, require_index
 from lineage.match.semantic.embed import embed as embed_texts
 from lineage.match.semantic.embed import load_model
 from lineage.match.semantic.models import MODELS, MODELS_DIR, ModelError, fetch_model
@@ -188,6 +189,15 @@ from lineage.match.semantic.vectors import REPORT as EMBED_REPORT
 from lineage.match.semantic.vectors import THREADS as EMBED_THREADS
 from lineage.match.semantic.vectors import EmbedError, embed_corpus, vectors_dir
 from lineage.match.semantic.vectors import write_report as write_embed_report
+from lineage.match.state_boilerplate import (
+    MIN_FAMILIES,
+    StateBoilerplateError,
+    build_state_boilerplate,
+    has_counts,
+)
+from lineage.match.state_boilerplate import REPORT as STATE_BOILERPLATE_REPORT
+from lineage.match.state_boilerplate import write_report as write_state_boilerplate_report
+from lineage.match.strata import PrecisionError
 from lineage.model_labels import BUDGET as LABEL_BUDGET
 from lineage.model_labels import MAX_COST as LABEL_MAX_COST
 from lineage.model_labels import MODEL_ID as LABEL_MODEL
@@ -260,7 +270,6 @@ from lineage.precision import SAMPLE as PRECISION_SAMPLE
 from lineage.precision import SAMPLE_REPORT as PRECISION_SAMPLE_REPORT
 from lineage.precision import build_sample, estimate, load_sizes, write_sample
 from lineage.publish import PublishError, export_changes, promote, staging_dir
-from lineage.query import IndexMissingError, query_text, require_index
 from lineage.relatives_sample import LABELS as RELATIVES_LABELS
 from lineage.relatives_sample import PARTS as RELATIVES_PARTS
 from lineage.relatives_sample import SAMPLE as RELATIVES_SAMPLE
@@ -301,15 +310,6 @@ from lineage.spend import BUDGET as CALL_BUDGET
 from lineage.spend import SPEND as CALL_SPEND
 from lineage.spend import BudgetError, Meter, check_projection
 from lineage.spend import spent as spent_on_calls
-from lineage.state_boilerplate import (
-    MIN_FAMILIES,
-    StateBoilerplateError,
-    build_state_boilerplate,
-    has_counts,
-)
-from lineage.state_boilerplate import REPORT as STATE_BOILERPLATE_REPORT
-from lineage.state_boilerplate import write_report as write_state_boilerplate_report
-from lineage.strata import PrecisionError
 from lineage.text.inventory import PLAN, REPORT, StalePlanError, build_inventory
 from lineage.text.merge import merge_texts
 from lineage.text.quality import REPORT as QUALITY

@@ -9,7 +9,7 @@ Writes three tables:
   signature positions on which their best pair of windows agrees), sorted by left, then right.
   Sections are numbered in the signatures table's row order (`SignatureTable.sections`).
 - `<tables>/same_state_pairs/`: the verified same-state section pairs, in the same layout. The
-  state boilerplate flag (lineage.state_boilerplate) counts the families each section's
+  state boilerplate flag (lineage.match.state_boilerplate) counts the families each section's
   near-duplicates reach in its own state.
 - `<tables>/families/families.parquet`: every signed bill's family, named by the first bill id
   in the family in sort order. A bill with no near-duplicate in its state is its own family.

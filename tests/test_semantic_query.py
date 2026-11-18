@@ -9,9 +9,9 @@ from pathlib import Path
 import pytest
 
 from lineage.core import db
+from lineage.match.query import query_text, regrouped
 from lineage.match.semantic import stage as semantic
 from lineage.match.semantic.stage import CORROBORATING, THRESHOLD, SemanticSearch, search_sections
-from lineage.query import query_text, regrouped
 from tests.fakes import MARK, bag_of_words_search
 
 

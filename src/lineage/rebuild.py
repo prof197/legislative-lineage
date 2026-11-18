@@ -74,8 +74,12 @@ from lineage.match.semantic.vectors import (
     shard_name,
     vectors_dir,
 )
+from lineage.match.state_boilerplate import (
+    build_state_boilerplate,
+    has_counts,
+    load_families_reached,
+)
 from lineage.origins import origins_path, write_origin_matches
-from lineage.state_boilerplate import build_state_boilerplate, has_counts, load_families_reached
 from lineage.text.inventory import PLAN as TEXT_PLAN
 from lineage.text.merge import BULK, FETCHED, merge_texts
 from lineage.text.rules import RULES as TEXT_RULES

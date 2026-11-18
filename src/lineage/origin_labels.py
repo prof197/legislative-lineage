@@ -37,6 +37,7 @@ from lineage.labels import (
     model_labeler,
     text_sha256,
 )
+from lineage.match.query import matchable_sections
 from lineage.model_labels import (
     MAX_COST,
     MODEL_ID,
@@ -51,7 +52,6 @@ from lineage.model_labels import (
 from lineage.modeldocs import MODELDOCS_DIR, ModelDoc, load_text
 from lineage.origin_precision import BUDGET, SPEND, MatchKey, OriginPrecisionError, match_key
 from lineage.origins import OriginMatch, SectionPair
-from lineage.query import matchable_sections
 from lineage.text.generic_sections import generic_kind
 
 PROMPT = PASSAGES_HIGH

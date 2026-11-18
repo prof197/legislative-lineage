@@ -36,14 +36,7 @@ from lineage.match.near.lsh import BUCKET_CAP, band_keys
 from lineage.match.near.minhash import NUM_PERM
 from lineage.match.near.signatures import open_signatures
 from lineage.match.near.verify import THRESHOLD, min_agreements
-from lineage.match.semantic.stage import (
-    BUILD_THRESHOLD,
-    CORROBORATING,
-    SemanticSearch,
-    best_cosines_to_bills,
-)
-from lineage.match.semantic.stage import THRESHOLD as THRESHOLD_SEMANTIC
-from lineage.query import (
+from lineage.match.query import (
     bucket_sizes,
     matchable_sections,
     query_text,
@@ -51,6 +44,13 @@ from lineage.query import (
     require_index,
     sign_query,
 )
+from lineage.match.semantic.stage import (
+    BUILD_THRESHOLD,
+    CORROBORATING,
+    SemanticSearch,
+    best_cosines_to_bills,
+)
+from lineage.match.semantic.stage import THRESHOLD as THRESHOLD_SEMANTIC
 from lineage.ulc import (
     ENACTMENTS,
     NO_BILLS,
@@ -243,8 +243,8 @@ def evaluate(
     `semantic_thresholds`, each at or above the build's, recall is also counted as if the
     stage's threshold were each of them, for the threshold proposal: each query is searched
     once at the lowest, and its matches regrouped at each and at the stage's own
-    (lineage.query.regrouped), so nothing else changes. Matches are listed as a page lists
-    them, without one stage's hits on the `flagged` sections (lineage.listing)."""
+    (lineage.match.query.regrouped), so nothing else changes. Matches are listed as a page lists
+    them, without one stage's hits on the `flagged` sections (lineage.match.listing)."""
     if any(t < BUILD_THRESHOLD for t in semantic_thresholds):
         raise CommissionError(
             f"a semantic threshold under the build's {BUILD_THRESHOLD} lists what the build "

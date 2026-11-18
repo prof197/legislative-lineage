@@ -26,10 +26,10 @@ import numpy as np
 
 from lineage.core.intervals import wilson
 from lineage.labels import CORRECT_FROM, PERSON, Item, Pair
+from lineage.match.strata import STRATA, stratum_of
 from lineage.pair_data import LABELS
 from lineage.precision import SEED as PRECISION_SEED
 from lineage.precision import latest_labels, stratified
-from lineage.strata import STRATA, stratum_of
 
 PAIRS = 50
 SEED = PRECISION_SEED + 2  # the flagged sample took + 1

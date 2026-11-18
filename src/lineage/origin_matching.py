@@ -1,11 +1,11 @@
 """`lineage origins`: model documents as a second collection, each queried against the corpus.
 
-A document's text is treated exactly as `lineage query` treats a bill's (lineage.query): cleaned,
-split and normalized, boilerplate-only sections set aside, the rest cut into windows, signed,
-looked up in the band index under its cap and verified at the build's threshold, and with the
-semantic stage embedded and searched exactly, each window keeping its K nearest corpus texts.
-Hits are listed as a page lists them (lineage.listing): by meaning at the stage's threshold, and
-without the state boilerplate flag's sections unless both stages found them. The bill index is
+A document's text is treated exactly as `lineage query` treats a bill's (lineage.match.query):
+cleaned, split and normalized, boilerplate-only sections set aside, the rest cut into windows,
+signed, looked up in the band index under its cap and verified at the build's threshold, and with
+the semantic stage embedded and searched exactly, each window keeping its K nearest corpus texts.
+Hits are listed as a page lists them (lineage.match.listing): by meaning at the stage's threshold,
+and without the state boilerplate flag's sections unless both stages found them. The bill index is
 only read, never written, so a document added or removed changes no bill's relatives.
 
 A match is kept per bill, not per family, since a bill page shows its own origins. It gives two
@@ -42,7 +42,8 @@ from lineage import queries
 from lineage.align import Alignment, align
 from lineage.core import db
 from lineage.core.disk import require_free_space
-from lineage.listing import MeaningHit, NearHit, SectionKey, flagged_sections
+from lineage.match.listing import MeaningHit, NearHit, SectionKey, flagged_sections
+from lineage.match.query import near_duplicate_hits, require_index, sign_query
 from lineage.match.semantic.embed import embed as embed_texts
 from lineage.match.semantic.embed import load_model
 from lineage.match.semantic.models import MODELS_DIR
@@ -55,7 +56,6 @@ from lineage.match.semantic.stage import (
 )
 from lineage.modeldocs import ModelDoc, ModelDocError, load_text
 from lineage.origins import BillSpan, OriginMatch, SectionPair, Stage
-from lineage.query import near_duplicate_hits, require_index, sign_query
 from lineage.text.boilerplate import boilerplate_kind
 from lineage.text.generic_sections import (
     MIN_WORDS,
@@ -90,12 +90,12 @@ class ModelText:
     @property
     def searched(self) -> set[int]:
         """The sections either stage searches: with the semantic stage, every matchable section
-        with a display word (lineage.query.query_text)."""
+        with a display word (lineage.match.query.query_text)."""
         return {q for q, text in enumerate(self.display) if text.split()}
 
 
 def model_text(doc_id: str, raw: str) -> ModelText:
-    """The document's matchable sections as lineage.query.matchable_sections gives them, and
+    """The document's matchable sections as lineage.match.query.matchable_sections gives them, and
     their generic text, read over every section in order so that an article running through
     the window fallback's windows is read whole."""
     split = split_sections(raw)
@@ -142,7 +142,7 @@ def listed(
     flagged: Collection[SectionKey] = frozenset(),
     exempt_at: float = CORROBORATING,
 ) -> tuple[list[NearHit], list[MeaningHit]]:
-    """The hits a page lists, by the rule of lineage.listing.listed_hits, keeping each hit's
+    """The hits a page lists, by the rule of lineage.match.listing.listed_hits, keeping each hit's
     corpus section: by meaning at or above `threshold`, and without a hit on a flagged section
     unless both stages hit it from the same model section, by meaning at `exempt_at` or above."""
     near_at = {(q, b, o) for q, b, o, _ in near}

@@ -10,8 +10,8 @@ list at, THRESHOLD, was set higher on samples of Georgia's pages (lineage.thresh
 DESIGN.md#choosing-the-threshold). The two have two roles. THRESHOLD is what a match by meaning
 needs to be listed on its own. CORROBORATING, the build's, is enough to corroborate what is
 already there: a pair the near-duplicate stage found too, which the state boilerplate flag then
-keeps (lineage.listing), and a paraphrase inside a relative already listed (lineage.align). Each
-window keeps its K nearest before a threshold applies, so the matches at THRESHOLD are exactly
+keeps (lineage.match.listing), and a paraphrase inside a relative already listed (lineage.align).
+Each window keeps its K nearest before a threshold applies, so the matches at THRESHOLD are exactly
 the stored ones at or above it.
 
 A query's matchable sections are cut into the stage's windows, 94 words without overlap, and

@@ -12,8 +12,7 @@ from lineage.flag_precision import build_flagged_sample, with_flag
 from lineage.labels import Item, Pair, Section, SectionKey, SectionRef, text_sha256
 from lineage.match.near.pairs import load_families, load_same_state_pairs
 from lineage.match.semantic.pairs import build_semantic_pairs, section_keys
-from lineage.precision import without_sections
-from lineage.state_boilerplate import (
+from lineage.match.state_boilerplate import (
     COMPACT_PHRASES,
     MIN_FAMILIES,
     StateBoilerplateError,
@@ -23,7 +22,8 @@ from lineage.state_boilerplate import (
     load_families_reached,
     section_families,
 )
-from lineage.strata import STRATA, stored_strata
+from lineage.match.strata import STRATA, stored_strata
+from lineage.precision import without_sections
 from tests.conftest import FAKE_MODEL
 
 

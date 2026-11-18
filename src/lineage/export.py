@@ -7,7 +7,7 @@ the JSON Schema those models emit is the site's contract (DR-1). One build write
   validation page's figures from the committed results.
 - `bills.json`: every hosted bill, for the browse page's filter.
 - `bills/<slug>.json`: one page per hosted bill: its record, its text's source, its sections,
-  and its relatives as a page lists them (lineage.relatives), each with the section pairs it
+  and its relatives as a page lists them (lineage.match.relatives), each with the section pairs it
   shares with the hosted bill.
 - `compare/<a>--<b>.json`: each listed relative's, and each featured story pair's, matched
   sections aligned (lineage.align), with a featured pair's grounded explanation from the cache
@@ -93,13 +93,15 @@ from lineage.export_schema import (
     Validation,
     WithheldDocument,
 )
-from lineage.listing import ListedPairs, listed_pairs, shipped_flag
+from lineage.match.listing import ListedPairs, listed_pairs, shipped_flag
 from lineage.match.near.minhash import NUM_PERM
 from lineage.match.near.pairs import load_families
+from lineage.match.relatives import bill_relatives
 from lineage.match.semantic.embed import embed as embed_texts
 from lineage.match.semantic.embed import load_model
 from lineage.match.semantic.pairs import section_keys
 from lineage.match.semantic.stage import MODEL
+from lineage.match.state_boilerplate import COMPACT_PHRASES
 from lineage.modeldocs import MODELDOCS_DIR, ModelDoc, Source, read_docs
 from lineage.origin_labels import LABELS as ORIGIN_LABELS
 from lineage.origin_labels import judged_correct, load_labels
@@ -108,12 +110,10 @@ from lineage.origin_story import FILE as ORIGIN_STORY_FILE
 from lineage.origin_story import STORY as ORIGIN_STORY
 from lineage.origin_story import story_file as origin_story_file
 from lineage.origins import OriginMatch, is_listed, read_origin_matches
-from lineage.relatives import bill_relatives
 from lineage.release import RELEASE_MANIFEST as RELEASE_MANIFEST
 from lineage.release import ReleaseError as ReleaseError
 from lineage.release import package as package
 from lineage.release import write_release_manifest as write_release_manifest
-from lineage.state_boilerplate import COMPACT_PHRASES
 from lineage.withheld import NONE as NO_WITHHELD
 from lineage.withheld import REPORT as WITHHELD_REPORT
 from lineage.withheld import Reason as WithheldReason

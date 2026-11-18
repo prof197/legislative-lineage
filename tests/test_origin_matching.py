@@ -18,7 +18,7 @@ from lineage.acts import ACTS, ACTS_DIR, enacted_text
 from lineage.collect import collectors
 from lineage.commission import evaluate
 from lineage.data.sessions import load_sessions
-from lineage.listing import listed_hits
+from lineage.match.listing import listed_hits
 from lineage.match.semantic.stage import CORROBORATING, THRESHOLD, open_search
 from lineage.modeldocs import (
     ModelDoc,
@@ -99,7 +99,7 @@ def test_a_model_copied_whole_yields_its_hand_made_match(
         assert "near_duplicate" in got.stages
         assert got.model_share == want.model_share == 1.0
         # The hand-made share counts display words, matching counts normalized ones, as a
-        # bill's relatives do (lineage.relatives); the two differ by a word or so.
+        # bill's relatives do (lineage.match.relatives); the two differ by a word or so.
         assert got.bill_share == pytest.approx(want.bill_share, abs=0.01)
         assert got.spans == want.spans
 

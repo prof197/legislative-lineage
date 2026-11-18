@@ -7,6 +7,7 @@ import pytest
 from lineage import queries
 from lineage.core import db
 from lineage.data import queries as data_queries
+from lineage.match import queries as match_queries
 from lineage.match.near import queries as near_queries
 from lineage.text import queries as text_queries
 
@@ -64,7 +65,7 @@ def tables(tmp_path: Path) -> Path:
 def test_only_eligible_non_boilerplate_sections_count(tables: Path) -> None:
     glob, eligible = str(tables / "s.parquet"), tables / "eligible.parquet"
     with db.connect_quiet() as con:
-        words = queries.section_word_counts(con, sections_glob=glob, eligible_path=eligible)
+        words = match_queries.section_word_counts(con, sections_glob=glob, eligible_path=eligible)
         ids = queries.matchable_bill_ids(con, sections_glob=glob, eligible_path=eligible)
         texts = queries.matchable_section_texts(
             con, sections_glob=glob, eligible_path=eligible, ids=["b4", "b5"]
@@ -79,7 +80,7 @@ def test_related_bills_are_the_named_ones_the_titled_ones_and_their_families(
     tables: Path,
 ) -> None:
     with db.connect_quiet() as con:
-        got = queries.related_bill_ids(
+        got = match_queries.related_bill_ids(
             con, bills_glob=str(tables / "b.parquet"), families_path=tables / "families.parquet",
             listed=[("OH", "135", "SB 237")], title_regex="slapp",
         )  # fmt: skip

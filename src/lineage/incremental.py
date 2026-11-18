@@ -57,7 +57,7 @@ from lineage.data import queries as data_queries
 from lineage.data.doctypes import RULES, decide, load_rules
 from lineage.data.sessions import load_sessions, status_end_date
 from lineage.data.status import OUTCOME_CLASSIFICATIONS, STATUS_WORDING, Action, bill_status
-from lineage.listing import shipped_flag
+from lineage.match.listing import shipped_flag
 from lineage.match.near import queries as near_queries
 from lineage.match.near.bands import load_band_index, update_bands
 from lineage.match.near.families import update_families
@@ -81,6 +81,7 @@ from lineage.match.near.signatures import (
     sign_part,
 )
 from lineage.match.near.stoplist import load_stoplist
+from lineage.match.relatives import bill_relatives
 from lineage.match.semantic import queries as semantic_queries
 from lineage.match.semantic.models import MODELS, MODELS_DIR, require_model
 from lineage.match.semantic.neighbors import update_neighbors
@@ -105,7 +106,6 @@ from lineage.match.semantic.vectors import (
     write_plan,
 )
 from lineage.origins import OriginMatch, origins_path, read_origin_matches, write_origin_matches
-from lineage.relatives import bill_relatives
 from lineage.text import queries as text_queries
 from lineage.text.boilerplate import boilerplate_kind
 from lineage.text.sections import normalize, split_sections

@@ -44,6 +44,7 @@ from lineage.acts import ACT_NAMES, ACTS, load_act
 from lineage.core import db
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.core.paths import DATA
+from lineage.match import queries as match_queries
 from lineage.match.near import queries as near_queries
 from lineage.match.semantic.embed import embed, load_model
 from lineage.match.semantic.models import MODELS, require_model
@@ -290,14 +291,16 @@ def main() -> None:
     ]
     with db.connect_quiet() as con:
         words = np.array(
-            queries.section_word_counts(con, sections_glob=sections_glob, eligible_path=eligible),
+            match_queries.section_word_counts(
+                con, sections_glob=sections_glob, eligible_path=eligible
+            ),
             dtype=np.int64,
         )
         pool_ids = queries.matchable_bill_ids(
             con, sections_glob=sections_glob, eligible_path=eligible
         )
         related = set(
-            queries.related_bill_ids(
+            match_queries.related_bill_ids(
                 con,
                 bills_glob=str(TABLES / "bills" / "*.parquet"),
                 families_path=TABLES / "families" / "families.parquet",

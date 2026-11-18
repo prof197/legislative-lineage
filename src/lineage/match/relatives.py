@@ -1,10 +1,10 @@
 """A corpus bill's relatives in other states, read from the build's stored pairs.
 
-A new text is searched (lineage.query). A bill already in the corpus has its matches stored:
+A new text is searched (lineage.match.query). A bill already in the corpus has its matches stored:
 the near-duplicate stage's cross-state section pairs (lineage.match.near.pairs) and the semantic
 stage's (lineage.match.semantic.pairs), so its relatives are read from them with no search, as a
-page lists them (lineage.listing). They are scored by
-the query's own function, `lineage.query.group_matches`: the share of the bill's words in the
+page lists them (lineage.match.listing). They are scored by
+the query's own function, `lineage.match.query.group_matches`: the share of the bill's words in the
 sections a family matches, of the words of every section either stage searched, each family
 counted once. So a bill and a query of its text score alike.
 
@@ -21,12 +21,12 @@ from pathlib import Path
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage import queries
 from lineage.core import db
-from lineage.listing import ListedPairs, listed_pairs
+from lineage.match import queries
+from lineage.match.listing import ListedPairs, listed_pairs
+from lineage.match.query import Match, group_matches
 from lineage.match.semantic.pairs import section_keys
 from lineage.match.semantic.stage import CORROBORATING, MODEL, THRESHOLD
-from lineage.query import Match, group_matches
 
 RELATIVES_SHOWN = 50  # a bill page's relatives; DESIGN.md#bill-scoring
 STAGES = ("near_duplicate", "semantic")
@@ -75,9 +75,9 @@ def bill_relatives(
     listed: ListedPairs | None = None,
 ) -> dict[str, BillRelatives]:
     """Each wanted bill's relatives in other states, best first, the best `shown` kept, as a
-    page lists them (lineage.listing): by meaning at or above `threshold`, and without the pairs
-    of a section `flag` marks that one stage alone found, the semantic stage under `exempt_at`.
-    `listed` passes pairs already read."""
+    page lists them (lineage.match.listing): by meaning at or above `threshold`, and without the
+    pairs of a section `flag` marks that one stage alone found, the semantic stage under
+    `exempt_at`. `listed` passes pairs already read."""
     wanted = sorted(set(bill_ids))
     bills, ordinals = section_keys(tables_dir)
     wanted_set = set(wanted)

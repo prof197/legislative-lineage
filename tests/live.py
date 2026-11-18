@@ -19,7 +19,7 @@ from lineage.cli import app
 from lineage.export import RESULTS, build_export
 from lineage.incremental import update
 from lineage.match.semantic.pairs import build_semantic_pairs
-from lineage.state_boilerplate import build_state_boilerplate
+from lineage.match.state_boilerplate import build_state_boilerplate
 from lineage.updates import fold, load_days, write_archives
 from tests.conftest import FAKE_MODEL, embed_with_stand_in
 from tests.days import DAYS, rebuild, sessions_csv, write_days

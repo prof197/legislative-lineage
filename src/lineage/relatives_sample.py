@@ -9,7 +9,7 @@ are right.
 
 BILLS bills of STATE are drawn at random, under a fixed seed, from its bills with at least one
 listed relative, and one relative is drawn at random from each page's list (the RELATIVES_SHOWN
-best, lineage.relatives). Each page counts once and each listed relative of a page equally, so
+best, lineage.match.relatives). Each page counts once and each listed relative of a page equally, so
 the share correct estimates a page's precision averaged over pages, with no further weights.
 
 A relative is judged on one section pair: the one its listing rests on most. A pair the
@@ -44,14 +44,14 @@ from lineage.align import Embedder, align
 from lineage.core import db
 from lineage.core.intervals import weighted_share, wilson
 from lineage.labels import Item
-from lineage.listing import listed_pairs
+from lineage.match.listing import listed_pairs
 from lineage.match.near import queries as near_queries
+from lineage.match.relatives import RELATIVES_SHOWN, bill_relatives
 from lineage.match.semantic.pairs import section_keys
 from lineage.match.semantic.stage import BUILD_THRESHOLD, CORROBORATING, MODEL, THRESHOLD
+from lineage.match.strata import STRATA, stratum_of
 from lineage.precision import SEED as PRECISION_SEED
 from lineage.precision import latest_correct
-from lineage.relatives import RELATIVES_SHOWN, bill_relatives
-from lineage.strata import STRATA, stratum_of
 
 STATE = "GA"
 BILLS = 100
@@ -167,7 +167,7 @@ def build_relatives_sample(
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """The sample's rows, in the precision sample's format with the page each relative is
     listed on, and the draw's report: `bills` bills of `state` not in `excluded`, their pages
-    listed at `threshold` with `flag` and its exemption at `exempt_at` (lineage.listing), pair
+    listed at `threshold` with `flag` and its exemption at `exempt_at` (lineage.match.listing), pair
     ids numbered from `first`."""
     section_bills, ordinals = section_keys(tables_dir)
     with db.connect_quiet() as con:

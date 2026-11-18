@@ -30,7 +30,7 @@ from lineage.core.intervals import wilson
 from lineage.labels import CORRECT_FROM, MODEL, PERSON, Item, SectionKey, is_correct
 from lineage.match.semantic.pairs import section_keys
 from lineage.match.semantic.stage import MODEL as MODEL_NAME
-from lineage.strata import (
+from lineage.match.strata import (
     STAGES,
     STRATA,
     PairKeys,

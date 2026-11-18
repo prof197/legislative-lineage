@@ -6,7 +6,7 @@ from typer.testing import CliRunner
 
 from lineage.cli import app
 from lineage.core import db
-from lineage.query import matchable_sections, query_text
+from lineage.match.query import matchable_sections, query_text
 
 runner = CliRunner()
 

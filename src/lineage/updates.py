@@ -23,11 +23,11 @@ from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
 from lineage import queries
 from lineage.core import db
 from lineage.core.paths import DATA
-from lineage.listing import shipped_flag
+from lineage.match.listing import shipped_flag
 from lineage.match.near.pairs import load_families
+from lineage.match.relatives import bill_relatives
 from lineage.match.semantic.stage import MODEL
 from lineage.origins import read_origin_matches
-from lineage.relatives import bill_relatives
 
 DAY_FILE = "day.json"
 BILLS_SUFFIX = "_bills.json"
@@ -318,7 +318,8 @@ SHARE_PLACES = 9
 
 
 def snapshot(tables_dir: Path, *, model: str = MODEL) -> Snapshot:
-    """A build's snapshot, read from its tables the way pages read them (lineage.relatives)."""
+    """A build's snapshot, read from its tables the way pages read them
+    (lineage.match.relatives)."""
     with db.connect_quiet() as con:
         statuses = queries.bill_statuses(con, bills_glob=str(tables_dir / "bills" / "*.parquet"))
         matchable = queries.matchable_bill_ids(

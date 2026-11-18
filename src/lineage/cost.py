@@ -2,7 +2,7 @@
 
 The build's stages are timed by their own commands, so their seconds, peak memory and stored
 bytes are read from the committed reports, each cited by file and field, never measured again
-here. A query is timed here, stage by stage (lineage.query): each development act's text is
+here. A query is timed here, stage by stage (lineage.match.query): each development act's text is
 queried once from a cold start, when the semantic stage's vectors are not yet in the page cache,
 and again warm. No stage makes a model call, so retrieval costs no dollars; the model's labels
 and explanations are costed where they are made. See DESIGN.md#cost-and-runtime.
@@ -13,8 +13,8 @@ from pathlib import Path
 from typing import Any
 
 from lineage.acts import enacted_text
+from lineage.match.query import query_text
 from lineage.match.semantic.stage import K, SemanticSearch
-from lineage.query import query_text
 
 REPORT = Path("reports/cost.json")
 COMMAND = "uv run lineage eval cost"

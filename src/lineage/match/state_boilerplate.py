@@ -28,15 +28,15 @@ from typing import Any, cast
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage import queries
 from lineage.core import db
 from lineage.core.disk import require_free_space
 from lineage.core.memory import BOUND_BYTES, peak_bytes, require_within
+from lineage.match import queries
 from lineage.match.near import queries as near_queries
 from lineage.match.near.pairs import load_cross_state_pairs, load_families, load_same_state_pairs
 from lineage.match.semantic.pairs import load_semantic_pairs, section_keys
 from lineage.match.semantic.stage import BUILD_THRESHOLD, MODEL
-from lineage.strata import stored_strata
+from lineage.match.strata import stored_strata
 
 REPORT = Path("reports/state_boilerplate.json")
 COMMAND = "uv run lineage state-boilerplate"
