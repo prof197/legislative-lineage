@@ -8,8 +8,6 @@ For a range of caps, it also counts the cross-state candidates each would lose. 
 DESIGN.md#dr-3.
 """
 
-import shutil
-import tempfile
 from collections.abc import Iterator
 from pathlib import Path
 from typing import Any, cast
@@ -20,6 +18,7 @@ from numpy.typing import NDArray
 from lineage.core import db
 from lineage.core.disk import require_free_space
 from lineage.match.near import queries
+from lineage.match.near.dirs import replace_dir
 from lineage.match.near.lsh import (
     BANDS,
     BUCKET_CAP,
@@ -89,16 +88,7 @@ def build_bands(
         keys.flush()
         rows.flush()
 
-    final = tables_dir / "bands"
-    building = Path(tempfile.mkdtemp(prefix="bands.", dir=tables_dir))
-    try:
-        write(building)
-        if final.exists():
-            shutil.rmtree(final)
-        building.rename(final)
-    except BaseException:
-        shutil.rmtree(building, ignore_errors=True)
-        raise
+    replace_dir(tables_dir / "bands", write)
 
     index = load_band_index(tables_dir)
     caps = sorted({*SWEEP_CAPS, BUCKET_CAP})
