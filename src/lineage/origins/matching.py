@@ -97,20 +97,26 @@ class ModelText:
         return {q for q, text in enumerate(self.display) if text.split()}
 
 
-def model_text(doc_id: str, raw: str) -> ModelText:
+def model_text(doc_id: str, raw: str, *, patterns: bool = True) -> ModelText:
     """The document's matchable sections as lineage.match.query.matchable_sections gives them, and
     their generic text, read over every section in order so that an article running through
-    the window fallback's windows is read whole."""
+    the window fallback's windows is read whole. Without `patterns`, no text is generic: what
+    matching would be without the hand-written patterns, to measure what they add."""
     split = split_sections(raw)
     texts = [section.text for section in split.sections]
-    inside_of = generic_inside(texts, continuous=not split.by_heading)
+    inside_of = (
+        generic_inside(texts, continuous=not split.by_heading) if patterns else [None] * len(texts)
+    )
     matchable = [
         (text, norm, inside)
         for text, inside in zip(texts, inside_of, strict=True)
         if boilerplate_kind(norm := normalize(text)) is None
     ]
     generic, inside = _generic(
-        [(len(norm.split()), generic_kind(norm), ins) for _, norm, ins in matchable]
+        [
+            (len(norm.split()), generic_kind(norm) if patterns else None, ins)
+            for _, norm, ins in matchable
+        ]
     )
     return ModelText(
         doc_id,
@@ -235,6 +241,7 @@ def match_texts(
     *,
     model: str,
     flagged: Collection[SectionKey] = frozenset(),
+    patterns: bool = True,
 ) -> list[OriginMatch]:
     """Every bill each text matches, through both stages, its shares and its spans."""
     require_index(tables_dir)
@@ -291,7 +298,7 @@ def match_texts(
     for bill_id, ordinal, display, normalized in rows:
         by_bill[bill_id].append((ordinal, display, normalized))
     sections = {
-        bill_id: bill_sections(rows_of, by_heading=split_by_heading[bill_id])
+        bill_id: bill_sections(rows_of, by_heading=split_by_heading[bill_id], patterns=patterns)
         for bill_id, rows_of in by_bill.items()
     }
 
@@ -347,18 +354,18 @@ class BillSection:
 
 
 def bill_sections(
-    rows: Sequence[tuple[int, str, str]], *, by_heading: bool
+    rows: Sequence[tuple[int, str, str]], *, by_heading: bool, patterns: bool = True
 ) -> dict[int, BillSection]:
     """A bill's matchable sections, (ordinal, display, normalized) in order, with their generic
     text; sections from the window fallback are read as one text, as a model's are."""
+    displays = [d for _, d, _ in rows]
+    insides = (
+        generic_inside(displays, continuous=not by_heading) if patterns else [None] * len(rows)
+    )
     whole, inside = _generic(
         [
-            (len(norm.split()), generic_kind(norm), ins)
-            for (_, _, norm), ins in zip(
-                rows,
-                generic_inside([d for _, d, _ in rows], continuous=not by_heading),
-                strict=True,
-            )
+            (len(norm.split()), generic_kind(norm) if patterns else None, ins)
+            for (_, _, norm), ins in zip(rows, insides, strict=True)
         ]
     )
     return {
@@ -535,6 +542,7 @@ def match_models(
     floor_bytes: int,
     embed: Embedder | None = None,
     models_dir: Path = MODELS_DIR,
+    patterns: bool = True,
 ) -> list[OriginMatch]:
     """Every bill each document's text matches, through the existing sections, windows and both
     stages, without changing the bill index; deterministic. The semantic stage embeds with
@@ -551,7 +559,7 @@ def match_models(
         holders[d.text_sha256].append(d.id)
     first = {ids[0]: ids for ids in holders.values()}
     texts = [
-        model_text(d.id, load_text(d, modeldocs_root))
+        model_text(d.id, load_text(d, modeldocs_root), patterns=patterns)
         for d in sorted(docs, key=lambda d: d.id)
         if d.id in first
     ]
@@ -563,6 +571,7 @@ def match_models(
         embed if embed is not None else _embedder(model, models_dir),
         model=model,
         flagged=flagged_sections(tables_dir),
+        patterns=patterns,
     )
     matches = sorted(
         (m.model_copy(update={"doc_id": held}) for m in matched for held in first[m.doc_id]),

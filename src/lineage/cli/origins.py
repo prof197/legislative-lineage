@@ -53,6 +53,7 @@ from lineage.origins.collect import CollectContext, CollectError, collectors, ru
 from lineage.origins.collect import write_report as write_collect_report
 from lineage.origins.labels import LABELS as ORIGIN_LABELS
 from lineage.origins.labels import PROMPT as ORIGIN_PROMPT
+from lineage.origins.labels import answers_by_match
 from lineage.origins.labels import build_items as build_origin_items
 from lineage.origins.labels import correct_by_sections as origin_correct_by_sections
 from lineage.origins.labels import label_in_batch as origin_label_in_batch
@@ -92,6 +93,8 @@ from lineage.origins.precision import load_sample as load_origin_sample
 from lineage.origins.precision import reading as origin_precision_reading
 from lineage.origins.precision import retired as origin_retired
 from lineage.origins.precision import without_intervals as without_origin_intervals
+from lineage.origins.reach import REPORT as ORIGIN_REACH_REPORT
+from lineage.origins.reach import proposal as origin_reach_proposal
 from lineage.origins.recall import KEYS as ORIGIN_KEYS
 from lineage.origins.recall import OriginRecallError, load_key, origin_recall, same_slug
 from lineage.origins.threshold import REPORT as ORIGIN_THRESHOLD_REPORT
@@ -141,6 +144,13 @@ def origins_command(
         bool,
         typer.Option("--report-only", help="Count the table as it stands; match nothing."),
     ] = False,
+    patterns: Annotated[
+        bool,
+        typer.Option(
+            "--patterns/--no-patterns",
+            help="The hand-written generic patterns; off only to measure what they still add.",
+        ),
+    ] = True,
 ) -> None:
     """Match every collected model document against the corpus -> <tables>/origins/matches.jsonl,
     reports/origins.json (DESIGN.md#origin-matches)."""
@@ -164,6 +174,7 @@ def origins_command(
             modeldocs_root=root,
             model=SEMANTIC_MODEL,
             floor_bytes=int(min_free_gib * GiB),
+            patterns=patterns,
         )
     path = write_origin_matches(tables, matches)
     counted = origins_report(matches, docs, seconds=time.perf_counter() - started)
@@ -434,6 +445,37 @@ def eval_origin_threshold(
             f"recall {r['found']}/{r['enactments']}"
         )
     typer.echo(f"-> {report}")
+
+
+@eval_app.command("origin-reach")
+def eval_origin_reach(
+    tables: TablesOption = DATA / "tables",
+    labels: OriginLabelsOption = ORIGIN_LABELS,
+    root: ModelDocsOption = MODELDOCS_DIR,
+    report: Annotated[
+        Path, typer.Option("--report", help="The proposal (committed).")
+    ] = ORIGIN_REACH_REPORT,
+) -> None:
+    """Each candidate reach scale's precision on the labeled origin matches, beside its
+    development recall, and the scale the rule picks (DESIGN.md#origin-matches)."""
+    with exits_on(OriginPrecisionError, OriginRecallError, ValueError):
+        matches = read_origin_matches(tables)
+        docs = [d for c in collectors().values() for d in read_docs(c.source, root)]
+        answers = answers_by_match(matches, docs, tables, load_origin_labels(labels), root=root)
+        answer_key = ORIGIN_KEYS["development"]
+        acts = {e.act for e in load_key(answer_key.path).enactments}
+        doc = origin_reach_proposal(
+            matches, answers, load_key(answer_key.path), same_slug(acts, "commission")
+        )
+    report.write_text(json.dumps(doc, indent=1) + "\n")
+    for r in doc["scales"]:
+        p, d = r["labeled"], r["development_recall"]
+        shown = "unlabeled" if p["precision"] is None else f"{p['precision']:.2f} of {p['labeled']}"
+        typer.echo(
+            f"scale {r['scale'] or 'none'}: precision {shown}, {r['matches_listed']:,} listed, "
+            f"recall {d['found']}/{d['enactments']}"
+        )
+    typer.echo(f"chosen: {doc['chosen']} -> {report}")
 
 
 @eval_app.command("origin-precision")

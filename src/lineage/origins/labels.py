@@ -230,6 +230,35 @@ def correct_by_sections(
     return {i.pair: by_sections[_key(i)] for i in items if _key(i) in by_sections}
 
 
+def answers_by_match(
+    matches: Iterable[OriginMatch],
+    docs: Iterable[ModelDoc],
+    tables_dir: Path,
+    labels: Iterable[Mapping[str, Any]],
+    *,
+    root: Path = MODELDOCS_DIR,
+) -> dict[MatchKey, bool]:
+    """Each match a label answers, by (bill id, document id): the label on the same bill,
+    document and both sections of the strongest pair the match rests on now, from whichever
+    sample drew it (correct_by_sections). A match no such label answers is absent."""
+    labels = list(labels)
+    labeled = {(str(r["bill_id"]), str(r["doc_id"])) for r in labels}
+    matches = [m for m in matches if match_key(m) in labeled]
+    rows: list[dict[str, Any]] = [
+        {"pair": f"{m.bill_id} {m.doc_id}", "bill_id": m.bill_id, "doc_id": m.doc_id, "stages": ()}
+        for m in sorted(matches, key=match_key)
+    ]
+    if not rows:
+        return {}
+    items = build_items(rows, matches, docs, tables_dir, root=root)
+    answered = correct_by_sections(items, labels)
+    return {
+        (str(i.row["bill_id"]), str(i.row["doc_id"])): answered[i.pair]
+        for i in items
+        if i.pair in answered
+    }
+
+
 def labelers(items: Sequence[OriginItem], labels: Iterable[Mapping[str, Any]]) -> list[str]:
     """Who labeled the items, under this prompt, on the sections each rests on: what a reading
     records as its labeler."""

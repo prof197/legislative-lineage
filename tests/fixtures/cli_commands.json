@@ -968,6 +968,63 @@
    }
   ]
  },
+ "lineage eval origin-reach": {
+  "help": "Each candidate reach scale's precision on the labeled origin matches, beside its\ndevelopment recall, and the scale the rule picks (DESIGN.md#origin-matches).",
+  "params": [
+   {
+    "default": "<data>/tables",
+    "flag": false,
+    "help": "Directory of Parquet tables.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "tables",
+    "opts": [
+     "--tables"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "evals/origin_precision_labels.jsonl",
+    "flag": false,
+    "help": "The origin labels (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "labels",
+    "opts": [
+     "--labels"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "<data>/modeldocs",
+    "flag": false,
+    "help": "Where documents are kept (local).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "root",
+    "opts": [
+     "--modeldocs"
+    ],
+    "required": false,
+    "type": "path"
+   },
+   {
+    "default": "reports/origin_reach_proposal.json",
+    "flag": false,
+    "help": "The proposal (committed).",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "report",
+    "opts": [
+     "--report"
+    ],
+    "required": false,
+    "type": "path"
+   }
+  ]
+ },
  "lineage eval origin-threshold": {
   "help": "Each candidate floor's precision on the origin tuning sample, beside its development\nrecall (DESIGN.md#origin-matches).",
   "params": [
@@ -3085,6 +3142,20 @@
     "name": "report_only",
     "opts": [
      "--report-only"
+    ],
+    "required": false,
+    "type": "boolean"
+   },
+   {
+    "default": "True",
+    "flag": true,
+    "help": "The hand-written generic patterns; off only to measure what they still add.",
+    "kind": "TyperOption",
+    "multiple": false,
+    "name": "patterns",
+    "opts": [
+     "--patterns",
+     "--no-patterns"
     ],
     "required": false,
     "type": "boolean"

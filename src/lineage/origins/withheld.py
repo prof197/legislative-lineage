@@ -28,7 +28,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Literal
 
-from lineage.origins.labels import build_items, correct_by_sections
+from lineage.origins.labels import answers_by_match
 from lineage.origins.matches import FLOOR, OriginMatch, is_listed
 from lineage.origins.modeldocs import MODELDOCS_DIR, ModelDoc
 
@@ -63,27 +63,16 @@ def tallies(
 ) -> list[Tally]:
     """Each document with a labeled listed match: how many matches pages list for it, how many
     of those a label answers, and how many of those it judged correct, by document id."""
-    labels = list(labels)
-    labeled_keys = {(str(r["bill_id"]), str(r["doc_id"])) for r in labels}
     listed = [m for m in matches if is_listed(m)]
     shown = Counter(m.doc_id for m in listed)
-    rows: list[dict[str, Any]] = [
-        {"pair": f"{m.bill_id} {m.doc_id}", "bill_id": m.bill_id, "doc_id": m.doc_id, "stages": ()}
-        for m in sorted(listed, key=lambda m: (m.bill_id, m.doc_id))
-        if (m.bill_id, m.doc_id) in labeled_keys
-    ]
     docs = list(docs)
     titles = {d.id: d.title for d in docs}
-    if not rows:
-        return []
-    items = build_items(rows, listed, docs, tables_dir, root=root)
-    answers = correct_by_sections(items, labels)
     counts: dict[str, list[int]] = defaultdict(lambda: [0, 0])
-    for i in items:
-        if i.pair in answers:
-            c = counts[str(i.row["doc_id"])]
-            c[0] += 1
-            c[1] += int(answers[i.pair])
+    answers = answers_by_match(listed, docs, tables_dir, labels, root=root)
+    for (_, doc_id), correct in answers.items():
+        c = counts[doc_id]
+        c[0] += 1
+        c[1] += int(correct)
     return [
         Tally(doc_id=d, title=titles.get(d, d), listed=shown[d], labeled=n, correct=k)
         for d, (n, k) in sorted(counts.items())

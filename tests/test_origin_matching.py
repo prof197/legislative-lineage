@@ -366,6 +366,26 @@ def test_a_sampled_match_is_read_back_as_its_strongest_pair_both_sections_whole(
         build_items(stale, matches, docs, tables, root=root)
 
 
+def test_without_the_patterns_no_text_is_generic() -> None:
+    """`lineage origins --no-patterns`, for measuring what the hand-written patterns add."""
+    raw = (
+        "Section 1. Definitions. In this act: (1) Lamp means a light.\n\n"
+        "Section 2. Severability. If any provision of this act is held invalid, the invalidity "
+        "does not affect other provisions which can be given effect without it.\n"
+    )
+    with_patterns = model_text("lib/m", raw)
+    without = model_text("lib/m", raw, patterns=False)
+    assert with_patterns.generic  # the definitions and the severability clause
+    assert without.generic == frozenset()
+    assert without.inside == {}
+    assert without.display == with_patterns.display
+    rows = [
+        (0, "Definitions. In this act: (1) Lamp means a light.", normalize("Definitions.")),
+        (1, "Severability. If any provision is held invalid.", normalize("Severability.")),
+    ]
+    assert not any(s.generic for s in bill_sections(rows, by_heading=True, patterns=False).values())
+
+
 def test_generic_sections_are_left_out_of_a_match_on_both_sides() -> None:
     """Ruled at the step 47 review: a pair counts only when neither section is generic, the
     shares are of the sections that are not, and the stages and pairs are the counted pairs'."""

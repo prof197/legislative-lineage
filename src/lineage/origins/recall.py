@@ -30,7 +30,7 @@ from lineage.core.intervals import wilson
 from lineage.evals.answer_key import ANSWER_KEY, HELD_OUT_KEY, ORIGINS_HELD_OUT_KEY, read_answer_key
 from lineage.evals.commission import MIN_SHARE, SHARE_SWEEP
 from lineage.evals.ulc import ULC_STATES, Stratum
-from lineage.origins.matches import FLOOR, OriginMatch, Stage, is_listed
+from lineage.origins.matches import FLOOR, REACH_SCALE, OriginMatch, Stage, is_listed
 
 COMMAND = "uv run lineage eval origins"
 STAGES: tuple[Stage, ...] = ("near_duplicate", "semantic")
@@ -165,8 +165,8 @@ def check_configuration(
             )
 
 
-def _rank(m: OriginMatch, floor: float) -> tuple[bool, float]:
-    return (is_listed(m, floor), m.model_share)
+def _rank(m: OriginMatch, floor: float, scale: int) -> tuple[bool, float]:
+    return (is_listed(m, floor, scale), m.model_share)
 
 
 def _cell(records: Sequence[Mapping[str, Any]], key: str = "found") -> dict[str, Any]:
@@ -189,7 +189,7 @@ def _breakdown(records: Sequence[Mapping[str, Any]], acts: Sequence[str]) -> dic
 
 
 def _best_matches(
-    matches: Iterable[OriginMatch], wanted: Mapping[str, str], floor: float
+    matches: Iterable[OriginMatch], wanted: Mapping[str, str], floor: float, scale: int
 ) -> dict[tuple[str, str], OriginMatch]:
     """Each bill's best match with each act `wanted` names a document of, by (bill, act)."""
     by_pair: dict[tuple[str, str], OriginMatch] = {}
@@ -200,13 +200,13 @@ def _best_matches(
         # Two documents of one act can both match a bill; the act's best match stands, a listed
         # one before any the floor leaves off.
         best = by_pair.get((m.bill_id, act))
-        if best is None or _rank(m, floor) > _rank(best, floor):
+        if best is None or _rank(m, floor, scale) > _rank(best, floor, scale):
             by_pair[m.bill_id, act] = m
     return by_pair
 
 
 def _bill_record(
-    bill_id: str, m: OriginMatch | None, *, min_share: float, floor: float
+    bill_id: str, m: OriginMatch | None, *, min_share: float, floor: float, scale: int
 ) -> dict[str, Any]:
     return {
         "id": bill_id,
@@ -214,8 +214,8 @@ def _bill_record(
         "stages": list(m.stages) if m else [],
         "model_share": m.model_share if m else None,
         "bill_share": m.bill_share if m else None,
-        "listed": m is not None and is_listed(m, floor),
-        "found": m is not None and m.model_share > min_share and is_listed(m, floor),
+        "listed": m is not None and is_listed(m, floor, scale),
+        "found": m is not None and m.model_share > min_share and is_listed(m, floor, scale),
     }
 
 
@@ -234,9 +234,12 @@ def _enactment_record(
     *,
     min_share: float,
     floor: float,
+    scale: int,
 ) -> dict[str, Any]:
     bills = [
-        _bill_record(bill_id, by_pair.get((bill_id, e.act)), min_share=min_share, floor=floor)
+        _bill_record(
+            bill_id, by_pair.get((bill_id, e.act)), min_share=min_share, floor=floor, scale=scale
+        )
         for bill_id in e.bill_ids
     ]
     hits = [b for b in bills if b["found"]]
@@ -278,6 +281,7 @@ def evaluate(
     *,
     min_share: float = MIN_SHARE,
     floor: float = FLOOR,
+    scale: int = REACH_SCALE,
 ) -> dict[str, Any]:
     """Recall of each act's enactments from the origin matches of the act's documents.
 
@@ -290,9 +294,10 @@ def evaluate(
     missing = [a for a in acts if not docs.get(a)]
     if missing:
         raise OriginRecallError(f"no model document named for {', '.join(missing)}")
-    by_pair = _best_matches(matches, {doc: act for act in acts for doc in docs[act]}, floor)
+    by_pair = _best_matches(matches, {doc: act for act in acts for doc in docs[act]}, floor, scale)
     records = [
-        _enactment_record(e, by_pair, min_share=min_share, floor=floor) for e in key.enactments
+        _enactment_record(e, by_pair, min_share=min_share, floor=floor, scale=scale)
+        for e in key.enactments
     ]
     ablation = {
         s: _breakdown([r | {"found": r["found_by_stage"][s]} for r in records], acts)
@@ -303,7 +308,8 @@ def evaluate(
             "score": "share of the model's words in the sections the bill matches",
             "min_share": min_share,
             "floor": floor,
-            "found_when": "score above min_share, and the larger share at floor or above",
+            "reach_scale": scale,
+            "found_when": "score above min_share, and the larger weighted share at floor or above",
         },
         "documents": {a: sorted(docs[a]) for a in acts},
         "recall": _breakdown(records, acts),
