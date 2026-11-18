@@ -50,6 +50,7 @@ from lineage.origins.collect_base import (
     Fetch,
     Fetched,
     ReadRobots,
+    RobotsStatus,
     fetch_url,
     provenance,
     read_robots,
@@ -419,77 +420,120 @@ def _fetch_step(c: Collection, page_url: str, url: str) -> Fetched | None:
         return None
 
 
-def _collect_policy(  # noqa: C901  (M13 allow-list, until step 5's lanes)
-    c: Collection, url: str, *, types: frozenset[str], statuses: frozenset[str]
-) -> None:
+def _read_page(c: Collection, url: str) -> PolicyPage | None:
+    """The policy's page, read for its type, status and dates; None once the policy is settled."""
     if c.permission(url) == "blocked":
         c.block(url)  # its type is unknown, so it is counted as found
-        return
+        return None
     try:
-        page = policy_page(c.get(url))
+        return policy_page(c.get(url))
     except (CollectFetchError, ExtractError) as e:
         c.fail(url, str(e))
-        return
-    match = _POLICY_PAGE.match(url)
-    slug = urllib.parse.unquote(match.group(1)) if match is not None else None
+        return None
 
-    def out_of_scope() -> None:
-        # Read and found not to be model state legislation: withdrawn if stored before.
-        if slug is not None:
-            c.out_of_scope(slug)
 
+def _page_in_scope(page: PolicyPage, types: frozenset[str], statuses: frozenset[str]) -> bool:
     if page.status.lower() not in statuses:
-        return out_of_scope()
-    if page.kind is not None and page.kind.lower() not in types:
-        return out_of_scope()
-    if slug is None:
-        c.fail(url, "not a policy page")
-        return
+        return False
+    return page.kind is None or page.kind.lower() in types
+
+
+@dataclass(frozen=True, slots=True)
+class _ApiRead:
+    response: Fetched
+    policy: ApiPolicy
+    robots: RobotsStatus
+
+
+def _read_api(c: Collection, url: str, slug: str) -> _ApiRead | None:
+    """The policy's body from the site's API; None once the policy is settled."""
     api = api_url(slug)
     if (robots := c.check(api)) is None:
-        return
+        return None
     if (response := _fetch_step(c, url, api)) is None:
-        return
+        return None
     try:
         policy = api_policy(response, slug)
     except CollectFetchError as e:
         c.fail(url, str(e))
-        return
-    body = html_text(policy.content.encode(), "utf-8") if policy.content.strip() else ""
+        return None
+    return _ApiRead(response=response, policy=policy, robots=robots)
+
+
+def _body_in_scope(page: PolicyPage, policy: ApiPolicy, body: str, types: frozenset[str]) -> bool:
     # Not a policy, not one of the kinds collected, or a local measure: none is counted as found.
     if page.kind is None:
         kind = body_kind(_title(policy.title), body, policy.content)
         if kind is None or kind.lower() not in types:
-            return out_of_scope()
-    if local_measure(_title(policy.title), body):
-        return out_of_scope()
-    raw, media_type = response.body, "application/json"
+            return False
+    return not local_measure(_title(policy.title), body)
+
+
+@dataclass(frozen=True, slots=True)
+class _PolicyText:
+    raw: bytes
+    media_type: str
+    text: str
+    robots: RobotsStatus
+
+
+def _policy_text(c: Collection, url: str, read: _ApiRead, body: str) -> _PolicyText | None:
+    """The policy's bytes and cleaned text: the API's body, or the Word or PDF file a body without
+    the law links to, as an amendment's does. None once the policy is settled."""
+    raw, media_type, robots = read.response.body, "application/json", read.robots
     try:
-        if not has_law(body) and (file_url := attachment(policy.content)) is not None:
+        if not has_law(body) and (file_url := attachment(read.policy.content)) is not None:
             if (robots := c.check(file_url)) is None:
-                return
+                return None
             if (got := _fetch_step(c, url, file_url)) is None:
-                return
+                return None
             raw = got.body
             media_type = _MEDIA[PurePosixPath(urllib.parse.urlsplit(file_url).path).suffix.lower()]
             body = docx_text(raw) if media_type == DOCX else pdf_text(raw)
         text = clean_policy(body)
     except (CollectFetchError, ExtractError, ModelTextError) as e:
         c.fail(url, str(e))
+        return None
+    return _PolicyText(raw=raw, media_type=media_type, text=text, robots=robots)
+
+
+def _collect_policy(
+    c: Collection, url: str, *, types: frozenset[str], statuses: frozenset[str]
+) -> None:
+    if (page := _read_page(c, url)) is None:
+        return
+    match = _POLICY_PAGE.match(url)
+    slug = urllib.parse.unquote(match.group(1)) if match is not None else None
+    if not _page_in_scope(page, types, statuses):
+        # Read and found not to be model state legislation: withdrawn if stored before.
+        if slug is not None:
+            c.out_of_scope(slug)
+        return
+    if slug is None:
+        c.fail(url, "not a policy page")
+        return
+    if (read := _read_api(c, url, slug)) is None:
+        return
+    content = read.policy.content
+    body = html_text(content.encode(), "utf-8") if content.strip() else ""
+    if not _body_in_scope(page, read.policy, body, types):
+        c.out_of_scope(slug)
+        return
+    if (got := _policy_text(c, url, read, body)) is None:
         return
     doc = provenance(
         SOURCE,
         slug=slugify(slug),
-        title=_title(policy.title) or slug,
+        title=_title(read.policy.title) or slug,
         url=url,
-        raw=raw,
-        media_type=media_type,
-        text=text,
-        robots=robots,
+        raw=got.raw,
+        media_type=got.media_type,
+        text=got.text,
+        robots=got.robots,
         collected_on=c.context.on,
         published=page.published,
     )
-    c.keep(doc, raw=raw, text=text)
+    c.keep(doc, raw=got.raw, text=got.text)
 
 
 def _collect_site(c: Collection, types: frozenset[str], statuses: frozenset[str]) -> None:
