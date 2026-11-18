@@ -30,6 +30,7 @@ Sections marked **To be measured** fill in as the build reaches them. Every numb
 - [Model documents](#model-documents)
 - [Origin matches](#origin-matches)
 - [Lanes](#lanes)
+- [Module map](#module-map)
 - [Alternatives considered](#alternatives-considered)
 - [Scaling limits](#scaling-limits)
 - [Known failure modes](#known-failure-modes)
@@ -695,6 +696,28 @@ The main agent owns every shared file: `pyproject.toml`, `uv.lock`, `schema/`, `
 
 **Dependencies.** M10's lanes need none beyond what is locked: collection uses the fetch path and pypdf, matching and the incremental core use NumPy and faiss, the site its current packages. A lane that finds it needs one stops and reports it. Validating the feed in M12 may want a parser; that is settled then.
 
+## Module map
+
+The package is eleven layers, set at M13's step 1 review (2026-11-18). A module imports only from its own layer and the layers below it; nothing imports the CLI. Each subpackage's `__init__.py` says what it holds.
+
+| Layer | Package | Holds |
+|---|---|---|
+| CLI | `lineage.cli` | `app` (the Typer apps, shared options), and one module of commands per layer below: `data`, `text`, `match`, `explain`, `evals`, `origins`, `export`, `live` |
+| Live track | `lineage.live` | Intake from Open States' API, the update contracts and the incremental core, the rebuild, publishing, the feed, the scheduled jobs and the deploy |
+| Export | `lineage.export` | The data contract (`schema`), the export (`build`), the stories, the data release, the Atom rules, the README's tables |
+| Origins | `lineage.origins` | Model documents and their collectors, origin matching (`matching`, into `matches`), origin recall and precision, the withheld documents |
+| Evals | `lineage.evals` | Act texts and the commission's lists, recall, the threshold, the pair dataset, precision samples and labels, agreement, faithfulness, cost |
+| Explain | `lineage.explain` | The reply schema and grounding check, the explanation call and cache, structured requests, the spend meter |
+| Align | `lineage.align` | Word-level alignment of a section pair (one module) |
+| Match | `lineage.match` | `near` (the near-duplicate stage) below `semantic` (the semantic stage), below the modules that combine them: query, relatives, listing, the state boilerplate flag, strata |
+| Text | `lineage.text` | Versions, the text layer's inventory, fetch, extraction and merge, sections, boilerplate and generic kinds, windows |
+| Data | `lineage.data` | The snapshot and its archives, sessions, ingest, status, document types, coverage statistics |
+| Core | `lineage.core` | Paths, the disk floor, memory, intervals, digests, DuckDB connections (`db`), HTTP (`http`, `pace`, `robots`) |
+
+- **SQL** lives only in a package's own `queries` module ([DR-4](#dr-4)). A package above may call a lower package's queries, imported as `<package>_queries`; connections come only from `lineage.core.db`.
+- **Names** drop a prefix the package already carries (`text_fetch` became `lineage.text.fetch`, `origin_recall` became `lineage.origins.recall`), and three modules were renamed so they do not read as another: `fetch` is `lineage.core.http`, `export` is `lineage.export.build`, `semantic` is `lineage.match.semantic.stage`.
+- **Tests** stay flat in `tests/`, one file per module as before.
+
 ## Alternatives considered
 
 | Alternative | Reason rejected | Evidence |
@@ -978,6 +1001,7 @@ This project's index is two `.npy` matrices. Signed by section they took 1.11 GB
 
 - Parquet is the interchange format between pipeline stages, readable by any tool. A stage can be rewritten without touching its neighbors.
 - SQL inside Python strings is invisible to pyright. Queries live in one module, run against committed fixtures in tests, and their result schemas are checked where they enter typed code.
+- *Amended at M13's step 1 review (2026-11-18):* SQL lives only in a package's own queries module (`lineage.<package>.queries`), not in one module for the whole pipeline: a module's SQL sits beside the package that owns its tables, and a package above may call a lower one's queries. DuckDB connections, with their spill cap, come only from `lineage.core.db` ([Module map](#module-map)).
 - The choice over Polars is a judgment, not a measurement: reading nested JSON with SQL and inspecting tables in the CLI outweighed Polars' typed expression API.
 
 **Would reverse it.** If DuckDB's JSON reader cannot handle the snapshot's shape or size without per-file Python preprocessing, which step 4 finds out, a streaming Python reader writes the Parquet and DuckDB keeps the queries. If most transforms turn out to need row-wise Python functions, Polars replaces DuckDB.

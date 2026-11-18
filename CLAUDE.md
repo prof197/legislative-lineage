@@ -98,107 +98,132 @@ All four checks must pass before every commit. CI runs the same four commands, t
 ## Layout
 
 ```
-src/lineage/      the package (import name `lineage`; distribution `legislative-lineage`)
-  cli.py          Typer app; subcommands stay thin wrappers over library functions
-  snapshot.py     archive manifest: scan, write, load, verify
-  fetch.py        HTTP as this project (User-Agent, TLS intermediates, retired hosts); download pinned archives
-  sessions.py     session dates from openstates-scrapers, parsed as source, never run
-  ingest.py       raw archives -> bills Parquet, one file per archive, with status
-  status.py       passed / died / introduced from action classifications
-  sections.py     clean, split at headings (with per-state heading rules) or into fallback windows, normalize (pure functions)
-  sectioning.py   build the sections table, one worker process per bills file
-  doctypes.py     document-type rules (DR-5): which records are matched
-  boilerplate.py  pattern list that flags boilerplate-only sections
-  windows.py      the matching unit: a section of up to 94 words whole, a longer one in overlapping 94-word windows (pure functions)
-  shingles.py     word 5-gram shingles, 32-bit hashes (NumPy; values pinned by a test)
-  minhash.py      MinHash signatures, exact (a·x + b) mod p (pure functions; values pinned)
-  signatures.py   build the signatures table, one row per window, one worker process per sections file
-  lsh.py          LSH banding: band keys, sorted-array buckets, the cap (pure functions)
-  bands.py        build the band index from the signatures; cap counter and cap sweep
-  verify.py       re-estimate candidates from full signatures; the verification threshold
-  families.py     same-state families: bill match shares, connected components (pure functions)
-  pairs.py        verify window candidates, store cross-state and same-state section pairs, write families
-  index.py        `lineage index`: signatures, bands, pairs and families, then reports/index.json
-  query.py        `lineage query`: sign a bill's text, look up its bands, verify, group by family, score by the share of its words matched
-  cost.py         `lineage eval cost`: each stage's build time, memory and size from its report, and a query's seconds by stage
-  relatives.py    a corpus bill's relatives from both stages' stored pairs, scored as a query is, the 50 best kept
-  listing.py      what a page lists: matches at the stage's threshold, less the state boilerplate flag's but for pairs both stages found
-  acts.py         uniform act texts as eval queries: keep the sections, drop comments and notes
-  ulc.py          the commission's enactment lists, and the bills each enactment names
-  answer_key.py   `lineage eval answer-key`: the resolved list rows, for checking by eye
-  commission.py   `lineage eval commission`: recall, a miss reason per enactment, the results JSON
-  threshold.py    `lineage eval threshold`: a page's precision under each threshold option and with the flag; the pair-level diagnostic at the stage's threshold
-  results_table.py  the README's summary and results tables, rendered from the committed reports
-  pair_data.py    the labeled pair dataset (Kim et al., EMNLP 2021): pinned files, fetch, load; no license, so local only
-  pair_eval.py    `lineage eval pair-data`: the stages scored on labeled pairs, metrics only
-  semantic.py     the semantic stage: its model, the build's threshold (the pair evaluation's) and the stage's (the tuning sample's), and a query's search by meaning
-  neighbors.py    `lineage neighbors`: every distinct window's nearest neighbors for the build, HNSW over the float16 vectors
-  semantic_pairs.py  `lineage semantic-pairs`: the semantic stage's matches as cross-state section pairs, fingerprinted by model, K and threshold
+src/lineage/      the package (import name `lineage`; distribution `legislative-lineage`); layers and the layering rule in DESIGN.md#module-map
+  cli/            Typer apps (app.py) and one module of commands per layer; subcommands stay thin wrappers over library functions
   align.py        word-level alignment of a section pair: copied, paraphrased and unmatched spans, with ids and offsets (pure functions)
-  labels.py       `lineage label`: a person labels the precision sample's pairs, aligned; labels keyed to survive a re-split
-  label_page.py   `lineage label-page` and `label-import`: the labeling session as a phone page (pages/label.html), and its saved labels checked back in
-  agreement.py    the subsample a person labels to check the model's labels, and the agreement: weighted kappa, cutoff agreement, the bars
-  relatives_sample.py  the precision of what a page lists: random bills' listed relatives, the pair each rests on, its aligned passages
-  model_labels.py  provisional precision labels from a model, under its id and prompt version; each batch's spend against the budget
-  precision.py    the precision sample's strata and seeded draw, and the estimate weighted by stratum size
-  intervals.py    the Wilson interval
-  featured.py     `lineage featured`: the three featured stories, their anchors and relatives rules, and the section pairs they explain
-  explanations.py the model's reply schema (Pydantic) and the span-grounding check that drops unbacked claims
-  explanations.py the model's reply schema (Pydantic) and the span-grounding check, on spans hashed so CI can run it
-  explain.py      `lineage explain`: the prompt from aligned spans, the SDK call, retry and withholding, the cache, and the cache's check
-  faithfulness.py `lineage eval faithfulness`: a model judges each kept claim against its cited spans, verdicts cached without text, the Wilson share
-  structured.py   one structured-output request: the schema sent without the bounds the API ignores, the reply validated in code, every reply metered
-  spend.py        M6's model calls metered against their $30 cap, projected before a run and checked before each call -> reports/explanation_spend.json
-  stoplist.py     document-frequency stoplist and its report
-  state_boilerplate.py  `lineage state-boilerplate`: a section flagged as its state's boilerplate by the other families it reaches; precision with the flag on, and the dropped pairs' sample
-  stats.py        coverage report: the measurements that replace the design's estimates
-  versions.py     which bill version the text layer fetches (pure functions)
-  robots.py       robots.txt rules for this project's User-Agent; temporary refusals asked again
-  pace.py         one request at a time per host, its interval apart, across every process (locked files)
-  text_inventory.py  `lineage text inventory`: unusable text per record, the fetch plan, per-host counts
-  certs/intermediates.pem  intermediate certificates some legislature servers omit
-  extract.py      text from HTML or PDF (pypdf), lines kept, struck text dropped
-  text_fetch.py   polite per-host fetching: robots, pacing, backoff, resumable JSON-lines store; extraction in worker processes
-  text_rules.py   rules/text_layer.toml: the usable-text bar, per-state formats and readings, the replacement rule
-  text_quality.py  `lineage text sample`: the quality test, fetched text against Open States'
-  text_run.py     `lineage text fetch`: the full fetch's jobs from the plan and the rules, and its report
-  ca_bulk.py      California's text from its official bulk download, one biennium at a time
-  text_merge.py   `lineage text merge`: the texts table, each record's text and its source; later stages read text only from it
-  queries.py      every SQL query the pipeline runs (DR-4)
-  disk.py         free-space floor checked before large writes
-  paths.py        DATA: LINEAGE_DATA or data/, the root of every default local path (worktrees share it)
-  memory.py       current and peak memory as the OS charges it (macOS physical footprint)
-  models.py       the embedding models: pinned repository revision and file hashes; fetched through fetch.download
-  embed.py        unit-length vectors from a pinned model, offline (fastembed, ONNX), batched by token count
-  vectors.py      `lineage embed`: plan the distinct windows, embed them in shards by worker processes, resume where it stopped
-  ann.py          nearest neighbors over unit vectors: exact search, and faiss indexes (build extra), typed
-  export_schema.py  the site's data contract: every exported file as a Pydantic model, which emits the JSON Schema
-  export.py       `lineage export`: bill pages, comparisons, section texts, stories and the data stamp for one state
-  release.py      the data release: the export contract's files, packing with its checksum manifest, pinning (DESIGN.md#export)
-  origin_story.py  the origin story's rule, which names no organization, and its file (DESIGN.md#export)
-  publish.py      `lineage publish pages|promote`: the pages a day's changes touch, rewritten in a staging copy, and the swap (DESIGN.md#updates)
-  feed.py         `lineage publish feed`: the national Atom feed of the live track's events, checked against RFC 4287
-  schedule.py     `lineage schedule`: the daily and weekly jobs under launchd, their status (held included) and alerts; the weekly agreement check and drift
-  deploy.py       `lineage publish deploy|release|candidate|review`: the day's release, its gates and circuit breaker, a held day's release, the candidate and the origin-claims review; every external command through an injectable shell (DR-13)
-  updates.py      the live track's contracts (DR-7): days, records over time, the change log, the snapshot an update must equal
-  incremental.py  `lineage update`'s body, one day applied in both directions in a staging view, journaled per day
-  rebuild.py      `lineage rebuild`: the folded days over the snapshot's archives, the pipeline run again with pinned or refreshed statistics (DR-7)
-  modeldocs.py    model legislation: each source's entry, each collected document, texts per version under data/modeldocs/
-  collect.py      the collector registry: one module per source under collectors/, found by name; the coverage report
-  collectors/     one collector module per source of model legislation, each owned by the lane that builds it
-  origins.py      OriginMatch, both shares and the bill's spans, and the origins table
-  origin_matching.py  `lineage origins`' body: each model document queried as `lineage query` queries a bill, through both stages and the page listing rule
-  collect_base.py  what collectors share: robots.txt per host, paced requests, provenance, storing, the report
-  modeltext.py    model texts as matching reads them: sections kept, commentary and drafting instructions dropped; Word text
-  collectors/commission.py  the commission's acts: those on disk, then its site's (off, SITE_FETCH, until its terms are ruled)
-  openstates_api.py  API v3's bills request and its bills mapped into the bulk archive's record shape
-  intake.py       `lineage intake`: paged by updated_at, pages recorded, text through the text layer, days written once; the January estimate
-  origin_recall.py  `lineage eval origins`: model-to-bill recall from the resolved answer keys; a sealed key only with --final
-  origin_precision.py  `lineage origin-sample` and `eval origin-precision`: seeded samples of origin matches, the tuning part by share band, the reporting part by stage at the floor; v2's label budget; the reporting reading by source
-  origin_labels.py  `lineage origin-label`: a match's strongest section pair, both sections and their passages, asked in one batch; rows by text hash
-  generic_sections.py  a section's generic kind by its heading or opening, within its kind's bound: definitions, short title, findings, severability and the rest, or lineage.text.boilerplate's kinds
-  withheld.py     `lineage withhold`: the documents withheld from pages because their labeled matches are mostly wrong, as a committed report the export, the live track and the feed read
-  origin_threshold.py  `lineage eval origin-threshold`: each candidate floor's weighted precision and development recall
+  core/           the bottom layer: paths, the disk floor, memory, intervals, digests, DuckDB, HTTP
+    paths.py        DATA: LINEAGE_DATA or data/, the root of every default local path (worktrees share it)
+    disk.py         free-space floor checked before large writes
+    memory.py       current and peak memory as the OS charges it (macOS physical footprint)
+    intervals.py    the Wilson interval
+    hashing.py      SHA-256 of a file, as reports and manifests record it
+    db.py           DuckDB connections, each with its spill cap; the SQL literal helpers (DR-4)
+    http.py         HTTP as this project (User-Agent, TLS intermediates, moved hosts, retries); open_url, streamed downloads
+    pace.py         one request at a time per host, its interval apart, across every process (locked files)
+    robots.py       robots.txt rules for this project's User-Agent; temporary refusals asked again
+    certs/intermediates.pem intermediate certificates some legislature servers omit
+  data/           Open States' bill data: the snapshot, sessions, ingest, status, document types, stats
+    snapshot.py     archive manifest: scan, write, load, verify
+    archives.py     download the archives the manifest pins, byte for byte
+    sessions.py     session dates from openstates-scrapers, parsed as source, never run
+    ingest.py       raw archives -> bills Parquet, one file per archive, with status
+    status.py       passed / died / introduced from action classifications
+    doctypes.py     document-type rules (DR-5): which records are matched
+    stats.py        coverage report: the measurements that replace the design's estimates
+    queries.py      this package's SQL, and only its own (DR-4)
+  text/           bill text and sections: versions, the text layer, sections, boilerplate, windows
+    versions.py     which bill version the text layer fetches (pure functions)
+    inventory.py    `lineage text inventory`: unusable text per record, the fetch plan, per-host counts
+    extract.py      text from HTML or PDF (pypdf), lines kept, struck text dropped
+    fetch.py        polite per-host fetching: robots, pacing, backoff, resumable JSON-lines store; extraction in worker processes
+    rules.py        rules/text_layer.toml: the usable-text bar, per-state formats and readings, the replacement rule
+    quality.py      `lineage text sample`: the quality test, fetched text against Open States'
+    run.py          `lineage text fetch`: the full fetch's jobs from the plan and the rules, and its report
+    ca_bulk.py      California's text from its official bulk download, one biennium at a time
+    merge.py        `lineage text merge`: the texts table, each record's text and its source; later stages read text only from it
+    sections.py     clean, split at headings (with per-state heading rules) or into fallback windows, normalize (pure functions)
+    sectioning.py   build the sections table, one worker process per bills file
+    boilerplate.py  pattern list that flags boilerplate-only sections
+    generic_sections.py a section's generic kind by its heading or opening, within its kind's bound: definitions, short title, findings, severability and the rest, or lineage.text.boilerplate's kinds
+    windows.py      the matching unit: a section of up to 94 words whole, a longer one in overlapping 94-word windows (pure functions)
+    queries.py      this package's SQL, and only its own (DR-4)
+  match/          matching: near below semantic, below the modules that combine both stages
+    query.py        `lineage query`: sign a bill's text, look up its bands, verify, group by family, score by the share of its words matched
+    relatives.py    a corpus bill's relatives from both stages' stored pairs, scored as a query is, the 50 best kept
+    listing.py      what a page lists: matches at the stage's threshold, less the state boilerplate flag's but for pairs both stages found
+    state_boilerplate.py `lineage state-boilerplate`: a section flagged as its state's boilerplate by the other families it reaches
+    strata.py       both stages' stored cross-state pairs by stratum, which the samples draw from
+    queries.py      this package's SQL, and only its own (DR-4)
+  match/near/     the near-duplicate stage (DR-3)
+      shingles.py     word 5-gram shingles, 32-bit hashes (NumPy; values pinned by a test)
+      stoplist.py     document-frequency stoplist and its report
+      minhash.py      MinHash signatures, exact (a·x + b) mod p (pure functions; values pinned)
+      signatures.py   build the signatures table, one row per window, one worker process per sections file
+      lsh.py          LSH banding: band keys, sorted-array buckets, the cap (pure functions)
+      bands.py        build the band index from the signatures; cap counter and cap sweep
+      verify.py       re-estimate candidates from full signatures; the verification threshold
+      families.py     same-state families: bill match shares, connected components (pure functions)
+      pairs.py        verify window candidates, store cross-state and same-state section pairs, write families
+      index.py        `lineage index`: signatures, bands, pairs and families, then reports/index.json
+      queries.py      this package's SQL, and only its own (DR-4)
+  match/semantic/ the semantic stage
+      models.py       the embedding models: pinned repository revision and file hashes; fetched through lineage.core.http.download
+      embed.py        unit-length vectors from a pinned model, offline (fastembed, ONNX), batched by token count
+      vectors.py      `lineage embed`: plan the distinct windows, embed them in shards by worker processes, resume where it stopped
+      ann.py          nearest neighbors over unit vectors: exact search, and faiss indexes (build extra), typed
+      neighbors.py    `lineage neighbors`: every distinct window's nearest neighbors for the build, HNSW over the float16 vectors
+      stage.py        the semantic stage: its model, the build's threshold (the pair evaluation's) and the stage's (the tuning sample's), and a query's search by meaning
+      pairs.py        `lineage semantic-pairs`: the semantic stage's matches as cross-state section pairs, fingerprinted by model, K and threshold
+      queries.py      this package's SQL, and only its own (DR-4)
+  explain/        the explanation step and the spend meter
+    explanations.py the model's reply schema (Pydantic) and the span-grounding check that drops unbacked claims
+    explain.py      `lineage explain`: the prompt from aligned spans, the SDK call, retry and withholding, the cache, and the cache's check
+    structured.py   one structured-output request: the schema sent without the bounds the API ignores, the reply validated in code, every reply metered
+    spend.py        M6's model calls metered against their $30 cap, projected before a run and checked before each call -> reports/explanation_spend.json
+    queries.py      this package's SQL, and only its own (DR-4)
+  evals/          the evaluations of matching
+    acts.py         uniform act texts as eval queries: keep the sections, drop comments and notes
+    ulc.py          the commission's enactment lists, and the bills each enactment names
+    answer_key.py   `lineage eval answer-key`: the resolved list rows, for checking by eye
+    commission.py   `lineage eval commission`: recall, a miss reason per enactment, the results JSON
+    threshold.py    `lineage eval threshold`: a page's precision under each threshold option and with the flag; the pair-level diagnostic at the stage's threshold
+    pair_data.py    the labeled pair dataset (Kim et al., EMNLP 2021): pinned files, fetch, load; no license, so local only
+    pair_eval.py    `lineage eval pair-data`: the stages scored on labeled pairs, metrics only
+    precision.py    the precision sample's seeded draw, and the estimate weighted by stratum size
+    labels.py       `lineage label`: a person labels the precision sample's pairs, aligned; labels keyed to survive a re-split
+    label_page.py   `lineage label-page` and `label-import`: the labeling session as a phone page (pages/label.html, beside it), and its saved labels checked back in
+    agreement.py    the subsample a person labels to check the model's labels, and the agreement: weighted kappa, cutoff agreement, the bars
+    model_labels.py provisional precision labels from a model, under its id and prompt version; each batch's spend against the budget
+    relatives_sample.py the precision of what a page lists: random bills' listed relatives, the pair each rests on, its aligned passages
+    faithfulness.py `lineage eval faithfulness`: a model judges each kept claim against its cited spans, verdicts cached without text, the Wilson share
+    flag_precision.py the state boilerplate flag's precision: the sample with the flag on, the dropped pairs' sample
+    cost.py         `lineage eval cost`: each stage's build time, memory and size from its report, and a query's seconds by stage
+    queries.py      this package's SQL, and only its own (DR-4)
+  origins/        documented origins: model legislation collected, matched and measured
+    modeldocs.py    model legislation: each source's entry, each collected document, texts per version under data/modeldocs/
+    modeltext.py    model texts as matching reads them: sections kept, commentary and drafting instructions dropped; Word text
+    collect.py      the collector registry: one module per source under collectors/, found by name; the coverage report
+    collect_base.py what collectors share: robots.txt per host, paced requests, provenance, storing, the report
+    collectors/     one collector module per source of model legislation, each owned by the lane that builds it
+    collectors/commission.py the commission's acts: those on disk, then its site's (off, SITE_FETCH, until its terms are ruled)
+    matches.py      OriginMatch, both shares and the bill's spans, and the origins table
+    matching.py     `lineage origins`' body: each model document queried as `lineage query` queries a bill, through both stages and the page listing rule
+    recall.py       `lineage eval origins`: model-to-bill recall from the resolved answer keys; a sealed key only with --final
+    precision.py    `lineage origin-sample` and `eval origin-precision`: seeded samples of origin matches, the tuning part by share band, the reporting part by stage at the floor; v2's label budget; the reporting reading by source
+    labels.py       `lineage origin-label`: a match's strongest section pair, both sections and their passages, asked in one batch; rows by text hash
+    threshold.py    `lineage eval origin-threshold`: each candidate floor's weighted precision and development recall
+    withheld.py     `lineage withhold`: the documents withheld from pages because their labeled matches are mostly wrong, as a committed report the export, the live track and the feed read
+    queries.py      this package's SQL, and only its own (DR-4)
+  export/         what leaves the pipeline: the data contract, the export, stories, the release
+    schema.py       the site's data contract: every exported file as a Pydantic model, which emits the JSON Schema
+    build.py        `lineage export`: bill pages, comparisons, section texts, stories and the data stamp for one state
+    featured.py     `lineage featured`: the three featured stories, their anchors and relatives rules, and the section pairs they explain
+    origin_story.py the origin story's rule, which names no organization, and its file (DESIGN.md#export)
+    release.py      the data release: the export contract's files, packing with its checksum manifest, pinning (DESIGN.md#export)
+    atom.py         Atom (RFC 4287): the namespace and each way a document breaks the rules
+    results_table.py the README's summary and results tables, rendered from the committed reports
+    queries.py      this package's SQL, and only its own (DR-4)
+  live/           the live track: intake, updates, rebuild, publishing, the schedule, the deploy
+    openstates_api.py API v3's bills request and its bills mapped into the bulk archive's record shape
+    intake.py       `lineage intake`: paged by updated_at, pages recorded, text through the text layer, days written once; the January estimate
+    updates.py      the live track's contracts (DR-7): days, records over time, the change log, the snapshot an update must equal
+    incremental.py  `lineage update`'s body, one day applied in both directions in a staging view, journaled per day
+    rebuild.py      `lineage rebuild`: the folded days over the snapshot's archives, the pipeline run again with pinned or refreshed statistics (DR-7)
+    publish.py      `lineage publish pages|promote`: the pages a day's changes touch, rewritten in a staging copy, and the swap (DESIGN.md#updates)
+    feed.py         `lineage publish feed`: the national Atom feed of the live track's events, checked against RFC 4287
+    schedule.py     `lineage schedule`: the daily and weekly jobs under launchd, their status (held included) and alerts; the weekly agreement check and drift
+    deploy.py       `lineage publish deploy|release|candidate|review`: the day's release, its gates and circuit breaker, a held day's release, the candidate and the origin-claims review; every external command through an injectable shell (DR-13)
+    queries.py      this package's SQL, and only its own (DR-4)
 benchmarks/       dev-only measurements that need dev dependencies (datasketch)
 scheduling/       the live track's launchd templates and run.sh; nothing loads them
 tools/            dev and CI checks
@@ -256,6 +281,7 @@ data/             local snapshots and derived tables; gitignored, never committe
 ## Conventions
 
 - Python 3.13, pyright strict, ruff. Dependencies are pinned in `uv.lock`. Add a dependency with `uv add`, and only after it is agreed. faiss-cpu is the `build` extra: the index build needs it, a query does not.
+- A module imports only from its own layer and the layers below it (DESIGN.md#module-map); a new module goes in the lowest layer that can hold it.
 - Small modules with explicit interfaces. Use plain functions, dataclasses and Pydantic models, not class hierarchies or metaprogramming.
 - A module that implements a decision record links to it in its docstring, e.g. `See DESIGN.md#dr-3`.
 - Comments explain why, not what.
@@ -264,12 +290,12 @@ data/             local snapshots and derived tables; gitignored, never committe
 - Every number in README.md or DESIGN.md comes from a committed eval or benchmark output, with the command that reproduces it. Never hard-code a result.
 - Docs drafted ahead of a measurement mark each number still to come with the one placeholder token `tests/test_placeholders.py` defines; that test fails while any remain, so a draft number cannot be committed or ship.
 - Fix random seeds. The snapshot is pinned by `snapshot/manifest.json`; an archive's as-of date is its README's Generated At.
-- Before a large write, call `disk.require_free_space` with an upper bound on the bytes written. The default floor is 20 GiB free.
+- Before a large write, call `lineage.core.disk.require_free_space` with an upper bound on the bytes written. The default floor is 20 GiB free.
 - Every run that touches the network goes through the `lineage` CLI, never a one-off script or `python -c`: archives, robots.txt and bill text alike. If no command does what is needed, add one to the CLI first. The CLI's spawned extraction workers never re-run a fetch, and `fetch_all` refuses to run inside one.
-- Every HTTP request goes through `fetch.open_url`, which waits for the host's turn in `lineage.core.pace`. Never pace requests any other way.
-- Open DuckDB only through `queries.connect_quiet` or `queries.connect`, which cap a query's spill to disk at the same floor. This holds for tests and one-off probes too; a test fails on any other `duckdb.*()` call.
+- Every HTTP request goes through `lineage.core.http.open_url`, which waits for the host's turn in `lineage.core.pace`. Never pace requests any other way.
+- Open DuckDB only through `lineage.core.db.connect_quiet` or `connect`, which cap a query's spill to disk at the same floor. This holds for tests and one-off probes too; a test fails on any other `duckdb.*()` call.
 - Secrets come only from environment variables. `.env` is gitignored.
 - Default paths to local data start at `lineage.core.paths.DATA`, never a literal `data/...`. Set `LINEAGE_DATA` to an absolute directory in `.claude/settings.local.json` (gitignored) so worktrees share the data.
-- In v2 lanes, edit only the files your lane owns (DESIGN.md#lanes); add SQL only in your lane's region of `queries.py`.
+- In v2 lanes, edit only the files your lane owns (DESIGN.md#lanes); add SQL only in your package's own `queries.py` (DR-4).
 - Model calls happen only in the explanation step and the provisional precision labels. Retrieval runs with no API key.
 - Commits use conventional messages, one build step per commit. The body gives the engineering reason: the tradeoff, the measurement, the alternative rejected.
