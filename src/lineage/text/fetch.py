@@ -112,6 +112,62 @@ def _read(response: HTTPResponse) -> bytes | None:
     return _decoded(body, encoding)
 
 
+@dataclass(frozen=True, slots=True)
+class _Failed:
+    """A fetch that ended without text: its outcome and what the store records of it."""
+
+    outcome: str
+    status: int | None = None
+    error: str | None = None
+    size: int = 0
+
+
+def _download(
+    url: str, opener: Callable[[str, float], HTTPResponse]
+) -> tuple[bytes, int, str] | _Failed:
+    """The response's body, status and Content-Type, or why there is no body to read."""
+    try:
+        with opener(url, MIN_INTERVAL_SECONDS * 5) as response:
+            body = _read(response)
+            status = response.status
+            content_type = response.headers.get("Content-Type", "")
+    except urllib.error.HTTPError as e:
+        e.close()
+        kind = "server_error" if e.code >= 500 or e.code == 429 else "http_error"
+        return _Failed(kind, status=e.code, error=str(e.reason))
+    except (urllib.error.URLError, TimeoutError, ConnectionError, HTTPException) as e:
+        return _Failed("network_error", error=f"{type(e).__name__}: {e}")
+    if body is None:
+        return _Failed("too_large", status=status, error=f"over {MAX_BODY_BYTES} bytes")
+    return body, status, content_type
+
+
+def _extracted(
+    extractor: Callable[..., str], body: bytes, content_type: str, status: int, **options: Any
+) -> str | _Failed:
+    """The body's text, or an extraction error; a failure of the workers themselves stops
+    the run (ExtractionWorkersError)."""
+    try:
+        return extractor(body, content_type, **options)
+    except ExtractError as e:
+        return _Failed("extract_error", status=status, error=str(e), size=len(body))
+    except ExtractionWorkersError:
+        raise
+    except Exception as e:
+        error = f"extractor failed: {type(e).__name__}: {e}"
+        return _Failed("extract_error", status=status, error=error, size=len(body))
+
+
+def _layout_text(extractor: Callable[..., str], body: bytes, content_type: str) -> str | None:
+    """A PDF read by word position as well; None for any other body, or if that reading fails."""
+    if not body.startswith(b"%PDF"):
+        return None
+    try:
+        return extractor(body, content_type, layout=True)
+    except Exception:
+        return None
+
+
 def fetch_one(
     job: Job,
     robots: Robots,
@@ -139,36 +195,19 @@ def fetch_one(
             text, digest, round(time.monotonic() - started, 3), at, layout,
         )  # fmt: skip
 
+    def failed(f: _Failed) -> Fetched:
+        return result(f.outcome, status=f.status, error=f.error, size=f.size)
+
     if not robots.allows(url):
         return result("robots", status=robots.status, error=f"{robots.url}: {robots.rule}")
-    try:
-        with opener(url, MIN_INTERVAL_SECONDS * 5) as response:
-            body = _read(response)
-            status = response.status
-            content_type = response.headers.get("Content-Type", "")
-    except urllib.error.HTTPError as e:
-        e.close()
-        kind = "server_error" if e.code >= 500 or e.code == 429 else "http_error"
-        return result(kind, status=e.code, error=str(e.reason))
-    except (urllib.error.URLError, TimeoutError, ConnectionError, HTTPException) as e:
-        return result("network_error", error=f"{type(e).__name__}: {e}")
-    if body is None:
-        return result("too_large", status=status, error=f"over {MAX_BODY_BYTES} bytes")
-    try:
-        text = extractor(body, content_type, layout=job.layout, container=container)
-    except ExtractError as e:
-        return result("extract_error", status=status, error=str(e), size=len(body))
-    except ExtractionWorkersError:
-        raise
-    except Exception as e:
-        error = f"extractor failed: {type(e).__name__}: {e}"
-        return result("extract_error", status=status, error=error, size=len(body))
-    layout = None
-    if layout_too and body.startswith(b"%PDF"):
-        try:
-            layout = extractor(body, content_type, layout=True)
-        except Exception:
-            layout = None
+    got = _download(url, opener)
+    if isinstance(got, _Failed):
+        return failed(got)
+    body, status, content_type = got
+    text = _extracted(extractor, body, content_type, status, layout=job.layout, container=container)
+    if isinstance(text, _Failed):
+        return failed(text)
+    layout = _layout_text(extractor, body, content_type) if layout_too else None
     outcome = "ok" if check is None or check(text) else "not_usable"
     return result(outcome, status=status, size=len(body), text=text, layout=layout)
 
