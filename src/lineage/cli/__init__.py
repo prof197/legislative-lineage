@@ -7,7 +7,18 @@ from lineage.cli.app import app
 
 # Registered in pipeline order, which is the order --help lists the commands in.
 # isort: off
-from lineage.cli import data, text, match, explain, evals, origins, export, live
+from lineage.cli import data, text, match, explain, labels, evals, origins, export, live
 # isort: on
 
-__all__ = ["app", "data", "evals", "explain", "export", "live", "match", "origins", "text"]
+__all__ = [
+    "app",
+    "data",
+    "evals",
+    "explain",
+    "export",
+    "labels",
+    "live",
+    "match",
+    "origins",
+    "text",
+]

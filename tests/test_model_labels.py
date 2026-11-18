@@ -175,7 +175,7 @@ def test_a_model_without_a_known_price_is_not_projected() -> None:
 def test_live_over_the_cost_cap_asks_nothing(
     corpus: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    from lineage.cli import evals as cli
+    from lineage.cli import labels as cli
 
     def no_calls(*args: object, **kwargs: object) -> object:
         raise AssertionError("a model was asked")
@@ -336,7 +336,7 @@ def test_a_batch_is_recorded_once_at_half_the_standard_price(tmp_path: Path) -> 
 def test_live_over_the_budget_asks_nothing(
     corpus: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    from lineage.cli import evals as cli
+    from lineage.cli import labels as cli
 
     def no_calls(*args: object, **kwargs: object) -> object:
         raise AssertionError("a model was asked")

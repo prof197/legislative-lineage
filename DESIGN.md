@@ -702,7 +702,7 @@ The package is eleven layers, set at M13's step 1 review (2026-11-18). A module 
 
 | Layer | Package | Holds |
 |---|---|---|
-| CLI | `lineage.cli` | `app` (the Typer apps, shared options), and one module of commands per layer below: `data`, `text`, `match`, `explain`, `evals`, `origins`, `export`, `live` |
+| CLI | `lineage.cli` | `app` (the Typer apps, shared options), and one module of commands per layer below: `data`, `text`, `match`, `explain`, `evals` (with the labeling commands apart, in `labels`), `origins`, `export`, `live` |
 | Live track | `lineage.live` | Intake from Open States' API, the update contracts and the incremental core, the rebuild, publishing, the feed, the scheduled jobs and the deploy |
 | Export | `lineage.export` | The data contract (`schema`), the export (`build`), the stories, the data release, the Atom rules, the README's tables |
 | Origins | `lineage.origins` | Model documents and their collectors, origin matching (`matching`, into `matches`), origin recall and precision, the withheld documents |

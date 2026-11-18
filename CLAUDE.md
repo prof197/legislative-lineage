@@ -99,7 +99,7 @@ All four checks must pass before every commit. CI runs the same four commands, t
 
 ```
 src/lineage/      the package (import name `lineage`; distribution `legislative-lineage`); layers and the layering rule in DESIGN.md#module-map
-  cli/            Typer apps (app.py) and one module of commands per layer; subcommands stay thin wrappers over library functions
+  cli/            Typer apps (app.py) and one module of commands per layer, the labeling commands apart (labels.py); subcommands stay thin wrappers over library functions
   align.py        word-level alignment of a section pair: copied, paraphrased and unmatched spans, with ids and offsets (pure functions)
   core/           the bottom layer: paths, the disk floor, memory, intervals, digests, DuckDB, HTTP
     paths.py        DATA: LINEAGE_DATA or data/, the root of every default local path (worktrees share it)
