@@ -71,6 +71,18 @@ class StatusColumns:
     on: list[date | None]
 
 
+# Each record's status, from StatusColumns bound as lists, as the table `s` a COPY joins on.
+STATUS_CTE = """
+            WITH s AS (
+                SELECT
+                    CAST(unnest($status_id) AS VARCHAR) AS id,
+                    CAST(unnest($status) AS VARCHAR) AS status,
+                    CAST(unnest($status_reason) AS VARCHAR) AS status_reason,
+                    CAST(unnest($status_date) AS DATE) AS status_date
+            )
+"""
+
+
 def copy_bills_to_parquet(
     con: duckdb.DuckDBPyConnection,
     *,
@@ -85,13 +97,7 @@ def copy_bills_to_parquet(
     # COPY's target cannot be a bound parameter, so it is quoted; every value is bound.
     query = f"""
         COPY (
-            WITH s AS (
-                SELECT
-                    CAST(unnest($status_id) AS VARCHAR) AS id,
-                    CAST(unnest($status) AS VARCHAR) AS status,
-                    CAST(unnest($status_reason) AS VARCHAR) AS status_reason,
-                    CAST(unnest($status_date) AS DATE) AS status_date
-            )
+            {STATUS_CTE}
             SELECT
                 b.id,
                 $state AS state,

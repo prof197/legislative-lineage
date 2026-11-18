@@ -11,7 +11,7 @@ from typing import Any
 import duckdb
 
 from lineage.core.db import sql_string, struct_literal
-from lineage.data.queries import BILL_JSON_COLUMNS, RecordType, StatusColumns
+from lineage.data.queries import BILL_JSON_COLUMNS, STATUS_CTE, RecordType, StatusColumns
 from lineage.match.queries import MATCHABLE
 
 
@@ -143,13 +143,7 @@ def restamp_bills(
     """A bills file as of a later Generated At: its rows unchanged but their status."""
     query = f"""
         COPY (
-            WITH s AS (
-                SELECT
-                    CAST(unnest($status_id) AS VARCHAR) AS id,
-                    CAST(unnest($status) AS VARCHAR) AS status,
-                    CAST(unnest($status_reason) AS VARCHAR) AS status_reason,
-                    CAST(unnest($status_date) AS DATE) AS status_date
-            )
+            {STATUS_CTE}
             SELECT b.* REPLACE (
                 s.status AS status, s.status_reason AS status_reason,
                 s.status_date AS status_date,
