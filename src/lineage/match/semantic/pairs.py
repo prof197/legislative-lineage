@@ -33,9 +33,9 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lineage.core import db
+from lineage.core.dirs import rebuild_dir
 from lineage.core.disk import require_free_space
 from lineage.core.memory import BOUND_BYTES, peak_bytes, require_within
-from lineage.match.near.dirs import rebuild_dir
 from lineage.match.near.signatures import open_signatures, row_labels
 from lineage.match.semantic import queries
 from lineage.match.semantic.stage import BUILD_THRESHOLD, MODEL, THRESHOLD, K

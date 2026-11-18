@@ -111,6 +111,7 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
     memory.py       current and peak memory as the OS charges it (macOS physical footprint)
     intervals.py    the Wilson interval
     hashing.py      SHA-256 of a file, as reports and manifests record it
+    dirs.py         a table directory written aside and swapped in, for every layer's tables; two ways a failed write is left
     db.py           DuckDB connections, each with its spill cap; the SQL literal helpers (DR-4)
     http.py         HTTP as this project (User-Agent, TLS intermediates, moved hosts, retries); open_url, streamed downloads
     pace.py         one request at a time per host, its interval apart, across every process (locked files)
@@ -158,7 +159,6 @@ src/lineage/      the package (import name `lineage`; distribution `legislative-
       verify.py       re-estimate candidates from full signatures; the verification threshold
       families.py     same-state families: bill match shares, connected components (pure functions)
       pairs.py        verify window candidates, store cross-state and same-state section pairs, write families
-      dirs.py         a table directory written aside and swapped in, two ways a failed write is left
       index.py        `lineage index`: signatures, bands, pairs and families, then reports/index.json
       queries.py      this package's SQL, and only its own (DR-4)
   match/semantic/ the semantic stage

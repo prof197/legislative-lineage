@@ -16,6 +16,7 @@ from pathlib import Path
 import duckdb
 
 from lineage.core import db
+from lineage.core.dirs import replace_dir
 from lineage.core.disk import require_free_space
 from lineage.data import queries
 from lineage.data.sessions import Session, load_sessions, status_end_date
@@ -116,23 +117,19 @@ def ingest(
     final = out_dir / "bills"
     # Build beside the old table and swap at the end, so a failed run leaves the old table whole
     # and a successful one leaves no files from an earlier manifest behind.
-    building = Path(tempfile.mkdtemp(prefix="bills.", dir=out_dir))
-    try:
+
+    def write(building: Path) -> int:
         with tempfile.TemporaryDirectory(dir=out_dir) as scratch:
             con = db.connect(memory_limit=_MEMORY_LIMIT, temp_directory=Path(scratch))
             try:
-                rows = sum(
+                return sum(
                     _ingest_archive(con, raw_dir, a, sessions, building, Path(scratch))
                     for a in archives
                 )
             finally:
                 con.close()
-        if final.exists():
-            shutil.rmtree(final)
-        building.rename(final)
-    except BaseException:
-        shutil.rmtree(building, ignore_errors=True)
-        raise
+
+    rows = replace_dir(final, write)
     output_bytes = sum(p.stat().st_size for p in final.glob("*.parquet"))
     return IngestResult(
         archives=len(archives),

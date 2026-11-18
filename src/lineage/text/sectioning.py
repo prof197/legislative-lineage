@@ -7,8 +7,6 @@ large the archive. See DESIGN.md#sections.
 """
 
 import multiprocessing
-import shutil
-import tempfile
 import time
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
@@ -18,6 +16,7 @@ from pathlib import Path
 import duckdb
 
 from lineage.core import db
+from lineage.core.dirs import replace_dir
 from lineage.core.disk import require_free_space
 from lineage.text import queries
 from lineage.text.boilerplate import boilerplate_kind
@@ -133,16 +132,12 @@ def build_sections(tables_dir: Path, *, workers: int, floor_bytes: int) -> Secti
     require_free_space(tables_dir, needed=2 * text, floor=floor_bytes)
 
     final = tables_dir / "sections"
-    building = Path(tempfile.mkdtemp(prefix="sections.", dir=tables_dir))
-    try:
+
+    def write(building: Path) -> list[FileCounts]:
         with ProcessPoolExecutor(max_workers=workers, mp_context=_SPAWN) as pool:
-            counts = list(pool.map(_split_file, files, repeat(building), states))
-        if final.exists():
-            shutil.rmtree(final)
-        building.rename(final)
-    except BaseException:
-        shutil.rmtree(building, ignore_errors=True)
-        raise
+            return list(pool.map(_split_file, files, repeat(building), states))
+
+    counts = replace_dir(final, write)
     return SectioningResult(
         bills=sum(c.bills for c in counts),
         with_text=sum(c.with_text for c in counts),

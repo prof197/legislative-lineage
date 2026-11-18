@@ -11,8 +11,6 @@ shingle, or every shingle stoplisted. See DESIGN.md#dr-3 and DESIGN.md#windows.
 
 import hashlib
 import multiprocessing
-import shutil
-import tempfile
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from itertools import pairwise, repeat
@@ -23,6 +21,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lineage.core import db
+from lineage.core.dirs import replace_dir
 from lineage.core.disk import require_free_space
 from lineage.match.near import queries
 from lineage.match.near.minhash import NUM_PERM, SEED, Permutations, permutations, signatures
@@ -169,10 +168,10 @@ def build_signatures(tables_dir: Path, *, workers: int, floor_bytes: int) -> dic
 
     perms = permutations()
     final = tables_dir / "signatures"
-    building = Path(tempfile.mkdtemp(prefix="signatures.", dir=tables_dir))
-    try:
+
+    def write(building: Path) -> list[PartCounts]:
         with ProcessPoolExecutor(max_workers=workers, mp_context=_SPAWN) as pool:
-            counts = list(
+            return list(
                 pool.map(
                     _sign_part,
                     parts,
@@ -182,12 +181,8 @@ def build_signatures(tables_dir: Path, *, workers: int, floor_bytes: int) -> dic
                     repeat(building),
                 )
             )
-        if final.exists():
-            shutil.rmtree(final)
-        building.rename(final)
-    except BaseException:
-        shutil.rmtree(building, ignore_errors=True)
-        raise
+
+    counts = replace_dir(final, write)
 
     sizes = np.concatenate([c.set_sizes for c in counts]) if counts else np.empty(0, np.int64)
     return {

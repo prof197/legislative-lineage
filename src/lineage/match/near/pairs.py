@@ -26,10 +26,10 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lineage.core import db
+from lineage.core.dirs import replace_dir
 from lineage.core.disk import require_free_space
 from lineage.match.near import queries
 from lineage.match.near.bands import load_band_index
-from lineage.match.near.dirs import replace_dir
 from lineage.match.near.families import (
     FAMILY_SHARE,
     BillPairs,

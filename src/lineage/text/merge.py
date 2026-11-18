@@ -8,12 +8,11 @@ names its source, so coverage and recall can be counted both ways. See DESIGN.md
 """
 
 import json
-import shutil
-import tempfile
 from collections.abc import Iterator
 from pathlib import Path
 
 from lineage.core import db
+from lineage.core.dirs import replace_dir
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.text import queries
 from lineage.text.ca_bulk import HOST as BULK_HOST
@@ -67,9 +66,9 @@ def merge_texts(
     bills = sorted((tables_dir / "bills").glob("*.parquet"))
     if not bills:
         raise FileNotFoundError(f"no bills table in {tables_dir}; run `lineage ingest` first")
-    building = Path(tempfile.mkdtemp(prefix="texts.", dir=tables_dir))
     final = tables_dir / "texts"
-    try:
+
+    def write(building: Path) -> dict[str, int]:
         fetched = building / "_fetched.jsonl"
         fetched.touch()
         if not exported_only and plan_path.exists() and store.exists():
@@ -89,11 +88,6 @@ def merge_texts(
                     con, bills_path=path, fetched_path=fetched, out_path=building / path.name
                 )
             fetched.unlink()
-            counts = queries.text_sources(con, texts_glob=str(building / "*.parquet"))
-        if final.exists():
-            shutil.rmtree(final)
-        building.rename(final)
-    except BaseException:
-        shutil.rmtree(building, ignore_errors=True)
-        raise
-    return counts
+            return queries.text_sources(con, texts_glob=str(building / "*.parquet"))
+
+    return replace_dir(final, write)

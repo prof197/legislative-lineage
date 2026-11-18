@@ -712,7 +712,7 @@ The package is eleven layers, set at M13's step 1 review (2026-11-18). A module 
 | Match | `lineage.match` | `near` (the near-duplicate stage) below `semantic` (the semantic stage), below the modules that combine them: query, relatives, listing, the state boilerplate flag, strata |
 | Text | `lineage.text` | Versions, the text layer's inventory, fetch, extraction and merge, sections, boilerplate and generic kinds, windows |
 | Data | `lineage.data` | The snapshot and its archives, sessions, ingest, status, document types, coverage statistics |
-| Core | `lineage.core` | Paths, the disk floor, memory, intervals, digests, DuckDB connections (`db`), HTTP (`http`, `pace`, `robots`) |
+| Core | `lineage.core` | Paths, the disk floor, memory, intervals, digests, table directories swapped in whole (`dirs`), DuckDB connections (`db`), HTTP (`http`, `pace`, `robots`) |
 
 - **SQL** lives only in a package's own `queries` module ([DR-4](#dr-4)). A package above may call a lower package's queries, imported as `<package>_queries`; connections come only from `lineage.core.db`.
 - **Names** drop a prefix the package already carries (`text_fetch` became `lineage.text.fetch`, `origin_recall` became `lineage.origins.recall`), and three modules were renamed so they do not read as another: `fetch` is `lineage.core.http`, `export` is `lineage.export.build`, `semantic` is `lineage.match.semantic.stage`.
