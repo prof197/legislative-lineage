@@ -46,11 +46,11 @@ from lineage.core.intervals import weighted_share, wilson
 from lineage.labels import Item
 from lineage.listing import listed_pairs
 from lineage.match.near import queries as near_queries
+from lineage.match.semantic.pairs import section_keys
+from lineage.match.semantic.stage import BUILD_THRESHOLD, CORROBORATING, MODEL, THRESHOLD
 from lineage.precision import SEED as PRECISION_SEED
 from lineage.precision import latest_correct
 from lineage.relatives import RELATIVES_SHOWN, bill_relatives
-from lineage.semantic import BUILD_THRESHOLD, CORROBORATING, MODEL, THRESHOLD
-from lineage.semantic_pairs import section_keys
 from lineage.strata import STRATA, stratum_of
 
 STATE = "GA"

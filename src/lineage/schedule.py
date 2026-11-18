@@ -46,8 +46,8 @@ from typing import Any
 from lineage.core.paths import DATA
 from lineage.deploy import DEPLOY_DIR, HELD, DeployRules, in_session, load_rules
 from lineage.incremental import applied_days
+from lineage.match.semantic.stage import MODEL
 from lineage.publish import staging_dir
-from lineage.semantic import MODEL
 from lineage.updates import CHANGES_DIR, DAY_FILE, DayInfo, Relative, Snapshot, snapshot
 
 SCHEDULE_DIR = DATA / "schedule"

@@ -1,7 +1,7 @@
 """`lineage eval threshold`: the semantic threshold's options, what each shows and finds.
 
-The threshold of 0.8905 was set on the labeled pair dataset (lineage.semantic) and changes
-only on precision-sample evidence (DESIGN.md#precision-sample). The options are the build's
+The threshold of 0.8905 was set on the labeled pair dataset (lineage.match.semantic.stage) and
+changes only on precision-sample evidence (DESIGN.md#precision-sample). The options are the build's
 threshold and stricter ones in steps of 0.01; the near-duplicate stage alone; and keeping a
 threshold but listing the relatives found by meaning alone apart, under their own heading, so
 each list has its own precision. A lower threshold would list relatives the samples never drew,
@@ -38,10 +38,10 @@ from lineage.core.intervals import weighted_share, wilson
 from lineage.flag_precision import dropped_strata
 from lineage.labels import Item
 from lineage.listing import ListedPairs, listed_pairs, shipped_flag
+from lineage.match.semantic.pairs import section_keys
+from lineage.match.semantic.stage import BUILD_THRESHOLD, CORROBORATING, MODEL, THRESHOLD
 from lineage.precision import latest_correct, restratified
 from lineage.relatives import bill_relatives
-from lineage.semantic import BUILD_THRESHOLD, CORROBORATING, MODEL, THRESHOLD
-from lineage.semantic_pairs import section_keys
 from lineage.strata import STRATA, pair_keys, stored_strata, strata
 
 # Up to 0.97, the first step at which development recall falls: the two enactments found by

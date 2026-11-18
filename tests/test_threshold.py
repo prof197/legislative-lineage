@@ -5,7 +5,7 @@ from typing import Any
 import pytest
 
 from lineage.core.intervals import wilson
-from lineage.semantic import BUILD_THRESHOLD
+from lineage.match.semantic.stage import BUILD_THRESHOLD
 from lineage.threshold import (
     CANDIDATES,
     Listed,

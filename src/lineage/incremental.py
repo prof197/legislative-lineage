@@ -81,12 +81,10 @@ from lineage.match.near.signatures import (
     sign_part,
 )
 from lineage.match.near.stoplist import load_stoplist
-from lineage.models import MODELS, MODELS_DIR, require_model
-from lineage.neighbors import update_neighbors
-from lineage.origins import OriginMatch, origins_path, read_origin_matches, write_origin_matches
-from lineage.relatives import bill_relatives
-from lineage.semantic import BUILD_THRESHOLD, MODEL, Embedder, K
-from lineage.semantic_pairs import (
+from lineage.match.semantic import queries as semantic_queries
+from lineage.match.semantic.models import MODELS, MODELS_DIR, require_model
+from lineage.match.semantic.neighbors import update_neighbors
+from lineage.match.semantic.pairs import (
     SemanticPairs,
     changed_texts,
     load_built_semantic_pairs,
@@ -95,6 +93,19 @@ from lineage.semantic_pairs import (
     update_semantic_pairs,
     write_semantic_pairs,
 )
+from lineage.match.semantic.stage import BUILD_THRESHOLD, MODEL, Embedder, K
+from lineage.match.semantic.vectors import (
+    SEMANTIC_DIR,
+    extend_store,
+    load_plan,
+    load_vectors,
+    semantic_dir,
+    text_count,
+    vectors_dir,
+    write_plan,
+)
+from lineage.origins import OriginMatch, origins_path, read_origin_matches, write_origin_matches
+from lineage.relatives import bill_relatives
 from lineage.text import queries as text_queries
 from lineage.text.boilerplate import boilerplate_kind
 from lineage.text.sections import normalize, split_sections
@@ -113,16 +124,6 @@ from lineage.updates import (
     record_changes,
     relative_changes,
     write_changes,
-)
-from lineage.vectors import (
-    SEMANTIC_DIR,
-    extend_store,
-    load_plan,
-    load_vectors,
-    semantic_dir,
-    text_count,
-    vectors_dir,
-    write_plan,
 )
 
 SESSIONS = Path(__file__).parents[2] / "snapshot" / "sessions.csv"
@@ -143,8 +144,8 @@ _EMBEDDERS: dict[str, Embedder] = {}
 
 
 def register_embedder(model: str, embed: Embedder) -> None:
-    """Embed `model`'s windows with `embed`: a model `lineage.models` does not pin, such as the
-    tests' stand-in, which the tables were embedded with."""
+    """Embed `model`'s windows with `embed`: a model `lineage.match.semantic.models` does not
+    pin, such as the tests' stand-in, which the tables were embedded with."""
     _EMBEDDERS[model] = embed
 
 
@@ -163,7 +164,7 @@ def embedder_for(model: str, models_dir: Path = MODELS_DIR) -> Callable[[], Embe
     require_model(model, models_dir)
 
     def load() -> Embedder:
-        from lineage.embed import embed, load_model  # fastembed is slow to import
+        from lineage.match.semantic.embed import embed, load_model  # fastembed is slow to import
 
         loaded = load_model(model, models_dir)
         return lambda texts: embed(loaded, texts)
@@ -823,7 +824,7 @@ def _semantic(
         for part, bill_id, ordinal, number, window in cut:
             by_part[part].append((bill_id, ordinal, number, ids[window]))
         for part, rows in by_part.items():
-            queries.write_semantic_units(
+            semantic_queries.write_semantic_units(
                 con,
                 parquet_path=view.fresh(f"{units_rel}/{part}.parquet"),
                 bill_ids=[r[0] for r in rows],

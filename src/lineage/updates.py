@@ -25,9 +25,9 @@ from lineage.core import db
 from lineage.core.paths import DATA
 from lineage.listing import shipped_flag
 from lineage.match.near.pairs import load_families
+from lineage.match.semantic.stage import MODEL
 from lineage.origins import read_origin_matches
 from lineage.relatives import bill_relatives
-from lineage.semantic import MODEL
 
 DAY_FILE = "day.json"
 BILLS_SUFFIX = "_bills.json"

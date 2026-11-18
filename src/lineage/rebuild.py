@@ -55,21 +55,13 @@ from lineage.data.snapshot import bills_member, load_manifest, scan, verify, wri
 from lineage.incremental import applied_days, embedder_for
 from lineage.match.near.index import build_index
 from lineage.match.near.stoplist import build_stoplist
-from lineage.models import MODELS, MODELS_DIR
-from lineage.neighbors import EF_SEARCH as NEIGHBORS_EF_SEARCH
-from lineage.neighbors import RECALL_FLOOR, SPEC, build_neighbors
-from lineage.origins import origins_path, write_origin_matches
-from lineage.semantic import MODEL
-from lineage.semantic_pairs import build_semantic_pairs, section_keys
-from lineage.state_boilerplate import build_state_boilerplate, has_counts, load_families_reached
-from lineage.text.inventory import PLAN as TEXT_PLAN
-from lineage.text.merge import BULK, FETCHED, merge_texts
-from lineage.text.rules import RULES as TEXT_RULES
-from lineage.text.run import QUALITY as TEXT_QUALITY
-from lineage.text.run import STORE as TEXT_STORE
-from lineage.text.sectioning import build_sections
-from lineage.updates import BILLS_SUFFIX, Folded, fold, load_days, text_hash
-from lineage.vectors import (
+from lineage.match.semantic import queries as semantic_queries
+from lineage.match.semantic.models import MODELS, MODELS_DIR
+from lineage.match.semantic.neighbors import EF_SEARCH as NEIGHBORS_EF_SEARCH
+from lineage.match.semantic.neighbors import RECALL_FLOOR, SPEC, build_neighbors
+from lineage.match.semantic.pairs import build_semantic_pairs, section_keys
+from lineage.match.semantic.stage import MODEL
+from lineage.match.semantic.vectors import (
     SHARD_TEXTS,
     build_plan,
     digest,
@@ -82,6 +74,15 @@ from lineage.vectors import (
     shard_name,
     vectors_dir,
 )
+from lineage.origins import origins_path, write_origin_matches
+from lineage.state_boilerplate import build_state_boilerplate, has_counts, load_families_reached
+from lineage.text.inventory import PLAN as TEXT_PLAN
+from lineage.text.merge import BULK, FETCHED, merge_texts
+from lineage.text.rules import RULES as TEXT_RULES
+from lineage.text.run import QUALITY as TEXT_QUALITY
+from lineage.text.run import STORE as TEXT_STORE
+from lineage.text.sectioning import build_sections
+from lineage.updates import BILLS_SUFFIX, Folded, fold, load_days, text_hash
 
 RAW = DATA / "raw"
 MANIFEST = Path("snapshot/manifest.json")
@@ -268,7 +269,7 @@ def _vector_index(
     ids: list[int] = []
     with db.connect_quiet() as con:
         for s in range(plan.shards):
-            texts = queries.read_semantic_texts(
+            texts = semantic_queries.read_semantic_texts(
                 con, parquet_path=semantic_dir(source) / "texts" / f"{shard_name(s)}.parquet"
             )
             for n, text in enumerate(texts):
@@ -290,7 +291,7 @@ def _reuse_vectors(tables: Path, source: Path, model: str) -> dict[str, int]:
     filled = texts_reused = 0
     with db.connect_quiet() as con:
         for s in range(plan.shards):
-            texts = queries.read_semantic_texts(
+            texts = semantic_queries.read_semantic_texts(
                 con, parquet_path=semantic_dir(tables) / "texts" / f"{shard_name(s)}.parquet"
             )
             wanted = np.array([digest(t) for t in texts], dtype="S16")
@@ -328,7 +329,7 @@ def _embed_rest(
     out.mkdir(parents=True, exist_ok=True)
     with db.connect_quiet() as con:
         for s in todo:
-            texts = queries.read_semantic_texts(
+            texts = semantic_queries.read_semantic_texts(
                 con, parquet_path=semantic_dir(tables) / "texts" / f"{shard_name(s)}.parquet"
             )
             np.save(out / f"{shard_name(s)}.npy", embed(texts).astype(np.float16))

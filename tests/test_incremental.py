@@ -26,6 +26,8 @@ from lineage.incremental import (
     unregister_embedder,
     update,
 )
+from lineage.match.semantic import queries as semantic_queries
+from lineage.match.semantic.vectors import load_plan, load_vectors, semantic_dir, shard_name
 from lineage.updates import (
     Change,
     RecordAdded,
@@ -45,7 +47,6 @@ from lineage.updates import (
     snapshot,
     write_changes,
 )
-from lineage.vectors import load_plan, load_vectors, semantic_dir, shard_name
 from tests.conftest import FAKE_MODEL
 from tests.days import DAYS, GEORGIA_ID, UTAH_SB_18, rebuild, write_days
 from tests.fakes import MARK, bag_of_words
@@ -161,7 +162,10 @@ def test_the_georgia_record_carries_no_vector_once_its_windows_are_retired(
     units = str(semantic_dir(tables) / "units" / "*.parquet")
     with db.connect_quiet() as con:
         marked = [
-            t for _, t in queries.semantic_text_ids_of(con, units_glob=units, bill_ids=[GEORGIA_ID])
+            t
+            for _, t in semantic_queries.semantic_text_ids_of(
+                con, units_glob=units, bill_ids=[GEORGIA_ID]
+            )
         ]
     # Day 4's windows, which only the Georgia record carries: its words are marked.
     assert marked
@@ -177,7 +181,10 @@ def test_the_georgia_record_carries_no_vector_once_its_windows_are_retired(
     with db.connect_quiet() as con:
         assert queries.carried_text_ids(con, units_glob=units, text_ids=marked) == []
         now = [
-            t for _, t in queries.semantic_text_ids_of(con, units_glob=units, bill_ids=[GEORGIA_ID])
+            t
+            for _, t in semantic_queries.semantic_text_ids_of(
+                con, units_glob=units, bill_ids=[GEORGIA_ID]
+            )
         ]
     assert now
     assert min(now) >= vectors.shape[0] - len(now)
@@ -189,7 +196,7 @@ def _texts(tables: Path, ids: list[int]) -> list[str]:
     texts: list[str] = []
     with db.connect_quiet() as con:
         for s in range(plan.shards):
-            texts += queries.read_semantic_texts(
+            texts += semantic_queries.read_semantic_texts(
                 con, parquet_path=semantic_dir(tables) / "texts" / f"{shard_name(s)}.parquet"
             )
     return [texts[i] for i in ids]

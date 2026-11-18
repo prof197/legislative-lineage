@@ -29,11 +29,17 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage import queries
-from lineage.ann import Neighbors, exact_search
 from lineage.core import db
+from lineage.match.semantic import queries
+from lineage.match.semantic.ann import Neighbors, exact_search
+from lineage.match.semantic.vectors import (
+    EmbedError,
+    load_plan,
+    load_vectors,
+    rows_of,
+    semantic_dir,
+)
 from lineage.text.windows import WINDOW_WORDS, display_windows
-from lineage.vectors import EmbedError, load_plan, load_vectors, rows_of, semantic_dir
 
 MODEL = "bge-small-en-v1.5"
 # reports/pair_data.json: semantic.models[MODEL].at_precision["0.9"].threshold
@@ -43,7 +49,8 @@ CORROBORATING = BUILD_THRESHOLD
 # The M5 review's choice, on the 0.93 sample's band above 0.93 (DESIGN.md#choosing-the-threshold)
 THRESHOLD = 0.94
 K = 20  # nearest corpus texts each query window keeps
-# Query windows scored per pass over the vectors: 2,000 hold 262 MB of scores (lineage.ann).
+# Query windows scored per pass over the vectors: 2,000 hold 262 MB of scores
+# (lineage.match.semantic.ann).
 WINDOWS_PER_PASS = 2_000
 
 Embedder = Callable[[Sequence[str]], NDArray[np.float32]]

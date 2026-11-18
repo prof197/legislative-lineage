@@ -5,11 +5,11 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
-from lineage import queries, vectors
 from lineage.core import db
 from lineage.data import queries as data_queries
-from lineage.text import queries as text_queries
-from lineage.vectors import (
+from lineage.match.semantic import queries as semantic_queries
+from lineage.match.semantic import vectors
+from lineage.match.semantic.vectors import (
     EmbedError,
     build_plan,
     current_plan,
@@ -19,6 +19,7 @@ from lineage.vectors import (
     semantic_dir,
     shard_name,
 )
+from lineage.text import queries as text_queries
 
 LONG = " ".join(f"w{i}" for i in range(150))  # two windows: words 0-93 and 56-149
 TEXTS = {
@@ -79,7 +80,7 @@ def _texts(tables: Path, plan_shards: int) -> list[str]:
         return [
             t
             for s in range(plan_shards)
-            for t in queries.read_semantic_texts(
+            for t in semantic_queries.read_semantic_texts(
                 con, parquet_path=semantic_dir(tables) / "texts" / f"{shard_name(s)}.parquet"
             )
         ]

@@ -1,7 +1,7 @@
 """Embed windows with a pinned ONNX model, on the CPU, offline.
 
-The model is loaded from the directory `lineage model fetch` filled (lineage.models), so
-fastembed never downloads anything. Vectors come back unit length, so a dot product is the
+The model is loaded from the directory `lineage model fetch` filled (lineage.match.semantic.models),
+so fastembed never downloads anything. Vectors come back unit length, so a dot product is the
 cosine similarity. See DESIGN.md#semantic-stage.
 """
 
@@ -13,7 +13,7 @@ import numpy as np
 from fastembed import TextEmbedding
 from numpy.typing import NDArray
 
-from lineage.models import MODELS, MODELS_DIR, require_model
+from lineage.match.semantic.models import MODELS, MODELS_DIR, require_model
 
 # fastembed is given a local directory and has no reason to reach the Hugging Face hub; this
 # makes sure nothing it imports tries.

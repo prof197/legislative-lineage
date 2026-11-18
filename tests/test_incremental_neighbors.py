@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
-from lineage.neighbors import update_neighbors
+from lineage.match.semantic.neighbors import update_neighbors
 
 K = 4
 THRESHOLD = 0.8

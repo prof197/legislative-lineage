@@ -10,9 +10,9 @@ once, and a family is scored from the query's side: the share of the query's wor
 the sections it matches, of the words of every section searched, so a provision carried inside
 a larger bill still scores high, and a long matched section counts for more than a short one.
 
-With the semantic stage's search (lineage.semantic), each matchable section's windows are also
-embedded and searched by meaning, and a bill matches a query section when either stage finds
-it. Every match keeps which stage found each of its sections, so the stages can be measured
+With the semantic stage's search (lineage.match.semantic.stage), each matchable section's windows
+are also embedded and searched by meaning, and a bill matches a query section when either stage
+finds it. Every match keeps which stage found each of its sections, so the stages can be measured
 alone and together. Nothing here needs a network connection or an API key. See
 DESIGN.md#near-duplicate-stage and DESIGN.md#semantic-stage.
 """
@@ -36,8 +36,8 @@ from lineage.match.near.shingles import section_shingles
 from lineage.match.near.signatures import open_signatures, signature_sections, signature_values
 from lineage.match.near.stoplist import apply_stoplist, load_stoplist
 from lineage.match.near.verify import THRESHOLD, min_agreements
-from lineage.semantic import CORROBORATING, SemanticSearch, search_sections
-from lineage.semantic import THRESHOLD as SEMANTIC_THRESHOLD
+from lineage.match.semantic.stage import CORROBORATING, SemanticSearch, search_sections
+from lineage.match.semantic.stage import THRESHOLD as SEMANTIC_THRESHOLD
 from lineage.text.boilerplate import boilerplate_kind
 from lineage.text.sections import normalize, split_sections
 from lineage.text.windows import normalized_windows

@@ -10,10 +10,10 @@ from pathlib import Path
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage import queries
 from lineage.core import db
-from lineage.semantic import SemanticSearch
-from lineage.vectors import build_plan, semantic_dir, shard_name
+from lineage.match.semantic import queries as semantic_queries
+from lineage.match.semantic.stage import SemanticSearch
+from lineage.match.semantic.vectors import build_plan, semantic_dir, shard_name
 
 DIM = 256
 MARK = "Q"
@@ -36,7 +36,7 @@ def bag_of_words_search(tables: Path) -> SemanticSearch:
         texts = [
             t
             for s in range(plan.shards)
-            for t in queries.read_semantic_texts(
+            for t in semantic_queries.read_semantic_texts(
                 con, parquet_path=semantic_dir(tables) / "texts" / f"{shard_name(s)}.parquet"
             )
         ]

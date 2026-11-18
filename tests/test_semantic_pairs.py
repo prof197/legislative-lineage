@@ -7,8 +7,7 @@ import numpy as np
 import pytest
 
 from lineage.core import db
-from lineage.semantic import BUILD_THRESHOLD, THRESHOLD, K
-from lineage.semantic_pairs import (
+from lineage.match.semantic.pairs import (
     SemanticPairs,
     SemanticPairsError,
     build_semantic_pairs,
@@ -16,7 +15,8 @@ from lineage.semantic_pairs import (
     pairs_dir,
     section_keys,
 )
-from lineage.vectors import semantic_dir, vectors_dir
+from lineage.match.semantic.stage import BUILD_THRESHOLD, THRESHOLD, K
+from lineage.match.semantic.vectors import semantic_dir, vectors_dir
 from tests.conftest import FAKE_MODEL as MODEL
 
 

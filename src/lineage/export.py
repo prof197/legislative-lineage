@@ -55,8 +55,6 @@ from lineage.data.stats import (
     GEORGIA_ENACTING,
     GEORGIA_NOTICE,
 )
-from lineage.embed import embed as embed_texts
-from lineage.embed import load_model
 from lineage.explain import CACHE_DIR, explain, prompt_spans
 from lineage.explain import MODEL as EXPLAIN_MODEL
 from lineage.export_schema import (
@@ -98,6 +96,10 @@ from lineage.export_schema import (
 from lineage.listing import ListedPairs, listed_pairs, shipped_flag
 from lineage.match.near.minhash import NUM_PERM
 from lineage.match.near.pairs import load_families
+from lineage.match.semantic.embed import embed as embed_texts
+from lineage.match.semantic.embed import load_model
+from lineage.match.semantic.pairs import section_keys
+from lineage.match.semantic.stage import MODEL
 from lineage.modeldocs import MODELDOCS_DIR, ModelDoc, Source, read_docs
 from lineage.origin_labels import LABELS as ORIGIN_LABELS
 from lineage.origin_labels import judged_correct, load_labels
@@ -111,8 +113,6 @@ from lineage.release import RELEASE_MANIFEST as RELEASE_MANIFEST
 from lineage.release import ReleaseError as ReleaseError
 from lineage.release import package as package
 from lineage.release import write_release_manifest as write_release_manifest
-from lineage.semantic import MODEL
-from lineage.semantic_pairs import section_keys
 from lineage.state_boilerplate import COMPACT_PHRASES
 from lineage.withheld import NONE as NO_WITHHELD
 from lineage.withheld import REPORT as WITHHELD_REPORT

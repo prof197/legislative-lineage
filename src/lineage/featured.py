@@ -36,8 +36,8 @@ from lineage import queries
 from lineage.answer_key import ANSWER_KEY, read_answer_key
 from lineage.core import db
 from lineage.listing import ListedPairs, listed_pairs, shipped_flag
+from lineage.match.semantic.pairs import section_keys
 from lineage.relatives import bill_relatives
-from lineage.semantic_pairs import section_keys
 
 PAIRS = Path("evals/featured_pairs.jsonl")
 REPORT = Path("reports/featured_pairs.json")

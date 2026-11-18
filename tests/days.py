@@ -15,7 +15,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from lineage.semantic_pairs import build_semantic_pairs
+from lineage.match.semantic.pairs import build_semantic_pairs
 from lineage.updates import fold, load_days, write_archives
 from tests.conftest import COMMISSION, FAKE_MODEL, embed_with_stand_in, tables_from_raw
 

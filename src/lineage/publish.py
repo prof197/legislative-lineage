@@ -107,14 +107,14 @@ from lineage.export_schema import (
 from lineage.incremental import applied_days
 from lineage.listing import listed_pairs, shipped_flag
 from lineage.match.near.pairs import load_families
+from lineage.match.semantic.pairs import section_keys
+from lineage.match.semantic.stage import MODEL
 from lineage.modeldocs import MODELDOCS_DIR, read_docs
 from lineage.origin_labels import LABELS as ORIGIN_LABELS
 from lineage.origin_story import FILE as ORIGIN_STORY_FILE
 from lineage.origin_story import story_file as origin_story_file
 from lineage.origins import read_origin_matches
 from lineage.relatives import BillRelatives, bill_relatives
-from lineage.semantic import MODEL
-from lineage.semantic_pairs import section_keys
 from lineage.state_boilerplate import COMPACT_PHRASES
 from lineage.updates import (
     CHANGES_DIR,

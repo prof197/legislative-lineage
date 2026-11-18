@@ -6,12 +6,12 @@ neighbors at or above the threshold, where IVF-PQ re-scored kept 97.2%, and sear
 (reports/ann_benchmark.json). HNSW's scores are cosines over the float16 vectors already; an
 index of compressed codes, such as IVF-PQ, has its `candidates` best re-scored against the
 vectors instead. The text itself is dropped, and the K best at or above the build's threshold
-(lineage.semantic.BUILD_THRESHOLD) are kept. The result is two arrays beside the vectors, one
-row per text id: `neighbors/ids.npy` (int32, -1 where fewer than K pass) and
+(lineage.match.semantic.stage.BUILD_THRESHOLD) are kept. The result is two arrays beside the
+vectors, one row per text id: `neighbors/ids.npy` (int32, -1 where fewer than K pass) and
 `neighbors/scores.npy` (float16 cosines). The index is never saved: it exists only for the
 build, and a single query needs neither it nor these arrays, since it searches the vectors
-exactly (lineage.semantic). `check_at` measures the stored neighbors' recall at the stage's
-stricter threshold on the same seeded texts.
+exactly (lineage.match.semantic.stage). `check_at` measures the stored neighbors' recall at the
+stage's stricter threshold on the same seeded texts.
 
 The build holds to DR-3's memory bound. It refuses to start when its projected peak, the index
 at its measured bytes per vector plus its buffers, is over the bound, and stops at the first
@@ -30,7 +30,9 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage.ann import (
+from lineage.core.disk import require_free_space
+from lineage.core.memory import BOUND_BYTES, MemoryBoundError, peak_bytes, require_within
+from lineage.match.semantic.ann import (
     Neighbors,
     add,
     exact_search,
@@ -42,11 +44,9 @@ from lineage.ann import (
     set_threads,
     train_index,
 )
-from lineage.core.disk import require_free_space
-from lineage.core.memory import BOUND_BYTES, MemoryBoundError, peak_bytes, require_within
-from lineage.semantic import BUILD_THRESHOLD as THRESHOLD
-from lineage.semantic import MODEL, K
-from lineage.vectors import EmbedError, load_plan, load_vectors, rows_of, vectors_dir
+from lineage.match.semantic.stage import BUILD_THRESHOLD as THRESHOLD
+from lineage.match.semantic.stage import MODEL, K
+from lineage.match.semantic.vectors import EmbedError, load_plan, load_vectors, rows_of, vectors_dir
 
 SEED = 20261111
 SPEC = "HNSW32,SQfp16"

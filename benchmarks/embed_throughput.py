@@ -4,7 +4,8 @@ Every configuration embeds the same seeded sample of distinct 94-word windows wi
 overlap, the semantic stage's unit, drawn from a seeded sample of matchable bills:
 
 - one process, batches in the order drawn, as the semantic sizing measured its rates;
-- one process, batches in order of token count (lineage.embed), at several thread counts;
+- one process, batches in order of token count (lineage.match.semantic.embed), at several thread
+counts;
 - several worker processes, each with its own model and threads, each embedding an equal share
   of the windows in order of token count.
 
@@ -36,8 +37,8 @@ from benchmarks.minhash import machine
 from lineage import queries
 from lineage.core import db
 from lineage.core.paths import DATA
-from lineage.embed import BATCH_SIZE, embed, load_model
-from lineage.models import MODELS
+from lineage.match.semantic.embed import BATCH_SIZE, embed, load_model
+from lineage.match.semantic.models import MODELS
 from lineage.text.windows import WINDOW_WORDS, display_windows
 
 SEED = 20261109

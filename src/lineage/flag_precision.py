@@ -12,9 +12,9 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lineage.labels import Item, SectionKey
+from lineage.match.semantic.pairs import section_keys
+from lineage.match.semantic.stage import MODEL
 from lineage.precision import SEED, draw, estimate, sample_rows, without_sections
-from lineage.semantic import MODEL
-from lineage.semantic_pairs import section_keys
 from lineage.state_boilerplate import (
     COMMAND,
     MIN_FAMILIES,

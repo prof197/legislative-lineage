@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage.ann import (
+from lineage.match.semantic.ann import (
     add,
     exact_search,
     index_bytes,

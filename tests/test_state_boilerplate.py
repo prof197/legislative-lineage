@@ -11,8 +11,8 @@ from lineage.core import db
 from lineage.flag_precision import build_flagged_sample, with_flag
 from lineage.labels import Item, Pair, Section, SectionKey, SectionRef, text_sha256
 from lineage.match.near.pairs import load_families, load_same_state_pairs
+from lineage.match.semantic.pairs import build_semantic_pairs, section_keys
 from lineage.precision import without_sections
-from lineage.semantic_pairs import build_semantic_pairs, section_keys
 from lineage.state_boilerplate import (
     COMPACT_PHRASES,
     MIN_FAMILIES,

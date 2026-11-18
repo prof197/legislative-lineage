@@ -44,9 +44,9 @@ from lineage.acts import ACT_NAMES, ACTS, load_act
 from lineage.core import db
 from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
 from lineage.core.paths import DATA
-from lineage.embed import embed, load_model
 from lineage.match.near import queries as near_queries
-from lineage.models import MODELS, require_model
+from lineage.match.semantic.embed import embed, load_model
+from lineage.match.semantic.models import MODELS, require_model
 from lineage.text.boilerplate import boilerplate_kind
 from lineage.text.sections import normalize, split_sections
 from lineage.text.windows import WINDOW_STRIDE, WINDOW_WORDS, display_windows, window_counts

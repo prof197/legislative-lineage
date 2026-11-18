@@ -1,9 +1,9 @@
 import json
 from pathlib import Path
 
-from lineage.models import MODELS
+from lineage.match.semantic.models import MODELS
+from lineage.match.semantic.stage import BUILD_THRESHOLD, MODEL, THRESHOLD
 from lineage.pair_eval import REPORT, TARGET_PRECISION
-from lineage.semantic import BUILD_THRESHOLD, MODEL, THRESHOLD
 from lineage.threshold import CANDIDATES
 from lineage.threshold import REPORT as PROPOSAL
 

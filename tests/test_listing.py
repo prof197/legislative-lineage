@@ -8,10 +8,10 @@ import pytest
 
 from lineage.listing import listed_hits, listed_pairs
 from lineage.match.near.pairs import load_cross_state_pairs
+from lineage.match.semantic.pairs import build_semantic_pairs, load_semantic_pairs, section_keys
+from lineage.match.semantic.stage import BUILD_THRESHOLD, CORROBORATING, THRESHOLD
 from lineage.query import Match, query_text
 from lineage.relatives import bill_relatives
-from lineage.semantic import BUILD_THRESHOLD, CORROBORATING, THRESHOLD
-from lineage.semantic_pairs import build_semantic_pairs, load_semantic_pairs, section_keys
 from tests.conftest import FAKE_MODEL
 from tests.test_relatives import bill_of, most_related
 

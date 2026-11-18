@@ -7,15 +7,15 @@ other. Each such pair across state lines is stored once, with its best cosine an
 pair that gave it, numbered as the near-duplicate stage's pairs are, by section in the
 signatures' order, so the two stages' pairs join directly: the precision sample's strata, bill
 scoring and the export read them alike. Window numbers are the semantic stage's own, 94 words
-without overlap (lineage.semantic.query_windows), which point alignment and explanations at the
-text that matched, and keep the effect of the cap of K traceable.
+without overlap (lineage.match.semantic.stage.query_windows), which point alignment and explanations
+at the text that matched, and keep the effect of the cap of K traceable.
 
 Same-state pairs are not stored, since families come from the near-duplicate stage. A section
 the near-duplicate stage did not sign, being shorter than one shingle, has no number; its
 windows are left out and counted.
 
-The table is built down to the build's threshold (lineage.semantic.BUILD_THRESHOLD) and read
-at the stage's, or any threshold between: each text keeps its K nearest before a threshold
+The table is built down to the build's threshold (lineage.match.semantic.stage.BUILD_THRESHOLD) and
+read at the stage's, or any threshold between: each text keeps its K nearest before a threshold
 applies, so the pairs at or above a stricter one are exactly those a build at it would store.
 It records the model, K and threshold it was built under, and refuses to load under another
 model or K, or at a threshold under its own, so changing one means rebuilding it. A single query
@@ -32,13 +32,13 @@ from typing import Any, cast
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage import queries
 from lineage.core import db
 from lineage.core.disk import require_free_space
 from lineage.core.memory import BOUND_BYTES, peak_bytes, require_within
 from lineage.match.near.signatures import open_signatures, row_labels
-from lineage.semantic import BUILD_THRESHOLD, MODEL, THRESHOLD, K
-from lineage.vectors import semantic_dir, vectors_dir
+from lineage.match.semantic import queries
+from lineage.match.semantic.stage import BUILD_THRESHOLD, MODEL, THRESHOLD, K
+from lineage.match.semantic.vectors import semantic_dir, vectors_dir
 
 REPORT = Path("reports/semantic_pairs.json")
 COMMAND = "uv run lineage semantic-pairs"

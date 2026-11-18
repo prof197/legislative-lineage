@@ -32,13 +32,13 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage import queries
 from lineage.core import db
 from lineage.core.disk import require_free_space
 from lineage.core.memory import peak_bytes
-from lineage.embed import embed, load_model
 from lineage.match.near import queries as near_queries
-from lineage.models import MODELS, MODELS_DIR, require_model
+from lineage.match.semantic import queries
+from lineage.match.semantic.embed import embed, load_model
+from lineage.match.semantic.models import MODELS, MODELS_DIR, require_model
 from lineage.text.windows import WINDOW_WORDS, display_windows
 
 SEMANTIC_DIR = "semantic"

@@ -17,10 +17,10 @@ paraphrase, merged over the model's sections, an exact span winning where the tw
 model's own text appears nowhere in a match.
 
 Every document's windows are searched together, in id order, a pass over the corpus's vectors
-per lineage.semantic.WINDOWS_PER_PASS windows rather than one per document, and everything is
-ordered before it is returned, so the same documents and tables give the same matches, byte for
-byte, whichever order they come in. Matched alone, a document gives the same matches unless a
-cosine sits within float rounding of a threshold, since a matrix product's last bits can depend
+per lineage.match.semantic.stage.WINDOWS_PER_PASS windows rather than one per document, and
+everything is ordered before it is returned, so the same documents and tables give the same matches,
+byte for byte, whichever order they come in. Matched alone, a document gives the same matches unless
+a cosine sits within float rounding of a threshold, since a matrix product's last bits can depend
 on how many rows it multiplies.
 
 A model window keeps its K nearest corpus texts, as a query's does, so an act copied with
@@ -42,14 +42,20 @@ from lineage import queries
 from lineage.align import Alignment, align
 from lineage.core import db
 from lineage.core.disk import require_free_space
-from lineage.embed import embed as embed_texts
-from lineage.embed import load_model
 from lineage.listing import MeaningHit, NearHit, SectionKey, flagged_sections
+from lineage.match.semantic.embed import embed as embed_texts
+from lineage.match.semantic.embed import load_model
+from lineage.match.semantic.models import MODELS_DIR
+from lineage.match.semantic.stage import (
+    CORROBORATING,
+    THRESHOLD,
+    Embedder,
+    open_search,
+    search_sections,
+)
 from lineage.modeldocs import ModelDoc, ModelDocError, load_text
-from lineage.models import MODELS_DIR
 from lineage.origins import BillSpan, OriginMatch, SectionPair, Stage
 from lineage.query import near_duplicate_hits, require_index, sign_query
-from lineage.semantic import CORROBORATING, THRESHOLD, Embedder, open_search, search_sections
 from lineage.text.boilerplate import boilerplate_kind
 from lineage.text.generic_sections import (
     MIN_WORDS,

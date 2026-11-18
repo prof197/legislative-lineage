@@ -8,10 +8,10 @@ from pathlib import Path
 
 import pytest
 
-from lineage import semantic
 from lineage.core import db
+from lineage.match.semantic import stage as semantic
+from lineage.match.semantic.stage import CORROBORATING, THRESHOLD, SemanticSearch, search_sections
 from lineage.query import query_text, regrouped
-from lineage.semantic import CORROBORATING, THRESHOLD, SemanticSearch, search_sections
 from tests.fakes import MARK, bag_of_words_search
 
 

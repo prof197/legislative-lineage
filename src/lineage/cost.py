@@ -13,8 +13,8 @@ from pathlib import Path
 from typing import Any
 
 from lineage.acts import enacted_text
+from lineage.match.semantic.stage import K, SemanticSearch
 from lineage.query import query_text
-from lineage.semantic import K, SemanticSearch
 
 REPORT = Path("reports/cost.json")
 COMMAND = "uv run lineage eval cost"

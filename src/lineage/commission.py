@@ -36,6 +36,13 @@ from lineage.match.near.lsh import BUCKET_CAP, band_keys
 from lineage.match.near.minhash import NUM_PERM
 from lineage.match.near.signatures import open_signatures
 from lineage.match.near.verify import THRESHOLD, min_agreements
+from lineage.match.semantic.stage import (
+    BUILD_THRESHOLD,
+    CORROBORATING,
+    SemanticSearch,
+    best_cosines_to_bills,
+)
+from lineage.match.semantic.stage import THRESHOLD as THRESHOLD_SEMANTIC
 from lineage.query import (
     bucket_sizes,
     matchable_sections,
@@ -44,8 +51,6 @@ from lineage.query import (
     require_index,
     sign_query,
 )
-from lineage.semantic import BUILD_THRESHOLD, CORROBORATING, SemanticSearch, best_cosines_to_bills
-from lineage.semantic import THRESHOLD as THRESHOLD_SEMANTIC
 from lineage.ulc import (
     ENACTMENTS,
     NO_BILLS,

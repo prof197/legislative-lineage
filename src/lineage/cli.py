@@ -76,8 +76,6 @@ from lineage.data.sessions import (
 )
 from lineage.data.snapshot import SnapshotError, load_manifest, scan, write_manifest
 from lineage.data.stats import write_coverage
-from lineage.embed import embed as embed_texts
-from lineage.embed import load_model
 from lineage.explain import CACHE_DIR as EXPLAIN_CACHE
 from lineage.explain import (
     GROUNDING_RULES,
@@ -172,6 +170,24 @@ from lineage.labels import model_labeler as model_labeler_name
 from lineage.listing import flagged_sections, shipped_flag
 from lineage.match.near.index import build_index
 from lineage.match.near.stoplist import StoplistError, build_stoplist
+from lineage.match.semantic.embed import embed as embed_texts
+from lineage.match.semantic.embed import load_model
+from lineage.match.semantic.models import MODELS, MODELS_DIR, ModelError, fetch_model
+from lineage.match.semantic.neighbors import EF_SEARCH, RECALL_FLOOR, SPEC, build_neighbors
+from lineage.match.semantic.neighbors import REPORT as NEIGHBORS_REPORT
+from lineage.match.semantic.neighbors import check_at as check_neighbors_at
+from lineage.match.semantic.neighbors import write_report as write_neighbors_report
+from lineage.match.semantic.pairs import REPORT as SEMANTIC_PAIRS_REPORT
+from lineage.match.semantic.pairs import SemanticPairsError, build_semantic_pairs
+from lineage.match.semantic.pairs import write_report as write_semantic_pairs_report
+from lineage.match.semantic.stage import MODEL as SEMANTIC_MODEL
+from lineage.match.semantic.stage import THRESHOLD as THRESHOLD_STAGE
+from lineage.match.semantic.stage import SemanticSearch, open_search
+from lineage.match.semantic.vectors import PROCESSES as EMBED_PROCESSES
+from lineage.match.semantic.vectors import REPORT as EMBED_REPORT
+from lineage.match.semantic.vectors import THREADS as EMBED_THREADS
+from lineage.match.semantic.vectors import EmbedError, embed_corpus, vectors_dir
+from lineage.match.semantic.vectors import write_report as write_embed_report
 from lineage.model_labels import BUDGET as LABEL_BUDGET
 from lineage.model_labels import MAX_COST as LABEL_MAX_COST
 from lineage.model_labels import MODEL_ID as LABEL_MODEL
@@ -190,11 +206,6 @@ from lineage.model_labels import (
 from lineage.model_labels import record_spend as record_label_spend
 from lineage.model_labels import spent as label_spent
 from lineage.modeldocs import MODELDOCS_DIR, ModelDocError, read_docs
-from lineage.models import MODELS, MODELS_DIR, ModelError, fetch_model
-from lineage.neighbors import EF_SEARCH, RECALL_FLOOR, SPEC, build_neighbors
-from lineage.neighbors import REPORT as NEIGHBORS_REPORT
-from lineage.neighbors import check_at as check_neighbors_at
-from lineage.neighbors import write_report as write_neighbors_report
 from lineage.origin_labels import LABELS as ORIGIN_LABELS
 from lineage.origin_labels import PROMPT as ORIGIN_PROMPT
 from lineage.origin_labels import build_items as build_origin_items
@@ -286,12 +297,6 @@ from lineage.schedule import (
     weekly_job_steps,
     weekly_report,
 )
-from lineage.semantic import MODEL as SEMANTIC_MODEL
-from lineage.semantic import THRESHOLD as THRESHOLD_STAGE
-from lineage.semantic import SemanticSearch, open_search
-from lineage.semantic_pairs import REPORT as SEMANTIC_PAIRS_REPORT
-from lineage.semantic_pairs import SemanticPairsError, build_semantic_pairs
-from lineage.semantic_pairs import write_report as write_semantic_pairs_report
 from lineage.spend import BUDGET as CALL_BUDGET
 from lineage.spend import SPEND as CALL_SPEND
 from lineage.spend import BudgetError, Meter, check_projection
@@ -327,11 +332,6 @@ from lineage.threshold import proposal as threshold_proposal
 from lineage.threshold import sample_inputs as threshold_sample_inputs
 from lineage.ulc import ENACTMENTS, HELD_OUT_ENACTMENTS, UlcError
 from lineage.updates import CHANGES_DIR, UpdateError, load_day
-from lineage.vectors import PROCESSES as EMBED_PROCESSES
-from lineage.vectors import REPORT as EMBED_REPORT
-from lineage.vectors import THREADS as EMBED_THREADS
-from lineage.vectors import EmbedError, embed_corpus, vectors_dir
-from lineage.vectors import write_report as write_embed_report
 from lineage.withheld import REPORT as WITHHELD_REPORT
 from lineage.withheld import Reviewed as WithheldReviewed
 from lineage.withheld import listed_count as withheld_listed_count

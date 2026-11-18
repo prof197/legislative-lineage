@@ -3,12 +3,13 @@
 Both paths that list relatives read their matches through here: a corpus bill's page
 (lineage.relatives) from the stored pairs, and a query of new text (lineage.query) from its own
 hits, so the two list alike. A match by meaning counts at or above the stage's threshold
-(lineage.semantic.THRESHOLD). A cross-state match one section of which is its state's
+(lineage.match.semantic.stage.THRESHOLD). A cross-state match one section of which is its state's
 boilerplate (lineage.state_boilerplate) is dropped from both stages unless both stages found it,
-the semantic stage at the cosine that corroborates a match (lineage.semantic.CORROBORATING), not
-the one that lists it alone: of the dropped pairs the model judged, 30 of the 34 found by both
-stated the same provision, against 8 and 10 of the 34 found by one stage (reports/results.json,
-`precision.state_boilerplate_flag.dropped_pairs`). See DESIGN.md#boilerplate.
+the semantic stage at the cosine that corroborates a match
+(lineage.match.semantic.stage.CORROBORATING), not the one that lists it alone: of the dropped pairs
+the model judged, 30 of the 34 found by both stated the same provision, against 8 and 10 of the 34
+found by one stage (reports/results.json, `precision.state_boilerplate_flag.dropped_pairs`). See
+DESIGN.md#boilerplate.
 """
 
 from collections.abc import Collection, Sequence
@@ -19,8 +20,8 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lineage.match.near.pairs import SectionPairs, load_cross_state_pairs
-from lineage.semantic import CORROBORATING, MODEL, THRESHOLD
-from lineage.semantic_pairs import SemanticPairs, load_semantic_pairs, section_keys
+from lineage.match.semantic.pairs import SemanticPairs, load_semantic_pairs, section_keys
+from lineage.match.semantic.stage import CORROBORATING, MODEL, THRESHOLD
 from lineage.state_boilerplate import MIN_FAMILIES, flagged, has_counts, load_families_reached
 
 SectionKey = tuple[str, int]  # (bill id, ordinal)

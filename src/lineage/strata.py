@@ -11,9 +11,9 @@ import numpy as np
 from numpy.typing import NDArray
 
 from lineage.match.near.pairs import load_cross_state_pairs
-from lineage.semantic import BUILD_THRESHOLD
-from lineage.semantic import MODEL as MODEL_NAME
-from lineage.semantic_pairs import load_semantic_pairs
+from lineage.match.semantic.pairs import load_semantic_pairs
+from lineage.match.semantic.stage import BUILD_THRESHOLD
+from lineage.match.semantic.stage import MODEL as MODEL_NAME
 
 # Each stratum's name and the stages that found its pairs, in report order.
 STRATA: dict[str, tuple[str, ...]] = {

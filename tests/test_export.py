@@ -26,7 +26,7 @@ from lineage.export import (
     validation_from,
 )
 from lineage.export_schema import BillList, BillPage, BillTexts, Comparison, Meta
-from lineage.semantic_pairs import build_semantic_pairs
+from lineage.match.semantic.pairs import build_semantic_pairs
 from tests.conftest import FAKE_MODEL
 from tests.test_explain import scripted
 from tests.test_relatives import bill_of, most_related

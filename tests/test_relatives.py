@@ -8,9 +8,9 @@ import pytest
 
 from lineage.core import db
 from lineage.match.near.pairs import load_cross_state_pairs
+from lineage.match.semantic.pairs import build_semantic_pairs, section_keys
 from lineage.query import Match, query_text
 from lineage.relatives import RELATIVES_SHOWN, bill_relatives
-from lineage.semantic_pairs import build_semantic_pairs, section_keys
 from tests.conftest import FAKE_MODEL
 
 # States with their own heading rules: a query, which knows no state, splits their text apart.

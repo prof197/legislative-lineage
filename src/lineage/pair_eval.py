@@ -24,13 +24,13 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage.embed import embed, load_model
 from lineage.match.near.lsh import band_keys
 from lineage.match.near.minhash import permutations, signatures
 from lineage.match.near.shingles import section_shingles
 from lineage.match.near.stoplist import apply_stoplist, load_stoplist
 from lineage.match.near.verify import THRESHOLD, min_agreements
-from lineage.models import MODELS_DIR
+from lineage.match.semantic.embed import embed, load_model
+from lineage.match.semantic.models import MODELS_DIR
 from lineage.pair_data import LABELS, PAIR_DATA_DIR, SPLITS, Pair, load_split
 from lineage.text.boilerplate import boilerplate_kind
 from lineage.text.sections import normalize

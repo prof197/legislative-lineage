@@ -19,6 +19,7 @@ from lineage.collect import collectors
 from lineage.commission import evaluate
 from lineage.data.sessions import load_sessions
 from lineage.listing import listed_hits
+from lineage.match.semantic.stage import CORROBORATING, THRESHOLD, open_search
 from lineage.modeldocs import (
     ModelDoc,
     ModelDocError,
@@ -43,7 +44,6 @@ from lineage.origin_matching import (
 )
 from lineage.origin_precision import OriginPrecisionError
 from lineage.origins import BillSpan, OriginMatch, read_origin_matches, write_origin_matches
-from lineage.semantic import CORROBORATING, THRESHOLD, open_search
 from lineage.text.sections import normalize
 from lineage.ulc import ENACTMENTS, load_enactments
 from tests.conftest import COMMISSION, FAKE_MODEL
