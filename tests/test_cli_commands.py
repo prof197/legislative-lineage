@@ -18,12 +18,17 @@ FIXTURE = Path(__file__).parent / "fixtures" / "cli_commands.json"
 
 
 def _default(value: Any) -> str | None:
-    """A default as text, the data directory and the repository written as placeholders so the
-    fixture does not depend on the machine."""
+    """A default as text, a path under the data directory or the repository written relative to
+    it, so the fixture is the same whether LINEAGE_DATA is set or not, and on any machine."""
     if value is None or callable(value):
         return None
-    text = str(value)
-    return text.replace(str(DATA), "<data>").replace(str(Path.cwd()), "<repo>")
+    if isinstance(value, Path):
+        path = (value if value.is_absolute() else Path.cwd() / value).resolve()
+        for root, name in ((DATA.resolve(), "<data>"), (Path.cwd().resolve(), "<repo>")):
+            if path.is_relative_to(root):
+                return f"{name}/{path.relative_to(root).as_posix()}"
+        return str(value)
+    return str(value)
 
 
 def _params(command: Any) -> list[dict[str, Any]]:
