@@ -64,10 +64,11 @@ COMMAND = "uv run lineage origin-sample"
 SEED = PRECISION_SEED + 6
 REPORTING_SEED = PRECISION_SEED + 7
 REPORT = Path("reports/origin_precision_sample.json")
-# v2's model calls are capped at $25 together, spent and projected, in v2's own ledger, apart
-# from v1's precision labels' (lineage.evals.model_labels.SPEND).
+# v2's model calls are capped together, spent and projected, in v2's own ledger, apart from v1's
+# precision labels' (lineage.evals.model_labels.SPEND): $25, raised to $40 at M13's step 6 review
+# for the fresh reporting sample after the weighing.
 SPEND = Path("reports/origin_label_spend.json")
-BUDGET = 25.0
+BUDGET = 40.0
 # The question an origin's label would ask is v1's passage question: do the passages state the
 # same provision, beyond boilerplate? Its prompt stands in for the projection until the origin
 # prompt is written.

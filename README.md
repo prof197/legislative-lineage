@@ -20,7 +20,7 @@ three featured stories, and one on a passed bill that shares wording with a publ
 | Judged by a model: do the related bills a page lists share the provision? (100 sampled from Georgia's pages) | 0.83 [0.74, 0.89] | `uv run lineage eval relatives` |
 | Judged by a model: do the explanations describe the text they cite? (359 claims) | 0.87 [0.83, 0.90] | `uv run lineage eval faithfulness` |
 | Matched as published model legislation, does a uniform act find the bills that enacted it? (three acts, at the listing floor) | 31 of 36 (86.1%) | `uv run lineage eval origins` |
-| Judged by a model: does the model legislation a page lists as an origin share the provision? (300 sampled matches) | 0.91 [0.87, 0.94] | `uv run lineage eval origin-precision --part reporting_after_compact_fix` |
+| Judged by a model: does the model legislation a page lists as an origin share the provision? (300 sampled matches) | 0.97 [0.94, 0.98] | `uv run lineage eval origin-precision --part reporting_weighted` |
 <!-- /results:summary -->
 
 **Where it falls short.**
@@ -83,18 +83,18 @@ Misses by both stages, at the step where the near-duplicate stage lost them: nev
 Documented origins are measured the same two ways. Recall comes from the commission's lists, with each uniform act's published text matched as a model document, and counts an enactment found only where its page would list the act. Its sealed key is the held-out lists' reserve acts, which v1 never ran, run once with `--final`; v1's held-out acts are reported beside it but apart, since v1's final run had already looked at their matches. Precision is a model's judgment of a seeded sample of the origins pages list, asked the same passage-level question as the relatives, and read for each source and for one source against the rest as well as overall, since errors concentrated on one organization would be unfair to it ([DESIGN.md](DESIGN.md#origin-matches)).
 
 <!-- results:origins -->
-Origin recall: each uniform act's published text is matched against the corpus as a model document, through both stages and the rule a page lists by, and an enactment is found when the act's document matches one of its bills with the larger of the two shares, of the model's words or of the bill's, at the listing floor of 0.25 or above. Origin precision: a model's judgment of a seeded sample of the matches pages list at the floor, drawn by stage and weighted by each stage's matches, each labeled on the section pair it rests on most with v1's passage-level question. One source's matches are read against every other source's together, each weighted by stage as the whole is (`compared`), and each source's own figure is in the same section (`by_source`). The reading was taken before 6 documents whose matches were found mostly wrong were withheld from pages, 82 listed matches in all (`uv run lineage withhold`, `reports/withheld_documents.json`), so it likely understates the precision of what pages show. Each result carries its 95% Wilson interval, and each command writes `reports/results.json` ([DESIGN.md](DESIGN.md#origin-matches)).
+Origin recall: each uniform act's published text is matched against the corpus as a model document, through both stages and the rule a page lists by, and an enactment is found when the act's document matches one of its bills with the larger of the two shares, of the model's words or of the bill's, at the listing floor of 0.25 or above. Origin precision: a model's judgment of a seeded sample of the matches pages list at the floor, drawn by stage and weighted by each stage's matches, each labeled on the section pair it rests on most with v1's passage-level question. One source's matches are read against every other source's together, each weighted by stage as the whole is (`compared`), and each source's own figure is in the same section (`by_source`). The reading was taken before 6 documents whose matches were found mostly wrong were withheld from pages, 35 listed matches in all (`uv run lineage withhold`, `reports/withheld_documents.json`), so it likely understates the precision of what pages show. Each result carries its 95% Wilson interval, and each command writes `reports/results.json` ([DESIGN.md](DESIGN.md#origin-matches)).
 
 | | Result | Reproduce |
 |---|---|---|
 | Recall on the development key, three acts | 31 of 36, 0.86 [0.71, 0.94] | `uv run lineage eval origins` |
 | Recall on the sealed key, two acts v1 never ran, run once with `--final`[^sealed] | 6 of 6, 1.00 [0.61, 1.00] | `uv run lineage eval origins --key held_out --final` |
-| Precision, model-judged, all stages (300 labels of 2,751 matches) | 0.91 [0.87, 0.94] | `uv run lineage eval origin-precision --part reporting_after_compact_fix` |
-| Precision, found by the near-duplicate stage alone (100 labels of 526 matches) | 0.87 [0.79, 0.92] | `uv run lineage eval origin-precision --part reporting_after_compact_fix` |
-| Precision, found by meaning alone (100 labels of 824 matches) | 0.98 [0.93, 0.99] | `uv run lineage eval origin-precision --part reporting_after_compact_fix` |
-| Precision, found by both stages (100 labels of 1,401 matches) | 0.89 [0.81, 0.94] | `uv run lineage eval origin-precision --part reporting_after_compact_fix` |
-| Precision, American Legislative Exchange Council (ALEC)'s matches (158 labels of 1,505 matches) | 0.84 [0.77, 0.89] | `uv run lineage eval origin-precision --part reporting_after_compact_fix` |
-| Precision, every other source's matches (142 labels of 1,246 matches) | 0.99 [0.95, 1.00] | `uv run lineage eval origin-precision --part reporting_after_compact_fix` |
+| Precision, model-judged, all stages (300 labels of 2,691 matches) | 0.97 [0.94, 0.98] | `uv run lineage eval origin-precision --part reporting_weighted` |
+| Precision, found by the near-duplicate stage alone (100 labels of 521 matches) | 0.93 [0.86, 0.97] | `uv run lineage eval origin-precision --part reporting_weighted` |
+| Precision, found by meaning alone (100 labels of 824 matches) | 0.96 [0.90, 0.98] | `uv run lineage eval origin-precision --part reporting_weighted` |
+| Precision, found by both stages (100 labels of 1,346 matches) | 0.99 [0.95, 1.00] | `uv run lineage eval origin-precision --part reporting_weighted` |
+| Precision, American Legislative Exchange Council (ALEC)'s matches (156 labels of 1,450 matches) | 0.96 [0.92, 0.98] | `uv run lineage eval origin-precision --part reporting_weighted` |
+| Precision, every other source's matches (144 labels of 1,241 matches) | 0.98 [0.93, 0.99] | `uv run lineage eval origin-precision --part reporting_weighted` |
 
 [^sealed]: Run once, before generic sections were left out of origin matches; a sealed key is not run again, so it stands at the configuration it records ([DESIGN.md](DESIGN.md#origin-matches)).
 

@@ -118,18 +118,18 @@ def test_a_batch_labels_each_match_by_its_hashes_and_keeps_no_text(tmp_path: Pat
 
 
 def test_the_plan_counts_v2s_own_ledger_and_refuses_over_its_cap(tmp_path: Path) -> None:
-    assert BUDGET == 25.0
+    assert BUDGET == 40.0  # $25, raised at M13's step 6 review
     ledger = tmp_path / "spend.json"
     items = [_item(n, "x" * 5000, "y" * 5000) for n in range(10)]
     fresh = plan(items, spend_path=ledger)
     assert fresh.spent == 0
-    assert fresh.budget == 25.0
+    assert fresh.budget == 40.0
     assert fresh.refusal() is None
 
     record(_Batches({"o0001": 1}), "msgbatch_test", model="claude-opus-5-5",
            today="2026-11-16", spend_path=ledger)  # fmt: skip
     doc = json.loads(ledger.read_text())
-    assert doc["budget"] == 25.0
+    assert doc["budget"] == 40.0
     assert doc["command"] == "uv run lineage origin-label --live"
     assert plan(items, spend_path=ledger).spent == doc["spent"] > 0
     over = plan(items, spend_path=ledger, budget=doc["spent"])
