@@ -369,5 +369,83 @@
    "max_cost": 10.0,
    "budget": 25.0
   }
+ },
+ "withhold_check": {
+  "command": "uv run lineage origin-sample --part withhold_check",
+  "seed": 20261124,
+  "per_document": 10,
+  "floor": 0.25,
+  "documents": {
+   "alec/a-resolution-calling-for-a-federal-balanced-budget-amendment": {
+    "listed": 1,
+    "labeled": 1,
+    "correct": 0,
+    "drawn": 0
+   },
+   "alec/affordable-health-insurance-act": {
+    "listed": 5,
+    "labeled": 2,
+    "correct": 0,
+    "drawn": 3
+   },
+   "alec/an-act-regarding-comprehensive-addiction-recovery-centers": {
+    "listed": 4,
+    "labeled": 1,
+    "correct": 0,
+    "drawn": 3
+   },
+   "alec/an-act-relating-to-the-creation-of-an-environmental-restoration-accelerator": {
+    "listed": 5,
+    "labeled": 1,
+    "correct": 0,
+    "drawn": 4
+   },
+   "alec/electronic-data-privacy-protection-act": {
+    "listed": 4,
+    "labeled": 1,
+    "correct": 0,
+    "drawn": 3
+   },
+   "alec/resolution-supporting-taiwans-meaningful-participation-in-international-organizations-including-the-international-civil-aviation-organization-icao-and-interpol": {
+    "listed": 2,
+    "labeled": 2,
+    "correct": 0,
+    "drawn": 0
+   },
+   "alec/veterans-dignity-in-crisis-act": {
+    "listed": 5,
+    "labeled": 2,
+    "correct": 0,
+    "drawn": 3
+   },
+   "ncoil/ncoil-telemedicine-authorization-and-reimbursement-act": {
+    "listed": 3,
+    "labeled": 2,
+    "correct": 1,
+    "drawn": 1
+   },
+   "states-project/easy-subscription-cancellation": {
+    "listed": 1,
+    "labeled": 1,
+    "correct": 0,
+    "drawn": 0
+   },
+   "states-project/protect-affordable-healthcare": {
+    "listed": 4,
+    "labeled": 2,
+    "correct": 1,
+    "drawn": 2
+   }
+  },
+  "label_plan": {
+   "pairs": 19,
+   "model": "claude-opus-5-5",
+   "prompt": "passages-v1-high",
+   "batch": true,
+   "projected": 0.638,
+   "spent": 19.2703,
+   "max_cost": 10.0,
+   "budget": 40.0
+  }
  }
 }

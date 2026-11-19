@@ -119,6 +119,9 @@ class Part:
     # It draws no match of a bill any part it excludes drew, not only none of their matches
     # (ruled at M13's step 6 review: a bill read once is not read again by a fresh sample).
     exclude_bills: bool = False
+    # Not a sample: the listed matches still unlabeled of the documents the withhold rule cannot
+    # settle yet, a wrong label among fewer than its minimum (lineage.origins.withheld.topup).
+    topup: bool = False
 
     @property
     def strata(self) -> tuple[str, ...]:
@@ -198,6 +201,20 @@ PARTS: dict[str, Part] = {
         floor=FLOOR,
         by_sections=True,
         exclude_bills=True,
+    ),
+    # Ruled for this week's release: a document with a wrong label but fewer labeled listed
+    # matches than the withhold rule needs has its remaining listed matches labeled, up to
+    # lineage.origins.withheld.TOPUP_PER_DOCUMENT each, for every source, and the rule applied
+    # again. Numbered after every id the sample after the weighing took.
+    "withhold_check": Part(
+        "withhold_check",
+        REPORTING_SEED + 5,
+        1901,
+        Path("evals/origin_precision_withhold_check.jsonl"),
+        final_only=False,
+        floor=FLOOR,
+        by_sections=True,
+        topup=True,
     ),
     "census_eppc": Part(
         "census_eppc",
