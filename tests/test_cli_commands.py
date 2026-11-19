@@ -1,5 +1,6 @@
 """The CLI's command tree, pinned: every command path and each of its parameters (names, kind,
-type, whether required, flag, count, help and default). Splitting or moving the CLI's modules
+type, whether required, flag, count, help and default; a worker count that defaults to the
+machine's CPUs is written as such). Splitting or moving the CLI's modules
 must leave it as it is; a command that changes on purpose regenerates the fixture with
 LINEAGE_REGENERATE=1.
 """
@@ -42,7 +43,9 @@ def _params(command: Any) -> list[dict[str, Any]]:
             "flag": bool(getattr(p, "is_flag", False)),
             "multiple": p.multiple,
             "help": getattr(p, "help", None),
-            "default": _default(p.default),
+            "default": "<cpus>"
+            if p.name == "workers" and p.default == (os.cpu_count() or 1)
+            else _default(p.default),
         }
         for p in command.params  # Typer's vendored click: read by duck typing
     ]

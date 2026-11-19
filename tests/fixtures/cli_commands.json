@@ -130,7 +130,7 @@
     "type": "path"
    },
    {
-    "default": "10",
+    "default": "<cpus>",
     "flag": false,
     "help": "Worker processes.",
     "kind": "TyperOption",
@@ -2048,7 +2048,7 @@
     "type": "path"
    },
    {
-    "default": "10",
+    "default": "<cpus>",
     "flag": false,
     "help": "Worker processes.",
     "kind": "TyperOption",
@@ -4238,7 +4238,7 @@
     "type": "boolean"
    },
    {
-    "default": "10",
+    "default": "<cpus>",
     "flag": false,
     "help": "Worker processes.",
     "kind": "TyperOption",
@@ -4685,7 +4685,7 @@
     "type": "path"
    },
    {
-    "default": "10",
+    "default": "<cpus>",
     "flag": false,
     "help": "Worker processes.",
     "kind": "TyperOption",
