@@ -115,6 +115,9 @@ class Part:
     # (lineage.origins.labels.correct_by_sections): drawn after matching changed, it may share
     # matches with a census, and only a label on the sections a row now rests on answers it.
     by_sections: bool = False
+    # It draws no match of a bill any part it excludes drew, not only none of their matches
+    # (ruled at M13's step 6 review: a bill read once is not read again by a fresh sample).
+    exclude_bills: bool = False
 
     @property
     def strata(self) -> tuple[str, ...]:
@@ -172,6 +175,28 @@ PARTS: dict[str, Part] = {
         excludes=("tuning", "reporting", "reporting_after_fix"),
         floor=FLOOR,
         by_sections=True,
+    ),
+    # M13 step 6: a passage that recurs across many unrelated bills and models counts for less
+    # in the shares the floor reads (lineage.origins.matches.REACH_SCALE), so precision is read
+    # once more, on a fresh sample drawn once from the table matched with the weighing, apart
+    # from every earlier reporting and tuning sample's matches, and published whatever it says.
+    # Numbered after every id the sample after the compact fix took.
+    "reporting_weighted": Part(
+        "reporting_weighted",
+        REPORTING_SEED + 4,
+        1601,
+        Path("evals/origin_precision_reporting_weighted.jsonl"),
+        final_only=True,
+        excludes=(
+            "tuning",
+            "reporting",
+            "reporting_after_fix",
+            "reporting_after_compact_fix",
+            "census_eppc",
+        ),
+        floor=FLOOR,
+        by_sections=True,
+        exclude_bills=True,
     ),
     "census_eppc": Part(
         "census_eppc",
@@ -231,8 +256,10 @@ def draw_part(
     strata = by_stratum(matches, by_share=part.by_share)
     if part.census:
         per = max([len(ms) for ms in strata.values()], default=0)
+    bills = {b for b, _ in excluded} if part.exclude_bills else set[str]()
     eligible = {
-        name: [m for m in ms if match_key(m) not in excluded] for name, ms in strata.items()
+        name: [m for m in ms if match_key(m) not in excluded and m.bill_id not in bills]
+        for name, ms in strata.items()
     }
     population = {name: np.arange(len(ms), dtype=np.uint64) for name, ms in eligible.items()}
     drawn = draw(population, per_stratum=per, seed=part.seed, names=part.strata)
@@ -544,7 +571,8 @@ RESULTS_SECTION = "origins_precision"
 RESULTS_SECTIONS = {
     "reporting": "origins_precision_before_fix",
     "reporting_after_fix": "origins_precision_before_compact_fix",
-    "reporting_after_compact_fix": RESULTS_SECTION,
+    "reporting_after_compact_fix": "origins_precision_before_weighing",
+    "reporting_weighted": RESULTS_SECTION,
 }
 
 

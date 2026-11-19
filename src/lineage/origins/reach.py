@@ -9,10 +9,12 @@ match a label still answers (on the sections it rests on now, lineage.origins.la
 different designs, drawn before matching changed, so this is a reading of where the errors sit,
 not an estimate. The estimate is a fresh reporting sample, drawn at the scale chosen here.
 
-The scale is chosen by a rule fixed before the reading: among the scales that keep every
-development enactment the plain shares find, the one with the highest precision, and of two
-within a label of each other the larger, which discounts fewer passages. See
-DESIGN.md#origin-matches.
+The scale is the smallest that still pays: walking from no weighing down through the candidates,
+each step must take more wrong labeled matches off pages than correct ones, and keep every
+development enactment. A first rule, the highest precision that keeps development recall, was
+fixed before the reading and amended after it (M13 step 6, recorded in DESIGN.md): it picked the
+smallest scale, which takes 71 correct labeled matches off for 29 wrong ones, a loss development
+recall cannot see, since uniform acts are not widespread passages. See DESIGN.md#origin-matches.
 """
 
 from collections import Counter
@@ -72,20 +74,24 @@ def _size(scale: int | None) -> int:
 
 
 def choose(readings: Sequence[Mapping[str, Any]]) -> int | None:
-    """The rule: of the scales keeping every development enactment no weighing finds, the
-    highest precision; of two within a label of each other, the larger scale."""
-    plain = next(r for r in readings if r["scale"] is None)["development_recall"]["found"]
-    keeps = [
-        r
-        for r in readings
-        if r["development_recall"]["found"] >= plain and r["labeled"]["precision"] is not None
-    ]
-    best = max(r["labeled"]["precision"] for r in keeps)
-    # Within a label's worth of precision, with room for the floats' last bits.
-    near = [
-        r for r in keeps if best - r["labeled"]["precision"] <= 1 / r["labeled"]["labeled"] + 1e-9
-    ]
-    return max(near, key=lambda r: _size(r["scale"]))["scale"]
+    """The rule: from no weighing down through the smaller scales, a step that takes labeled
+    matches off pages is taken only while it takes more wrong ones off than correct ones and
+    keeps every development enactment no weighing finds; the walk stops at the first step that
+    fails. The scale is the last step taken that changed anything, or no weighing."""
+    ordered = sorted(readings, key=lambda r: _size(r["scale"]), reverse=True)
+    plain = ordered[0]
+    found = plain["development_recall"]["found"]
+    chosen, previous = plain, plain
+    for r in ordered[1:]:
+        before, now = previous["labeled"], r["labeled"]
+        correct_off = before["correct"] - now["correct"]
+        wrong_off = (before["labeled"] - before["correct"]) - (now["labeled"] - now["correct"])
+        if correct_off == wrong_off == 0:
+            continue  # takes nothing labeled off: neither a reason to go on nor to stop
+        if wrong_off <= correct_off or r["development_recall"]["found"] < found:
+            break
+        chosen, previous = r, r
+    return chosen["scale"]
 
 
 def proposal(
@@ -113,6 +119,7 @@ def proposal(
         },
         "scales": readings,
         "chosen": choose(readings),
-        "rule": "of the scales keeping every development enactment no weighing finds, the "
-        "highest precision; of two within a label of each other, the larger scale",
+        "rule": "from no weighing down, each step taken only while it takes more wrong labeled "
+        "matches off pages than correct ones and keeps every development enactment; the last "
+        "step that changed anything",
     }

@@ -484,10 +484,10 @@ def eval_origin_precision(
         str,
         typer.Option(
             "--part",
-            help="reporting_after_compact_fix; reporting_after_fix and reporting are the "
-            "readings before each change to matching.",
+            help="reporting_weighted; reporting_after_compact_fix, reporting_after_fix and "
+            "reporting are the readings before each change to matching.",
         ),
-    ] = "reporting_after_compact_fix",
+    ] = "reporting_weighted",
     labels: OriginLabelsOption = ORIGIN_LABELS,
     tables: TablesOption = DATA / "tables",
     root: ModelDocsOption = MODELDOCS_DIR,

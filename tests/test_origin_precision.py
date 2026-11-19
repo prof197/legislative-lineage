@@ -22,6 +22,7 @@ from lineage.origins.precision import (
     RESULTS_SECTIONS,
     STAND_IN,
     OriginPrecisionError,
+    Part,
     band_of,
     census_reading,
     doc_chars,
@@ -366,7 +367,7 @@ def test_the_reporting_sample_is_read_once(tmp_path: Path) -> None:
     results = tmp_path / "results.json"
     stored: dict[str, dict[str, object]] = {
         "origins_precision": {
-            "command": "uv run lineage eval origin-precision --part reporting_after_compact_fix",
+            "command": "uv run lineage eval origin-precision --part reporting_weighted",
             "overall": {},
         }
     }
@@ -468,10 +469,12 @@ def test_the_reporting_sample_after_the_fix_is_drawn_once_apart_from_both_earlie
     assert (after.final_only, after.floor, after.excludes) == (True, FLOOR, ("tuning", "reporting"))
     assert after.seed not in {p.seed for n, p in PARTS.items() if n != "reporting_after_fix"}
     # Ruled at the step 48 review: its reading is kept as the one before the compact fix.
+    # At M13's step 6 the reading after the compact fix is kept as the one before the weighing.
     assert RESULTS_SECTIONS == {
         "reporting": "origins_precision_before_fix",
         "reporting_after_fix": "origins_precision_before_compact_fix",
-        "reporting_after_compact_fix": "origins_precision",
+        "reporting_after_compact_fix": "origins_precision_before_weighing",
+        "reporting_weighted": "origins_precision",
     }
     table = _table()
     for name in ("tuning", "reporting"):
@@ -506,7 +509,7 @@ def test_a_published_reading_moves_aside_unchanged_when_a_later_part_is_read() -
         "other": 2,
     }
     assert retired(moved) == moved
-    assert RESULTS_SECTIONS["reporting_after_compact_fix"] == "origins_precision"
+    assert RESULTS_SECTIONS["reporting_weighted"] == "origins_precision"
     taken = results | {"origins_precision_before_compact_fix": oldest}
     with pytest.raises(OriginPrecisionError, match="is taken"):
         retired(taken)
@@ -516,5 +519,32 @@ def test_the_fresh_part_is_drawn_apart_from_every_earlier_sample() -> None:
     part = PARTS["reporting_after_compact_fix"]
     assert (part.final_only, part.by_sections, part.floor) == (True, True, FLOOR)
     assert set(part.excludes) == {"tuning", "reporting", "reporting_after_fix"}
+    weighted = PARTS["reporting_weighted"]
+    assert (weighted.final_only, weighted.by_sections, weighted.floor) == (True, True, FLOOR)
+    assert set(weighted.excludes) == {
+        "tuning",
+        "reporting",
+        "reporting_after_fix",
+        "reporting_after_compact_fix",
+        "census_eppc",
+    }
+    assert weighted.exclude_bills
+    assert weighted.first == part.first + 300
     seeds = [p.seed for p in PARTS.values()]
     assert len(seeds) == len(set(seeds))
+
+
+def test_a_part_excluding_bills_draws_no_match_of_a_bill_an_earlier_sample_drew() -> None:
+    """Ruled at M13's step 6 review: the fresh sample reads no bill an earlier sample read,
+    whichever document it was drawn with."""
+    table = _table()
+    first = table[0]
+    other_doc = [m for m in table if m.bill_id != first.bill_id]
+    assert other_doc
+    part = Part("p", 7, 1, Path("p.jsonl"), final_only=False, floor=FLOOR, exclude_bills=True)
+    elsewhere = {(first.bill_id, "lib/elsewhere")}
+    rows, _ = draw_part(table, part, excluded=elsewhere, per_stratum=10**6)
+    assert first.bill_id not in {r["bill_id"] for r in rows}
+    loose = Part("q", 7, 1, Path("q.jsonl"), final_only=False, floor=FLOOR)
+    rows, _ = draw_part(table, loose, excluded=elsewhere, per_stratum=10**6)
+    assert first.bill_id in {r["bill_id"] for r in rows}

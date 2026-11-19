@@ -1,0 +1,556 @@
+{
+ "command": "uv run lineage eval origin-reach",
+ "floor": 0.25,
+ "weight": "a passage counts in full up to the scale and scale / reach past it",
+ "answered_matches": 916,
+ "matches": 4135,
+ "matches_with_reach": 4135,
+ "least_reach_of_a_match": {
+  "at_most_scale": {
+   "20": 2555,
+   "50": 3326,
+   "100": 3504,
+   "200": 3853,
+   "274": 3873
+  },
+  "over_1000": 2
+ },
+ "scales": [
+  {
+   "scale": 20,
+   "matches_listed": 2455,
+   "bills_listing_an_origin": 2235,
+   "documents_listed": 402,
+   "labeled": {
+    "labeled": 723,
+    "correct": 693,
+    "precision": 0.9585,
+    "interval_95": [
+     0.9414,
+     0.9708
+    ]
+   },
+   "by_source": {
+    "alec": {
+     "labeled": 399,
+     "correct": 381,
+     "precision": 0.9549,
+     "interval_95": [
+      0.9298,
+      0.9713
+     ]
+    },
+    "commission": {
+     "labeled": 35,
+     "correct": 35,
+     "precision": 1.0,
+     "interval_95": [
+      0.9011,
+      1.0
+     ]
+    },
+    "eppc": {
+     "labeled": 13,
+     "correct": 13,
+     "precision": 1.0,
+     "interval_95": [
+      0.7719,
+      1.0
+     ]
+    },
+    "goldwater": {
+     "labeled": 23,
+     "correct": 23,
+     "precision": 1.0,
+     "interval_95": [
+      0.8569,
+      1.0
+     ]
+    },
+    "ncoil": {
+     "labeled": 158,
+     "correct": 155,
+     "precision": 0.981,
+     "interval_95": [
+      0.9457,
+      0.9935
+     ]
+    },
+    "public-citizen": {
+     "labeled": 17,
+     "correct": 17,
+     "precision": 1.0,
+     "interval_95": [
+      0.8157,
+      1.0
+     ]
+    },
+    "states-project": {
+     "labeled": 78,
+     "correct": 69,
+     "precision": 0.8846,
+     "interval_95": [
+      0.795,
+      0.9381
+     ]
+    }
+   },
+   "development_recall": {
+    "enactments": 36,
+    "found": 31,
+    "recall": 0.8611,
+    "interval_95": [
+     0.7134,
+     0.9392
+    ]
+   }
+  },
+  {
+   "scale": 50,
+   "matches_listed": 2668,
+   "bills_listing_an_origin": 2436,
+   "documents_listed": 403,
+   "labeled": {
+    "labeled": 795,
+    "correct": 757,
+    "precision": 0.9522,
+    "interval_95": [
+     0.9351,
+     0.965
+    ]
+   },
+   "by_source": {
+    "alec": {
+     "labeled": 437,
+     "correct": 415,
+     "precision": 0.9497,
+     "interval_95": [
+      0.925,
+      0.9665
+     ]
+    },
+    "commission": {
+     "labeled": 35,
+     "correct": 35,
+     "precision": 1.0,
+     "interval_95": [
+      0.9011,
+      1.0
+     ]
+    },
+    "eppc": {
+     "labeled": 17,
+     "correct": 15,
+     "precision": 0.8824,
+     "interval_95": [
+      0.6566,
+      0.9671
+     ]
+    },
+    "goldwater": {
+     "labeled": 23,
+     "correct": 23,
+     "precision": 1.0,
+     "interval_95": [
+      0.8569,
+      1.0
+     ]
+    },
+    "ncoil": {
+     "labeled": 172,
+     "correct": 167,
+     "precision": 0.9709,
+     "interval_95": [
+      0.9338,
+      0.9875
+     ]
+    },
+    "public-citizen": {
+     "labeled": 19,
+     "correct": 19,
+     "precision": 1.0,
+     "interval_95": [
+      0.8318,
+      1.0
+     ]
+    },
+    "states-project": {
+     "labeled": 92,
+     "correct": 83,
+     "precision": 0.9022,
+     "interval_95": [
+      0.8244,
+      0.9477
+     ]
+    }
+   },
+   "development_recall": {
+    "enactments": 36,
+    "found": 31,
+    "recall": 0.8611,
+    "interval_95": [
+     0.7134,
+     0.9392
+    ]
+   }
+  },
+  {
+   "scale": 100,
+   "matches_listed": 2691,
+   "bills_listing_an_origin": 2458,
+   "documents_listed": 404,
+   "labeled": {
+    "labeled": 803,
+    "correct": 762,
+    "precision": 0.9489,
+    "interval_95": [
+     0.9315,
+     0.9621
+    ]
+   },
+   "by_source": {
+    "alec": {
+     "labeled": 440,
+     "correct": 416,
+     "precision": 0.9455,
+     "interval_95": [
+      0.9201,
+      0.9631
+     ]
+    },
+    "commission": {
+     "labeled": 35,
+     "correct": 35,
+     "precision": 1.0,
+     "interval_95": [
+      0.9011,
+      1.0
+     ]
+    },
+    "eppc": {
+     "labeled": 17,
+     "correct": 15,
+     "precision": 0.8824,
+     "interval_95": [
+      0.6566,
+      0.9671
+     ]
+    },
+    "goldwater": {
+     "labeled": 23,
+     "correct": 23,
+     "precision": 1.0,
+     "interval_95": [
+      0.8569,
+      1.0
+     ]
+    },
+    "ncoil": {
+     "labeled": 173,
+     "correct": 167,
+     "precision": 0.9653,
+     "interval_95": [
+      0.9264,
+      0.984
+     ]
+    },
+    "public-citizen": {
+     "labeled": 19,
+     "correct": 19,
+     "precision": 1.0,
+     "interval_95": [
+      0.8318,
+      1.0
+     ]
+    },
+    "states-project": {
+     "labeled": 96,
+     "correct": 87,
+     "precision": 0.9062,
+     "interval_95": [
+      0.8313,
+      0.9499
+     ]
+    }
+   },
+   "development_recall": {
+    "enactments": 36,
+    "found": 31,
+    "recall": 0.8611,
+    "interval_95": [
+     0.7134,
+     0.9392
+    ]
+   }
+  },
+  {
+   "scale": 200,
+   "matches_listed": 2749,
+   "bills_listing_an_origin": 2514,
+   "documents_listed": 404,
+   "labeled": {
+    "labeled": 823,
+    "correct": 764,
+    "precision": 0.9283,
+    "interval_95": [
+     0.9086,
+     0.944
+    ]
+   },
+   "by_source": {
+    "alec": {
+     "labeled": 458,
+     "correct": 416,
+     "precision": 0.9083,
+     "interval_95": [
+      0.8784,
+      0.9314
+     ]
+    },
+    "commission": {
+     "labeled": 35,
+     "correct": 35,
+     "precision": 1.0,
+     "interval_95": [
+      0.9011,
+      1.0
+     ]
+    },
+    "eppc": {
+     "labeled": 17,
+     "correct": 15,
+     "precision": 0.8824,
+     "interval_95": [
+      0.6566,
+      0.9671
+     ]
+    },
+    "goldwater": {
+     "labeled": 24,
+     "correct": 24,
+     "precision": 1.0,
+     "interval_95": [
+      0.862,
+      1.0
+     ]
+    },
+    "ncoil": {
+     "labeled": 173,
+     "correct": 167,
+     "precision": 0.9653,
+     "interval_95": [
+      0.9264,
+      0.984
+     ]
+    },
+    "public-citizen": {
+     "labeled": 20,
+     "correct": 20,
+     "precision": 1.0,
+     "interval_95": [
+      0.8389,
+      1.0
+     ]
+    },
+    "states-project": {
+     "labeled": 96,
+     "correct": 87,
+     "precision": 0.9062,
+     "interval_95": [
+      0.8313,
+      0.9499
+     ]
+    }
+   },
+   "development_recall": {
+    "enactments": 36,
+    "found": 31,
+    "recall": 0.8611,
+    "interval_95": [
+     0.7134,
+     0.9392
+    ]
+   }
+  },
+  {
+   "scale": 274,
+   "matches_listed": 2749,
+   "bills_listing_an_origin": 2514,
+   "documents_listed": 404,
+   "labeled": {
+    "labeled": 823,
+    "correct": 764,
+    "precision": 0.9283,
+    "interval_95": [
+     0.9086,
+     0.944
+    ]
+   },
+   "by_source": {
+    "alec": {
+     "labeled": 458,
+     "correct": 416,
+     "precision": 0.9083,
+     "interval_95": [
+      0.8784,
+      0.9314
+     ]
+    },
+    "commission": {
+     "labeled": 35,
+     "correct": 35,
+     "precision": 1.0,
+     "interval_95": [
+      0.9011,
+      1.0
+     ]
+    },
+    "eppc": {
+     "labeled": 17,
+     "correct": 15,
+     "precision": 0.8824,
+     "interval_95": [
+      0.6566,
+      0.9671
+     ]
+    },
+    "goldwater": {
+     "labeled": 24,
+     "correct": 24,
+     "precision": 1.0,
+     "interval_95": [
+      0.862,
+      1.0
+     ]
+    },
+    "ncoil": {
+     "labeled": 173,
+     "correct": 167,
+     "precision": 0.9653,
+     "interval_95": [
+      0.9264,
+      0.984
+     ]
+    },
+    "public-citizen": {
+     "labeled": 20,
+     "correct": 20,
+     "precision": 1.0,
+     "interval_95": [
+      0.8389,
+      1.0
+     ]
+    },
+    "states-project": {
+     "labeled": 96,
+     "correct": 87,
+     "precision": 0.9062,
+     "interval_95": [
+      0.8313,
+      0.9499
+     ]
+    }
+   },
+   "development_recall": {
+    "enactments": 36,
+    "found": 31,
+    "recall": 0.8611,
+    "interval_95": [
+     0.7134,
+     0.9392
+    ]
+   }
+  },
+  {
+   "scale": null,
+   "matches_listed": 2751,
+   "bills_listing_an_origin": 2516,
+   "documents_listed": 404,
+   "labeled": {
+    "labeled": 823,
+    "correct": 764,
+    "precision": 0.9283,
+    "interval_95": [
+     0.9086,
+     0.944
+    ]
+   },
+   "by_source": {
+    "alec": {
+     "labeled": 458,
+     "correct": 416,
+     "precision": 0.9083,
+     "interval_95": [
+      0.8784,
+      0.9314
+     ]
+    },
+    "commission": {
+     "labeled": 35,
+     "correct": 35,
+     "precision": 1.0,
+     "interval_95": [
+      0.9011,
+      1.0
+     ]
+    },
+    "eppc": {
+     "labeled": 17,
+     "correct": 15,
+     "precision": 0.8824,
+     "interval_95": [
+      0.6566,
+      0.9671
+     ]
+    },
+    "goldwater": {
+     "labeled": 24,
+     "correct": 24,
+     "precision": 1.0,
+     "interval_95": [
+      0.862,
+      1.0
+     ]
+    },
+    "ncoil": {
+     "labeled": 173,
+     "correct": 167,
+     "precision": 0.9653,
+     "interval_95": [
+      0.9264,
+      0.984
+     ]
+    },
+    "public-citizen": {
+     "labeled": 20,
+     "correct": 20,
+     "precision": 1.0,
+     "interval_95": [
+      0.8389,
+      1.0
+     ]
+    },
+    "states-project": {
+     "labeled": 96,
+     "correct": 87,
+     "precision": 0.9062,
+     "interval_95": [
+      0.8313,
+      0.9499
+     ]
+    }
+   },
+   "development_recall": {
+    "enactments": 36,
+    "found": 31,
+    "recall": 0.8611,
+    "interval_95": [
+     0.7134,
+     0.9392
+    ]
+   }
+  }
+ ],
+ "chosen": 100,
+ "rule": "from no weighing down, each step taken only while it takes more wrong labeled matches off pages than correct ones and keeps every development enactment; the last step that changed anything"
+}

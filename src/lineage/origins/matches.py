@@ -31,7 +31,7 @@ FLOOR = 0.25
 # stage, and the other model texts holding it) is at most this many counts in full; past it,
 # REACH_SCALE / reach of its words count, as a search engine discounts a common word. Set on the
 # tuning sample at M13's step 6 (reports/origin_reach_proposal.json). See DESIGN.md#origin-matches.
-REACH_SCALE = 50
+REACH_SCALE = 100
 
 
 class BillSpan(BaseModel):

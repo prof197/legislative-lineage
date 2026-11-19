@@ -889,9 +889,9 @@
   "help": "Origin precision on a reporting sample, read once: overall, by stage, by source, and\nALEC's against the rest (DESIGN.md#origin-matches).",
   "params": [
    {
-    "default": "reporting_after_compact_fix",
+    "default": "reporting_weighted",
     "flag": false,
-    "help": "reporting_after_compact_fix; reporting_after_fix and reporting are the readings before each change to matching.",
+    "help": "reporting_weighted; reporting_after_compact_fix, reporting_after_fix and reporting are the readings before each change to matching.",
     "kind": "TyperOption",
     "multiple": false,
     "name": "part",
