@@ -157,3 +157,12 @@ def test_stored_text_the_sections_no_longer_hold_is_split_again(tmp_path: Path) 
         kinds = [r[4] for r in _rechecked(con, records, str(bills))]
 
     assert kinds == ["amendment_only", "no_sections", "usable"]
+
+
+def test_the_committed_plan_was_built_from_this_code() -> None:
+    """CI's half of the plan check (ruled at M13's step 5 review): the inventory report records
+    the fingerprint it wrote the stored plan with, so a change to the code or the committed
+    inputs the plan depends on fails here, before the weekly job would refuse the plan. Run
+    `uv run lineage text inventory --plan data/text/plan.parquet` after such a change."""
+    report = json.loads(Path("reports/text_inventory.json").read_text())
+    assert report["fingerprint"] == plan_fingerprint()
