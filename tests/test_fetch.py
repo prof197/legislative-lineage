@@ -6,10 +6,11 @@ from pathlib import Path
 
 import pytest
 
-from lineage import fetch
-from lineage.disk import InsufficientDiskSpaceError
-from lineage.fetch import USER_AGENT, fetch_raw, moved, request_url, tls_context
-from lineage.snapshot import load_manifest, scan, verify, write_manifest
+from lineage.core import http
+from lineage.core.disk import InsufficientDiskSpaceError
+from lineage.core.http import USER_AGENT, moved, request_url, tls_context
+from lineage.data.archives import fetch_raw
+from lineage.data.snapshot import load_manifest, scan, verify, write_manifest
 from tests.conftest import Upstream
 
 
@@ -185,9 +186,9 @@ def test_a_header_travels_with_the_user_agent_and_cannot_replace_it(
     def urlopen(request: urllib.request.Request, **_: object) -> None:
         sent.append(request)
 
-    monkeypatch.setattr(fetch.urllib.request, "urlopen", urlopen)
+    monkeypatch.setattr(http.urllib.request, "urlopen", urlopen)
     monkeypatch.setenv("LINEAGE_PACE_DIR", str(tmp_path))
-    fetch.open_url(
+    http.open_url(
         "https://api.example/bills",
         0,
         interval=0,

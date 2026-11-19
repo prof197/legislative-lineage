@@ -9,11 +9,18 @@ import pytest
 from fastembed import TextEmbedding
 from typer.testing import CliRunner
 
-from lineage import models
 from lineage.cli import app
-from lineage.embed import embed
-from lineage.fetch import FetchError
-from lineage.models import MODELS, Model, ModelError, ModelFile, fetch_model, git_blob_id
+from lineage.core.http import FetchError
+from lineage.match.semantic import models
+from lineage.match.semantic.embed import embed
+from lineage.match.semantic.models import (
+    MODELS,
+    Model,
+    ModelError,
+    ModelFile,
+    fetch_model,
+    git_blob_id,
+)
 
 ONNX = b"onnx bytes"
 TOKENIZER = b'{"tokenizer": true}'

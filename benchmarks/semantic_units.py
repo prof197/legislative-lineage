@@ -39,15 +39,19 @@ from numpy.typing import NDArray
 from tokenizers import Tokenizer
 
 from benchmarks.minhash import machine
-from lineage import queries
-from lineage.acts import ACT_NAMES, ACTS, load_act
-from lineage.boilerplate import boilerplate_kind
-from lineage.disk import DEFAULT_FLOOR_BYTES, require_free_space
-from lineage.embed import embed, load_model
-from lineage.models import MODELS, require_model
-from lineage.paths import DATA
-from lineage.sections import normalize, split_sections
-from lineage.windows import WINDOW_STRIDE, WINDOW_WORDS, display_windows, window_counts
+from lineage.core import db
+from lineage.core.disk import DEFAULT_FLOOR_BYTES, require_free_space
+from lineage.core.paths import DATA
+from lineage.evals.acts import ACT_NAMES, ACTS, load_act
+from lineage.live import queries as live_queries
+from lineage.match import queries as match_queries
+from lineage.match.near import queries as near_queries
+from lineage.match.semantic.embed import embed, load_model
+from lineage.match.semantic.models import MODELS, require_model
+from lineage.origins import queries as origins_queries
+from lineage.text.boilerplate import boilerplate_kind
+from lineage.text.sections import normalize, split_sections
+from lineage.text.windows import WINDOW_STRIDE, WINDOW_WORDS, display_windows, window_counts
 
 COMMAND = "uv run python -m benchmarks.semantic_units"
 REPORT = Path("reports/semantic_sizing.json")
@@ -169,8 +173,8 @@ def distinct_units(sections_glob: str, eligible: Path) -> dict[str, dict[str, in
     an identical text needs one vector, however many bills carry it."""
     hashes: dict[str, list[NDArray[np.uint64]]] = defaultdict(list)
     for path in sorted(Path().glob(sections_glob)):
-        with queries.connect_quiet() as con:
-            cursor = queries.matchable_sections(
+        with db.connect_quiet() as con:
+            cursor = near_queries.matchable_sections(
                 con, sections_path=path, eligible_path=eligible, display=True
             )
             while rows := cursor.fetchmany(100_000):
@@ -286,16 +290,18 @@ def main() -> None:
         for act in ACTS
         for r in commission["queries"][act]["relatives"]
     ]
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         words = np.array(
-            queries.section_word_counts(con, sections_glob=sections_glob, eligible_path=eligible),
+            match_queries.section_word_counts(
+                con, sections_glob=sections_glob, eligible_path=eligible
+            ),
             dtype=np.int64,
         )
-        pool_ids = queries.matchable_bill_ids(
+        pool_ids = live_queries.matchable_bill_ids(
             con, sections_glob=sections_glob, eligible_path=eligible
         )
         related = set(
-            queries.related_bill_ids(
+            match_queries.related_bill_ids(
                 con,
                 bills_glob=str(TABLES / "bills" / "*.parquet"),
                 families_path=TABLES / "families" / "families.parquet",
@@ -305,8 +311,8 @@ def main() -> None:
         )
     others = sorted(set(pool_ids) - enacting - related)
     sample = sorted(rng.choice(others, size=DISTRACTOR_BILLS, replace=False).tolist())
-    with queries.connect_quiet() as con:
-        sections = queries.matchable_section_texts(
+    with db.connect_quiet() as con:
+        sections = origins_queries.matchable_section_texts(
             con,
             sections_glob=sections_glob,
             eligible_path=eligible,

@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from lineage.sessions import (
+from lineage.data.sessions import (
     CARRYOVER,
     Session,
     SessionsError,
@@ -13,7 +13,7 @@ from lineage.sessions import (
     status_end_date,
     write_sessions,
 )
-from lineage.snapshot import load_manifest
+from lineage.data.snapshot import load_manifest
 
 # Shaped like an openstates-scrapers state module: imports and a class around a literal list.
 SCRAPER_SOURCE = """

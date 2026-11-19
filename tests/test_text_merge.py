@@ -3,11 +3,13 @@
 import json
 from pathlib import Path
 
-from lineage import queries
+from lineage.core import db
+from lineage.evals import queries as evals_queries
+from lineage.text import queries as text_queries
 
 
 def _bills(path: Path) -> None:
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         con.execute(
             "COPY (SELECT * FROM (VALUES "
             "('b1', 'Exported text one.', 'https://leg.example/b1.htm', "
@@ -28,8 +30,8 @@ def test_fetched_text_replaces_the_exported_text_and_names_its_source(tmp_path: 
     }  # fmt: skip
     fetched.write_text(json.dumps(row) + "\n")
 
-    with queries.connect_quiet() as con:
-        queries.write_texts(con, bills_path=bills, fetched_path=fetched, out_path=out)
+    with db.connect_quiet() as con:
+        text_queries.write_texts(con, bills_path=bills, fetched_path=fetched, out_path=out)
         rows = con.execute(
             "SELECT id, text, text_source, text_url, text_version FROM read_parquet($p) "
             "ORDER BY id",
@@ -46,7 +48,7 @@ def test_fetched_text_replaces_the_exported_text_and_names_its_source(tmp_path: 
 def test_the_recall_eval_judges_the_merged_text_not_the_exported_text(tmp_path: Path) -> None:
     bills, texts = tmp_path / "bills.parquet", tmp_path / "texts.parquet"
     eligible, families = tmp_path / "eligible.parquet", tmp_path / "families.parquet"
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         con.execute(
             "COPY (SELECT * FROM (VALUES "
             "('b1', 'NJ', '2025', 'A 1', 'passed', DATE '2025-06-30', "
@@ -62,7 +64,7 @@ def test_the_recall_eval_judges_the_merged_text_not_the_exported_text(tmp_path: 
         con.execute(
             f"COPY (SELECT 'b1' AS bill_id, 'f1' AS family) TO '{families}' (FORMAT parquet)"
         )
-        [bill] = queries.enactment_bills(
+        [bill] = evals_queries.enactment_bills(
             con, bills_glob=str(bills), texts_glob=str(texts), eligible_path=eligible,
             families_path=families, states=["NJ"], opening="^Amend", chars=100,
             substitute="strike out everything",

@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 
-from lineage.minhash import NUM_PERM
-from lineage.verify import agreements, min_agreements
+from lineage.match.near.minhash import NUM_PERM
+from lineage.match.near.verify import agreements, min_agreements
 
 
 def test_counts_agreeing_positions_per_pair() -> None:

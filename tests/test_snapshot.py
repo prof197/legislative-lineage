@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from lineage.snapshot import (
+from lineage.data.snapshot import (
     Archive,
     SnapshotError,
     load_manifest,

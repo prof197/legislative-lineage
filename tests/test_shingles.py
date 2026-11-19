@@ -1,6 +1,6 @@
 import numpy as np
 
-from lineage.shingles import SHINGLE_WORDS, section_shingles, shingle_hashes
+from lineage.match.near.shingles import SHINGLE_WORDS, section_shingles, shingle_hashes
 
 MASK64 = (1 << 64) - 1
 

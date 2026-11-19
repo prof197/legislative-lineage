@@ -196,9 +196,71 @@
    "sections": 3121
   }
  ],
+ "passage_reach": {
+  "histogram": [
+   {
+    "families": "0",
+    "sections": 1264496
+   },
+   {
+    "families": "1",
+    "sections": 457575
+   },
+   {
+    "families": "2",
+    "sections": 248591
+   },
+   {
+    "families": "3",
+    "sections": 151327
+   },
+   {
+    "families": "4",
+    "sections": 108906
+   },
+   {
+    "families": "5-9",
+    "sections": 260874
+   },
+   {
+    "families": "10-19",
+    "sections": 156331
+   },
+   {
+    "families": "20-49",
+    "sections": 109457
+   },
+   {
+    "families": "50-99",
+    "sections": 33382
+   },
+   {
+    "families": "100-199",
+    "sections": 22148
+   },
+   {
+    "families": "200-499",
+    "sections": 30234
+   },
+   {
+    "families": "500-999",
+    "sections": 16403
+   },
+   {
+    "families": "1000+",
+    "sections": 13532
+   }
+  ],
+  "quantiles_of_sections_reaching_another_family": {
+   "0.5": 3,
+   "0.9": 31,
+   "0.99": 832,
+   "0.999": 1997
+  }
+ },
  "states_with_a_flagged_section": 45,
  "bytes": 22986048,
- "seconds": 53,
- "peak_memory_bytes": 6522421632,
+ "seconds": 107,
+ "peak_memory_bytes": 7709445184,
  "memory_bound_bytes": 17179869184
 }

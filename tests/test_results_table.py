@@ -8,8 +8,8 @@ import pytest
 from typer.testing import CliRunner
 
 from lineage.cli import app
-from lineage.export import STORIES_RULES as STORIES
-from lineage.results_table import (
+from lineage.export.pages import STORIES_RULES as STORIES
+from lineage.export.results_table import (
     END,
     HELD_OUT_END,
     HELD_OUT_START,

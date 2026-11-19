@@ -15,10 +15,10 @@ import pytest
 from typer.testing import CliRunner
 
 from lineage.cli import app
-from lineage.collect import CollectContext, CollectReport, collectors
-from lineage.collect_base import Fetched
-from lineage.collectors import ncoil
-from lineage.collectors.ncoil import (
+from lineage.origins.collect import CollectContext, CollectReport, collectors
+from lineage.origins.collect_base import Fetched
+from lineage.origins.collectors import ncoil
+from lineage.origins.collectors.ncoil import (
     DOCX,
     LIBRARY,
     SOURCE,
@@ -31,8 +31,7 @@ from lineage.collectors.ncoil import (
     model_file,
     model_name,
 )
-from lineage.extract import pdf_text
-from lineage.modeldocs import (
+from lineage.origins.modeldocs import (
     MODELDOCS_DIR,
     load_text,
     raw_path,
@@ -40,7 +39,8 @@ from lineage.modeldocs import (
     read_versions,
     sha256,
 )
-from lineage.modeltext import docx_text
+from lineage.origins.modeltext import docx_text
+from lineage.text.extract import pdf_text
 from tests.recorded_site import COLLECT, RecordedSite, docx_bytes, pdf_bytes
 
 DAY = date(2026, 11, 15)

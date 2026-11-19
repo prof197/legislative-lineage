@@ -10,10 +10,10 @@ from typing import Literal
 import pytest
 from typer.testing import CliRunner
 
-from lineage import queries
 from lineage.align import Span, align
 from lineage.cli import app
-from lineage.explain import (
+from lineage.core import db as core_db
+from lineage.explain.explain import (
     ATTEMPTS,
     GROUNDING_RULES,
     MODEL,
@@ -33,8 +33,8 @@ from lineage.explain import (
     prompt_spans,
     reground_cache,
 )
-from lineage.explanations import ChangeExplanation, Claim
-from lineage.spend import BUDGET, BudgetError, Meter, load_runs
+from lineage.explain.explanations import ChangeExplanation, Claim
+from lineage.explain.spend import BUDGET, BudgetError, Meter, load_runs
 
 ORIGIN = "The fee is set for each fiscal year. Records are kept."
 DESCENDANT = "The fee is set every biennium. Records are kept. Appeals go to the board."
@@ -232,7 +232,7 @@ def test_no_claims_means_nothing_changed_and_is_not_retried(tmp_path: Path) -> N
 def test_the_command_replays_the_cache_and_asks_only_with_live(
     corpus: Path, tmp_path: Path
 ) -> None:
-    with queries.connect_quiet() as con:
+    with core_db.connect_quiet() as con:
         rows: list[tuple[str, int]] = con.execute(
             "SELECT bill_id, ordinal FROM read_parquet($p) ORDER BY bill_id, ordinal LIMIT 2",
             {"p": str(corpus / "sections" / "*.parquet")},

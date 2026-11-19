@@ -44,6 +44,10 @@ jobs:
       - run: uv run ruff format --check
       - run: uv run pyright
       - run: uv run pytest
+      # The layering rule, and the module-size and dead-code checks with their allow-lists.
+      - run: uv run lint-imports
+      - run: uv run python -m tools.module_size
+      - run: uv run python -m tools.dead_code
 
       # The deny list lives in a repository secret, so the repo never lists it. GitHub gives no
       # secrets to a run in a fork or to a pull request from one, so there the check is skipped

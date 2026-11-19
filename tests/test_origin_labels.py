@@ -8,9 +8,9 @@ from typing import Any
 
 import pytest
 
-from lineage.labels import Item, Pair, Section, SectionKey, SectionRef
-from lineage.model_labels import PASSAGES_HIGH, BatchReply, SameProvision, Schema
-from lineage.origin_labels import (
+from lineage.evals.labels import Item, Pair, Section, SectionKey, SectionRef
+from lineage.evals.model_labels import PASSAGES_HIGH, BatchReply, SameProvision, Schema
+from lineage.origins.labels import (
     PROMPT,
     OriginItem,
     correct_by_sections,
@@ -20,8 +20,8 @@ from lineage.origin_labels import (
     record,
     strongest_pair,
 )
-from lineage.origin_precision import BUDGET, OriginPrecisionError
-from lineage.origins import OriginMatch, SectionPair
+from lineage.origins.matches import OriginMatch, SectionPair
+from lineage.origins.precision import BUDGET, OriginPrecisionError
 
 
 def _match(*pairs: SectionPair) -> OriginMatch:
@@ -118,18 +118,18 @@ def test_a_batch_labels_each_match_by_its_hashes_and_keeps_no_text(tmp_path: Pat
 
 
 def test_the_plan_counts_v2s_own_ledger_and_refuses_over_its_cap(tmp_path: Path) -> None:
-    assert BUDGET == 25.0
+    assert BUDGET == 40.0  # $25, raised at M13's step 6 review
     ledger = tmp_path / "spend.json"
     items = [_item(n, "x" * 5000, "y" * 5000) for n in range(10)]
     fresh = plan(items, spend_path=ledger)
     assert fresh.spent == 0
-    assert fresh.budget == 25.0
+    assert fresh.budget == 40.0
     assert fresh.refusal() is None
 
     record(_Batches({"o0001": 1}), "msgbatch_test", model="claude-opus-5-5",
            today="2026-11-16", spend_path=ledger)  # fmt: skip
     doc = json.loads(ledger.read_text())
-    assert doc["budget"] == 25.0
+    assert doc["budget"] == 40.0
     assert doc["command"] == "uv run lineage origin-label --live"
     assert plan(items, spend_path=ledger).spent == doc["spent"] > 0
     over = plan(items, spend_path=ledger, budget=doc["spent"])
@@ -144,8 +144,8 @@ def test_the_command_caps_a_run_at_v1s_cap_unless_raised_explicitly() -> None:
     v2's budget still checked."""
     import inspect
 
-    from lineage.cli import origin_label_command
-    from lineage.model_labels import MAX_COST
+    from lineage.cli.origins import origin_label_command
+    from lineage.evals.model_labels import MAX_COST
 
     default = inspect.signature(origin_label_command).parameters["max_cost"].default
     assert default == MAX_COST == 10.0

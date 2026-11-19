@@ -7,7 +7,7 @@ How the scheduled jobs run on the maintainer's Mac, how to set them up, and what
 | Job | When (Eastern, the Mac's zone) | What it does |
 |---|---|---|
 | Daily | Monday to Saturday, 05:30 | Intake, update, the incremental export and feed, promote; from Georgia's first day of session (2027-01-11, `rules/deploy.toml`) the deploy, behind its gates and circuit breaker |
-| Weekly | Saturday, 20:00 | Two rebuilds and the agreement check (fails below 98%); before session a release candidate for review, during session the week's new origin claims |
+| Weekly | Saturday, 20:00 | The fetch plan checked against the code (fails at once on a stale plan; run `uv run lineage text inventory`), two rebuilds and the agreement check (fails below 98%); before session a release candidate for review, during session the week's new origin claims |
 
 The two never run at once: a job that finds the other running stops on the lock and alerts. A day without a daily run loses nothing, since intake resumes each state from its own cursor.
 
@@ -24,7 +24,7 @@ Every run writes `<data>/schedule/status.json` (`<data>` is `LINEAGE_DATA`) and 
    security add-generic-password -a "$USER" -s legislative-lineage-openstates -w
    ```
 
-   The deploy reads the token before every git or gh call and stops without it, so it never uses your own gh login (`lineage.deploy.github_shell`). To replace the token later, run the first command again with `-U` after `add-generic-password`.
+   The deploy reads the token before every git or gh call and stops without it, so it never uses your own gh login (`lineage.live.deploy.github_shell`). To replace the token later, run the first command again with `-U` after `add-generic-password`.
 3. **The job's own clone,** on main, where it builds the site, commits the pin and pushes:
 
    ```sh

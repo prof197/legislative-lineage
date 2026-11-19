@@ -5,12 +5,15 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from typer.testing import CliRunner
 
-from lineage import queries
-from lineage.robots import Robots, parse_robots
-from lineage.text_inventory import (
+from lineage.cli import app
+from lineage.core import db
+from lineage.core.robots import Robots, parse_robots
+from lineage.text.inventory import (
     StalePlanError,
     build_inventory,
+    check_plan,
     load_plan,
     plan_fingerprint,
     plan_row,
@@ -64,7 +67,7 @@ def test_the_inventory_counts_the_fixture_corpus_and_writes_the_plan(
 
     assert json.loads(report.read_text()) == doc
     assert doc["totals"]["eligible"] == sum(s["eligible"] for s in doc["states"].values())
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         (rows,) = con.execute(f"SELECT count(*) FROM '{plan}'").fetchone() or (0,)
     assert rows == doc["totals"]["eligible"]
     for host in doc["hosts"].values():
@@ -78,15 +81,42 @@ def test_a_plan_built_from_other_code_or_inputs_is_refused(corpus: Path, tmp_pat
     plan, report = tmp_path / "plan.parquet", tmp_path / "inventory.json"
     build_inventory(corpus, plan_path=plan, report_path=report, read=_robots)
 
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         assert len(load_plan(con, plan)) > 0
         with pytest.raises(StalePlanError):
             load_plan(con, plan, expected="0" * 64)
 
 
+def test_the_plan_check_passes_a_plan_from_this_code_and_none_stored(
+    corpus: Path, tmp_path: Path
+) -> None:
+    plan, report = tmp_path / "plan.parquet", tmp_path / "inventory.json"
+    assert check_plan(plan) is None  # none stored: the merge reads the export's text alone
+    doc = build_inventory(corpus, plan_path=plan, report_path=report, read=_robots)
+    assert doc["fingerprint"] == plan_fingerprint()
+    assert check_plan(plan) is None
+
+    runner = CliRunner()
+    ok = runner.invoke(app, ["text", "check-plan", "--plan", str(plan)])
+    assert ok.exit_code == 0, ok.output
+
+
+def test_the_plan_check_fails_fast_on_a_plan_from_other_code(tmp_path: Path) -> None:
+    plan = tmp_path / "plan.parquet"
+    with db.connect_quiet() as con:
+        con.execute(f"COPY (SELECT 'a' AS id) TO '{plan}' (FORMAT parquet)")
+    problem = check_plan(plan)
+    assert problem is not None
+    assert "uv run lineage text inventory" in problem
+
+    stale = CliRunner().invoke(app, ["text", "check-plan", "--plan", str(plan)])
+    assert stale.exit_code == 1
+    assert "built from other code or inputs" in stale.output
+
+
 def test_a_plan_without_a_fingerprint_is_refused(tmp_path: Path) -> None:
     plan = tmp_path / "plan.parquet"
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         con.execute(f"COPY (SELECT 'a' AS id) TO '{plan}' (FORMAT parquet)")
 
         with pytest.raises(StalePlanError):
@@ -110,10 +140,10 @@ def test_the_fingerprint_follows_the_snapshot_and_the_document_type_rules(tmp_pa
 def test_stored_text_the_sections_no_longer_hold_is_split_again(tmp_path: Path) -> None:
     # Once a record's fetched text is split, the sections table says nothing about whether
     # its stored text yields a section; the inventory splits the stored text itself.
-    from lineage.text_inventory import _rechecked  # pyright: ignore[reportPrivateUsage]
+    from lineage.text.inventory import _rechecked  # pyright: ignore[reportPrivateUsage]
 
     bills = tmp_path / "bills.parquet"
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         con.execute(
             "COPY (SELECT * FROM (VALUES ('a', 'Section 1. Fees. Section 2. Rules.'), "
             "('b', '   ')) t(id, text)) TO '" + str(bills) + "' (FORMAT parquet)"
@@ -127,3 +157,12 @@ def test_stored_text_the_sections_no_longer_hold_is_split_again(tmp_path: Path) 
         kinds = [r[4] for r in _rechecked(con, records, str(bills))]
 
     assert kinds == ["amendment_only", "no_sections", "usable"]
+
+
+def test_the_committed_plan_was_built_from_this_code() -> None:
+    """CI's half of the plan check (ruled at M13's step 5 review): the inventory report records
+    the fingerprint it wrote the stored plan with, so a change to the code or the committed
+    inputs the plan depends on fails here, before the weekly job would refuse the plan. Run
+    `uv run lineage text inventory --plan data/text/plan.parquet` after such a change."""
+    report = json.loads(Path("reports/text_inventory.json").read_text())
+    assert report["fingerprint"] == plan_fingerprint()

@@ -8,22 +8,27 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from lineage.intervals import wilson
-from lineage.labels import SAME_PROVISION, Item, Pair, Section, SectionKey, SectionRef, text_sha256
-from lineage.precision import (
-    STRATA,
-    PrecisionError,
+from lineage.core import db
+from lineage.core.intervals import wilson
+from lineage.evals.labels import (
+    SAME_PROVISION,
+    Item,
+    Pair,
+    Section,
+    SectionKey,
+    SectionRef,
+    text_sha256,
+)
+from lineage.evals.precision import (
     draw,
     estimate,
     latest_correct,
     latest_labels,
-    pair_keys,
     restratified,
     sample_rows,
-    strata,
     stratified,
-    stratum_of,
 )
+from lineage.match.strata import STRATA, PrecisionError, pair_keys, strata, stratum_of
 
 
 def _keys(*pairs: tuple[int, int]) -> np.ndarray:
@@ -227,10 +232,9 @@ def test_a_sample_pair_from_an_unknown_stratum_is_refused(tmp_path: Path) -> Non
 def test_the_command_writes_the_estimate_into_the_results(corpus: Path, tmp_path: Path) -> None:
     from typer.testing import CliRunner
 
-    from lineage import queries
     from lineage.cli import app
 
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         rows: list[tuple[str, int]] = con.execute(
             "SELECT bill_id, ordinal FROM read_parquet($p) ORDER BY bill_id, ordinal LIMIT 2",
             {"p": str(corpus / "sections" / "*.parquet")},
@@ -271,10 +275,10 @@ def test_the_command_writes_the_estimate_into_the_results(corpus: Path, tmp_path
 
 
 def test_the_sample_is_drawn_from_both_stages_stored_pairs(embedded_commission: Path) -> None:
-    from lineage.pairs import load_cross_state_pairs
-    from lineage.precision import build_sample
-    from lineage.semantic import BUILD_THRESHOLD
-    from lineage.semantic_pairs import build_semantic_pairs, load_semantic_pairs, section_keys
+    from lineage.evals.precision import build_sample
+    from lineage.match.near.pairs import load_cross_state_pairs
+    from lineage.match.semantic.pairs import build_semantic_pairs, load_semantic_pairs, section_keys
+    from lineage.match.semantic.stage import BUILD_THRESHOLD
     from tests.conftest import FAKE_MODEL
 
     tables = embedded_commission

@@ -8,8 +8,8 @@ a coincidence of common phrasing and is not kept.
 Between the copies, and over the whole pair when nothing was copied, lie unmatched stretches.
 Inside each stretch that has text on both sides, each side is cut into sentences, and sentences
 are paired by embedding similarity: a pair at or above THRESHOLD, the pair dataset's cosine
-threshold (lineage.semantic.CORROBORATING), is a paraphrase. It stayed there when pages came to
-list matches by meaning at a stricter threshold: every Georgia sample was judged on passages
+threshold (lineage.match.semantic.stage.CORROBORATING), is a paraphrase. It stayed there when pages
+came to list matches by meaning at a stricter threshold: every Georgia sample was judged on passages
 aligned at it, and which bills a page lists is a separate question from which sentences of a
 listed pair read alike. Pairs are taken best first and never cross, so each text
 still reads in order. Every sentence left unpaired is unmatched. Without an embedder nothing is
@@ -30,8 +30,8 @@ from typing import Literal
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage.sections import normalize
-from lineage.semantic import CORROBORATING
+from lineage.match.semantic.stage import CORROBORATING
+from lineage.text.sections import normalize
 
 THRESHOLD = CORROBORATING
 

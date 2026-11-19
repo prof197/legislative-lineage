@@ -5,9 +5,9 @@ from pathlib import Path
 
 import pytest
 
-from lineage import pair_data
-from lineage.fetch import FetchError
-from lineage.pair_data import (
+from lineage.core.http import FetchError
+from lineage.evals import pair_data
+from lineage.evals.pair_data import (
     COMMIT,
     FILES,
     PairDataError,

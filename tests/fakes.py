@@ -10,9 +10,10 @@ from pathlib import Path
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage import queries
-from lineage.semantic import SemanticSearch
-from lineage.vectors import build_plan, semantic_dir, shard_name
+from lineage.core import db
+from lineage.match.semantic import queries as semantic_queries
+from lineage.match.semantic.stage import SemanticSearch
+from lineage.match.semantic.vectors import build_plan, semantic_dir, shard_name
 
 DIM = 256
 MARK = "Q"
@@ -31,11 +32,11 @@ def bag_of_words(texts: Sequence[str]) -> NDArray[np.float32]:
 def bag_of_words_search(tables: Path) -> SemanticSearch:
     """Plan the tables' windows and embed them with the stand-in, in memory."""
     plan = build_plan(tables, floor_bytes=0)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         texts = [
             t
             for s in range(plan.shards)
-            for t in queries.read_semantic_texts(
+            for t in semantic_queries.read_semantic_texts(
                 con, parquet_path=semantic_dir(tables) / "texts" / f"{shard_name(s)}.parquet"
             )
         ]

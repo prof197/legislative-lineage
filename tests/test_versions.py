@@ -2,7 +2,7 @@
 
 import pytest
 
-from lineage.versions import Choice, Link, Version, choose_version, is_bill_text
+from lineage.text.versions import Choice, Link, Version, choose_version, is_bill_text
 
 PDF = "application/pdf"
 HTML = "text/html"

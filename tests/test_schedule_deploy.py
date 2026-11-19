@@ -13,11 +13,13 @@ from pathlib import Path
 
 import pytest
 
-from lineage import deploy
-from lineage.deploy import DeployPaths, DeployRules, Limits, load_rules
-from lineage.feed import write_feed
-from lineage.publish import export_changes, promote, staging_dir
-from lineage.schedule import (
+from lineage.live import deploy
+from lineage.live.deploy_ledger import DeployPaths
+from lineage.live.deploy_rules import DeployRules, Limits, load_rules
+from lineage.live.feed import write_feed
+from lineage.live.incremental import update
+from lineage.live.publish import export_changes, promote, staging_dir
+from lineage.live.schedule import (
     STATUS_FILE,
     TEMPLATES,
     DailyPaths,
@@ -28,7 +30,7 @@ from lineage.schedule import (
     run_job,
     weekly_job_steps,
 )
-from lineage.updates import load_day, update
+from lineage.live.updates import load_day
 from tests.conftest import FAKE_MODEL
 from tests.days import DAYS
 from tests.live import ExportInputs, Recorded, export_inputs, full_export, recorded
@@ -105,7 +107,7 @@ def _runner(
         elif step.name == "pages":
             export_changes(
                 paths.tables, state="GA", export=export, changes_dir=paths.changes,
-                models_dir=None, floor=0, **inputs,
+                models_dir=None, floor=0, inputs=inputs,
             )  # fmt: skip
         elif step.name == "feed":
             write_feed(
@@ -114,8 +116,8 @@ def _runner(
                 export=staging_dir(export),
                 site_url=SITE,
                 changes_dir=paths.changes,
-                modeldocs_root=inputs["modeldocs_root"],
-                collector_package=inputs["collector_package"],
+                modeldocs_root=inputs.modeldocs_root,
+                collector_package=inputs.collector_package,
             )
         elif step.name == "promote":
             promote(export)
@@ -230,7 +232,13 @@ def test_the_weekly_job_prepares_a_candidate_before_session_and_a_review_during_
     before = weekly_job_steps(
         paths, state="GA", site_url=SITE, day=D3, rules=_rules(date(2027, 1, 11))
     )
-    assert [s.name for s in before] == ["rebuild-pinned", "rebuild-refreshed", "check", "candidate"]
+    assert [s.name for s in before] == [
+        "check-plan",
+        "rebuild-pinned",
+        "rebuild-refreshed",
+        "check",
+        "candidate",
+    ]
     candidate = before[-1].argv
     assert candidate[:2] == ("publish", "candidate")
     assert ("--export", str(tmp_path / "export" / "GA")) == candidate[
@@ -246,6 +254,7 @@ def test_the_weekly_job_prepares_a_candidate_before_session_and_a_review_during_
     assert review[review.index("--through") + 1] == DAYS[2]
     # Without a state the job is the rebuilds and the check alone, as before.
     assert [s.name for s in weekly_job_steps(paths)] == [
+        "check-plan",
         "rebuild-pinned",
         "rebuild-refreshed",
         "check",
@@ -258,7 +267,7 @@ def test_the_runner_script_reads_the_leak_terms_from_the_keychain_and_knows_a_he
     assert "export LEAK_CHECK_TERMS" in script
     assert "uv run --frozen lineage schedule weekly --state" in script
     assert "-ne 3" in script  # a held day is already alerted, like a failed step
-    # The GitHub token is the deploy's to read before each call (lineage.deploy.github_shell).
+    # The GitHub token is the deploy's to read before each call (lineage.live.deploy.github_shell).
     assert "export GH_TOKEN" not in script
     # Held awake for the length of the job, which the Mac is woken for.
     assert "caffeinate -i uv run --frozen lineage schedule daily" in script

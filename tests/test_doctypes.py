@@ -4,9 +4,9 @@ from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 
-from lineage import queries
 from lineage.cli import app
-from lineage.doctypes import (
+from lineage.core import db
+from lineage.data.doctypes import (
     RULES,
     DocTypesError,
     build_eligibility,
@@ -14,10 +14,10 @@ from lineage.doctypes import (
     load_rules,
     rule_samples,
 )
-from lineage.ingest import ingest
-from lineage.sectioning import build_sections
-from lineage.snapshot import scan, write_manifest
-from lineage.text_merge import merge_texts
+from lineage.data.ingest import ingest
+from lineage.data.snapshot import scan, write_manifest
+from lineage.text.merge import merge_texts
+from lineage.text.sectioning import build_sections
 from tests.conftest import SESSIONS
 
 HEADER = "state,type,title,unless,decision,reason\n"
@@ -311,7 +311,7 @@ def test_writes_eligibility_and_a_report_counting_each_rule(tables: Path, tmp_pa
 
     doc = build_eligibility(tables, rules_path=RULES, report_path=report)
 
-    con = queries.connect_quiet()
+    con = db.connect_quiet()
     rows = con.execute(
         f"SELECT b.state, b.identifier, e.eligible, e.rule "
         f"FROM read_parquet('{tables / 'eligible.parquet'}') e "

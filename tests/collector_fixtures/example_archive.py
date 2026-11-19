@@ -2,8 +2,8 @@
 
 from datetime import date
 
-from lineage.collect import CollectContext, CollectReport
-from lineage.modeldocs import Source
+from lineage.origins.collect import CollectContext, CollectReport
+from lineage.origins.modeldocs import Source
 
 SOURCE = Source(
     key="example-archive",

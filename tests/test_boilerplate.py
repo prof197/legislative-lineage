@@ -1,7 +1,7 @@
 import pytest
 
-from lineage.boilerplate import boilerplate_kind
-from lineage.sections import normalize
+from lineage.text.boilerplate import boilerplate_kind
+from lineage.text.sections import normalize
 
 
 @pytest.mark.parametrize(

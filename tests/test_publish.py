@@ -9,11 +9,11 @@ from pathlib import Path
 
 import pytest
 
-from lineage import queries
-from lineage.export_schema import BillPage
-from lineage.publish import (
+from lineage.core import db
+from lineage.export.pages import bill_refs
+from lineage.export.schema import BillPage
+from lineage.live.publish import (
     PublishError,
-    bill_refs,
     changes_on,
     export_changes,
     promote,
@@ -21,7 +21,7 @@ from lineage.publish import (
     staging_dir,
     touched,
 )
-from lineage.updates import RecordUpdated, RelativeGained, RelativeLost
+from lineage.live.updates import RecordUpdated, RelativeGained, RelativeLost
 from tests.days import DAYS
 from tests.live import Recorded, export_inputs, files_seen, full_export, normalized, recorded
 
@@ -40,7 +40,7 @@ def _named_pages(rec: Recorded, n: int, export: Path) -> set[str]:
         c.relative_id for c in log if isinstance(c, RelativeGained | RelativeLost)
     }
     records = {c.bill_id for c in log if c.kind in ("added", "updated", "replaced")}
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         refs, _ = bill_refs(con, rec.tables[n], sorted(named))
     named_slugs = {refs[b].slug for b in named}
     record_slugs = {refs[b].slug for b in records}
@@ -75,7 +75,7 @@ def test_only_the_files_a_day_changes_are_rewritten_and_the_export_equals_a_full
             since=day if n == first else None,  # a full export carries no as-of date
             models_dir=None,
             floor=0,
-            **inputs,
+            inputs=inputs,
         )
         assert files_seen(live) == before  # nothing reaches the live export before the swap
         promote(live)
@@ -146,7 +146,7 @@ def test_a_page_a_relative_moved_without_a_log_entry_is_rebuilt_and_reported(
         since=D3,
         models_dir=None,
         floor=0,
-        **inputs,
+        inputs=inputs,
     )
     promote(live)
 
@@ -160,7 +160,7 @@ def test_an_export_ahead_of_or_behind_the_tables_is_refused(rec: Recorded, tmp_p
     log = rec.log_through(3, tmp_path / "log")
     with pytest.raises(PublishError, match="not had 2026-01-14 applied"):
         export_changes(
-            rec.tables[2], state="GA", export=live, changes_dir=log, models_dir=None, **inputs
+            rec.tables[2], state="GA", export=live, changes_dir=log, models_dir=None, inputs=inputs
         )
     with pytest.raises(PublishError, match="not in"):
         export_changes(
@@ -169,7 +169,7 @@ def test_an_export_ahead_of_or_behind_the_tables_is_refused(rec: Recorded, tmp_p
             export=live,
             changes_dir=rec.log_through(2, tmp_path / "short"),
             models_dir=None,
-            **inputs,
+            inputs=inputs,
         )
 
 

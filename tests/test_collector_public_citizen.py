@@ -15,10 +15,11 @@ import pytest
 from typer.testing import CliRunner
 
 from lineage.cli import app
-from lineage.collect import CollectContext, CollectReport, collectors
-from lineage.collect_base import Fetched
-from lineage.collectors import public_citizen
-from lineage.collectors.public_citizen import (
+from lineage.core.robots import Robots, parse_robots
+from lineage.origins.collect import CollectContext, CollectReport, collectors
+from lineage.origins.collect_base import Fetched
+from lineage.origins.collectors import public_citizen
+from lineage.origins.collectors.public_citizen import (
     LIBRARY,
     MEDIA_TYPE,
     SOURCE,
@@ -27,7 +28,7 @@ from lineage.collectors.public_citizen import (
     doc_slug,
     read_page,
 )
-from lineage.modeldocs import (
+from lineage.origins.modeldocs import (
     MODELDOCS_DIR,
     ModelDoc,
     load_text,
@@ -36,7 +37,6 @@ from lineage.modeldocs import (
     read_versions,
     sha256,
 )
-from lineage.robots import Robots, parse_robots
 from tests.recorded_site import RecordedSite
 
 FIXTURES = Path(__file__).parent / "fixtures" / "collect" / "public-citizen"

@@ -8,9 +8,10 @@ from pathlib import Path
 
 import pytest
 
-from lineage import queries, semantic
-from lineage.query import query_text, regrouped
-from lineage.semantic import CORROBORATING, THRESHOLD, SemanticSearch, search_sections
+from lineage.core import db
+from lineage.match.query import query_text, regrouped
+from lineage.match.semantic import stage as semantic
+from lineage.match.semantic.stage import CORROBORATING, THRESHOLD, SemanticSearch, search_sections
 from tests.fakes import MARK, bag_of_words_search
 
 
@@ -20,7 +21,7 @@ def search(corpus: Path) -> SemanticSearch:
 
 
 def _raw_text(tables: Path, identifier: str) -> str:
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         row = con.execute(
             "SELECT text FROM read_parquet($p) WHERE identifier = $i",
             {"p": str(tables / "bills" / "*.parquet"), "i": identifier},
@@ -113,8 +114,8 @@ def test_searching_in_passes_finds_what_one_pass_finds(
     corpus: Path, search: SemanticSearch, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     # A collection of model documents is searched at once, a pass over the vectors per
-    # WINDOWS_PER_PASS windows (lineage.origin_matching).
-    with queries.connect_quiet() as con:
+    # WINDOWS_PER_PASS windows (lineage.origins.matching).
+    with db.connect_quiet() as con:
         rows = con.execute(
             "SELECT text FROM read_parquet($p) ORDER BY bill_id, ordinal LIMIT 40",
             {"p": str(corpus / "sections" / "*.parquet")},

@@ -5,8 +5,11 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
-from lineage import queries, vectors
-from lineage.vectors import (
+from lineage.core import db
+from lineage.data import queries as data_queries
+from lineage.match.semantic import queries as semantic_queries
+from lineage.match.semantic import vectors
+from lineage.match.semantic.vectors import (
     EmbedError,
     build_plan,
     current_plan,
@@ -16,6 +19,7 @@ from lineage.vectors import (
     semantic_dir,
     shard_name,
 )
+from lineage.text import queries as text_queries
 
 LONG = " ".join(f"w{i}" for i in range(150))  # two windows: words 0-93 and 56-149
 TEXTS = {
@@ -36,9 +40,9 @@ def tables(tmp_path: Path) -> Path:
     (tables / "sections").mkdir(parents=True)
     keys = sorted(TEXTS)
     halves = {"a.parquet": keys[:2], "b.parquet": keys[2:]}
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for name, part in halves.items():
-            columns = queries.SectionColumns(
+            columns = text_queries.SectionColumns(
                 bill_id=[b for b, _ in part],
                 ordinal=[o for _, o in part],
                 heading=[None] * len(part),
@@ -47,9 +51,11 @@ def tables(tmp_path: Path) -> Path:
                 by_heading=[True] * len(part),
                 boilerplate=["effective date" if k == BOILERPLATE else None for k in part],
             )
-            queries.write_sections(con, parquet_path=tables / "sections" / name, columns=columns)
+            text_queries.write_sections(
+                con, parquet_path=tables / "sections" / name, columns=columns
+            )
         bills = sorted({b for b, _ in keys})
-        queries.write_eligibility(
+        data_queries.write_eligibility(
             con,
             parquet_path=tables / "eligible.parquet",
             ids=bills,
@@ -60,7 +66,7 @@ def tables(tmp_path: Path) -> Path:
 
 
 def _units(tables: Path) -> list[tuple[str, int, int, int]]:
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         rows: list[tuple[str, int, int, int]] = con.execute(
             "SELECT bill_id, ordinal, window_number, text_id FROM read_parquet($p) "
             "ORDER BY bill_id, ordinal, window_number",
@@ -70,11 +76,11 @@ def _units(tables: Path) -> list[tuple[str, int, int, int]]:
 
 
 def _texts(tables: Path, plan_shards: int) -> list[str]:
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         return [
             t
             for s in range(plan_shards)
-            for t in queries.read_semantic_texts(
+            for t in semantic_queries.read_semantic_texts(
                 con, parquet_path=semantic_dir(tables) / "texts" / f"{shard_name(s)}.parquet"
             )
         ]
@@ -169,8 +175,8 @@ def test_the_report_counts_a_stopped_run_up_to_its_last_shard(tables: Path) -> N
 
 def test_a_change_of_eligibility_makes_the_plan_stale(tables: Path) -> None:
     current_plan(tables, floor_bytes=0)
-    with queries.connect_quiet() as con:
-        queries.write_eligibility(
+    with db.connect_quiet() as con:
+        data_queries.write_eligibility(
             con,
             parquet_path=tables / "eligible.parquet",
             ids=["b1", "b2", "b3", "r1"],

@@ -1,4 +1,4 @@
-# The text layer's rules (DESIGN.md#dr-6), applied by lineage.text_rules. The quality test
+# The text layer's rules (DESIGN.md#dr-6), applied by lineage.text.rules. The quality test
 # (`uv run lineage text sample` -> reports/text_quality.json) measures what these choose between;
 # tests/test_text_rules.py checks the choices against that report.
 
@@ -50,7 +50,7 @@ AK = { formats = ["html", "pdf"] }
 AL = { formats = ["pdf"] }
 AR = { formats = ["pdf"] }
 AZ = { formats = ["html", "pdf"] }
-CA = { source = "bulk" }  # leginfo's robots.txt answers 403; see lineage.ca_bulk
+CA = { source = "bulk" }  # leginfo's robots.txt answers 403; see lineage.text.ca_bulk
 CO = { formats = ["pdf"] }
 CT = { formats = ["pdf"] }
 DE = { formats = ["html", "pdf"] }

@@ -10,8 +10,8 @@ from pathlib import Path
 
 import pytest
 
-from lineage.acts import ACTS, ActTextError, enacted_text, load_act
-from lineage.sections import normalize
+from lineage.evals.acts import ACTS, ActTextError, enacted_text, load_act
+from lineage.text.sections import normalize
 
 ACT = """\
 Uniform Widget Registration Act
@@ -225,9 +225,9 @@ receiving a complete application, and may charge a reasonable fee.
 
 def _proposed_and_estimate(act: str, bill: str) -> tuple[bool, float]:
     """The near-duplicate stage on one section pair, as the index treats one window."""
-    from lineage.lsh import band_keys
-    from lineage.minhash import permutations, signatures, similarity
-    from lineage.shingles import section_shingles
+    from lineage.match.near.lsh import band_keys
+    from lineage.match.near.minhash import permutations, signatures, similarity
+    from lineage.match.near.shingles import section_shingles
 
     texts = [normalize(act), normalize(bill)]
     assert all(len(t.split()) <= 94 for t in texts)  # one window each
@@ -244,7 +244,7 @@ def test_the_query_keeps_the_placeholders_alternatives_and_optional_clause() -> 
 
 
 def test_a_lightly_filled_enactment_is_proposed_and_verified() -> None:
-    from lineage.verify import THRESHOLD
+    from lineage.match.near.verify import THRESHOLD
 
     proposed, estimate = _proposed_and_estimate(enacted_text(DRAFTED), LIGHTLY_FILLED)
 
@@ -256,7 +256,7 @@ def test_a_fully_filled_enactment_is_proposed_but_lost_at_verification() -> None
     # Each filled placeholder changes the shingles around it, and at this density they add up:
     # the section is the semantic stage's to find (DESIGN.md#commission-recall). Pinned so that a
     # change to matching that recovers it is seen, not assumed.
-    from lineage.verify import THRESHOLD
+    from lineage.match.near.verify import THRESHOLD
 
     proposed, estimate = _proposed_and_estimate(enacted_text(DRAFTED), FILLED)
 

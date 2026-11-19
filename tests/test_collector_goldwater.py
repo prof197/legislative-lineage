@@ -16,10 +16,11 @@ import pytest
 from typer.testing import CliRunner
 
 from lineage.cli import app
-from lineage.collect import CollectContext, CollectReport, collectors
-from lineage.collect_base import CollectFetchError, Fetched
-from lineage.collectors import goldwater
-from lineage.collectors.goldwater import (
+from lineage.core.robots import Robots, parse_robots
+from lineage.origins.collect import CollectContext, CollectReport, collectors
+from lineage.origins.collect_base import CollectFetchError, Fetched
+from lineage.origins.collectors import goldwater
+from lineage.origins.collectors.goldwater import (
     DOCX,
     LIBRARY,
     SOURCE,
@@ -35,7 +36,7 @@ from lineage.collectors.goldwater import (
     qualifier,
     title_for,
 )
-from lineage.modeldocs import (
+from lineage.origins.modeldocs import (
     MODELDOCS_DIR,
     load_text,
     raw_path,
@@ -43,7 +44,6 @@ from lineage.modeldocs import (
     read_versions,
     sha256,
 )
-from lineage.robots import Robots, parse_robots
 from tests.recorded_site import docx_bytes, pdf_bytes
 
 FIXTURES = Path(__file__).parent / "fixtures" / "collect" / "goldwater"
@@ -175,7 +175,8 @@ def test_each_document_is_stored_with_provenance(tmp_path: Path) -> None:
     assert (lantern.robots, lantern.leaked, lantern.collected_on) == ("allowed", False, DAY)
     assert lantern.raw_sha256 == sha256(fetched)
     assert raw_path(lantern, root).read_bytes() == fetched
-    # The PDF's text layer is read as lineage.extract reads it; words, not layout, are compared.
+    # The PDF's text layer is read as lineage.text.extract reads it; words, not layout, are
+    # compared.
     assert load_text(lantern, root).split() == LANTERN_CLEANED.split()
 
     mooring = docs["goldwater/harbor-fairness-act-mooring"]

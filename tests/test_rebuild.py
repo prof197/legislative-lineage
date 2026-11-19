@@ -13,9 +13,9 @@ import pytest
 from typer.testing import CliRunner
 
 from lineage.cli import app
-from lineage.rebuild import Base, RebuildError, lay_days, rebuild, work_dir
-from lineage.snapshot import scan, write_manifest
-from lineage.updates import fold, load_days, snapshot, write_archives
+from lineage.data.snapshot import scan, write_manifest
+from lineage.live.rebuild import Base, RebuildError, lay_days, rebuild, work_dir
+from lineage.live.updates import fold, load_days, snapshot, write_archives
 from tests.conftest import FAKE_MODEL
 from tests.days import DAYS, sessions_csv
 from tests.days import rebuild as reference

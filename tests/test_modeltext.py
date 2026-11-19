@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from lineage.acts import (
+from lineage.evals.acts import (
     ACTS,
     ACTS_DIR,
     HELD_OUT_ACTS,
@@ -19,7 +19,7 @@ from lineage.acts import (
     ORIGIN_HELD_OUT_ACTS,
     enacted_text,
 )
-from lineage.modeltext import ModelTextError, clean_act, docx_text, drop_instructions
+from lineage.origins.modeltext import ModelTextError, clean_act, docx_text, drop_instructions
 from tests.recorded_site import SYNTHETIC_ACT, docx_bytes
 
 CLEANED = (

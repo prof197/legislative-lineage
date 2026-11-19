@@ -3,14 +3,14 @@ lists the sections each wrong match rests on by kind (DESIGN.md#origin-matches).
 
 import pytest
 
-from lineage.generic_sections import (
+from lineage.text.generic_sections import (
     MAX_WORDS,
     Inside,
     generic_inside,
     generic_kind,
     words_outside,
 )
-from lineage.sections import normalize
+from lineage.text.sections import normalize
 
 
 @pytest.mark.parametrize(
@@ -65,7 +65,7 @@ LONG = " ".join(["The court shall consider the legislature's intent in each case
     ("text", "kind"),
     [
         # A long severability section, the case-law recital EPPC's models carry, is generic by
-        # its heading, though too long for lineage.boilerplate's whole-section patterns.
+        # its heading, though too long for lineage.text.boilerplate's whole-section patterns.
         (f"Section 6. Severability. Mindful of Leavitt v. Jane L. {LONG}", "severability"),
         (f"Section 501. Severability. (1) {LONG}", "severability"),
         (f"Section 12. Effective Date. {LONG}", "effective date"),

@@ -3,12 +3,25 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from lineage import queries
-from lineage.ann import Neighbors
-from lineage.memory import MemoryBoundError, current_bytes
-from lineage.neighbors import build_neighbors, check_at, keep_neighbors, projected_bytes
-from lineage.semantic import BUILD_THRESHOLD, THRESHOLD, K
-from lineage.vectors import EmbedError, build_plan, load_plan, semantic_dir, shard_name, vectors_dir
+from lineage.core import db
+from lineage.core.memory import MemoryBoundError, current_bytes
+from lineage.match.semantic import queries as semantic_queries
+from lineage.match.semantic.ann import Neighbors
+from lineage.match.semantic.neighbors import (
+    build_neighbors,
+    check_at,
+    keep_neighbors,
+    projected_bytes,
+)
+from lineage.match.semantic.stage import BUILD_THRESHOLD, THRESHOLD, K
+from lineage.match.semantic.vectors import (
+    EmbedError,
+    build_plan,
+    load_plan,
+    semantic_dir,
+    shard_name,
+    vectors_dir,
+)
 from tests.fakes import bag_of_words
 
 
@@ -35,9 +48,9 @@ def test_every_text_gets_its_nearest_texts_above_the_threshold(
     plan = build_plan(tables, floor_bytes=0)
     out = vectors_dir(tables, "fake")
     out.mkdir(parents=True)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for s in range(plan.shards):
-            texts = queries.read_semantic_texts(
+            texts = semantic_queries.read_semantic_texts(
                 con, parquet_path=semantic_dir(tables) / "texts" / f"{shard_name(s)}.parquet"
             )
             np.save(out / f"{shard_name(s)}.npy", bag_of_words(texts).astype(np.float16))
@@ -65,9 +78,9 @@ def _embedded(corpus: Path, tmp_path: Path) -> Path:
     plan = build_plan(tables, floor_bytes=0)
     out = vectors_dir(tables, "fake")
     out.mkdir(parents=True)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for s in range(plan.shards):
-            texts = queries.read_semantic_texts(
+            texts = semantic_queries.read_semantic_texts(
                 con, parquet_path=semantic_dir(tables) / "texts" / f"{shard_name(s)}.parquet"
             )
             np.save(out / f"{shard_name(s)}.npy", bag_of_words(texts).astype(np.float16))
@@ -130,7 +143,7 @@ def test_the_command_stops_below_the_recall_floor_or_over_the_bound(
 ) -> None:
     from typer.testing import CliRunner
 
-    from lineage import cli
+    from lineage.cli import match as cli
 
     def build(*args: object, **kwargs: object) -> dict[str, object]:
         return _report(recall, within)
@@ -148,7 +161,7 @@ def test_the_command_stops_below_the_recall_floor_or_over_the_bound(
 def test_the_command_passes_at_the_floor(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     from typer.testing import CliRunner
 
-    from lineage import cli
+    from lineage.cli import match as cli
 
     def build(*args: object, **kwargs: object) -> dict[str, object]:
         return _report(0.99, True)

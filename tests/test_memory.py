@@ -1,7 +1,7 @@
 import pytest
 
-from lineage import memory
-from lineage.memory import MemoryBoundError, require_within
+from lineage.core import memory
+from lineage.core.memory import MemoryBoundError, require_within
 
 
 def test_a_peak_that_has_passed_still_crosses_the_bound(monkeypatch: pytest.MonkeyPatch) -> None:

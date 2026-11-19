@@ -15,10 +15,11 @@ import numpy as np
 import pytest
 from typer.testing import CliRunner
 
-from lineage import queries
-from lineage.acts import ACTS, HELD_OUT_ACTS
 from lineage.cli import app
-from lineage.commission import (
+from lineage.core import db
+from lineage.data.sessions import load_sessions
+from lineage.evals.acts import ACTS, HELD_OUT_ACTS
+from lineage.evals.commission import (
     MISS_REASONS,
     CommissionError,
     Probe,
@@ -30,12 +31,11 @@ from lineage.commission import (
     target_reason,
     with_earlier_runs,
 )
-from lineage.lsh import BANDS, BUCKET_CAP, ROWS
-from lineage.minhash import NUM_PERM
-from lineage.queries import EnactmentBill
-from lineage.semantic import BUILD_THRESHOLD, THRESHOLD
-from lineage.sessions import load_sessions
-from lineage.ulc import ENACTMENTS, load_enactments
+from lineage.evals.queries import EnactmentBill
+from lineage.evals.ulc import ENACTMENTS, load_enactments
+from lineage.match.near.lsh import BANDS, BUCKET_CAP, ROWS
+from lineage.match.near.minhash import NUM_PERM
+from lineage.match.semantic.stage import BUILD_THRESHOLD, THRESHOLD
 from tests.conftest import COMMISSION
 from tests.fakes import bag_of_words_search
 from tests.test_acts import ACT
@@ -126,7 +126,7 @@ def test_found_is_a_score_above_the_threshold_whatever_the_rank() -> None:
 
 
 def _raw_text(tables: Path, bill_id: str) -> str:
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         row = con.execute(
             "SELECT text FROM read_parquet($p) WHERE id = $i",
             {"p": str(tables / "bills" / "*.parquet"), "i": bill_id},
@@ -158,7 +158,7 @@ def test_pipeline_regression_the_enacting_bills_are_found_among_distractors(
     build = json.loads((COMMISSION / "build.json").read_text())
     act_texts = {act: _raw_text(commission_corpus, bill) for act, bill in build["queries"].items()}
     snapshot = load_enactments(ENACTMENTS)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         own = {
             (act, row[0], row[1])
             for act, bill in build["queries"].items()

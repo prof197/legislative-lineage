@@ -37,6 +37,7 @@ module-name = "lineage"
 [dependency-groups]
 dev = [
     "datasketch>=2.0.0",
+    "import-linter>=2.17",
     "pyright>=1.1.414",
     "pytest>=9.2.0",
     "ruff>=0.17.3",
@@ -59,7 +60,13 @@ select = [
     "PTH",      # pathlib over os.path
     "PT",       # pytest style
     "RUF",
+    "C90",      # mccabe complexity
 ]
+
+[tool.ruff.lint.mccabe]
+# Ruled at M13's step 1 review. A function over it is allow-listed only by a `noqa: C901` on
+# its def, which RUF100 reports once the function is back under the limit.
+max-complexity = 15
 
 [tool.pyright]
 include = ["src", "tests", "benchmarks", "evals", "tools"]
@@ -75,3 +82,61 @@ pythonpath = ["."]
 addopts = ["-ra", "--strict-markers", "--strict-config", "--import-mode=importlib"]
 xfail_strict = true
 filterwarnings = ["error"]
+
+# The layering rule (DESIGN.md#module-map), checked in CI by `uv run lint-imports`.
+[tool.importlinter]
+root_package = "lineage"
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "Layers: a module imports only from its own layer and those below"
+type = "layers"
+containers = ["lineage"]
+layers = [
+    "cli",
+    "live",
+    "export",
+    "origins",
+    "evals",
+    "explain",
+    "align",
+    "match",
+    "text",
+    "data",
+    "core",
+]
+exhaustive = true
+
+[[tool.importlinter.contracts]]
+name = "Match: near below semantic, both below the modules that combine them"
+type = "layers"
+containers = ["lineage.match"]
+layers = ["query : relatives : listing : state_boilerplate : strata : queries", "semantic", "near"]
+exhaustive = true
+
+[[tool.importlinter.contracts]]
+name = "Collectors: each source's collector stands alone"
+type = "independence"
+modules = ["lineage.origins.collectors.*"]
+# IFS's documents are on its co-publisher EPPC's site and read with EPPC's reader.
+ignore_imports = ["lineage.origins.collectors.ifs -> lineage.origins.collectors.eppc"]
+
+[[tool.importlinter.contracts]]
+name = "Model calls: the Anthropic SDK only in the explanation step and the model labels"
+type = "forbidden"
+source_modules = ["lineage"]
+forbidden_modules = ["anthropic"]
+allow_indirect_imports = true
+ignore_imports = [
+    "lineage.explain.explain -> anthropic",
+    "lineage.evals.model_labels -> anthropic",
+    "lineage.evals.faithfulness -> anthropic",
+]
+
+[[tool.importlinter.contracts]]
+name = "faiss, the build extra, only behind lineage.match.semantic.ann"
+type = "forbidden"
+source_modules = ["lineage"]
+forbidden_modules = ["faiss"]
+allow_indirect_imports = true
+ignore_imports = ["lineage.match.semantic.ann -> faiss"]

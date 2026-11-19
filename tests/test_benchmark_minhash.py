@@ -4,9 +4,12 @@ import numpy as np
 import pytest
 
 from benchmarks.minhash import ENGINES, run_engine, run_lsh
-from lineage import memory, queries
-from lineage.minhash import NUM_PERM
-from lineage.signatures import build_signatures
+from lineage.core import db, memory
+from lineage.data import queries as data_queries
+from lineage.match.near import queries as near_queries
+from lineage.match.near.minhash import NUM_PERM
+from lineage.match.near.signatures import build_signatures
+from lineage.text import queries as text_queries
 
 TEXTS = [
     "the department of revenue shall publish the rates each year",
@@ -21,22 +24,22 @@ def tables(tmp_path: Path) -> Path:
     (tables / "sections").mkdir(parents=True)
     ids = [f"b{i}" for i in range(len(TEXTS))]
     n = len(TEXTS)
-    with queries.connect_quiet() as con:
-        queries.write_sections(
+    with db.connect_quiet() as con:
+        text_queries.write_sections(
             con,
             parquet_path=tables / "sections" / "s.parquet",
-            columns=queries.SectionColumns(
+            columns=text_queries.SectionColumns(
                 ids, [1] * n, [None] * n, TEXTS, TEXTS, [True] * n, [None] * n
             ),
         )
-        queries.write_eligibility(
+        data_queries.write_eligibility(
             con,
             parquet_path=tables / "eligible.parquet",
             ids=ids,
             eligible=[True] * n,
             rules=[1] * n,
         )
-        queries.write_stoplist(
+        near_queries.write_stoplist(
             con, parquet_path=tables / "stoplist.parquet", hashes=[], sections=[]
         )
     return tables

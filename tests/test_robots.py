@@ -7,7 +7,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import pytest
 
-from lineage.robots import parse_robots, read_robots
+from lineage.core.robots import parse_robots, read_robots
 
 URL = "https://leg.example/robots.txt"
 BILL = "https://leg.example/bills/getPDF.asp?paper=SP0891&item=1"

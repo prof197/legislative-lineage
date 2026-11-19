@@ -4,7 +4,7 @@ and the relatives introduced after it (DESIGN.md#explanations)."""
 import numpy as np
 import pytest
 
-from lineage.featured import (
+from lineage.export.featured import (
     GEORGIA_SECTIONS,
     STORIES,
     FeaturedError,
@@ -13,9 +13,9 @@ from lineage.featured import (
     introduced_after,
     pairs_with,
 )
-from lineage.listing import ListedPairs
-from lineage.pairs import SectionPairs
-from lineage.semantic_pairs import SemanticPairs
+from lineage.match.listing import ListedPairs
+from lineage.match.near.pairs import SectionPairs
+from lineage.match.semantic.pairs import SemanticPairs
 
 # Sections 0-1 are the anchor's, 2-3 relative r's, 4 another bill's.
 BILLS = ["anchor", "anchor", "r", "r", "x"]

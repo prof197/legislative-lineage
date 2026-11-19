@@ -4,7 +4,7 @@ spans that exist and differ (DESIGN.md#explanations)."""
 import pytest
 from pydantic import ValidationError
 
-from lineage.explanations import (
+from lineage.explain.explanations import (
     ChangeExplanation,
     Claim,
     GroundingSpan,

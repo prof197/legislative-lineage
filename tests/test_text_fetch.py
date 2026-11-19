@@ -12,8 +12,8 @@ from typing import Any, cast
 
 import pytest
 
-from lineage.robots import Robots, parse_robots
-from lineage.text_fetch import (
+from lineage.core.robots import Robots, parse_robots
+from lineage.text.fetch import (
     ExtractionWorkersError,
     Fetched,
     FetchInWorkerError,

@@ -3,8 +3,8 @@ from pathlib import Path
 
 import pytest
 
-from lineage.snapshot import load_manifest
-from lineage.status import EXPORT_TIMEZONES, Action, Outcome, Status, bill_status, local_date
+from lineage.data.snapshot import load_manifest
+from lineage.data.status import EXPORT_TIMEZONES, Action, Outcome, Status, bill_status, local_date
 
 SESSION_END = date(2026, 4, 2)
 AFTER_SESSION = date(2026, 7, 25)

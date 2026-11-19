@@ -9,12 +9,12 @@ from pathlib import Path
 
 import pytest
 
-from lineage import collect_base
-from lineage.collect import CollectContext
-from lineage.collect_base import CollectFetchError, Collection, Fetched, provenance, slugify
-from lineage.disk import InsufficientDiskSpaceError
-from lineage.modeldocs import ModelDoc, Source, load_text, read_docs, read_versions
-from lineage.robots import Robots, parse_robots
+from lineage.core.disk import InsufficientDiskSpaceError
+from lineage.core.robots import Robots, parse_robots
+from lineage.origins import collect_base
+from lineage.origins.collect import CollectContext
+from lineage.origins.collect_base import CollectFetchError, Collection, Fetched, provenance, slugify
+from lineage.origins.modeldocs import ModelDoc, Source, load_text, read_docs, read_versions
 
 SOURCE = Source(
     key="example-library",

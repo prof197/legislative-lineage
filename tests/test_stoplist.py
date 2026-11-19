@@ -4,9 +4,10 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from lineage import queries
-from lineage.shingles import shingle_hashes
-from lineage.stoplist import (
+from lineage.core import db
+from lineage.data import queries as data_queries
+from lineage.match.near.shingles import shingle_hashes
+from lineage.match.near.stoplist import (
     StoplistError,
     apply_stoplist,
     build_stoplist,
@@ -14,6 +15,7 @@ from lineage.stoplist import (
     load_stoplist,
     over_threshold,
 )
+from lineage.text import queries as text_queries
 
 ENACTING = "be it enacted by the general assembly"
 
@@ -49,7 +51,7 @@ def test_apply_stoplist_drops_listed_hashes_from_each_set() -> None:
 
 def _write_sections(tables: Path, texts: list[str], eligible: list[bool] | None = None) -> None:
     (tables / "sections").mkdir(parents=True)
-    columns = queries.SectionColumns(
+    columns = text_queries.SectionColumns(
         bill_id=[f"b{i}" for i in range(len(texts))],
         ordinal=[1] * len(texts),
         heading=[None] * len(texts),
@@ -58,9 +60,11 @@ def _write_sections(tables: Path, texts: list[str], eligible: list[bool] | None 
         by_heading=[False] * len(texts),
         boilerplate=["enacting clause" if t == ENACTING else None for t in texts],
     )
-    with queries.connect_quiet() as con:
-        queries.write_sections(con, parquet_path=tables / "sections" / "s.parquet", columns=columns)
-        queries.write_eligibility(
+    with db.connect_quiet() as con:
+        text_queries.write_sections(
+            con, parquet_path=tables / "sections" / "s.parquet", columns=columns
+        )
+        data_queries.write_eligibility(
             con,
             parquet_path=tables / "eligible.parquet",
             ids=columns.bill_id,

@@ -1,0 +1,167 @@
+{
+ "command": "uv run python -m benchmarks.generic_patterns",
+ "listed_with_patterns": {
+  "matches": 2691,
+  "labeled": 803,
+  "correct": 762
+ },
+ "extra_listed_without": {
+  "matches": 758,
+  "labeled": 154,
+  "correct": 86
+ },
+ "extra_by_source": {
+  "alec": 456,
+  "ncoil": 115,
+  "states-project": 70,
+  "eppc": 55,
+  "commission": 38,
+  "goldwater": 15,
+  "ifs": 6,
+  "public-citizen": 3
+ },
+ "by_kind": {
+  "model:definitions": {
+   "matches": 441,
+   "labeled": 58,
+   "correct": 53
+  },
+  "bill:definitions": {
+   "matches": 300,
+   "labeled": 43,
+   "correct": 40
+  },
+  "model:mostly_inside": {
+   "matches": 80,
+   "labeled": 16,
+   "correct": 8
+  },
+  "model:severability": {
+   "matches": 75,
+   "labeled": 54,
+   "correct": 0
+  },
+  "bill:inside": {
+   "matches": 67,
+   "labeled": 11,
+   "correct": 6
+  },
+  "bill:severability": {
+   "matches": 32,
+   "labeled": 28,
+   "correct": 1
+  },
+  "bill:mostly_inside": {
+   "matches": 32,
+   "labeled": 5,
+   "correct": 0
+  },
+  "bill:short title": {
+   "matches": 22,
+   "labeled": 1,
+   "correct": 1
+  },
+  "model:short title": {
+   "matches": 13,
+   "labeled": 2,
+   "correct": 2
+  },
+  "bill:findings": {
+   "matches": 11,
+   "labeled": 2,
+   "correct": 1
+  },
+  "model:inside": {
+   "matches": 10,
+   "labeled": 1,
+   "correct": 0
+  },
+  "model:findings": {
+   "matches": 8,
+   "labeled": 2,
+   "correct": 2
+  },
+  "bill:compact clause": {
+   "matches": 3,
+   "labeled": 0,
+   "correct": 0
+  },
+  "model:effective date": {
+   "matches": 2,
+   "labeled": 0,
+   "correct": 0
+  },
+  "bill:effective date": {
+   "matches": 1,
+   "labeled": 0,
+   "correct": 0
+  }
+ },
+ "definitions_only": {
+  "matches": 556,
+  "labeled": 80,
+  "correct": 75,
+  "by_source": {
+   "alec": {
+    "matches": 314,
+    "labeled": 42,
+    "correct": 42
+   },
+   "commission": {
+    "matches": 36,
+    "labeled": 6,
+    "correct": 2
+   },
+   "eppc": {
+    "matches": 3,
+    "labeled": 3,
+    "correct": 3
+   },
+   "goldwater": {
+    "matches": 15,
+    "labeled": 3,
+    "correct": 3
+   },
+   "ifs": {
+    "matches": 5,
+    "labeled": 0,
+    "correct": 0
+   },
+   "ncoil": {
+    "matches": 110,
+    "labeled": 15,
+    "correct": 14
+   },
+   "public-citizen": {
+    "matches": 3,
+    "labeled": 0,
+    "correct": 0
+   },
+   "states-project": {
+    "matches": 70,
+    "labeled": 11,
+    "correct": 11
+   }
+  }
+ },
+ "development_recall": {
+  "with_patterns": {
+   "enactments": 36,
+   "found": 31,
+   "recall": 0.8611,
+   "interval_95": [
+    0.7134,
+    0.9392
+   ]
+  },
+  "without_patterns": {
+   "enactments": 36,
+   "found": 31,
+   "recall": 0.8611,
+   "interval_95": [
+    0.7134,
+    0.9392
+   ]
+  }
+ }
+}

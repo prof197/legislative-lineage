@@ -4,7 +4,7 @@
   The live track's daily job for launchd (DESIGN.md#updates): intake, update, the incremental
   export and the feed, staged and swapped in only on success, and from the first day of session
   (rules/deploy.toml) the deploy, behind its gates and circuit breaker. A template: each placeholder, a
-  name between at signs, is filled by lineage.schedule.render_template, and nothing here names
+  name between at signs, is filled by lineage.live.schedule.render_template, and nothing here names
   a real path. Loading it is the operator's step, by hand.
 -->
 <plist version="1.0">

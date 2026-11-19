@@ -4,18 +4,22 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from lineage import bands, queries
-from lineage.bands import SWEEP_CAPS, load_band_index
-from lineage.disk import InsufficientDiskSpaceError
-from lineage.index import build_index
-from lineage.lsh import BANDS, BUCKET_CAP, build_band_index
-from lineage.pairs import (
+from lineage.core import db
+from lineage.core.disk import InsufficientDiskSpaceError
+from lineage.data import queries as data_queries
+from lineage.match.near import bands
+from lineage.match.near import queries as near_queries
+from lineage.match.near.bands import SWEEP_CAPS, load_band_index
+from lineage.match.near.index import build_index
+from lineage.match.near.lsh import BANDS, BUCKET_CAP, build_band_index
+from lineage.match.near.pairs import (
     load_cross_state_pairs,
     load_families,
     load_same_state_pairs,
     section_pairs,
 )
-from lineage.signatures import load_signatures
+from lineage.match.near.signatures import load_signatures
+from lineage.text import queries as text_queries
 
 COPIED = "a person who knowingly sells a catalytic converter without a receipt commits a felony"
 SECTIONS = {
@@ -35,22 +39,22 @@ def tables(tmp_path: Path) -> Path:
     ids = sorted(SECTIONS)
     texts = [SECTIONS[b][1] for b in ids]
     n = len(ids)
-    with queries.connect_quiet() as con:
-        queries.write_sections(
+    with db.connect_quiet() as con:
+        text_queries.write_sections(
             con,
             parquet_path=tables / "sections" / "s.parquet",
-            columns=queries.SectionColumns(
+            columns=text_queries.SectionColumns(
                 ids, [1] * n, [None] * n, texts, texts, [True] * n, [None] * n
             ),
         )
-        queries.write_eligibility(
+        data_queries.write_eligibility(
             con,
             parquet_path=tables / "eligible.parquet",
             ids=ids,
             eligible=[True] * n,
             rules=[1] * n,
         )
-        queries.write_stoplist(
+        near_queries.write_stoplist(
             con, parquet_path=tables / "stoplist.parquet", hashes=[], sections=[]
         )
         # Only the columns the band report reads.
@@ -189,22 +193,22 @@ def test_a_provision_inside_another_states_long_section_is_a_verified_pair(
     (tables / "sections").mkdir(parents=True)
     (tables / "bills").mkdir()
     ids, states, texts = ["a1", "k1"], ["AL", "AK"], [provision, long]
-    with queries.connect_quiet() as con:
-        queries.write_sections(
+    with db.connect_quiet() as con:
+        text_queries.write_sections(
             con,
             parquet_path=tables / "sections" / "s.parquet",
-            columns=queries.SectionColumns(
+            columns=text_queries.SectionColumns(
                 ids, [1, 1], [None, None], texts, texts, [True, True], [None, None]
             ),
         )
-        queries.write_eligibility(
+        data_queries.write_eligibility(
             con,
             parquet_path=tables / "eligible.parquet",
             ids=ids,
             eligible=[True] * 2,
             rules=[1] * 2,
         )
-        queries.write_stoplist(
+        near_queries.write_stoplist(
             con, parquet_path=tables / "stoplist.parquet", hashes=[], sections=[]
         )
         con.execute(

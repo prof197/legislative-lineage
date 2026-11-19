@@ -43,7 +43,7 @@ fi
 
 # The job's GitHub access is not set here: the deploy reads its own token from the keychain
 # (legislative-lineage-gh-token) before every git or gh call and stops without it, so it never
-# falls back to the maintainer's login (lineage.deploy.github_shell).
+# falls back to the maintainer's login (lineage.live.deploy.github_shell).
 
 # caffeinate holds off idle sleep while the job runs: the Mac is woken for it (pmset), and a
 # rebuild runs for hours, longer than the Mac stays awake on its own.

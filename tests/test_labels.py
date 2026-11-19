@@ -10,9 +10,9 @@ from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 
-from lineage import queries
 from lineage.cli import app
-from lineage.labels import (
+from lineage.core import db
+from lineage.evals.labels import (
     CORRECT_FROM,
     Item,
     LabelError,
@@ -30,8 +30,8 @@ from lineage.labels import (
     session,
     text_sha256,
 )
-from lineage.pair_data import LABELS
-from lineage.pair_eval import POSITIVE_FROM
+from lineage.evals.pair_data import LABELS
+from lineage.evals.pair_eval import POSITIVE_FROM
 
 
 def _section(bill: str, ordinal: int, text: str) -> Section:
@@ -149,7 +149,7 @@ def test_alignment_is_marked_in_plain_text() -> None:
 
 
 def _corpus_sample(corpus: Path, tmp_path: Path) -> Path:
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         rows: list[tuple[str, int]] = con.execute(
             "SELECT bill_id, ordinal FROM read_parquet($p) ORDER BY bill_id, ordinal LIMIT 2",
             {"p": str(corpus / "sections" / "*.parquet")},

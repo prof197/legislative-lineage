@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from lineage.modeldocs import (
+from lineage.origins.modeldocs import (
     ModelDoc,
     ModelDocError,
     Source,

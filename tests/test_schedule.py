@@ -16,11 +16,12 @@ from typing import Any
 import pytest
 from typer.testing import CliRunner
 
-from lineage import fetch
 from lineage.cli import app
-from lineage.feed import check, write_feed
-from lineage.publish import export_changes, promote, staging_dir
-from lineage.schedule import (
+from lineage.core import http
+from lineage.live.feed import check, write_feed
+from lineage.live.incremental import update
+from lineage.live.publish import export_changes, promote, staging_dir
+from lineage.live.schedule import (
     AGREEMENT_FLOOR,
     LOCK_FILE,
     SCHEDULE,
@@ -43,7 +44,7 @@ from lineage.schedule import (
     weekly_report,
     weekly_steps,
 )
-from lineage.updates import Snapshot, load_day, snapshot, update
+from lineage.live.updates import Snapshot, load_day, snapshot
 from tests.conftest import FAKE_MODEL
 from tests.days import DAYS
 from tests.live import (
@@ -79,7 +80,7 @@ def no_network(monkeypatch: pytest.MonkeyPatch) -> None:
     def refuse(*_: object, **__: object) -> Any:
         raise AssertionError("a dry run sends no request")
 
-    monkeypatch.setattr(fetch, "open_url", refuse)
+    monkeypatch.setattr(http, "open_url", refuse)
     monkeypatch.setattr(socket.socket, "connect", refuse)
 
 
@@ -108,7 +109,7 @@ def _runner(rec: Recorded, paths: DailyPaths, inputs: ExportInputs, fail: str | 
                 changes_dir=paths.changes,
                 models_dir=None,
                 floor=0,
-                **inputs,
+                inputs=inputs,
             )
         elif step.name == "feed":
             write_feed(
@@ -117,8 +118,8 @@ def _runner(rec: Recorded, paths: DailyPaths, inputs: ExportInputs, fail: str | 
                 export=staging_dir(export),
                 site_url=SITE,
                 changes_dir=paths.changes,
-                modeldocs_root=inputs["modeldocs_root"],
-                collector_package=inputs["collector_package"],
+                modeldocs_root=inputs.modeldocs_root,
+                collector_package=inputs.collector_package,
             )
         elif step.name == "promote":
             promote(export)
@@ -383,12 +384,14 @@ def test_the_weekly_steps_check_before_anything_is_adopted(tmp_path: Path) -> No
         pinned=tmp_path / "p",
         refreshed=tmp_path / "f",
         report=tmp_path / "w.json",
+        plan=tmp_path / "plan.parquet",
     )
     steps = weekly_steps(D3, paths=paths)
-    assert [s.name for s in steps] == ["rebuild-pinned", "rebuild-refreshed", "check"]
-    assert "--pinned-from" in steps[0].argv
-    assert "--pinned-from" not in steps[1].argv
-    assert steps[2].argv[:2] == ("publish", "weekly")
+    assert [s.name for s in steps] == ["check-plan", "rebuild-pinned", "rebuild-refreshed", "check"]
+    assert steps[0].argv == ("text", "check-plan", "--plan", str(tmp_path / "plan.parquet"))
+    assert "--pinned-from" in steps[1].argv
+    assert "--pinned-from" not in steps[2].argv
+    assert steps[3].argv[:2] == ("publish", "weekly")
     alerts = Alerts()
     status = run_job(
         "weekly",

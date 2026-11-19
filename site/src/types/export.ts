@@ -357,8 +357,8 @@ sources: string[]
 }
 /**
  * `origin_story.json`: the origin story (DESIGN.md#export), the passed bill and listed origin
- * lineage.origin_story's rule chooses; not written when no passed bill has a listed origin both
- * stages found that a labeler judged correct.
+ * lineage.export.origin_story's rule chooses; not written when no passed bill has a listed origin
+ * both stages found that a labeler judged correct.
  * 
  * This interface was referenced by `LegislativeLineageExport`'s JSON-Schema
  * via the `definition` "OriginStory".
@@ -404,8 +404,8 @@ terms_url: (string | null)
 withheld: WithheldDocument[]
 }
 /**
- * A model document withheld from bill pages, the feed and stories (lineage.withheld): at
- * least 3 of its listed matches labeled, fewer than half judged correct.
+ * A model document withheld from bill pages, the feed and stories (lineage.origins.withheld):
+ * at least 3 of its listed matches labeled, fewer than half judged correct.
  * 
  * This interface was referenced by `LegislativeLineageExport`'s JSON-Schema
  * via the `definition` "WithheldDocument".

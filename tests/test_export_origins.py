@@ -5,9 +5,9 @@ from datetime import date
 
 import pytest
 
-from lineage.export import ExportError, origins_by_bill
-from lineage.modeldocs import ModelDoc, Source
-from lineage.origins import FLOOR, BillSpan, OriginMatch
+from lineage.export.pages import ExportError, origins_by_bill
+from lineage.origins.matches import FLOOR, BillSpan, OriginMatch
+from lineage.origins.modeldocs import ModelDoc, Source
 
 SOURCE = Source(
     key="example-library",

@@ -19,7 +19,7 @@ against the memory bound as it grows, and the build stops if it crosses the boun
 disk falls to the floor, so that a run that does not fit is measured stopping there, not
 extrapolated, and never pushes the machine into swap.
 
-Peak memory is the process's physical footprint (see lineage.memory). Both engines run
+Peak memory is the process's physical footprint (see lineage.core.memory). Both engines run
 on one core. The comparison is per process, and both parallelize the same way.
 """
 
@@ -44,14 +44,15 @@ from typing import Any, cast
 import numpy as np
 from numpy.typing import NDArray
 
-from lineage import memory, queries
-from lineage.disk import DEFAULT_FLOOR_BYTES, GiB
-from lineage.lsh import BANDS, ROWS, build_band_index
-from lineage.minhash import NUM_PERM, permutations, signatures
-from lineage.paths import DATA
-from lineage.shingles import section_shingles
-from lineage.signatures import load_signatures
-from lineage.stoplist import apply_stoplist, load_stoplist
+from lineage.core import db, memory
+from lineage.core.disk import DEFAULT_FLOOR_BYTES, GiB
+from lineage.core.paths import DATA
+from lineage.match.near import queries as near_queries
+from lineage.match.near.lsh import BANDS, ROWS, build_band_index
+from lineage.match.near.minhash import NUM_PERM, permutations, signatures
+from lineage.match.near.shingles import section_shingles
+from lineage.match.near.signatures import load_signatures
+from lineage.match.near.stoplist import apply_stoplist, load_stoplist
 
 ENGINES = ("numpy", "datasketch")
 COMMAND = "uv run python -m benchmarks.minhash"
@@ -104,9 +105,9 @@ def _read_sets(tables_dir: Path, parts: int | None) -> list[NDArray[np.uint32]]:
     eligible = tables_dir / "eligible.parquet"
     stoplist = load_stoplist(tables_dir)
     sets: list[NDArray[np.uint32]] = []
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for part in files:
-            scan = queries.matchable_sections(con, sections_path=part, eligible_path=eligible)
+            scan = near_queries.matchable_sections(con, sections_path=part, eligible_path=eligible)
             while batch := scan.fetchmany(_BATCH):
                 kept = apply_stoplist(section_shingles([t for *_, t in batch]), stoplist)
                 sets += (s for s in kept if s.size)

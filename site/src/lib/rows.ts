@@ -35,7 +35,7 @@ type Side = "a" | "b";
 type Atom = { kind: Span["kind"]; span: string; a: [number, number] | null; b: [number, number] | null; endA: boolean; endB: boolean };
 
 const WORD = /\S+/g;
-const KEYED = /[\p{L}\p{N}§]/u; // a word that normalizes to something (lineage.sections.normalize)
+const KEYED = /[\p{L}\p{N}§]/u; // a word that normalizes to something (lineage.text.sections.normalize)
 const STOP = /[.;:?!]["'”’)\]]*$/;
 // Enumerators and abbreviations end with a stop but end no clause.
 const ENUMERATOR = /^[(\[]?(\d+[a-z]?|[a-z]{1,2}|[ivxlc]{1,6})[.)\]]+$/i;

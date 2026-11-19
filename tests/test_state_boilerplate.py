@@ -7,23 +7,25 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from lineage import queries
-from lineage.labels import Item, Pair, Section, SectionKey, SectionRef, text_sha256
-from lineage.pairs import load_families, load_same_state_pairs
-from lineage.precision import STRATA, stored_strata, without_sections
-from lineage.semantic_pairs import build_semantic_pairs, section_keys
-from lineage.state_boilerplate import (
+from lineage.core import db
+from lineage.evals.flag_precision import build_flagged_sample, with_flag
+from lineage.evals.labels import Item, Pair, Section, SectionKey, SectionRef, text_sha256
+from lineage.evals.precision import without_sections
+from lineage.match.near.pairs import load_cross_state_pairs, load_families, load_same_state_pairs
+from lineage.match.semantic.pairs import build_semantic_pairs, load_semantic_pairs, section_keys
+from lineage.match.semantic.stage import BUILD_THRESHOLD
+from lineage.match.state_boilerplate import (
     COMPACT_PHRASES,
     MIN_FAMILIES,
     StateBoilerplateError,
-    build_flagged_sample,
     build_state_boilerplate,
     families_reached,
     flagged,
     load_families_reached,
+    load_passage_reach,
     section_families,
-    with_flag,
 )
+from lineage.match.strata import STRATA, stored_strata
 from tests.conftest import FAKE_MODEL
 
 
@@ -87,7 +89,7 @@ def test_the_build_stores_each_sections_count_and_the_strata_with_the_flag(
     assert counts.tolist() == [len(r) for r in reached]
     assert any(reached), "the fixture should have same-state near-duplicates across families"
     assert sum(h["sections"] for h in doc["histogram"]) == len(bills)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         texts: list[tuple[str, int, str]] = con.execute(
             "SELECT bill_id, ordinal, normalized FROM read_parquet($p)",
             {"p": str(tables / "sections" / "*.parquet")},
@@ -105,6 +107,37 @@ def test_the_build_stores_each_sections_count_and_the_strata_with_the_flag(
     for keys in on.values():
         left, right = (keys >> np.uint64(32)).astype(np.int64), (keys & np.uint64(0xFFFFFFFF))
         assert not (flag[left] | flag[right.astype(np.int64)]).any()
+
+
+def test_the_build_stores_each_sections_national_reach_over_every_stages_pairs(
+    tables: Path,
+) -> None:
+    doc = build_state_boilerplate(tables, model=FAKE_MODEL, floor_bytes=0)
+
+    reach = load_passage_reach(tables)
+    assert reach is not None
+    bills, _ = section_keys(tables)
+    family_of_bill = load_families(tables)
+    reached: list[set[str]] = [set() for _ in bills]
+    pairs = (
+        load_same_state_pairs(tables),
+        load_cross_state_pairs(tables),
+        load_semantic_pairs(tables, FAKE_MODEL, threshold=BUILD_THRESHOLD),
+    )
+    for p in pairs:
+        lefts: list[int] = np.asarray(p.left).tolist()
+        rights: list[int] = np.asarray(p.right).tolist()
+        for a, b in zip(lefts, rights, strict=True):
+            if family_of_bill[bills[a]] != family_of_bill[bills[b]]:
+                reached[a].add(family_of_bill[bills[b]])
+                reached[b].add(family_of_bill[bills[a]])
+    assert reach.tolist() == [len(r) for r in reached]
+    assert (reach >= load_families_reached(tables)).all()  # every state, not only its own
+    assert sum(h["sections"] for h in doc["passage_reach"]["histogram"]) == len(bills)
+
+
+def test_tables_without_passage_reach_have_none(tables: Path) -> None:
+    assert load_passage_reach(tables) is None
 
 
 def test_counts_from_another_build_are_refused(tables: Path) -> None:

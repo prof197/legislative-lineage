@@ -14,42 +14,37 @@ from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 
-from lineage import deploy
 from lineage.cli import app
-from lineage.deploy import (
-    JOB_SHELL,
-    TOKEN_SERVICE,
-    Breaker,
-    Call,
-    DeployError,
-    DeployPaths,
-    DeployRules,
-    Limits,
-    Result,
-    breaker,
+from lineage.export.release import RELEASE_MANIFEST, Checksums, changed_files, read_checksums
+from lineage.export.schema import Release
+from lineage.live import deploy, deploy_gates
+from lineage.live.deploy import (
     deploy_day,
-    github_shell,
-    in_session,
-    listed_origin_claims,
-    load_rules,
-    local_paths,
     origin_claims_review,
     prepare_candidate,
-    read_record,
     reject_day,
     release_day,
-    tag_for,
     weekly_review,
     write_review,
 )
-from lineage.export_schema import Release
-from lineage.feed import write_feed
-from lineage.origins import FLOOR
-from lineage.publish import export_changes, promote, staging_dir
-from lineage.release import RELEASE_MANIFEST, Checksums, changed_files, read_checksums
-from lineage.updates import OriginGained, OriginLost, RecordAdded, write_changes
-from lineage.withheld import Reviewed
-from lineage.withheld import write_report as write_withheld
+from lineage.live.deploy_gates import local_paths, tag_for
+from lineage.live.deploy_ledger import DeployError, DeployPaths, read_record
+from lineage.live.deploy_rules import (
+    Breaker,
+    DeployRules,
+    Limits,
+    breaker,
+    in_session,
+    listed_origin_claims,
+    load_rules,
+)
+from lineage.live.deploy_shell import JOB_SHELL, TOKEN_SERVICE, Call, Result, github_shell
+from lineage.live.feed import write_feed
+from lineage.live.publish import export_changes, promote, staging_dir
+from lineage.live.updates import OriginGained, OriginLost, RecordAdded, write_changes
+from lineage.origins.matches import FLOOR
+from lineage.origins.withheld import Reviewed
+from lineage.origins.withheld import write_report as write_withheld
 from tests.days import DAYS
 from tests.live import Recorded, export_inputs, full_export, recorded
 from tools.leak_check import LOCAL_PATH
@@ -75,7 +70,7 @@ def live(rec: Recorded, tmp_path_factory: pytest.TempPathFactory) -> dict[int, P
         log = rec.log_through(n, root / f"log{n}")
         export_changes(
             rec.tables[n], state="GA", export=export, changes_dir=log, models_dir=None, floor=0,
-            **inputs,
+            inputs=inputs,
         )  # fmt: skip
         write_feed(
             rec.tables[n],
@@ -83,8 +78,8 @@ def live(rec: Recorded, tmp_path_factory: pytest.TempPathFactory) -> dict[int, P
             export=staging_dir(export),
             site_url=SITE,
             changes_dir=log,
-            modeldocs_root=inputs["modeldocs_root"],
-            collector_package=inputs["collector_package"],
+            modeldocs_root=inputs.modeldocs_root,
+            collector_package=inputs.collector_package,
         )
         promote(export)
         out[n] = shutil.copytree(export, root / f"after{n}")
@@ -716,7 +711,7 @@ def test_a_web_address_under_home_is_not_a_local_path(tmp_path: Path) -> None:
 
 
 def test_the_local_path_pattern_is_the_leak_checks() -> None:
-    assert deploy.LOCAL_PATH.pattern == LOCAL_PATH.pattern
+    assert deploy_gates.LOCAL_PATH.pattern == LOCAL_PATH.pattern
 
 
 # The circuit breaker's rule.

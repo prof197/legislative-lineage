@@ -4,7 +4,13 @@ from pathlib import Path
 
 import pytest
 
-from lineage import queries
+from lineage.core import db
+from lineage.data import queries as data_queries
+from lineage.live import queries as live_queries
+from lineage.match import queries as match_queries
+from lineage.match.near import queries as near_queries
+from lineage.origins import queries as origins_queries
+from lineage.text import queries as text_queries
 
 # id: (state, session, identifier, title, sections as (text, boilerplate), eligible, family)
 BILLS = {
@@ -25,22 +31,22 @@ def tables(tmp_path: Path) -> Path:
     ]
     ids = [r[0] for r in rows]
     n = len(rows)
-    with queries.connect_quiet() as con:
-        queries.write_sections(
+    with db.connect_quiet() as con:
+        text_queries.write_sections(
             con,
             parquet_path=tmp_path / "s.parquet",
-            columns=queries.SectionColumns(
+            columns=text_queries.SectionColumns(
                 ids, [r[1] for r in rows], [None] * n, [r[2] for r in rows],
                 [r[2] for r in rows], [True] * n, [r[3] for r in rows],
             ),
         )  # fmt: skip
         bills = sorted(BILLS)
-        queries.write_eligibility(
+        data_queries.write_eligibility(
             con, parquet_path=tmp_path / "eligible.parquet", ids=bills,
             eligible=[BILLS[b][5] for b in bills], rules=[1] * len(bills),
         )  # fmt: skip
         in_family = [b for b in bills if BILLS[b][6]]
-        queries.write_families(
+        near_queries.write_families(
             con, parquet_path=tmp_path / "families.parquet",
             bill_ids=in_family, families=[str(BILLS[b][6]) for b in in_family],
         )  # fmt: skip
@@ -59,10 +65,10 @@ def tables(tmp_path: Path) -> Path:
 
 def test_only_eligible_non_boilerplate_sections_count(tables: Path) -> None:
     glob, eligible = str(tables / "s.parquet"), tables / "eligible.parquet"
-    with queries.connect_quiet() as con:
-        words = queries.section_word_counts(con, sections_glob=glob, eligible_path=eligible)
-        ids = queries.matchable_bill_ids(con, sections_glob=glob, eligible_path=eligible)
-        texts = queries.matchable_section_texts(
+    with db.connect_quiet() as con:
+        words = match_queries.section_word_counts(con, sections_glob=glob, eligible_path=eligible)
+        ids = live_queries.matchable_bill_ids(con, sections_glob=glob, eligible_path=eligible)
+        texts = origins_queries.matchable_section_texts(
             con, sections_glob=glob, eligible_path=eligible, ids=["b4", "b5"]
         )
 
@@ -74,8 +80,8 @@ def test_only_eligible_non_boilerplate_sections_count(tables: Path) -> None:
 def test_related_bills_are_the_named_ones_the_titled_ones_and_their_families(
     tables: Path,
 ) -> None:
-    with queries.connect_quiet() as con:
-        got = queries.related_bill_ids(
+    with db.connect_quiet() as con:
+        got = match_queries.related_bill_ids(
             con, bills_glob=str(tables / "b.parquet"), families_path=tables / "families.parquet",
             listed=[("OH", "135", "SB 237")], title_regex="slapp",
         )  # fmt: skip

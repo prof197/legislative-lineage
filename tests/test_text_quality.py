@@ -2,9 +2,9 @@
 
 from typing import Any
 
-from lineage.text_fetch import Job
-from lineage.text_quality import containment, draw_sample, evaluate, overlap
-from lineage.text_rules import TextRules
+from lineage.text.fetch import Job
+from lineage.text.quality import containment, draw_sample, evaluate, overlap
+from lineage.text.rules import TextRules
 
 RULES = TextRules(
     min_words=5, min_real_word_share=0.5, min_usable_rate=0.8, html_margin=0.05,

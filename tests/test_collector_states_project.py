@@ -16,10 +16,11 @@ import pytest
 from typer.testing import CliRunner
 
 from lineage.cli import app
-from lineage.collect import CollectContext, CollectReport, collectors
-from lineage.collect_base import CollectFetchError, Fetched
-from lineage.collectors import states_project
-from lineage.collectors.states_project import (
+from lineage.core.robots import Robots, parse_robots
+from lineage.origins.collect import CollectContext, CollectReport, collectors
+from lineage.origins.collect_base import CollectFetchError, Fetched
+from lineage.origins.collectors import states_project
+from lineage.origins.collectors.states_project import (
     LIBRARY,
     SITEMAP_INDEX,
     SOURCE,
@@ -28,7 +29,7 @@ from lineage.collectors.states_project import (
     model_policy,
     policy_url,
 )
-from lineage.modeldocs import (
+from lineage.origins.modeldocs import (
     MODELDOCS_DIR,
     ModelDoc,
     ModelDocError,
@@ -38,8 +39,7 @@ from lineage.modeldocs import (
     read_versions,
     sha256,
 )
-from lineage.robots import Robots, parse_robots
-from lineage.sections import split_sections
+from lineage.text.sections import split_sections
 
 FIXTURES = Path(__file__).parent / "fixtures" / "collect" / "states-project"
 DAY = date(2026, 11, 15)

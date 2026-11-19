@@ -11,11 +11,12 @@ import numpy as np
 import pytest
 from typer.testing import CliRunner
 
-from lineage import queries
 from lineage.cli import app
-from lineage.incremental import register_embedder
-from lineage.neighbors import build_neighbors
-from lineage.vectors import build_plan, semantic_dir, shard_name, vectors_dir
+from lineage.core import db
+from lineage.live.incremental import register_embedder
+from lineage.match.semantic import queries as semantic_queries
+from lineage.match.semantic.neighbors import build_neighbors
+from lineage.match.semantic.vectors import build_plan, semantic_dir, shard_name, vectors_dir
 from tests.fakes import bag_of_words
 
 FIXTURES = Path(__file__).parent / "fixtures" / "openstates"
@@ -160,9 +161,9 @@ def embed_with_stand_in(built: Path, out: Path) -> Path:
     plan = build_plan(out, floor_bytes=0)
     vectors = vectors_dir(out, FAKE_MODEL)
     vectors.mkdir(parents=True)
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         for s in range(plan.shards):
-            texts = queries.read_semantic_texts(
+            texts = semantic_queries.read_semantic_texts(
                 con, parquet_path=semantic_dir(out) / "texts" / f"{shard_name(s)}.parquet"
             )
             np.save(vectors / f"{shard_name(s)}.npy", bag_of_words(texts).astype(np.float16))

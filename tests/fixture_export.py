@@ -16,19 +16,21 @@ from collections import defaultdict
 from datetime import date
 from pathlib import Path
 
-from lineage import queries
-from lineage.collect import collectors
-from lineage.export import RESULTS, build_export
-from lineage.generic_sections import generic_kind
-from lineage.labels import SAME_PROVISION, text_sha256
-from lineage.modeldocs import ModelDoc, Source, sha256, store
-from lineage.origin_labels import PROMPT
-from lineage.origins import BillSpan, OriginMatch, SectionPair, write_origin_matches
-from lineage.query import matchable_sections
-from lineage.sections import normalize
-from lineage.semantic_pairs import build_semantic_pairs
-from lineage.withheld import Tally
-from lineage.withheld import write_report as write_withheld
+from lineage.core import db
+from lineage.evals.labels import SAME_PROVISION, text_sha256
+from lineage.export.build import build_export
+from lineage.export.pages import RESULTS, ExportInputs
+from lineage.match.query import matchable_sections
+from lineage.match.semantic.pairs import build_semantic_pairs
+from lineage.origins import queries as origins_queries
+from lineage.origins.collect import collectors
+from lineage.origins.labels import PROMPT
+from lineage.origins.matches import BillSpan, OriginMatch, SectionPair, write_origin_matches
+from lineage.origins.modeldocs import ModelDoc, Source, sha256, store
+from lineage.origins.withheld import Tally
+from lineage.origins.withheld import write_report as write_withheld
+from lineage.text.generic_sections import generic_kind
+from lineage.text.sections import normalize
 from tests.conftest import (
     COMMISSION,
     FAKE_MODEL,
@@ -52,7 +54,8 @@ DRAWN_FROM = {
         "ocd-bill/370e175f-246b-4076-a6b8-62312800299c",  # Utah HB 181 (2026)
         "Model Electronic Estate Planning Documents Act (synthetic fixture)",
     ),
-    # Matched, then withheld (lineage.withheld), so no page lists it and the sources page does.
+    # Matched, then withheld (lineage.origins.withheld), so no page lists it and the sources page
+    # does.
     "example-library/speech-procedures": (
         "ocd-bill/7968b9d9-25ee-4684-a92e-c76167d6f917",  # Utah SB 18 (2023)
         "Model Speech Procedures Act (synthetic fixture)",
@@ -67,10 +70,10 @@ def hand_made_origins(
 ) -> list[OriginMatch]:
     """The hand-made matches, and in `labels` a label judging the first correct, as a labeler
     would on its strongest pair, so the fixture's origin story can feature it (a featured
-    story features only a match judged correct, lineage.origin_story)."""
+    story features only a match judged correct, lineage.export.origin_story)."""
     ids = [bill for bill, _ in DRAWN_FROM.values()]
-    with queries.connect_quiet() as con:
-        rows = queries.matchable_section_texts(
+    with db.connect_quiet() as con:
+        rows = origins_queries.matchable_section_texts(
             con,
             sections_glob=str(tables / "sections" / "*.parquet"),
             eligible_path=tables / "eligible.parquet",
@@ -81,7 +84,7 @@ def hand_made_origins(
         by_bill[bill_id].append((ordinal, text))
     out: list[OriginMatch] = []
     # The first is found by both stages, so the fixture carries an origin story
-    # (lineage.origin_story), and the rest by wording alone.
+    # (lineage.export.origin_story), and the rest by wording alone.
     first = next(iter(DRAWN_FROM))
     for doc_id, (bill_id, title) in DRAWN_FROM.items():
         sections = by_bill[bill_id]
@@ -103,7 +106,7 @@ def hand_made_origins(
             text_sha256=sha256(raw),
         )
         store(source, doc, raw=raw, text=text, root=modeldocs)
-        # Generic sections are left out of a match's shares (lineage.generic_sections).
+        # Generic sections are left out of a match's shares (lineage.text.generic_sections).
         words = sum(len(t.split()) for _, t in sections if generic_kind(normalize(t)) is None)
         model_sections = [norm for _, norm in matchable_sections(text)[1]]
         pairs = [
@@ -164,18 +167,20 @@ def build_fixture_export(root: Path) -> Path:
         state=STATE,
         out=out,
         models_dir=None,
-        cache=root / "no-cache",
-        featured_pairs=no_pairs,
-        featured_report=no_stories,
-        stories_rules=rules,
-        results=REPO / RESULTS,
-        modeldocs_root=modeldocs,
-        collector_package=PACKAGE,
-        model=FAKE_MODEL,
-        require_flag=False,
+        inputs=ExportInputs(
+            cache=root / "no-cache",
+            featured_pairs=no_pairs,
+            featured_report=no_stories,
+            stories_rules=rules,
+            results=REPO / RESULTS,
+            modeldocs_root=modeldocs,
+            collector_package=PACKAGE,
+            model=FAKE_MODEL,
+            require_flag=False,
+            origin_labels=labels,
+            withheld_report=withheld,
+        ),
         floor=0,
-        origin_labels=labels,
-        withheld_report=withheld,
     )
     return out
 

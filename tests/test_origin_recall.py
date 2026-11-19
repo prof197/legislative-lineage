@@ -6,11 +6,12 @@ from typing import Any
 
 import pytest
 
-from lineage.acts import ACTS, HELD_OUT_ACTS, ORIGIN_HELD_OUT_ACTS
-from lineage.answer_key import ANSWER_KEY, COLUMNS, render_answer_key
-from lineage.commission import RESULTS
-from lineage.intervals import wilson
-from lineage.origin_recall import (
+from lineage.core.intervals import wilson
+from lineage.evals.acts import ACTS, HELD_OUT_ACTS, ORIGIN_HELD_OUT_ACTS
+from lineage.evals.answer_key import ANSWER_KEY, COLUMNS, render_answer_key
+from lineage.evals.commission import RESULTS
+from lineage.origins.matches import FLOOR, OriginMatch
+from lineage.origins.recall import (
     KEYS,
     V1_OPENED,
     AnswerKey,
@@ -21,7 +22,6 @@ from lineage.origin_recall import (
     origin_recall,
     same_slug,
 )
-from lineage.origins import FLOOR, OriginMatch
 
 ROOT = Path(__file__).parents[1]
 SOURCE = "commission"

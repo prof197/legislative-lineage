@@ -15,8 +15,8 @@ import json
 from pathlib import Path
 from typing import Any
 
-from lineage.semantic_pairs import build_semantic_pairs
-from lineage.updates import fold, load_days, write_archives
+from lineage.live.updates import fold, load_days, write_archives
+from lineage.match.semantic.pairs import build_semantic_pairs
 from tests.conftest import COMMISSION, FAKE_MODEL, embed_with_stand_in, tables_from_raw
 
 GEORGIA_ID = "ocd-bill/fixture-ga-0001"  # not an Open States id: the record is synthetic

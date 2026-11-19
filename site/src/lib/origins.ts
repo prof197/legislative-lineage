@@ -13,7 +13,7 @@ export const INCLUSION_RULE =
 
 export const LEAKED_LABEL = "Leaked";
 
-// The sources page's line on a library's withheld documents (lineage.withheld, ruled at the
+// The sources page's line on a library's withheld documents (lineage.origins.withheld, ruled at the
 // deploy review): what is held back, from where, and why, without naming it a fault of the library.
 // Two reasons: the labels found most of its matches wrong, resting on generic text; or the
 // maintainer did, reviewing a day's new matches before they were published.
@@ -163,7 +163,7 @@ export function bySource(sources: readonly SourceEntry[]): SourceEntry[] {
 }
 
 // The origin story (DESIGN.md#export): one passed bill and the listed model document both stages
-// found holding the most of its wording, chosen by lineage.origin_story's rule, which names no
+// found holding the most of its wording, chosen by lineage.export.origin_story's rule, which names no
 // organization and features only a match a labeler judged correct; its file's type is the export
 // schema's.
 export type { OriginStory };

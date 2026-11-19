@@ -9,9 +9,9 @@ on a seeded sample of the embedded corpus (`lineage embed`):
   CANDIDATES best re-scored against the float16 vectors and the best K kept.
 
 The sample and the queries are drawn from the shards embedded so far, which a run takes in a
-seeded random order (lineage.vectors), so the benchmark can run before the corpus is finished;
-the report records how much was embedded. Queries are windows drawn apart from the sample, so no
-query finds itself. For each index it
+seeded random order (lineage.match.semantic.vectors), so the benchmark can run before the corpus is
+finished; the report records how much was embedded. Queries are windows drawn apart from the sample,
+so no query finds itself. For each index it
 records build time, index bytes, queries a second, recall of the exact K nearest, and recall of
 the exact neighbors at or above the stage's cosine threshold, the ones the stage keeps. The
 build's cost on the whole corpus is projected from the sample: bytes and build time grow with
@@ -33,7 +33,9 @@ import numpy as np
 from numpy.typing import NDArray
 
 from benchmarks.minhash import machine
-from lineage.ann import (
+from lineage.core.memory import peak_bytes
+from lineage.core.paths import DATA
+from lineage.match.semantic.ann import (
     Index,
     Neighbors,
     add,
@@ -46,11 +48,9 @@ from lineage.ann import (
     set_threads,
     train_index,
 )
-from lineage.memory import peak_bytes
-from lineage.paths import DATA
-from lineage.semantic import BUILD_THRESHOLD as THRESHOLD
-from lineage.semantic import MODEL
-from lineage.vectors import embedded_shards, load_plan, rows_of
+from lineage.match.semantic.stage import BUILD_THRESHOLD as THRESHOLD
+from lineage.match.semantic.stage import MODEL
+from lineage.match.semantic.vectors import embedded_shards, load_plan, rows_of
 
 SEED = 20261110
 TABLES = DATA / "tables"

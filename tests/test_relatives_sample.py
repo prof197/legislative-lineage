@@ -8,11 +8,9 @@ from typing import Any
 import numpy as np
 import pytest
 
-from lineage import queries
-from lineage.labels import Item, Pair, Section, SectionKey, SectionRef, text_sha256
-from lineage.pairs import load_cross_state_pairs
-from lineage.relatives import bill_relatives
-from lineage.relatives_sample import (
+from lineage.core import db
+from lineage.evals.labels import Item, Pair, Section, SectionKey, SectionRef, text_sha256
+from lineage.evals.relatives_sample import (
     BILLS,
     DISCARDED,
     PARTS,
@@ -22,8 +20,11 @@ from lineage.relatives_sample import (
     estimate,
     with_passages,
 )
-from lineage.semantic import BUILD_THRESHOLD, THRESHOLD
-from lineage.semantic_pairs import build_semantic_pairs, load_semantic_pairs, section_keys
+from lineage.match.near import queries as near_queries
+from lineage.match.near.pairs import load_cross_state_pairs
+from lineage.match.relatives import bill_relatives
+from lineage.match.semantic.pairs import build_semantic_pairs, load_semantic_pairs, section_keys
+from lineage.match.semantic.stage import BUILD_THRESHOLD, THRESHOLD
 from tests.conftest import FAKE_MODEL
 
 STATE = "UT"  # the fixture state with the most bills
@@ -36,8 +37,8 @@ def tables(embedded_commission: Path) -> Path:
 
 
 def _states(tables: Path) -> dict[str, str]:
-    with queries.connect_quiet() as con:
-        return queries.bill_states(con, bills_glob=str(tables / "bills" / "*.parquet"))
+    with db.connect_quiet() as con:
+        return near_queries.bill_states(con, bills_glob=str(tables / "bills" / "*.parquet"))
 
 
 def _expected_pair(tables: Path, query_bill: str, match_bill: str) -> tuple[int, int]:

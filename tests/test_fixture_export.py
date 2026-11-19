@@ -7,15 +7,22 @@ from pathlib import Path
 
 import pytest
 
-from lineage.collect import collectors
-from lineage.export import RESULTS, carries_origin_story
-from lineage.export_schema import BillPage, Meta, Sources
-from lineage.modeldocs import read_docs
-from lineage.origin_labels import judged_correct, load_labels
-from lineage.origin_story import FILE as ORIGIN_STORY_FILE
-from lineage.origin_story import story_file
-from lineage.origins import read_origin_matches
-from lineage.publish import bill_list, bill_page, plan_export, texts_by_slug
+from lineage.export.origin_story import FILE as ORIGIN_STORY_FILE
+from lineage.export.origin_story import story_file
+from lineage.export.pages import (
+    RESULTS,
+    ExportInputs,
+    bill_list,
+    bill_page,
+    carries_origin_story,
+    plan_export,
+    texts_by_slug,
+)
+from lineage.export.schema import BillPage, Meta, Sources
+from lineage.origins.collect import collectors
+from lineage.origins.labels import judged_correct, load_labels
+from lineage.origins.matches import read_origin_matches
+from lineage.origins.modeldocs import read_docs
 from tests.conftest import FAKE_MODEL
 from tests.fixture_export import (
     COMMITTED,
@@ -77,24 +84,26 @@ def test_a_match_is_judged_correct_only_on_the_sections_its_label_names(built: P
 
 
 def test_the_live_tracks_rendering_gives_the_exports_pages_byte_for_byte(built: Path) -> None:
-    """Ruled at the step 48 review: until lineage.publish shares the export's rendering, its
+    """Ruled at the step 48 review: until lineage.live.publish shares the export's rendering, its
     own copy must give the same files for the same bills, read from the same tables: every bill
     page, the bill index, every bill's section texts and the origin story."""
     root = built.parent
     plan = plan_export(
         root / "embedded",
         state=STATE,
-        cache=root / "no-cache",
-        featured_pairs=root / "none.jsonl",
-        featured_report=root / "none.json",
-        stories_rules=root / "stories.toml",
-        results=REPO / RESULTS,
-        modeldocs_root=root / "modeldocs",
-        collector_package=PACKAGE,
-        model=FAKE_MODEL,
-        require_flag=False,
-        origin_labels=root / "origin_labels.jsonl",
-        withheld_report=root / "withheld.json",
+        inputs=ExportInputs(
+            cache=root / "no-cache",
+            featured_pairs=root / "none.jsonl",
+            featured_report=root / "none.json",
+            stories_rules=root / "stories.toml",
+            results=REPO / RESULTS,
+            modeldocs_root=root / "modeldocs",
+            collector_package=PACKAGE,
+            model=FAKE_MODEL,
+            require_flag=False,
+            origin_labels=root / "origin_labels.jsonl",
+            withheld_report=root / "withheld.json",
+        ),
     )
 
     def same(name: str, rendered: bytes) -> None:

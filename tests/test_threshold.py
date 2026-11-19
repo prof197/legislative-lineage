@@ -4,9 +4,8 @@ from typing import Any
 
 import pytest
 
-from lineage.intervals import wilson
-from lineage.semantic import BUILD_THRESHOLD
-from lineage.threshold import (
+from lineage.core.intervals import wilson
+from lineage.evals.threshold import (
     CANDIDATES,
     Listed,
     ThresholdError,
@@ -17,6 +16,7 @@ from lineage.threshold import (
     page_precision,
     proposal,
 )
+from lineage.match.semantic.stage import BUILD_THRESHOLD
 
 # Six sampled pages, each with its drawn relative: (found by the near-duplicate stage, its best
 # cosine by meaning, correct), and the best cosines of what each page lists by meaning alone.

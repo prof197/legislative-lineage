@@ -6,11 +6,11 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from lineage import queries
-from lineage.pairs import load_cross_state_pairs
-from lineage.query import Match, query_text
-from lineage.relatives import RELATIVES_SHOWN, bill_relatives
-from lineage.semantic_pairs import build_semantic_pairs, section_keys
+from lineage.core import db
+from lineage.match.near.pairs import load_cross_state_pairs
+from lineage.match.query import Match, query_text
+from lineage.match.relatives import RELATIVES_SHOWN, bill_relatives
+from lineage.match.semantic.pairs import build_semantic_pairs, section_keys
 from tests.conftest import FAKE_MODEL
 
 # States with their own heading rules: a query, which knows no state, splits their text apart.
@@ -24,7 +24,7 @@ def tables(embedded_commission: Path) -> Path:
 
 
 def bill_of(tables: Path, bill_id: str) -> tuple[str, str]:
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         rows = con.execute(
             "SELECT state, text FROM read_parquet($p) WHERE id = $i",
             {"p": str(tables / "bills" / "*.parquet"), "i": bill_id},

@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
-from lineage.lsh import (
+from lineage.match.near.lsh import (
     BANDS,
     ROWS,
     band_keys,
@@ -12,7 +12,7 @@ from lineage.lsh import (
     cap_sweep,
     threshold,
 )
-from lineage.minhash import NUM_PERM, permutations, signatures
+from lineage.match.near.minhash import NUM_PERM, permutations, signatures
 
 _MASK64 = (1 << 64) - 1
 

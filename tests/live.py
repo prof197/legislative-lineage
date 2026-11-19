@@ -10,16 +10,18 @@ import json
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, TypedDict
+from typing import Any
 
 import pytest
 from typer.testing import CliRunner
 
 from lineage.cli import app
-from lineage.export import RESULTS, build_export
-from lineage.semantic_pairs import build_semantic_pairs
-from lineage.state_boilerplate import build_state_boilerplate
-from lineage.updates import fold, load_days, update, write_archives
+from lineage.export.build import build_export
+from lineage.export.pages import RESULTS, ExportInputs
+from lineage.live.incremental import update
+from lineage.live.updates import fold, load_days, write_archives
+from lineage.match.semantic.pairs import build_semantic_pairs
+from lineage.match.state_boilerplate import build_state_boilerplate
 from tests.conftest import FAKE_MODEL, embed_with_stand_in
 from tests.days import DAYS, rebuild, sessions_csv, write_days
 
@@ -107,18 +109,6 @@ def refreshed_rebuild(days: Path, upto: int, root: Path) -> Path:
     return tables
 
 
-class ExportInputs(TypedDict):
-    cache: Path
-    featured_pairs: Path
-    featured_report: Path
-    stories_rules: Path
-    results: Path
-    modeldocs_root: Path
-    collector_package: str
-    model: str
-    require_flag: bool
-
-
 def export_inputs(root: Path) -> ExportInputs:
     """The committed inputs a fixture export reads: no stories, the repository's results."""
     root.mkdir(parents=True, exist_ok=True)
@@ -126,21 +116,21 @@ def export_inputs(root: Path) -> ExportInputs:
     no_pairs.touch()
     no_stories.write_text('{"stories": {}}')
     rules.write_text("")
-    return {
-        "cache": root / "no-cache",
-        "featured_pairs": no_pairs,
-        "featured_report": no_stories,
-        "stories_rules": rules,
-        "results": REPO / RESULTS,
-        "modeldocs_root": root / "modeldocs",
-        "collector_package": PACKAGE,
-        "model": FAKE_MODEL,
-        "require_flag": False,
-    }
+    return ExportInputs(
+        cache=root / "no-cache",
+        featured_pairs=no_pairs,
+        featured_report=no_stories,
+        stories_rules=rules,
+        results=REPO / RESULTS,
+        modeldocs_root=root / "modeldocs",
+        collector_package=PACKAGE,
+        model=FAKE_MODEL,
+        require_flag=False,
+    )
 
 
 def full_export(tables: Path, out: Path, inputs: ExportInputs, state: str = STATE) -> Path:
-    build_export(tables, state=state, out=out, models_dir=None, floor=0, **inputs)
+    build_export(tables, state=state, out=out, models_dir=None, floor=0, inputs=inputs)
     return out
 
 

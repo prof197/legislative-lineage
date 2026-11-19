@@ -1,13 +1,18 @@
 # Contributing
 
-Before every commit, run the four checks CI runs:
+Before every commit, run the checks CI runs:
 
 ```sh
-uv run ruff check
+uv run ruff check                      # lint, with the complexity limit of 15
 uv run ruff format --check
 uv run pyright
 uv run pytest
+uv run lint-imports                    # the layering rule (DESIGN.md#module-map)
+uv run python -m tools.module_size     # no module over 800 lines but those allowed
+uv run python -m tools.dead_code       # no top-level name nothing reads but those allowed
 ```
+
+A function over the complexity limit, a module over 800 lines and an unread name are each allowed only where they are listed: a `noqa: C901` on the def, `ALLOWED` in `tools/module_size.py`, and `tools/dead_code_allow.txt`. Each list only shrinks: an entry that no longer applies fails the check.
 
 ## Leak check
 

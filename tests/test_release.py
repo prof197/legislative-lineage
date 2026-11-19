@@ -12,10 +12,9 @@ from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 
-from lineage import release
 from lineage.cli import app
-from lineage.export_schema import TOP_LEVEL, Release
-from lineage.release import (
+from lineage.export import release
+from lineage.export.release import (
     CHECKSUMS,
     CONTRACT,
     Checksums,
@@ -27,6 +26,7 @@ from lineage.release import (
     read_checksums,
     write_release_manifest,
 )
+from lineage.export.schema import TOP_LEVEL, Release
 from tests.fixture_export import COMMITTED
 
 TAG = "data-ut-2026-11-16"

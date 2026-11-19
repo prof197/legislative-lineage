@@ -9,7 +9,8 @@ import pytest
 from typer.testing import CliRunner
 
 from lineage.cli import app
-from lineage.labels import (
+from lineage.core import db
+from lineage.evals.labels import (
     SAME_PROVISION,
     Item,
     Pair,
@@ -20,13 +21,11 @@ from lineage.labels import (
     pending,
     text_sha256,
 )
-from lineage.model_labels import (
+from lineage.evals.model_labels import (
     BUDGET,
-    CHARS_PER_TOKEN,
     MAX_TOKENS,
     PASSAGES_HIGH,
     PASSAGES_SYSTEM,
-    PRICES,
     PROMPT_VERSION,
     PROMPTS,
     RELATIVES,
@@ -50,6 +49,7 @@ from lineage.model_labels import (
     spent,
     user_message,
 )
+from lineage.explain.spend import CHARS_PER_TOKEN, PRICES
 
 
 def _item(i: int) -> Item:
@@ -118,9 +118,8 @@ def test_a_label_under_an_older_prompt_is_asked_again() -> None:
 
 
 def _one_pair_sample(corpus: Path, tmp_path: Path) -> Path:
-    from lineage import queries
 
-    with queries.connect_quiet() as con:
+    with db.connect_quiet() as con:
         rows: list[tuple[str, int]] = con.execute(
             "SELECT bill_id, ordinal FROM read_parquet($p) ORDER BY bill_id, ordinal LIMIT 2",
             {"p": str(corpus / "sections" / "*.parquet")},
@@ -176,7 +175,7 @@ def test_a_model_without_a_known_price_is_not_projected() -> None:
 def test_live_over_the_cost_cap_asks_nothing(
     corpus: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    from lineage import cli
+    from lineage.cli import labels as cli
 
     def no_calls(*args: object, **kwargs: object) -> object:
         raise AssertionError("a model was asked")
@@ -337,7 +336,7 @@ def test_a_batch_is_recorded_once_at_half_the_standard_price(tmp_path: Path) -> 
 def test_live_over_the_budget_asks_nothing(
     corpus: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    from lineage import cli
+    from lineage.cli import labels as cli
 
     def no_calls(*args: object, **kwargs: object) -> object:
         raise AssertionError("a model was asked")

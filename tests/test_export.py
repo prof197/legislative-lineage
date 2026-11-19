@@ -3,34 +3,36 @@ site's types come from, every comparison's spans indexing the section texts writ
 and featured pairs carrying their cached explanation (DESIGN.md#export)."""
 
 import json
+from dataclasses import fields
 from pathlib import Path
 from typing import Any
 
 import pytest
 
-from lineage import queries
 from lineage.align import align
-from lineage.explain import NotCachedError, explain, prompt_spans
-from lineage.explanations import ChangeExplanation, Claim
-from lineage.export import (
+from lineage.core import db
+from lineage.explain.explain import NotCachedError, explain, prompt_spans
+from lineage.explain.explanations import ChangeExplanation, Claim
+from lineage.export import queries as export_queries
+from lineage.export.build import SCHEMA, align_all, build_export, schema_text
+from lineage.export.pages import (
     RESULTS,
-    SCHEMA,
     ExportError,
-    align_all,
-    build_export,
+    ExportInputs,
     comparison_slug,
-    schema_text,
     slug,
     stories_for,
-    validation_from,
 )
-from lineage.export_schema import BillList, BillPage, BillTexts, Comparison, Meta
-from lineage.semantic_pairs import build_semantic_pairs
+from lineage.export.schema import BillList, BillPage, BillTexts, Comparison, Meta
+from lineage.export.validation import validation_from
+from lineage.match.semantic.pairs import build_semantic_pairs
 from tests.conftest import FAKE_MODEL
 from tests.test_explain import scripted
 from tests.test_relatives import bill_of, most_related
 
 REPO = Path(__file__).parent.parent
+
+INPUT_FIELDS = {f.name for f in fields(ExportInputs)}
 
 
 def test_a_bills_file_name_is_its_state_session_and_identifier() -> None:
@@ -82,13 +84,16 @@ def _export(tables: Path, out: Path, **kw: Any) -> dict[str, Any]:
         state=state,
         out=out,
         models_dir=None,
-        cache=kw.pop("cache", out.parent / "no-cache"),
-        featured_pairs=kw.pop("featured_pairs", no_pairs),
-        featured_report=kw.pop("featured_report", no_stories),
-        stories_rules=rules,
-        results=kw.pop("results", REPO / RESULTS),
-        model=FAKE_MODEL,
-        require_flag=False,
+        inputs=ExportInputs(
+            cache=kw.pop("cache", out.parent / "no-cache"),
+            featured_pairs=kw.pop("featured_pairs", no_pairs),
+            featured_report=kw.pop("featured_report", no_stories),
+            stories_rules=rules,
+            results=kw.pop("results", REPO / RESULTS),
+            model=FAKE_MODEL,
+            require_flag=False,
+            **{k: kw.pop(k) for k in list(kw) if k in INPUT_FIELDS},
+        ),
         floor=0,
         **kw,
     )
@@ -174,8 +179,8 @@ def _one_pair(out: Path) -> tuple[Comparison, Any]:
 
 
 def _bill_id(tables: Path, state: str, session: str, identifier: str) -> str:
-    with queries.connect_quiet() as con:
-        found = queries.bill_id_of(
+    with db.connect_quiet() as con:
+        found = export_queries.bill_id_of(
             con,
             bills_glob=str(tables / "bills" / "*.parquet"),
             state=state,
