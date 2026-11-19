@@ -95,3 +95,19 @@ def test_a_match_no_page_lists_neither_counts_nor_is_drawn() -> None:
     matches = [_listed("b0", "lib/short"), hidden]
     rows, _ = topup(matches, {("b0", "lib/short"): False}, PARTS["withhold_check"])
     assert rows == []
+
+
+def test_a_document_whose_every_listed_match_is_labeled_is_judged_on_them_all() -> None:
+    """Amended 2026-11-19: the minimum guards against judging from a small sample, and when
+    every listed match is labeled there is no sample."""
+    assert Tally(doc_id="x", title="X", listed=1, labeled=1, correct=0).withheld
+    assert Tally(doc_id="x", title="X", listed=2, labeled=2, correct=0).withheld
+    assert not Tally(doc_id="x", title="X", listed=2, labeled=2, correct=1).withheld  # half
+    assert not Tally(doc_id="x", title="X", listed=3, labeled=2, correct=0).withheld  # a sample
+    assert not Tally(doc_id="x", title="X", listed=0, labeled=0, correct=0).withheld
+
+
+def test_a_document_with_every_listed_match_labeled_is_not_left_to_top_up() -> None:
+    matches = [_listed("b0", "lib/all"), _listed("b1", "lib/all")]
+    answers = {("b0", "lib/all"): False, ("b1", "lib/all"): False}
+    assert unsettled(matches, answers) == []

@@ -1,12 +1,14 @@
 """Model documents withheld from what pages show, because their labeled matches are mostly wrong.
 
-Ruled at the deploy review (2026-11-17), for every source alike: a document with at least
-MIN_LABELED labeled matches, fewer than half of them judged correct, is withheld from bill pages,
-the feed and the origin story until a fix lands. A labeled match is one a page lists (at the
-floor, lineage.origins.matches.is_listed) whose strongest section pair a label under the current
-prompt answers, from whichever sample drew it (lineage.origins.labels.correct_by_sections), so a
-label on sections the match no longer rests on does not count. The sources page names each withheld
-document and why: its matches rest on generic text.
+Ruled at the deploy review (2026-11-17), for every source alike, and amended 2026-11-19: a
+document fewer than half of whose labeled listed matches are judged correct, judged on at least
+MIN_LABELED labeled matches or on all of its listed matches, is withheld from bill pages, the feed
+and the origin story until a fix lands. The minimum guards against judging a document from a small
+sample; when every listed match is labeled there is no sample. A labeled match is one a page
+lists (at the floor, lineage.origins.matches.is_listed) whose strongest section pair a label under
+the current prompt answers, from whichever sample drew it (lineage.origins.labels
+.correct_by_sections), so a label on sections the match no longer rests on does not count. The
+sources page names each withheld document and why: its matches rest on generic text.
 
 The withheld set is a committed report, written by `lineage withhold` after matching changes,
 so the daily live track reads the same set the reviewed export did and never recounts it.
@@ -54,7 +56,8 @@ class Tally:
 
     @property
     def withheld(self) -> bool:
-        return self.labeled >= MIN_LABELED and 2 * self.correct < self.labeled
+        judged = self.labeled >= MIN_LABELED or self.labeled == self.listed
+        return self.labeled > 0 and judged and 2 * self.correct < self.labeled
 
 
 def tallies(
@@ -104,7 +107,8 @@ def report(found: Iterable[Tally], reviewed: Iterable[Reviewed] = ()) -> dict[st
         "command": COMMAND,
         "rule": {
             "min_labeled": MIN_LABELED,
-            "withheld_when": "fewer than half of the labeled listed matches judged correct",
+            "withheld_when": "fewer than half of the labeled listed matches judged correct, "
+            "judged on at least min_labeled labeled matches or on all of the listed matches",
             "floor": FLOOR,
         },
         "documents_with_labels": len(found),
@@ -176,13 +180,18 @@ TOPUP_PER_DOCUMENT = 10
 
 def unsettled(matches: Iterable[OriginMatch], answers: Mapping[MatchKey, bool]) -> list[str]:
     """The documents the rule cannot settle yet: a labeled listed match judged wrong, but fewer
-    labeled listed matches than MIN_LABELED."""
-    counts: dict[str, list[int]] = defaultdict(lambda: [0, 0])
+    labeled listed matches than MIN_LABELED and some listed match still unlabeled."""
+    counts: dict[str, list[int]] = defaultdict(lambda: [0, 0, 0])
     for m in matches:
-        if is_listed(m) and (key := match_key(m)) in answers:
-            counts[m.doc_id][0] += 1
-            counts[m.doc_id][1] += int(answers[key])
-    return sorted(d for d, (n, k) in counts.items() if n < MIN_LABELED and k < n)
+        if is_listed(m):
+            c = counts[m.doc_id]
+            c[2] += 1
+            if (key := match_key(m)) in answers:
+                c[0] += 1
+                c[1] += int(answers[key])
+    return sorted(
+        d for d, (n, k, listed) in counts.items() if 0 < n < MIN_LABELED and k < n and n < listed
+    )
 
 
 def topup(
