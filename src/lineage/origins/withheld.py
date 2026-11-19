@@ -23,14 +23,18 @@ See DESIGN.md#dr-11.
 
 import json
 from collections import Counter, defaultdict
-from collections.abc import Iterable, Mapping
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Literal
 
+import numpy as np
+
+from lineage.match.strata import STRATA, stratum_of
 from lineage.origins.labels import answers_by_match
 from lineage.origins.matches import FLOOR, OriginMatch, is_listed
 from lineage.origins.modeldocs import MODELDOCS_DIR, ModelDoc
+from lineage.origins.precision import MatchKey, Part, match_key
 
 COMMAND = "uv run lineage withhold"
 REPORT = Path("reports/withheld_documents.json")
@@ -165,3 +169,66 @@ def load_withheld(path: Path = REPORT) -> Withheld:
     reasons: dict[str, Reason] = {str(d["doc_id"]): REASON for d in doc["withheld"]}
     reasons |= {str(d["doc_id"]): REVIEW for d in doc.get("reviewed", [])}
     return Withheld(reasons=reasons, matches=int(doc["listed_matches_withheld"]))
+
+
+TOPUP_PER_DOCUMENT = 10
+
+
+def unsettled(matches: Iterable[OriginMatch], answers: Mapping[MatchKey, bool]) -> list[str]:
+    """The documents the rule cannot settle yet: a labeled listed match judged wrong, but fewer
+    labeled listed matches than MIN_LABELED."""
+    counts: dict[str, list[int]] = defaultdict(lambda: [0, 0])
+    for m in matches:
+        if is_listed(m) and (key := match_key(m)) in answers:
+            counts[m.doc_id][0] += 1
+            counts[m.doc_id][1] += int(answers[key])
+    return sorted(d for d, (n, k) in counts.items() if n < MIN_LABELED and k < n)
+
+
+def topup(
+    matches: Sequence[OriginMatch],
+    answers: Mapping[MatchKey, bool],
+    part: Part,
+    *,
+    per_document: int = TOPUP_PER_DOCUMENT,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Each unsettled document's listed matches no label answers yet, up to `per_document` in
+    a seeded order, as rows to label, and the draw's report."""
+    docs = unsettled(matches, answers)
+    rng = np.random.default_rng(part.seed)
+    rows: list[dict[str, Any]] = []
+    drawn: dict[str, dict[str, int]] = {}
+    for doc in docs:
+        listed = sorted((m for m in matches if m.doc_id == doc and is_listed(m)), key=match_key)
+        open_ = [m for m in listed if match_key(m) not in answers]
+        order: list[int] = rng.permutation(len(open_)).tolist()
+        chosen = [open_[i] for i in order[:per_document]]
+        labeled = [answers[match_key(m)] for m in listed if match_key(m) in answers]
+        drawn[doc] = {
+            "listed": len(listed),
+            "labeled": len(labeled),
+            "correct": sum(labeled),
+            "drawn": len(chosen),
+        }
+        for m in chosen:
+            stratum = stratum_of(m.stages)
+            rows.append(
+                {
+                    "pair": f"o{part.first + len(rows):04d}",
+                    "stratum": stratum,
+                    "stages": list(STRATA[stratum]),
+                    "bill_id": m.bill_id,
+                    "doc_id": m.doc_id,
+                    "ordinals": sorted({s.ordinal for s in m.spans}),
+                    "model_share": m.model_share,
+                    "bill_share": m.bill_share,
+                }
+            )
+    report = {
+        "command": f"uv run lineage origin-sample --part {part.name}",
+        "seed": part.seed,
+        "per_document": per_document,
+        "floor": FLOOR,
+        "documents": drawn,
+    }
+    return rows, report

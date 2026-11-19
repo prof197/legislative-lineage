@@ -3,13 +3,18 @@
 import json
 from pathlib import Path
 
+from lineage.origins.matches import BillSpan, OriginMatch
+from lineage.origins.precision import PARTS
 from lineage.origins.withheld import (
     REASON,
     REVIEW,
+    TOPUP_PER_DOCUMENT,
     Reviewed,
     Tally,
     load_withheld,
     read_reviewed,
+    topup,
+    unsettled,
     write_report,
 )
 
@@ -46,3 +51,47 @@ def test_a_document_the_rule_withholds_is_listed_once(tmp_path: Path) -> None:
 
 def test_no_report_withholds_nothing(tmp_path: Path) -> None:
     assert load_withheld(tmp_path / "none.json").ids == frozenset()
+
+
+def _listed(bill: str, doc: str) -> OriginMatch:
+    return OriginMatch(
+        bill_id=bill,
+        doc_id=doc,
+        stages=["near_duplicate"],
+        model_share=0.5,
+        bill_share=0.5,
+        spans=[BillSpan(ordinal=1, start=0, end=80, kind="exact")],
+    )
+
+
+def test_only_a_document_with_a_wrong_label_and_too_few_to_settle_is_topped_up() -> None:
+    """Ruled for this week's release: a wrong label among fewer than the rule's minimum leaves a
+    document neither withheld nor cleared; its remaining listed matches are labeled, up to ten,
+    for every source alike."""
+    matches = [_listed(f"b{i}", "lib/short") for i in range(14)]  # 1 labeled, wrong
+    matches += [_listed(f"b{i}", "lib/right") for i in range(4)]  # 1 labeled, correct
+    matches += [_listed(f"b{i}", "lib/settled") for i in range(5)]  # 3 labeled, 1 wrong
+    answers = {("b0", "lib/short"): False, ("b0", "lib/right"): True}
+    answers |= {("b0", "lib/settled"): False, ("b1", "lib/settled"): True}
+    answers |= {("b2", "lib/settled"): True}
+
+    assert unsettled(matches, answers) == ["lib/short"]
+    rows, report = topup(matches, answers, PARTS["withhold_check"])
+    assert len(rows) == TOPUP_PER_DOCUMENT
+    assert {r["doc_id"] for r in rows} == {"lib/short"}
+    assert "b0" not in {r["bill_id"] for r in rows}  # the labeled one is not asked again
+    assert [r["pair"] for r in rows][:2] == ["o1901", "o1902"]
+    assert report["documents"]["lib/short"] == {
+        "listed": 14,
+        "labeled": 1,
+        "correct": 0,
+        "drawn": TOPUP_PER_DOCUMENT,
+    }
+    assert topup(matches, answers, PARTS["withhold_check"])[0] == rows  # seeded
+
+
+def test_a_match_no_page_lists_neither_counts_nor_is_drawn() -> None:
+    hidden = _listed("b9", "lib/short").model_copy(update={"model_share": 0.01, "bill_share": 0.01})
+    matches = [_listed("b0", "lib/short"), hidden]
+    rows, _ = topup(matches, {("b0", "lib/short"): False}, PARTS["withhold_check"])
+    assert rows == []

@@ -3014,7 +3014,7 @@
    {
     "default": "tuning",
     "flag": false,
-    "help": "tuning, reporting (once matching is final), or census_eppc (every EPPC match listed).",
+    "help": "tuning, reporting (once matching is final), census_eppc (every EPPC match listed), or withhold_check (the unlabeled listed matches of documents with a wrong label but too few to settle).",
     "kind": "TyperOption",
     "multiple": false,
     "name": "part",

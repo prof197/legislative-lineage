@@ -66,6 +66,7 @@ from lineage.origins.labels import record as record_origin_spend
 from lineage.origins.matches import FLOOR as ORIGIN_FLOOR
 from lineage.origins.matches import REPORT as ORIGINS_REPORT
 from lineage.origins.matches import (
+    is_listed,
     origins_report,
     read_origin_matches,
     write_origin_matches,
@@ -106,6 +107,7 @@ from lineage.origins.withheld import Reviewed as WithheldReviewed
 from lineage.origins.withheld import listed_count as withheld_listed_count
 from lineage.origins.withheld import read_reviewed as read_withheld_reviewed
 from lineage.origins.withheld import tallies as withheld_tallies
+from lineage.origins.withheld import topup as withheld_topup
 from lineage.origins.withheld import write_report as write_withheld
 
 
@@ -190,8 +192,9 @@ def origin_sample_command(
         str,
         typer.Option(
             "--part",
-            help="tuning, reporting (once matching is final), or census_eppc (every EPPC "
-            "match listed).",
+            help="tuning, reporting (once matching is final), census_eppc (every EPPC "
+            "match listed), or withhold_check (the unlabeled listed matches of documents "
+            "with a wrong label but too few to settle).",
         ),
     ] = "tuning",
     tables: TablesOption = DATA / "tables",
@@ -209,9 +212,18 @@ def origin_sample_command(
         fail(f"error: no part {part!r}; one of {', '.join(ORIGIN_PARTS)}")
     chosen = ORIGIN_PARTS[part]
     with exits_on(OriginPrecisionError, ModelDocError):
-        rows, report = draw_part(
-            read_origin_matches(tables), chosen, excluded=excluded_keys(chosen), final=final
-        )
+        matches = read_origin_matches(tables)
+        if chosen.topup:
+            every = [d for c in collectors().values() for d in read_docs(c.source, root)]
+            listed = [m for m in matches if is_listed(m)]
+            answers = answers_by_match(
+                listed, every, tables, load_origin_labels(ORIGIN_LABELS), root=root
+            )
+            rows, report = withheld_topup(matches, answers, chosen)
+            if not rows:
+                raise OriginPrecisionError("no document has a wrong label but too few to settle")
+        else:
+            rows, report = draw_part(matches, chosen, excluded=excluded_keys(chosen), final=final)
         if not rows:
             raise OriginPrecisionError(
                 f"no origin matches in {tables}; run `lineage origins` first"

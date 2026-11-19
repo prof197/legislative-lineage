@@ -1,7 +1,7 @@
 {
  "command": "uv run lineage origin-label --live",
  "budget": 40.0,
- "spent": 19.2703,
+ "spent": 19.4499,
  "batches": [
   {
    "batch_id": "msgbatch_01263vWX4YL7m4N87XRApjpa",
@@ -70,6 +70,19 @@
    "at": "2026-11-18",
    "projected": 10.5527,
    "max_cost": 11.0,
+   "per_run_cap": 10.0
+  },
+  {
+   "batch_id": "msgbatch_01TXqzV7S8r5dpk5ePWhNATp",
+   "model": "claude-opus-5-5",
+   "prompt": "passages-v1-high",
+   "replies": 19,
+   "input_tokens": 77932,
+   "output_tokens": 2375,
+   "dollars": 0.1796,
+   "at": "2026-11-19",
+   "projected": 0.572,
+   "max_cost": 10.0,
    "per_run_cap": 10.0
   }
  ]
