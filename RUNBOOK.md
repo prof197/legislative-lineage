@@ -110,3 +110,17 @@ During session, read the week's new origin claims in `<data>/deploy/reviews/<day
 ## When a step fails
 
 The notification names the step; `status.json` holds its command, exit code and the tail of its output. The live export stays the last good one, since nothing before the promote touches it. Fix the cause, then run the job again by hand (above). A deploy stopped part way resumes from its record without publishing twice.
+
+## The release order
+
+Every data release goes out in one order: **the release, then the pin PR, then the merge, then the deploy.**
+
+1. Pack the export (`uv run lineage export --state GA --package data-ga-YYYY-MM-DD`), which pins it in `site/data-release.json`, and run its gates.
+2. Create the GitHub release with the asset (`gh release create`) before the pin leaves the machine. The PR's data check (`data.yml`) downloads the release the pin names and verifies its digest, so the release has to exist first.
+3. Commit the pin, run the leak check, push the branch and open the PR to main.
+4. Merge the PR once its checks pass, with a merge commit.
+5. Deploy: dispatch the Pages workflow on main (`gh workflow run pages.yml --ref main`), then check that the live `data/release.json` names the new tag.
+
+If the PR does not merge, delete its release (`gh release delete data-ga-YYYY-MM-DD --cleanup-tag`), so no release stands that main does not pin.
+
+The live track's deploy (`lineage publish deploy`, `lineage.live.deploy_publish`) keeps the same order: it creates the release, then pushes the pin, then dispatches Pages. In session the job's checkout pushes the pin to main itself, so the push stands in for the PR and the merge. A push that fails stops the day with the release up, and rerunning the job resumes at the push. If the pin cannot land (for example, main moved and the commit cannot be pushed), delete that day's release as above before the next run packs a new one.

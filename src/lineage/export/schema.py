@@ -316,7 +316,8 @@ class Meta(_Model):
 
 class WithheldDocument(_Model):
     """A model document withheld from bill pages, the feed and stories (lineage.origins.withheld):
-    at least 3 of its listed matches labeled, fewer than half judged correct."""
+    fewer than half of its labeled listed matches judged correct, on at least 3 labeled or on all
+    of its listed matches."""
 
     id: str
     title: str

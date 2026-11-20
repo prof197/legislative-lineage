@@ -15,6 +15,7 @@ COLLECT = Path(__file__).parent / "fixtures" / "collect"
 SYNTHETIC_ACT = COLLECT / "synthetic_act.txt"
 
 _W = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+_DOCX_TIME = (1980, 1, 1, 0, 0, 0)
 
 
 def docx_bytes(text: str) -> bytes:
@@ -33,8 +34,13 @@ def docx_bytes(text: str) -> bytes:
     )
     out = io.BytesIO()
     with zipfile.ZipFile(out, "w") as z:
-        z.writestr("[Content_Types].xml", '<?xml version="1.0"?><Types/>')
-        z.writestr("word/document.xml", document)
+        # A fixed timestamp: writestr given a name stamps the entry with the current time, so two
+        # builds of the same text either side of a two-second tick hashed differently.
+        for name, data in (
+            ("[Content_Types].xml", '<?xml version="1.0"?><Types/>'),
+            ("word/document.xml", document),
+        ):
+            z.writestr(zipfile.ZipInfo(name, date_time=_DOCX_TIME), data)
     return out.getvalue()
 
 
