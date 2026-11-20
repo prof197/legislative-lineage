@@ -25,15 +25,15 @@
   "compare": 49843880,
   "meta.json": 8150,
   "origin_story.json": 749,
-  "sources.json": 10427,
+  "sources.json": 11453,
   "stories": 35660,
   "texts": 53168886
  },
- "total_bytes": 113703826,
+ "total_bytes": 113704852,
  "share_of_site_limit": 0.1137,
  "largest_file": {
   "path": "bills.json",
   "bytes": 1570449
  },
- "seconds": 16740
+ "seconds": 14761
 }
